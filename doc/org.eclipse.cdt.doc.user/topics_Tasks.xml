@@ -7,11 +7,12 @@
 		<topic label="Work with C or C++ project files" href="tasks/cdt_o_proj_files.htm">
 			<topic label="Display file members in the C/C++ Projects view" href="tasks/cdt_t_show_proj_files.htm"/>
 			<topic label="Assign a C or C++ nature to a project" href="tasks/cdt_t_conv_proj.htm"/>
-			<topic label="Create a cpp file" href="tasks/cdt_t_new_cpp.htm"/>
+			<topic label="Create a C/C++ file" href="tasks/cdt_t_new_cpp.htm"/>
 			<topic label="Create a makefile" href="tasks/cdt_t_new_make.htm"/>
 			<topic label="Hide files of a given type" href="tasks/cdt_t_prvw_hide_files.htm"/>
-			<topic label="Converting CDT 1.x Projects" href="cdt_t_convert_cdt_proj.htm"/>
-			<topic label="Adding Convert to a C/C++ Make Project to the New menu" href="cdt_t_add_custom_persp.htm"/>
+			<topic label="Converting CDT 1.x Projects" href="tasks/cdt_t_convert_cdt_proj.htm"/>
+			<topic label="Adding Convert to a C/C++ Make Project to the New menu" href="tasks/cdt_t_add_custom_persp.htm"/>
+			<topic label="Set Discovery Options" href="tasks/cdt_t_discovery.htm"/>
 		</topic>
 		<topic label="Write code" href="tasks/cdt_o_write_code.htm">
 			<topic label="Customize the C/C++ editor" href="tasks/cdt_t_cust_cpp_editor.htm"/>
@@ -23,6 +24,7 @@
 			</topic>
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
 			<topic label="Search for C/C++ elements" href="tasks/cdt_t_search.htm"/>
+			<topic label="Selection Search for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
 			<topic label="Refactoring" href="tasks/cdt_t_refactoring.htm"/>
 		</topic>

@@ -23,7 +23,7 @@
 	</topic>
 	<topic label="Build" href="concepts/cdt_o_build_conc.htm"> 
 		<topic label="Building C/C++ Projects" href="concepts/cdt_c_build_over.htm"/> 
-		<topic label="Manage Build Extensibility Document" href="concepts/http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/cdt-home/user/Reference%20Documents/Managed_Build/Managed_Build_Extensibility.html?cvsroot=Tools_Project"/>
+		<topic label="Manage Build Extensibility Document" href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/cdt-home/user/Reference%20Documents/Managed_Build/Managed_Build_Extensibility.html?cvsroot=Tools_Project"/>
 	</topic>
 	<topic label="Debug" href="concepts/cdt_o_dbg_concepts.htm">
 		<topic label="Adding Break Points" href="concepts/cdt_c_brkpnts.htm"/> 

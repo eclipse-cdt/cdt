@@ -44,6 +44,7 @@
 		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
 			<topic label="GDB MI preferences" href="reference/cdt_u_gdb_mi.htm"/>
 			<topic label="Source Code Locations preferences" href="reference/cdt_u_dbg_src.htm"/>
+		</topic>
 		<topic label="C/C++ Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
 			<topic label="General preferences" href="reference/cdt_u_c_editor_gen.htm"/>
 			<topic label="Colors preferences" href="reference/cdt_u_c_editor_color.htm"/>
@@ -59,7 +60,7 @@
 			<topic label="Binary Parser" href="reference/cdt_u_newproj_parser_binary.htm"/>
 			<topic label="Discovery Options" href="reference/cdt_u_discovery_preferences.htm"/>
 		</topic>
-		<topic label="Search preferences" href="reference/cdt_u_search_pref.htm">
+		<topic label="Search preferences" href="reference/cdt_u_search_pref.htm"/>
 	</topic>
 	<topic label="C/C++ Project Properties" href="reference/cdt_u_properties.htm">
 		<topic label="Managed Make Projects" href="reference/cdt_o_mmake_proj.htm">

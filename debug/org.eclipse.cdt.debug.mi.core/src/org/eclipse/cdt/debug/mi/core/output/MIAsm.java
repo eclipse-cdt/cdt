@@ -10,13 +10,11 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIAsm {
 	long address;
-	String func = "";
+	String function = "";
 	long offset;
-	String inst = "";
-	int line;
-	String file = "";
+	String instruction = "";
 
-	public MIAsm(MITuple tuple) {
+	public MIAsm (MITuple tuple) {
 		parse(tuple);
 	}
 
@@ -25,7 +23,7 @@ public class MIAsm {
 	}
 
 	public String getFunction() {
-		return func;
+		return function;
 	}
 
 	public long getOffset() {
@@ -33,33 +31,17 @@ public class MIAsm {
 	}
 
 	public String getInstruction() {
-		return inst;
-	}
-
-	public int getLine() {
-		return line;
-	}
-
-	public String getFile() {
-		return file;
+		return instruction;
 	}
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		if (file.length() > 0) {
-			buffer.append("line=\"").append(line);
-			buffer.append("file=\"" + file + "\",");
-			buffer.append("line_asm_insn=[");
-		}
 		buffer.append('{');
 		buffer.append("address=\"" + Long.toHexString(address) +"\"");
-		buffer.append(",func-name=\"" + func + "\"");
+		buffer.append(",func-name=\"" + function + "\"");
 		buffer.append(",offset=\"").append(offset).append('"');
-		buffer.append(",inst=\"" + inst + "\"");
+		buffer.append(",inst=\"" + instruction + "\"");
 		buffer.append('}');
-		if (file.length() > 0) {
-			buffer.append(']');
-		} 
 		return buffer.toString();
 	}
 
@@ -70,48 +52,24 @@ public class MIAsm {
 			MIValue value = results[i].getMIValue();
 			String str = "";
 
-			// Recurse.
-			if (value instanceof MITuple) {
-				parse((MITuple)value);
-				continue;
-			}
-			
-
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("line_asm_insn")) {
-				if (value instanceof MIList) {
-					MIList l = (MIList)value;
-					MIValue[] values = l.getMIValues();
-					for (int j = 0; j < values.length; j++) {
-						if (values[j] instanceof MITuple) {
-							parse((MITuple)values[j]);
-						}
-					}
-				}
-			} else if (var.equals("address")) {
+			if (var.equals("address")) {
 				try {
 					address = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func-name")) {
-				func = str;
+				function = str;
 			} else if (var.equals("offset")) {
 				try {
 					offset = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("inst")) {
-				inst = str;
-			} else if (var.equals("line")) {
-				try {
-					line = Integer.parseInt(str.trim());
-				} catch (NumberFormatException e) {
-				}
-			} else if (var.equals("file")) {
-				file = str;
+				instruction = str;
 			}
 		}
 	}

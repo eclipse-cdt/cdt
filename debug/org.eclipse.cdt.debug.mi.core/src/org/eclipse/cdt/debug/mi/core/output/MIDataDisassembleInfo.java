@@ -13,30 +13,56 @@ import java.util.List;
  */
 public class MIDataDisassembleInfo extends MIInfo {
 
-	MIAsm[] asms;
+	MISrcAsm[] src_asm;
+	MIAsm[] asm;
+	boolean mixed;
 
 	public MIDataDisassembleInfo(MIOutput rr) {
 		super(rr);
+		mixed = false;
+		parse();
 	}
 
-	public MIAsm[] getAsm() {
-		if (asms == null) {
-			parse();
-		}
-		return asms;
+	public MIAsm[] getMIAsms() {
+		return asm;
+	}
+
+	public boolean isMixed() {
+		return mixed;
+	}
+
+	public MISrcAsm[] getMISrcAsms() {
+		return src_asm;
 	}
 
 	public String toString() {
-		MIAsm[] asms = getAsm();
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < asms.length; i++) {
-			buffer.append(asms[i].toString());
+		buffer.append("asm_insns=[");
+		
+		if (isMixed()) {
+			MISrcAsm[] array = getMISrcAsms();
+			for (int i = 0; i < array.length; i++) {
+				if (i != 0) {
+					buffer.append(',');
+				}
+				buffer.append(array[i].toString());
+			}
+		} else {
+			MIAsm[] array = getMIAsms();
+			for (int i = 0; i < array.length; i++) {
+				if (i != 0) {
+					buffer.append(',');
+				}
+				buffer.append(array[i].toString());
+			}
 		}
+		buffer.append("]");
 		return buffer.toString();
 	}
 
 	void parse() {
-		List aList = new ArrayList();
+		List asmList = new ArrayList();
+		List srcList = new ArrayList();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -47,16 +73,17 @@ public class MIDataDisassembleInfo extends MIInfo {
 					if (var.equals("asm_insns")) {
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIList) {
-							parse((MIList)value, aList);
+							parse((MIList)value, srcList, asmList);
 						}
 					}
 				}
 			}
 		}
-		asms = (MIAsm[])aList.toArray(new MIAsm[aList.size()]);
+		src_asm = (MISrcAsm[])srcList.toArray(new MISrcAsm[srcList.size()]);
+		asm = (MIAsm[])asmList.toArray(new MIAsm[asmList.size()]);
 	}
 
-	void parse(MIList list, List aList) {
+	void parse(MIList list, List srcList, List asmList) {
 		// src and assenbly is different
 		
 		// Mixed mode.
@@ -67,10 +94,11 @@ public class MIDataDisassembleInfo extends MIInfo {
 				if (var.equals("src_and_asm_line")) {
 					MIValue value = results[i].getMIValue();
 					if (value instanceof MITuple) {
-						aList.add(new MIAsm((MITuple)value));
+						srcList.add(new MISrcAsm((MITuple)value));
 					}
 				}
 			}
+			mixed = true;
 		}
 
 		// Non Mixed with source
@@ -78,9 +106,10 @@ public class MIDataDisassembleInfo extends MIInfo {
 		if (values != null && values.length > 0) {
 			for (int i = 0; i < values.length; i++) {
 				if (values[i] instanceof MITuple) {
-					aList.add(new MIAsm((MITuple)values[i]));
+					asmList.add(new MIAsm((MITuple)values[i]));
 				}
 			}
+			mixed = false;
 		}
 	}
 }

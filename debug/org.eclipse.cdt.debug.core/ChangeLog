@@ -1,11 +1,11 @@
-2003-16-10 Mikhail Khodjaiants
+2003-10-16 Mikhail Khodjaiants
 	Fix for PR 38468: Error in files location.
 	Use the 'getCanonicalPath' method of the 'File' class to obtain the file name.
 	* CDirectorySourceLocation.java
 	* CProjectSourceLocation.java
 	* CSourceLocator.java
 
-2003-15-10 Mikhail Khodjaiants
+2003-10-15 Mikhail Khodjaiants
 	Fix for PR 43101: Breakpoint exception when source doesn't exist.
 	The 'fireBreakpointChanged' method of 'BreakpointManager' is used to notify 
 	the UI components that a breakpoint is added. This is a part of new implementation 
@@ -13,12 +13,12 @@
 	Check if delta is not null to avoid this problem.
 	* CDebugTarget.java
 
-2003-11-10 Mikhail Khodjaiants
+2003-10-11 Mikhail Khodjaiants
 	Detail Pane values for casted variables.
 	* CVariable.java: the qualified name should be chached in the InternalVariable instance
 	* CArrayPartition.java: added new field to store the chached value of the qualified name
 
-2003-11-10 Mikhail Khodjaiants
+2003-10-11 Mikhail Khodjaiants
 	Moving the shared library search paths block to mi UI.
 	* ICDTLaunchConfigurationConstants.java: moved the 'ATTR_DEBUGGER_SOLIB_PATH' attribute to mi.
 

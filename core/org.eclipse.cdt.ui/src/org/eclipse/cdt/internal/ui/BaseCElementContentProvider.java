@@ -171,6 +171,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					}
 					return getTranslationUnitChildren(tu);
 				}
+			} else if (element instanceof IBinary) {
+				return ((IBinary)element).getChildren();
+			} else if (element instanceof IArchive) {
+				return ((IArchive)element).getChildren();
 			} else if (element instanceof ISourceReference  && element instanceof IParent) {
 				return ((IParent)element).getChildren();
 			} else if (element instanceof IProject) {

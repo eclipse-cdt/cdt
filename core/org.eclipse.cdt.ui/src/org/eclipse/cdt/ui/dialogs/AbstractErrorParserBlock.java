@@ -47,7 +47,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	private static String[] EMPTY = new String[0];
 	private Preferences fPrefs;
-	private HashMap mapParsers = new HashMap();
+	protected HashMap mapParsers = new HashMap();
 	private CheckedListDialogField fErrorParserList;
 	protected boolean listDirty = false;
 

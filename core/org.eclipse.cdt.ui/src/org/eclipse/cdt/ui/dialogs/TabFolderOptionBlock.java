@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 public abstract class TabFolderOptionBlock {
-	private boolean initializingTabs = true;
+	protected boolean initializingTabs = true;
 	private Composite composite;
 	private boolean bShowMessageArea;
 	private String fErrorMessage;

@@ -176,7 +176,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		comboBox.setText(initial);
 		// Give a change to the UI contributors to react.
 		// But do it last after the comboBox is set.
-		super.performDefaults();
+		handleBinaryParserChanged();
 		getContainer().updateContainer();
 	}
 

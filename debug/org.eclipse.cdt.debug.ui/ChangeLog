@@ -1,4 +1,8 @@
 2005-02-03 Mikhail Khodjaiants
+	Fix for bug 84402: computeDetail executes in the UI thread.
+	* CValueDetailProvider.java
+
+2005-02-03 Mikhail Khodjaiants
 	Fix for bug 84187: "Toggle Watchpoint" and "Toggle Method Breakpoint" don't work with C editor.
 	ICWatchpoint should extend ILineBreakpoint to allow watchpoints to be shown in editors.
 	* AbstractBreakpointRulerAction.java

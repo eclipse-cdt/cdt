@@ -1,5 +1,22 @@
 2002-10-22 Alain Magloire
 
+	Change the framewor to support access to gdb prompt.
+	Trying to reuse as much as possible Eclipse framework.
+	The session/gdb process is available via CDI.
+
+	* src/.../core/GDBStreamsProxy.java: Removed.
+	* src/.../core/GDBProcess.java: Removed.
+	* src/.../core/GDBStreamMonitor.java: Removed.
+	* src/.../core/SessionProcess.java: New file.
+	* src/.../core/MISession.java (getMISessionProcess):
+	New method, returns a "fake" Process that wraps the input/outpu
+	stream of gdb.
+	(getGDBProcess): was getMIProcess(), renamed.
+	* src/.../core/cdi/CSession.java (getSessionProcess): New method
+	return gdb process.
+
+2002-10-22 Alain Magloire
+
 	* src/.../core/GDBStreamsProxy.java (write):
 	Replace the OutputStream with a Write class.
 	And clear the buffer on flush().

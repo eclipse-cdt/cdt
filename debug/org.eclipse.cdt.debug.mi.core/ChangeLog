@@ -1,3 +1,9 @@
+2003-12-09 Alain Magloire
+
+	Do not try to interrupt if the target was suspended.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java
+
 2003-12-08 Alain Magloire
 
 	Target.terminate() did not pass the exception up.

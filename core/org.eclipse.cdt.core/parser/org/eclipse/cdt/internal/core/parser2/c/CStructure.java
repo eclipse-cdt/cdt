@@ -146,4 +146,11 @@ public class CStructure implements ICompositeType {
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
+	 */
+	public int getKey() {
+		return ( definition != null ) ? definition.getKey() : declarations[0].getKind();
+	}
 }

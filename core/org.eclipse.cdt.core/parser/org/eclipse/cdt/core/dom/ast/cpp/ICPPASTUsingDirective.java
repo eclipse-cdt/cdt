@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  * @author jcamelon
  */
 public interface ICPPASTUsingDirective extends IASTDeclaration {
-
+	public static final ICPPASTUsingDirective [] EMPTY_USINGDIRECTIVE_ARRAY = new ICPPASTUsingDirective[0];
     public static final ASTNodeProperty QUALIFIED_NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
     
     public IASTName getQualifiedName();

@@ -3197,6 +3197,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ((ASTNode)elaboratedTypeSpec).setOffset( t.getOffset() );
         elaboratedTypeSpec.setKind( eck );
         elaboratedTypeSpec.setName( name );
+        name.setParent( elaboratedTypeSpec );
+        name.setPropertyInParent( IASTElaboratedTypeSpecifier.TYPE_NAME );
         return elaboratedTypeSpec;
     }
 
@@ -3795,6 +3797,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ((ASTNode)astClassSpecifier).setOffset( classKey.getOffset() );
         astClassSpecifier.setKey( classKind );
         astClassSpecifier.setName( name );
+        name.setParent( astClassSpecifier );
+        name.setPropertyInParent( IASTCompositeTypeSpecifier.TYPE_NAME );
         
         // base clause
         if (LT(1) == IToken.tCOLON) {

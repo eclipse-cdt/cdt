@@ -20,6 +20,7 @@ public class CPPASTName extends CPPASTNode implements IASTName {
 
     private char[] name;
     private static final char[] EMPTY_CHAR_ARRAY = { };
+    private IBinding binding = null;
 
     /**
      * @param name 
@@ -39,12 +40,14 @@ public class CPPASTName extends CPPASTNode implements IASTName {
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-        //TODO
-        return null;
+    	if( binding == null )
+    		binding = CPPVisitor.createBinding( this ); 
+    	
+        return binding;
     }
     
     protected void setBinding( IBinding binding ){
-    	//TODO
+    	this.binding = binding;
     }
 
     /* (non-Javadoc)

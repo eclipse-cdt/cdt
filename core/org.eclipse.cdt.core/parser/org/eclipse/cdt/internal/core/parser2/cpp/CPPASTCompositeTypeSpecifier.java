@@ -27,6 +27,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
     private int k;
     private IASTName n;
+    private IScope scope;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier#getBaseSpecifiers()
@@ -152,8 +153,10 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
      * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getScope()
      */
     public IScope getScope() {
-        // TODO Auto-generated method stub
-        return null;
+    	if( scope == null )
+    		scope = new CPPClassScope( this );
+    	
+        return scope;
     }
 
 }

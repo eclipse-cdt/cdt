@@ -18,6 +18,12 @@ import java.util.List;
 public interface ICompositeType extends IType {
 
 	/**
+	 *  what kind of composite type is this?
+	 * @return
+	 */
+	public int getKey();
+	
+	/**
 	 * Returns the fields for this type.
 	 * 
 	 * @return List of IField

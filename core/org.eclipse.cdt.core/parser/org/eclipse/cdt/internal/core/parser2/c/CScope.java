@@ -31,7 +31,6 @@ public class CScope implements ICScope {
     private IASTNode physicalNode = null;
     
     private CharArrayObjectMap [] bindings = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
-    int lastBinding = -1;
     
     public CScope( IASTNode physical ){
         physicalNode = physical;

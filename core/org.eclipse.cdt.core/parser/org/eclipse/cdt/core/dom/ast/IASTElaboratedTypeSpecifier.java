@@ -14,10 +14,11 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTElaboratedTypeSpecifier extends IASTDeclSpecifier {
 
-    public static final int k_struct = 0;
-    public static final int k_union  = 1;
-    public static final int k_enum   = 2;
-    public static final int k_last =  k_enum;
+	//these should agree with IASTCompositeType keys
+	public static final int k_enum   = 0;
+    public static final int k_struct = 1;
+    public static final int k_union  = 2;
+    public static final int k_last =  k_union;
     
     public int   getKind();
     public void  setKind( int value );

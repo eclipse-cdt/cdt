@@ -22,9 +22,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -69,7 +67,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
  * 
  * @author jcamelon
  */
-public class Parser implements IParser
+public abstract class Parser implements IParser
 {
     protected final IParserLogService log;
 	private static final List EMPTY_LIST = new ArrayList();
@@ -78,13 +76,12 @@ public class Parser implements IParser
     private int firstErrorOffset = DEFAULT_OFFSET;
     // offset where the first parse error occurred
    
-    private ParserMode mode = ParserMode.COMPLETE_PARSE;
     // are we doing the high-level parse, or an in depth parse?
     private boolean parsePassed = true; // did the parse pass?
     private ParserLanguage language = ParserLanguage.CPP; // C or CPP
     private ISourceElementRequestor requestor = null;
     // new callback mechanism
-    private IASTFactory astFactory = null; // ast factory
+    protected IASTFactory astFactory = null; // ast factory
     /**
      * This is the single entry point for setting parsePassed to 
      * false, and also making note what token offset we failed upon. 
@@ -117,15 +114,12 @@ public class Parser implements IParser
     public Parser(
         IScanner scanner,
         ISourceElementRequestor callback,
-        ParserMode mode,
-        ParserLanguage language, IParserLogService log )
+        ParserLanguage language,
+        IParserLogService log )
     {
         this.scanner = scanner;
         requestor = callback;
-        this.mode = mode;
         this.language = language;
-        astFactory = ParserFactory.createASTFactory( mode, language);
-        scanner.setASTFactory(astFactory);
         this.log = log;
     }
     // counter that keeps track of the number of times Parser.parse() is called
@@ -1060,17 +1054,8 @@ public class Parser implements IParser
         }
         
     }
-    protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws Backtrack, EndOfFile
-    {
-        if ( mode == ParserMode.QUICK_PARSE || isInlineFunction ) 
-        {
-            skipOverCompoundStatement();
-        }
-        else
-        {
-            functionBody(scope);
-        }
-    }
+    protected abstract void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws Backtrack, EndOfFile;
+
     protected void skipOverCompoundStatement() throws Backtrack, EndOfFile
     {
         // speed up the parser by skiping the body
@@ -3034,13 +3019,13 @@ public class Parser implements IParser
             	declaration(scope, null); // was exceptionDeclaration
             consume(IToken.tRPAREN);
             
-            if( mode == ParserMode.COMPLETE_PARSE )
-            	compoundStatement(scope, true);
-            else
-            	skipOverCompoundStatement();
+            catchBlockCompoundStatement(scope);
         }
     }
-    protected void singleStatementScope(IASTScope scope) throws Backtrack
+    
+    protected abstract void catchBlockCompoundStatement(IASTScope scope) throws Backtrack, EndOfFile; 
+    
+	protected void singleStatementScope(IASTScope scope) throws Backtrack
     {
         IASTCodeScope newScope;
         try

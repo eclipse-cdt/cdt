@@ -13,10 +13,11 @@ package org.eclipse.cdt.core.parser;
 import java.io.Reader;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.CompleteParser;
 import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Preprocessor;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
+import org.eclipse.cdt.internal.core.parser.QuickParser;
 import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
@@ -42,8 +43,11 @@ public class ParserFactory {
 		if( language == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_LANGUAGE );
 		IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
-		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );   
-		return new Parser( scanner, ourCallback, ourMode, language, logService );
+		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );
+		if( ourMode == ParserMode.COMPLETE_PARSE)
+			return new CompleteParser( scanner, ourCallback, language, logService );
+		else
+			return new QuickParser( scanner, ourCallback, language, logService );
     }
  	 	
     public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log ) throws ParserFactoryException

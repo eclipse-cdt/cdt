@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICPathContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
@@ -883,5 +884,27 @@ public class CModelManager implements IResourceChangeListener {
 	public void deleting(IProject project){
 		//	discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
+	}
+
+	/**
+	 * @param containerPath
+	 * @param project
+	 * @return
+	 */
+	public ICPathContainer getCPathContainer(IPath containerPath, ICProject project) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param containerPath
+	 * @param affectedProjects
+	 * @param respectiveContainers
+	 * @param monitor
+	 * @return
+	 */
+	public Object setCPatchContainer(IPath containerPath, ICProject[] affectedProjects, ICPathContainer[] respectiveContainers, IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

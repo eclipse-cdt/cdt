@@ -30,6 +30,8 @@ public class CommandLauncher {
 	
 	protected String fErrorMessage;
 	
+	private String lineSeparator;
+	
 	/**
 	 * The number of milliseconds to pause
 	 * between polling.
@@ -44,6 +46,7 @@ public class CommandLauncher {
 	public CommandLauncher() {
 		fProcess= null;
 		fShowCommand= false;
+		lineSeparator = System.getProperty("line.separator", "\n");
 	}
 	
 	/**
@@ -173,6 +176,25 @@ public class CommandLauncher {
 			//e.printStackTrace();
 		}
 		
+		// Drain the pipes.
+		try {
+			while (errInPipe.available() > 0 || inputPipe.available() > 0) {
+				if ( errInPipe.available() > 0 ) {
+					nbytes = errInPipe.read(buffer);
+					err.write(buffer, 0, nbytes);
+					err.flush();
+				}
+				if ( inputPipe.available() > 0 ) {
+					nbytes = inputPipe.read(buffer);
+					out.write(buffer, 0, nbytes);
+					out.flush();
+				}
+			}
+			errInPipe.close();
+			inputPipe.close();
+		} catch (IOException e) {
+		}
+		
 		return state;
 	}	
 
@@ -183,7 +205,7 @@ public class CommandLauncher {
 				buf.append(commandArgs[i]);
 				buf.append(' ');
 			}
-			buf.append('\n');
+			buf.append(lineSeparator);
 			try {
 				os.write(buf.toString().getBytes());
 				os.flush();				

@@ -16,6 +16,8 @@
     <plugin name="org.eclipse.cdt.launch" type="plugin"/>
     <plugin name="org.eclipse.cdt.linux.gtk" type="plugin"/>
     <plugin name="org.eclipse.cdt.linux.motif" type="plugin"/>
+    <plugin name="org.eclipse.cdt.managedbuilder.core" type="plugin"/>
+    <plugin name="org.eclipse.cdt.managedbuilder.ui" type="plugin"/>
     <plugin name="org.eclipse.cdt.qnx.photon" type="plugin"/>
     <plugin name="org.eclipse.cdt.solaris.motif" type="plugin"/>
     <plugin name="org.eclipse.cdt.source" type="plugin"/>
@@ -26,6 +28,7 @@
     <feature name="org.eclipse.cdt" suffix="-feature" type="feature" visible="false"/>
     <feature name="org.eclipse.cdt.linux.gtk" suffix="-feature" type="feature"/>
     <feature name="org.eclipse.cdt.linux.motif" suffix="-feature" type="feature"/>
+    <feature name="org.eclipse.cdt.managedbuilder" suffix="-feature" type="feature"/>
     <feature name="org.eclipse.cdt.qnx.photon" suffix="-feature" type="feature"/>
     <feature name="org.eclipse.cdt.solaris.motif" suffix="-feature" type="feature"/>
     <feature name="org.eclipse.cdt.source" suffix="-feature" type="feature"/>

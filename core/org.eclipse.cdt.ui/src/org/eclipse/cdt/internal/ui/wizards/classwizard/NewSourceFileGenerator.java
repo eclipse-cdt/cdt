@@ -27,6 +27,7 @@ import org.eclipse.ui.dialogs.ContainerGenerator;
 
 public class NewSourceFileGenerator {
 
+    //TODO these should all be configurable in prefs
     private static final String HEADER_EXT = ".h"; //$NON-NLS-1$
     private static final String SOURCE_EXT = ".cpp"; //$NON-NLS-1$
     private static boolean fUseIncludeGuard = true;

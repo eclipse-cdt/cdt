@@ -1,3 +1,10 @@
+2004-08-20 Chris Wiebe
+
+	class wizard now adds include paths dynamically
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
+
 2004-08-19 Alain Magloire
 
 	Match the changing API of the Resolver Model.

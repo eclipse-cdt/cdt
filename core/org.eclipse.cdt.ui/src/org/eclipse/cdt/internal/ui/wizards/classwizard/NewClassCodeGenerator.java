@@ -16,13 +16,20 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -30,6 +37,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class NewClassCodeGenerator {
 
@@ -43,6 +51,16 @@ public class NewClassCodeGenerator {
     private ITranslationUnit fCreatedHeaderTU = null;
     private ITranslationUnit fCreatedSourceTU = null;
     private ICElement fCreatedClass = null;
+    
+	//TODO this should be a prefs option
+	private boolean fCreateIncludePaths = true;
+	
+	public static class CodeGeneratorException extends Exception {
+        public CodeGeneratorException(String message) {
+        }
+        public CodeGeneratorException(Throwable e) {
+        }
+	}
 
     public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, String className, String namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
         fHeaderPath = headerPath;
@@ -76,33 +94,30 @@ public class NewClassCodeGenerator {
      * @throws InterruptedException
      *             Thrown when the operation was cancelled.
      */
-    public ICElement createClass(IProgressMonitor monitor) throws CoreException, InterruptedException {
+    public ICElement createClass(IProgressMonitor monitor) throws CodeGeneratorException, CoreException, InterruptedException {
         if (monitor == null)
             monitor = new NullProgressMonitor();
 
-        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task"), 10); //$NON-NLS-1$
+        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.mainTask"), 400); //$NON-NLS-1$
 
-        ITranslationUnit headerTU = null;
+	    ITranslationUnit headerTU = null;
         ITranslationUnit sourceTU = null;
         ICElement createdClass = null;
 
         IWorkingCopy headerWorkingCopy = null;
         IWorkingCopy sourceWorkingCopy = null;
         try {
-            monitor.worked(1);
-
             if (fHeaderPath != null) {
-	            IFile headerFile = NewSourceFileGenerator.createHeaderFile(fHeaderPath, true, monitor);
+	            IFile headerFile = NewSourceFileGenerator.createHeaderFile(fHeaderPath, true, new SubProgressMonitor(monitor, 50));
 	            if (headerFile != null) {
 	                headerTU = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
 	            }
-	            monitor.worked(1);
 	
 	            // create a working copy with a new owner
 	            headerWorkingCopy = headerTU.getWorkingCopy();
 	            // headerWorkingCopy = headerTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
 	
-	            String headerContent = constructHeaderFileContent(headerTU, headerWorkingCopy.getBuffer().getContents());
+	            String headerContent = constructHeaderFileContent(headerTU, headerWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
 	            headerWorkingCopy.getBuffer().setContents(headerContent);
 	
 	            if (monitor.isCanceled()) {
@@ -111,6 +126,7 @@ public class NewClassCodeGenerator {
 	
 	            headerWorkingCopy.reconcile();
 	            headerWorkingCopy.commit(true, monitor);
+	            monitor.worked(50);
 	
 	            createdClass = headerWorkingCopy.getElement(fClassName);
 	            fCreatedClass = createdClass;
@@ -118,16 +134,16 @@ public class NewClassCodeGenerator {
             }
 
             if (fSourcePath != null) {
-	            IFile sourceFile = NewSourceFileGenerator.createHeaderFile(fSourcePath, true, monitor);
+	            IFile sourceFile = NewSourceFileGenerator.createHeaderFile(fSourcePath, true, new SubProgressMonitor(monitor, 50));
 	            if (sourceFile != null) {
 	                sourceTU = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
 	            }
-	            monitor.worked(1);
+	            monitor.worked(50);
 	
 	            // create a working copy with a new owner
 	            sourceWorkingCopy = sourceTU.getWorkingCopy();
 	
-	            String sourceContent = constructSourceFileContent(sourceTU, headerTU);
+	            String sourceContent = constructSourceFileContent(sourceTU, headerTU, new SubProgressMonitor(monitor, 100));
 	            sourceWorkingCopy.getBuffer().setContents(sourceContent);
 	
 	            if (monitor.isCanceled()) {
@@ -136,6 +152,7 @@ public class NewClassCodeGenerator {
 	
 	            sourceWorkingCopy.reconcile();
 	            sourceWorkingCopy.commit(true, monitor);
+	            monitor.worked(50);
 	
 	            fCreatedSourceTU = sourceTU;
             }
@@ -152,7 +169,10 @@ public class NewClassCodeGenerator {
         return fCreatedClass;
     }
 
-    public String constructHeaderFileContent(ITranslationUnit headerTU, String oldContents) {
+    public String constructHeaderFileContent(ITranslationUnit headerTU, String oldContents, IProgressMonitor monitor) throws CodeGeneratorException {
+
+        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header"), 100); //$NON-NLS-1$
+        
         //TODO should use code templates
         StringBuffer text = new StringBuffer();
         
@@ -179,7 +199,7 @@ public class NewClassCodeGenerator {
         }
 
         if (fBaseClasses != null && fBaseClasses.length > 0) {
-            addBaseClassIncludes(headerTU, text);
+            addBaseClassIncludes(headerTU, text, new SubProgressMonitor(monitor, 50));
             text.append(fLineDelimiter);
         }
         
@@ -227,8 +247,10 @@ public class NewClassCodeGenerator {
                 text.append(oldContents.substring(appendFirstCharPos));
             }
         }
-
-        return text.toString();
+        
+        String newContents = text.toString();
+        monitor.done();
+        return newContents;
     }
 
     private int getInsertionPos(String contents) {
@@ -334,49 +356,210 @@ public class NewClassCodeGenerator {
         }
     }
 
-    private void addBaseClassIncludes(ITranslationUnit headerTU, StringBuffer text) {
-        IProject project = headerTU.getCProject().getProject();
+    private void addBaseClassIncludes(ITranslationUnit headerTU, StringBuffer text, IProgressMonitor monitor) throws CodeGeneratorException {
+
+        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header.includePaths"), 100); //$NON-NLS-1$
+        
+        ICProject cProject = headerTU.getCProject();
+        IProject project = cProject.getProject();
         IPath projectLocation = project.getLocation();
         IPath headerLocation = headerTU.getResource().getLocation();
-        for (int i = 0; i < fBaseClasses.length; ++i) {
-            String baseClassFileName = null;
-            boolean isSystemIncludePath = false;
-            IBaseClassInfo baseClass = fBaseClasses[i];
-            ITypeReference ref = baseClass.getType().getResolvedReference();
-            if (ref != null) {
-                IPath baseClassLocation = ref.getLocation();
-                IPath includePath = makeRelativePathToProjectIncludes(baseClassLocation, project);
-                if (includePath != null && !projectLocation.isPrefixOf(baseClassLocation)) {
-                    isSystemIncludePath = true;
-                } else if (projectLocation.isPrefixOf(baseClassLocation)
-                        && projectLocation.isPrefixOf(headerLocation)) {
-                    includePath = makeRelativePath(baseClassLocation, headerLocation);
-                }
-                if (includePath == null)
-                    includePath = baseClassLocation;
-                baseClassFileName = includePath.toString();
-            }
-            if (baseClassFileName == null) {
-                baseClassFileName = NewSourceFileGenerator.generateHeaderFileNameFromClass(baseClass.getType().getName());
-            }
-
-            // add the include statement if we are extending a base class
-            // and we are not already in the base class header file
-            // (enclosing type)
-            if (!(headerTU.getElementName().equals(baseClassFileName))) {
-                String include = getIncludeString(baseClassFileName, isSystemIncludePath);
-                text.append(include);
-                text.append(fLineDelimiter);
-            }
+        
+        List includePaths = getIncludePaths(headerTU);
+        List baseClassPaths = getBaseClassPaths();
+        
+	    // add the missing include paths to the project
+        if (fCreateIncludePaths) {
+	        List newIncludePaths = getMissingIncludePaths(projectLocation, includePaths, baseClassPaths);
+	        if (!newIncludePaths.isEmpty()) {
+			    addIncludePaths(cProject, newIncludePaths, monitor);
+	        }
         }
+
+        List systemIncludes = new ArrayList();
+        List localIncludes = new ArrayList();
+        
+        // sort the include paths into system and local
+        for (Iterator bcIter = baseClassPaths.iterator(); bcIter.hasNext(); ) {
+            IPath baseClassLocation = (IPath) bcIter.next();
+            boolean isSystemIncludePath = false;
+
+            IPath includePath = PathUtil.makeRelativePathToProjectIncludes(baseClassLocation, project);
+            if (includePath != null && !projectLocation.isPrefixOf(baseClassLocation)) {
+                isSystemIncludePath = true;
+            } else if (projectLocation.isPrefixOf(baseClassLocation)
+                    && projectLocation.isPrefixOf(headerLocation)) {
+                includePath = PathUtil.makeRelativePath(baseClassLocation, headerLocation);
+            }
+            if (includePath == null)
+                includePath = baseClassLocation;
+            
+            if (isSystemIncludePath)
+                systemIncludes.add(includePath);
+            else
+                localIncludes.add(includePath);
+        }
+        
+        // write the system include paths, e.g. #include <header.h>
+        for (Iterator i = systemIncludes.iterator(); i.hasNext(); ) {
+            IPath includePath = (IPath) i.next();
+			if (!(headerTU.getElementName().equals(includePath.toString()))) {
+			    String include = getIncludeString(includePath.toString(), true);
+			    text.append(include);
+			    text.append(fLineDelimiter);
+			}
+        }
+        
+        // write the local include paths, e.g. #include "header.h"
+        for (Iterator i = localIncludes.iterator(); i.hasNext(); ) {
+            IPath includePath = (IPath) i.next();
+			if (!(headerTU.getElementName().equals(includePath.toString()))) {
+			    String include = getIncludeString(includePath.toString(), false);
+			    text.append(include);
+			    text.append(fLineDelimiter);
+			}
+        }
+        
+        monitor.done();
     }
 
-    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU) {
+    private void addIncludePaths(ICProject cProject, List newIncludePaths, IProgressMonitor monitor) throws CodeGeneratorException {
+        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header.addIncludePaths"), 100); //$NON-NLS-1$
+
+        //TODO prefs option whether to add to project or parent source folder?
+        IPath addToResourcePath = cProject.getPath();
+        try {
+            List pathEntryList = new ArrayList();
+            IPathEntry[] pathEntries = cProject.getRawPathEntries();
+            if (pathEntries != null) {
+                for (int i = 0; i < pathEntries.length; ++i) {
+                    pathEntryList.add(pathEntries[i]);
+                }
+            }
+            for (Iterator ipIter = newIncludePaths.iterator(); ipIter.hasNext(); ) {
+                IPath folderToAdd = (IPath) ipIter.next();
+                IPath basePath = null;
+                IPath includePath = folderToAdd;
+                IProject includeProject = PathUtil.getEnclosingProject(folderToAdd);
+                boolean isSystemInclude = (includeProject == null);
+                if (includeProject != null) {
+                    includePath = PathUtil.makeRelativePath(folderToAdd, includeProject.getLocation());
+                    basePath = includeProject.getFullPath().makeRelative();
+                }
+                IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, basePath, includePath, isSystemInclude);
+                pathEntryList.add(entry);
+            }
+            pathEntries = (IPathEntry[]) pathEntryList.toArray(new IPathEntry[pathEntryList.size()]);
+            cProject.setRawPathEntries(pathEntries, new SubProgressMonitor(monitor, 80));
+        } catch (CModelException e) {
+            throw new CodeGeneratorException(e);
+        }
+        monitor.done();
+    }
+
+    private List getMissingIncludePaths(IPath projectLocation, List includePaths, List baseClassPaths) {
+        // check for missing include paths
+        List newIncludePaths = new ArrayList();
+        for (Iterator bcIter = baseClassPaths.iterator(); bcIter.hasNext(); ) {
+            IPath baseClassLocation = (IPath) bcIter.next();
+            
+            // skip any paths inside the same project
+            //TODO possibly a preferences option?
+            if (projectLocation.isPrefixOf(baseClassLocation)) {
+                continue;
+            }
+
+            IPath folderToAdd = baseClassLocation.removeLastSegments(1);
+            IPath canonPath = PathUtil.getCanonicalPath(folderToAdd);
+            if (canonPath != null)
+                folderToAdd = canonPath;
+
+            // see if folder or its parent hasn't already been added
+            for (Iterator newIter = newIncludePaths.iterator(); newIter.hasNext(); ) {
+                IPath newFolder = (IPath) newIter.next();
+	            if (newFolder.isPrefixOf(folderToAdd)) {
+	                folderToAdd = null;
+	                break;
+	            }
+            }
+
+            if (folderToAdd != null) {
+	            // search include paths
+                boolean foundPath = false;
+	            for (Iterator ipIter = includePaths.iterator(); ipIter.hasNext(); ) {
+	                IPath includePath = (IPath) ipIter.next();
+		            if (includePath.isPrefixOf(folderToAdd)) {
+		                foundPath = true;
+		                break;
+		            }
+	            }
+	            if (!foundPath) {
+                    // remove any children of this folder
+                    for (Iterator newIter = newIncludePaths.iterator(); newIter.hasNext(); ) {
+                        IPath newFolder = (IPath) newIter.next();
+        	            if (folderToAdd.isPrefixOf(newFolder)) {
+        	                newIter.remove();
+        	            }
+                    }
+                    newIncludePaths.add(folderToAdd);
+	            }
+            }
+        }
+        return newIncludePaths;
+    }
+
+    private List getIncludePaths(ITranslationUnit headerTU) throws CodeGeneratorException {
+        IProject project = headerTU.getCProject().getProject();
+        // get the parent source folder
+        ICContainer sourceFolder = CModelUtil.getSourceFolder(headerTU);
+        if (sourceFolder == null) {
+            throw new CodeGeneratorException("Could not find source folder"); //$NON-NLS-1$
+        }
+
+        // get the include paths
+        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+        if (provider != null) {
+            IScannerInfo info = provider.getScannerInformation(sourceFolder.getResource());
+            if (info != null) {
+                String[] includePaths = info.getIncludePaths();
+                if (includePaths != null) {
+                    List list = new ArrayList();
+                    for (int i = 0; i < includePaths.length; ++i) {
+                        //TODO do we need to canonicalize these paths first?
+                        list.add(new Path(includePaths[i]));
+                    }
+                    return list;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private List getBaseClassPaths() throws CodeGeneratorException {
+        List list = new ArrayList();
+	    for (int i = 0; i < fBaseClasses.length; ++i) {
+	        IBaseClassInfo baseClass = fBaseClasses[i];
+	        ITypeReference ref = baseClass.getType().getResolvedReference();
+	        IPath baseClassLocation = null;
+	        if (ref != null)
+	            baseClassLocation = ref.getLocation();
+	        if (baseClassLocation == null) {
+	            throw new CodeGeneratorException("Could not find base class " + baseClass.toString()); //$NON-NLS-1$
+	        }
+	        list.add(baseClassLocation);
+	    }
+	    return list;
+    }
+
+    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, IProgressMonitor monitor) {
+
+        monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.source"), 150); //$NON-NLS-1$
+        
         //TODO should use code templates
         StringBuffer text = new StringBuffer();
 
         if (headerTU != null) {
-            addHeaderInclude(sourceTU, headerTU, text);
+            addHeaderInclude(sourceTU, headerTU, text, new SubProgressMonitor(monitor, 50));
             text.append(fLineDelimiter);
         }
         
@@ -394,29 +577,31 @@ public class NewClassCodeGenerator {
                 beginNamespace(text);
             }
 
-            addMethodBodies(publicMethods, protectedMethods, privateMethods, text);
+            addMethodBodies(publicMethods, protectedMethods, privateMethods, text, new SubProgressMonitor(monitor, 50));
 
             if (fNamespace != null && fNamespace.length() > 0) {
                 endNamespace(text);
             }
         }
 
-        return text.toString();
+        String newContents = text.toString();
+        monitor.done();
+        return newContents;
     }
 
-    private void addHeaderInclude(ITranslationUnit sourceTU, ITranslationUnit headerTU, StringBuffer text) {
+    private void addHeaderInclude(ITranslationUnit sourceTU, ITranslationUnit headerTU, StringBuffer text, IProgressMonitor monitor) {
         IProject project = headerTU.getCProject().getProject();
         IPath projectLocation = project.getLocation();
         IPath headerLocation = headerTU.getResource().getLocation();
         IPath sourceLocation = sourceTU.getResource().getLocation();
 
-        IPath includePath = makeRelativePathToProjectIncludes(headerLocation, project);
+        IPath includePath = PathUtil.makeRelativePathToProjectIncludes(headerLocation, project);
         boolean isSystemIncludePath = false;
         if (includePath != null && !projectLocation.isPrefixOf(headerLocation)) {
             isSystemIncludePath = true;
         } else if (projectLocation.isPrefixOf(headerLocation)
                 && projectLocation.isPrefixOf(sourceLocation)) {
-            includePath = makeRelativePath(headerLocation, sourceLocation);
+            includePath = PathUtil.makeRelativePath(headerLocation, sourceLocation);
         }
         if (includePath == null)
             includePath = headerLocation;
@@ -426,7 +611,7 @@ public class NewClassCodeGenerator {
         text.append(fLineDelimiter);
     }
 
-    private void addMethodBodies(List publicMethods, List protectedMethods, List privateMethods, StringBuffer text) {
+    private void addMethodBodies(List publicMethods, List protectedMethods, List privateMethods, StringBuffer text, IProgressMonitor monitor) {
         if (!publicMethods.isEmpty()) {
             for (Iterator i = publicMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
@@ -459,45 +644,6 @@ public class NewClassCodeGenerator {
                     text.append(fLineDelimiter);
             }
         }
-    }
-
-    public static IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
-        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
-        if (provider != null) {
-            IScannerInfo info = provider.getScannerInformation(project);
-            if (info != null) {
-                String[] includePaths = info.getIncludePaths();
-                IPath relativePath = null;
-                int mostSegments = 0;
-                for (int i = 0; i < includePaths.length; ++i) {
-                    IPath includePath = new Path(includePaths[i]);
-                    if (includePath.isPrefixOf(fullPath)) {
-                        int segments = includePath.matchingFirstSegments(fullPath);
-                        if (segments > mostSegments) {
-                            relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
-                            mostSegments = segments;
-                        }
-                    }
-                }
-                if (relativePath != null)
-                    return relativePath;
-            }
-        }
-        return null;
-    }
-
-    public static IPath makeRelativePath(IPath path, IPath relativeTo) {
-        int segments = relativeTo.matchingFirstSegments(path);
-        if (segments > 0) {
-            IPath prefix = relativeTo.removeFirstSegments(segments).removeLastSegments(1);
-            IPath suffix = path.removeFirstSegments(segments);
-            IPath relativePath = new Path(""); //$NON-NLS-1$
-            for (int i = 0; i < prefix.segmentCount(); ++i) {
-                relativePath = relativePath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
-            }
-            return relativePath.append(suffix);
-        }
-        return null;
     }
 
     private static String getIncludeString(String fileName, boolean isSystemInclude) {

@@ -24,7 +24,7 @@ public interface ICASTDesignatedInitializer extends
     public void addDesignator( ICASTDesignator designator );
     public ICASTDesignator [] getDesignators();
     
-    public static final ASTNodeProperty RHS_INITIALIZER = new ASTNodeProperty( "RHS Initializer"); //$NON-NLS-1$
-    public IASTInitializer getRHSInitializer();
-    public void setRHSInitializer( IASTInitializer rhs );
+    public static final ASTNodeProperty OPERAND = new ASTNodeProperty( "RHS Initializer"); //$NON-NLS-1$
+    public IASTInitializer getOperandInitializer();
+    public void setOperandInitializer( IASTInitializer rhs );
 }

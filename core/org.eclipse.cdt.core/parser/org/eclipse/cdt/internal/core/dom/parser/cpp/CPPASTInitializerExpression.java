@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 /**
  * @author jcamelon
  */
-public class CPPASTInitializerExpresion extends CPPASTNode implements
+public class CPPASTInitializerExpression extends CPPASTNode implements
         IASTInitializerExpression {
 
     private IASTExpression exp;

@@ -178,9 +178,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                         d.setPropertyInParent( ICASTDesignatedInitializer.DESIGNATOR );
                         desigInitializer.addDesignator( d );
                     }
-                    desigInitializer.setRHSInitializer(initializer);
+                    desigInitializer.setOperandInitializer(initializer);
                     initializer.setParent( desigInitializer );
-                    initializer.setPropertyInParent( ICASTDesignatedInitializer.RHS_INITIALIZER );
+                    initializer.setPropertyInParent( ICASTDesignatedInitializer.OPERAND );
                     result.addInitializer( desigInitializer );
                     desigInitializer.setParent( result );
                     desigInitializer.setPropertyInParent( IASTInitializerList.NESTED_INITIALIZER );
@@ -244,7 +244,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTInitializerExpression createInitializerExpression() {
-        return new CASTInitializerExpresion();
+        return new CASTInitializerExpression();
     }
 
     protected List designatorList() throws EndOfFileException,

@@ -3336,7 +3336,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTInitializerExpression createInitializerExpression() {
-        return new CPPASTInitializerExpresion();
+        return new CPPASTInitializerExpression();
     }
 
     /**

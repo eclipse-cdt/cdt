@@ -70,14 +70,14 @@ public class CASTDesignatedInitializer extends CASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#getRHSInitializer()
      */
-    public IASTInitializer getRHSInitializer() {
+    public IASTInitializer getOperandInitializer() {
         return rhs;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#setRHSInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
      */
-    public void setRHSInitializer(IASTInitializer rhs) {
+    public void setOperandInitializer(IASTInitializer rhs) {
         this.rhs = rhs;
     }
 

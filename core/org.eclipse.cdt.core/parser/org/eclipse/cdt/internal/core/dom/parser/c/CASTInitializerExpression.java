@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 /**
  * @author jcamelon
  */
-public class CASTInitializerExpresion extends CASTNode implements
+public class CASTInitializerExpression extends CASTNode implements
         IASTInitializerExpression {
 
     private IASTExpression expression;

@@ -2407,6 +2407,12 @@ public class Scanner2 implements IScanner, IScannerData {
 				"__attribute__".toCharArray(), //$NON-NLS-1$
 				emptyCharArray,
 				new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
+	private static final FunctionStyleMacro __declspec
+	= new FunctionStyleMacro(
+			"__declspec".toCharArray(), //$NON-NLS-1$
+			emptyCharArray,
+			new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
+	
 	private static final FunctionStyleMacro _Pragma = new FunctionStyleMacro( 
 			"_Pragma".toCharArray(),  //$NON-NLS-1$
 			emptyCharArray, 
@@ -2428,6 +2434,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		definitions.put( __const.name, __const );
 		definitions.put(__extension__.name, __extension__);
 		definitions.put(__attribute__.name, __attribute__);
+		definitions.put( __declspec.name, __declspec );
 		definitions.put(__restrict__.name, __restrict__);
 		definitions.put(__restrict.name, __restrict);
 		definitions.put(__volatile__.name, __volatile__);

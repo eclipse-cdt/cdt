@@ -87,18 +87,6 @@ public class ASTFailedTests extends BaseASTTest
         assertCodeFailsParse("register int *foo asm (\"a5\");");
     }
 
-    public void testBug39701A() throws Exception
-    {
-        assertCodeFailsParse("extern template int max (int, int);");
-    }
-    public void testBug39701B() throws Exception
-    {
-        assertCodeFailsParse("inline template class Foo<int>;");
-    }
-    public void testBug39701C() throws Exception
-    {
-        assertCodeFailsParse("static template class Foo<int>;");
-    }
     public void testBug39702() throws Exception
     {
         Writer code = new StringWriter();

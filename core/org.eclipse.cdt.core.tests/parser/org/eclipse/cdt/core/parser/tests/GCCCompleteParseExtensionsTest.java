@@ -18,9 +18,12 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
@@ -225,7 +228,7 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
     public void testBug73954B() throws Exception{
         Writer writer = new StringWriter();
         writer.write( "#define foo(x)                                            \\\n"); //$NON-NLS-1$
-        writer.write( "  __builtin_choose_expr( 1, foo_d(x), (void)0 )             \n"); //$NON-NLS-1$
+        writer.write( "  __builtin_choose_expr( 1, foob_d(x), (void)0 )             \n"); //$NON-NLS-1$
         writer.write( "int foo_d( int x );                                         \n"); //$NON-NLS-1$
         writer.write( "int main() {                                                \n"); //$NON-NLS-1$
         writer.write( "   if( __builtin_constant_p(1) &&                           \n"); //$NON-NLS-1$
@@ -235,4 +238,13 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
         
         parse( writer.toString(), true, ParserLanguage.C );
     }
+    
+	public void testGNUExternalTemplate_bug71603() throws Exception {
+		Iterator i = parse("template <typename T> \n class A {}; \n extern template class A<int>; \n").getDeclarations();
+		IASTTemplateDeclaration td = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+		IASTTemplateInstantiation ti = (IASTTemplateInstantiation) i.next();
+		assertFalse(i.hasNext());
+	}
+
 }

@@ -159,18 +159,4 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertFalse(j.hasNext());
 	}
 	
-	
-	public void testGNUExternalTemplate_bug71603() throws Exception {
-		try {
-			parse("template <typename T> \n class A {}; \n extern template class A<int>; \n"); //$NON-NLS-1$
-			fail();
-		} catch (ParserException e) {
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
-		}
-//		Iterator i = parse("template <typename T> \n class A {}; \n extern template class A<int>; \n").getDeclarations();
-//		IASTTemplateDeclaration td = (IASTTemplateDeclaration) i.next();
-//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
-//		IASTTemplateInstantiation ti = (IASTTemplateInstantiation) i.next();
-//		assertFalse(i.hasNext());
-	}
 }

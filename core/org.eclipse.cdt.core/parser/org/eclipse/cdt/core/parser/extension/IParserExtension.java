@@ -76,4 +76,8 @@ public interface IParserExtension {
 	 * @return
 	 */
 	public Kind getExpressionKindForStatement();
+	
+	public boolean supportsExtendedTemplateInstantiationSyntax();
+	
+	public boolean isValidModifierForInstantiation( IToken la );
 }

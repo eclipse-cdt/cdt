@@ -19,6 +19,7 @@ import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileWordDetector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -33,6 +34,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -188,6 +190,16 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		} catch (BadLocationException e) {
 			resetHighlightRange();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Comment"); //$NON-NLS-1$
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Uncomment"); //$NON-NLS-1$
+
 	}
 
 }

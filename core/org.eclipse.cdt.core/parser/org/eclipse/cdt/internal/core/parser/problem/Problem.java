@@ -113,6 +113,9 @@ public class Problem implements IProblem {
 				new Integer( IProblem.SEMANTIC_INVALID_CONVERSION_TYPE ),
 				ParserMessages.getString("ASTProblemFactory.error.semantic.invalidConversionType")); //$NON-NLS-1$
 		errorMessages.put(
+				new Integer( IProblem.SEMANTIC_MALFORMED_EXPRESSION ),
+				ParserMessages.getString("ASTProblemFactory.error.semantic.malformedExpression")); //$NON-NLS-1$		
+		errorMessages.put(
 				new Integer( IProblem.SEMANTIC_AMBIGUOUS_LOOKUP ),
 				ParserMessages.getString("ASTProblemFactory.error.semantic.pst.ambiguousLookup")); //$NON-NLS-1$
 		errorMessages.put(

@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICType;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
@@ -317,6 +318,25 @@ public class CArrayPartition extends AbstractCVariable {
 		if ( fArrayPartitionValue != null ) {
 			fArrayPartitionValue.dispose();
 			fArrayPartitionValue = null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#resetValue()
+	 */
+	protected void resetValue() {
+		if ( fArrayPartitionValue != null ) {
+			fArrayPartitionValue.reset();
+			fireChangeEvent( DebugEvent.STATE );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#setChanged(boolean)
+	 */
+	protected void setChanged( boolean changed ) {
+		if ( fArrayPartitionValue != null ) {
+			fArrayPartitionValue.setChanged( changed );
 		}
 	}
 }

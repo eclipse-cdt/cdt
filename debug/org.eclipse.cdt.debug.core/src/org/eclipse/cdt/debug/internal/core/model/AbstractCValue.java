@@ -24,5 +24,9 @@ public abstract class AbstractCValue extends CDebugElement implements ICValue {
 		super( target );
 	}
 
+	abstract protected void setChanged( boolean changed );
+
 	abstract public void dispose();
+
+	abstract protected void reset();
 }

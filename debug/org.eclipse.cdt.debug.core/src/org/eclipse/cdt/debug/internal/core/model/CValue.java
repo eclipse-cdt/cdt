@@ -175,14 +175,14 @@ public class CValue extends AbstractCValue {
 		return Arrays.asList( vars );
 	}
 
-	public synchronized void setChanged( boolean changed ) /*throws DebugException*/ {
+	protected synchronized void setChanged( boolean changed ) {
 		if ( changed ) {
 			fValueString = null;
 			resetStatus();
 		}
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
-			((CVariable)it.next()).setChanged( changed );
+			((AbstractCVariable)it.next()).setChanged( changed );
 		}
 	}
 
@@ -448,7 +448,7 @@ public class CValue extends AbstractCValue {
 		fValueString = null;
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
-			((CVariable)it.next()).resetValue();
+			((AbstractCVariable)it.next()).resetValue();
 		}
 	}
 }

@@ -264,8 +264,8 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			if ( changed ) {
 				invalidateValue();
 			}
-			if ( fValue instanceof CValue ) {
-				((CValue)fValue).setChanged( changed );
+			if ( fValue instanceof AbstractCValue ) {
+				((AbstractCValue)fValue).setChanged( changed );
 			}
 			fChanged = changed;
 		}
@@ -279,8 +279,8 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		}
 
 		void resetValue() {
-			if ( fValue instanceof CValue ) {
-				((CValue)fValue).reset();
+			if ( fValue instanceof AbstractCValue ) {
+				((AbstractCValue)fValue).reset();
 			}
 		}
 

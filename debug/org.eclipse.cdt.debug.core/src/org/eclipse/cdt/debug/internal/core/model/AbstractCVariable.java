@@ -34,4 +34,8 @@ public abstract class AbstractCVariable extends CDebugElement implements ICVaria
 	public abstract String getExpressionString() throws DebugException;
 
 	public abstract void dispose();
+
+	protected abstract void resetValue();
+
+	protected abstract void setChanged( boolean changed );
 }

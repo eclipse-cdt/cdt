@@ -116,10 +116,13 @@ public class CArrayPartitionValue extends AbstractCValue {
 		return fEnd;
 	}
 
-	public void setChanged( boolean changed ) throws DebugException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#setChanged(boolean)
+	 */
+	protected void setChanged( boolean changed ) {
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
-			((CVariable)it.next()).setChanged( changed );
+			((AbstractCVariable)it.next()).setChanged( changed );
 		}
 	}
 
@@ -155,6 +158,16 @@ public class CArrayPartitionValue extends AbstractCValue {
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() ) {
 			((AbstractCVariable)it.next()).dispose();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#reset()
+	 */
+	protected void reset() {
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() ) {
+			((AbstractCVariable)it.next()).resetValue();
 		}
 	}
 }

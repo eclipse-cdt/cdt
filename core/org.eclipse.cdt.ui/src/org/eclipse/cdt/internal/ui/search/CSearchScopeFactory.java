@@ -17,10 +17,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -115,12 +118,34 @@ public class CSearchScopeFactory {
 		
 		Iterator iter = fStructuredSelection.iterator();
 		while( iter.hasNext() ){
-			addCElements( cElements, (IAdaptable)iter.next() );
+			Object tempObj = iter.next(); 
+			if ( tempObj instanceof ICElement){
+				addCElements( cElements, (ICElement)tempObj );
+			}
+			else if (tempObj instanceof BasicSearchMatch){
+				addCElements( cElements, (BasicSearchMatch)tempObj );
+			}
+			else if (tempObj instanceof IResource){
+				addCElements(cElements, (IResource) tempObj); 
+			}
 		}
 		
 		return createCSearchScope( cElements );
 	}
 	
+
+	/**
+	 * @param elements
+	 * @param match
+	 */
+	private void addCElements(Set elements, BasicSearchMatch match) {
+		IResource tempResource=match.getResource(); 
+		if (tempResource!=null ){ 
+			ICElement cTransUnit = CCorePlugin.getDefault().getCoreModel().create(tempResource);
+			if (cTransUnit != null)
+				elements.add(cTransUnit);
+		}
+	}
 
 	public IWorkingSet[] queryWorkingSets() {
 		Shell shell= CUIPlugin.getActiveWorkbenchShell();

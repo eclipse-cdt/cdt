@@ -1,4 +1,12 @@
 2004-06-15 Bogdan Gheorghe
+	Fix for Bug 60490:  "Selected resource" option should only be enabled/disabled 
+	based on selections in the Navigator and C/C++ Projects views - search now
+	works on all C/C++ views
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchScopeFactory.java
+	* src/org/eclipse/cdt/internal/ui/search/NewSearchResultCollector.java
+		
+2004-06-15 Bogdan Gheorghe
 	Fix for Bug 63957: Error with external search markers - changed label
 	provider to provide proper paths for external links
 	

@@ -193,7 +193,8 @@ public interface ICSearchConstants {
 	 */
 	int WAIT_UNTIL_READY_TO_SEARCH = IJob.WaitUntilReady;
 	
-
+	public static final String EXTERNAL_SEARCH_LINK_PREFIX = "cdtlnk"; //$NON-NLS-1$
+	
 	public class SearchFor{
 		private SearchFor( int value )
 		{

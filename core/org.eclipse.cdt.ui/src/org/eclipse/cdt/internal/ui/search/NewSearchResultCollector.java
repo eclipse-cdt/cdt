@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
+import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -30,6 +31,7 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
 	private CSearchResult fSearch;
 	private IProgressMonitor fProgressMonitor;
 	private int fMatchCount;
+	
 
 	public NewSearchResultCollector(CSearchResult search, IProgressMonitor monitor) {
 		super();
@@ -132,7 +134,7 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
 		int segments = externalMatchLocation.segmentCount() - 1;
 		for (int linkNumber=0; linkNumber<Integer.MAX_VALUE; linkNumber++){
 			if (fileName !="") //$NON-NLS-1$
-				fileName = "lnk" + linkNumber + "_" + externalMatchLocation.segment(segments); //$NON-NLS-1$ //$NON-NLS-2$
+				fileName = ICSearchConstants.EXTERNAL_SEARCH_LINK_PREFIX + linkNumber + "_" + externalMatchLocation.segment(segments); //$NON-NLS-1$ //$NON-NLS-2$
 			else
 				fileName = externalMatchLocation.segment(segments);
 			

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
@@ -29,7 +31,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class VariableManager extends SessionObject {
+public class VariableManager extends SessionObject implements ICDIExpressionManager {
 
 	List elementList;
 	List oosList;  // Out of Scope variable lists;
@@ -71,12 +73,14 @@ public class VariableManager extends SessionObject {
 		return null;
 	}
 
+	/**
+	 * Make sure an element is not added twice.
+	 */
 	void addElement(Element element) {
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
 			String name = elements[i].miVar.getVarName();
 			if (name.equals(element.miVar.getVarName())) {
-			//	Thread.currentThread().dumpStack();
 				return;
 			}
 		}
@@ -106,13 +110,17 @@ public class VariableManager extends SessionObject {
 					eventList.add( new MIVarChangedEvent(varName, changes[i].isInScope()));
 				}
 				if (! changes[i].isInScope()) {
-					removeVariable(changes[i]);
+					// Only remove ICDIVariables.
+					if (! (element.variable instanceof Expression ||
+						element.variable instanceof Register)) {
+						removeElement(changes[i]);
+					}
 				}
 			}
 			MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 			mi.fireEvents(events);
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			throw new CDIException(e.getMessage());
 		}
 	}
 
@@ -134,22 +142,10 @@ public class VariableManager extends SessionObject {
 				element.name = name;
 				element.stackframe = stack;
 			} catch (MIException e) {
-				throw new CDIException(e.toString());
+				throw new CDIException(e.getMessage());
 			}
 		}
 		return element;
-	}
-
-	void removeMIVar(MIVar miVar) throws CDIException {
-		MISession mi = getCSession().getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
-		try {
-			mi.postCommand(var);
-			MIInfo info = var.getMIInfo();
-		} catch (MIException e) {
-			throw new CDIException(e.toString());
-		}
 	}
 
 	Element removeOutOfScope(String varName) {
@@ -162,7 +158,19 @@ public class VariableManager extends SessionObject {
 		return null;
 	}
 
-	void removeVariable(String varName) throws CDIException {
+	void removeMIVar(MIVar miVar) throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
+		try {
+			mi.postCommand(var);
+			MIInfo info = var.getMIInfo();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
+	}
+
+	void removeElement(String varName) throws CDIException {
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i].miVar.getVarName().equals(varName)) {
@@ -173,19 +181,19 @@ public class VariableManager extends SessionObject {
 		}
 	}
 
-	void removeVariable(MIVarChange changed) throws CDIException {
+	void removeElement(MIVarChange changed) throws CDIException {
 		String varName = changed.getVarName();
-		removeVariable(varName);
+		removeElement(varName);
 	}
 
-	void removeVariable(Variable variable) throws CDIException {
+	void removeElement(Variable variable) throws CDIException {
 		String varName = ((Variable)variable).getMIVar().getVarName();
-		removeVariable(varName);
+		removeElement(varName);
 	}
 
-	void removeVariables(Variable[] variables) throws CDIException {
+	void removeElements(Variable[] variables) throws CDIException {
 		for (int i = 0; i < variables.length; i++) {
-			removeVariable(variables[i]);
+			removeElement(variables[i]);
 		}
 	}
 
@@ -240,6 +248,49 @@ public class VariableManager extends SessionObject {
 			addElement(element);
 		}
 		return reg;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
+	 */
+	public ICDIExpression createExpression(String name) throws CDIException {
+		CTarget target = getCSession().getCTarget();
+		StackFrame frame = ((CThread)target.getCurrentThread()).getCurrentStackFrame();
+		return createExpression(frame, name);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
+	 */
+	public ICDIExpression[] getExpressions() throws CDIException {
+		Element[] elements = getElements();
+		List aList = new ArrayList(elements.length);
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i].variable instanceof ICDIExpression) {
+				aList.add(elements[i].variable);
+			}
+		}
+		return (ICDIExpression[])aList.toArray(new ICDIExpression[0]);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
+	 */
+	public void removeExpression(ICDIExpression expression)
+		throws CDIException {
+		if (expression instanceof Variable) {
+			removeElement((Variable)expression);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpressions(ICDIExpression[])
+	 */
+	public void removeExpressions(ICDIExpression[] expressions)
+		throws CDIException {
+		for (int i = 0; i < expressions.length; i++) {
+			removeExpression(expressions[i]);
+		}
 	}
 
 }

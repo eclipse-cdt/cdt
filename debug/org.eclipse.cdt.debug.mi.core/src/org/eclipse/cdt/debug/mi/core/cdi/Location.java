@@ -65,20 +65,27 @@ public class Location implements ICDILocation {
 	 */
 	public boolean equals(ICDILocation location) {
 		String ofile = location.getFile();
-		if (ofile == null) {
-			ofile = "";
+		if (file.length() > 0 && ofile.length() > 0) {
+			if (file.equals(ofile)) {
+				int oline = location.getLineNumber();
+				if (line != 0 && oline != 0) {
+					if (line == oline) {
+						return true;
+					}
+				}
+				String ofunction = location.getFunction();
+				if (function.length() > 0 && ofunction.length() > 0) {
+					if (function.equals(ofunction)) {
+						return true;
+					}
+				}
+			}
 		}
-		String ofunction = location.getFunction();
-		if (ofunction == null) {
-			ofunction = "";
-		}
-
-		if (file.equals(ofile) && line == location.getLineNumber()) {
-			return true;
-		}
-
-		if (file.equals(ofile) && function.equals(ofunction)) {
-			return true;
+		long oaddr = location.getAddress();
+		if (addr != 0 && oaddr != 0) {
+			if (addr == oaddr) {
+				return true;
+			}
 		}
 		return super.equals(location);
 	}

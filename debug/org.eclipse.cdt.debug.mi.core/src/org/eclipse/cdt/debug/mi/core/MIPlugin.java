@@ -78,19 +78,30 @@ public class MIPlugin extends Plugin {
 	 * @throws MIException
 	 */
 	public ICDISession createCSession(String gdb, String program) throws IOException, MIException {
+		PTY pty = null;
+		try {
+			pty = new PTY();
+			String ttyName = pty.getSlaveName();
+		} catch (IOException e) {
+		}
+		return createCSession(gdb, program, pty);
+	}
+
+	/**
+	 * Method createCSession.
+	 * @param program
+	 * @return ICDISession
+	 * @throws IOException
+	 */
+	public ICDISession createCSession(String gdb, String program, PTY pty) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
 
 		String[] args;
-		PTY pty = null;
-		try {
-			pty = new PTY();
-			String ttyName = pty.getSlaveName();
-			args = new String[] {gdb, "-q", "-nw", "-tty", ttyName, "-i", "mi1", program};
-		} catch (IOException e) {
-			//e.printStackTrace();
-			pty = null;
+		if (pty != null) {
+			args = new String[] {gdb, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program};
+		} else {
 			args = new String[] {"gdb", "-q", "-nw", "-i", "mi1", program};
 		}
 

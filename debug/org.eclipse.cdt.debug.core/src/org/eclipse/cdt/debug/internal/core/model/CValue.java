@@ -364,7 +364,7 @@ public class CValue extends AbstractCValue {
 		BigInteger pv = value.pointerValue();
 		if ( pv == null )
 			return ""; //$NON-NLS-1$
-		IAddress address = factory.createAddress( value.pointerValue() );
+		IAddress address = factory.createAddress( pv );
 		if ( address == null )
 			return ""; //$NON-NLS-1$
 		CVariableFormat format = getParentVariable().getFormat();

@@ -21,6 +21,8 @@ import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
@@ -74,13 +76,25 @@ public class BuildConsoleView extends ViewPart {
 
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, fCopyAction);
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, fSelectAllAction);
+		
+		fTextViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent e) {
+                // ensures that the copyAction updates is doability when the selections tate changes
+                fCopyAction.update();
+            }
+        });
+//		addTextListener(new ITextListener() {
+//			public void textChanged(TextEvent event) {
+//				fCopyAction.update();
+//				fSelectAllAction.update();
+//			}
+//		});
 	}	
 		
 	/**
 	 * @see ViewPart#createPartControl
 	 */
 	public void createPartControl(Composite parent) {
-		//fTextViewer= new TextViewer(parent, SWT.V_SCROLL|SWT.H_SCROLL);
 		fTextViewer= new TextViewer(parent, SWT.V_SCROLL|SWT.H_SCROLL|SWT.WRAP|SWT.MULTI);
 		fTextViewer.setDocument(CPlugin.getDefault().getConsoleDocument());
 		fTextViewer.addTextListener(new ITextListener() {

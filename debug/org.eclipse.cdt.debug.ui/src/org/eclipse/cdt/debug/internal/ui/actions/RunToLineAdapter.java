@@ -16,10 +16,10 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -119,7 +119,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		else {
 			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}
-		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
+		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
 	}
 
 	/* (non-Javadoc)

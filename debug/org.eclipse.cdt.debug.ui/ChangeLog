@@ -1,4 +1,13 @@
 2005-02-02 Mikhail Khodjaiants
+	The "INTERNAL_ERROR" constant has been moved from ICDebugUIConstants to IInternalCDebugUIConstants.
+	* IInternalCDebugUIConstants.java
+	* ICDebugUIConstants.java
+	* ResumeAtLineAdapter.java
+	* RunToLineAdapter.java
+	* ToggleBreakpointAdapter.java
+	* CDebugUIPlugin.java
+
+2005-02-02 Mikhail Khodjaiants
 	Fix for bug 84187: "Toggle Watchpoint" and "Toggle Method Breakpoint" don't work with C editor.
 	* ToggleBreakpointAdapter.java
 

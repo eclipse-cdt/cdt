@@ -57,4 +57,15 @@ public interface IInternalCDebugUIConstants {
 	public static final String ACTION_TOGGLE_BREAKPOINT = PREFIX + "toggleBreakpoint"; //$NON-NLS-1$
 	public static final String ACTION_ENABLE_DISABLE_BREAKPOINT = PREFIX + "enableDisableBreakpoint"; //$NON-NLS-1$
 	public static final String ACTION_BREAKPOINT_PROPERTIES = PREFIX + "breakpointProperties"; //$NON-NLS-1$
+
+	/**
+	 * The name of the font to use for detail panes. This font is managed via
+	 * the workbench font preference page.
+	 */ 
+	public static final String DETAIL_PANE_FONT = PREFIX + "DetailPaneFont"; //$NON-NLS-1$	
+
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int INTERNAL_ERROR = 150;
 }

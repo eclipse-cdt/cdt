@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -120,7 +121,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 *            the exception to be logged
 	 */
 	public static void log( Throwable e ) {
-		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) ); //$NON-NLS-1$
+		log( new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) ); //$NON-NLS-1$
 	}
 
 	/**
@@ -130,7 +131,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 *            the error message to log
 	 */
 	public static void logErrorMessage( String message ) {
-		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, message, null ) );
+		log( new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, message, null ) );
 	}
 
 	public ILaunchConfigurationTab getDebuggerPage( String debuggerID ) throws CoreException {
@@ -167,7 +168,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		log( t );
 		Shell shell = getActiveWorkbenchShell();
 		if ( shell != null ) {
-			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null ); //$NON-NLS-1$	
+			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null ); //$NON-NLS-1$	
 			ErrorDialog.openError( shell, UIMessages.getString( "CDebugUIPlugin.0" ), message, status ); //$NON-NLS-1$
 		}
 	}

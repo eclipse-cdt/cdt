@@ -8,62 +8,33 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.ui;
 
-
-
 /**
- * 
  * Constant definitions for C/C++ Debug UI plug-in.
- * 
- * @since Jul 23, 2002
  */
-public interface ICDebugUIConstants
-{
+public interface ICDebugUIConstants {
 	/**
 	 * C/C++ Debug UI plug-in identifier (value <code>"org.eclipse.cdt.debug.ui"</code>).
 	 */
 	public static final String PLUGIN_ID = CDebugUIPlugin.getUniqueIdentifier();
 
-	// Debug views
+	public static final String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 	
 	/**
-	 * Registers view identifier (value <code>"org.eclipse.cdt.debug.ui.RegitersView"</code>).
+	 * Modules view identifier (value <code>"org.eclipse.cdt.debug.ui.ModulesView"</code>).
 	 */
-	public static final String ID_REGISTERS_VIEW = "org.eclipse.cdt.debug.ui.RegitersView"; //$NON-NLS-1$
-	
-	/**
-	 * Memory view identifier (value <code>"org.eclipse.cdt.debug.ui.MemoryView"</code>).
-	 */
-	public static final String ID_MEMORY_VIEW = "org.eclipse.cdt.debug.ui.MemoryView"; //$NON-NLS-1$
+	public static final String ID_MODULES_VIEW = PREFIX + "ModulesView"; //$NON-NLS-1$
 
 	/**
-	 * Status code indicating an unexpected internal error.
+	 * Id for the popup menu associated with the variables (tree viewer) part of the VariableView
 	 */
-	public static final int INTERNAL_ERROR = 150;
+	public static final String MODULES_VIEW_MODULES_ID = PREFIX + "ModulesView.modules"; //$NON-NLS-1$
 
-	/** 
-	 * Identifier for an empty group preceeding a
-	 * register group in a menu (value <code>"emptyRegisterGroup"</code>).
-	 */
-	public static final String EMPTY_REGISTER_GROUP = "emptyRegisterGroup"; //$NON-NLS-1$
-	
 	/**
-	 * Identifier for a register group in a menu (value <code>"registerGroup"</code>).
+	 * Id for the popup menu associated with the detail (text viewer) part of the Modules view
 	 */
-	public static final String REGISTER_GROUP = "registerGroup"; //$NON-NLS-1$
-
-	/** 
-	 * Identifier for an empty group preceeding a
-	 * memory group in a menu (value <code>"emptyMemoryGroup"</code>).
-	 */
-	public static final String EMPTY_MEMORY_GROUP = "emptyMemoryGroup"; //$NON-NLS-1$
-	
-	/**
-	 * Identifier for a memory group in a menu (value <code>"memoryGroup"</code>).
-	 */
-	public static final String MEMORY_GROUP = "memoryGroup"; //$NON-NLS-1$
+	public static final String MODULES_VIEW_DETAIL_ID = PREFIX + "ModulesView.detail"; //$NON-NLS-1$
 
 	/** 
 	 * Identifier for an empty group preceeding a
@@ -87,6 +58,7 @@ public interface ICDebugUIConstants
 	 * </code>).
 	 */
 	public static final String REFRESH_GROUP = "refreshGroup"; //$NON-NLS-1$
+
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * shared libraries group  in a menu (value <code>"
@@ -101,4 +73,15 @@ public interface ICDebugUIConstants
 	 * </code>).
 	 */
 	public static final String SHARED_LIBRARIES_GROUP = "sharedLibrariesGroup"; //$NON-NLS-1$
+
+	/** 
+	 * Identifier for an empty group preceeding a
+	 * modules group in a menu (value <code>"emptyModulesGroup"</code>).
+	 */
+	public static final String EMPTY_MODULES_GROUP = "emptyModulesGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a shared libraries group in a menu (value <code>"modulesGroup"</code>).
+	 */
+	public static final String MODULES_GROUP = "modulesGroup"; //$NON-NLS-1$
 }

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.cdt.debug.core1</name>
+	<name>org.eclipse.cdt.debug.core</name>
 	<comment></comment>
 	<projects>
+		<project>org.eclipse.core.boot</project>
+		<project>org.eclipse.core.resources</project>
+		<project>org.eclipse.core.runtime</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

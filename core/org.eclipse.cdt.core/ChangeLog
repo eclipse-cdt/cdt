@@ -1,4 +1,8 @@
 2005-03-23 Alain Magloire
+	NPE fix.
+	* src/org/eclipse/cdt/internal/core/PathEntryVariableresolver.java
+
+2005-03-23 Alain Magloire
 	Optimize the pathentry markers.
 	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
 	* model/org/eclipse/cdt/internal/core/model/PathEntryManger.java

@@ -15,7 +15,9 @@ package org.eclipse.cdt.internal.core;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
@@ -31,7 +33,11 @@ public class PathEntryVariableResolver implements IDynamicVariableResolver {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, CCorePlugin.getResourceString("PathEntryVariableResolver.0"), null)); //$NON-NLS-1$
 		}
 		IPathEntryVariableManager manager = CCorePlugin.getDefault().getPathEntryVariableManager();
-		return manager.getValue(argument).toString();
+		IPath path = manager.getValue(argument);
+		if (path == null) {
+			path = Path.EMPTY;
+		}
+		return path.toPortableString();
 	}
 
 }

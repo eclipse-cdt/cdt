@@ -16,11 +16,13 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileWordDetector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -161,9 +163,11 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			if (moveCursor) {
 				// Let see if we can move the cursor at the position also
 				String var = directive.toString().trim();
+				IWordDetector detector = new MakefileWordDetector();
 				for (len = 0; len < var.length(); len++) {
 					char c = var.charAt(len);
-					if (! (Character.isLetterOrDigit(c) || c == '.' || c == '_')) {
+					//if (! (Character.isLetterOrDigit(c) || c == '.' || c == '_')) {
+					if (!(detector.isWordPart(c) || detector.isWordStart(c))) {
 						break;
 					}
 				}

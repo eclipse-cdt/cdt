@@ -121,9 +121,9 @@ public class MakeTargetDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		String title;
 		if (fTarget == null) {
-			title = "Create Make target.";
+			title = "Create Make target";
 		} else {
-			title = "Modify Make target,";
+			title = "Modify Make target";
 		}
 		newShell.setText(title);
 		super.configureShell(newShell);
@@ -140,7 +140,7 @@ public class MakeTargetDialog extends Dialog {
 		if (fTarget == null) {
 			title = "Create a new Make target.";
 		} else {
-			title = "Modify a Make target,";
+			title = "Modify a Make target.";
 		}
 
 		fStatusLine = new MessageLine(composite);

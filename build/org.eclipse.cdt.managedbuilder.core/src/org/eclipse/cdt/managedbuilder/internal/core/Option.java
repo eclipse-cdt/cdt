@@ -1314,11 +1314,24 @@ public class Option extends BuildObject implements IOption {
 			if (superClassId != null && superClassId.length() > 0) {
 				superClass = ManagedBuildManager.getExtensionOption(superClassId);
 				if (superClass == null) {
-					// TODO:  Report error
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"superClass",	//$NON-NLS-1$
+							superClassId,
+							"option",	//$NON-NLS-1$
+							getId());
 				}
 			}
 			if (categoryId != null) {
 				category = ((Tool)tool).getOptionCategory(categoryId);
+				if (category == null) {
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"category",	//$NON-NLS-1$
+							categoryId,
+							"option",	//$NON-NLS-1$
+							getId());
+					}
 			}
 			// Process the value and default value attributes.  This is delayed until now
 			// because we may not know the valueType until after we have resolved the superClass above

@@ -97,15 +97,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
-	public static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
+	public  static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
-	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildManager";	//$NON-NLS-1$
-	public static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".buildDefinitions";		//$NON-NLS-1$
-	public static final String EXTENSION_POINT_ID_V2 = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildInfo";	//$NON-NLS-1$
+	public  static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildManager";	//$NON-NLS-1$
+	public  static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".buildDefinitions";		//$NON-NLS-1$
+	public  static final String EXTENSION_POINT_ID_V2 = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildInfo";	//$NON-NLS-1$
 	private static final String REVISION_ELEMENT_NAME = "managedBuildRevision";	//$NON-NLS-1$
 	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
 	private static final String MANIFEST_VERSION_ERROR ="ManagedBuildManager.error.manifest.version.error";	//$NON-NLS-1$
 	private static final String PROJECT_VERSION_ERROR ="ManagedBuildManager.error.project.version.error";	//$NON-NLS-1$
+	private static final String MANIFEST_ERROR_HEADER = "ManagedBuildManager.error.manifest.header";	//$NON-NLS-1$
+	public  static final String MANIFEST_ERROR_RESOLVING = "ManagedBuildManager.error.manifest.resolving";	//$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files that
 	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(2, 1, 0);
@@ -1862,5 +1865,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static IManagedConfigElement getConfigElement(IBuildObject buildObj) {
 		return (IManagedConfigElement)getConfigElementMap().get(buildObj);
+	}
+	
+	public static void OutputResolveError(String attribute, String lookupId, String type, String id) {
+		String[] msgs = new String[4];
+		msgs[0] = attribute;
+		msgs[1] = lookupId;
+		msgs[2] = type;
+		msgs[3] = id;
+		ManagedBuildManager.OutputManifestError(
+			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_RESOLVING, msgs));
+	}
+	
+	public static void OutputManifestError(String message) {
+		System.err.println(ManagedMakeMessages.getResourceString(MANIFEST_ERROR_HEADER) + message + NEWLINE);
 	}
 }

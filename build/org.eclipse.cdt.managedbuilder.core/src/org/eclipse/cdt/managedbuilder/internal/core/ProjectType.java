@@ -298,7 +298,12 @@ public class ProjectType extends BuildObject implements IProjectType {
 			if (superClassId != null && superClassId.length() > 0) {
 				superClass = ManagedBuildManager.getExtensionProjectType(superClassId);
 				if (superClass == null) {
-					// TODO:  Report error
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"superClass",	//$NON-NLS-1$
+							superClassId,
+							"projectType",	//$NON-NLS-1$
+							getId());
 				}
 			}
 			

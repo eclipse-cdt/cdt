@@ -522,7 +522,12 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			if (superClassId != null && superClassId.length() > 0) {
 				superClass = ManagedBuildManager.getExtensionTargetPlatform(superClassId);
 				if (superClass == null) {
-					// TODO:  Report error
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"superClass",	//$NON-NLS-1$
+							superClassId,
+							"targetPlatform",	//$NON-NLS-1$
+							getId());
 				}
 			}
 		}

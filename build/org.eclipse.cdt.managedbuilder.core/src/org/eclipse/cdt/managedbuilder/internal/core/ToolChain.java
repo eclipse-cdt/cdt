@@ -916,7 +916,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 			if (superClassId != null && superClassId.length() > 0) {
 				superClass = ManagedBuildManager.getExtensionToolChain(superClassId);
 				if (superClass == null) {
-					// TODO:  Report error
+					// Report error
+					ManagedBuildManager.OutputResolveError(
+							"superClass",	//$NON-NLS-1$
+							superClassId,
+							"toolChain",	//$NON-NLS-1$
+							getId());
 				}
 			}
 			//  Call resolveReferences on our children

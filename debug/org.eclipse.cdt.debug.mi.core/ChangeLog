@@ -1,5 +1,12 @@
 2003-01-16 Alain Magloire
 
+	* src/.../mi/core/cdi/SharedLibary.java (setMIShared):
+	New method.
+	* src/.../mi/core/cdi/SharedLibraryManager.java (update):
+	When changed reset the MIShared of the SharedLibrary.
+
+2003-01-16 Alain Magloire
+
 	Process gdbinit configuration file.
 
 	* src/.../mi/core/MIPlugin.java (createCSession): Takes now two new

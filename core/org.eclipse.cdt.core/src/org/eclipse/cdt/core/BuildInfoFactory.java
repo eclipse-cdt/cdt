@@ -25,6 +25,8 @@ public class BuildInfoFactory {
 	public static final String STOP_ON_ERROR = "stopOnError";
 //	public static final String CLEAR_CONSOLE = "clearConsole";
 	public static final String DEFAULT_BUILD_CMD = "useDefaultBuildCmd";
+	public static final String INCLUDE_PATHS = "includePaths";
+	public static final String DEFINED_SYMBOLS = "definedSymbols";
 	
 	public static abstract class Store implements IBuildInfo {
     	public String getBuildLocation() {
@@ -49,8 +51,16 @@ public class BuildInfoFactory {
 			return getString(LOCATION);
     	}
     	
+    	public String getDefinedSymbols() {
+    		return getString(DEFINED_SYMBOLS);
+    	}
+    	
         public String getFullBuildArguments() {
         	return getString(FULL_ARGUMENTS);
+        }
+        
+        public String getIncludePaths() {
+        	return getString(INCLUDE_PATHS);
         }
         
         public String getIncrementalBuildArguments() {
@@ -65,14 +75,22 @@ public class BuildInfoFactory {
 	    	putValue(LOCATION, location);
 	    }
 	    
+	    public void setDefinedSymbols(String argument) {
+	    	putValue(DEFINED_SYMBOLS, argument);
+	    }
+	    
         public void setFullBuildArguments(String arguments) {
         	putValue(FULL_ARGUMENTS, arguments);
         }
         
+		public void setIncludePaths(String arguments) {
+			putValue(INCLUDE_PATHS, arguments);	        
+		}
+		
         public void setIncrementalBuildArguments(String arguments) {
         	putValue(INCREMENTAL_ARGUMENTS, arguments);
         }
-        
+
 		public void setStopOnError(boolean on) {
         	putValue(STOP_ON_ERROR, new Boolean(on).toString());
 		}

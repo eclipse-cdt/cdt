@@ -30,6 +30,7 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 	private ReferenceBlock referenceBlock;
 	private SettingsBlock settingsBlock;
 	private BinaryParserBlock binaryParserBlock;
+	private BuildPathInfoBlock pathInfoBlock;
 
 	public StdMakeProjectWizard() {
 		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC));
@@ -72,6 +73,17 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 		item3.setData(binaryParserBlock);
 		item3.setControl(binaryParserBlock.getControl(folder));
 		addTabItem(binaryParserBlock);
+		
+		pathInfoBlock = new BuildPathInfoBlock(getValidation());
+		TabItem pathItem = new TabItem(folder, SWT.NONE);
+		pathItem.setText(pathInfoBlock.getLabel());
+		Image pathImg = pathInfoBlock.getImage();
+		if (pathImg != null) {
+			pathItem.setImage(pathImg);
+		}
+		pathItem.setData(pathInfoBlock);
+		pathItem.setControl(pathInfoBlock.getControl(folder));
+		addTabItem(pathInfoBlock);
 	}
 
 	protected void doRunPrologue(IProgressMonitor monitor) {
@@ -89,7 +101,7 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask("Standard Make", 3);
+			monitor.beginTask("Standard Make", 4);
 			// Update the referenced project if provided.
 			if (referenceBlock != null) {
 				referenceBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
@@ -101,6 +113,10 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 			// Update the binary parser
 			if (binaryParserBlock != null) {
 				binaryParserBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
+			}
+			// Update the binary parser
+			if (pathInfoBlock != null) {
+				pathInfoBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
 			}
 		}
 	}

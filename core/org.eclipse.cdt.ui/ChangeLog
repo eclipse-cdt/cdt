@@ -1,3 +1,12 @@
+2003-06-26 Sean Evoy
+	Added a tab to the new standard make project wizard and CNature project
+	property page. User interacts with two list controls to add include paths
+	and proprocessor symbols to a standard make project.
+	* src/org/eclipse/cdt/ui/wizards/BuildPathInfoBlock.java
+	* src/org/eclipse/cdt/ui/wizards/StdMakeProjectWizard.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CProjectPropertyPage.java
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
+
 2003-06-25 John Camelon
 	Create new interface and support for calculating lineNumber/offset mapping.  
 	Updated IASTClassSpecifier for qualified name query.  

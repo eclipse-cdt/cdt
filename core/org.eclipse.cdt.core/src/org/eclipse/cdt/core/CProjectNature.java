@@ -106,6 +106,30 @@ public class CProjectNature implements IProjectNature {
 	    return new Path(buildLocation);
     }
 
+	/**
+	 * Answers a comma-separated list of defined preprocessor symbols
+	 * for the project, or an empty string if there are none.
+	 * 
+	 * @return
+	 * @throws CoreException
+	 */
+	public String getDefinedSymbols() throws CoreException {
+		String symbols = fBuildInfo.getDefinedSymbols();
+		return symbols == null ? new String() : symbols;
+	}
+	
+	/**
+	 * Sets the defined symbols for the project.
+	 * 
+	 * @param symbols
+	 */
+	public void setDefinedSymbols(String symbols, IProgressMonitor monitor) throws CoreException {
+		String oldSymbols = fBuildInfo.getDefinedSymbols();
+		if (symbols != null && !symbols.equals(oldSymbols)) {
+			fBuildInfo.setDefinedSymbols(symbols);
+		}
+	}
+	
     /**
      * Sets the arguments for the full build.
      */
@@ -126,7 +150,33 @@ public class CProjectNature implements IProjectNature {
 		}
 		return buildArguments;
     }
+    
+    /**
+     * Answers a comma-separated list of include paths defined for
+     * the project, or an empty string if there are none.
+     * 
+	 * @return
+	 * @throws CoreException
+	 */
+	public String getIncludePaths() throws CoreException {
+    	String paths = fBuildInfo.getIncludePaths();
+    	return paths == null ? new String() : paths;
+    }
 
+	/**
+	 * Sets the include path information for the project.
+	 * 
+	 * @param paths
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public void setIncludePaths(String paths, IProgressMonitor monitor) throws CoreException {
+		String oldPaths = fBuildInfo.getIncludePaths();
+		if (paths != null && !paths.equals(oldPaths)) {
+			fBuildInfo.setIncludePaths(paths);
+		}
+	}
+	
     /**
      * Sets the arguments for the incremental build.
      */

@@ -12,6 +12,7 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.wizards.BinaryParserBlock;
+import org.eclipse.cdt.ui.wizards.BuildPathInfoBlock;
 import org.eclipse.cdt.ui.wizards.IndexerBlock;
 import org.eclipse.cdt.ui.wizards.SettingsBlock;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
@@ -43,6 +44,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	SettingsBlock settingsBlock;
 	IndexerBlock indexerBlock;
 	BinaryParserBlock binaryParserBlock;
+	private BuildPathInfoBlock pathInfoBlock;
 
 	protected Control createContents(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -88,6 +90,16 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 			item4.setImage(img4);
 		item4.setData(binaryParserBlock);
 		item4.setControl(binaryParserBlock.getControl(folder));
+		
+		pathInfoBlock = new BuildPathInfoBlock(this, getProject());
+		TabItem pathItem = new TabItem(folder, SWT.NONE);
+		pathItem.setText(pathInfoBlock.getLabel());
+		Image pathImg = pathInfoBlock.getImage();
+		if (pathImg != null) {
+			pathItem.setImage(pathImg);
+		}
+		pathItem.setData(pathInfoBlock);
+		pathItem.setControl(pathInfoBlock.getControl(folder));
 
 		WorkbenchHelp.setHelp(parent, ICHelpContextIds.PROJECT_PROPERTY_PAGE);	
 	}
@@ -112,6 +124,9 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		if (ok && binaryParserBlock != null) {
 			ok = binaryParserBlock.isValid();
 		}
+		if (ok && pathInfoBlock != null) {
+			ok = pathInfoBlock.isValid();
+		}
 		setValid(ok);
 	}
 
@@ -133,6 +148,10 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 				monitor.worked(10);
 				if (binaryParserBlock != null) {
 					binaryParserBlock.doRun(getProject(), monitor);
+				}
+				monitor.worked(15);
+				if (pathInfoBlock != null) {
+					pathInfoBlock.doRun(getProject(), monitor);
 				}
 				monitor.worked(19);
 				monitor.done();
@@ -167,6 +186,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 			settingsBlock.setVisible(visible);
 			indexerBlock.setVisible(visible);
 			binaryParserBlock.setVisible(visible);
+			pathInfoBlock.setVisible(visible);
 			folder.setFocus();
 		}
 	}	

@@ -46,10 +46,11 @@ public class BuildOptionListFieldEditor extends ListEditor {
 	protected String getNewInputObject() {
 		// Create a dialog to prompt for a new symbol or path
 		InputDialog dialog = new InputDialog(getShell(), CUIPlugin.getResourceString(TITLE), fieldName, new String(), null);
+		String input = null;
 		if (dialog.open() == InputDialog.OK) {
-			return dialog.getValue();
+			input = dialog.getValue();
 		}
-		return new String();
+		return input.length() == 0 ? null : input;
 	}
 
 	/* (non-Javadoc)

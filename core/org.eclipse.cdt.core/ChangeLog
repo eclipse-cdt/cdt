@@ -1,3 +1,14 @@
+2003-06-26 Sean Evoy
+	Added methods to add and extract include paths and preprocessor 
+	symbols from standard make C and C++ projects.
+	
+	Getter and setter methods in:
+	* src/org/eclipse/cdt/core/BuildInfoFactory.java
+	* src/org/eclipse/cdt/core/CProjectNature.java
+	
+	Added new constant for comma-separated lists
+	* src/org/eclipse/cdt/core/resources/IBuildInfo.java
+
 2003-06-24 Alain Magloire
 
 	Patch form ando@park.ruru.ne.jp, to deal

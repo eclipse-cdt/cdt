@@ -1,3 +1,12 @@
+2004-12-02 Alain Magloire
+	Fix for 40081
+	Textfield to choose NM.
+	Fix MacOX binary parser page.
+	* src/org/eclipse/cdt/internal/ui/CUIMessages.properties.
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/CygwinPEBinarParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/MachOBinaryParserPage.java
+
 2004-11-25 Alain Magloire
 	Fix for PR 79327
 	* src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java

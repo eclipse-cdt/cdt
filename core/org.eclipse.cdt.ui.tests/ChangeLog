@@ -1,3 +1,6 @@
+2004-12-17 Tanya Wolff
+	Added more Content Assist Regression tests
+
 2004-12-10 Alain Magloire
 	No need for TestBufferTest test, it is now in JFace.
 

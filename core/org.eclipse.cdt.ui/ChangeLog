@@ -1,5 +1,16 @@
 2004-02-15 Alain Magloire
 
+	Special working set for the C/C++ Celements
+	new pakage.
+
+	* src/org/eclipse/cdt/internal/ui/workingsets
+	* src/org/eclipse/cdt/internal/ui/workingsets/CElementWorkingSetPage.java
+	* src/org/eclipse/cdt/internal/ui/workingsets/CElementWorkingSetPageContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/workingsets/WorkingSetMessages.java
+	* src/org/eclipse/cdt/internal/ui/workingsets/WorkingSetMessages.properties
+	
+2004-02-15 Alain Magloire
+
 	Reorganize the action of the CView and distribute them
 	in different action group.
 

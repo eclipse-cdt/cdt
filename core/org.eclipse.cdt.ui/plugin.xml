@@ -538,4 +538,14 @@
       </parserPage>
    </extension>
 
+   <extension
+         point="org.eclipse.ui.workingSets">
+      <workingSet
+            name="%CElementWorkingSetPage.name"
+            pageClass="org.eclipse.cdt.internal.ui.workingsets.CElementWorkingSetPage"
+            icon="icons/full/cview16/cview.gif"
+            id="org.eclipse.cdt.ui.CElementWorkingSetPage">
+      </workingSet>
+   </extension>
+
 </plugin>

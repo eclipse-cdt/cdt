@@ -49,10 +49,15 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 
 public class MakefileGenerator {
+	
+	// this is used to draw a "comment line"
+	private static final int COLS_PER_LINE = 80;
+	
 	// String constants for messages
 	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
 	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
 	private static final String COMMENT = "ManagedMakeBuilder.comment";	//$NON-NLS-1$
+	private static final String HEADER = COMMENT + ".header"; //$NON-NLS-1$
 	private static final String MOD_LIST = COMMENT + ".module.list";	//$NON-NLS-1$	
 	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$	
 	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
@@ -74,6 +79,9 @@ public class MakefileGenerator {
 	protected static final String WHITESPACE = " ";	//$NON-NLS-1$
 	protected static final String WILDCARD = "%";	//$NON-NLS-1$
 	protected static final String COMMENT_SYMBOL = "#";	//$NON-NLS-1$
+	protected static final String MAKEFILE_INIT = "makefile.init"; //$NON-NLS-1$
+	protected static final String MAKEFILE_DEFS = "makefile.defs"; //$NON-NLS-1$
+	protected static final String MAKEFILE_TARGETS = "makefile.targets"; //$NON-NLS-1$
 
 	// Local variables needed by generator
 	protected IManagedBuildInfo info;
@@ -388,6 +396,34 @@ public class MakefileGenerator {
 		}
 	}
 
+	protected StringBuffer addTopHeader() {
+		return addDefaultHeader();
+	}
+	
+	protected StringBuffer addFragmentMakefileHeader() {
+		return addDefaultHeader();
+	}
+
+	protected StringBuffer addFragmentDependenciesHeader() {
+		return addDefaultHeader();
+	}
+
+	protected void outputCommentLine(StringBuffer buffer) {
+		for (int i = 0; i < COLS_PER_LINE; i++) {
+			buffer.append(COMMENT_SYMBOL);
+		}
+		buffer.append(NEWLINE);		
+	}
+	
+	protected StringBuffer addDefaultHeader() {
+		StringBuffer buffer = new StringBuffer();
+		outputCommentLine(buffer);
+		buffer.append(COMMENT_SYMBOL+WHITESPACE+ManagedBuilderCorePlugin.getResourceString(HEADER)+NEWLINE);
+		outputCommentLine(buffer);
+		buffer.append(NEWLINE);
+		return buffer;
+	}
+	
 	/* (non-javadoc)
 	 * @param buffer
 	 * @param info
@@ -397,10 +433,16 @@ public class MakefileGenerator {
 		
 		// Add the ROOT macro
 		buffer.append("ROOT := .." + NEWLINE);
+		buffer.append(NEWLINE);
 		
+		// include makefile.init supplementary makefile
+		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_INIT + NEWLINE);
+		buffer.append(NEWLINE);
+
 		// Get the clean command from the build model
 		buffer.append("RM := ");
-		buffer.append(info.getCleanCommand() + NEWLINE + NEWLINE);
+		buffer.append(info.getCleanCommand() + NEWLINE);
+		buffer.append(NEWLINE);
 		
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
 		buffer.append("C_SRCS := " + NEWLINE);
@@ -457,8 +499,12 @@ public class MakefileGenerator {
 		buffer.append(NEWLINE);
 		buffer.append(COMMENT_SYMBOL +WHITESPACE + ManagedBuilderCorePlugin.getResourceString(MOD_INCL) + NEWLINE);
 		buffer.append("-include ${patsubst %, %/subdir.mk, $(SUBDIRS)}" + NEWLINE);
-
-		buffer.append(NEWLINE + NEWLINE);
+		buffer.append(NEWLINE);
+		
+		// Include makefile.defs supplemental makefile
+		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_DEFS + NEWLINE);
+		
+		buffer.append(NEWLINE);
 		return buffer;
 	}
 
@@ -629,6 +675,11 @@ public class MakefileGenerator {
 		
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
 		buffer.append("-include ${patsubst %, %/subdir.dep, $(SUBDIRS)}" + NEWLINE);
+		buffer.append(NEWLINE);
+		
+		// Include makefile.targets supplemental makefile
+		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_TARGETS + NEWLINE);
+
 		return buffer;
 	}
 
@@ -926,6 +977,9 @@ public class MakefileGenerator {
 	protected void populateTopMakefile(IFile fileHandle, boolean rebuild) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
 		
+		// Add the header
+		buffer.append(addTopHeader());
+		
 		// Add the macro definitions
 		buffer.append(addMacros());
 
@@ -958,11 +1012,13 @@ public class MakefileGenerator {
 		// Create a module makefile
 		IFile modMakefile = createFile(moduleOutputDir.addTrailingSeparator().append(MODFILE_NAME));
 		StringBuffer makeBuf = new StringBuffer();
+		makeBuf.append(addFragmentMakefileHeader());
 		makeBuf.append(addSources(module));
 
 		// Create a module dep file
 		IFile modDepfile = createFile(moduleOutputDir.addTrailingSeparator().append(DEPFILE_NAME));
 		StringBuffer depBuf = new StringBuffer();
+		depBuf.append(addFragmentDependenciesHeader());
 		depBuf.append(addSourceDependencies(module));
 
 		// Save the files

@@ -1,4 +1,12 @@
-2004-02-26
+2004-02-26 Jeremiah Lott
+	Added a header to the automatically generated makefiles to alert users 
+	not to edit them. Also added includes directives to bring in user-supplied 
+	makefiles to support additional targets, macro definitions, and custom 
+	build steps. Strings are externalized.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+
+2004-02-26 Sean Evoy
 	Work for C14, add the ability to inherit a tool description via a tool 
 	reference.
 	

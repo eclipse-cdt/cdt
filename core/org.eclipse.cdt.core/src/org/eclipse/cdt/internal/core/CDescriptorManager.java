@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -236,9 +237,23 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	
 	synchronized public ICDescriptor getDescriptor(IProject project, boolean create) throws CoreException {
 		CDescriptor descriptor = (CDescriptor)fDescriptorMap.get(project);
-		if (descriptor == null && create) {
-			descriptor = new CDescriptor(this, project);
-			fDescriptorMap.put(project, descriptor);
+		if (descriptor == null) {
+			if (create) {
+				descriptor = new CDescriptor(this, project);
+				fDescriptorMap.put(project, descriptor);
+			} else {
+				IPath projectLocation = project.getDescription().getLocation();
+
+				if (projectLocation == null) {
+					projectLocation = Platform.getLocation().append(project.getFullPath());
+				}
+				IPath descriptionPath = projectLocation.append(CDescriptor.DESCRIPTION_FILE_NAME);
+
+				if (descriptionPath.toFile().exists()) {
+					descriptor = new CDescriptor(this, project);
+					fDescriptorMap.put(project, descriptor);
+				}
+			}
 		}
 		return descriptor;
 	}

@@ -19,6 +19,7 @@ public class CASTName extends CASTNode implements IASTName {
 
     private final char[] name;
     private static final char[] EMPTY_CHAR_ARRAY = { };
+    private IBinding binding = null;
 
     /**
      * @param name 
@@ -38,8 +39,14 @@ public class CASTName extends CASTNode implements IASTName {
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-        // TODO Auto-generated method stub
-        return null;
+    	if( binding == null )
+    		CVisitor.createBinding( this ); 
+    	
+        return binding;
+    }
+    
+    protected void setBinding( IBinding binding ){
+    	this.binding = binding;
     }
 
     /* (non-Javadoc)
@@ -48,5 +55,9 @@ public class CASTName extends CASTNode implements IASTName {
     public String toString() {
         if( name == EMPTY_CHAR_ARRAY ) return null;
         return new String( name );
+    }
+    
+    public char[] toCharArray() {
+    	return name;
     }
 }

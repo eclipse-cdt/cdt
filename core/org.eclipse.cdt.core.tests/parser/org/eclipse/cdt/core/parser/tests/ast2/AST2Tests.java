@@ -194,10 +194,10 @@ public class AST2Tests extends TestCase {
 		IFunction func_f = (IFunction) name_f.resolveBinding();
 		assertEquals(globalScope, func_f.getScope());
 		IParameter var_y = (IParameter) name_y.resolveBinding();
-		assertEquals(func_f, var_y.getScope());
+		assertEquals(func_f.getFunctionScope(), var_y.getScope());
 
 		IVariable var_z = (IVariable) name_z.resolveBinding();
-		assertEquals(func_f, var_z.getScope());
+		assertEquals(func_f.getFunctionScope(), var_z.getScope());
 
 		// make sure the variable referenced is the same one we declared above
 		assertEquals(var_x, name_ref_x.resolveBinding());

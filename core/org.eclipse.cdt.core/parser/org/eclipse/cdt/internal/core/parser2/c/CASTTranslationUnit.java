@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.parser2.CompilationUnit;
 
 /**
  * @author jcamelon
@@ -26,6 +27,10 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     private IASTDeclaration [] decls = null;
     private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
     private int currentIndex = 0;
+    
+    //Binding
+    private CompilationUnit compilationUnit = null;
+    
     public void addDeclaration( IASTDeclaration d )
     {
         if( decls == null )
@@ -74,7 +79,8 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getScope()
      */
     public IScope getScope() {
-        // TODO Auto-generated method stub
-        return null;
+    	if( compilationUnit == null )
+    		compilationUnit = new CompilationUnit();
+        return compilationUnit;
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
  * 
  * @author Doug Schaefer
  */
-public interface IFunction extends IBinding, IScope {
+public interface IFunction extends IBinding {
 
 	/**
 	 * This gets the parameters to the function which are IVariables.
@@ -26,5 +26,12 @@ public interface IFunction extends IBinding, IScope {
 	 * @return List of IParameter
 	 */
 	public List getParameters();
+	
+	/**
+	 * Get the function scope
+	 * 
+	 * @return
+	 */
+	public IScope getFunctionScope();
 	
 }

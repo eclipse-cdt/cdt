@@ -1,3 +1,6 @@
+2004-02-17 Andrew Niefer
+	bug 52111 : added IContainerSymbol.removeSymbol() which is implemented as ContainerSymbol.removeSymbol()
+	
 2004-02-16 Andrew Niefer
 	bug 52120 document symbol table use of ParserSymbolTableException
 	also clean up a couple of exceptions

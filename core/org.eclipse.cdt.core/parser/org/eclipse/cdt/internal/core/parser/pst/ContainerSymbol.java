@@ -215,6 +215,42 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		getSymbolTable().pushCommand( command );
 	}
 
+	public boolean removeSymbol( ISymbol symbol ){
+		boolean removed = false;
+		
+		Map contained = getContainedSymbols();
+		
+		if( symbol != null && contained.containsKey( symbol.getName() ) ){
+			Object obj = contained.get( symbol.getName() );
+			if( obj instanceof ISymbol ){
+				if( obj == symbol ){
+					contained.remove( symbol.getName() );
+					removed = true;
+				}
+			} else if ( obj instanceof List ){
+				List list = (List) obj;
+				if( list.remove( symbol ) ){
+					if( list.size() == 1 ){
+						contained.put( symbol.getName(), list.get( 0 ) );
+					}
+					removed = true;
+				}
+			}
+		}
+		
+		if( removed ){
+			ListIterator iter = getContents().listIterator( getContents().size() );
+			while( iter.hasPrevious() ){
+				if( iter.previous() == symbol ){
+					iter.remove();
+					break;
+				}
+			}
+		}
+		
+		return removed;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#hasUsingDirectives()
 	 */

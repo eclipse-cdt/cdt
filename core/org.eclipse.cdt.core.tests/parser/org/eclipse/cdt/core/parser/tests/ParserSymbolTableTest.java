@@ -3355,5 +3355,74 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertTrue( f1.hasSameParameters( f2 ) );
 	}
+	
+	public void testBug52111RemoveSymbol() throws Exception{
+		newTable();
+		
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		table.getCompilationUnit().addSymbol( A );
+		
+		ISymbol i = table.newSymbol( "i", TypeInfo.t_int );
+		A.addSymbol( i );
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		A.addSymbol( f1 );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( TypeInfo.t_int, 0, null, false );
+		
+		A.addSymbol( f2 );
+		
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+		B.addParent( A );
+		
+		table.getCompilationUnit().addSymbol( B );
+		
+		ISymbol look = B.qualifiedLookup( "i" );
+		assertEquals( look, i );
+		
+		Iterator iter = A.getContentsIterator();
+		assertEquals( iter.next(), i );
+		assertEquals( iter.next(), f1 );
+		assertEquals( iter.next(), f2 );
+		assertFalse( iter.hasNext() );
+		
+		assertTrue( A.removeSymbol( i ) );
+		
+		iter = A.getContentsIterator();
+		assertEquals( iter.next(), f1 );
+		assertEquals( iter.next(), f2 );
+		assertFalse( iter.hasNext() );
+		
+		look = B.qualifiedLookup( "i" );
+		assertNull( look );
+		
+		List params = new LinkedList();
+		
+		look = B.qualifiedFunctionLookup( "f", params );
+		assertEquals( look, f1 );
+		
+		assertTrue( A.removeSymbol( f1 ) );
+		iter = A.getContentsIterator();
+		assertEquals( iter.next(), f2 );
+		assertFalse( iter.hasNext() );
+		
+		look = B.qualifiedFunctionLookup( "f", params );
+		assertNull( look );
+		
+		params.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		look = B.qualifiedFunctionLookup( "f", params );
+		
+		assertEquals( look, f2 );
+		assertTrue( A.removeSymbol( f2 ) );
+		
+		iter = A.getContentsIterator();
+		assertFalse( iter.hasNext() );
+		
+		look = B.qualifiedFunctionLookup( "f", params );
+		assertNull( look );
+		
+		assertEquals( A.getContainedSymbols().size(), 0 );
+	}
 }
 

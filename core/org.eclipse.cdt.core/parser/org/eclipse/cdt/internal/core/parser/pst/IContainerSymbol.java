@@ -38,6 +38,8 @@ public interface IContainerSymbol extends ISymbol {
 	 */
 	public void addSymbol( ISymbol symbol ) throws ParserSymbolTableException;
 
+	public boolean removeSymbol( ISymbol symbol );
+	
 	public boolean hasUsingDirectives();
 	public List getUsingDirectives();
 	

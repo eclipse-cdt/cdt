@@ -1,3 +1,6 @@
+2004-02-17 Andrew Niefer
+	added ParserSymbolTableTests.testBug52111RemoveSymbol
+
 2004-02-17 Sean Evoy
 	Updated the managed build tets suite to include a test for project renaming and  
 	updated the sanity tests to check the extension and project/artifact name as 

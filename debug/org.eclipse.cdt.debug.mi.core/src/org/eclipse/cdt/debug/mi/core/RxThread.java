@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
@@ -153,7 +154,7 @@ public class RxThread extends Thread {
 				} else if ("error".equals(state)) {
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
-						MIEvent event = new MIStoppedEvent(rr);
+						MIEvent event = new MIErrorEvent(rr);
 						session.fireEvent(event);
 					}
 				}

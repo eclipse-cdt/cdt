@@ -38,10 +38,6 @@ public class MIStoppedEvent extends MIEvent {
 		parse();
 	}
 	
-//	public MIStoppedEvent(int token) {
-//		super(token);
-//	}
-
 	public int getThreadId() {
 		return threadId;
 	}

@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.debug.mi.ui"
    name="%pluginName"
-   version="1.0.1"
+   version="1.1.0"
    provider-name="%providerName"
    class="org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin">
 
@@ -51,33 +51,5 @@
             id="org.eclipse.cdt.debug.mi.ui.MIPreferencePage">
       </page>
    </extension>
-<!--
-   <extension
-         point="org.eclipse.ui.viewActions">
-      <viewContribution
-            targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
-            id="org.eclipse.cdt.debug.ui.sharedLibrariesView.actions">
-         <action
-               state="false"
-               toolbarPath="sharedLibrariesGroup"
-               id="org.eclipse.cdt.debug.mi.internal.ui.actions.SetAutoSolibActionDelegate"
-               hoverIcon="icons/full/clcl16/auto_solib_co.gif"
-               class="org.eclipse.cdt.debug.mi.internal.ui.actions.SetAutoSolibActionDelegate"
-               disabledIcon="icons/full/dlcl16/auto_solib_co.gif"
-               icon="icons/full/elcl16/auto_solib_co.gif"
-               helpContextId="set_auto_solib_action_context"
-               label="%SetAutoSolibAction.label"
-               menubarPath="additions"
-               tooltip="%SetAutoSolibAction.tooltip">
-            <enablement>
-               <pluginState
-                     value="installed"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </viewContribution>
-   </extension>
--->
 
 </plugin>

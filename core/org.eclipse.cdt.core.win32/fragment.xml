@@ -2,7 +2,7 @@
 <fragment
    id="org.eclipse.cdt.core.win32"
    name="%fragmentName"
-   version="1.0.1"
+   version="1.1.0"
    provider-name="%providerName"
    plugin-id="org.eclipse.cdt.core"
    plugin-version="1.0.1">

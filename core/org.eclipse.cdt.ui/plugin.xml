@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.ui"
    name="%pluginName"
-   version="1.0.1"
+   version="1.1.0"
    provider-name="%providerName"
    class="org.eclipse.cdt.ui.CUIPlugin">
 
@@ -11,9 +11,6 @@
          <export name="*"/>
       </library>
    </runtime>
-<!-- ======================================================================= -->
-<!-- The C Plugin                                                            -->
-<!-- ======================================================================= -->
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
@@ -29,11 +26,12 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
+   <extension-point id="CToolTabGroup" name="C/C++ Tool Configuration Tabs" schema="schema/CToolTabGroup.exsd"/>
 
 <!-- Implement our filters for C-View.  -->
    <extension
@@ -139,8 +137,8 @@
             id="org.eclipse.cdt.ui.MakeView">
       </view>
    </extension>
-<!-- The wizards -->
 <!-- For C Wizards -->
+<!-- The wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -423,9 +421,6 @@
             class="org.eclipse.cdt.internal.ui.BuildConsole">
       </CBuildConsole>
    </extension>
-
-   <extension-point id="CToolTabGroup" name="C/C++ Tool Configuration Tabs" schema="schema/CToolTabGroup.exsd"/>
-
    <extension
          point="org.eclipse.ui.views">
       <view
@@ -491,23 +486,23 @@
    <extension
          point="org.eclipse.cdt.ui.CToolTabGroup">
       <toolTabGroup
-      		toolId="org.eclipse.cdt.gnu.tools.cc"
             class="org.eclipse.cdt.gnu.tools.CTabGroupCC"
+            toolId="org.eclipse.cdt.gnu.tools.cc"
             id="org.eclipse.cdt.gnu.tools.tabGroupCC">
       </toolTabGroup>
       <toolTabGroup
-      		toolId="org.eclipse.cdt.gnu.tools.cxx"
             class="org.eclipse.cdt.gnu.tools.CTabGroupCXX"
+            toolId="org.eclipse.cdt.gnu.tools.cxx"
             id="org.eclipse.cdt.gnu.tools.tabGroupCXX">
       </toolTabGroup>
       <toolTabGroup
-      		toolId="org.eclipse.cdt.gnu.tools.cpp"
             class="org.eclipse.cdt.gnu.tools.CTabGroupCPP"
+            toolId="org.eclipse.cdt.gnu.tools.cpp"
             id="org.eclipse.cdt.gnu.tools.tabGroupCPP">
       </toolTabGroup>
       <toolTabGroup
-      		toolId="org.eclipse.cdt.gnu.tools.ld"
             class="org.eclipse.cdt.gnu.tools.CTabGroupLD"
+            toolId="org.eclipse.cdt.gnu.tools.ld"
             id="org.eclipse.cdt.gnu.tools.tabGroupLD">
       </toolTabGroup>
    </extension>

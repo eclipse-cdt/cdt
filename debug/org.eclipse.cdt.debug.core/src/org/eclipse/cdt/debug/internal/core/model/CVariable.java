@@ -167,9 +167,9 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			return fType;
 		}
 
-		synchronized void invalidate() {
+		synchronized void invalidate( boolean destroy ) {
 			try {
-				if ( fCDIVariable != null )
+				if ( destroy && fCDIVariable != null )
 					fCDIVariable.dispose();
 			}
 			catch( CDIException e ) {
@@ -182,8 +182,8 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			fType = null;
 		}
 
-		void dispose() {
-			invalidate();
+		void dispose( boolean destroy ) {
+			invalidate( destroy );
 		}
 
 		boolean isSameVariable( ICDIVariable cdiVar ) {
@@ -389,10 +389,10 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	public void setEnabled( boolean enabled ) throws DebugException {
 		InternalVariable iv = getOriginal();
 		if ( iv != null )
-			iv.invalidate();
+			iv.dispose( true );
 		iv = getShadow();
 		if ( iv != null )
-			iv.invalidate();
+			iv.dispose( true );
 		fIsEnabled = enabled;
 		fireChangeEvent( DebugEvent.STATE );
 	}
@@ -520,7 +520,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		if ( current != null ) {
 			InternalVariable newVar = current.createShadow( startIndex, length );
 			if ( getShadow() != null )
-				getShadow().dispose();
+				getShadow().dispose( true );
 			setShadow( newVar );
 			fireChangeEvent( DebugEvent.STATE );
 		}
@@ -609,7 +609,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		if ( current != null ) {
 			InternalVariable newVar = current.createShadow( type );
 			if ( getShadow() != null )
-				getShadow().dispose();
+				getShadow().dispose( true );
 			setShadow( newVar );
 			fireChangeEvent( DebugEvent.STATE );
 		}
@@ -624,7 +624,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		InternalVariable oldVar = getShadow();
 		setShadow( null );
 		if ( oldVar != null )
-			oldVar.dispose();
+			oldVar.dispose( true );
 		InternalVariable iv = getOriginal();
 		if ( iv != null )
 			iv.invalidateValue();
@@ -755,13 +755,8 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#dispose()
 	 */
 	public void dispose() {
-		getCDISession().getEventManager().removeEventListener( this );
-		InternalVariable iv = getOriginal();
-		if ( iv != null )
-			iv.dispose();
-		iv = getShadow();
-		if ( iv != null )
-			iv.dispose();
+		// Hack: do not destroy local variables
+		internalDispose( false );
 	}
 
 	protected int sizeof() {
@@ -806,5 +801,15 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		InternalVariable iv = getCurrentInternalVariable(); 
 		if ( iv != null )
 			iv.preserve();
+	}
+
+	protected void internalDispose( boolean destroy ) {
+		getCDISession().getEventManager().removeEventListener( this );
+		InternalVariable iv = getOriginal();
+		if ( iv != null )
+			iv.dispose( destroy );
+		iv = getShadow();
+		if ( iv != null )
+			iv.dispose( destroy );
 	}
 }

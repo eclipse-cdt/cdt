@@ -73,4 +73,11 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	public IGlobalVariableDescriptor getDescriptor() {
 		return fDescriptor;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#dispose()
+	 */
+	public void dispose() {
+		internalDispose( true );
+	}
 }

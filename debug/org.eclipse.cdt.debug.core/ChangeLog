@@ -1,3 +1,9 @@
+2004-11-24 Mikhail Khodjaiants
+	Do not request to dispose local variables when the target is resumed.
+	* CExpression.java
+	* CGlobalVariable.java
+	* CVariable.java
+
 2004-11-23 Mikhail Khodjaiants
 	The enablement of the step actions is calculated in the UI thread. This causes 
 	the UI locks for slow or unresponsive targets. Use the cached stack frames to 

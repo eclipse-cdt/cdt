@@ -77,6 +77,7 @@ public class MemorySizeAction extends Action implements IUpdate
 	public void run()
 	{
 		fGroup.setCurrentSelection( this );
+		fMemoryViewer.setWordSize( fId );
 	}
 	
 	public String getActionId()

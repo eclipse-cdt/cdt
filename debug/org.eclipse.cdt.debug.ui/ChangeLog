@@ -1,4 +1,9 @@
 2002-10-24 Mikhail Khodjaiants
+	Implementation of the 'Memory Unit Size' action.
+	* MemorySizeAction.java
+	* MemoryView.java
+
+2002-10-24 Mikhail Khodjaiants
 	Implementing Memory view formatting actions.
 	* MemoryActionSelectionGroup.java: implementation of a toggle action group.
 	* MemorySizeAction.java: implementation of the "Memory Unit Size" menu item.

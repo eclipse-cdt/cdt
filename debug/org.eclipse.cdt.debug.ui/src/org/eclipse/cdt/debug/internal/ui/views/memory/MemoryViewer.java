@@ -215,4 +215,14 @@ public class MemoryViewer extends ContentViewer
 		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
 		return ( block != null ) ? block.getWordSize() : 0;
 	}
+	
+	public void setWordSize( int size )
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		if ( block != null )
+		{ 
+			block.setWordSize( size );
+			((MemoryControlArea)fTabFolder.getSelection().getControl()).refresh();
+		}
+	}
 }

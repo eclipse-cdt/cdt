@@ -23,13 +23,14 @@
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
 		<property name="cdtuser" value="nobody"/>
 		<property name="cdtpasswd" value="home"/>
-		<property name="remotedir" value="ftp://download1.eclipse.org/cdt/builds/${branchVersion}"/>
+		<property name="remotedir" value="${cdtuser}@download1.eclipse.org:cdt/builds/${branchVersion}"/>
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
 		<property name="basearch" value="${osgi.arch}"/>
 		<condition property="onWindows">
 			<os family="windows"/>
 		</condition>
+		<mkdir dir="${buildDirectory}"/>
 	</target>
 
 	<target name="fetch" depends="init">
@@ -48,7 +49,7 @@
 	</target>
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
-		<unzip src="${eclipseZip}" dest="${buildDirectory}"/>
+		<untar src="${eclipseZip}" dest="${buildDirectory}" compression="gzip"/>
 	</target>
 	
 	<target name="zips" depends="init,unzip">
@@ -107,23 +108,23 @@
 	</target>
 	
 	<target name="upload" depends="init" unless="hasErrors">
-		<exec dir="${buildDirectory}" executable="curl">
-			<arg line="-s -u${cdtuser}:${cdtpasswd} ${remotedir}/index.html -o index.html"/>
+		<exec dir="${buildDirectory}" executable="expect">
+			<arg line="${basedir}/myscp ${cdtpasswd} ${remotedir}/index.html index.html"/>
 		</exec>
 		<replace file="${buildDirectory}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
-			<replacevalue><![CDATA[  <li><a href="@buildId@/index.html">@buildId@</a></li>
+			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>
   <!-- add here -->]]></replacevalue>
 		</replace>
 		<replace file="${buildDirectory}/index.html">
 			<replacefilter token="@buildType@" value="${buildType}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
-		<exec dir="${buildDirectory}" executable="curl">
-			<arg line="-s -u${cdtuser}:${cdtpasswd} -T index.html ${remotedir}/index.html"/>
+		<exec dir="${buildDirectory}" executable="expect">
+			<arg line="${basedir}/myscp ${cdtpasswd} index.html ${remotedir}/index.html"/>
 		</exec>
-		<exec dir="${zipsdir}" executable="sh">
-			<arg line="${basedir}/upload.sh ${cdtuser} ${cdtpasswd} ${remotedir}/${buildId}/"/>
+		<exec dir="${buildDirectory}" executable="expect">
+			<arg line="${basedir}/myscp ${cdtpasswd} -r ${buildType}.${buildId} ${remotedir}"/>
 		</exec>
 	</target>
 	
@@ -139,7 +140,7 @@
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
 		<mail subject="CDT ${branchVersion} Build ${buildId} completed"
-			tolist="${mailto}" from="dschaefe@ca.ibm.com">
+ 			tolist="${mailto}" from="dschaefe@ca.ibm.com">
 			<message src="message.txt"/>
 		</mail>
 	</target>
@@ -275,7 +276,7 @@
  		<!--antcall target="${target}">
  			<param name="type" value="fragment"/>
  			<param name="dir" value="plugins"/>
- 			<param name="id" value="org.eclipse.cdt.source.hpux.motif.PA_RISC"/>
+ 			<param name="id" value="org.eclipse.cdt.source.dschaefer2hpux.motif.PA_RISC"/>
  		</antcall-->
  		<antcall target="${target}">
  			<param name="type" value="fragment"/>

@@ -1,0 +1,8 @@
+#!/usr/bin/expect -f
+
+set passwd [lindex $argv 0]
+set timeout 6000
+
+set id [eval spawn scp -q [lrange $argv 1 end]]
+expect "Password:" { send "$passwd\r" }
+expect

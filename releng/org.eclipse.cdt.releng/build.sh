@@ -7,10 +7,7 @@ die() {
 	exit 1
 }
 
-[ -n "$JAVA_HOME" ] || die JAVA_HOME not set
 [ -n "$ECLIPSE_HOME" ] || die ECLIPSE_HOME not set
-
-export PATH="$JAVA_HOME/bin:$PATH"
 
 cd `dirname $0`
 

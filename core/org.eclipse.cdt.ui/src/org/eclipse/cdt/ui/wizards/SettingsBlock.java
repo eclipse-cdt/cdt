@@ -74,14 +74,15 @@ public class SettingsBlock implements IWizardTab {
 					useDefaultBuildCmd = nature.isDefaultBuildCmd();
 					if (!useDefaultBuildCmd) {
 						buildCmd = nature.getBuildCommand().toOSString();
+						if (buildCmd.indexOf(' ') > 0) {
+							buildCmd = "\"" + buildCmd + "\"";
+						}
 						buildCmd += " " + nature.getFullBuildArguments();
 					}
 				}
+			} catch (CoreException e) {
 			}
-			catch (CoreException e) {
-			}
-		}
-		else {
+		} else {
 			// FIXME: Should use the default settings
 			stopOnError = false;
 			useDefaultBuildCmd = true;
@@ -197,17 +198,24 @@ public class SettingsBlock implements IWizardTab {
 				nature.setBuildCommandOverride(useDefaultBuildCmd());
 				if (!useDefaultBuildCmd()) {
 					String bldLine = getBuildLine();
-					int start = bldLine.indexOf(' ');
+					int start = 0;
+					int end = -1;
+					if (!bldLine.startsWith("\"")) {
+						end = bldLine.indexOf(' ');
+					} else {
+						start = 1;
+						end = bldLine.indexOf('"', 1);
+					}
 					IPath path;
-					if ( start == -1 ) {
+					if (end == -1) {
 						path = new Path(bldLine);
 					} else {
-						path = new Path(bldLine.substring(0, start));
+						path = new Path(bldLine.substring(start, end));
 					}
 					nature.setBuildCommand(path, new SubProgressMonitor(monitor, 50));
 					String args = "";
-					if ( start != -1 ) {
-						args = bldLine.substring(start + 1);
+					if (end != -1) {
+						args = bldLine.substring(end + 1);
 					}
 					nature.setFullBuildArguments(args, new SubProgressMonitor(monitor, 50));
 				}

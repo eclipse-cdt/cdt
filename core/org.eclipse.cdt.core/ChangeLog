@@ -1,3 +1,9 @@
+2003-03-12 Alain Magloire
+
+	* utils/org/eclipse/cdt/utils/elf/Elf.java:
+	Do a better check when looking for the nearest symbol, a validation
+	is to check if the line number is "0", zero is invalid and keep on iterating.
+
 2003-03-11 Alain Magloire
 
 	* utils/org/eclipse/cdt/utils/elf/Elf.java (Symbol:getLineInfo):

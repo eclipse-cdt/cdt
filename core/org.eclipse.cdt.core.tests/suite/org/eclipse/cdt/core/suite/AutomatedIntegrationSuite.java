@@ -9,6 +9,7 @@ package org.eclipse.cdt.core.suite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.filetype.tests.ResolverTests;
@@ -50,6 +51,9 @@ public class AutomatedIntegrationSuite extends TestSuite {
 	public static Test suite() {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
 		
+		//TODO: BOG take this out once TypeCache issues resolved
+		disableIndexUpgrades();
+		
 		// Add all success tests
 		suite.addTest(CDescriptorTests.suite());
 		//suite.addTest(GCCErrorParserTests.suite());
@@ -74,6 +78,14 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(FailedCompleteParseASTTest.class);
 
 		return suite;
+	}
+
+	/**
+	 * 
+	 */
+	private static void disableIndexUpgrades() {
+		CCorePlugin.getDefault().getCoreModel().getIndexManager().disableUpgrades();
+		
 	}
 	
 }

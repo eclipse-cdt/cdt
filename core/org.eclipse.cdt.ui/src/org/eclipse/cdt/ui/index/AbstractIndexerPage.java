@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
  */
 public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
+   protected IProject currentProject;
    
    protected AbstractIndexerPage() {
    	  super();
@@ -28,5 +29,13 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
    * @param currentProject - the project that this page is being created for  
    */
    abstract public void initialize(IProject currentProject);
-
+   
+   
+   
+	public IProject getCurrentProject() {
+		return currentProject;
+	}
+	public void setCurrentProject(IProject currentProject) {
+		this.currentProject = currentProject;
+	}
 }

@@ -13,8 +13,8 @@ package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -51,16 +51,18 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		
-		IProject newProject = null;
-		newProject = getContainer().getProject();
-		
-		this.persistIndexerValues(newProject);
+	
+		this.persistIndexerValues(currentProject);
 		
 		boolean indexProject = getIndexerValue();
 		
-		//if (indexProject && newProject != null)
-			//SourceIndexer.indexAll()
+		if ((indexProject != oldIndexerValue)
+			&& (currentProject != null)
+			&& indexProject) {
+			ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(currentProject);
+			if (indexer instanceof SourceIndexer)
+			 ((SourceIndexer) indexer).indexAll(currentProject);
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
@@ -176,6 +178,7 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		try {
 			oldIndexerValue = getIndexerEnabled(project);
 			oldIndexerProblemsValue = getIndexerProblemsEnabled( project );
+			this.currentProject = project;
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

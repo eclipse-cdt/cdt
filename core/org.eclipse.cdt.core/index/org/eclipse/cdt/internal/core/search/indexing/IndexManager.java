@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -45,6 +46,8 @@ public class IndexManager extends JobManager{
 	public final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".cdtindexers"; //$NON-NLS-1$
 	public final static String INDEXERID = "indexerID"; //$NON-NLS-1$
 	public final static QualifiedName indexerIDKey = new QualifiedName(INDEX_MODEL_ID, INDEXERID);
+	
+	public static final String nullIndexerID = "org.eclipse.cdt.core.nullindexer"; //$NON-NLS-1$
 	
 	public static final String CDT_INDEXER = "cdt_indexer"; //$NON-NLS-1$
 	public static final String INDEXER_ID = "indexerID"; //$NON-NLS-1$
@@ -58,6 +61,12 @@ public class IndexManager extends JobManager{
     //Map of Persisted Indexers; keyed by project
     private HashMap indexerMap = null;
    
+    //Upgrade index version
+    private boolean upgradeIndexEnabled = false;
+    private int		upgradeIndexProblems = 0;
+	private boolean	upgradeProjects	= true;
+   
+  
     /**
      * Create an indexer only on request
      */
@@ -343,7 +352,15 @@ public class IndexManager extends JobManager{
 			}
 			
 			//Make sure that we have an indexer ID
-			if (indexerID == null)
+			if (indexerID == null && upgradeProjects) {
+				//No persisted info on file? Must be old project - run temp. upgrade
+				indexerID = doProjectUpgrade(project);
+				doSourceIndexerUpgrade(project);
+			}
+			
+			//If we're asking for the null indexer,return null
+			if (indexerID == null ||
+				indexerID.equals(nullIndexerID)) 
 				return null;
 			
 			//Create the indexer and store it
@@ -354,7 +371,178 @@ public class IndexManager extends JobManager{
 		return indexer;
 	}
 	
-   protected ICDTIndexer getIndexer(String indexerId) {
+   /**
+	 * @param project
+	 */
+	private void doSourceIndexerUpgrade(IProject project) {
+		ICDescriptor descriptor = null;
+		Element rootElement = null;
+		IProject newProject = null;
+		
+		try {
+			newProject = project;
+			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
+			rootElement = descriptor.getProjectData(SourceIndexer.SOURCE_INDEXER);
+		
+			// Clear out all current children
+			Node child = rootElement.getFirstChild();
+			while (child != null) {
+				rootElement.removeChild(child);
+				child = rootElement.getFirstChild();
+			}
+			Document doc = rootElement.getOwnerDocument();
+	
+					
+			saveIndexerEnabled(upgradeIndexEnabled, rootElement, doc);
+			saveIndexerProblemsEnabled( upgradeIndexProblems, rootElement, doc );
+			
+			descriptor.saveProjectData();
+			
+			//Update project session property
+			
+			project.setSessionProperty(SourceIndexer.activationKey,new Boolean(upgradeIndexEnabled));
+			project.setSessionProperty(SourceIndexer.problemsActivationKey, new Integer( upgradeIndexProblems ));	
+	
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void saveIndexerEnabled (boolean indexerEnabled, Element rootElement, Document doc ) {
+		
+		Element indexEnabled = doc.createElement(SourceIndexer.INDEXER_ENABLED);
+		Boolean tempValue= new Boolean(indexerEnabled);
+		
+		indexEnabled.setAttribute(SourceIndexer.INDEXER_VALUE,tempValue.toString());
+		rootElement.appendChild(indexEnabled);
+
+	}
+	private static void saveIndexerProblemsEnabled ( int problemValues, Element rootElement, Document doc ) {
+		
+		Element enabled = doc.createElement(SourceIndexer.INDEXER_PROBLEMS_ENABLED);
+		Integer tempValue= new Integer( problemValues );
+		
+		enabled.setAttribute(SourceIndexer.INDEXER_PROBLEMS_VALUE, tempValue.toString());
+		rootElement.appendChild(enabled);
+	}
+
+/**
+	 * @return
+	 */
+	private String doProjectUpgrade(IProject project) {
+		ICDescriptor descriptor = null;
+		Element rootElement = null;
+		IProject newProject = null;
+		
+		try {
+			//Get the old values from .cdtproject before upgrading
+			Boolean tempEnabled = loadIndexerEnabledFromCDescriptor(project);
+			if (tempEnabled != null)
+				upgradeIndexEnabled = tempEnabled.booleanValue();
+			
+			Integer tempProblems = loadIndexerProblemsEnabledFromCDescriptor(project);
+			if (tempProblems != null)
+				upgradeIndexProblems = tempProblems.intValue();
+			
+		} catch (CoreException e1) {}
+		
+		
+		//For now all upgrades will be to the old source indexer
+		String indexerPageID = "org.eclipse.cdt.ui.originalSourceIndexerUI"; //$NON-NLS-1$
+		String indexerID = "org.eclipse.cdt.core.originalsourceindexer"; //$NON-NLS-1$
+		
+		try {
+			newProject = project;
+			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
+			rootElement = descriptor.getProjectData(IndexManager.CDT_INDEXER);
+		
+			// Clear out all current children
+			Node child = rootElement.getFirstChild();
+			while (child != null) {
+				rootElement.removeChild(child);
+				child = rootElement.getFirstChild();
+			}
+			Document doc = rootElement.getOwnerDocument();
+			
+			saveIndexerInfo(indexerID, indexerPageID, rootElement, doc);
+		
+			descriptor.saveProjectData();
+			
+			//Update project session property
+			
+			project.setSessionProperty(IndexManager.indexerIDKey, indexerID);	
+			//project.setSessionProperty(indexerUIIDKey, indexerPageID);
+	
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+
+	private static void saveIndexerInfo (String indexerID, String indexerUIID, Element rootElement, Document doc ) {
+		
+		//Save the indexer id
+		Element indexerIDElement = doc.createElement(IndexManager.INDEXER_ID);
+		indexerIDElement.setAttribute(IndexManager.INDEXER_ID_VALUE,indexerID);
+		rootElement.appendChild(indexerIDElement);
+		
+		//Save the indexer UI id
+		Element indexerUIIDElement = doc.createElement("indexerUI"); //$NON-NLS-1$
+		indexerUIIDElement.setAttribute("indexerUIValue",indexerUIID); //$NON-NLS-1$
+		rootElement.appendChild(indexerUIIDElement);
+	}
+
+	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
+		// Check if we have the property in the descriptor
+		// We pass false since we do not want to create the descriptor if it does not exists.
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
+		Boolean strBool = null;
+		if (descriptor != null) {
+			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+		
+			while (child != null) {
+				if (child.getNodeName().equals(SourceIndexer.INDEXER_ENABLED)) 
+					strBool = Boolean.valueOf(((Element)child).getAttribute(SourceIndexer.INDEXER_VALUE));
+			
+			
+				child = child.getNextSibling();
+			}
+		}
+		
+		return strBool;
+	}
+	private Integer loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
+	// we are only checking for the settings do not create the descriptor.
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
+		Integer strInt = null;
+		if( descriptor != null ){
+			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+			
+			while (child != null) {
+				if (child.getNodeName().equals(SourceIndexer.INDEXER_PROBLEMS_ENABLED)){
+					String val = ((Element)child).getAttribute(SourceIndexer.INDEXER_PROBLEMS_VALUE);
+					try{
+						strInt = Integer.valueOf( val );
+					} catch( NumberFormatException e ){
+						//some old projects might have a boolean stored, translate that into just preprocessors
+						Boolean bool = Boolean.valueOf( val );
+						if( bool.booleanValue() )
+							strInt = new Integer( SourceIndexer.PREPROCESSOR_PROBLEMS_BIT );
+						else 
+							strInt = new Integer( 0 );
+					}
+					break;
+				}
+				child = child.getNextSibling();
+			}
+		}
+		
+		return strInt;
+	}
+
+protected ICDTIndexer getIndexer(String indexerId) {
 	    CDTIndexer configElement = (CDTIndexer) contributedIndexerMap.get(indexerId);
 	    if (configElement != null) {
 	        try {
@@ -377,6 +565,15 @@ public class IndexManager extends JobManager{
    		indexer.notifyIdle(idlingTime);
    	}
    }
+
+
+
+
+/**
+ * 
+ */
+public void disableUpgrades() {
+	upgradeProjects = false;
+}
    
-  
 }

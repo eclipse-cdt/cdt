@@ -216,7 +216,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 			}
 		});
         //Add button
-        ControlFactory.createPushButton(group,"Info ...");
+        ControlFactory.createPushButton(group,"Info ..."); //$NON-NLS-1$
         
         // fill the combobox and set the initial value
         for (Iterator items = getIndexerPageIdList().iterator(); items.hasNext();) {
@@ -227,6 +227,15 @@ public class IndexerBlock extends AbstractCOptionPage {
             }
         }
 
+        String[] indexerList = indexersComboBox.getItems();
+        int selectedIndex = 0;
+        for (int i=0; i<indexerList.length; i++){
+        	if (indexerList[i].equals("No Indexer")) //$NON-NLS-1$
+        		selectedIndex = i;
+        }
+        
+        indexersComboBox.select(selectedIndex);
+        
         return true;
     }
     
@@ -328,6 +337,9 @@ public class IndexerBlock extends AbstractCOptionPage {
     	
     	persistIndexerValues(project);
 		
+    	if (currentPage instanceof AbstractIndexerPage)
+    		((AbstractIndexerPage)currentPage).setCurrentProject(project);
+    	
 		//Give the chosen indexer a chance to persist its values
 		if (currentPage != null){
 			currentPage.performApply(monitor);
@@ -424,7 +436,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		rootElement.appendChild(indexerIDElement);
 		
 		//Save the indexer UI id
-		Element indexerUIIDElement = doc.createElement(INDEXER_UI);
+		Element indexerUIIDElement = doc.createElement(INDEXER_UI); 
 		indexerUIIDElement.setAttribute(INDEXER_UI_VALUE,indexerUIID);
 		rootElement.appendChild(indexerUIIDElement);
 	}

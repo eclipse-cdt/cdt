@@ -21,6 +21,9 @@ import org.eclipse.core.runtime.IPath;
  * @since 2.0
  */
 public class ManagedBuildPathEntryContainerInitializer extends PathEntryContainerInitializer {
+	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
+	private static final String TRACE_HEADER = "PathEntryContainerInitializer trace [";	//$NON-NLS-1$
+	public static boolean VERBOSE = false;
 
 	/**
 	 * Need a zero-argument constructor to allow the system to create 
@@ -34,6 +37,9 @@ public class ManagedBuildPathEntryContainerInitializer extends PathEntryContaine
 	 * @see org.eclipse.cdt.core.model.PathEntryContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.model.ICProject)
 	 */
 	public void initialize(IPath containerPath, ICProject project) throws CoreException {
+		if (VERBOSE) {
+			System.out.println(TRACE_HEADER + project.getProject().getName() + TRACE_FOOTER + "Initializing path entry container");
+		}
 		CoreModel.getDefault().setPathEntryContainer(new ICProject[]{project}, new ManagedBuildCPathEntryContainer(project.getProject()), null);
 	}
 

@@ -13,7 +13,9 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
+import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -83,16 +85,26 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		configurePluginDebugOptions();
 	}
 	
-	private static final String PATH_ENTRY = getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
+	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
+	private static final String PATH_ENTRY_INIT = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntryInit"; //$NON-NLS-1$
+	private static final String BUILDER = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/builder"; //$NON-NLS-1$
 	
 	/**
 	 * 
 	 */
 	private void configurePluginDebugOptions() {
 		if (isDebugging()) {
-			String option = Platform.getDebugOption(PATH_ENTRY);
-			if (option != null) {
-				ManagedBuildCPathEntryContainer.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			String pathInit = Platform.getDebugOption(PATH_ENTRY_INIT);
+			if (pathInit != null) {
+				ManagedBuildPathEntryContainerInitializer.VERBOSE = pathInit.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			}
+			String pathCalc = Platform.getDebugOption(PATH_ENTRY);
+			if (pathCalc != null) {
+				ManagedBuildCPathEntryContainer.VERBOSE = pathCalc.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			}
+			String builder = Platform.getDebugOption(BUILDER);
+			if (builder != null) {
+				GeneratedMakefileBuilder.VERBOSE = builder.equalsIgnoreCase("true") ; //$NON-NLS-1$
 			}
 		}
 	}

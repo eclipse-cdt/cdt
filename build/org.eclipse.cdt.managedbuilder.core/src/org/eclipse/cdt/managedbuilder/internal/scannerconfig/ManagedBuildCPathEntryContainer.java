@@ -64,11 +64,15 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	public static boolean VERBOSE = false;
 	
 	public static void outputTrace(String resourceName, String message) {
-		System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		if (VERBOSE) {
+			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		}
 	}
 
 	public static void outputError(String resourceName, String message) {
-		System.err.println(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		if (VERBOSE) {
+			System.err.println(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		}
 	}
 
 	/**
@@ -191,11 +195,14 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	 */
 	public IPathEntry[] getPathEntries() {
 		info = (ManagedBuildInfo) ManagedBuildManager.getBuildInfo(project);
-
-		// Load the toolchain-spec'd collector
+		if (info == null) {
+			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information is null");	//$NON-NLS-1$
+			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+		}
 		defaultTarget = info.getDefaultTarget();
 		if (defaultTarget == null) {
 			// The build information has not been loaded yet
+			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
 			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
 		}
 		ITarget parent = defaultTarget.getParent();
@@ -204,6 +211,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
 			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
 		}
+
 		// See if we can load a dynamic resolver
 		String baseTargetId = parent.getId();
 		IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(baseTargetId); 

@@ -60,29 +60,13 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 1.2 
  */
 public class GeneratedMakefileBuilder extends ACBuilder {
-	// String constants
-	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
-	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
-	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
-	private static final String BUILD_FINISHED = MESSAGE + ".finished";	//$NON-NLS-1$
-	private static final String NOTHING_BUILT = MESSAGE + ".no.build";	//$NON-NLS-1$
-	private static final String MAKE = MESSAGE + ".make";	//$NON-NLS-1$
-	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
-	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
-	private static final String CONSOLE_HEADER = MESSAGE + ".console.header";	//$NON-NLS-1$
-	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
-	private static final String TYPE_FULL = "ManagedMakeBuilder.type.full";	//$NON-NLS-1$
-	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
-
-	// Local variables
-	protected List resourcesToBuild;
-	protected List ruleList;
-	protected IManagedBuilderMakefileGenerator generator;
-	protected IProject[] referencedProjects;
 	
+	/**
+	 * @since 1.2
+	 */
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
-		private boolean buildNeeded = true;
 		private IManagedBuildInfo buildInfo;
+		private boolean buildNeeded = true;
 		private List reservedNames;
 		
 		/**
@@ -117,6 +101,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		private boolean isProjectFile(IResource resource) {
 			return reservedNames.contains(resource.getName()); 
 		}
+
+		public boolean shouldBuild() {
+			return buildNeeded;
+		}
 		
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
@@ -146,9 +134,42 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			return true;
 		}
+	}
 
-		public boolean shouldBuild() {
-			return buildNeeded;
+	// String constants
+	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
+	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
+	private static final String BUILD_FINISHED = MESSAGE + ".finished";	//$NON-NLS-1$
+	private static final String CONSOLE_HEADER = MESSAGE + ".console.header";	//$NON-NLS-1$
+	private static final String ERROR_HEADER = "GeneratedmakefileBuilder error [";	//$NON-NLS-1$
+	private static final String MAKE = MESSAGE + ".make";	//$NON-NLS-1$
+	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
+	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
+	private static final String NOTHING_BUILT = MESSAGE + ".no.build";	//$NON-NLS-1$
+	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
+	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
+	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
+	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace [";	//$NON-NLS-1$
+	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
+	private static final String TYPE_FULL = "ManagedMakeBuilder.type.full";	//$NON-NLS-1$
+	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
+	public static boolean VERBOSE = false;
+	
+	// Local variables
+	protected IManagedBuilderMakefileGenerator generator;
+	protected IProject[] referencedProjects;
+	protected List resourcesToBuild;
+	protected List ruleList;
+
+	public static void outputTrace(String resourceName, String message) {
+		if (VERBOSE) {
+			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
+		}
+	}
+
+	public static void outputError(String resourceName, String message) {
+		if (VERBOSE) {
+			System.err.println(ERROR_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
 		}
 	}
 
@@ -170,17 +191,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		// Get the build information
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info == null) {
+			outputError(getProject().getName(), "Build information was not found");	//$NON-NLS-1$
 			return referencedProjects;
 		}
 
 		// So let's figure out why we got called
 		if (kind == CLEAN_BUILD) {
+			outputTrace(getProject().getName(), "Clean build requested");	//$NON-NLS-1$
 			cleanBuild(monitor, info);
 		}
 		else if (kind == FULL_BUILD || info.needsRebuild()) {
+			outputTrace(getProject().getName(), "Full build needed/requested");	//$NON-NLS-1$
 			fullBuild(monitor, info);
 		}
 		else if (kind == AUTO_BUILD && info.needsRebuild()) {
+			outputTrace(getProject().getName(), "Autobuild requested, full build needed");	//$NON-NLS-1$
 			fullBuild(monitor, info);
 		}
 		else {
@@ -188,11 +213,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
 			IResourceDelta delta = getDelta(getProject());
 			if (delta == null) {
+				outputTrace(getProject().getName(), "Incremental build requested, full build needed");	//$NON-NLS-1$
 				fullBuild(monitor, info);
 			}
 			else {
 				delta.accept(visitor);
 				if (visitor.shouldBuild()) {
+					outputTrace(getProject().getName(), "Incremental build requested");	//$NON-NLS-1$
 					incrementalBuild(delta, info, monitor);
 				}
 			}
@@ -203,6 +230,19 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		
 		// Ask build mechanism to compute deltas for project dependencies next time
 		return referencedProjects;
+	}
+
+
+	/**
+	 * Check whether the build has been canceled. Cancellation requests 
+	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
+	 * 
+	 * @see org.eclipse.core.runtime.OperationCanceledException#OperationCanceledException()
+	 */
+	public void checkCancel(IProgressMonitor monitor) {
+		if (monitor != null && monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}
 	}
 
 	/**
@@ -224,19 +264,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			monitor.subTask(statusMsg);
 			checkCancel(monitor);
 			invokeMake(CLEAN_BUILD, buildDir, info, monitor);
-		}
-	}
-
-
-	/**
-	 * Check whether the build has been canceled. Cancellation requests 
-	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
-	 * 
-	 * @see org.eclipse.core.runtime.OperationCanceledException#OperationCanceledException()
-	 */
-	public void checkCancel(IProgressMonitor monitor) {
-		if (monitor != null && monitor.isCanceled()) {
-			throw new OperationCanceledException();
 		}
 	}
 
@@ -599,7 +626,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				epm.reportProblems();
 			}
 		} catch (Exception e) {
-			CCorePlugin.log(e);
+			ManagedBuilderCorePlugin.log(e);
 			forgetLastBuiltState();
 		} finally {
 			monitor.done();

@@ -141,8 +141,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 		private boolean matchQualifiedName(ITypeInfo info) {
 			IQualifiedTypeName qualifiedName = info.getQualifiedTypeName();
-			String[] segments = qualifiedName.segments();
-			if (fSegmentMatchers.length != segments.length)
+			if (fSegmentMatchers.length != qualifiedName.segmentCount())
 				return false;
 			
 			if (fMatchGlobalNamespace) {
@@ -152,10 +151,10 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			}
 			
 			boolean matchFound = true;
-			int max = Math.min(fSegmentMatchers.length, segments.length);
+			int max = Math.min(fSegmentMatchers.length, qualifiedName.segmentCount());
 			for (int i = 0; i < max; ++i) {
 				StringMatcher matcher = fSegmentMatchers[i];
-				String name = segments[i];
+				String name = qualifiedName.segment(i);
 				if (name == null || !matcher.match(name)) {
 					matchFound = false;
 					break;

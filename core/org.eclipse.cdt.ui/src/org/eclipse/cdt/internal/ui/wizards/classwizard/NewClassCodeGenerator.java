@@ -267,10 +267,9 @@ public class NewClassCodeGenerator {
         return insertPos;
     }
     private void beginNamespace(StringBuffer text) {
-        String[] segments = fNamespace.segments();
-        for (int i = 0; i < segments.length; ++i) {
+        for (int i = 0; i < fNamespace.segmentCount(); ++i) {
 	        text.append("namespace "); //$NON-NLS-1$
-	        text.append(segments[i]);
+	        text.append(fNamespace.segment(i));
 	        text.append(fLineDelimiter);
 	        text.append('{');
 	        text.append(fLineDelimiter);
@@ -279,8 +278,7 @@ public class NewClassCodeGenerator {
     }
 
     private void endNamespace(StringBuffer text) {
-        String[] segments = fNamespace.segments();
-        for (int i = 0; i < segments.length; ++i) {
+        for (int i = 0; i < fNamespace.segmentCount(); ++i) {
             text.append(fLineDelimiter);
 	        text.append("};"); //$NON-NLS-1$
 	        text.append(fLineDelimiter);

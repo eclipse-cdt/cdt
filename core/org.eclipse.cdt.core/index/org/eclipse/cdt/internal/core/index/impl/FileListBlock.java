@@ -63,9 +63,12 @@ public class FileListBlock extends Block {
 		try {
 			String[] paths= getPaths();
 			int i= fileNum - field.getInt4(0);
+			if(i >= paths.length) {	//fileNum was too large
+				return null;
+			}
 			resp= new IndexedFile(paths[i], fileNum);
 		} catch (Exception e) {
-			//fileNum too big
+			//Cover ourselves in case something happens getting the indexed file
 		}
 		return resp;
 	}

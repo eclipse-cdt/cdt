@@ -282,11 +282,13 @@ public class CMainTab extends CLaunchConfigurationTab {
 		setMessage(null);
 
 		String name = fProjText.getText().trim();
-		if (name.length() > 0) {
-			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-				setErrorMessage("Project does not exist");
-				return false;
-			}
+		if (name.length() == 0) {
+			setErrorMessage("Project not specified");
+			return false;
+		}
+		if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
+			setErrorMessage("Project does not exist");
+			return false;
 		}
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 
@@ -295,10 +297,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			setErrorMessage("Program not specified");
 			return false;
 		}
-		IPath path = Platform.getLocation().append(project.getFullPath());
-		path = path.append(name);
-
-		if (!ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path).exists()) {
+		if (!project.getFile(name).exists() ) {
 			setErrorMessage("Program does not exist");
 			return false;
 		}

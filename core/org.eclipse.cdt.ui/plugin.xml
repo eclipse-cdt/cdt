@@ -266,8 +266,20 @@
       <page
             objectClass="org.eclipse.core.resources.IProject"
             name="%CProjectPropertyPage.name"
+            adaptable="true"
             class="org.eclipse.cdt.internal.ui.preferences.CProjectPropertyPage"
             id="org.eclipse.cdt.ui.preferences.CProjectPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+		    adaptable="true"
+            name="%CIndexerPropertyPage.name"
+            class="org.eclipse.cdt.internal.ui.preferences.CIndexerPropertyPage"
+            id="org.eclipse.cdt.ui.preferences.CIndexerPropertyPage">
          <filter
                name="nature"
                value="org.eclipse.cdt.core.cnature">

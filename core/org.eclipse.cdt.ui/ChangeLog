@@ -1,3 +1,11 @@
+2002-11-13 David Inglis	
+	
+	* plugin.properties
+	* plugin.xml
+	* src/.../internal/ui/preferences/CIndexerPropertyPage.java
+	Added new property page on c project to enable/disable the indexing service.
+	
+	
 2002-11-06 Alain Magloire
 
 	Fix for Bugzilla 25869.

@@ -188,13 +188,11 @@ public class TCPSettingsBlock extends Observable {
 
 	private boolean portNumberIsValid( String portNumber ) {
 		try {
-			int port = Short.parseShort( portNumber );
-			if ( port < 0 )
-				return false;
+			int port = Integer.parseInt( portNumber );
+			return ( port > 0 && port <= 0xFFFF );
 		}
 		catch( NumberFormatException e ) {
 			return false;
 		}
-		return true;
 	}
 }

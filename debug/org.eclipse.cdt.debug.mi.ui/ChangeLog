@@ -1,3 +1,7 @@
+2004-11-11 Mikhail Khodjaiants
+	Fix for bug 75627: Incorrect limit to port numbers.
+	* TCPSettingsBlock.java
+
 2004-11-08 Mikhail Khodjaiants
 	Added the "Automatically refresh registers" and "Automatically refresh shared libraries"
 	preferences and properties.

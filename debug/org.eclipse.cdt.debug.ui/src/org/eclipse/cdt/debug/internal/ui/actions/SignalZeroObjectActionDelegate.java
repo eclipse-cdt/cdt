@@ -23,14 +23,14 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @since: Feb 4, 2003
  */
-public class SignalZeroActionDelegate implements IObjectActionDelegate
+public class SignalZeroObjectActionDelegate implements IObjectActionDelegate
 {
 	private IResumeWithoutSignal fTarget = null;
 
 	/**
-	 * Constructor for SignalZeroActionDelegate.
+	 * Constructor for SignalZeroObjectActionDelegate.
 	 */
-	public SignalZeroActionDelegate()
+	public SignalZeroObjectActionDelegate()
 	{
 		super();
 	}

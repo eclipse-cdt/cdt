@@ -1,3 +1,8 @@
+2003-02-07 Mikhail Khodjaiants
+	Rename 'SignalZeroActionDelegate' to 'SignalZeroObjectActionDelegate'.
+	* SignalZeroObjectActionDelegate.java
+	* plugin.xml
+
 2003-02-05 Mikhail Khodjaiants
 	Removed warnings.
 	* AddAddressBreakpointActionDelegate.java

@@ -537,17 +537,17 @@
             </enablement>
          </action>
          <action
-               menubarPath="additions"
-               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
-               icon="icons/full/clcl16/jump_co.gif"
                label="%JumpToLineAction.label"
+               icon="icons/full/clcl16/jump_co.gif"
+               helpContextId="jump_to_line_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
-               helpContextId="jump_to_line_action_context">
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -674,13 +674,13 @@
             </enablement>
          </action>
          <action
-               menubarPath="additions"
                label="%JumpToLineAction.label"
                icon="icons/full/clcl16/jump_co.gif"
+               helpContextId="jump_to_line_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
-               helpContextId="jump_to_line_action_context">
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
             <enablement>
                <pluginState
                      value="activated"
@@ -767,10 +767,10 @@
                label="%SignalZeroAction.label"
                icon="icons/full/clcl16/signal0_co.gif"
                helpContextId="signal_zero_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroObjectActionDelegate"
                menubarPath="threadGroup"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroActionDelegate">
+               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroObjectActionDelegate">
             <enablement>
                <pluginState
                      value="activated"

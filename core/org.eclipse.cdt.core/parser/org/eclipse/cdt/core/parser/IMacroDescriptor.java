@@ -15,4 +15,5 @@ public interface IMacroDescriptor {
 	List getTokenizedExpansion();
 	String getName();
 	String getSignature();
+	boolean compatible(IMacroDescriptor descriptor);
 }

@@ -78,14 +78,12 @@ public class ScannerException extends Exception {
         		return true;
         	if( mode == ParserMode.COMPLETE_PARSE )
 				if( this == ErrorCode.POUND_ERROR ||
-					this == ErrorCode.DEFINITION_NOT_FOUND ||
 					this == ErrorCode.UNBALANCED_CONDITIONALS ||		  
 					this == ErrorCode.MALFORMED_MACRO_DEFN ||
 					this == ErrorCode.UNEXPECTED_EOF  ||
 					this == ErrorCode.MACRO_USAGE_ERROR  ||
 					this == ErrorCode.MACRO_PASTING_ERROR ||
-					this == ErrorCode.EXPRESSION_EVALUATION_ERROR || 
-					this == ErrorCode.ATTEMPTED_REDEFINITION )
+					this == ErrorCode.EXPRESSION_EVALUATION_ERROR )
 						return true;
 			return false;
         }

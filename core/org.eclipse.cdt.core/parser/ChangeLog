@@ -1,4 +1,8 @@
-2003-10-22 John Camelon
+2003-10-24 John Camelon
+	Fixed Bug 45476 : preprocessor macro "defined" not handled correctly 
+	Fixed Bug 45477 : macro redefines prevent further parsing 
+
+2003-10-24 John Camelon
 	Fixed Bug 39542 : Parser fails on 'struct' parameter types 
 	Fixed Bug 39549 : Designated initializers are not supported (ANSI C99) 
 	Fixed Bug 39551 : Complex and imaginary numbers are not supported (ANSI C99) 

@@ -1,3 +1,9 @@
+2003-10-15 Mikhail Khodjaiants
+	Improving the source search algorithms.
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+
 2003-10-14 Mikhail Khodjaiants
 	Improved the source search algorithm.
 	* CProjectSourceLocation.java

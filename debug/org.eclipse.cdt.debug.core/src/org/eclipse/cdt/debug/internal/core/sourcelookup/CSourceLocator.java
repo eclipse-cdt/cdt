@@ -6,7 +6,6 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -21,7 +20,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xerces.dom.DocumentImpl;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
@@ -36,10 +34,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -122,23 +118,19 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			String fileName = info.getFile();
 			if ( fileName != null && fileName.length() > 0 )
 			{
-				result = findFileByAbsolutePath( fileName );
-				if ( result == null )
+				ICSourceLocation[] locations = getSourceLocations();
+				for ( int i = 0; i < locations.length; ++i )
 				{
-					ICSourceLocation[] locations = getSourceLocations();
-					for ( int i = 0; i < locations.length; ++i )
+					try
 					{
-						try
-						{
-							result = locations[i].findSourceElement( fileName );
-						}
-						catch( CoreException e )
-						{
-							// do nothing
-						}
-						if ( result != null )
-							break;
+						result = locations[i].findSourceElement( fileName );
 					}
+					catch( CoreException e )
+					{
+						// do nothing
+					}
+					if ( result != null )
+						break;
 				}
 			}
 		}		
@@ -165,7 +157,10 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			{
 				try
 				{
-					if ( locations[i].findSourceElement( resource.getLocation().toOSString() ) != null )
+					Object result = locations[i].findSourceElement( resource.getLocation().toOSString() );
+					if ( result instanceof IFile && ((IFile)result).equals( resource ) )
+						return true;
+					if ( result instanceof List && ((List)result).contains( resource ) )
 						return true;
 				}
 				catch( CoreException e )
@@ -248,29 +243,6 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		return false;
  	}
 
-	private Object findFileByAbsolutePath( String fileName )
-	{
-		File file = new File( fileName );
-		if ( file.isAbsolute() && file.exists() )
-		{
-			try
-			{
-				Path path = new Path( file.getCanonicalPath() );
-				// Try for a file in another workspace project
-				IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-				if ( f != null && f.exists() ) 
-				{
-					return f;
-				} 
-				return new FileStorage( path );
-			}
-			catch( IOException e )
-			{
-			}
-		}
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#findSourceElement(String)
 	 */
@@ -279,23 +251,19 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		Object result = null;
 		if ( fileName != null && fileName.length() > 0 )
 		{
-			result = findFileByAbsolutePath( fileName );
-			if ( result == null )
+			ICSourceLocation[] locations = getSourceLocations();
+			for ( int i = 0; i < locations.length; ++i )
 			{
-				ICSourceLocation[] locations = getSourceLocations();
-				for ( int i = 0; i < locations.length; ++i )
+				try
 				{
-					try
-					{
-						result = locations[i].findSourceElement( fileName );
-					}
-					catch( CoreException e )
-					{
-						// do nothing
-					}
-					if ( result != null )
-						break;
+					result = locations[i].findSourceElement( fileName );
 				}
+				catch( CoreException e )
+				{
+					// do nothing
+				}
+				if ( result != null )
+					break;
 			}
 		}
 		return result;

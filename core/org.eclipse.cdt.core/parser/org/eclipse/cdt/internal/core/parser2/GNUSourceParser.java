@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
  * 
  * @author jcamelon
  */
-public class Parser2 {
+public class GNUSourceParser  {
     protected final ParserMode mode;
 
     protected static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$
@@ -71,12 +71,11 @@ public class Parser2 {
         throw backtrack;
     }
 
-    //TODO this stuff needs to be encapsulated by IParserData
     protected final IParserLogService log;
 
-    protected ParserLanguage language = ParserLanguage.CPP;
+    protected final ParserLanguage language;
 
-    protected IScanner scanner;
+    protected final IScanner scanner;
 
     protected IToken currToken;
 
@@ -127,7 +126,7 @@ public class Parser2 {
     /**
      * @return Returns the log.
      */
-    public IParserLogService getLog() {
+    protected IParserLogService getLog() {
         return log;
     }
 
@@ -140,7 +139,7 @@ public class Parser2 {
      * @throws EndOfFileException
      *             if looking ahead encounters EOF, throw EndOfFile
      */
-    public IToken LA(int i) throws EndOfFileException {
+    protected IToken LA(int i) throws EndOfFileException {
 
         if (isCancelled) {
             throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
@@ -168,7 +167,7 @@ public class Parser2 {
      * @throws EndOfFileException
      *             if looking ahead encounters EOF, throw EndOfFile
      */
-    public int LT(int i) throws EndOfFileException {
+    protected int LT(int i) throws EndOfFileException {
         return LA(i).getType();
     }
 
@@ -179,7 +178,7 @@ public class Parser2 {
      * @throws EndOfFileException
      *             If there is no token to consume.
      */
-    public IToken consume() throws EndOfFileException {
+    protected IToken consume() throws EndOfFileException {
 
         if (currToken == null)
             currToken = fetchToken();
@@ -198,7 +197,7 @@ public class Parser2 {
      * @throws BacktrackException
      *             If LT(1) != type
      */
-    public IToken consume(int type) throws EndOfFileException,
+    protected IToken consume(int type) throws EndOfFileException,
             BacktrackException {
         if (LT(1) == type)
             return consume();
@@ -216,7 +215,7 @@ public class Parser2 {
      * @throws EndOfFileException
      *             If there are no more tokens.
      */
-    public IToken mark() throws EndOfFileException {
+    protected IToken mark() throws EndOfFileException {
         if (currToken == null)
             currToken = fetchToken();
         return currToken;
@@ -229,7 +228,7 @@ public class Parser2 {
      *            The point that we wish to restore to.
      *  
      */
-    public void backup(IToken mark) {
+    protected void backup(IToken mark) {
         currToken = mark;
         lastToken = null; // this is not entirely right ...
     }
@@ -726,7 +725,7 @@ public class Parser2 {
         return conditionalExpression(scope);
     }
 
-    public Object expression(Object scope) throws BacktrackException,
+    protected Object expression(Object scope) throws BacktrackException,
             EndOfFileException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -1121,7 +1120,7 @@ public class Parser2 {
      * @param methodName
      * @param e
      */
-    public void logException(String methodName, Exception e) {
+    protected void logException(String methodName, Exception e) {
         if (!(e instanceof EndOfFileException) && e != null && log.isTracing()) {
             StringBuffer buffer = new StringBuffer();
             buffer.append("Parser: Unexpected exception in "); //$NON-NLS-1$
@@ -1285,7 +1284,7 @@ public class Parser2 {
      * @param expression
      * @throws BacktrackException
      */
-    public Object shiftExpression(Object scope) throws BacktrackException,
+    protected Object shiftExpression(Object scope) throws BacktrackException,
             EndOfFileException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -1535,7 +1534,7 @@ public class Parser2 {
     /**
      * @throws BacktrackException
      */
-    public Object typeId(Object scope, boolean skipArrayModifiers)
+    protected Object typeId(Object scope, boolean skipArrayModifiers)
             throws EndOfFileException, BacktrackException {
         IToken mark = mark();
         ITokenDuple name = null;
@@ -2020,7 +2019,7 @@ public class Parser2 {
      * @param expression
      * @throws BacktrackException
      */
-    public Object unaryExpression(Object scope) throws EndOfFileException,
+    protected Object unaryExpression(Object scope) throws EndOfFileException,
             BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -2895,17 +2894,8 @@ public class Parser2 {
      * 
      * @see org.eclipse.cdt.internal.core.parser.IParserData#getLastToken()
      */
-    public IToken getLastToken() {
+    protected IToken getLastToken() {
         return lastToken;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.IParserData#getParserLanguage()
-     */
-    public final ParserLanguage getParserLanguage() {
-        return language;
     }
 
     /**
@@ -2914,7 +2904,7 @@ public class Parser2 {
      * @throws BacktrackException
      *             request a backtrack
      */
-    public IToken identifier() throws EndOfFileException, BacktrackException {
+    protected IToken identifier() throws EndOfFileException, BacktrackException {
         IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its
                                                     // not that
         return first;
@@ -2998,16 +2988,14 @@ public class Parser2 {
      *            TODO
      *  
      */
-    public Parser2(IScanner scanner, ParserMode mode,
+    public GNUSourceParser(IScanner scanner, ParserMode mode,
             IProblemRequestor callback, ParserLanguage language,
             IParserLogService log, IParserExtensionConfiguration config) {
         this.scanner = scanner;
         this.language = language;
         this.log = log;
         this.mode = mode;
-        requestor = callback;
-        if (this.mode == ParserMode.QUICK_PARSE)
-            constructInitializersInDeclarations = false;
+        this.requestor = callback;
         allowCPPRestrict = config.allowRestrictPointerOperatorsCPP();
         supportTypeOfUnaries = config.supportTypeofUnaryExpressionsCPP();
         supportAlignOfUnaries = config.supportAlignOfUnaryExpressionCPP();
@@ -4013,13 +4001,11 @@ public class Parser2 {
 
             Declarator declarator = null;
             if (LT(1) != IToken.tSEMI) {
-                declarator = initDeclarator(sdw, strategy,
-                        constructInitializersInDeclarations);
+                declarator = initDeclarator(sdw, strategy );
 
                 while (LT(1) == IToken.tCOMMA) {
                     consume();
-                    initDeclarator(sdw, strategy,
-                            constructInitializersInDeclarations);
+                    initDeclarator(sdw, strategy );
                 }
             }
 
@@ -4246,9 +4232,6 @@ public class Parser2 {
 
     }
 
-    protected boolean constructInitializersInParameters = true;
-
-    protected boolean constructInitializersInDeclarations = true;
 
     /**
      * This routine parses a parameter declaration
@@ -4295,8 +4278,7 @@ public class Parser2 {
             }
 
         if (LT(1) != IToken.tSEMI)
-            initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION,
-                    constructInitializersInParameters);
+            initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION);
 
         if (lastToken != null)
             sdw.setEndingOffsetAndLineNumber(lastToken.getEndOffset(),
@@ -4762,16 +4744,16 @@ public class Parser2 {
      *             request a backtrack
      */
     protected Declarator initDeclarator(DeclarationWrapper sdw,
-            SimpleDeclarationStrategy strategy, boolean constructInitializers)
+            SimpleDeclarationStrategy strategy )
             throws EndOfFileException, BacktrackException {
         Declarator d = declarator(sdw, sdw.getScope(), strategy);
 
         try {
             //			astFactory.constructExpressions(constructInitializers);
             if (language == ParserLanguage.CPP)
-                optionalCPPInitializer(d, constructInitializers);
+                optionalCPPInitializer(d );
             else if (language == ParserLanguage.C)
-                optionalCInitializer(d, constructInitializers);
+                optionalCInitializer(d );
             sdw.addDeclarator(d);
             return d;
         } finally {
@@ -4779,8 +4761,7 @@ public class Parser2 {
         }
     }
 
-    protected void optionalCPPInitializer(Declarator d,
-            boolean constructInitializers) throws EndOfFileException,
+    protected void optionalCPPInitializer(Declarator d) throws EndOfFileException,
             BacktrackException {
         // handle initializer
         Object scope = d.getDeclarationWrapper().getScope();
@@ -4789,8 +4770,7 @@ public class Parser2 {
             consume(IToken.tASSIGN);
             throwAwayMarksForInitializerClause(d);
             try {
-                Object clause = initializerClause(scope,
-                        constructInitializers);
+                Object clause = initializerClause(scope);
                 d.setInitializerClause(clause);
             } catch (EndOfFileException eof) {
                 failParse();
@@ -4817,15 +4797,14 @@ public class Parser2 {
             d.getPointerOperatorNameDuple().getLastToken().setNext(null);
     }
 
-    protected void optionalCInitializer(Declarator d,
-            boolean constructInitializers) throws EndOfFileException,
+    protected void optionalCInitializer(Declarator d ) throws EndOfFileException,
             BacktrackException {
         final Object scope = d.getDeclarationWrapper().getScope();
         if (LT(1) == IToken.tASSIGN) {
             consume(IToken.tASSIGN);
             throwAwayMarksForInitializerClause(d);
             d.setInitializerClause(cInitializerClause(scope,
-                    Collections.EMPTY_LIST, constructInitializers));
+                    Collections.EMPTY_LIST ));
         }
     }
 
@@ -4834,7 +4813,7 @@ public class Parser2 {
      * @return
      */
     protected Object cInitializerClause(Object scope,
-            List designators, boolean constructInitializers)
+            List designators)
             throws EndOfFileException, BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -4853,7 +4832,7 @@ public class Parser2 {
                     if (LT(1) == IToken.tASSIGN)
                         consume(IToken.tASSIGN);
                 Object initializer = cInitializerClause(scope,
-                        newDesignators, constructInitializers);
+                        newDesignators);
                 initializerList.add(initializer);
                 // can end with just a '}'
                 if (LT(1) == IToken.tRBRACE)
@@ -4874,8 +4853,6 @@ public class Parser2 {
             }
             // consume the closing brace
             consume(IToken.tRBRACE);
-            if (!constructInitializers)
-                return null;
             return null;
         }
         // if we get this far, it means that we have not yet succeeded
@@ -4884,8 +4861,6 @@ public class Parser2 {
         try {
             Object assignmentExpression = assignmentExpression(scope);
             try {
-                if (!constructInitializers)
-                    return null;
                 return null;
             } catch (Exception e) {
                 int endOffset = (lastToken != null) ? lastToken.getEndOffset()
@@ -4904,8 +4879,7 @@ public class Parser2 {
     /**
      *  
      */
-    protected Object initializerClause(Object scope,
-            boolean constructInitializers) throws EndOfFileException,
+    protected Object initializerClause(Object scope ) throws EndOfFileException,
             BacktrackException {
         if (LT(1) == IToken.tLBRACE) {
             IToken t = consume(IToken.tLBRACE);
@@ -4913,8 +4887,6 @@ public class Parser2 {
             if (LT(1) == (IToken.tRBRACE)) {
                 last = consume(IToken.tRBRACE);
                 try {
-                    if (!constructInitializers)
-                        return null;
                     return null;
                 } catch (Exception e) {
                     logException(
@@ -4929,8 +4901,7 @@ public class Parser2 {
             List initializerClauses = null;
             int startingOffset = LA(1).getOffset();
             for (;;) {
-                Object clause = initializerClause(scope,
-                        constructInitializers);
+                Object clause = initializerClause(scope );
                 if (clause != null) {
                     if (initializerClauses == null)
                         initializerClauses = new ArrayList();
@@ -4942,8 +4913,6 @@ public class Parser2 {
             }
             last = consume(IToken.tRBRACE);
             try {
-                if (!constructInitializers)
-                    return null;
                 return null;
             } catch (Exception e) {
                 logException("initializerClause_2:createInitializerClause", e); //$NON-NLS-1$
@@ -4965,8 +4934,6 @@ public class Parser2 {
         Object assignmentExpression = assignmentExpression(scope);
         int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
         try {
-            if (!constructInitializers)
-                return null;
             return null;
         } catch (Exception e) {
             logException("initializerClause_3:createInitializerClause", e); //$NON-NLS-1$
@@ -6067,24 +6034,6 @@ public class Parser2 {
     protected Object compilationUnit;
 
     protected IToken simpleDeclarationMark;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.IParser#getLanguage()
-     */
-    public ParserLanguage getLanguage() {
-        return language;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser.IParser#setLanguage(Language)
-     */
-    public void setLanguage(ParserLanguage l) {
-        language = l;
-    }
 
     /**
      *  

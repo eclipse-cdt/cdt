@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.parser2.ANSIParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.IParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
-import org.eclipse.cdt.internal.core.parser2.Parser2;
+import org.eclipse.cdt.internal.core.parser2.GNUSourceParser;
 
 /**
  * @author jcamelon
@@ -1389,7 +1389,7 @@ public class QuickParser2Tests extends TestCase {
                 .toCharArray()), new ScannerInfo(), ParserMode.QUICK_PARSE,
                 lang, NULL_REQUESTOR,
                 NULL_LOG, Collections.EMPTY_LIST);
-        Parser2 parser2 = new Parser2(scanner, ParserMode.QUICK_PARSE, collector,
+        GNUSourceParser parser2 = new GNUSourceParser(scanner, ParserMode.QUICK_PARSE, collector,
                 lang, NULL_LOG,
                 config );
         boolean answer = parser2.parse();

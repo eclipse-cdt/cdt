@@ -1,3 +1,8 @@
+2003-05-30 Hoda Amer
+	Added the new class wizard on May 27th
+	Fixed the inclusion problem on May 28th
+	Fixed the non-cmodel selection problem May 30th.
+	
 2003-04-27 Alain Magloire
 
 	PR 36759, the outline does not update

@@ -197,7 +197,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(composite);
-
+		
 	}
 	
 	protected void createClassNameControls(Composite composite, int nColumns) {		
@@ -349,12 +349,27 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			List list= ((IStructuredSelection)sel).toList();
 			if (list.size() == 1) {
 				Object element= list.get(0);
-				if ( (element instanceof ICElement) 
-				//&& ((ICElement)element).getElementType() == ICElement.C_CCONTAINER)
-				) 
-				{
+				if (element instanceof ICElement) {
 					return (ICElement)element;
-				}
+				} 
+			}
+		}
+		return null;
+	}
+
+	private IResource getSelectionResourceElement(IStructuredSelection sel) {
+		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
+			List list= ((IStructuredSelection)sel).toList();
+			if (list.size() == 1) {
+				Object element= list.get(0);
+				if (element instanceof IResource) {
+					if(element instanceof IFile){
+						IFile file = (IFile)element;
+						return (IResource) file.getParent();
+					}else {
+						return (IResource)element;
+					}
+				} 
 			}
 		}
 		return null;
@@ -380,35 +395,39 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	
 	private ArrayList findClassElementsInProject(){		
-		if(	elementsOfTypeClassInProject == null ){
-			elementsOfTypeClassInProject = new ArrayList();		
-			IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					if (monitor == null) {
-						monitor= new NullProgressMonitor();
-					}				
-					monitor.beginTask("", 5); //$NON-NLS-1$
-					try{
-						if(eSelection != null){
-							ICProject cProject = eSelection.getCProject();
-							getChildrenOfTypeClass((IParent)cProject, elementsOfTypeClassInProject, monitor, 1);
-						}
-						monitor.worked(5);
-					} finally{
-						monitor.done();
-					}
+		if(eSelection == null){
+			return new ArrayList();			
+		}
+
+		if(	elementsOfTypeClassInProject != null ){
+			return elementsOfTypeClassInProject;
+		}
+
+		elementsOfTypeClassInProject = new ArrayList();		
+		IRunnableWithProgress runnable= new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				if (monitor == null) {
+					monitor= new NullProgressMonitor();
+				}				
+				monitor.beginTask(NewWizardMessages.getString("NewClassWizardPage.operations.getProjectClasses"), 5); //$NON-NLS-1$
+				try{
+					ICProject cProject = eSelection.getCProject();
+					getChildrenOfTypeClass((IParent)cProject, elementsOfTypeClassInProject, monitor, 1);
+					monitor.worked(5);
+				} finally{
+					monitor.done();
 				}
-			};
-			
-			try {
-				getWizard().getContainer().run(false, true, runnable);
-			} catch (InvocationTargetException e) {				
-			} catch (InterruptedException e) {
-			} 
-			finally {
 			}
-		}							 
-		return elementsOfTypeClassInProject;
+		};
+		
+		try {
+			getWizard().getContainer().run(false, true, runnable);
+		} catch (InvocationTargetException e) {				
+		} catch (InterruptedException e) {
+		} 
+		finally {
+		}
+		return elementsOfTypeClassInProject;				
 	}
 	
 	protected ICElement chooseBaseClass(){
@@ -613,6 +632,14 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	// -------------Helper methods for creating the class -------
 	protected IPath getSelectionPath(){
+		if(eSelection == null){
+			IResource resourceSelection = getSelectionResourceElement(currentSelection);
+			if(resourceSelection != null){
+				return resourceSelection.getLocation().makeAbsolute();
+			}
+			else
+				return null;
+		}		
 		// if it is a file, return the parent path
 		if(eSelection instanceof ITranslationUnit)
 			return (eSelection.getParent().getPath());

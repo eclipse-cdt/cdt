@@ -85,7 +85,7 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 		ColorFieldEditor background = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_BACKGROUND_RGB, "Background Color:", getFieldEditorParent() );
 		ColorFieldEditor address = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_ADDRESS_RGB, "Address Color:", getFieldEditorParent() );
 		ColorFieldEditor changed = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_CHANGED_RGB, "Changed Value Color:", getFieldEditorParent() );
-		ColorFieldEditor dirty = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_DIRTY_RGB, "Modified Value Color:", getFieldEditorParent() );
+//		ColorFieldEditor dirty = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_DIRTY_RGB, "Modified Value Color:", getFieldEditorParent() );
 
 		FontFieldEditor font = new FontFieldEditor( ICDebugPreferenceConstants.MEMORY_FONT, "Font:", getFieldEditorParent() );
 
@@ -93,7 +93,7 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 		addField( background );
 		addField( address );
 		addField( changed );
-		addField( dirty );
+//		addField( dirty );
 		addField( font );
 
 		StringFieldEditor paddingChar = new StringFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, "Padding Character:", 1, getFieldEditorParent() );

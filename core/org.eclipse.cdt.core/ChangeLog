@@ -1,3 +1,16 @@
+2003-09-04 Alain Magloire
+
+	The IProgressMonitor.setCancelled() is incorrect, it tries to access
+	widget withour wrapping things in Display.async().  Even if the IProgressMonitor
+	is a "core" Class.  We workaround this by not using the method.
+
+	PR 42501.  When the clock setting is incorrect GNU Make will throw something like:
+		make: *** Warning: clock File`...` has modification in the future
+	It was show as an error.  Thanks to Brent for the catch.
+
+	* src/org/eclipse/cdt/internal/core/CBuilder.java
+	* src/org/eclipse/cdt/internal/core/errorparsers/MakeErrorParser.java
+	
 2003-09-04 Hoda Amer
 	- Changed the ASTExpression of the complete package to store the
 	whole ITOkenDuple for the typeId instead of just the string.

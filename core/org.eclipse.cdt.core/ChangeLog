@@ -1,3 +1,12 @@
+2005-03-03 Alain Magloire
+	Part of plan item 79518: for PathEntry variable manager.
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/resources/IPathEntryVariableChangeListener.java
+	* src/org/eclipse/cdt/core/resources/IPathEntryVariableManager.java
+	* src/org/eclipse/cdt/core/resources/PathEntryVariableManager.java
+	* src/org/eclipse/cdt/internal/core/PathEntryVariableManager.java
+
 2005-03-03 Vladimir Hirsl
 	Small change for enabling generation of path entry container change events.
 	* model/org/eclipse/cdt/core/model/PathEntryContainerChanged.java

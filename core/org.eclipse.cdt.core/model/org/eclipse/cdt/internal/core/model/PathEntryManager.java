@@ -459,7 +459,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				if (hasPathEntryProblemMarkersChange(project, problems)) {
 					generateMarkers(project, problems);
 				}
-
 			}
 
 			// Check for duplication in the sources
@@ -1805,11 +1804,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	 * Record a new marker denoting a pathentry problem
 	 */
 	void createPathEntryProblemMarker(IProject project, ICModelStatus status) {
-
-		IMarker marker = null;
 		int severity = code2Severity(status);
 		try {
-			marker = project.createMarker(ICModelMarker.PATHENTRY_PROBLEM_MARKER);
+			IMarker marker = project.createMarker(ICModelMarker.PATHENTRY_PROBLEM_MARKER);
 			marker.setAttributes(new String[]{IMarker.MESSAGE, IMarker.SEVERITY, IMarker.LOCATION,
 					ICModelMarker.PATHENTRY_FILE_FORMAT,}, new Object[]{status.getMessage(), new Integer(severity), "pathentry",//$NON-NLS-1$
 					"false",//$NON-NLS-1$

@@ -25,10 +25,12 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
+import org.eclipse.cdt.internal.core.PathEntryVariableManager;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
@@ -116,7 +118,9 @@ public class CCorePlugin extends Plugin {
 	private CDescriptorManager fDescriptorManager = new CDescriptorManager();
 
 	private CoreModel fCoreModel;
-	
+
+	private PathEntryVariableManager fPathEntryVariableManager;
+
 	// -------- static methods --------
 
 	static {
@@ -215,6 +219,11 @@ public class CCorePlugin extends Plugin {
 			if (cdtLog != null) {
 				cdtLog.shutdown();
 			}
+
+			if (fPathEntryVariableManager != null) {
+				fPathEntryVariableManager.shutdown();
+			}
+
 			savePluginPreferences();
 		} finally {
 			super.stop(context);
@@ -245,6 +254,9 @@ public class CCorePlugin extends Plugin {
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
 
 		// Start file type manager
+		fPathEntryVariableManager = new PathEntryVariableManager();
+		fPathEntryVariableManager.startup();
+
 	}
     
     
@@ -598,6 +610,10 @@ public class CCorePlugin extends Plugin {
 		return fCoreModel;
 	}
 
+	public IPathEntryVariableManager getPathEntryVariableManager() {
+		return fPathEntryVariableManager;
+	}
+
 	/**
 	 * @param project
 	 * @return
@@ -853,9 +869,9 @@ public class CCorePlugin extends Plugin {
 	/**
 	 * Configure the plugin with respect to option settings defined in ".options" file
 	 */
-	public void configurePluginDebugOptions(){
+	public void configurePluginDebugOptions() {
 		
-		if(CCorePlugin.getDefault().isDebugging()){
+		if(CCorePlugin.getDefault().isDebugging()) {
 			String option = Platform.getDebugOption(PARSER);
 			if(option != null) Util.VERBOSE_PARSER = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		
@@ -903,8 +919,7 @@ public class CCorePlugin extends Plugin {
 		return getPluginPreferences().getBoolean(PREF_USE_STRUCTURAL_PARSE_MODE);
 	}
 	
-	public CDOM getDOM()
-	{
+	public CDOM getDOM() {
 	    return CDOM.getInstance();
 	}
 

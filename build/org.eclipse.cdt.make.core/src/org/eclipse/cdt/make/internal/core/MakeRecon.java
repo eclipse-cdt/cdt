@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringReader;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPath;
@@ -29,33 +29,52 @@ public class MakeRecon extends OutputStream {
 	IPath directory;
 	IProgressMonitor monitor;
 	OutputStream console;
-	BufferedReader log;
+	MyList log;
 	StringBuffer currentLine;
-	String expectation;
 
-	public MakeRecon(
-		IPath buildCommand,
-		String[] buildArguments,
-		String[] env,
-		IPath workingDirectory,
-		IProgressMonitor mon,
-		OutputStream cos) {
-		make = buildCommand;
-		if (buildArguments != null) {
-			args = new String[buildArguments.length + 1];
-			args[0] = "-n";
-			System.arraycopy(buildArguments, 0, args, 1, buildArguments.length);
-		} else {
-			args = new String[] { "-n" };
+	class MyList extends ArrayList {
+		public void removeInterval (int start, int len) {
+			removeRange(start, len);
 		}
+	}
+
+	public MakeRecon(IPath buildCommand, String[] buildArguments,
+		String[] env, IPath workingDirectory, IProgressMonitor mon, OutputStream cos) {
+		this(buildCommand, new String[]{"-n"}, buildArguments, env, workingDirectory, mon, cos);
+	}
+
+	public MakeRecon(IPath buildCommand, String[] options, String[] buildArguments,
+		String[] env, IPath workingDirectory, IProgressMonitor mon, OutputStream cos) {
+
+		make = buildCommand;
+
+		args = new String[0];
+		if (options != null) {
+			String[]array = new String[args.length + options.length];
+			System.arraycopy(args, 0, array, 0, args.length);
+			System.arraycopy(options, 0, array, args.length, options.length);
+			args = array;
+		}
+		if (buildArguments != null) {
+			String[] array = new String[args.length + buildArguments.length];
+			System.arraycopy(args, 0, array, 0, args.length);
+			System.arraycopy(buildArguments, 0, array, args.length, buildArguments.length);
+			args = array;
+		}
+
 		environ = env;
 		directory = workingDirectory;
 		monitor = mon;
 		console = cos;
 		currentLine = new StringBuffer();
+		log = new MyList();
+
+		// Get the buffer log.
+		invokeMakeRecon();
+
 	}
 
-	public void invokeMakeRecon() {
+	private void invokeMakeRecon() {
 		int i = 0;
 		String[] array = new String[args.length + 1];
 		array[0] = make.toOSString();
@@ -67,10 +86,9 @@ public class MakeRecon extends OutputStream {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			// Swallow the output
 			String line;
-			StringBuffer sb = new StringBuffer();
 			try {
 				while ((line = reader.readLine()) != null) {
-					sb.append(line).append('\n');
+					log.add(line);
 					i++;
 				}
 			} catch (IOException e) {
@@ -80,13 +98,11 @@ public class MakeRecon extends OutputStream {
 			} catch (IOException e) {
 			}
 			p.destroy();
-			log = new BufferedReader(new StringReader(sb.toString()));
+			log.trimToSize();
 		} catch (IOException e1) {
 			i = IProgressMonitor.UNKNOWN;
 		}
-		if (monitor != null) {
-			monitor.beginTask("", i);
-		}
+		monitor.beginTask("", i);
 	}
 
 	/**
@@ -96,6 +112,7 @@ public class MakeRecon extends OutputStream {
 		if (console != null) {
 			console.close();
 		}
+		monitor.done();
 	}
 
 	/**
@@ -155,29 +172,23 @@ public class MakeRecon extends OutputStream {
 	}
 
 	private void processLine(String line) {
-		if (expectation == null) {
-			try {
-				expectation = log.readLine();
-								if (expectation != null) {
-									String show;
-									if (expectation.length() > 150) {
-										show = expectation.substring(0, 150);
-									} else {
-										show = expectation;
-									}
-									monitor.subTask(show);
-								}
-			} catch (IOException e) {
-			}
-			if (expectation == null) {
-				expectation = "";
+		int found = -1;
+		for (int i = 0; i < log.size(); i++) {
+			String s = (String)log.get(i);
+			if (s.startsWith(line)) {
+				found = i;
+				break;
 			}
 		}
-		if (expectation.startsWith(line)) {
-			expectation = null;
-			if (monitor != null) {
-				monitor.worked(1);
+
+		if (found != -1) {
+			String show = (String)log.get(found);
+			if (show.length() > 50) {
+				show = show.substring(0, 50);
 			}
-		}
+			monitor.subTask(show);
+			monitor.worked(found + 1);
+			log.removeInterval(0, found + 1);
+		} 
 	}
 }

@@ -26,7 +26,7 @@ public class LocalRunLaunchConfigurationTabGroup extends AbstractLaunchConfigura
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode)  {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new CMainTab(),
+			new CMainTab(true),
 			new CArgumentsTab(),
 			new MigratingCEnvironmentTab(),
 			new CDebuggerTab(false),

@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -119,8 +120,9 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 				command.add(exePath.toOSString());
 				command.addAll(Arrays.asList(arguments));
 				String[] commandArray = (String[]) command.toArray(new String[command.size()]);
+				boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, false);
 				monitor.worked(5);
-				Process process = exec(commandArray, getEnvironment(config), wd);
+				Process process = exec(commandArray, getEnvironment(config), wd, usePty);
 				monitor.worked(3);
 				DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 			}
@@ -145,14 +147,17 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 	 *         cancelled
 	 * @see Runtime
 	 */
-	protected Process exec(String[] cmdLine, String[] environ, File workingDirectory) throws CoreException {
+	protected Process exec(String[] cmdLine, String[] environ, File workingDirectory, boolean usePty) throws CoreException {
 		Process p = null;
 		try {
-
 			if (workingDirectory == null) {
 				p = ProcessFactory.getFactory().exec(cmdLine, environ);
 			} else {
-				p = ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory);
+				if (usePty && PTY.isSupported()) {
+					p = ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory, new PTY());
+				} else {
+					p = ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory);
+				}
 			}
 		} catch (IOException e) {
 			if (p != null) {
@@ -173,7 +178,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 			if (handler != null) {
 				Object result = handler.handleStatus(status, this);
 				if (result instanceof Boolean && ((Boolean) result).booleanValue()) {
-					p = exec(cmdLine, environ, null);
+					p = exec(cmdLine, environ, null, usePty);
 				}
 			}
 		}

@@ -516,15 +516,7 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 			if ( type != null && isShowVariableTypeNames() ) {
 				String typeName = getVariableTypeName( type );
 				if ( typeName != null && typeName.length() > 0 ) {
-					label.append( typeName );
-					if ( type.isArray() ) {
-						int[] dims = type.getArrayDimensions();
-						for( int i = 0; i < dims.length; ++i ) {
-							label.append( '[' );
-							label.append( dims[i] );
-							label.append( ']' );
-						}
-					}
+					label.append( typeName ).append( ' ' );
 				}
 			}
 			String name = var.getName();

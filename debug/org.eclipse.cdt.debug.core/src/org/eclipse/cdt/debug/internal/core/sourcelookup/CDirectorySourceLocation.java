@@ -160,23 +160,14 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		File file = new File( name );
 		if ( !file.isAbsolute() )
 			return null;
-		String fileName;
-		try
-		{
-			fileName = file.getCanonicalPath();
-		}
-		catch( IOException e )
-		{
-			return null;
-		}
-		IPath filePath = new Path( fileName );
+		IPath filePath = new Path( name );
 		IPath path = getDirectory();
 		IPath association = getAssociation();
-		if ( path.isPrefixOf( filePath ) )
+		if ( isPrefix( path, filePath ) )
 		{
 			filePath = path.append( filePath.removeFirstSegments( path.segmentCount() ) );
 		}
-		else if ( association != null && association.isPrefixOf( filePath ) )
+		else if ( association != null && isPrefix( association, filePath ) )
 		{
 			filePath = path.append( filePath.removeFirstSegments( association.segmentCount() ) );
 		}
@@ -184,6 +175,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		{
 			return null;
 		}
+
 		// Try for a file in another workspace project
 		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( filePath );
 		if ( f != null && f.exists() ) 
@@ -208,19 +200,13 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			File file = path.toFile();
 			if ( file.exists() )
 			{
-				try
+				path = new Path( file.getAbsolutePath() ); // can't use getCanonicalPath because of links
+				IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
+				if ( f != null && f.exists() ) 
 				{
-					path = new Path( file.getCanonicalPath() );
-					IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-					if ( f != null ) 
-					{
-						return f;
-					} 
-					return createExternalFileStorage( path );
-				}
-				catch( IOException e )
-				{
-				}
+					return f;
+				} 
+				return createExternalFileStorage( path );
 			}
 		}
 		return null;
@@ -358,5 +344,15 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			}
 		}
 		return false;
+	}
+
+	private boolean isPrefix( IPath prefix, IPath path )
+	{
+		int segCount = prefix.segmentCount();
+		if ( segCount >= path.segmentCount() )
+			return false;
+		String prefixString = prefix.toOSString();
+		String pathString = path.removeLastSegments( path.segmentCount() - segCount ).toOSString();
+		return prefixString.equalsIgnoreCase( pathString );
 	}
 }

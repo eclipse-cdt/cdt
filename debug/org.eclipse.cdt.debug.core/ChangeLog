@@ -3,6 +3,11 @@
 	'setCurrentThread': check if the old current thread is not null.
 	* CDebugTarget.java
 
+2003-10-13 Mikhail Khodjaiants
+	Fix for bug 43372: changed the source lookup procedures to avoid the usage of 'getCanonicalPath'.
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+
 2003-10-07 Mikhail Khodjaiants
 	All methods of 'IRuntimeOptions' should throw CDI exceptions in case of failure.
 	* ICDIRuntimeOptions.java

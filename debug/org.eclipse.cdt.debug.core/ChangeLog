@@ -1,3 +1,8 @@
+2004-06-29 Alain Magloire
+
+	Do not use the cache stackframe.
+	* src/org/eclipse/cdt/debug/internal/core/model/CThread.java
+
 2004-06-29 Mikhail Khodjaiants
 	Temporary fix for bug 68915: Invalid values in the Variables view.
 	* CStackFrame.java

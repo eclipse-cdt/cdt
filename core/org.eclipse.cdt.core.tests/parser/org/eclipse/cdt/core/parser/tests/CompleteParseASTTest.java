@@ -1974,12 +1974,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     
     public void testUnaryAmperCast() throws Exception{
     	Writer writer = new StringWriter();
-    	writer.write( "void f( char * );              \n ");
-    	writer.write( "void f( char   );              \n ");
-    	writer.write( "void main() {                  \n ");
-    	writer.write( "   char * t = new char [ 5 ];  \n ");
-    	writer.write( "   f( &t[1] );                 \n ");
-    	writer.write( "}                              \n ");
+    	writer.write( "void f( char * );              \r\n "); //$NON-NLS-1$
+    	writer.write( "void f( char   );              \n "); //$NON-NLS-1$
+    	writer.write( "void main() {                  \n "); //$NON-NLS-1$
+    	writer.write( "   char * t = new char [ 5 ];  \n "); //$NON-NLS-1$
+    	writer.write( "   f( &t[1] );                 \n "); //$NON-NLS-1$
+    	writer.write( "}                              \n "); //$NON-NLS-1$
     	
     	Iterator i = parse( writer.toString() ).getDeclarations();
     	IASTFunction f1 = (IASTFunction) i.next();
@@ -1993,10 +1993,10 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	
     public void testBug68235() throws Exception{
     	Writer writer = new StringWriter();
-    	writer.write( " struct xTag { int x; };               ");
-    	writer.write( " typedef xTag xType;                   ");
-    	writer.write( " typedef struct yTag { int x; } yType; ");
-    	writer.write( " class C1 { xType x; yType y; };       ");
+    	writer.write( " struct xTag { int x; };               "); //$NON-NLS-1$
+    	writer.write( " typedef xTag xType;                   "); //$NON-NLS-1$
+    	writer.write( " typedef struct yTag { int x; } yType; "); //$NON-NLS-1$
+    	writer.write( " class C1 { xType x; yType y; };       "); //$NON-NLS-1$
     	
     	Iterator i = parse( writer.toString() ).getDeclarations();
     	
@@ -2025,34 +2025,34 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug60407() throws Exception
     {
     	Writer writer = new StringWriter();
-    	writer.write( "struct ZZZ { int x, y, z; };\n" );
-    	writer.write( "typedef struct ZZZ _FILE;\n" );
-    	writer.write( "typedef _FILE FILE;\n" );
-    	writer.write( "static void static_function(FILE * lcd){}\n" );
-    	writer.write( "int	main(int argc, char **argv) {\n" );
-    	writer.write( "FILE * file = 0;\n" );
-    	writer.write( "static_function( file );\n" );
-    	writer.write( "return 0;\n" );	
-    	writer.write( "}\n" );
+    	writer.write( "struct ZZZ { int x, y, z; };\r\n" ); //$NON-NLS-1$
+    	writer.write( "typedef struct ZZZ _FILE;\n" ); //$NON-NLS-1$
+    	writer.write( "typedef _FILE FILE;\n" ); //$NON-NLS-1$
+    	writer.write( "static void static_function(FILE * lcd){}\n" ); //$NON-NLS-1$
+    	writer.write( "int	main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+    	writer.write( "FILE * file = 0;\n" ); //$NON-NLS-1$
+    	writer.write( "static_function( file );\n" ); //$NON-NLS-1$
+    	writer.write( "return 0;\n" );	 //$NON-NLS-1$
+    	writer.write( "}\n" ); //$NON-NLS-1$
     	parse( writer.toString() );
     }
     
     public void testBug68623() throws Exception{
         Writer writer = new StringWriter();
-        writer.write( "class A {                         \n" );
-        writer.write( "   A();                           \n" );
-        writer.write( "   class sub{};                   \n" );
-        writer.write( "   sub * x;                       \n" );
-        writer.write( "};                                \n" );
-        writer.write( "A::A() : x( (sub *) 0 ) {}        \n" );
+        writer.write( "class A {                         \n" ); //$NON-NLS-1$
+        writer.write( "   A();                           \n" ); //$NON-NLS-1$
+        writer.write( "   class sub{};                   \n" ); //$NON-NLS-1$
+        writer.write( "   sub * x;                       \n" ); //$NON-NLS-1$
+        writer.write( "};                                \n" ); //$NON-NLS-1$
+        writer.write( "A::A() : x( (sub *) 0 ) {}        \n" ); //$NON-NLS-1$
         
         parse( writer.toString() );
         
         writer = new StringWriter();
-        writer.write( "class A {                         \n" );
-        writer.write( "   A() : x (0) {}                 \n" );
-        writer.write( "   int x;                         \n" );
-        writer.write( "};                                \n" );
+        writer.write( "class A {                         \n" ); //$NON-NLS-1$
+        writer.write( "   A() : x (0) {}                 \n" ); //$NON-NLS-1$
+        writer.write( "   int x;                         \n" ); //$NON-NLS-1$
+        writer.write( "};                                \n" ); //$NON-NLS-1$
         
         Iterator i = parse( writer.toString() ).getDeclarations();
         IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
@@ -2062,5 +2062,13 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         IASTField x = (IASTField) i.next();
         
         assertAllReferences( 1, createTaskList( new Task( x ) ) );
+    }
+    
+    public void testBug69798() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "enum Flags { FLAG1, FLAG2 };                          \n" ); //$NON-NLS-1$
+        writer.write( "int f() { int a, b;  b = ( a ? FLAG1 : 0 ) | FLAG2; } \n" ); //$NON-NLS-1$
+        
+        parse( writer.toString() );
     }
 }

@@ -1724,7 +1724,7 @@ public class ParserSymbolTable {
 		 
 		int mask = ITypeInfo.isShort | ITypeInfo.isLong | ITypeInfo.isUnsigned | ITypeInfo.isLongLong | ITypeInfo.isSigned;
 		
-		if( (src.isType( ITypeInfo.t__Bool, ITypeInfo.t_float ) || src.isType( ITypeInfo.t_enumeration )) &&
+		if( src.isType( ITypeInfo.t__Bool, ITypeInfo.t_float ) &&
 			(trg.isType( ITypeInfo.t_int ) || trg.isType( ITypeInfo.t_double )) )
 		{
 			if( src.getType() == trg.getType() && (( src.getTypeBits() & mask) == (trg.getTypeBits() & mask)) ){
@@ -1821,9 +1821,9 @@ public class ParserSymbolTable {
 		} else if( !src.hasPtrOperators() ) {
 			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
-			if( src.isType( ITypeInfo.t__Bool, ITypeInfo.t_int ) ||
-				src.isType( ITypeInfo.t_float, ITypeInfo.t_double ) ||
-				src.isType( ITypeInfo.t_enumeration ) )
+			if( src.isType( ITypeInfo.t__Bool, ITypeInfo.t_int ) ||	src.isType( ITypeInfo.t_float, ITypeInfo.t_double ) ||
+				src.isType( ITypeInfo.t_enumeration ) || ( src.isType( ITypeInfo.t_type ) && src.getTypeSymbol() != null 
+				                                           && src.getTypeSymbol().isType( ITypeInfo.t_enumeration ) ) )
 			{
 				if( trg.isType( ITypeInfo.t__Bool, ITypeInfo.t_int ) ||
 					trg.isType( ITypeInfo.t_float, ITypeInfo.t_double ) )
@@ -2099,9 +2099,12 @@ public class ParserSymbolTable {
 			
 			info = typeSymbol.getTypeInfo();
 			int j = 0;
-			while( (info.getTypeSymbol() != null && info.getType() == ITypeInfo.t_type) ||
+			while( (info.getTypeSymbol() != null && ( info.isType( ITypeInfo.t_type ) || info.isType( ITypeInfo.t_enumerator ) ) ) ||
 				   (typeSymbol != null && typeSymbol.isForwardDeclaration() && typeSymbol.getForwardSymbol() != null ) ){
-				typeSymbol = info.isType( ITypeInfo.t_type) ? info.getTypeSymbol() : typeSymbol.getForwardSymbol();
+			    
+				typeSymbol = (info.isType( ITypeInfo.t_type) || info.isType(ITypeInfo.t_enumerator)) 
+							 ? info.getTypeSymbol() 
+							 : typeSymbol.getForwardSymbol();
 				
 				returnInfo.addPtrOperator( info.getPtrOperators() );	
 				returnInfo.setTypeBits( ( returnInfo.getTypeBits() | info.getTypeBits() ) & ~ITypeInfo.isTypedef & ~ITypeInfo.isForward );

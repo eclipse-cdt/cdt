@@ -211,6 +211,7 @@ public class CElementImageProvider {
 			case ICElement.C_VARIABLE:
 				return CPluginImages.DESC_OBJS_FIELD;
 
+			case ICElement.C_METHOD:  // FIXME: provide an icon for methods.
 			case ICElement.C_FUNCTION:
 				return CPluginImages.DESC_OBJS_FUNCTION;
 		
@@ -247,6 +248,7 @@ public class CElementImageProvider {
 			case ICElement.C_VARIABLE:
 				return CPluginImages.DESC_OBJS_FIELD;
 
+			case ICElement.C_METHOD: // FIXME: Provide a different icon.
 			case ICElement.C_FUNCTION:
 			case ICElement.C_FUNCTION_DECLARATION:
 				return CPluginImages.DESC_OBJS_FUNCTION;

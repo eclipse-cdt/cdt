@@ -24,7 +24,6 @@ import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -458,15 +457,15 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LaunchMessages.getString("CEnvironmentTab.Environment"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#getImage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_ENVIRONMENT_TAB);

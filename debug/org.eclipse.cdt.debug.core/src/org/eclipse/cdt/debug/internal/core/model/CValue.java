@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
+import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
@@ -133,18 +134,28 @@ public class CValue extends CDebugElement implements ICValue
 			return Collections.EMPTY_LIST;
 		if ( fVariables.size() == 0 )
 		{
-			List vars = getCDIVariables();
-
-			if ( vars.size() > 1 )
-				fVariables = CArrayPartition.splitArray( this, vars, 0, vars.size() - 1 );
-			else
+			try
 			{
-				fVariables = new ArrayList( vars.size() );
-				Iterator it = vars.iterator();
-				while( it.hasNext() )
+				List vars = getCDIVariables();
+				
+				if ( vars.size() > 1 )
+					fVariables = CArrayPartition.splitArray( this, vars, 0, vars.size() - 1 );
+				else
 				{
-					fVariables.add( new CModificationVariable( this, (ICDIVariable)it.next() ) );
+					fVariables = new ArrayList( vars.size() );
+					Iterator it = vars.iterator();
+					while( it.hasNext() )
+					{
+						fVariables.add( new CModificationVariable( this, (ICDIVariable)it.next() ) );
+					}
 				}
+			}
+			catch( DebugException e )
+			{
+				fVariables = new ArrayList( 1 );
+				CModificationVariable var = new CModificationVariable( this, new CVariable.ErrorVariable( null, e ) );
+				var.setStatus( ICDebugElementErrorStatus.ERROR, e.getMessage() );
+				fVariables.add( var );
 			}
 		}
 		return fVariables;
@@ -192,8 +203,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		catch( CDIException e )
 		{
-			vars = new ICDIVariable[0];
-			infoMessage( e );
+			requestFailed( "not available: ", e );
 		}
 		return Arrays.asList( vars );
 	}

@@ -1,4 +1,9 @@
 2003-07-22 Mikhail Khodjaiants
+	Create a special type of ICDIVariable (ErrorVariable) if request to gdb fails.
+	* CVariable.java
+	* CValue.java
+
+2003-07-22 Mikhail Khodjaiants
 	Use the 'getReferencedProjects' method of 'CSourceLocator' to obtain the list of referenced projects.
 	Use the correct tag for additional source locations.
 	* CSourceLocator.java

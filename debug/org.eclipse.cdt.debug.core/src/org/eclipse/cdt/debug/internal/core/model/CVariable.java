@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.text.MessageFormat;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -19,9 +20,12 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
@@ -47,6 +51,106 @@ public abstract class CVariable extends CDebugElement
 										   ICastToType,
 										   ICastToArray
 {
+	/**
+	 * The instance of this class is created when the 'getCDIVariable' call throws an exception.
+	 * 
+	 * @since Jul 22, 2003
+	 */
+	public static class ErrorVariable implements ICDIVariable
+	{
+		private ICDIVariableObject fVariableObject;
+		private Exception fException;
+
+		public ErrorVariable( ICDIVariableObject varObject, Exception e )
+		{
+			fVariableObject = varObject;
+			fException = e;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getStackFrame()
+		 */
+		public ICDIStackFrame getStackFrame() throws CDIException
+		{
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getName()
+		 */
+		public String getName()
+		{
+			return ( fVariableObject != null ) ? fVariableObject.getName() : "";
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getTypeName()
+		 */
+		public String getTypeName() throws CDIException
+		{
+			// TODO When the 'getType' method is moved to 'ICDIVariableObject'
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getType()
+		 */
+		public ICDIType getType() throws CDIException
+		{
+			// TODO When the 'getType' method is moved to 'ICDIVariableObject'
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getValue()
+		 */
+		public ICDIValue getValue() throws CDIException
+		{
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#isEditable()
+		 */
+		public boolean isEditable() throws CDIException
+		{
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(java.lang.String)
+		 */
+		public void setValue( String expression ) throws CDIException
+		{
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(org.eclipse.cdt.debug.core.cdi.model.ICDIValue)
+		 */
+		public void setValue( ICDIValue value ) throws CDIException
+		{
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setFormat(int)
+		 */
+		public void setFormat( int format ) throws CDIException
+		{
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getTarget()
+		 */
+		public ICDITarget getTarget()
+		{
+			return ( fVariableObject != null ) ? fVariableObject.getTarget() : null;
+		}
+
+		public Exception getException()
+		{
+			return fException;
+		}
+	}
 	class InternalVariable
 	{
 		private ICDIVariableObject fCDIVariableObject;
@@ -67,10 +171,19 @@ public abstract class CVariable extends CDebugElement
 		{
 			if ( fCDIVariable == null )
 			{
-				if ( getCDIVariableObject() instanceof ICDIArgumentObject )
-					fCDIVariable = getCDISession().getVariableManager().createArgument( (ICDIArgumentObject)getCDIVariableObject() );
-				else if ( getCDIVariableObject() instanceof ICDIVariableObject )
-					fCDIVariable = getCDISession().getVariableManager().createVariable( getCDIVariableObject() );
+				try
+				{
+					if ( getCDIVariableObject() instanceof ICDIArgumentObject )
+						fCDIVariable = getCDISession().getVariableManager().createArgument( (ICDIArgumentObject)getCDIVariableObject() );
+					else if ( getCDIVariableObject() instanceof ICDIVariableObject )
+						fCDIVariable = getCDISession().getVariableManager().createVariable( getCDIVariableObject() );
+				}
+				catch( CDIException e )
+				{
+					fCDIVariable = new ErrorVariable( getCDIVariableObject(), e );
+					setStatus( ICDebugElementErrorStatus.ERROR, 
+							   MessageFormat.format( "not available: {0}", new String[] { e.getMessage() } ) );
+				}
 			}
 			return fCDIVariable;
 		}

@@ -71,9 +71,15 @@ public abstract class AbstractToken implements IToken {
 	 * @see org.eclipse.cdt.core.parser.IToken#isKeyword()
 	 */
 	public boolean canBeAPrefix() {
-		if( getType() == tIDENTIFIER ) return true;
-		if( getType() >= t_and && getType() <= t_xor_eq ) return true;
-		if( getType() >= t__Bool && getType() <= t_restrict ) return true;
+		switch( getType() )
+		{
+			case tIDENTIFIER:
+			case tCOMPL:
+				return true;
+			default:
+				if( getType() >= t_and && getType() <= t_xor_eq ) return true;
+				if( getType() >= t__Bool && getType() <= t_restrict ) return true;
+		}
 		return false;
 	}
 

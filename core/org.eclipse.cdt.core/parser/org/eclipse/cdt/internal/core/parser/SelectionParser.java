@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
@@ -198,6 +200,12 @@ public class SelectionParser extends ContextualParser {
 				if( ((IASTOffsetableNamedElement)contextNode).getName().equals( finalDuple.toString() ) )
 					return contextNode;
 			}
+			if( contextNode instanceof IASTQualifiedNameElement )
+			{
+				String [] elementQualifiedName = ((IASTQualifiedNameElement)contextNode).getFullyQualifiedName();
+				if( Arrays.equals( elementQualifiedName, finalDuple.toQualifiedName() ) )
+					return contextNode;
+			}
 			try {
 				if( ourKind == IASTCompletionNode.CompletionKind.NEW_TYPE_REFERENCE )
 				{
@@ -293,10 +301,10 @@ public class SelectionParser extends ContextualParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#endExpressionStatement(org.eclipse.cdt.core.parser.ast.IASTExpression)
 	 */
-	protected void endExpressionStatement(IASTExpression expression)
+	protected void endExpression(IASTExpression expression)
 			throws EndOfFileException {
 		if( ! tokenDupleCompleted() )
-			super.endExpressionStatement(expression);
+			super.endExpression(expression);
 		else
 		{
 			contextNode = expression;

@@ -58,4 +58,8 @@ public interface ITokenDuple {
 	 * @return
 	 */
 	public boolean contains(ITokenDuple duple);
+	/**
+	 * @return
+	 */
+	public abstract String [] toQualifiedName();
 }

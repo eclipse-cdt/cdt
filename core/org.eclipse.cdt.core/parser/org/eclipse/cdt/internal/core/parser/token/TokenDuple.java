@@ -191,6 +191,7 @@ public class TokenDuple implements ITokenDuple {
 	private static final Integer LT = new Integer( IToken.tLT );
 	private static final Integer LBRACKET = new Integer( IToken.tLBRACKET );
 	private static final Integer LPAREN = new Integer( IToken.tLPAREN );
+	private String [] qualifiedName = null;
 
 	public IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
 	    IToken token = name;
@@ -493,5 +494,44 @@ public class TokenDuple implements ITokenDuple {
 		}
 
 		return ( foundFirst && foundLast );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#toQualifiedName()
+	 */
+	public String[] toQualifiedName() {
+		if( qualifiedName == null )
+			generateQualifiedName();
+		return qualifiedName;
+	}
+
+	/**
+	 * 
+	 */
+	private void generateQualifiedName() {
+		List qn = new ArrayList();
+		Iterator i = iterator();
+		while( i.hasNext() )
+		{
+			IToken t = (IToken) i.next();
+			boolean compl = false;
+			if( t.getType() == IToken.tCOLONCOLON ) continue;
+			if( t.getType() == IToken.tCOMPL )
+			{
+				compl = true;
+				if( !i.hasNext() ) break;
+				t = (IToken) i.next();
+			}
+			if( t.getType() == IToken.tIDENTIFIER )
+			{
+				if( compl )
+					qn.add( "~" + t.getImage() ); //$NON-NLS-1$
+				else
+					qn.add( t.getImage() );
+			}
+		}
+		qualifiedName = new String[ qn.size() ];
+		qualifiedName = (String[]) qn.toArray( qualifiedName );
+		
 	}
 }

@@ -183,7 +183,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
-            	log.traceLog( "Parser::translationUnit: Unexpected exception occurred : " + e.getMessage() ); //$NON-NLS-1$
+            	logException( "translationUnit", e ); //$NON-NLS-1$
 				failParse();
             }
         }
@@ -1087,6 +1087,11 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
 			throw backtrack;
         }
+        catch( Exception e )
+		{
+        	logException( "simpleDecl", e ); //$NON-NLS-1$
+        	throw backtrack;
+		}
         Iterator i = l.iterator();
         if (hasFunctionBody && l.size() != 1)
         {
@@ -2813,6 +2818,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.t_case);
                 IASTExpression constant_expression = constantExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
 				constant_expression.acceptElement(requestor);
+				endExpression(constant_expression);
                 consume(IToken.tCOLON);
                 statement(scope);
                 cleanupLastToken();
@@ -2888,6 +2894,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 {  
                     IASTExpression finalExpression = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.DECLARATION);
                     finalExpression.acceptElement(requestor);
+                    endExpression(finalExpression);
                 }
                 consume(IToken.tRPAREN);
                 statement(scope);
@@ -2909,6 +2916,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 {
                     IASTExpression retVal = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION);
                     retVal.acceptElement(requestor);
+                    endExpression(retVal);
                 }
                 consume(IToken.tSEMI);
                 cleanupLastToken();
@@ -2950,7 +2958,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     IASTExpression expressionStatement = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.STATEMENT);
                    	consume(IToken.tSEMI);
                    	expressionStatement.acceptElement( requestor );
-                   	endExpressionStatement(expressionStatement);
+                   	endExpression(expressionStatement);
                     return;
                 }
                 catch (BacktrackException b)
@@ -3014,7 +3022,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     {
         IASTExpression someExpression = expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
         someExpression.acceptElement(requestor);
-        //TODO type-specifier-seq declarator = assignment expression 
+        endExpression(someExpression); 
     }
     
     /**
@@ -3188,7 +3196,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	}
 
 
-	protected void endExpressionStatement( IASTExpression expression ) throws EndOfFileException
+	protected void endExpression( IASTExpression expression ) throws EndOfFileException
 	{
 		cleanupLastToken();
 	}

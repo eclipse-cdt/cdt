@@ -14,7 +14,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -237,4 +236,30 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		}
 	}
 	
+	public void testMethodReference() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class Sample { public:\n"); //$NON-NLS-1$
+		writer.write( "  int getAnswer() const;\n"); //$NON-NLS-1$
+		writer.write( "};\n"); //$NON-NLS-1$
+		writer.write( "int main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+		writer.write( " Sample * s = new Sample();\n" ); //$NON-NLS-1$
+		writer.write( " return s->getAnswer();\n" ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "->getAnswer") + 2; //$NON-NLS-1$
+		IASTNode node = parse( code, startIndex, startIndex+9);
+		assertTrue( node instanceof IASTMethod );
+		assertEquals( ((IASTMethod)node).getName(), "getAnswer" ); //$NON-NLS-1$
+	}
+	
+	public void testConstructorDefinition() throws Exception
+	{
+		String code = "class ABC { public: ABC(); }; ABC::ABC(){}"; //$NON-NLS-1$
+		int startIndex = code.indexOf( "::ABC") + 2; //$NON-NLS-1$
+		IASTNode node = parse( code, startIndex, startIndex + 3 );
+		assertTrue( node instanceof IASTMethod );
+		IASTMethod constructor = (IASTMethod) node;
+		assertTrue( constructor.isConstructor() );
+	}
 }

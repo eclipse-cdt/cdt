@@ -20,6 +20,8 @@ public class TokenFactory {
 	
 	public static IToken createIntegerToken( String value, IScannerData scannerData )
 	{
+		if( value.length() > 15 )
+			return createUniquelyImagedToken( IToken.tINTEGER, value, scannerData );
 		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
 			return new IntegerExpansionToken( IToken.tINTEGER, Integer.parseInt(value ), scannerData.getContextStack() );
 			

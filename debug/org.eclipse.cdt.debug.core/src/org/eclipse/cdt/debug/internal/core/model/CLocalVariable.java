@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 
 /**
@@ -33,18 +34,18 @@ public class CLocalVariable extends CModificationVariable
 	private ICDIVariable fCDIVariable;
 	
 	/**
-	 * The stack frame this variable is contained in.
+	 * The parent object this variable is contained in.
 	 */
-	private CStackFrame fStackFrame;
+	private CDebugElement fParent;
 
 	/**
 	 * Constructor for CLocalVariable.
 	 * @param target
 	 */
-	public CLocalVariable( CStackFrame stackFrame, ICDIVariable cdiVariable )
+	public CLocalVariable( CDebugElement parent, ICDIVariable cdiVariable )
 	{
-		super( (CDebugTarget)stackFrame.getDebugTarget() );
-		fStackFrame = stackFrame;
+		super( (CDebugTarget)parent.getDebugTarget() );
+		fParent = parent;
 		fCDIVariable = cdiVariable;
 	}
 
@@ -68,8 +69,8 @@ public class CLocalVariable extends CModificationVariable
 	 */
 	protected ICDIValue retrieveValue() throws DebugException, CDIException
 	{
-		return ( getStackFrame().isSuspended() ) ? 
-					getCDIVariable().getValue() : getLastKnownValue();
+		return ( ((IDebugTarget)getParent().getDebugTarget()).isSuspended() ) ? 
+						getCDIVariable().getValue() : getLastKnownValue();
 	}
 
 	/* (non-Javadoc)
@@ -126,9 +127,9 @@ public class CLocalVariable extends CModificationVariable
 	 * 
 	 * @return the stack frame
 	 */
-	protected CStackFrame getStackFrame()
+	protected CDebugElement getParent()
 	{
-		return fStackFrame;
+		return fParent;
 	}
 
 	/* (non-Javadoc)
@@ -160,7 +161,7 @@ public class CLocalVariable extends CModificationVariable
 			if ( !getValue().hasVariables() )
 			{
 				setChanged( true );
-				getStackFrame().fireChangeEvent( DebugEvent.CONTENT );
+				getParent().fireChangeEvent( DebugEvent.CONTENT );
 			}
 		}
 		catch( DebugException e )

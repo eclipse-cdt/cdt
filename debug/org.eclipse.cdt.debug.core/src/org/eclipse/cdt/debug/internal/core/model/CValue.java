@@ -6,8 +6,15 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -24,6 +31,11 @@ public class CValue extends CDebugElement implements IValue
 	 * Underlying CDI value.
 	 */
 	private ICDIValue fValue;
+
+	/**
+	 * List of child variables.
+	 */
+	private List fVariables = Collections.EMPTY_LIST;
 
 	/**
 	 * Constructor for CValue.
@@ -69,7 +81,7 @@ public class CValue extends CDebugElement implements IValue
 	 */
 	public boolean isAllocated() throws DebugException
 	{
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +89,25 @@ public class CValue extends CDebugElement implements IValue
 	 */
 	public IVariable[] getVariables() throws DebugException
 	{
-		return null;
+		List list = getVariables0();
+		return (IVariable[])list.toArray( new IVariable[list.size()] );
+	}
+
+	protected synchronized List getVariables0() throws DebugException 
+	{
+		if ( !isAllocated() )
+			return Collections.EMPTY_LIST;
+		if ( fVariables.size() == 0 )
+		{
+			List vars = getCDIVariables();
+			fVariables = new ArrayList( vars.size() );
+			Iterator it = vars.iterator();
+			while( it.hasNext() )
+			{
+				fVariables.add( new CLocalVariable( this, (ICDIVariable)it.next() ) );
+			}
+		}
+		return fVariables;
 	}
 
 	/* (non-Javadoc)
@@ -113,5 +143,22 @@ public class CValue extends CDebugElement implements IValue
 	protected ICDIValue getUnderlyingValue()
 	{
 		return fValue;
+	}
+	
+	protected List getCDIVariables() throws DebugException
+	{
+		try
+		{
+			ICDIValue value = getUnderlyingValue();
+			if ( value != null )
+			{
+				return Arrays.asList( value.getVariables() );
+			}
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( "Operation failed. Reason: ", e );
+		}
+		return Collections.EMPTY_LIST;
 	}
 }

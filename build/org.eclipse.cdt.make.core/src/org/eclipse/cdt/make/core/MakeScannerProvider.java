@@ -71,7 +71,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		// There is nothing persisted for the session, or saved in a file so 
 		// create a build info object
 		if (scannerInfo != null && cacheInfo == true) {
-			((IProject)project).setSessionProperty(scannerInfoProperty, scannerInfo);
+			project.setSessionProperty(scannerInfoProperty, scannerInfo);
 		}
 		return scannerInfo;
 	}
@@ -109,7 +109,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	public IScannerInfo getScannerInformation(IResource resource) {
 		IScannerInfo info = null;
 		try {
-			info = getMakeScannerInfo((IProject)resource, true);
+			info = getMakeScannerInfo(resource.getProject(), true);
 		} catch (CoreException e) {
 		}
 		return info;
@@ -153,7 +153,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	 */
 	public static void removeScannerInfo(IResource resource) {
 		try {
-			resource.setSessionProperty(scannerInfoProperty, null);
+			resource.getProject().setSessionProperty(scannerInfoProperty, null);
 		} catch (CoreException e) {
 		}
 	}

@@ -1,3 +1,9 @@
+2003-04-01 John Camelon
+	Updated Scanner to convert control-characters to ' '.  
+	Fixed logic error in SimpleDeclarationWrapper.
+	Added operator support to grammar.  
+	Fixed Name.toString() to support non-qualified yet multi-part names.
+
 2003-04-01 Andrew Niefer
 	Parser Symbol Table, modified lookup with respect to resolving ambiguous names,
 	reducing the number of temporary lists/sets.  Modified adding using declarations

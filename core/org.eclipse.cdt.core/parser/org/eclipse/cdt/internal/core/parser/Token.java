@@ -43,6 +43,54 @@ public class Token {
 	private Token next;
 	public Token getNext() { return next; }
 	public void setNext(Token t) { next = t; }
+	
+	public boolean isOperator()
+	{
+		switch( getType() )
+		{
+			case Token.t_new:
+			case Token.t_delete:
+			case Token.tPLUS:
+			case Token.tMINUS:
+			case Token.tSTAR:
+			case Token.tDIV:
+			case Token.tXOR:
+			case Token.tMOD:
+			case Token.tAMPER:
+			case Token.tBITOR:
+			case Token.tCOMPL:
+			case Token.tNOT:
+			case Token.tASSIGN:
+			case Token.tLT:
+			case Token.tGT:
+			case Token.tPLUSASSIGN:
+			case Token.tMINUSASSIGN:
+			case Token.tSTARASSIGN:
+			case Token.tDIVASSIGN:
+			case Token.tMODASSIGN:
+			case Token.tBITORASSIGN:
+			case Token.tAMPERASSIGN:
+			case Token.tXORASSIGN:
+			case Token.tSHIFTL:
+			case Token.tSHIFTR:
+			case Token.tSHIFTLASSIGN:
+			case Token.tSHIFTRASSIGN:
+			case Token.tEQUAL:
+			case Token.tNOTEQUAL:
+			case Token.tLTEQUAL:
+			case Token.tGTEQUAL:
+			case Token.tAND:
+			case Token.tOR:
+			case Token.tINCR:
+			case Token.tDECR:
+			case Token.tCOMMA:
+			case Token.tARROW:
+			case Token.tARROWSTAR:
+				return true;
+			default:
+				return false;
+		}
+	}
 
 	// Token types
 	static public final int tIDENTIFIER = 1;
@@ -83,7 +131,6 @@ public class Token {
 	static public final int tNOT = 36;
 	static public final int tEQUAL = 37;
 	static public final int tASSIGN = 38;
-	static public final int tSHIFLASSIGN = 39;
 	static public final int tSHIFTL = 40;
 	static public final int tLTEQUAL = 41;
 	static public final int tLT = 42;

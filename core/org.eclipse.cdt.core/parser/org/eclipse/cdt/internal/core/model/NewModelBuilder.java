@@ -354,8 +354,8 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		elem.setElementName( elementName );
 		if( wrapper.getName() != null )
 		{ 	
-			elem.setIdPos(wrapper.getName().getStartOffset(), elementName.length());
-			elem.setPos(wrapper.getName().getStartOffset(), elementName.length());
+			elem.setIdPos(wrapper.getName().getStartOffset(), wrapper.getName().length());
+			elem.setPos(wrapper.getName().getStartOffset(), wrapper.getName().length());
 		}
 		else
 		{

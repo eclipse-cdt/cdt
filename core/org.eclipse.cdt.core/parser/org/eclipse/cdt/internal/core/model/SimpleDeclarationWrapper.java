@@ -14,10 +14,6 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
 /**
  * @author jcamelon
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpecifier.Container, ICElementWrapper {
 
@@ -29,7 +25,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 
 	public SimpleDeclarationWrapper( IParent item )
 	{
-		this.element = item; 
+		this.parent = item; 
 	}
 	
 	public SimpleDeclarationWrapper()
@@ -139,8 +135,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 			if( currentDeclarator.getName() != null )
 			{
 				// hook up the offsets
-				declaration.setIdPos( currentDeclarator.getName().getStartOffset(), declaratorName.length());
-				declaration.setPos( currentDeclarator.getName().getStartOffset(), declaratorName.length() );
+				declaration.setIdPos( currentDeclarator.getName().getStartOffset(), currentDeclarator.getName().length() );
+				declaration.setPos( currentDeclarator.getName().getStartOffset(), currentDeclarator.getName().length());
 			}
 			else
 			{

@@ -35,13 +35,22 @@ public class Name {
 
 	public String toString() {
 		Token t = nameStart;
-		String name = t.getImage();
-		
+		StringBuffer buffer = new StringBuffer(); 
+		buffer.append( t.getImage() ); 
+		if( t.getType() == Token.t_operator )
+			buffer.append( " " );
+
 		while (t != nameEnd) {
 			t = t.getNext();
-			name += t.getImage();
+				
+			buffer.append( t.getImage() );			
 		}
 		
-		return name;
+		return buffer.toString();
+	}
+	
+	public int length()
+	{
+		return getEndOffset() - getStartOffset() + nameEnd.getImage().length();
 	}
 }

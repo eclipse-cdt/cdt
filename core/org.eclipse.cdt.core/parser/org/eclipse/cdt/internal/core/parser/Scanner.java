@@ -1196,7 +1196,7 @@ public class Scanner implements IScanner {
 							throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
 						else
 						{
-							c = getChar();
+							c = ' ';
 							continue;
 						}
 				}

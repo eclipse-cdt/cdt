@@ -914,7 +914,7 @@ c, quick);
 	 */
 	protected Object initDeclarator( Object owner ) throws Backtrack {
 		Object declarator = declarator( owner );
-		
+			
 		// handle = initializerClause
 		if (LT(1) == Token.tASSIGN) {
 			consume(); 
@@ -1011,9 +1011,60 @@ c, quick);
 				return declarator;
 			}
 			
-			name();
-			try{ callback.declaratorId(declarator);} catch( Exception e ) {}
-			
+			if( LT(1) == Token.t_operator )
+			{
+				// we know this is an operator
+				Token operatorToken = consume( Token.t_operator );
+				Token toSend = null;
+				if( LA(1).isOperator() || LT(1) == Token.tLPAREN || LT(1) == Token.tLBRACKET )
+				{
+					if( (LT(1) == Token.t_new || LT(1) == Token.t_delete ) && 
+							LT(2) == Token.tLBRACKET && LT(3) == Token.tRBRACKET )
+					{
+						consume(); 
+						consume( Token.tLBRACKET );
+						toSend = consume( Token.tRBRACKET );
+						// vector new and delete operators
+					}
+					else if ( LT(1) == Token.tLPAREN && LT(2) == Token.tRPAREN )
+					{
+						// operator ()
+						consume( Token.tLPAREN );
+						toSend = toSend = consume( Token.tRPAREN );
+					}
+					else if ( LT(1) == Token.tLBRACKET && LT(2) == Token.tRBRACKET )
+					{
+						consume( Token.tLBRACKET );
+						toSend = consume( Token.tRBRACKET ); 
+					}
+					else if( LA(1).isOperator() )
+						toSend = consume();
+					else 
+						throw backtrack;
+													
+				}
+				else
+				{
+					// temporary 
+					while( LT(1) != Token.tLPAREN )
+					{
+						toSend = consume(); 
+					}
+				}
+					
+				try{ 
+					callback.nameBegin( operatorToken );
+					callback.nameEnd( toSend );
+				} catch( Exception e ) {}
+
+				
+			}
+			else
+			{
+				name();
+			}
+
+			try{ callback.declaratorId(declarator);} catch( Exception e ) {}			
 			for (;;) {
 				switch (LT(1)) {
 					case Token.tLPAREN:

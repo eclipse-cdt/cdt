@@ -261,8 +261,6 @@ public class BreakpointManager extends Manager implements ICDIBreakpointManager 
 					// Fire ChangedEvent
 					bp.setMIBreakpoint(newMIBreakpoints[i]);
 					eventList.add(new MIBreakpointChangedEvent(no)); 
-				} else {
-					eventList.add(new MIBreakpointCreatedEvent(no)); 
 				}
 			} else {
 				// add the new breakpoint and fire CreatedEvent

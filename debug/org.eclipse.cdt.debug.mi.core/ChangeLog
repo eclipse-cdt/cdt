@@ -1,3 +1,8 @@
+2004-09-01 Alain Magloire
+
+	Fix for 72974
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+
 2004-08-14 Alain Magloire
 
 	Fix for 71992.

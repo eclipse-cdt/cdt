@@ -762,27 +762,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 12.8-3d):
-	void h(int());
-	void h(int (*)()); // redeclaration of h(int())
-	void h(int x()) { } // definition of h(int())
-	void h(int (*x)()) { } // illformed: redefinition of h(int())
-	 --End Example]
-	 */
-	public void test12_8s3d()  { // TODO Devin raised bug 90666
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("void h(int());\n"); //$NON-NLS-1$
-		buffer.append("void h(int (*)()); // redeclaration of h(int())\n"); //$NON-NLS-1$
-		buffer.append("void h(int x()) { } // definition of h(int())\n"); //$NON-NLS-1$
-		buffer.append("void h(int (*x)()) { } // illformed: redefinition of h(int())\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, false, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 13.3.3.2-3c):
 	struct A {
 	operator short();

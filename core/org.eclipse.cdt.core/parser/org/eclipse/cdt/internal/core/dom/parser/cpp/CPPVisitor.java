@@ -461,14 +461,36 @@ public class CPPVisitor {
             binding = null;
         }
         
-        if( declarator instanceof ICPPASTFunctionDeclarator ){
+        if( parent instanceof ICPPASTParameterDeclaration ){
+			ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration) parent;
+			parent = param.getParent();
+			if( parent instanceof IASTStandardFunctionDeclarator ) {
+				IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
+				if( fDtor.getParent() instanceof IASTDeclarator || fDtor.getNestedDeclarator() != null )
+				    return null;
+				IBinding temp = fDtor.getName().resolveBinding();
+				if( temp instanceof CPPFunction ){
+					CPPFunction function = (CPPFunction) temp;
+					binding = function.resolveParameter( param );
+				} else if( temp instanceof CPPFunctionTemplate ) {
+					binding = ((CPPFunctionTemplate)temp).resolveFunctionParameter( param );
+				}
+			} else if( parent instanceof ICPPASTTemplateDeclaration ) {
+				return CPPTemplates.createBinding( param );
+			}
+		} else if( declarator instanceof ICPPASTFunctionDeclarator ){
 			if( binding != null && binding instanceof IFunction ){
 			    IFunction function = (IFunction) binding;
 			    if( CPPSemantics.isSameFunction( function, declarator ) ){
+			        ICPPInternalBinding internal = (ICPPInternalBinding) function;
 			        if( parent instanceof IASTSimpleDeclaration )
-			            ((ICPPInternalBinding)function).addDeclaration( name );
-			        else 
-			            ((ICPPInternalBinding)function).addDefinition( name );
+			            internal.addDeclaration( name );
+			        else {
+			            if( internal.getDefinition() == null )
+			                ((ICPPInternalBinding)function).addDefinition( name );
+			            else 
+			                return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray() );
+			        }
 			        
 			        return function;
 			    }
@@ -486,23 +508,6 @@ public class CPPVisitor {
 			} else {
 				binding = template ? (ICPPFunction) new CPPFunctionTemplate( name )
 								   : new CPPFunction( (ICPPASTFunctionDeclarator) declarator );
-			}
-		} else if( parent instanceof ICPPASTParameterDeclaration ){
-			ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration) parent;
-			parent = param.getParent();
-			if( parent instanceof IASTStandardFunctionDeclarator ) {
-				IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
-				if( fDtor.getParent() instanceof IASTDeclarator || fDtor.getNestedDeclarator() != null )
-				    return null;
-				IBinding temp = fDtor.getName().resolveBinding();
-				if( temp instanceof CPPFunction ){
-					CPPFunction function = (CPPFunction) temp;
-					binding = function.resolveParameter( param );
-				} else if( temp instanceof CPPFunctionTemplate ) {
-					binding = ((CPPFunctionTemplate)temp).resolveFunctionParameter( param );
-				}
-			} else if( parent instanceof ICPPASTTemplateDeclaration ) {
-				return CPPTemplates.createBinding( param );
 			}
 		} else if( parent instanceof IASTSimpleDeclaration ){
 		    

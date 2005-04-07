@@ -377,6 +377,11 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			for(int i=0; i<interfaces.length; i++) {
 				Method[] methods = interfaces[i].getMethods();
 				for(int j=0; j<methods.length; j++) {
+					// multiple interfaces can have the same method, so don't duplicate that method in the property view
+					// which causes an ArrayIndexOutOfBoundsException elsewhere
+					if (alreadyEncountered(methods[j], desc))
+						continue;
+					
 					if (methods[j].getParameterTypes().length > 0 || (!shouldInvokeMethod(methods[j].getName()))) continue; // only do getters, that aren't in the bad list (like clone())
 					
 					TextPropertyDescriptor text = null;
@@ -396,6 +401,22 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			}
 			
 			return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, desc);
+		}
+		
+		private boolean alreadyEncountered(Method method, IPropertyDescriptor[] desc) {
+			StringBuffer name = null;
+			for(int i=0; i<desc.length; i++) {
+				if (desc[i] == null) // reached the end of the array
+					break;
+				
+				name = new StringBuffer();
+				name.append(method.getName());
+				name.append(EMPTY_PARAMETER);
+				if (name.toString().equals(desc[i].getDisplayName()))
+					return true;
+			}
+			
+			return false;
 		}
 		
 		public Object getPropertyValue(Object id) {

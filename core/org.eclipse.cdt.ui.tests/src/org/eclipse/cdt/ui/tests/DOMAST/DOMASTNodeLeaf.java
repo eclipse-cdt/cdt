@@ -470,6 +470,8 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		}
 		
 		private String getValueString(Object obj) {
+			if (obj == null) return NULL_STRING;
+			
 			StringBuffer buffer = new StringBuffer();
 			
 			if (obj.getClass().isPrimitive()) {

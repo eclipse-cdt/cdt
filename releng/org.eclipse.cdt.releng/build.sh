@@ -7,7 +7,8 @@ die() {
 	exit 1
 }
 
-[ -n "$ECLIPSE_HOME" ] || die ECLIPSE_HOME not set
+#[ -n "$ECLIPSE_HOME" ] || die ECLIPSE_HOME not set
+ECLIPSE_HOME=../org.eclipse.releng.basebuilder
 
 cd `dirname $0`
 

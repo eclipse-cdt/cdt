@@ -19,8 +19,8 @@ import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 
 public interface IIndexerOutput {
     public void addRef(int indexedFileNumber, char[] word);
-	public void addRef(int indexedFileNumber, char[] word, int offset, int offsetType);
-	public void addRef(int indexedFileNumber, String word, int offset, int offsetType);
+	public void addRef(int indexedFileNumber, char[] word, int offset, int offsetLength, int offsetType);
+	public void addRef(int indexedFileNumber, String word, int offset, int offsetLength, int offsetType);
 	
 	public IndexedFileEntry  getIndexedFile(String path); 
 	public IndexedFileEntry  addIndexedFile(String path);

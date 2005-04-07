@@ -117,7 +117,7 @@ public class CTagsConsoleParser implements IConsoleParser {
     	String lineNumber = (String)tempTag.tagExtensionField.get(LINE);
     	
     	if (entryType != null)
-    	    indexer.getOutput().addRef(getFileNumber(),IndexEncoderUtil.encodeEntry(fullName,entryType,type), Integer.parseInt(lineNumber), ICIndexStorageConstants.LINE);
+    	    indexer.getOutput().addRef(getFileNumber(),IndexEncoderUtil.encodeEntry(fullName,entryType,type), Integer.parseInt(lineNumber), 1, ICIndexStorageConstants.LINE);
     }
 
     /**

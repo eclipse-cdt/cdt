@@ -30,13 +30,13 @@ public class IndexerOutput implements IIndexerOutput {
 	 * @deprecated
 	 */
 	public void addRef(int indexedFileNumber, char[] word){
-	    addRef(indexedFileNumber,word,1,1);
+	    addRef(indexedFileNumber,word,1,1, 1);
 	}
 	
 	/**
 	 * Adds a reference to the given word to the inMemoryIndex.
 	 */
-	public void addRef(int indexedFileNumber, char[] word, int offset, int offsetType) {
+	public void addRef(int indexedFileNumber, char[] word, int offset, int offsetLength, int offsetType) {
 		if (indexedFileNumber == 0) {
 			throw new IllegalStateException();
 		}
@@ -47,8 +47,8 @@ public class IndexerOutput implements IIndexerOutput {
 	/**
 	 * Adds a reference to the given word to the inMemoryIndex.
 	 */
-	public void addRef(int indexedFileNumber, String word, int offset, int offsetType) {
-		addRef(indexedFileNumber, word.toCharArray(), offset, offsetType);
+	public void addRef(int indexedFileNumber, String word, int offset, int offsetLength, int offsetType) {
+		addRef(indexedFileNumber, word.toCharArray(), offset, offsetLength, offsetType);
 	}
 		
 	public void addRelatives(int indexedFileNumber, String inclusion, String parent) {

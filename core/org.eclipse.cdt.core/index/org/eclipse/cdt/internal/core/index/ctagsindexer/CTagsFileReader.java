@@ -129,7 +129,7 @@ public class CTagsFileReader {
 	    	}
 	    	
 	    	if (entryType != null)
-	    	    output.addRef(fileNum, IndexEncoderUtil.encodeEntry(fullName,entryType,type), lineNumber, ICIndexStorageConstants.LINE);
+	    	    output.addRef(fileNum, IndexEncoderUtil.encodeEntry(fullName,entryType,type), lineNumber, 1, ICIndexStorageConstants.LINE);
 	    }
         /* (non-Javadoc)
          * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)

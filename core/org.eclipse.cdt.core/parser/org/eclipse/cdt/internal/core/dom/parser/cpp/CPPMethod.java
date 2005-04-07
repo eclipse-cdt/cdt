@@ -125,7 +125,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	}
 
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( declarations != null ? declarations[0] : definition  );
+	    IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : definition;
+		return CPPVisitor.getContainingScope( node );
 	}
 	
 	public String getName() {

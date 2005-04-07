@@ -493,8 +493,9 @@ public class CPPSemantics {
 		if( parent instanceof ICPPASTFunctionDeclarator ){
 			data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
 		} else if( parent instanceof IASTIdExpression ){
-			parent = parent.getParent();
-			if( parent instanceof IASTFunctionCallExpression ){
+		    ASTNodeProperty prop = parent.getPropertyInParent();
+		    if( prop == IASTFunctionCallExpression.FUNCTION_NAME ){
+		        parent = parent.getParent();
 				IASTExpression exp = ((IASTFunctionCallExpression)parent).getParameterExpression();
 				if( exp instanceof IASTExpressionList )
 					data.functionParameters = ((IASTExpressionList) exp ).getExpressions();
@@ -503,7 +504,7 @@ public class CPPSemantics {
 				else
 					data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 			}
-		} else if( parent instanceof ICPPASTFieldReference && parent.getParent() instanceof IASTFunctionCallExpression ){
+		} else if( parent instanceof ICPPASTFieldReference && parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME ){
 		    IASTExpression exp = ((IASTFunctionCallExpression)parent.getParent()).getParameterExpression();
 			if( exp instanceof IASTExpressionList )
 				data.functionParameters = ((IASTExpressionList) exp ).getExpressions();
@@ -1291,7 +1292,7 @@ public class CPPSemantics {
 			IASTNode node =  name.getParent();
 			if( node instanceof ICPPASTQualifiedName )
 				node = node.getParent();
-			if( node instanceof ICPPASTFunctionDeclarator ){
+			if( node instanceof ICPPASTFunctionDeclarator && node.getParent() instanceof IASTFunctionDefinition ){
 				if( binding instanceof ICPPInternalBinding )
 				((ICPPInternalBinding)binding).addDefinition( node );
 			}

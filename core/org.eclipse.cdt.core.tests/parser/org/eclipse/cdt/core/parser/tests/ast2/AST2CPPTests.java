@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -3358,6 +3359,59 @@ public class AST2CPPTests extends AST2BaseTest {
         IBinding binding = col.getName(0).resolveBinding();
         assertTrue( binding instanceof ITypedef );
         assertTrue( ((ITypedef)binding).getType() instanceof IFunctionType );
+    }
+    
+    public void testBug90616() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void f( int );          \n"); //$NON-NLS-1$
+        buffer.append( "void foo(){             \n"); //$NON-NLS-1$
+        buffer.append( "   f( ( 1, 2 ) );       \n"); //$NON-NLS-1$
+        buffer.append( "}                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+    	IFunction f2 = (IFunction) col.getName(3).resolveBinding();
+    	assertSame( f1, f2 );
+    }
+    
+    public void testBug90603() throws Exception {
+        IASTTranslationUnit tu = parse( "class X { void f(){} };", ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
+    	ICPPMethod f1 = (ICPPMethod) col.getName(1).resolveBinding();
+    	
+    	assertFalse( f1.isStatic() );
+    	
+    	String[] qns = f1.getQualifiedName();
+    	assertEquals( qns.length, 2 );
+    	assertEquals( qns[0], "X" ); //$NON-NLS-1$
+    	assertEquals( qns[1], "f" ); //$NON-NLS-1$
+    	assertTrue( f1.isGloballyQualified() );
+    	assertEquals( f1.getVisibility(), ICPPMember.v_private );
+    	
+    	assertSame( f1.getScope(), X.getCompositeScope() );
+    }
+    
+    public void testBug90662() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class X {   };           \n"); //$NON-NLS-1$
+        buffer.append("X x;                     \n"); //$NON-NLS-1$
+        buffer.append("class X {   };           \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
+    	IVariable x = (IVariable) col.getName(2).resolveBinding();
+    	IProblemBinding problem = (IProblemBinding) col.getName(3).resolveBinding();
+    	assertSame( x.getType(), X );
+    	assertEquals( problem.getID(), IProblemBinding.SEMANTIC_INVALID_REDEFINITION );
     }
 }
 

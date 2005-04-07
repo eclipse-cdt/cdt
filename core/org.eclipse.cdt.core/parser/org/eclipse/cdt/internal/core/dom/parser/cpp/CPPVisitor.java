@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -349,7 +350,14 @@ public class CPPVisitor {
             		binding = new CPPClassType( name );
     			scope.addName( compType.getName() );
     		} else {
-    			((CPPClassType)binding).addDefinition( compType );
+    			if( binding instanceof ICPPInternalBinding ){
+					ICPPInternalBinding internal = (ICPPInternalBinding) binding;
+					if( internal.getDefinition() == null )
+						internal.addDefinition( compType );
+					else
+						binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray() ); 
+    			}
+    			
     		}
         } catch ( DOMException e ) {
             binding = e.getProblem();
@@ -1542,6 +1550,9 @@ public class CPPVisitor {
 		    } catch ( DOMException e ) {
 		        return e.getProblem();
             }
+		} else if( expression instanceof IASTExpressionList ){
+			IASTExpression [] exps = ((IASTExpressionList)expression).getExpressions();
+			return getExpressionType( exps[ exps.length - 1 ] );
 		}
 	    return null;
 	}

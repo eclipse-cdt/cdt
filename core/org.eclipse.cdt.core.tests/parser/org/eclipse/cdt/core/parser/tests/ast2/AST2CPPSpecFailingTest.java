@@ -271,29 +271,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 5.18-2):
-	int f(int, int, int) {}
-	int foo() {
-	int a=0, t=1, c=2;
-	f(a, (t=3, t+2), c);
-	}
-	 --End Example]
-	 */
-	public void test5_18s2()  { // TODO Devin raised bug 90616
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("int f(int, int, int) {}\n"); //$NON-NLS-1$
-		buffer.append("int foo() {\n"); //$NON-NLS-1$
-		buffer.append("int a=0, t=1, c=2;\n"); //$NON-NLS-1$
-		buffer.append("f(a, (t=3, t+2), c);\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 6.4-3):
 	int foo() {
 	if (int x = f()) {
@@ -515,7 +492,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void _test8_2s7a()  { // TODO Devin raised bug 90633
+	public void test8_2s7a()  { // TODO Devin raised bug 90633
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("class C { };\n"); //$NON-NLS-1$
 		buffer.append("void f(int(C)) { } // void f(int (*fp)(C c)) { }\n"); //$NON-NLS-1$
@@ -732,61 +709,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("int c = X(a); // OK: a.operator X().operator int()\n"); //$NON-NLS-1$
 		try {
 		parse(buffer.toString(), ParserLanguage.CPP, false, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
-	 [--Start Example(CPP 12.7-1):
-	struct X { int i; };
-	struct Y : X { };
-	struct A { int a; };
-	struct B : public A { int j; Y y; };
-	extern B bobj;
-	B* pb = &bobj; // OK
-	int* p1 = &bobj.a; // undefined, refers to base class member
-	int* p2 = &bobj.y.i; // undefined, refers to member’s member
-	A* pa = &bobj; // undefined, upcast to a base class type
-	B bobj; // definition of bobj
-	extern X xobj;
-	int* p3 = &xobj.i; // OK, X is a POD class
-	X xobj;
-	struct W { int j; };
-	struct X : public virtual W { };
-	struct Y {
-	int *p;
-	X x;
-	Y() : p(&x.j) // undefined, x is not yet constructed
-	{ }
-	};
-	 --End Example]
-	 */
-	public void test12_7s1()  { // TODO Devin raised bug 90662
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct X { int i; };\n"); //$NON-NLS-1$
-		buffer.append("struct Y : X { };\n"); //$NON-NLS-1$
-		buffer.append("struct A { int a; };\n"); //$NON-NLS-1$
-		buffer.append("struct B : public A { int j; Y y; };\n"); //$NON-NLS-1$
-		buffer.append("extern B bobj;\n"); //$NON-NLS-1$
-		buffer.append("B* pb = &bobj; // OK\n"); //$NON-NLS-1$
-		buffer.append("int* p1 = &bobj.a; // undefined, refers to base class member\n"); //$NON-NLS-1$
-		buffer.append("int* p2 = &bobj.y.i; // undefined, refers to member’s member\n"); //$NON-NLS-1$
-		buffer.append("A* pa = &bobj; // undefined, upcast to a base class type\n"); //$NON-NLS-1$
-		buffer.append("B bobj; // definition of bobj\n"); //$NON-NLS-1$
-		buffer.append("extern X xobj;\n"); //$NON-NLS-1$
-		buffer.append("int* p3 = &xobj.i; // OK, X is a POD class\n"); //$NON-NLS-1$
-		buffer.append("X xobj;\n"); //$NON-NLS-1$
-		buffer.append("struct W { int j; };\n"); //$NON-NLS-1$
-		buffer.append("struct X : public virtual W { };\n"); //$NON-NLS-1$
-		buffer.append("struct Y {\n"); //$NON-NLS-1$
-		buffer.append("int *p;\n"); //$NON-NLS-1$
-		buffer.append("X x;\n"); //$NON-NLS-1$
-		buffer.append("Y() : p(&x.j) // undefined, x is not yet constructed\n"); //$NON-NLS-1$
-		buffer.append("{ }\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, true);
 		assertTrue(false);
 		} catch (Exception e) {
 		}

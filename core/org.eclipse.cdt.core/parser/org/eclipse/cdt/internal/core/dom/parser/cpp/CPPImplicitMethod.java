@@ -186,7 +186,7 @@ public class CPPImplicitMethod extends CPPMethod {
 						}
 						if( idx == ps.length ){
 							name.setBinding( this );
-							addDeclaration( (ICPPASTFunctionDeclarator) dtor );
+							addDeclaration( dtor );
 							return members[i];
 						}
 							

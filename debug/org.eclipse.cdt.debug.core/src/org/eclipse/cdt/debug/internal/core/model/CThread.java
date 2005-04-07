@@ -418,7 +418,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		CDebugElementState oldState = getState();
 		setState( CDebugElementState.SUSPENDING );
 		try {
-			getCDITarget().suspend();
+			getCDIThread().suspend();
 		}
 		catch( CDIException e ) {
 			setState( oldState );

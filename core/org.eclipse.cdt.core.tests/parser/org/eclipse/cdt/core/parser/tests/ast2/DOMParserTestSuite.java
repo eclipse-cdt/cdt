@@ -38,6 +38,8 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( AST2UtilOldTests.class );
 		suite.addTestSuite( AST2SelectionParseTest.class );		
 		suite.addTestSuite( CodeReaderCacheTest.class );
+		suite.addTestSuite( AST2CPPSpecTest.class );
+		suite.addTestSuite( AST2CPPSpecFailingTest.class );
 		return suite;
 	}	
 

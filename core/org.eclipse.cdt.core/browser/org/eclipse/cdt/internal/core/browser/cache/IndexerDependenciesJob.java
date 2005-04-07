@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
@@ -76,7 +76,7 @@ public class IndexerDependenciesJob extends IndexerJob {
 							if (progressMonitor.isCanceled())
 								throw new InterruptedException();
 
-							IndexedFile file = input.getIndexedFile(references[j]);
+							IndexedFileEntry file = input.getIndexedFile(references[j]);
 							if (file != null && file.getPath() != null) {
 								IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
 								fTypeCache.flush(path);

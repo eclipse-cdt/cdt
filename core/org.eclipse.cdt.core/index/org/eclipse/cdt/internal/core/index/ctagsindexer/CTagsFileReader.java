@@ -20,8 +20,9 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexEncoderUtil;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
@@ -71,7 +72,8 @@ public class CTagsFileReader {
 		   //encode new tag in current file
 		   char[][] fullName = parser.getQualifiedName(tagEntry);
 		   //encode name
-		   indexer.addToOutput(fullName,(String)tagEntry.tagExtensionField.get(CTagsConsoleParser.KIND));
+		   String lineNumber = (String) tagEntry.tagExtensionField.get(CTagsConsoleParser.LINE);
+		   indexer.addToOutput(fullName,(String)tagEntry.tagExtensionField.get(CTagsConsoleParser.KIND), Integer.parseInt(lineNumber));
 		}
 	}
 
@@ -85,14 +87,14 @@ public class CTagsFileReader {
         public MiniIndexer(IFile currentFile) {
             this.currentFile = currentFile;
         }
-        public void addToOutput(char[][]fullName, String kind){
+        public void addToOutput(char[][]fullName, String kind, int lineNumber){
         	if (kind == null)
         	  return;
         	
-	        IndexedFile mainIndexFile = this.output.getIndexedFile(currentFile.getFullPath().toString());
+	        IndexedFileEntry mainIndexFile = this.output.getIndexedFile(currentFile.getFullPath().toString());
 			int fileNum = 0;
 	        if (mainIndexFile != null)
-				fileNum = mainIndexFile.getFileNumber();
+				fileNum = mainIndexFile.getFileID();
 			
 	        EntryType entryType = null;
 	        
@@ -127,14 +129,14 @@ public class CTagsFileReader {
 	    	}
 	    	
 	    	if (entryType != null)
-	    	    output.addRef(fileNum, IndexEncoderUtil.encodeEntry(fullName,entryType,type));
+	    	    output.addRef(fileNum, IndexEncoderUtil.encodeEntry(fullName,entryType,type), lineNumber, ICIndexStorageConstants.LINE);
 	    }
         /* (non-Javadoc)
          * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)
          */
         public void index(IFile file, IIndexerOutput output) throws IOException {
             this.output = output;
-            IndexedFile indFile =output.addIndexedFile(file.getFullPath().toString());
+            IndexedFileEntry indFile =output.addIndexedFile(file.getFullPath().toString());
         }
 
         /* (non-Javadoc)

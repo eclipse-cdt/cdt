@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +24,14 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexOutput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexOutput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.MergeFactory;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.SimpleIndexInput;
+import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
+import org.eclipse.cdt.internal.core.index.impl.Int;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -93,7 +101,7 @@ public class Index implements IIndex {
 		if (timeToMerge()) {
 			merge();
 		}
-		IndexedFile indexedFile= addsIndex.getIndexedFile(file.getFullPath().toString());
+		IndexedFileEntry indexedFile= addsIndex.getIndexedFile(file.getFullPath().toString());
 		if (indexedFile != null /*&& removedInAdds.get(document.getName()) == null*/
 			)
 			remove(indexedFile, MergeFactory.ADDS_INDEX);
@@ -184,7 +192,7 @@ public class Index implements IIndex {
 		IndexInput input= new BlocksIndexInput(indexFile);
 		try {
 			input.open();
-			IndexedFile file = input.getIndexedFile(documentNumber);
+			IndexedFileEntry file = input.getIndexedFile(documentNumber);
 			if (file == null) return null;
 			return file.getPath();
 		} finally {
@@ -217,10 +225,10 @@ public class Index implements IIndex {
 			} catch(IOException e) {
 				BlocksIndexInput input = (BlocksIndexInput)mainIndexInput;
 				try {
-					input.opened = true;
+					input.setOpened(true);
 					input.close();
 				} finally {
-					input.opened = false;
+					input.setOpened(false);
 				}
 				indexFile.delete();
 				mainIndexInput = null;
@@ -360,8 +368,8 @@ public class Index implements IIndex {
 		List tempFileReturn = new ArrayList();
 		try {
 			input.open();
-			IndexedFile inFile = input.getIndexedFile(file.getFullPath().toString());
-			fileNum =inFile.getFileNumber();
+			IndexedFileEntry inFile = input.getIndexedFile(file.getFullPath().toString());
+			fileNum =inFile.getFileID();
 	
 			IncludeEntry[] tempEntries = input.queryIncludeEntries(fileNum);
 			for (int i=0; i<tempEntries.length; i++)
@@ -379,16 +387,16 @@ public class Index implements IIndex {
 	 * @see IIndex#remove
 	 */
 	public void remove(String documentName) throws IOException {
-		IndexedFile file= addsIndex.getIndexedFile(documentName);
+		IndexedFileEntry file= addsIndex.getIndexedFile(documentName);
 		if (file != null) {
 			//the file is in the adds Index, we remove it from this one
 			Int lastRemoved= (Int) removedInAdds.get(documentName);
 			if (lastRemoved != null) {
-				int fileNum= file.getFileNumber();
+				int fileNum= file.getFileID();
 				if (lastRemoved.value < fileNum)
 					lastRemoved.value= fileNum;
 			} else
-				removedInAdds.put(documentName, new Int(file.getFileNumber()));
+				removedInAdds.put(documentName, new Int(file.getFileID()));
 		} else {
 			//we remove the file from the old index
 			removedInOld.put(documentName, new Int(1));
@@ -399,15 +407,15 @@ public class Index implements IIndex {
 	 * Removes the given document from the given index (MergeFactory.ADDS_INDEX for the
 	 * in memory index, MergeFactory.OLD_INDEX for the index on the disk).
 	 */
-	protected void remove(IndexedFile file, int index) throws IOException {
+	protected void remove(IndexedFileEntry file, int index) throws IOException {
 		String name= file.getPath();
 		if (index == MergeFactory.ADDS_INDEX) {
 			Int lastRemoved= (Int) removedInAdds.get(name);
 			if (lastRemoved != null) {
-				if (lastRemoved.value < file.getFileNumber())
-					lastRemoved.value= file.getFileNumber();
+				if (lastRemoved.value < file.getFileID())
+					lastRemoved.value= file.getFileID();
 			} else
-				removedInAdds.put(name, new Int(file.getFileNumber()));
+				removedInAdds.put(name, new Int(file.getFileID()));
 		} else if (index == MergeFactory.OLD_INDEX)
 			removedInOld.put(name, new Int(1));
 		else

@@ -8,9 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
 
 /**
  * An indexBlock stores wordEntries.

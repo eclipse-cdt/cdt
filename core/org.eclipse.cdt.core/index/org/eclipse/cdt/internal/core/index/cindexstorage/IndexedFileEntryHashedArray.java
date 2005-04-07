@@ -8,36 +8,36 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import java.util.ArrayList;
 
-public final class IndexedFileHashedArray {
+public final class IndexedFileEntryHashedArray {
 
-private IndexedFile elements[];
+private IndexedFileEntry elements[];
 private int elementSize; // number of elements in the table
 private int threshold;
 private int lastId;
 private ArrayList replacedElements;
 
-public IndexedFileHashedArray(int size) {
+public IndexedFileEntryHashedArray(int size) {
 	if (size < 7) size = 7;
-	this.elements = new IndexedFile[2 * size + 1];
+	this.elements = new IndexedFileEntry[2 * size + 1];
 	this.elementSize = 0;
 	this.threshold = size + 1; // size is the expected number of elements
 	this.lastId = 0;
 	this.replacedElements = null;
 }
 
-public IndexedFile add(String path){
-	return add(new IndexedFile(path, ++lastId));
+public IndexedFileEntry add(String path){
+	return add(new IndexedFileEntry(path, ++lastId));
 }
 
-private IndexedFile add(IndexedFile file) {
+private IndexedFileEntry add(IndexedFileEntry file) {
 	int length = elements.length;
 	String path = file.getPath();
 	int index = (path.hashCode() & 0x7FFFFFFF) % length;
-	IndexedFile current;
+	IndexedFileEntry current;
 	while ((current = elements[index]) != null) {
 		if (current.getPath().equals(path)) {
 			if (replacedElements == null) replacedElements = new ArrayList(5);
@@ -53,26 +53,26 @@ private IndexedFile add(IndexedFile file) {
 	return file;
 }
 
-public IndexedFile[] asArray() {
-	IndexedFile[] array = new IndexedFile[lastId];
+public IndexedFileEntry[] asArray() {
+    IndexedFileEntry[] array = new IndexedFileEntry[lastId];
 	for (int i = 0, length = elements.length; i < length; i++) {
-		IndexedFile current = elements[i];
+	    IndexedFileEntry current = elements[i];
 		if (current != null)
-			array[current.fileNumber - 1] = current;
+			array[current.getFileID() - 1] = current;
 	}
 	if (replacedElements != null) {
 		for (int i = 0, length = replacedElements.size(); i < length; i++) {
-			IndexedFile current = (IndexedFile) replacedElements.get(i);
-			array[current.fileNumber - 1] = current;
+		    IndexedFileEntry current = (IndexedFileEntry) replacedElements.get(i);
+			array[current.getFileID() - 1] = current;
 		}
 	}
 	return array;
 }
 
-public IndexedFile get(String path) {
+public IndexedFileEntry get(String path) {
 	int length = elements.length;
 	int index = (path.hashCode() & 0x7FFFFFFF) % length;
-	IndexedFile current;
+	IndexedFileEntry current;
 	while ((current = elements[index]) != null) {
 		if (current.getPath().equals(path)) return current;
 		if (++index == length) index = 0;
@@ -81,7 +81,7 @@ public IndexedFile get(String path) {
 }
 
 private void grow() {
-	IndexedFileHashedArray newArray = new IndexedFileHashedArray(elementSize * 2); // double the number of expected elements
+	IndexedFileEntryHashedArray newArray = new IndexedFileEntryHashedArray(elementSize * 2); // double the number of expected elements
 	for (int i = 0, length = elements.length; i < length; i++)
 		if (elements[i] != null)
 			newArray.add(elements[i]);
@@ -98,7 +98,7 @@ public int size() {
 
 public String toString() {
 	String s = ""; //$NON-NLS-1$
-	IndexedFile[] files = asArray();
+	IndexedFileEntry[] files = asArray();
 	for (int i = 0, length = files.length; i < length; i++)
 		s += files[i].toString() + "\n"; 	//$NON-NLS-1$
 	return s;

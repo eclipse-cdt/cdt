@@ -8,11 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
 
 /**
  * A blocksIndexOutput is used to save an index in a file with the given structure:<br>
@@ -55,10 +60,10 @@ public class BlocksIndexOutput extends IndexOutput {
 	/**
 	 * @see IndexOutput#addFile
 	 */
-	public void addFile(IndexedFile indexedFile) throws IOException {
+	public void addFile(IndexedFileEntry indexedFile) throws IOException {
 		if (firstFileListBlock) {
 			firstInBlock= true;
-			fileListBlock= new FileListBlock(IIndexConstants.BLOCK_SIZE);
+			fileListBlock= new FileListBlock(ICIndexStorageConstants.BLOCK_SIZE);
 			firstFileListBlock= false;
 		}
 		if (fileListBlock.addFile(indexedFile)) {
@@ -80,7 +85,7 @@ public class BlocksIndexOutput extends IndexOutput {
 	 */
 	public void addWord(WordEntry entry) throws IOException {
 		if (firstIndexBlock) {
-			indexBlock= new GammaCompressedIndexBlock(IIndexConstants.BLOCK_SIZE);
+			indexBlock= new GammaCompressedIndexBlock(ICIndexStorageConstants.BLOCK_SIZE);
 			firstInBlock= true;
 			firstIndexBlock= false;
 		}
@@ -105,7 +110,7 @@ public class BlocksIndexOutput extends IndexOutput {
 	 */
 	public void addInclude(IncludeEntry entry) throws IOException {
 		if (firstIncludeIndexBlock) {
-			includeIndexBlock= new GammaCompressedIndexBlock(IIndexConstants.BLOCK_SIZE);
+			includeIndexBlock= new GammaCompressedIndexBlock(ICIndexStorageConstants.BLOCK_SIZE);
 			firstInBlock= true;
 			firstIncludeIndexBlock= false;
 		}
@@ -144,10 +149,10 @@ public class BlocksIndexOutput extends IndexOutput {
 		summary.setNumFiles(numFiles);
 		summary.setNumWords(numWords);
 		summary.setNumIncludes(numIncludes);
-		indexOut.seek(blockNum * (long) IIndexConstants.BLOCK_SIZE);
+		indexOut.seek(blockNum * (long) ICIndexStorageConstants.BLOCK_SIZE);
 		summary.write(indexOut);
 		indexOut.seek(0);
-		indexOut.writeUTF(IIndexConstants.SIGNATURE);
+		indexOut.writeUTF(ICIndexStorageConstants.SIGNATURE);
 		indexOut.writeInt(blockNum);
 	}
 	/**

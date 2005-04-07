@@ -8,14 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.cdt.internal.core.index.cindexstorage.InMemoryIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
 
 /**
  * A simpleIndexInput is an input on an in memory Index. 
@@ -24,8 +27,8 @@ import org.eclipse.jface.text.IDocument;
 public class SimpleIndexInput extends IndexInput {
 	protected WordEntry[] sortedWordEntries;
 	protected IncludeEntry[] sortedIncludes;
-	protected IndexedFile currentFile;
-	protected IndexedFile[] sortedFiles;
+	protected IndexedFileEntry currentFile;
+	protected IndexedFileEntry[] sortedFiles;
 	protected InMemoryIndex index;
 
 	public SimpleIndexInput(InMemoryIndex index) {
@@ -46,7 +49,7 @@ public class SimpleIndexInput extends IndexInput {
 	/**
 	 * @see IndexInput#getCurrentFile()
 	 */
-	public IndexedFile getCurrentFile() throws IOException {
+	public IndexedFileEntry getCurrentFile() throws IOException {
 		if (!hasMoreFiles())
 			return null;
 		return currentFile;
@@ -54,18 +57,18 @@ public class SimpleIndexInput extends IndexInput {
 	/**
 	 * @see IndexInput#getIndexedFile(int)
 	 */
-	public IndexedFile getIndexedFile(int fileNum) throws IOException {
+	public IndexedFileEntry getIndexedFile(int fileNum) throws IOException {
 		for (int i= 0; i < sortedFiles.length; i++)
-			if (sortedFiles[i].getFileNumber() == fileNum)
+			if (sortedFiles[i].getFileID() == fileNum)
 				return sortedFiles[i];
 		return null;
 	}
 	/**
-	 * @see IndexInput#getIndexedFile(IDocument)
+	 * @see IndexInput#getIndexedFile(String)
 	 */
-	public IndexedFile getIndexedFile(String fullPath) throws IOException {
+	public IndexedFileEntry getIndexedFile(String fullPath) throws IOException {
 		for (int i= index.getNumFiles(); i >= 1; i--) {
-			IndexedFile file= getIndexedFile(i);
+			IndexedFileEntry file= getIndexedFile(i);
 			if (fullPath.equals(file.getPath()))
 				return file;
 		}
@@ -164,7 +167,7 @@ public class SimpleIndexInput extends IndexInput {
 		setFirstFile();
 		ArrayList matches= new ArrayList();
 		while (hasMoreFiles()) {
-			IndexedFile file= getCurrentFile();
+			IndexedFileEntry file= getCurrentFile();
 			if (file.getPath().indexOf(word) != -1)
 				matches.add(file.getPath());
 			moveToNextFile();

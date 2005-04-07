@@ -8,9 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.IOException;
+
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
 
 /**
  * An indexOutput is used to write an index into a different object (a File, ...). 
@@ -19,7 +22,7 @@ public abstract class IndexOutput {
 	/**
 	 * Adds a File to the destination.
 	 */
-	public abstract void addFile(IndexedFile file) throws IOException;
+	public abstract void addFile(IndexedFileEntry file) throws IOException;
 	/**
 	 * Adds a word to the destination.
 	 */

@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 
 public class IndexEncoderUtil {
+    
     public static final char[] encodeEntry(char[][] elementName, EntryType entryType, LimitTo encodeType) {
         int pos, nameLength = 0;
         for (int i=0; i < elementName.length; i++){
@@ -71,10 +72,10 @@ public class IndexEncoderUtil {
         //the first step in the Source Indexer is to add the file being indexed to the index
         //which actually creates an entry for the file in the index.
         
-        IndexedFile mainIndexFile = indexer.getOutput().getIndexedFile(
+        IndexedFileEntry mainIndexFile = indexer.getOutput().getIndexedFile(
                 indexer.getResourceFile().getFullPath().toString());
         if (mainIndexFile != null)
-            fileNum = mainIndexFile.getFileNumber();
+            fileNum = mainIndexFile.getFileID();
         
         String fileName = null;
         IASTNodeLocation[] nameLocations = name.getNodeLocations();
@@ -103,21 +104,21 @@ public class IndexEncoderUtil {
 	            //We are not in the file that has triggered the index. Thus, we need to find the
 	            //file number for the current file (if it has one). If the current file does not
 	            //have a file number, we need to add it to the index.
-               IndexedFile indFile = indexer.getOutput().getIndexedFile(filePath);
+               IndexedFileEntry indFile = indexer.getOutput().getIndexedFile(filePath);
                 if (indFile != null){
-                    fileNum = indFile.getFileNumber();
+                    fileNum = indFile.getFileID();
                 }
                 else {
                     //Need to add file to index
                     if (tempFile != null){
                     indFile = indexer.getOutput().addIndexedFile(tempFile.getFullPath().toString());
                     if (indFile != null)
-                        fileNum = indFile.getFileNumber();
+                        fileNum = indFile.getFileID();
                     }
                     else {
                         indFile = indexer.getOutput().addIndexedFile(fileName);
                         if (indFile != null)
-                            fileNum = indFile.getFileNumber();
+                            fileNum = indFile.getFileID();
                     }
                 }
             }

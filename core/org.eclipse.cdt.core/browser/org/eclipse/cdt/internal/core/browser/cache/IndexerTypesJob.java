@@ -22,9 +22,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
@@ -175,7 +175,7 @@ public class IndexerTypesJob extends IndexerJob {
 //					}
 //				}
 				// just grab the first reference
-				IndexedFile file = input.getIndexedFile(references[0]);
+				IndexedFileEntry file = input.getIndexedFile(references[0]);
 				if (file != null && file.getPath() != null) {
 					IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
 					info.addReference(new TypeReference(path, project));
@@ -200,7 +200,7 @@ public class IndexerTypesJob extends IndexerJob {
 				if (monitor.isCanceled())
 					throw new InterruptedException();
 
-				IndexedFile file = input.getIndexedFile(references[i]);
+				IndexedFileEntry file = input.getIndexedFile(references[i]);
 				if (file != null && file.getPath() != null) {
 					IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
 					info.addDerivedReference(new TypeReference(path, project));

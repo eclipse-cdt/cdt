@@ -18,10 +18,10 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IncludeEntry;
-import org.eclipse.cdt.internal.core.index.impl.IndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
@@ -174,11 +174,11 @@ public class DependencyQueryJob implements IIndexJob {
 	 */
 	private void findDep(IndexInput input) throws IOException {
 		
-		IndexedFile indexedFile = input.getIndexedFile(file.getFullPath().toString());
+		IndexedFileEntry indexedFile = input.getIndexedFile(file.getFullPath().toString());
 		if (indexedFile == null) return;
 		
 		
-		int fileNum =indexedFile.getFileNumber();
+		int fileNum =indexedFile.getFileID();
 		IncludeEntry[] tempEntries = input.queryIncludeEntries(fileNum);
 		if (tempEntries != null){
 			for (int r=0; r<tempEntries.length; r++){

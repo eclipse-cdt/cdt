@@ -8,13 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Util;
 
 /**
  * An indexSummary is used when saving an index into a BlocksIndexOuput or 
@@ -49,7 +51,7 @@ public class IndexSummary {
 	protected int numIncludes;
 	
 	static class FirstFileInBlock {
-		IndexedFile indexedFile;
+		IndexedFileEntry indexedFile;
 		int blockNum;
 	}
 
@@ -77,7 +79,7 @@ public class IndexSummary {
 	/**
 	 * Adds the given file as the first file for the given Block number. 
 	 */
-	public void addFirstFileInBlock(IndexedFile indexedFile, int blockNum) {
+	public void addFirstFileInBlock(IndexedFileEntry indexedFile, int blockNum) {
 		FirstFileInBlock entry= new FirstFileInBlock();
 		entry.indexedFile= indexedFile;
 		entry.blockNum= blockNum;
@@ -133,7 +135,7 @@ public class IndexSummary {
 		while (min <= max) {
 			int mid= (min + max) / 2;
 			FirstFileInBlock entry= (FirstFileInBlock) firstFilesInBlocks.get(mid);
-			int compare= fileNum - entry.indexedFile.getFileNumber();
+			int compare= fileNum - entry.indexedFile.getFileID();
 			if (compare == 0)
 				return entry.blockNum;
 			if (compare < 0)
@@ -318,7 +320,7 @@ public class IndexSummary {
 			FirstFileInBlock entry= new FirstFileInBlock();
 			String path= raf.readUTF();
 			int fileNum= raf.readInt();
-			entry.indexedFile= new IndexedFile(path, fileNum);
+			entry.indexedFile= new IndexedFileEntry(path, fileNum);
 			entry.blockNum= raf.readInt();
 			firstFilesInBlocks.add(entry);
 		}
@@ -370,7 +372,7 @@ public class IndexSummary {
 		for (int i= 0, size= firstFilesInBlocks.size(); i < size; ++i) {
 			FirstFileInBlock entry= (FirstFileInBlock) firstFilesInBlocks.get(i);
 			raf.writeUTF(entry.indexedFile.getPath());
-			raf.writeInt(entry.indexedFile.getFileNumber());
+			raf.writeInt(entry.indexedFile.getFileID());
 			raf.writeInt(entry.blockNum);
 		}
 		raf.writeInt(firstWordsInBlocks.size());

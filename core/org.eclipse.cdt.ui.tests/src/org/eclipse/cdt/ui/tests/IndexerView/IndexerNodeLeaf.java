@@ -16,15 +16,15 @@ import java.io.IOException;
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
-import org.eclipse.cdt.internal.core.index.impl.IndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
-
+ 
 /**
  * @author dsteffle
  */
@@ -174,6 +174,10 @@ public class IndexerNodeLeaf implements IAdaptable {
         private static final String IENTRYRESULT_GETWORD__ = "IEntryResult#getWord()"; //$NON-NLS-1$
         private static final String REFERENCES = "References"; //$NON-NLS-1$
         private static final String REFERENCE_NUMBER_ = "reference# "; //$NON-NLS-1$
+        private static final String OFFSETS = "Offsets"; //$NON-NLS-1$
+        private static final String OFFSETS_NUMBER = "offsets for #"; //$NON-NLS-1$
+        private static final String OFFSETS_LINE = "Line "; //$NON-NLS-1$
+        private static final String OFFSETS_OFFSET = "Offset "; //$NON-NLS-1$
         private static final int DEFAULT_DESCRIPTOR_SIZE = 4;
         IEntryResult entryResult = null;
         
@@ -198,13 +202,37 @@ public class IndexerNodeLeaf implements IAdaptable {
                 int[] references = entryResult.getFileReferences();
                 if (references != null) {
                     for (int j = 0; j < references.length; ++j) {
-                        IndexedFile file = input.getIndexedFile(references[j]);
+                        IndexedFileEntry file = input.getIndexedFile(references[j]);
                         if (file != null && file.getPath() != null) {
                             String id = REFERENCE_NUMBER_ + String.valueOf(j);
                             text = new TextPropertyDescriptor(new TextDescriptorId(id, PathUtil.getWorkspaceRelativePath(file.getPath()).toOSString()), id);
                             text.setCategory(REFERENCES);
                             descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
                         }
+                    }
+                }
+                
+                //offsets
+                int[][]offsets = entryResult.getOffsets();
+                if (offsets != null){
+                    for (int j=0; j<offsets.length; j++){
+                        String id = OFFSETS_NUMBER + j;
+                        String offsetString = ""; //$NON-NLS-1$
+                        for (int k=0; k<offsets[j].length; k++){
+                            String rawOffset = String.valueOf(offsets[j][k]) ;
+                            switch(rawOffset.charAt(0)){
+                             case '1':
+                                 offsetString +=  OFFSETS_LINE + rawOffset.substring(1) + " "; //$NON-NLS-1$
+                             break;
+                             case '2':
+                                 offsetString +=  OFFSETS_OFFSET + rawOffset.substring(1) + " "; //$NON-NLS-1$
+                             break;    
+                            }
+                       
+                        }
+                        text = new TextPropertyDescriptor(new TextDescriptorId(id, offsetString), id);
+                        text.setCategory(OFFSETS);
+                        descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
                     }
                 }
                 

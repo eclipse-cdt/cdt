@@ -14,8 +14,9 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexEncoderUtil;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
 
@@ -113,8 +114,10 @@ public class CTagsConsoleParser implements IConsoleParser {
     	
     	}
     
+    	String lineNumber = (String)tempTag.tagExtensionField.get(LINE);
+    	
     	if (entryType != null)
-    	    indexer.getOutput().addRef(getFileNumber(),IndexEncoderUtil.encodeEntry(fullName,entryType,type));
+    	    indexer.getOutput().addRef(getFileNumber(),IndexEncoderUtil.encodeEntry(fullName,entryType,type), Integer.parseInt(lineNumber), ICIndexStorageConstants.LINE);
     }
 
     /**
@@ -122,10 +125,10 @@ public class CTagsConsoleParser implements IConsoleParser {
      */
     private int getFileNumber() {
         int fileNum = 0;
-        IndexedFile mainIndexFile = indexer.getOutput().getIndexedFile(
+        IndexedFileEntry mainIndexFile = indexer.getOutput().getIndexedFile(
                 indexer.getResourceFile().getFullPath().toString());
         if (mainIndexFile != null)
-            fileNum = mainIndexFile.getFileNumber();
+            fileNum = mainIndexFile.getFileID();
         
         return fileNum;
     }

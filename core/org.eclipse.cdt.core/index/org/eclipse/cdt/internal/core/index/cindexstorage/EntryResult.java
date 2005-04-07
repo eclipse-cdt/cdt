@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
@@ -17,10 +17,12 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 public class EntryResult implements IEntryResult {
 	private char[] word;
 	private int[]  fileRefs;
+	private int[][] offsets;
 	
-public EntryResult(char[] word, int[] refs) {
+public EntryResult(char[] word, int[] refs, int[][] offsets) {
 	this.word = word;
 	this.fileRefs = refs;
+	this.offsets = offsets;
 }
 public boolean equals(Object anObject){
 	
@@ -61,8 +63,26 @@ public String toString(){
 		buffer.append(' ');
 		buffer.append(fileRefs[i]);
 	}
+	buffer.append(" }, offsets={"); //$NON-NLS-1$
+	for (int i = 0; i < offsets.length; i++){
+		if (i > 0) buffer.append(',');
+		buffer.append(' ');
+		buffer.append('['); 
+		for (int j=0; j<offsets[i].length; j++){
+		    if (j > 0) buffer.append(',');
+			buffer.append(' ');
+		    buffer.append(offsets[i][j]);
+		}
+		buffer.append(']'); 
+	}
 	buffer.append(" }"); //$NON-NLS-1$
 	return buffer.toString();
+}
+/* (non-Javadoc)
+ * @see org.eclipse.cdt.internal.core.index.IEntryResult#getOffsets()
+ */
+public int[][] getOffsets() {
+    return offsets;
 }
 
 }

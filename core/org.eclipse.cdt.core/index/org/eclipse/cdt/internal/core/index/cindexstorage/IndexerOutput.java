@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 
@@ -25,20 +25,30 @@ public class IndexerOutput implements IIndexerOutput {
 	public IndexerOutput(InMemoryIndex index) {
 		this.index= index;
 	}
+	
+	/**
+	 * @deprecated
+	 */
+	public void addRef(int indexedFileNumber, char[] word){
+	    addRef(indexedFileNumber,word,1,1);
+	}
+	
 	/**
 	 * Adds a reference to the given word to the inMemoryIndex.
 	 */
-	public void addRef(int indexedFileNumber, char[] word) {
+	public void addRef(int indexedFileNumber, char[] word, int offset, int offsetType) {
 		if (indexedFileNumber == 0) {
 			throw new IllegalStateException();
 		}
-		index.addRef(word, indexedFileNumber);
-	}
+		
+		
+		index.addRef(word, indexedFileNumber, offset, offsetType);
+	}  
 	/**
 	 * Adds a reference to the given word to the inMemoryIndex.
 	 */
-	public void addRef(int indexedFileNumber, String word) {
-		addRef(indexedFileNumber, word.toCharArray());
+	public void addRef(int indexedFileNumber, String word, int offset, int offsetType) {
+		addRef(indexedFileNumber, word.toCharArray(), offset, offsetType);
 	}
 		
 	public void addRelatives(int indexedFileNumber, String inclusion, String parent) {
@@ -59,7 +69,7 @@ public class IndexerOutput implements IIndexerOutput {
 		addIncludeRef(indexedFileNumber, word.toCharArray());
 	}
 	
-	public IndexedFile getIndexedFile(String path) {
+	public IndexedFileEntry getIndexedFile(String path) {
 		return index.getIndexedFile(path);
 	}
 	
@@ -67,7 +77,7 @@ public class IndexerOutput implements IIndexerOutput {
 	 * Adds the file path to the index, creating a new file entry
 	 * for it
 	 */
-	public IndexedFile addIndexedFile(String path) {
+	public IndexedFileEntry addIndexedFile(String path) {
 		return index.addFile(path);
 	}
 	

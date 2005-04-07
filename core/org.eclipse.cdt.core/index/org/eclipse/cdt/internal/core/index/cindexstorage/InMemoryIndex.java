@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexOutput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexOutput;
 
+ 
 /**
  * This index stores the document names in an <code>ObjectVector</code>, and the words in
  * an <code>HashtableOfObjects</code>.
@@ -27,13 +29,17 @@ public class InMemoryIndex {
 	*/
 	protected IncludeEntryHashedArray includes;
 	/**
-	 * hashtable of WordEntrys = words+numbers of the files they appear in.
+	 * Array of WordEntry
 	 */
 	protected WordEntryHashedArray words;
 	/**
-	 * List of IndexedFiles = file name + a unique number.
+	 * Array of IndexedFileEntry
 	 */
-	protected IndexedFileHashedArray files;
+	protected IndexedFileEntryHashedArray files;
+	/**
+	 * Array of IndexedPathVariableEntry = file name + a unique number.
+	 */
+	protected IndexPathVariableEntryHashedArray  pathVars;
 	/**
 	 * Size of the index.
 	 */
@@ -41,69 +47,55 @@ public class InMemoryIndex {
 
 	private IncludeEntry[] sortedIncludeEntries;
 	private WordEntry[] sortedWordEntries;
-	private IndexedFile[] sortedFiles;
-
+	private IndexedFileEntry[] sortedFiles;
+	private IndexPathVariableEntry[] sortedPathVars;
 	private int lastId;
 	
 	public InMemoryIndex() {
-		includes= new IncludeEntryHashedArray(501);
 		init();
 	}
 	
-	public IndexedFile addFile(String path){
-		IndexedFile indexedFile = this.files.add(path);
-		this.footprint += indexedFile.footprint() + 4;
+	public IndexedFileEntry addFile(String path){
+	    IndexedFileEntry indexedFileEntry = this.files.add(path);
+		this.footprint += indexedFileEntry.footprint() + 4;
 		this.sortedFiles = null;
-		return indexedFile;
+		return indexedFileEntry;
 	}
 	
-	public void addIncludeRef(IndexedFile indexedFile, char[] include) {
-		addIncludeRef(include, indexedFile.getFileNumber());
+	public void addIncludeRef(IndexedFileEntry indexedFile, char[] include) {
+		addIncludeRef(include, indexedFile.getFileID());
 	}
 	
-	public void addIncludeRef(IndexedFile indexedFile, String include) {
-		addIncludeRef(include.toCharArray(), indexedFile.getFileNumber());
+	public void addIncludeRef(IndexedFileEntry indexedFile, String include) {
+		addIncludeRef(include.toCharArray(), indexedFile.getFileID());
 	}
 	
 	/**
-		 * Adds the references of the include to the tree (reference = number of the file the include belongs to).
-		 */
-		protected void addIncludeRef(char[] include, int[] references) {
-			int size= references.length;
-			int i= 0;
-			while (i < size) {
-				if (references[i] != 0)
-					addIncludeRef(include, references[i]);
-				i++;
-			}
-		}
-		/**
-		 * Looks if the include already exists to the tree and adds the fileNum to this include.
-		 * If the include does not exist, it adds it to the tree.
-		 */
-		protected void addIncludeRef(char[] include, int fileNum) {
-			IncludeEntry entry= this.includes.get(include);
-			if (entry == null) {
-				entry= new IncludeEntry(include, ++lastId);
-				entry.addRef(fileNum);
-				this.includes.add(entry);
-				this.sortedIncludeEntries= null;
-				this.footprint += entry.footprint();
-			} else {
-				this.footprint += entry.addRef(fileNum);
-			}
-		}
-
-	/**
-	 * Adds the references of the word to the index (reference = number of the file the word belongs to).
+	 * Adds the references of the include to the tree (reference = number of the file the include belongs to).
 	 */
-	protected void addRef(char[] word, int[] references) {
+	protected void addIncludeRef(char[] include, int[] references) {
 		int size= references.length;
 		int i= 0;
 		while (i < size) {
 			if (references[i] != 0)
-				addRef(word, references[i]);
+				addIncludeRef(include, references[i]);
 			i++;
+		}
+	}
+	/**
+	 * Looks if the include already exists to the tree and adds the fileNum to this include.
+	 * If the include does not exist, it adds it to the tree.
+	 */
+	protected void addIncludeRef(char[] include, int fileNum) {
+		IncludeEntry entry= this.includes.get(include);
+		if (entry == null) {
+			entry= new IncludeEntry(include, ++lastId);
+			entry.addRef(fileNum);
+			this.includes.add(entry);
+			this.sortedIncludeEntries= null;
+			this.footprint += entry.footprint();
+		} else {
+			this.footprint += entry.addRef(fileNum);
 		}
 	}
 	/**
@@ -111,25 +103,28 @@ public class InMemoryIndex {
 	 * If the word does not exist, it adds it in the index.
 	 * @param indexFlags
 	 */
-	protected void addRef(char[] word, int fileNum) {
+	protected void addRef(char[] word, int fileNum, int offset, int offsetType) {
 		WordEntry entry= this.words.get(word);
+	
 		if (entry == null) {
 			entry= new WordEntry(word);
 			entry.addRef(fileNum);
+			entry.addOffset(offset,fileNum, offsetType);
 			this.words.add(entry);
 			this.sortedWordEntries= null;
 			this.footprint += entry.footprint();
 		} else {
 			this.footprint += entry.addRef(fileNum);
+			entry.addOffset(offset, fileNum, offsetType);
 		}
 	}
 
-	public void addRef(IndexedFile indexedFile, char[] word) {
-		addRef(word, indexedFile.getFileNumber());
+	public void addRef(IndexedFileEntry indexedFile, char[] word, int offset, int offsetType) {
+		addRef(word, indexedFile.getFileID(), offset, offsetType);
 	}
 
-	public void addRef(IndexedFile indexedFile, String word) {
-		addRef(word.toCharArray(), indexedFile.getFileNumber());
+	public void addRef(IndexedFileEntry indexedFile, String word, int offset, int offsetType) {
+		addRef(word.toCharArray(), indexedFile.getFileID(), offset, offsetType);
 	}
 	
 	public void addRelatives(int fileNumber, String inclusion, String parent) {
@@ -161,13 +156,13 @@ public class InMemoryIndex {
 	/**
 	 * Returns the indexed files contained in the hashtable of includes.
 	 */
-	public IndexedFile[] getIndexedFiles(){
+	public IndexedFileEntry[] getIndexedFiles(){
 		return this.files.asArray();
 	}
 	/**
 	 * Returns the indexed file with the given path, or null if such file does not exist.
 	 */
-	public IndexedFile getIndexedFile(String path) {
+	public IndexedFileEntry getIndexedFile(String path) {
 		return files.get(path);
 	}
 	/**
@@ -182,15 +177,11 @@ public class InMemoryIndex {
 	protected IncludeEntry getIncludeEntry(char[] include) {
 		return includes.get(include);
 	}
-	/**
-	 * @see IIndex#getNumDocuments()
-	 */
+
 	public int getNumFiles() {
 		return files.size();
 	}
-	/**
-	 * @see IIndex#getNumWords()
-	 */
+	
 	public int getNumWords() {
 		return words.elementSize;
 	}
@@ -202,9 +193,9 @@ public class InMemoryIndex {
 	/**
 	 * Returns the words contained in the hashtable of words, sorted by alphabetical order.
 	 */
-	protected IndexedFile[] getSortedFiles() {
+	public IndexedFileEntry[] getSortedFiles() {
 		if (this.sortedFiles == null) {
-			IndexedFile[] indexedFiles= files.asArray();
+			IndexedFileEntry[] indexedFiles= files.asArray();
 			Util.sort(indexedFiles);
 			this.sortedFiles= indexedFiles;
 		}
@@ -213,7 +204,7 @@ public class InMemoryIndex {
 	/**
 	 * Returns the word entries contained in the hashtable of words, sorted by alphabetical order.
 	 */
-	protected WordEntry[] getSortedWordEntries() {
+	public WordEntry[] getSortedWordEntries() {
 		if (this.sortedWordEntries == null) {
 			WordEntry[] words= this.words.asArray();
 			Util.sort(words);
@@ -224,7 +215,7 @@ public class InMemoryIndex {
 	/**
 	 * Returns the include entries contained in the hashtable of includeas, sorted by alphabetical order.
 	 */
-	protected IncludeEntry[] getSortedIncludeEntries() {
+	public IncludeEntry[] getSortedIncludeEntries() {
 		if (this.sortedIncludeEntries == null) {
 			IncludeEntry[] includes= this.includes.asArray();
 			Util.sort(includes);
@@ -235,7 +226,7 @@ public class InMemoryIndex {
 	/**
 	 * Returns the word entry corresponding to the given word.
 	 */
-	protected WordEntry getWordEntry(char[] word) {
+	public WordEntry getWordEntry(char[] word) {
 		return words.get(word);
 	}
 	/**
@@ -244,7 +235,8 @@ public class InMemoryIndex {
 	public void init() {
 		includes= new IncludeEntryHashedArray(501);
 		words= new WordEntryHashedArray(501);
-		files= new IndexedFileHashedArray(101);
+		files= new IndexedFileEntryHashedArray(101);
+		pathVars= new IndexPathVariableEntryHashedArray(101);
 		footprint= 0;
 		lastId=0;
 		sortedWordEntries= null;
@@ -285,7 +277,7 @@ public class InMemoryIndex {
 		boolean ok= false;
 		try {
 			output.open();
-			IndexedFile[] indexedFiles= files.asArray();
+			IndexedFileEntry[] indexedFiles= files.asArray();
 			for (int i= 0, length = indexedFiles.length; i < length; ++i)
 				output.addFile(indexedFiles[i]); // written out in order BUT not alphabetical
 			getSortedWordEntries(); // init the slot

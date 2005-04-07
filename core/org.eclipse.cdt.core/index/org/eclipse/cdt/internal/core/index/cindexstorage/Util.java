@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -143,19 +143,19 @@ public class Util {
 			quickSort(list, left, original_right);
 		}
 	}
-	private static void quickSort(IndexedFile[] list, int left, int right) {
+	private static void quickSort(IndexedFileEntry[] list, int left, int right) {
 		int original_left= left;
 		int original_right= right;
-		String mid= list[(left + right) / 2].path;
+		String mid= list[(left + right) / 2].getPath();
 		do {
-			while (list[left].path.compareTo(mid) < 0) {
+			while (list[left].getPath().compareTo(mid) < 0) {
 				left++;
 			}
-			while (mid.compareTo(list[right].path) < 0) {
+			while (mid.compareTo(list[right].getPath()) < 0) {
 				right--;
 			}
 			if (left <= right) {
-				IndexedFile tmp= list[left];
+				IndexedFileEntry tmp= list[left];
 				list[left]= list[right];
 				list[right]= tmp;
 				left++;
@@ -172,12 +172,12 @@ public class Util {
 	private static void quickSort(WordEntry[] list, int left, int right) {
 		int original_left= left;
 		int original_right= right;
-		char[] mid= list[(left + right) / 2].fWord;
+		char[] mid= list[(left + right) / 2].getWord();
 		do {
-			while (compare(list[left].fWord, mid) < 0) {
+			while (compare(list[left].getWord(), mid) < 0) {
 				left++;
 			}
-			while (compare(mid, list[right].fWord) < 0) {
+			while (compare(mid, list[right].getWord()) < 0) {
 				right--;
 			}
 			if (left <= right) {
@@ -195,6 +195,7 @@ public class Util {
 			quickSort(list, left, original_right);
 		}
 	}
+	
 	private static void quickSort(IncludeEntry[] list, int left, int right) {
 			int original_left= left;
 			int original_right= right;
@@ -309,7 +310,7 @@ public class Util {
 		if (list.length > 1)
 			quickSort(list, 0, list.length - 1);
 	}
-	public static void sort(IndexedFile[] list) {
+	public static void sort(IndexedFileEntry[] list) {
 		if (list.length > 1)
 			quickSort(list, 0, list.length - 1);
 	}
@@ -367,5 +368,6 @@ public class Util {
 			}
 		}
 	}
+   
 }
 

@@ -33,8 +33,8 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
@@ -70,7 +70,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 
     protected void indexFile(IFile file) throws IOException {
         // Add the name of the file to the index
-        IndexedFile indFile =output.addIndexedFile(file.getFullPath().toString());
+        IndexedFileEntry indFile =output.addIndexedFile(file.getFullPath().toString());
       
         int problems = indexer.indexProblemsEnabled(resourceFile.getProject());
         setProblemMarkersEnabled(problems);
@@ -176,7 +176,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 //                }
 //            }
             int fileNumber = getOutput().getIndexedFile(
-                    getResourceFile().getFullPath().toString()).getFileNumber();
+                    getResourceFile().getFullPath().toString()).getFileID();
             getOutput().addRef(fileNumber,IndexEncoderUtil.encodeEntry(
                         new char[][] {include.toCharArray()}, 
                         IIndexEncodingConstants.INCLUDE,

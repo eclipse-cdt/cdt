@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -51,7 +51,7 @@ public class CTagsIndexerRunner extends AbstractIndexer {
      * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#indexFile(org.eclipse.cdt.internal.core.index.IDocument)
      */
     protected void indexFile(IFile file) throws IOException {
-    	IndexedFile indFile =output.addIndexedFile(file.getFullPath().toString());
+    	IndexedFileEntry indFile =output.addIndexedFile(file.getFullPath().toString());
        
     	String[] args = {"ctags", //$NON-NLS-1$
 		        "--excmd=number",  //$NON-NLS-1$

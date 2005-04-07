@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 
 /**
  * This class represents the output from an indexer to an index 
@@ -18,11 +18,12 @@ import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
  */
 
 public interface IIndexerOutput {
-	public void addRef(int indexedFileNumber, char[] word);
-	public void addRef(int indexedFileNumber, String word);
+    public void addRef(int indexedFileNumber, char[] word);
+	public void addRef(int indexedFileNumber, char[] word, int offset, int offsetType);
+	public void addRef(int indexedFileNumber, String word, int offset, int offsetType);
 	
-	public IndexedFile getIndexedFile(String path); 
-	public IndexedFile addIndexedFile(String path);
+	public IndexedFileEntry  getIndexedFile(String path); 
+	public IndexedFileEntry  addIndexedFile(String path);
 	//For Dep Tree
 	public void addIncludeRef(int indexedFileNumber, char[] word);
 	public void addIncludeRef(int indexedFileNumber, String word);

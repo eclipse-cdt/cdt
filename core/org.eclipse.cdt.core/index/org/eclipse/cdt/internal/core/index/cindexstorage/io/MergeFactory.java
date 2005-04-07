@@ -8,11 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Util;
+import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
+import org.eclipse.cdt.internal.core.index.impl.Int;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 
@@ -129,8 +134,8 @@ public class MergeFactory {
 		int compare;
 
 		while (oldInput.hasMoreFiles() || addsInput.hasMoreFiles()) {
-			IndexedFile file1= oldInput.getCurrentFile();
-			IndexedFile file2= addsInput.getCurrentFile();
+			IndexedFileEntry file1= oldInput.getCurrentFile();
+			IndexedFileEntry file2= addsInput.getCurrentFile();
 
 			//if the file has been removed we don't take it into account
 			while (file1 != null && wasRemoved(file1, OLD_INDEX)) {
@@ -159,18 +164,18 @@ public class MergeFactory {
 				//the file has been modified: 
 				//we remove it from the oldIndex and add it to the addsIndex
 				removeFile(file1, OLD_INDEX);
-				mappingAdds[file2.getFileNumber()]= positionInMerge;
+				mappingAdds[file2.getFileID()]= positionInMerge;
 				file1.setFileNumber(positionInMerge);
 				mergeOutput.addFile(file1);
 				oldInput.moveToNextFile();
 				addsInput.moveToNextFile();
 			} else if (compare < 0) {
-				mappingOld[file1.getFileNumber()]= positionInMerge;
+				mappingOld[file1.getFileID()]= positionInMerge;
 				file1.setFileNumber(positionInMerge);
 				mergeOutput.addFile(file1);
 				oldInput.moveToNextFile();
 			} else {
-				mappingAdds[file2.getFileNumber()]= positionInMerge;
+				mappingAdds[file2.getFileID()]= positionInMerge;
 				file2.setFileNumber(positionInMerge);
 				mergeOutput.addFile(file2);
 				addsInput.moveToNextFile();
@@ -199,21 +204,17 @@ public class MergeFactory {
 			else
 				compare= Util.compare(word1.getWord(), word2.getWord());
 			if (compare < 0) {
-				word1.catRefs(word1);
 				word1.mapRefs(mappingOld);
 				mergeOutput.addWord(word1);
 				oldInput.moveToNextWordEntry();
 			} else if (compare > 0) {
-				word2.catRefs(word2);
 				word2.mapRefs(mappingAdds);
 				mergeOutput.addWord(word2);
 				addsInput.moveToNextWordEntry();
 			} else {
-				word1.catRefs(word1);
-				word2.catRefs(word2);
 				word1.mapRefs(mappingOld);
 				word2.mapRefs(mappingAdds);
-				word1.addRefs(word2.getRefs());
+				word1.addWordInfo(word2.getRefs(), word2.getOffsets(), word2.getOffsetCount());
 				mergeOutput.addWord(word1);
 				addsInput.moveToNextWordEntry();
 				oldInput.moveToNextWordEntry();
@@ -263,11 +264,11 @@ public class MergeFactory {
 	/**
 	 * Records the deletion of one file.
 	 */
-	protected void removeFile(IndexedFile file, int index) {
+	protected void removeFile(IndexedFileEntry file, int index) {
 		if (index == OLD_INDEX)
-			mappingOld[file.getFileNumber()]= -1;
+			mappingOld[file.getFileID()]= -1;
 		else
-			mappingAdds[file.getFileNumber()]= -1;
+			mappingAdds[file.getFileID()]= -1;
 	}
 	/**
 	 * Returns whether the given file has to be removed from the given index
@@ -275,17 +276,17 @@ public class MergeFactory {
 	 * deletes it and records the changes. 
 	 */
 
-	protected boolean wasRemoved(IndexedFile indexedFile, int index) {
+	protected boolean wasRemoved(IndexedFileEntry indexedFile, int index) {
 		String path= indexedFile.getPath();
 		if (index == OLD_INDEX) {
 			if (removedInOld.remove(path) != null) {
-				mappingOld[indexedFile.getFileNumber()]= -1;
+				mappingOld[indexedFile.getFileID()]= -1;
 				return true;
 			}
 		} else if (index == ADDS_INDEX) {
 			Int lastRemoved= (Int) removedInAdds.get(path);
 			if (lastRemoved != null) {
-				int fileNum= indexedFile.getFileNumber();
+				int fileNum= indexedFile.getFileID();
 				if (lastRemoved.value >= fileNum) {
 					mappingAdds[fileNum]= -1;
 					//if (lastRemoved.value == fileNum) // ONLY if files in sorted order for names AND fileNums

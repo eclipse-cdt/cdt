@@ -23,5 +23,11 @@ public interface IEntryResult {
 	 * Returns the encoded word of this entry
 	 */
 	public char[] getWord();
+	/**
+	 * Returns the offsets for this entry - offsets are in the same position
+	 * as the file references (ex. the first offset array belongs to the first
+	 * file reference etc.)
+	 */
+	public int[][] getOffsets();
 }
 

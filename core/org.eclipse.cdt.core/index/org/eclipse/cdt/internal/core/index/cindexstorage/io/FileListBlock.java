@@ -8,10 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Util;
 
 public class FileListBlock extends Block {
 
@@ -27,10 +30,10 @@ public class FileListBlock extends Block {
 	 * The name is not the entire name of the indexedfile, but the 
 	 * difference between its name and the name of the previous indexedfile ...	
 	 */
-	public boolean addFile(IndexedFile indexedFile) {
+	public boolean addFile(IndexedFileEntry indexedFile) {
 		int offset= this.offset;
 		if (isEmpty()) {
-			field.putInt4(offset, indexedFile.getFileNumber());
+			field.putInt4(offset, indexedFile.getFileID());
 			offset += 4;
 		}
 		String path= indexedFile.getPath();
@@ -58,15 +61,15 @@ public class FileListBlock extends Block {
 			offset= 0;
 		}
 	}
-	public IndexedFile getFile(int fileNum) throws IOException {
-		IndexedFile resp= null;
+	public IndexedFileEntry getFile(int fileNum) throws IOException {
+		IndexedFileEntry resp= null;
 		try {
 			String[] paths= getPaths();
 			int i= fileNum - field.getInt4(0);
 			if(i >= paths.length) {	//fileNum was too large
 				return null;
 			}
-			resp= new IndexedFile(paths[i], fileNum);
+			resp= new IndexedFileEntry(paths[i], fileNum);
 		} catch (Exception e) {
 			//Cover ourselves in case something happens getting the indexed file
 		}

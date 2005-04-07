@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.index.impl.IndexInput;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 
@@ -81,7 +81,7 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	 */
 	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope) throws IOException {
 		for (int i = 0, max = references.length; i < max; i++) {
-			IndexedFile file = input.getIndexedFile(references[i]);
+			IndexedFileEntry file = input.getIndexedFile(references[i]);
 			String path;
 			if (file != null && scope.encloses(path =file.getPath())) {
 				requestor.acceptNamespaceDeclaration(path, decodedSimpleName, decodedContainingTypes);

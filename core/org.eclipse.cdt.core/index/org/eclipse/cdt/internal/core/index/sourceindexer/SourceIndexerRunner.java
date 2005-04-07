@@ -35,8 +35,8 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -72,7 +72,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
 	
 	protected void indexFile(IFile file) throws IOException {
 		// Add the name of the file to the index
-		IndexedFile indFile =output.addIndexedFile(file.getFullPath().toString());
+		IndexedFileEntry indFile =output.addIndexedFile(file.getFullPath().toString());
         
 		// Create a new Parser 
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile);

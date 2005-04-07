@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
@@ -108,7 +109,8 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 					if (typeSpec instanceof IASTClassSpecifier){
 						IASTClassSpecifier baseClassSpec = (IASTClassSpecifier) typeSpec;
 						char[][] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedNameCharArrays();
-						this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
+						
+						this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS), baseClassSpec.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 					}
 				} catch (ASTNotImplementedException e) {}
 			}
@@ -120,12 +122,12 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 				if (decl instanceof IASTClassSpecifier){
 					IASTClassSpecifier friendClassSpec = (IASTClassSpecifier) decl;
 					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
-					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS),friendClassSpec.getStartingOffset(), ICIndexStorageConstants.OFFSET);
 				}
 				else if (decl instanceof IASTElaboratedTypeSpecifier){
 					IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
 					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
-					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS), friendClassSpec.getStartingOffset(), ICIndexStorageConstants.OFFSET);
 				}
 				else if (decl instanceof IASTFunction){
 					
@@ -136,7 +138,7 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 				
 			}
 			
-			this.output.addRef(fileNumber, encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),CLASS, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(fileNumber, encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),CLASS, ICSearchConstants.DECLARATIONS), classSpecification.getStartingOffset(), ICIndexStorageConstants.OFFSET);
 		}		
 		else if (classSpecification.getClassKind().equals(ASTClassKind.STRUCT))
 		{
@@ -149,7 +151,7 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 					if (typeSpec instanceof IASTClassSpecifier){
 						IASTClassSpecifier baseClassSpec = (IASTClassSpecifier) typeSpec;
 						char[][] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedNameCharArrays();
-						this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
+						this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS),baseClassSpec.getStartingOffset(), ICIndexStorageConstants.OFFSET);
 					}
 				} catch (ASTNotImplementedException e) {}
 			}
@@ -161,12 +163,12 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 				if (decl instanceof IASTClassSpecifier){
 					IASTClassSpecifier friendClassSpec = (IASTClassSpecifier) decl;
 					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
-					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS),friendClassSpec.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 				}
 				else if (decl instanceof IASTElaboratedTypeSpecifier){
 					IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
 					char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
-					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS));
+					this.output.addRef(fileNumber, encodeTypeEntry(baseFullyQualifiedName,FRIEND,ICSearchConstants.DECLARATIONS),friendClassSpec.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 				}
 				else if (decl instanceof IASTFunction){
 					
@@ -176,16 +178,16 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 				}
 			}
 			
-			this.output.addRef(fileNumber, encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),STRUCT, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(fileNumber, encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),STRUCT, ICSearchConstants.DECLARATIONS),classSpecification.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 		}
 		else if (classSpecification.getClassKind().equals(ASTClassKind.UNION))
 		{
-			this.output.addRef(fileNumber, encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),UNION, ICSearchConstants.DECLARATIONS));			
+			this.output.addRef(fileNumber, encodeTypeEntry(classSpecification.getFullyQualifiedNameCharArrays(),UNION, ICSearchConstants.DECLARATIONS),classSpecification.getStartingOffset(),ICIndexStorageConstants.OFFSET);			
 		}
 	}
 	
 	public void addEnumerationSpecifier(IASTEnumerationSpecifier enumeration, int fileNumber) {
-		this.output.addRef(fileNumber, encodeTypeEntry(enumeration.getFullyQualifiedNameCharArrays(), ENUM, ICSearchConstants.DECLARATIONS));
+		this.output.addRef(fileNumber, encodeTypeEntry(enumeration.getFullyQualifiedNameCharArrays(), ENUM, ICSearchConstants.DECLARATIONS),enumeration.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 		
 		Iterator i = enumeration.getEnumerators();
 		while (i.hasNext())
@@ -194,7 +196,7 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 			char[][] enumeratorFullName =
 				createEnumeratorFullyQualifiedName(en);
 
-			this.output.addRef(fileNumber, encodeEntry( enumeratorFullName, ENUMTOR_DECL, ENUMTOR_DECL_LENGTH ));
+			this.output.addRef(fileNumber, encodeEntry( enumeratorFullName, ENUMTOR_DECL, ENUMTOR_DECL_LENGTH ),en.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 
 		}
 	}
@@ -213,70 +215,70 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	}
 
 	public void addEnumeratorReference(IASTEnumerator enumerator, int fileNumber) {
-		this.output.addRef(fileNumber, encodeEntry(createEnumeratorFullyQualifiedName(enumerator),ENUMTOR_REF,ENUMTOR_REF_LENGTH));	
+		this.output.addRef(fileNumber, encodeEntry(createEnumeratorFullyQualifiedName(enumerator),ENUMTOR_REF,ENUMTOR_REF_LENGTH),enumerator.getStartingOffset(), ICIndexStorageConstants.OFFSET);	
 	}
 		
 	public void addMacro(IASTMacro macro, int fileNumber) {
 		char[][] macroName = new char[][] { macro.getNameCharArray() };
-		this.output.addRef(fileNumber, encodeEntry(macroName,MACRO_DECL,MACRO_DECL_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(macroName,MACRO_DECL,MACRO_DECL_LENGTH), macro.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 		
 	public void addEnumerationReference(IASTEnumerationSpecifier enumeration, int fileNumber) {
-		this.output.addRef(fileNumber, encodeTypeEntry(enumeration.getFullyQualifiedNameCharArrays(), ENUM, ICSearchConstants.REFERENCES));
+		this.output.addRef(fileNumber, encodeTypeEntry(enumeration.getFullyQualifiedNameCharArrays(), ENUM, ICSearchConstants.REFERENCES), enumeration.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	public void addVariable(IASTVariable variable, int fileNumber) {
-		this.output.addRef(fileNumber, encodeTypeEntry(variable.getFullyQualifiedNameCharArrays(), VAR, ICSearchConstants.DECLARATIONS));
+		this.output.addRef(fileNumber, encodeTypeEntry(variable.getFullyQualifiedNameCharArrays(), VAR, ICSearchConstants.DECLARATIONS), variable.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addVariableReference(IASTVariable variable, int fileNumber) {
-		this.output.addRef(fileNumber, encodeTypeEntry(variable.getFullyQualifiedNameCharArrays(), VAR, ICSearchConstants.REFERENCES));
+		this.output.addRef(fileNumber, encodeTypeEntry(variable.getFullyQualifiedNameCharArrays(), VAR, ICSearchConstants.REFERENCES),variable.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}	
 	
 	public void addParameterReference( IASTParameterDeclaration parameter, int fileNumber ){
-		this.output.addRef(fileNumber,encodeTypeEntry( new char[][] { parameter.getNameCharArray() }, VAR, ICSearchConstants.REFERENCES));
+		this.output.addRef(fileNumber,encodeTypeEntry( new char[][] { parameter.getNameCharArray() }, VAR, ICSearchConstants.REFERENCES), parameter.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addTypedefDeclaration(IASTTypedefDeclaration typedef, int fileNumber) {
-		this.output.addRef(fileNumber,encodeEntry(typedef.getFullyQualifiedNameCharArrays(), TYPEDEF_DECL, TYPEDEF_DECL_LENGTH));
+		this.output.addRef(fileNumber,encodeEntry(typedef.getFullyQualifiedNameCharArrays(), TYPEDEF_DECL, TYPEDEF_DECL_LENGTH),typedef.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addFieldDeclaration(IASTField field, int fileNumber) {
-		this.output.addRef(fileNumber, encodeEntry(field.getFullyQualifiedNameCharArrays(),FIELD_DECL,FIELD_DECL_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(field.getFullyQualifiedNameCharArrays(),FIELD_DECL,FIELD_DECL_LENGTH),field.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addFieldReference(IASTField field, int fileNumber) {
-		this.output.addRef(fileNumber, encodeEntry(field.getFullyQualifiedNameCharArrays(),FIELD_REF,FIELD_REF_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(field.getFullyQualifiedNameCharArrays(),FIELD_REF,FIELD_REF_LENGTH),field.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addMethodDeclaration(IASTMethod method, int fileNumber) {
-		this.output.addRef(fileNumber, encodeEntry(method.getFullyQualifiedNameCharArrays(),METHOD_DECL,METHOD_DECL_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(method.getFullyQualifiedNameCharArrays(),METHOD_DECL,METHOD_DECL_LENGTH),method.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	
 		Iterator i=method.getParameters();
 		while (i.hasNext()){
 			Object parm = i.next();
 			if (parm instanceof IASTParameterDeclaration){
 				IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
-				this.output.addRef(fileNumber, encodeTypeEntry(new char[][]{parmDecl.getNameCharArray()}, VAR, ICSearchConstants.DECLARATIONS));
+				this.output.addRef(fileNumber, encodeTypeEntry(new char[][]{parmDecl.getNameCharArray()}, VAR, ICSearchConstants.DECLARATIONS),parmDecl.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 			}
 		}
 	}
 	
 	public void addMethodReference(IASTMethod method, int fileNumber) {
-		this.output.addRef(fileNumber, encodeEntry(method.getFullyQualifiedNameCharArrays(),METHOD_REF,METHOD_REF_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(method.getFullyQualifiedNameCharArrays(),METHOD_REF,METHOD_REF_LENGTH),method.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 
 	public void addElaboratedForwardDeclaration(IASTElaboratedTypeSpecifier elaboratedType, int fileNumber) {
 		if (elaboratedType.getClassKind().equals(ASTClassKind.CLASS))
 		{
-			this.output.addRef(fileNumber,encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_CLASS, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(fileNumber,encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_CLASS, ICSearchConstants.DECLARATIONS),elaboratedType.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 		}		
 		else if (elaboratedType.getClassKind().equals(ASTClassKind.STRUCT))
 		{
-			this.output.addRef(fileNumber,encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_STRUCT, ICSearchConstants.DECLARATIONS));
+			this.output.addRef(fileNumber,encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_STRUCT, ICSearchConstants.DECLARATIONS),elaboratedType.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 		}
 		else if (elaboratedType.getClassKind().equals(ASTClassKind.UNION))
 		{
-			this.output.addRef(fileNumber,encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_UNION, ICSearchConstants.DECLARATIONS));			
+			this.output.addRef(fileNumber,encodeTypeEntry(elaboratedType.getFullyQualifiedNameCharArrays(),FWD_UNION, ICSearchConstants.DECLARATIONS),elaboratedType.getStartingOffset(),ICIndexStorageConstants.OFFSET);			
 		}
 	}
 	
@@ -295,20 +297,20 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	}
 
 	public void addFunctionDeclaration(IASTFunction function, int fileNumber){
-		this.output.addRef(fileNumber, encodeEntry(function.getFullyQualifiedNameCharArrays(),FUNCTION_DECL,FUNCTION_DECL_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(function.getFullyQualifiedNameCharArrays(),FUNCTION_DECL,FUNCTION_DECL_LENGTH),function.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 		
 		Iterator i=function.getParameters();
 		while (i.hasNext()){
 			Object parm = i.next();
 			if (parm instanceof IASTParameterDeclaration){
 				IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
-				this.output.addRef(fileNumber, encodeTypeEntry(new char[][]{parmDecl.getNameCharArray()}, VAR, ICSearchConstants.DECLARATIONS));
+				this.output.addRef(fileNumber, encodeTypeEntry(new char[][]{parmDecl.getNameCharArray()}, VAR, ICSearchConstants.DECLARATIONS),parmDecl.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 			}
 		}
 	}
 	
 	public void addFunctionReference(IASTFunction function, int fileNumber){
-		this.output.addRef(fileNumber, encodeEntry(function.getFullyQualifiedNameCharArrays(),FUNCTION_REF,FUNCTION_REF_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(function.getFullyQualifiedNameCharArrays(),FUNCTION_REF,FUNCTION_REF_LENGTH),function.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addNameReference(){
@@ -316,15 +318,15 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	}
 	
 	public void addNamespaceDefinition(IASTNamespaceDefinition namespace, int fileNumber){
-		this.output.addRef(fileNumber, encodeEntry(namespace.getFullyQualifiedNameCharArrays(),NAMESPACE_DECL,NAMESPACE_DECL_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(namespace.getFullyQualifiedNameCharArrays(),NAMESPACE_DECL,NAMESPACE_DECL_LENGTH),namespace.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addNamespaceReference(IASTNamespaceDefinition namespace, int fileNumber) {
-		this.output.addRef(fileNumber, encodeEntry(namespace.getFullyQualifiedNameCharArrays(),NAMESPACE_REF,NAMESPACE_REF_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(namespace.getFullyQualifiedNameCharArrays(),NAMESPACE_REF,NAMESPACE_REF_LENGTH),namespace.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 	
 	public void addTypedefReference( IASTTypedefDeclaration typedef, int fileNumber ){
-		this.output.addRef(fileNumber,encodeTypeEntry( typedef.getFullyQualifiedNameCharArrays(), TYPEDEF, ICSearchConstants.REFERENCES));
+		this.output.addRef(fileNumber,encodeTypeEntry( typedef.getFullyQualifiedNameCharArrays(), TYPEDEF, ICSearchConstants.REFERENCES),typedef.getStartingOffset(),ICIndexStorageConstants.OFFSET);
 	}
 
 	private void addSuperTypeReference(int modifiers, char[] packageName, char[] typeName, char[][] enclosingTypeNames, char classOrInterface, char[] superTypeName, char superClassOrInterface){
@@ -338,39 +340,44 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	public void addClassReference(IASTTypeSpecifier reference, int fileNumber){
 		char[][] fullyQualifiedName = null;
 		ASTClassKind classKind = null;
+		int offset=0;
 		
 		if (reference instanceof IASTClassSpecifier){
 		  IASTClassSpecifier classRef = (IASTClassSpecifier) reference;
 		  fullyQualifiedName = classRef.getFullyQualifiedNameCharArrays();
 		  classKind = classRef.getClassKind();
+		  offset=classRef.getStartingOffset();
 		}
 		else if (reference instanceof IASTElaboratedTypeSpecifier){
 		  IASTElaboratedTypeSpecifier typeRef = (IASTElaboratedTypeSpecifier) reference;
 		  fullyQualifiedName = typeRef.getFullyQualifiedNameCharArrays();
 		  classKind = typeRef.getClassKind();
+		  offset=typeRef.getStartingOffset();
 		}
 	
 		if (classKind.equals(ASTClassKind.CLASS))
 		{  
-			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,CLASS, ICSearchConstants.REFERENCES));
+			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,CLASS, ICSearchConstants.REFERENCES),offset,ICIndexStorageConstants.OFFSET);
 		}		
 		else if (classKind.equals(ASTClassKind.STRUCT))
 		{
-			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,STRUCT,ICSearchConstants.REFERENCES));
+			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,STRUCT,ICSearchConstants.REFERENCES),offset,ICIndexStorageConstants.OFFSET);
 		}
 		else if (classKind.equals(ASTClassKind.UNION))
 		{
-			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,UNION,ICSearchConstants.REFERENCES));			
+			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,UNION,ICSearchConstants.REFERENCES),offset,ICIndexStorageConstants.OFFSET);			
 		}
 	}
 	public void addForwardClassReference(IASTTypeSpecifier reference, int fileNumber){
 		char[][] fullyQualifiedName = null;
 		ASTClassKind classKind = null;
+		int offset=0;
 		
 		if (reference instanceof IASTElaboratedTypeSpecifier){
 		  IASTElaboratedTypeSpecifier typeRef = (IASTElaboratedTypeSpecifier) reference;
 		  fullyQualifiedName = typeRef.getFullyQualifiedNameCharArrays();
 		  classKind = typeRef.getClassKind();
+		  offset=typeRef.getStartingOffset();
 		}
 	
 		if (classKind == null)
@@ -378,15 +385,15 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 		
 		if (classKind.equals(ASTClassKind.CLASS))
 		{  
-			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,FWD_CLASS, ICSearchConstants.REFERENCES));
+			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,FWD_CLASS, ICSearchConstants.REFERENCES),offset,ICIndexStorageConstants.OFFSET);
 		}		
 		else if (classKind.equals(ASTClassKind.STRUCT))
 		{
-			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,FWD_STRUCT,ICSearchConstants.REFERENCES));
+			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,FWD_STRUCT,ICSearchConstants.REFERENCES),offset,ICIndexStorageConstants.OFFSET);
 		}
 		else if (classKind.equals(ASTClassKind.UNION))
 		{
-			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,FWD_UNION,ICSearchConstants.REFERENCES));			
+			this.output.addRef(fileNumber, encodeTypeEntry(fullyQualifiedName,FWD_UNION,ICSearchConstants.REFERENCES),offset,ICIndexStorageConstants.OFFSET);			
 		}
 	}
 	/**
@@ -861,7 +868,7 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 		incName[0] = inclusion.getFullFileName().toCharArray();
 		//TODO: Kludge! Get rid of BOGUS entry - need to restructure Dep Tree to use reference indexes
 		int BOGUS_ENTRY = 1;
-		this.output.addRef(fileNumber, encodeEntry(incName, INCLUDE_REF, INCLUDE_REF_LENGTH));
+		this.output.addRef(fileNumber, encodeEntry(incName, INCLUDE_REF, INCLUDE_REF_LENGTH),1,ICIndexStorageConstants.LINE);
 	}
 	
 	

@@ -64,7 +64,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexProblemHandler;
 import org.eclipse.core.resources.IFile;
@@ -193,7 +193,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		}
 		
 		IASTInclusion parent = peekInclude();
-		indexer.addInclude(inclusion, parent,indexer.output.getIndexedFile(resourceFile.getFullPath().toString()).getFileNumber());
+		indexer.addInclude(inclusion, parent,indexer.output.getIndexedFile(resourceFile.getFullPath().toString()).getFileID());
 		//Push on stack
 		pushInclude(inclusion);
 		//Add to traversed files
@@ -274,9 +274,9 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		//the first step in the Source Indexer is to add the file being indexed to the index
 		//which actually creates an entry for the file in the index.
 		
-		IndexedFile mainIndexFile = indexer.output.getIndexedFile(resourceFile.getFullPath().toString());
+		IndexedFileEntry mainIndexFile = indexer.output.getIndexedFile(resourceFile.getFullPath().toString());
 		if (mainIndexFile != null)
-			fileNum = mainIndexFile.getFileNumber();
+			fileNum = mainIndexFile.getFileID();
 		
 		IASTInclusion include = peekInclude();
 		if (include != null){
@@ -294,22 +294,22 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 				filePath = include.getFullFileName();
 			}
 			
-			IndexedFile indFile = indexer.output.getIndexedFile(filePath);
+			IndexedFileEntry indFile = indexer.output.getIndexedFile(filePath);
 			if (indFile != null){
 				//File has already been added to the output; it already has a number
-				fileNum = indFile.getFileNumber();
+				fileNum = indFile.getFileID();
 			}
 			else {
 				//Need to add file to index and get a fileNumber
 				if (tempFile != null){
 				indFile = indexer.output.addIndexedFile(tempFile.getFullPath().toString());
 				if (indFile != null)
-					fileNum = indFile.getFileNumber();
+					fileNum = indFile.getFileID();
 				}
 				else {
 					indFile = indexer.output.addIndexedFile(include.getFullFileName());
 					if (indFile != null)
-						fileNum = indFile.getFileNumber();
+						fileNum = indFile.getFileID();
 				}
 			}
 			

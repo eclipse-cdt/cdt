@@ -8,9 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.UTFDataFormatException;
+
+import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Util;
+import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
 
 /**
  * Uses prefix coding on words, and gamma coding of document numbers differences.
@@ -56,16 +60,21 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 			codeStream.writeGamma(ref - prevRef);
 			prevRef= ref;
 		}
-		//encode index bit field
-		//FUTURE USE: For index parms etc.
-		/*if (entry.fRefs.length != entry.fRefsIndexFlags.length)
-			throw new IndexOutOfBoundsException();
-		
-		for (int i=0; i < n; ++i) {
-			int indexField = entry.getIndexFlag(i);
-			codeStream.writeGamma(indexField);
-		}*/
-		
+		//encode offsets
+		//same number of offsets arrays as file references
+		for (int i=0; i<n; i++){
+		    int[]offsetArray = entry.getOffsets(i);
+		    //write offset array length
+		    codeStream.writeGamma(offsetArray.length);
+			prevRef=0;
+		    for (int j=0; j<offsetArray.length; j++){
+		        int ref = offsetArray[j];
+		        if (ref <= prevRef)
+		            throw new IllegalArgumentException();
+		        codeStream.writeGamma(ref - prevRef);
+		        prevRef=ref;
+		    }
+		}
 	}
 	/**
 	 * @see IndexBlock#addEntry
@@ -148,16 +157,21 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 				prevRef= ref;
 			}
 			
-		/*	//Now read in the index bit fields
-			//FUTURE USE: For index parms etc.
-			for (int i=0; i<n; ++i) {
-				int indexField = readCodeStream.readGamma();
-				//The index fields are encoded in the same order as 
-				//the file refs read above. So the first one belongs 
-				//to whatever the first file reference is
-				entry.fRefsIndexFlags[i]=indexField;
-			}*/
 			
+			for (int i=0; i<n; ++i) {
+				int offsetArrayLength = readCodeStream.readGamma();
+				int[] tempOffsetArray = new int[offsetArrayLength];
+				prevRef=0;
+				for (int j=0; j<offsetArrayLength; j++){
+				    int ref = prevRef + readCodeStream.readGamma();
+				    if (ref < prevRef)
+				        throw new InternalError();
+				    tempOffsetArray[j] = ref;
+				    prevRef = ref;
+				}
+				entry.setOffsets(i, tempOffsetArray);
+			}
+	
 			offset= readCodeStream.byteLength();
 			prevWord= word;
 			return true;

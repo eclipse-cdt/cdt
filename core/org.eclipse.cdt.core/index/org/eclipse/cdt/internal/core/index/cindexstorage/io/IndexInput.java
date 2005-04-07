@@ -8,12 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.impl;
+package org.eclipse.cdt.internal.core.index.cindexstorage.io;
 
 import java.io.IOException;
 
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
 
 
 /**
@@ -49,7 +52,7 @@ public abstract class IndexInput {
 	/**
 	 * Returns the current file the indexInput is pointing to in the index.
 	 */
-	public abstract IndexedFile getCurrentFile() throws IOException;
+	public abstract IndexedFileEntry getCurrentFile() throws IOException;
 	/**
 	 * Returns the current file the indexInput is pointing to in the index.
 	 */
@@ -76,13 +79,13 @@ public abstract class IndexInput {
 	 * Returns the indexedFile corresponding to the given document number in the index the input
 	 * reads in, or null if such indexedFile does not exist.
 	 */
-	public abstract IndexedFile getIndexedFile(int fileNum) throws IOException;
+	public abstract IndexedFileEntry getIndexedFile(int fileNum) throws IOException;
 	/**
 	 * Returns the indexedFile corresponding to the given file path in the index the input
 	 * reads in (e.g. the indexedFile with the same path in this index), or null if such 
 	 * indexedFile does not exist.
 	 */
-	public abstract IndexedFile getIndexedFile(String fullpath) throws IOException;
+	public abstract IndexedFileEntry getIndexedFile(String fullpath) throws IOException;
 	/**
 	 * Returns the number of files in the index.
 	 */

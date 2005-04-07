@@ -33,7 +33,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             name="%WizardNewCMakeProject.name"
-            icon="icons/ctool16/newc_app.gif"
+            icon="icons/etool16/newc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.make.ui.wizards.NewMakeCProjectWizard"
             project="true"
@@ -45,7 +45,7 @@
       </wizard>
       <wizard
             name="%WizardConvertMakeProject.name"
-            icon="icons/ctool16/convert-normal.gif"
+            icon="icons/etool16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.make.ui.wizards.ConvertToMakeProjectWizard"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
@@ -60,7 +60,7 @@
 <!-- For C++ Wizards -->
       <wizard
             name="%WizardNewCCMakeProject.name"
-            icon="icons/ctool16/newcc_app.gif"
+            icon="icons/etool16/newcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard"
             project="true"
@@ -72,7 +72,7 @@
       </wizard>
       <wizard
             name="%WizardConvertMakeProject.name"
-            icon="icons/ctool16/convert-normal.gif"
+            icon="icons/etool16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.make.ui.wizards.ConvertToMakeProjectWizard"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
@@ -227,7 +227,7 @@
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page> 
-      <!-- page
+      <!--page
             objectClass="org.eclipse.cdt.core.model.ICContainer"
             name="%IncludeSymbolProperties.name"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
@@ -246,7 +246,7 @@
                name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
-      </page -->
+      </page-->
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -268,7 +268,7 @@
       </category>
       <view
             name="%ViewMake.name"
-            icon="icons/cview16/make_target.gif"
+            icon="icons/view16/make_target.gif"
             category="org.eclipse.cdt.make.ui"
             class="org.eclipse.cdt.make.ui.views.MakeView"
             id="org.eclipse.cdt.make.ui.views.MakeView">
@@ -281,7 +281,7 @@
             id="org.eclipse.cdt.make.ui.updateActionSet">
          <action
                label="%ActionMakeUpdate.label"
-               icon="icons/ctool16/update_old.gif"
+               icon="icons/etool16/update_old.gif"
                tooltip="%ActionMakeUpdate.tooltip"
                class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
                toolbarPath="Normal"
@@ -357,7 +357,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%MakefileEditor.name"
-            icon="icons/obj16/makefile.gif"
+            icon="icons/etool16/makefile.gif"
             extensions="mk"
             filenames="Makefile,makefile,GNUMakefile"
             contributorClass="org.eclipse.cdt.make.internal.ui.editor.MakefileEditorActionContributor"

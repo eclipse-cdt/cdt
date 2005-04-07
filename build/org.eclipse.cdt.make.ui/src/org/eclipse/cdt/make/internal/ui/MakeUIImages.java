@@ -77,6 +77,9 @@ public class MakeUIImages {
 
 	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
 
+	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX + "environment_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ENV_VAR = createManaged(OBJ, IMG_OBJS_ENV_VAR);
+
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}
@@ -112,7 +115,7 @@ public class MakeUIImages {
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath = relPath.substring(NAME_PREFIX_LENGTH);
 		action.setDisabledImageDescriptor(create("d" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
-		action.setHoverImageDescriptor(create("c" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
+//		action.setHoverImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 		action.setImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

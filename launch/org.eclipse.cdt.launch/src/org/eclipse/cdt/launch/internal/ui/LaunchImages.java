@@ -32,7 +32,7 @@ public class LaunchImages {
 		fgIconBaseURL= Platform.getBundle(LaunchUIPlugin.getUniqueIdentifier()).getEntry("/icons/"); //$NON-NLS-1$
 	}	
 
-	private static final String T_TABS = "tabs/"; //$NON-NLS-1$
+	private static final String T_TABS = "view16/"; //$NON-NLS-1$
 	private static final String T_OBJS = "obj16/"; //$NON-NLS-1$
 
 	public static String IMG_VIEW_MAIN_TAB = NAME_PREFIX + "main_tab.gif"; //$NON-NLS-1$

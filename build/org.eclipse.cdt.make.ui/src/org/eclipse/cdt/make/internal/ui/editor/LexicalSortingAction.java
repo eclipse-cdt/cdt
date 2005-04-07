@@ -34,7 +34,7 @@ public class LexicalSortingAction extends Action {
 
 		setDescription(MakeUIPlugin.getResourceString(ACTION_NAME + ".description")); //$NON-NLS-1$
 		setToolTipText(MakeUIPlugin.getResourceString(ACTION_NAME + ".tooltip")); //$NON-NLS-1$
-		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_ALPHA_SORTING); //$NON-NLS-1$
+		MakeUIImages.setImageDescriptors(this, MakeUIImages.T_TOOL, MakeUIImages.IMG_TOOLS_ALPHA_SORTING);
 
 		fTreeViewer = treeViewer;
 		fSorter = new LexicalMakefileSorter();

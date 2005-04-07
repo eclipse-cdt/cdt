@@ -56,17 +56,17 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icons/c_app.gif"
+            icon="icons/obj16/c_app.gif"
             configTypeID="org.eclipse.cdt.launch.localCLaunch"
             id="org.eclipse.cdt.launch.localRunLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/c_app.gif"
+            icon="icons/obj16/c_app.gif"
             configTypeID="org.eclipse.cdt.launch.localAttachCLaunch"
             id="org.eclipse.cdt.launch.localAttachLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
-            icon="icons/c_app.gif"
+            icon="icons/obj16/c_app.gif"
             configTypeID="org.eclipse.cdt.launch.coreFileCLaunch"
             id="org.eclipse.cdt.launch.coreFileLaunchImage">
       </launchConfigurationTypeImage>
@@ -93,7 +93,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             label="%CApplicationShortcut.label"
-            icon="icons/c_app.gif"
+            icon="icons/obj16/c_app.gif"
             modes="run, debug"
             class="org.eclipse.cdt.launch.internal.CApplicationLaunchShortcut"
             id="org.eclipse.cdt.debug.ui.localCShortcut">

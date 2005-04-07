@@ -1,4 +1,9 @@
 2005-04-07 Mikhail Khodjaiants
+	Move to Eclipse-31M6.
+	* CMemoryBlockRetrievalExtension.java
+	* CMemoryBlockExtension.java
+
+2005-04-07 Mikhail Khodjaiants
 	Bug 89755: CThread.suspend suspends target, not thread.
 	* CThread.java
 

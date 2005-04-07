@@ -43,8 +43,8 @@ public class CMemoryBlockRetrievalExtension implements IMemoryBlockRetrievalExte
 	/** 
 	 * Constructor for CMemoryBlockRetrievalExtension. 
 	 */
-	public CMemoryBlockRetrievalExtension(CDebugTarget debugTarget) {
-		fDebugTarget = debugTarget;	
+	public CMemoryBlockRetrievalExtension( CDebugTarget debugTarget ) {
+		fDebugTarget = debugTarget;
 	}
 
 	protected CDebugTarget getDebugTarget() {

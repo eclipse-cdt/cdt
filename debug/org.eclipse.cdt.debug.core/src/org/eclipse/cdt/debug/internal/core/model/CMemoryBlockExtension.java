@@ -64,7 +64,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * Constructor for CMemoryBlockExtension. 
 	 */
 	public CMemoryBlockExtension( CDebugTarget target, String expression, BigInteger baseAddress ) {
-		this(target, expression, baseAddress, 1);
+		this( target, expression, baseAddress, 1 );
 	}
 
 	/** 
@@ -119,7 +119,10 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	public void setBaseAddress( BigInteger address ) throws DebugException {
 	}
 
-	public MemoryByte[] getBytesFromOffset(BigInteger unitOffset, long addressableUnits) throws DebugException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(java.math.BigInteger, long)
+	 */
+	public MemoryByte[] getBytesFromOffset( BigInteger unitOffset, long addressableUnits ) throws DebugException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -154,16 +157,18 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 				for ( int i = 0; i < bytes.length; ++i ) {
 					byte cdiFlags = getCDIBlock().getFlags( i );
 					byte flags = 0;
-					if ( (cdiFlags & ICDIMemoryBlock.READ_ONLY) != 0 ) {
-						flags |= MemoryByte.READABLE;
-					} else {
-						flags |= MemoryByte.READABLE | MemoryByte.WRITABLE;
+					if ( (cdiFlags & ICDIMemoryBlock.VALID) != 0 ) {
+						flags |= MemoryByte.HISTORY_KNOWN;
+						if ( (cdiFlags & ICDIMemoryBlock.READ_ONLY) != 0 ) {
+							flags |= MemoryByte.READABLE;
+						}
+						else {
+							flags |= MemoryByte.READABLE | MemoryByte.WRITABLE;
+						}
 					}
-					if (isBigEndian()) {
+					if ( isBigEndian() ) {
 						flags |= MemoryByte.ENDIANESS_KNOWN | MemoryByte.BIG_ENDIAN;
 					}
-//					flags |= ( (cdiFlags & ICDIMemoryBlock.VALID) != 0 ) ? MemoryByte.VALID : MemoryByte.READONLY; // ????
-//					flags |= ( (cdiFlags & ICDIMemoryBlock.READ_ONLY) != 0 ) ? MemoryByte.READABLE : 0;
 					if ( hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) )
 						flags |= MemoryByte.CHANGED;
 					fBytes[i] = new MemoryByte( bytes[i], flags );
@@ -253,10 +258,13 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
 	 */
 	public void setValue( long offset, byte[] bytes ) throws DebugException {
-		setValue(BigInteger.valueOf(offset), bytes);
+		setValue( BigInteger.valueOf( offset ), bytes );
 	}
 
-	public void setValue(BigInteger offset, byte[] bytes) throws DebugException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setValue(java.math.BigInteger, byte[])
+	 */
+	public void setValue( BigInteger offset, byte[] bytes ) throws DebugException {
 		ICDIMemoryBlock block = getCDIBlock();
 		if ( block != null ) {
 			BigInteger base = getBigBaseAddress();
@@ -385,6 +393,9 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		// TODO Auto-generated method stub
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getConnections()
+	 */
 	public Object[] getConnections() {
 		// TODO Auto-generated method stub
 		return new Object[0];
@@ -417,21 +428,29 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		return super.getAdapter( adapter );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockStartAddress()
+	 */
 	public BigInteger getMemoryBlockStartAddress() throws DebugException {
 		return null; // return null to mean not bounded ... according to the spec
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockEndAddress()
+	 */
 	public BigInteger getMemoryBlockEndAddress() throws DebugException {
-		return null;// return null to maen not bounded ... according to the spec
+		return null;// return null to mean not bounded ... according to the spec
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigLength()
+	 */
 	public BigInteger getBigLength() throws DebugException {
 		ICDIMemoryBlock block = getCDIBlock();
-		if (block != null) {
-			BigInteger length = new BigInteger(Long.toHexString(block.getLength()), 16);
+		if ( block != null ) {
+			BigInteger length = new BigInteger( Long.toHexString( block.getLength() ), 16 );
 			return length;
 		}
 		return BigInteger.ZERO;
 	}
-
 }

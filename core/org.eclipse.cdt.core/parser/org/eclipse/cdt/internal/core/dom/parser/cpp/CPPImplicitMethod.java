@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -91,6 +92,22 @@ public class CPPImplicitMethod extends CPPMethod {
 	public IScope getScope() {
 		return scope;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
+	 */
+	public IScope getFunctionScope() {
+	    return null;
+	}
+	
+	public int getVisibility() throws DOMException {
+		IASTDeclaration decl = getPrimaryDeclaration();
+		if( decl == null ) {
+		    //12.1-5, 12.8-10 Implicitl constructors and assignment operators are public
+		    return ICPPASTVisiblityLabel.v_public;
+		} 
+		return super.getVisibility();
+    }
 	
 	public IBinding resolveParameter( IASTParameterDeclaration param ){
     	IASTName name = param.getDeclarator().getName();

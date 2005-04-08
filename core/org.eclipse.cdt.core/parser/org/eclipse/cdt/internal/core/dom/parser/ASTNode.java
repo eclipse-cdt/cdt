@@ -64,9 +64,9 @@ public abstract class ASTNode implements IASTNode {
     }
     
     /* (non-Javadoc)
-    * @see org.eclipse.cdt.core.dom.ast.IASTNode#getUnpreprocessedSignature()
+    * @see org.eclipse.cdt.core.dom.ast.IASTNode#getRawSignature()
     */
-   public String getUnpreprocessedSignature() {
+   public String getRawSignature() {
       return getTranslationUnit().getUnpreprocessedSignature( getNodeLocations() );
    }
 }

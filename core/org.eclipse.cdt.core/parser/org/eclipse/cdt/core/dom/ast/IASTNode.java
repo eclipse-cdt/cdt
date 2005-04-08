@@ -82,5 +82,15 @@ public interface IASTNode {
 	 * @return continue on (true) or quit( false )
 	 */
 	public boolean accept(ASTVisitor visitor);
+    
+    /**
+     * Returns the raw signature of the IASTNode before it is processed by the preprocessor.
+     * 
+     * Example:
+     * #define ONE 1
+     * int x=ONE; // getRawSignature() for this declaration would return "int x=ONE;"
+     * @return the raw signature of the IASTNode before it is processed by the preprocessor
+     */
+    public String getRawSignature();
 
 }

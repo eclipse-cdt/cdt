@@ -82,9 +82,9 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#getUnpreprocessedSignature()
+     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#getRawSignature()
      */
-    public String getUnpreprocessedSignature() {
+    public String getRawSignature() {
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
     }
 

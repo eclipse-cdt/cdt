@@ -123,6 +123,6 @@ public interface IASTDeclSpecifier extends IASTNode {
 	 * 
 	 * @return String
 	 */
-	public String getUnpreprocessedSignature();
+	public String getRawSignature();
 
 }

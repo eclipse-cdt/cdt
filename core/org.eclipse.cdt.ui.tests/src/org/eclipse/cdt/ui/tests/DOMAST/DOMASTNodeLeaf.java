@@ -163,7 +163,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		} else if( node instanceof IASTDeclSpecifier )
 		{
 		    buffer.append( START_OF_LIST );
-		    buffer.append( ((IASTDeclSpecifier)node).getUnpreprocessedSignature() );
+		    buffer.append( ((IASTDeclSpecifier)node).getRawSignature() );
 		    return buffer.toString();
 		} else if ( node instanceof IASTPreprocessorIncludeStatement ) {
 			String path = ((IASTPreprocessorIncludeStatement)node).getPath();

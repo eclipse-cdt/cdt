@@ -1,5 +1,9 @@
 <project default="build">
 
+	<target name="hi">
+		<echo message="${eclipse.home}"/>
+	</target>
+	
 	<target name="build" depends="zips,test"/>
 	<target name="cdtbuild" depends="zips,test,upload"/>
 	
@@ -24,6 +28,7 @@
 		<property name="cdtuser" value="nobody"/>
 		<property name="cdtpasswd" value="home"/>
 		<property name="remotedir" value="${cdtuser}@download1.eclipse.org:cdt/builds/${branchVersion}"/>
+		<property name="eclipseRoot" value=":pserver:anonymous@dev.eclipse.org:/home/eclipse"/>
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
 		<property name="basearch" value="${osgi.arch}"/>
@@ -90,12 +95,8 @@
 		<antcall target="tunzip"/>
 		<antcall target="tuntar"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip" dest="${buildDirectory}"/>
-		<copy todir="${buildDirectory}/eclipse/plugins/org.eclipse.test">
-			<fileset dir="../org.eclipse.test"/>
-		</copy>
-		<copy todir="${buildDirectory}/eclipse/plugins/org.eclipse.ant.optional.junit">
-			<fileset dir="../org.eclipse.ant.optional.junit"/>
-		</copy>
+		<cvs cvsroot="${eclipseRoot}" dest="${buildDirectory}/eclipse/plugins" package="org.eclipse.test"/>
+		<cvs cvsroot="${eclipseRoot}" dest="${buildDirectory}/eclipse/plugins" package="org.eclipse.ant.optional.junit"/>
 		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
 			<property name="os" value="${baseos}"/>

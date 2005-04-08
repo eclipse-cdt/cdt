@@ -28,7 +28,7 @@
 <!-- Managed Make Builder Projects -->
       <wizard
             name="%MngCCWizard.name"
-            icon="icons/full/wizban/newmngcc_app.gif"
+            icon="icons/elcl16/newmngcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.NewManagedCCProjectWizard"
             project="true"
@@ -40,7 +40,7 @@
       </wizard>
       <wizard
             name="%MngCWizard.name"
-            icon="icons/full/wizban/newmngc_app.gif"
+            icon="icons/elcl16/newmngc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.managedbuilder.ui.wizards.NewManagedCProjectWizard"
             project="true"
@@ -64,53 +64,37 @@
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
          </filter>
       </page>
-   </extension>
-       
-   <extension
-         point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
             name="%MngResourceProp.name"
             nameFilter="*.c"
             class="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage"
-            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
+            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties.c">
       </page>
-   </extension>
-      
-   <extension
-         point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
             name="%MngResourceProp.name"
             nameFilter="*.cpp"
             class="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage"
-            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
+            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties.cpp">
       </page>
-   </extension>
-      
-   <extension
-         point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
             name="%MngResourceProp.name"
             nameFilter="*.cc"
             class="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage"
-            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
+            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties.cc">
       </page>
-   </extension>
-      
-   <extension
-         point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
             name="%MngResourceProp.name"
             nameFilter="*.cxx"
             class="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage"
-            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
+            id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties.cxx">
       </page>
    </extension>
       

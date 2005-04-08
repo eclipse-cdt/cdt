@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.internal.ui;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002, 2005 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -36,11 +35,10 @@ public class ManagedBuilderUIImages {
 
 	private static final String NAME_PREFIX= ManagedBuilderUIPlugin.getUniqueIdentifier() + '.';
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-	private static final String T= "full/"; //$NON-NLS-1$
 
-	public static final String T_BUILD= T + "build16/"; //$NON-NLS-1$
+	public static final String T_BUILD= "elcl16/"; //$NON-NLS-1$
 	// list icons dir
-	public static final String T_LIST= T + "list/"; //$NON-NLS-1$
+	public static final String T_LIST= "elcl16/"; //$NON-NLS-1$
 
 
 	// For the managed build images
@@ -107,12 +105,12 @@ public class ManagedBuilderUIImages {
 	/**
 	 * Sets all available image descriptors for the given action.
 	 */	
-	public static void setImageDescriptors(IAction action, String type, String relPath) {
-		relPath= relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
-		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
-		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
-	}
+//	public static void setImageDescriptors(IAction action, String type, String relPath) {
+//		relPath= relPath.substring(NAME_PREFIX_LENGTH);
+//		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
+//		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
+//		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
+//	}
 	
 	/**
 	 * Helper method to access the image registry from the JavaPlugin class.

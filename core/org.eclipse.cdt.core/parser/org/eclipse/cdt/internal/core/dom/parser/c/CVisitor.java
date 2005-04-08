@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -423,6 +424,9 @@ public class CVisitor {
 		}
 	}
 	
+	protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
+	protected static final ASTNodeProperty STRING_LOOKUP_TAGS_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_TAGS_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
+	
 	//lookup bits
 	private static final int COMPLETE 			= 0;		
 	private static final int CURRENT_SCOPE 		= 1;
@@ -648,18 +652,8 @@ public class CVisitor {
 	 */
 	private static IBinding createBinding(IASTDeclarator declarator, IASTName name) {
 		IBinding binding = null;
-		IASTNode parent = declarator.getParent();
-		if( declarator instanceof IASTStandardFunctionDeclarator ){
-			binding = resolveBinding( parent, CURRENT_SCOPE );
-			if( binding != null ) {
-			    if( binding instanceof IFunction )
-			        ((CFunction)binding).addDeclarator( (IASTStandardFunctionDeclarator) declarator );
-			    else 
-			        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
-			} else {
-				binding = createBinding(declarator);
-			}
-		} else if( declarator instanceof ICASTKnRFunctionDeclarator ){
+		if( declarator instanceof ICASTKnRFunctionDeclarator ){
+		    IASTNode parent = declarator.getParent();
 			if ( CharArrayUtils.equals(declarator.getName().toCharArray(), name.toCharArray()) ){
 				binding = resolveBinding( parent, CURRENT_SCOPE );
 				if( binding != null ) {
@@ -685,40 +679,21 @@ public class CVisitor {
                         }
 				}
 			}
-		} else if( parent instanceof IASTSimpleDeclaration ){
-			binding = createBinding( (IASTSimpleDeclaration) parent, name );
-		} else if( parent instanceof IASTParameterDeclaration ){
-		    IASTParameterDeclaration param = (IASTParameterDeclaration) parent;
-		    IASTFunctionDeclarator fDtor = (IASTFunctionDeclarator) param.getParent();
-		    IBinding b = fDtor.getName().resolveBinding();
-		    if( b instanceof IFunction ){
-		        binding = ((CFunction)b).resolveParameter( name );
-		        parent = fDtor.getParent();
-		        if( parent instanceof IASTFunctionDefinition ){
-		            ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
-					if ( scope != null && binding != null )
-                        try {
-                            scope.addName(name);
-                        } catch ( DOMException e ) {
-                        }
-				}
-		    }
-		} else if ( parent instanceof IASTDeclarator ) {
-			binding = createBinding(declarator);
+		} else {
+		    binding = createBinding( declarator );
 		}
-		
 		return binding;
 	}
 
 	private static IBinding createBinding( IASTDeclarator declarator ){
 		IASTNode parent = declarator.getParent();
 
-		if( declarator.getNestedDeclarator() != null )
-			return createBinding( declarator.getNestedDeclarator() );
-		
 		while( parent instanceof IASTDeclarator ){
 			parent = parent.getParent();
 		}
+
+		while( declarator.getNestedDeclarator() != null )
+			declarator = declarator.getNestedDeclarator();
 		
 		ICScope scope = (ICScope) getContainingScope( parent );
 		
@@ -730,65 +705,66 @@ public class CVisitor {
 		    	scope = null;
 		}
 		
+		IASTName name = declarator.getName();
+		
 		IBinding binding = null;
 		try {
-            binding = ( scope != null ) ? scope.getBinding( declarator.getName(), false ) : null;
+            binding = ( scope != null ) ? scope.getBinding( name, false ) : null;
         } catch ( DOMException e1 ) {
             binding = null;
         }  
 		
-		if( declarator instanceof IASTFunctionDeclarator ){
-			if( binding != null && binding instanceof IFunction ){
-			    try{ 
+        if( parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ){
+		    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) parent.getParent();
+		    IBinding temp = fdtor.getName().resolveBinding();
+		    if( temp != null && temp instanceof IFunction ){
+		        binding = ((CFunction) temp).resolveParameter( name );
+		    }
+		} else if( declarator instanceof IASTFunctionDeclarator ){
+			if( binding != null ) {
+			    if( binding instanceof IFunction ){
 			        IFunction function = (IFunction) binding;
-				    IFunctionType ftype = function.getType();
-				    IType type = createType( declarator );
-				    if( ftype.equals( type ) ){
-				        if( parent instanceof IASTSimpleDeclaration )
-				            ((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
-				        
-				        return function;
-				    }
-			    } catch( DOMException e ){
+		            ((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
+			        return function;
 			    }
-			} 
-
-			if( parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) parent).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
-				binding = new CTypeDef( declarator.getName() );
+		        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
+			} else if( parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) parent).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
+				binding = new CTypeDef( name );
 			else
 				binding = new CFunction( (IASTFunctionDeclarator) declarator );
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-				binding = new CTypeDef( declarator.getName() );
+				binding = new CTypeDef( name );
 			} else {
 			    IType t1 = null, t2 = null;
-			    if( binding != null && binding instanceof IVariable ){
-			        t1 = createType( declarator );
-			        try {
-                        t2 = ((IVariable)binding).getType();
-                    } catch ( DOMException e1 ) {
-                    }
-			    }
-			    if( t1 != null && t2 != null && t1.equals( t2 ) ){
-			        ((CVariable)binding).addDeclaration( declarator.getName() );
+			    if( binding != null ) {
+			        if( binding instanceof IParameter ){
+			            return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray() );
+			        } else if( binding instanceof IVariable ){
+				        t1 = createType( declarator );
+				        try {
+	                        t2 = ((IVariable)binding).getType();
+	                    } catch ( DOMException e1 ) {
+	                    }
+	                    if( t1 != null && t2 != null && t1.equals( t2 ) ){
+	    			        if( binding instanceof CVariable )
+	    			            ((CVariable)binding).addDeclaration( name );
+	    			    } else {
+	    			        return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray() );
+	    			    }
+			    	}
 			    } else if( simpleDecl.getParent() instanceof ICASTCompositeTypeSpecifier ){
-					binding = new CField( declarator.getName() );
+					binding = new CField( name );
 				} else {
-					binding = new CVariable( declarator.getName() );
+					binding = new CVariable( name );
 				}
 			}
-		}  else if( parent instanceof IASTParameterDeclaration ){
-		    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) parent.getParent();
-		    IBinding temp = fdtor.getName().resolveBinding();
-		    if( temp != null && temp instanceof IFunction ){
-		        binding = ((CFunction) temp).resolveParameter( declarator.getName() );
-		    }
 		}
 
 		if( scope != null && binding != null )
             try {
-                scope.addName( declarator.getName() );
+                scope.addName( name );
             } catch ( DOMException e ) {
             }
 		return binding;
@@ -823,47 +799,6 @@ public class CVisitor {
 		return binding;
 	}
 	
-
-	/**
-	 * @param parent
-	 * @return
-	 */
-	private static IBinding createBinding(IASTSimpleDeclaration simpleDeclaration, IASTName name) {
-		IBinding binding = null;
-		if( simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-			binding = new CTypeDef( name );
-			try {
-                ((ICScope) binding.getScope()).addName( name );
-            } catch ( DOMException e ) {
-            }
-		} else if( simpleDeclaration.getParent() instanceof ICASTCompositeTypeSpecifier ){
-			binding = new CField( name );
-			try {
-                ((ICScope) binding.getScope()).addName( name );
-            } catch ( DOMException e ) {
-            }
-		} else {
-		    CScope scope = (CScope) CVisitor.getContainingScope( simpleDeclaration );
-		    binding = scope.getBinding( name, false );
-		    if( binding == null ){
-		    	// if the simpleDeclaration is part of a KRC function declarator, then the binding is to a KRC parameter
-		    	if ( simpleDeclaration.getParent() instanceof IASTFunctionDeclarator ) {
-		    	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) simpleDeclaration.getParent();
-		    	    IBinding fn = fdtor.getName().resolveBinding();
-		    	    if( fn instanceof CFunction ){
-		    	        binding = ((CFunction)fn).resolveParameter( name );
-		    	    }
-		    	} else {
-			        binding = new CVariable( name );		    		
-		    	}
-		    	
-		        scope.addName( name );
-		    }
-		}
- 
-		return binding;
-	}
-
 	protected static IBinding resolveBinding( IASTNode node ){
 		return resolveBinding( node, COMPLETE );
 	}
@@ -1764,5 +1699,52 @@ public class CVisitor {
 	        }
         }
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
+    }
+    
+    public static IBinding[] findBindings( IScope scope, String name ) throws DOMException{
+        IASTNode node = scope.getPhysicalNode();
+        if( node instanceof IASTFunctionDefinition )
+            node = ((IASTFunctionDefinition)node).getBody();
+        
+        CASTName astName = new CASTName( name.toCharArray() );
+	    astName.setParent( node );
+	    
+	    //normal names
+	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
+	    IBinding b1 = (IBinding) findBinding( astName, astName, COMPLETE );
+        
+	    //structure names
+        astName.setPropertyInParent( STRING_LOOKUP_TAGS_PROPERTY );
+        IBinding b2 = (IBinding) findBinding( astName, astName, COMPLETE | TAGS );
+
+        //label names
+        ILabel b3 = null;
+        do{
+            char [] n = name.toCharArray();
+            if( scope instanceof ICFunctionScope ){
+                ILabel [] labels = ((CFunctionScope)scope).getLabels();
+                for( int i = 0; i < labels.length; i++ ){
+	                ILabel label = labels[i];
+	                if( CharArrayUtils.equals( label.getNameCharArray(), n) ){
+	                    b3 = label;
+	                    break;
+	                }
+	            }
+                break;
+            }
+            scope = scope.getParent();
+        } while( scope != null );
+        
+        int c = (( b1 != null ) ? 1 : 0) + (( b2 != null ) ? 1 : 0) + (( b3 != null ) ? 1 : 0);
+        IBinding [] result = new IBinding [c];
+        c = 0;
+        if( b1 != null ) 
+            result[c++] = b1;
+        if( b2 != null )
+            result[c++] = b2;
+        if( b3 != null )
+            result[c] = b3;
+        
+        return result;
     }
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
@@ -27,6 +28,24 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 		this.type = type;
 	}
 	
+    public boolean equals(Object obj) {
+        if( obj instanceof ICArrayType ){
+            ICArrayType at = (ICArrayType) obj;
+            try {
+		        if( isConst() != at.isConst() ) return false;
+		        if( isRestrict() != at.isRestrict() ) return false;
+		        if( isStatic() != at.isStatic() ) return false;
+		        if( isVolatile() != at.isVolatile() ) return false;
+		        if( isVariableLength() != at.isVariableLength() ) return false;
+            
+                return at.getType().equals( type );
+            } catch ( DOMException e ) {
+                return false;
+            }
+        }
+    	return false;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IArrayType#getType()
 	 */

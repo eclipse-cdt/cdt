@@ -78,7 +78,7 @@ public class CScope implements ICScope {
                 prop == IASTDeclarator.DECLARATOR_NAME )
             {
                 if( CharArrayUtils.equals( n.toCharArray(), name ) )
-                    result = (IASTName[]) ArrayUtil.append( IASTName.class, result, name );    
+                    result = (IASTName[]) ArrayUtil.append( IASTName.class, result, n );    
             }
             
             return PROCESS_CONTINUE; 
@@ -95,35 +95,10 @@ public class CScope implements ICScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public IBinding[] find( String name ) {
-        IASTNode node = getPhysicalNode();
-        CollectNamesAction action = new CollectNamesAction( name.toCharArray() );
-        node.accept( action );
-        
-        IASTName [] names = action.getNames();
-        IBinding [] result = null;
-        for( int i = 0; i < names.length; i++ ){
-            IBinding b = names[i].resolveBinding();
-            if( b == null ) continue;
-            try {
-                if( b.getScope() == this )
-                    result = (IBinding[]) ArrayUtil.append( IBinding.class, result, b );
-            } catch ( DOMException e ) {
-            }
-        }
-            
-        return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
+    public IBinding[] find( String name ) throws DOMException {
+        return CVisitor.findBindings( this, name );
     }
 
-//    public void addBinding( IBinding binding ) {
-//        int type = ( binding instanceof ICompositeType || binding instanceof IEnumeration ) ? 
-//                						NAMESPACE_TYPE_TAG : NAMESPACE_TYPE_OTHER;
-//
-//        if( bindings[type] == CharArrayObjectMap.EMPTY_MAP )
-//            bindings[type] = new CharArrayObjectMap(1);
-//        bindings[type].put( binding.getNameCharArray(), binding );
-//    }
-    
     public IBinding getBinding( int namespaceType, char [] name ){
         IASTName n = (IASTName) bindings[namespaceType].get( name );
         return ( n != null ) ? n.resolveBinding() : null;
@@ -168,7 +143,8 @@ public class CScope implements ICScope {
         ASTNodeProperty prop = name.getPropertyInParent();
         if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
             prop == IASTElaboratedTypeSpecifier.TYPE_NAME ||
-            prop == IASTEnumerationSpecifier.ENUMERATION_NAME )
+            prop == IASTEnumerationSpecifier.ENUMERATION_NAME ||
+            prop == CVisitor.STRING_LOOKUP_TAGS_PROPERTY )
         {
             return NAMESPACE_TYPE_TAG;
         }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
@@ -27,6 +28,22 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 	
 	public CPointerType(IType next) {
 		this.nextType = next;
+	}
+	
+	public boolean equals( Object obj ){
+	    if( obj instanceof ICPointerType ){
+	        ICPointerType pt = (ICPointerType) obj;
+            try {
+		        if( isConst() != pt.isConst() ) return false;
+		        if( isRestrict() != pt.isRestrict() ) return false;
+		        if( isVolatile() != pt.isVolatile() ) return false;
+            
+                return pt.getType().equals( nextType );
+            } catch ( DOMException e ) {
+                return false;
+            }
+        }
+    	return false;
 	}
 	
 	/* (non-Javadoc)

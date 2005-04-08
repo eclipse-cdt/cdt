@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -35,6 +36,22 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 	 */
 	public CQualifierType(IASTDeclSpecifier declSpec) {
 		this.declSpec = declSpec;
+	}
+	
+	public boolean equals( Object obj ){
+	    if( obj instanceof ICQualifierType ){
+	        ICQualifierType qt = (ICQualifierType) obj;
+            try {
+		        if( isConst() != qt.isConst() ) return false;
+		        if( isRestrict() != qt.isRestrict() ) return false;
+		        if( isVolatile() != qt.isVolatile() ) return false;
+            
+                return qt.getType().equals( getType() );
+            } catch ( DOMException e ) {
+                return false;
+            }
+        }
+    	return false;
 	}
 	
 	/* (non-Javadoc)

@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -3013,5 +3014,57 @@ public class AST2Tests extends AST2BaseTest {
     	
     	IFunction f = (IFunction) col.getName(0).resolveBinding();
     	assertFalse( f.isStatic() );
+    }
+    
+    public void testBug90253() throws Exception {
+        IASTTranslationUnit tu = parse( "void f(int par) { int v1; };", ParserLanguage.C ); //$NON-NLS-1$
+        CNameCollector col = new CNameCollector();
+        tu.accept( col );
+        
+        IFunction f = (IFunction) col.getName(0).resolveBinding();
+        IParameter p = (IParameter) col.getName(1).resolveBinding();
+        IVariable v1 = (IVariable) col.getName(2).resolveBinding();
+        
+        IScope scope = f.getFunctionScope();
+        
+        IBinding [] bs = scope.find( "par" ); //$NON-NLS-1$
+        assertEquals( bs.length, 1 );
+        assertSame( bs[0], p );
+        
+        bs = scope.find( "v1" ); //$NON-NLS-1$
+        assertEquals( bs.length, 1 );
+        assertSame( bs[0], v1 );
+    }
+    
+    public void testFind() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct S {};                \n"); //$NON-NLS-1$
+        buffer.append( "int S;                      \n"); //$NON-NLS-1$
+        buffer.append( "void f( ) {                 \n"); //$NON-NLS-1$
+        buffer.append( "   int S;                   \n"); //$NON-NLS-1$
+        buffer.append( "   {                        \n"); //$NON-NLS-1$
+        buffer.append( "      S :  ;                \n"); //$NON-NLS-1$
+        buffer.append( "   }                        \n"); //$NON-NLS-1$
+        buffer.append( "}                           \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); 
+        CNameCollector col = new CNameCollector();
+        tu.accept( col );
+        
+        ICompositeType S1 = (ICompositeType) col.getName(0).resolveBinding();
+        IVariable S2 = (IVariable) col.getName(1).resolveBinding();
+        IFunction f = (IFunction) col.getName(2).resolveBinding();
+        IVariable S3 = (IVariable) col.getName(3).resolveBinding();
+        ILabel S4 = (ILabel) col.getName(4).resolveBinding();
+        
+        IScope scope = f.getFunctionScope();
+        
+        IBinding [] bs = scope.find( "S" ); //$NON-NLS-1$
+        
+        assertNotNull( S2 );
+        assertEquals( bs.length, 3 );
+        assertSame( bs[0], S3 );
+        assertSame( bs[1], S1 );
+        assertSame( bs[2], S4 );
     }
 }

@@ -103,28 +103,28 @@ public class InMemoryIndex {
 	 * If the word does not exist, it adds it in the index.
 	 * @param indexFlags
 	 */
-	protected void addRef(char[] word, int fileNum, int offset, int offsetType) {
+	protected void addRef(char[] word, int fileNum, int offset, int offsetLength, int offsetType) {
 		WordEntry entry= this.words.get(word);
 	
 		if (entry == null) {
 			entry= new WordEntry(word);
 			entry.addRef(fileNum);
-			entry.addOffset(offset,fileNum, offsetType);
+			entry.addOffset(offset, offsetLength, fileNum, offsetType);
 			this.words.add(entry);
 			this.sortedWordEntries= null;
 			this.footprint += entry.footprint();
 		} else {
 			this.footprint += entry.addRef(fileNum);
-			entry.addOffset(offset, fileNum, offsetType);
+			entry.addOffset(offset, offsetLength, fileNum, offsetType);
 		}
 	}
 
-	public void addRef(IndexedFileEntry indexedFile, char[] word, int offset, int offsetType) {
-		addRef(word, indexedFile.getFileID(), offset, offsetType);
+	public void addRef(IndexedFileEntry indexedFile, char[] word, int offset, int offsetLength, int offsetType) {
+		addRef(word, indexedFile.getFileID(), offset, offsetLength, offsetType);
 	}
 
-	public void addRef(IndexedFileEntry indexedFile, String word, int offset, int offsetType) {
-		addRef(word.toCharArray(), indexedFile.getFileID(), offset, offsetType);
+	public void addRef(IndexedFileEntry indexedFile, String word, int offset, int offsetLength, int offsetType) {
+		addRef(word.toCharArray(), indexedFile.getFileID(), offset, offsetLength, offsetType);
 	}
 	
 	public void addRelatives(int fileNumber, String inclusion, String parent) {

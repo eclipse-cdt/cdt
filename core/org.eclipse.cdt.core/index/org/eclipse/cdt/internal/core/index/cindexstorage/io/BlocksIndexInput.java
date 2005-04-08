@@ -248,7 +248,7 @@ public class BlocksIndexInput extends IndexInput {
 			case -1 :
 				WordEntry entry = getEntry(pattern);
 				if (entry == null) return null;
-				return new IEntryResult[]{ new EntryResult(entry.getWord(), entry.getRefs(), entry.getOffsets()) };
+				return new IEntryResult[]{ new EntryResult(entry.getWord(), entry.getRefs(), entry.getOffsets(), entry.getOffsetLengths()) };
 			case 0 :
 				blockNums = summary.getAllBlockNums();
 				break;
@@ -270,7 +270,7 @@ public class BlocksIndexInput extends IndexInput {
 					if (count == entries.length){
 						System.arraycopy(entries, 0, entries = new IEntryResult[count*2], 0, count);
 					}
-					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getOffsets());
+					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getOffsets(), entry.getOffsetLengths());
 					found = true;
 				} else {
 					if (found) break;
@@ -300,7 +300,7 @@ public class BlocksIndexInput extends IndexInput {
 					if (count == entries.length){
 						System.arraycopy(entries, 0, entries = new IEntryResult[count*2], 0, count);
 					}
-					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getOffsets());
+					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getOffsets(), entry.getOffsetLengths());
 					found = true;
 				} else {
 					if (found) break;

@@ -75,6 +75,16 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 		        prevRef=ref;
 		    }
 		}
+		//encode offset lengths
+		for (int i=0; i<n; i++){
+			int[] offsetLengthArray = entry.getOffsetLengths(i);
+		    //write offset array length
+		    codeStream.writeGamma(offsetLengthArray.length);
+		    for (int j=0; j<offsetLengthArray.length; j++){
+		        int ref = offsetLengthArray[j];
+		        codeStream.writeGamma(ref);
+		    }
+		}
 	}
 	/**
 	 * @see IndexBlock#addEntry
@@ -170,6 +180,16 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 				    prevRef = ref;
 				}
 				entry.setOffsets(i, tempOffsetArray);
+			}
+			
+			for (int i=0; i<n; ++i) {
+				int offsetLengthArrayLength = readCodeStream.readGamma();
+				int[] tempOffsetLengthArray = new int[offsetLengthArrayLength];
+				for (int j=0; j<offsetLengthArrayLength; j++){
+				    int ref = readCodeStream.readGamma();
+					tempOffsetLengthArray[j] = ref;
+				}
+				entry.setOffsetLengths(i, tempOffsetLengthArray);
 			}
 	
 			offset= readCodeStream.byteLength();

@@ -29,5 +29,10 @@ public interface IEntryResult {
 	 * file reference etc.)
 	 */
 	public int[][] getOffsets();
+	/**
+	 * Returns the offset lengths for this entry - offset lengths map to the offset in the
+	 * offset array
+	 */
+	public int[][] getOffsetLengths();
 }
 

@@ -33,6 +33,10 @@ public class WordEntry {
 	//key into the offsets
 	//Offsets are prefixed with LINE or OFFSET designation
 	private int[][] offsets;
+	//Lengths of the offsets - all offsets will have an entry in here; OFFSET entries
+	//will have the real offset value, LINE entires will have a place holder value of 1
+	private int[][] offsetLengths;
+	
 	//Number of offsets in each offset array
 	private int[] offsetCount;
 	
@@ -44,6 +48,7 @@ public class WordEntry {
 		fileRefCount= 0;
 		fileRefs= new int[1];
 		offsets = new int [1][1];
+		offsetLengths = new int[1][1];
 		offsetCount = new int[1];
 	}	
 	/**
@@ -68,6 +73,8 @@ public class WordEntry {
 		System.arraycopy(fileRefs, 0, fileRefs= new int[newSize], 0, fileRefCount);
 		//Grow the offset array
 		System.arraycopy(offsets, 0, offsets= new int[newSize][1], 0, fileRefCount);
+		//Grow the offsetLengths array
+		System.arraycopy(offsetLengths, 0, offsetLengths=new int[newSize][1],0,fileRefCount);
 		//Grow the offset count array
 		System.arraycopy(offsetCount, 0, offsetCount= new int[newSize], 0, fileRefCount);
 		//Add the new file reference
@@ -89,9 +96,10 @@ public class WordEntry {
      * @param passedOffsetCount
      * @param offsets
 	 */
-	public void addWordInfo(int[] refs, int[][] passedOffsets, int[] passedOffsetCount) {
+	public void addWordInfo(int[] refs, int[][] passedOffsets, int[][] passedOffsetLengths, int[] passedOffsetCount) {
 		int[] newRefs= new int[fileRefCount + refs.length];
-		int[][]  newOffsets = new int[fileRefCount + refs.length][];
+		int[][] newOffsets = new int[fileRefCount + refs.length][];
+		int[][] newOffsetLengths = new int[fileRefCount + refs.length][];
 		int[] newOffSetCount= new int[fileRefCount + refs.length];
 		
 		int pos1= 0;
@@ -117,6 +125,7 @@ public class WordEntry {
 			if (compare > 0) {
 				newRefs[posNew]= r1;
 				newOffsets[posNew]= offsets[pos1];
+				newOffsetLengths[posNew]=offsetLengths[pos1];
 				newOffSetCount[posNew]=offsetCount[pos1];
 				posNew++;
 				pos1++;
@@ -124,6 +133,7 @@ public class WordEntry {
 				if (r2 != 0) {
 					newRefs[posNew]= r2;
 					newOffsets[posNew]=passedOffsets[pos2];
+					newOffsetLengths[posNew]=passedOffsetLengths[pos2];
 					newOffSetCount[posNew]=passedOffsetCount[pos2];
 					posNew++;
 				}
@@ -132,6 +142,7 @@ public class WordEntry {
 		}
 		fileRefs= newRefs;
 		offsets= newOffsets;
+		offsetLengths=newOffsetLengths;
 		offsetCount=newOffSetCount;
 		fileRefCount= posNew;
 	}
@@ -142,7 +153,7 @@ public class WordEntry {
 	 * change of object size, new size of object if adding offset forced the expansion
 	 * of the underlying array
 	 */
-	public int addOffset(int offset, int fileNum, int offsetType) {
+	public int addOffset(int offset, int offsetLength, int fileNum, int offsetType) {
 	    //Get the position in the fileRefs array for this file number - the 
 	    //position acts as an index into the offsets array
 	    int filePosition = getPositionForFile(fileNum);
@@ -151,6 +162,8 @@ public class WordEntry {
             return -1;
         //Get the array containing the offsets for this file
         int[] selectedOffsets = offsets[filePosition];
+		//Get the array containing the offset lengths for this file;
+		int[] selectedOffsetLengths = offsetLengths[filePosition];
         //Get the offset count for this file
         int selectedOffsetCount = offsetCount[filePosition];
         
@@ -166,7 +179,11 @@ public class WordEntry {
         //If there is still space in the array, add the encoded offset, update 
         //the count
 		if (selectedOffsetCount < selectedOffsets.length) {
-		    selectedOffsets[selectedOffsetCount++]= encodedNumber;
+			//Place the offset in next position in the offset array
+		    selectedOffsets[selectedOffsetCount]= encodedNumber;
+			//Place the length at the same place in the offset length array and increment 
+			//the position counter
+			selectedOffsetLengths[selectedOffsetCount++]=offsetLength;
 		    offsetCount[filePosition] = selectedOffsetCount;
 			return 0;
 		} 
@@ -174,13 +191,15 @@ public class WordEntry {
 		//Grow the offset array - start @ 1, grow to 4, 8, 16, 32, 64 etc.
 		int newSize= selectedOffsetCount < 4 ? 4 : selectedOffsetCount * 2; 
 		System.arraycopy(selectedOffsets, 0, selectedOffsets= new int[newSize], 0, selectedOffsetCount);
-	
-		//Add the encoded offset to the newly grown array, update the count
-		selectedOffsets[selectedOffsetCount++]= encodedNumber;
+	    System.arraycopy(selectedOffsetLengths,0, selectedOffsetLengths=new int[newSize], 0, selectedOffsetCount);
+		//Add the encoded offset to the newly grown array, add the length to the same
+		//position, update the count
+		selectedOffsets[selectedOffsetCount]= encodedNumber;
+		selectedOffsetLengths[selectedOffsetCount++]=offsetLength;
 		offsetCount[filePosition] = selectedOffsetCount;
-		//Put the newly grown array back in place
+		//Put the newly grown arrays  back in place
 		offsets[filePosition]=selectedOffsets;
-		
+		offsetLengths[filePosition]=selectedOffsetLengths;
 		return (newSize - fileRefCount + 1) * 4;
 	}
 	
@@ -259,6 +278,19 @@ public class WordEntry {
 		return result;
 	}
 	/**
+	 * Returns the offset lengths of the wordEntry 
+	 */
+	public int[][] getOffsetLengths() {
+		int[][] result= new int[fileRefCount][];
+		for (int i=0; i<fileRefCount; i++){
+		   int offsetLength =offsetCount[i];
+		   int[] tempOffset = new int[offsetLength];
+		   System.arraycopy(offsetLengths[i], 0, tempOffset, 0, offsetLength);
+		   result[i]=tempOffset;
+		}
+		return result;
+	}
+	/**
 	 * returns offset count array
 	 */
 	public int[] getOffsetCount(){
@@ -296,6 +328,7 @@ public class WordEntry {
 		//Trim all arrays of excess flab
 		System.arraycopy(fileRefs, 0, (fileRefs= new int[fileRefCount]), 0, fileRefCount);
 		System.arraycopy(offsets, 0, (offsets = new int[fileRefCount][]), 0,fileRefCount);
+		System.arraycopy(offsetLengths, 0, (offsetLengths = new int[fileRefCount][]), 0,fileRefCount);
 		System.arraycopy(offsetCount, 0,(offsetCount=new int[fileRefCount]),0,fileRefCount);
 		
 		//Store original ref positions in order to generate map
@@ -306,7 +339,7 @@ public class WordEntry {
 		
 		 //Sort the original file refs
 	     int[] mapping = new int[fileRefs.length];
-	     figureOutMapping(originalRefs, mapping);
+	     figureOutMapping(originalRefs, fileRefs, mapping);
 	     mapOffsets(mapping);
 	}
 	
@@ -316,23 +349,27 @@ public class WordEntry {
     private void mapOffsets(int[] mapping) {
         int fileRefLength = fileRefs.length;
         int[][] tempOffsetsArray = new int[fileRefLength][];
-        int[] tempOffsetLengthArray = new int[fileRefLength];
+		int[][] tempOffsetsLengthArray = new int[fileRefLength][];
+        int[] tempOffsetCountArray = new int[fileRefLength];
         
         for (int i=0; i<mapping.length; i++){
             int moveTo = mapping[i];
             tempOffsetsArray[moveTo] = offsets[i];
-            tempOffsetLengthArray [moveTo] = offsetCount[i];
+			tempOffsetsLengthArray[moveTo] = offsetLengths[i];
+			tempOffsetCountArray [moveTo] = offsetCount[i];
         }
         
         System.arraycopy(tempOffsetsArray, 0, offsets,0, fileRefLength);
-        System.arraycopy(tempOffsetLengthArray, 0, offsetCount,0, fileRefLength);
+		System.arraycopy(tempOffsetsLengthArray, 0, offsetLengths, 0, fileRefLength);
+        System.arraycopy(tempOffsetCountArray, 0, offsetCount,0, fileRefLength);
     }
-    private void figureOutMapping(int[] originalRefs, int[] mapping){
+	
+    private void figureOutMapping(int[] originalRefs, int[] sortedRefs, int[] mapping){
 	    int position = 0;
         for (int i=0; i<originalRefs.length; i++){
             int currentRef = originalRefs[i];
-            for (int j=0; j<fileRefs.length; j++){
-                if (currentRef == fileRefs[j]){
+            for (int j=0; j<sortedRefs.length; j++){
+                if (currentRef == sortedRefs[j]){
                     mapping[position++] = j;
                     break;
                 }
@@ -366,6 +403,32 @@ public class WordEntry {
 		Util.sort(result);
 		return result;
     }
+	
+    /**
+     * Returns the offset length entries sorted in the same order as the sorted offsets
+     * for the given index
+     * @return
+     */
+    public int[] getOffsetLengths(int index) {
+		//Get the before/after sort offsets and create a mapping
+		int[] initialOffsets = offsets[index];
+		int[] sortedOffsets = getOffsets(index);
+		int[] map = new int[sortedOffsets.length];
+		figureOutMapping(initialOffsets,sortedOffsets, map);
+		
+		//Map the offset lengths to the sorted offset positions
+        int[] tempOffset = offsetLengths[index];
+        int offsetLength = offsetCount[index];
+        int[] result= new int[offsetLength];
+
+        for (int i=0; i<map.length; i++){
+            int moveTo = map[i];
+			result [moveTo] = tempOffset[i];
+        }
+	       
+		return result;
+    }
+	
     /**
      * @param n
      * @param tempOffsetArray
@@ -381,5 +444,21 @@ public class WordEntry {
 		//Put the newly grown array back in place
 		offsets[index]=selectedOffsets;
     }
+	
+	/**
+    * @param n
+    * @param tempOffsetArray
+    */
+   public void setOffsetLengths(int index, int[] tempOffsetArray) {
+       int[] selectedOffsets = offsetLengths[index];
+       int tempOffsetArrayLength = tempOffsetArray.length;
+       
+       //Grow the offset array - start @ 1, grow to 4, 8, 16, 32, 64 etc.
+		int newSize= tempOffsetArrayLength < 4 ? 4 : tempOffsetArrayLength * 2; 
+		System.arraycopy(tempOffsetArray, 0, selectedOffsets= new int[newSize], 0, tempOffsetArrayLength);
+
+		//Put the newly grown array back in place
+		offsetLengths[index]=selectedOffsets;
+   }
 }
 

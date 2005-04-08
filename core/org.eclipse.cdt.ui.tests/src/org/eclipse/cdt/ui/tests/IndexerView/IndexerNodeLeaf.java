@@ -214,18 +214,20 @@ public class IndexerNodeLeaf implements IAdaptable {
                 
                 //offsets
                 int[][]offsets = entryResult.getOffsets();
+				int[][]offsetLengths = entryResult.getOffsetLengths();
                 if (offsets != null){
                     for (int j=0; j<offsets.length; j++){
                         String id = OFFSETS_NUMBER + j;
                         String offsetString = ""; //$NON-NLS-1$
                         for (int k=0; k<offsets[j].length; k++){
                             String rawOffset = String.valueOf(offsets[j][k]) ;
+							String offsetLocation = String.valueOf(offsetLengths[j][k]);
                             switch(rawOffset.charAt(0)){
                              case '1':
                                  offsetString +=  OFFSETS_LINE + rawOffset.substring(1) + " "; //$NON-NLS-1$
                              break;
                              case '2':
-                                 offsetString +=  OFFSETS_OFFSET + rawOffset.substring(1) + " "; //$NON-NLS-1$
+                                 offsetString +=  OFFSETS_OFFSET + rawOffset.substring(1) + ":" + offsetLocation + " "; //$NON-NLS-1$ //$NON-NLS-2$
                              break;    
                             }
                        

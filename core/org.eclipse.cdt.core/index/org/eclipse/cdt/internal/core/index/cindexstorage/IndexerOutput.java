@@ -41,8 +41,10 @@ public class IndexerOutput implements IIndexerOutput {
 			throw new IllegalStateException();
 		}
 		
+		if (offsetLength <= 0)
+			offsetLength = 1;
 		
-		index.addRef(word, indexedFileNumber, offset, offsetType);
+		index.addRef(word, indexedFileNumber, offset, offsetLength, offsetType);
 	}  
 	/**
 	 * Adds a reference to the given word to the inMemoryIndex.

@@ -214,7 +214,7 @@ public class MergeFactory {
 			} else {
 				word1.mapRefs(mappingOld);
 				word2.mapRefs(mappingAdds);
-				word1.addWordInfo(word2.getRefs(), word2.getOffsets(), word2.getOffsetCount());
+				word1.addWordInfo(word2.getRefs(), word2.getOffsets(),word2.getOffsetLengths(), word2.getOffsetCount());
 				mergeOutput.addWord(word1);
 				addsInput.moveToNextWordEntry();
 				oldInput.moveToNextWordEntry();

@@ -18,11 +18,13 @@ public class EntryResult implements IEntryResult {
 	private char[] word;
 	private int[]  fileRefs;
 	private int[][] offsets;
+	private int[][] offsetLengths;
 	
-public EntryResult(char[] word, int[] refs, int[][] offsets) {
+public EntryResult(char[] word, int[] refs, int[][] offsets, int[][] offsetLengths) {
 	this.word = word;
 	this.fileRefs = refs;
 	this.offsets = offsets;
+	this.offsetLengths = offsetLengths;
 }
 public boolean equals(Object anObject){
 	
@@ -83,6 +85,9 @@ public String toString(){
  */
 public int[][] getOffsets() {
     return offsets;
+}
+public int[][] getOffsetLengths() {
+	return offsetLengths;
 }
 
 }

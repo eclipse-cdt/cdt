@@ -156,7 +156,7 @@ public class MainActionGroup extends CViewActionGroup {
 		toggleLinkingAction = new ToggleLinkingAction(getCView()); //$NON-NLS-1$
 		toggleLinkingAction.setToolTipText(CViewMessages.getString("ToggleLinkingAction.toolTip")); //$NON-NLS-1$
 		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
-		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
+//		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
 		refactoringActionGroup = new RefactoringActionGroup(getCView().getSite(), null);	

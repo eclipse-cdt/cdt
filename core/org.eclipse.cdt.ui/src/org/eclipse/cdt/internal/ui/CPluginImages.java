@@ -34,14 +34,13 @@ public class CPluginImages {
 	}	
 	private static final String NAME_PREFIX= CUIPlugin.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-	private static final String T= "full/"; //$NON-NLS-1$
 
-	public static final String T_OBJ= T + "obj16/"; //$NON-NLS-1$
-	public static final String T_WIZBAN= T + "wizban/"; //$NON-NLS-1$
+	public static final String T_OBJ= "obj16/"; //$NON-NLS-1$
+	public static final String T_WIZBAN= "wizban/"; //$NON-NLS-1$
 	public static final String T_LCL=  "lcl16/"; //$NON-NLS-1$
 	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
-	public static final String T_VIEW= T + "cview16/"; //$NON-NLS-1$
-	public static final String T_OVR= T + "ovr16/"; //$NON-NLS-1$
+	public static final String T_VIEW= "view16/"; //$NON-NLS-1$
+	public static final String T_OVR= "ovr16/"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_TEMPLATE= NAME_PREFIX + "template_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE= NAME_PREFIX + "variable_obj.gif"; //$NON-NLS-1$
@@ -286,9 +285,9 @@ public class CPluginImages {
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 	    if (relPath.startsWith(NAME_PREFIX))
 	        relPath= relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
-		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
-		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
+		action.setDisabledImageDescriptor(create("d" + type, relPath)); //$NON-NLS-1$
+//		action.setHoverImageDescriptor(create("c" + type, relPath)); //$NON-NLS-1$
+		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 
 		// We are still not sure about this, let see TF results first.
 		//		Use the managed version so that we ensure that there is no resource handle leaks

@@ -191,19 +191,19 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%perspective.name"
-            icon="icons/full/cview16/c_pers.gif"
+            icon="icons/view16/c_pers.gif"
             class="org.eclipse.cdt.internal.ui.CPerspectiveFactory"
             id="org.eclipse.cdt.ui.CPerspective">
       </perspective>
       <perspective
             name="%CBrowsing.perspective.name"
-            icon="icons/full/cview16/cbrowsing_pers.gif"
+            icon="icons/view16/cbrowsing_pers.gif"
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPerspectiveFactory"
             id="org.eclipse.cdt.ui.CBrowsingPerspective">
       </perspective>
       <perspective
             name="%CHierarchy.perspective.name"
-            icon="icons/full/eview16/chierch_pers.gif"
+            icon="icons/view16/chierch_pers.gif"
             class="org.eclipse.cdt.internal.ui.browser.typehierarchy.CHierarchyPerspectiveFactory"
             id="org.eclipse.cdt.ui.CHierarchyPerspective">
       </perspective>
@@ -258,7 +258,7 @@
       </category>
       <view
             name="%CView.name"
-            icon="icons/full/cview16/cview.gif"
+            icon="icons/view16/cview.gif"
             category="org.eclipse.cdt.ui.views"
             class="org.eclipse.cdt.internal.ui.cview.CView"
             id="org.eclipse.cdt.ui.CView">
@@ -269,28 +269,28 @@
       </category>
       <view
             name="%CBrowsing.projectsViewName"
-            icon="icons/full/eview16/cprojects.gif"
+            icon="icons/view16/cprojects.gif"
             category="org.eclipse.cdt.ui.c.browsing"
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.ProjectsView"
             id="org.eclipse.cdt.ui.ProjectsView">
       </view>
       <view
             name="%CBrowsing.namespacesViewName"
-            icon="icons/full/eview16/namespaces.gif"
+            icon="icons/view16/namespaces.gif"
             category="org.eclipse.cdt.ui.c.browsing"
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.NamespacesView"
             id="org.eclipse.cdt.ui.NamespacesView">
       </view>
       <view
             name="%CBrowsing.typesViewName"
-            icon="icons/full/eview16/types.gif"
+            icon="icons/view16/types.gif"
             category="org.eclipse.cdt.ui.c.browsing"
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.TypesView"
             id="org.eclipse.cdt.ui.TypesView">
       </view>
       <view
             name="%CBrowsing.membersViewName"
-            icon="icons/full/eview16/members.gif"
+            icon="icons/view16/members.gif"
             category="org.eclipse.cdt.ui.c.browsing"
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.MembersView"
             id="org.eclipse.cdt.ui.MembersView">
@@ -301,7 +301,7 @@
       </category>
       <view
             name="%CHierarchy.hierarchyViewName"
-            icon="icons/full/eview16/class_hi.gif"
+            icon="icons/view16/class_hi.gif"
             category="org.eclipse.cdt.ui.c.hierarchy"
             class="org.eclipse.cdt.internal.ui.browser.typehierarchy.TypeHierarchyViewPart"
             id="org.eclipse.cdt.ui.TypeHierarchyView">
@@ -317,7 +317,7 @@
       </category>
       <wizard
             name="%NewWizards.sourceFile"
-            icon="icons/full/ctool16/newcfile_wiz.gif"
+            icon="icons/etool16/newcfile_wiz.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
@@ -330,7 +330,7 @@
       </wizard>
       <wizard
             name="%NewWizards.headerFile"
-            icon="icons/full/ctool16/newhfile_wiz.gif"
+            icon="icons/etool16/newhfile_wiz.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
@@ -343,7 +343,7 @@
       </wizard>
       <wizard
             name="%NewWizards.file"
-            icon="icons/full/ctool16/newfile_wiz.gif"
+            icon="icons/etool16/newfile_wiz.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
@@ -356,7 +356,7 @@
       </wizard>
       <wizard
             name="%NewWizards.sourceFolder"
-            icon="icons/full/ctool16/newsrcfldr_wiz.gif"
+            icon="icons/etool16/newsrcfldr_wiz.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
@@ -369,7 +369,7 @@
       </wizard>
       <wizard
             name="%NewWizards.folder"
-            icon="icons/full/ctool16/newfolder_wiz.gif"
+            icon="icons/etool16/newfolder_wiz.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
@@ -387,7 +387,7 @@
       </category>
       <wizard
             name="%NewWizards.class"
-            icon="icons/full/ctool16/newclass_wiz.gif"
+            icon="icons/etool16/newclass_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
@@ -401,7 +401,7 @@
       </wizard>
       <wizard
             name="%NewWizards.sourceFile"
-            icon="icons/full/ctool16/newcfile_wiz.gif"
+            icon="icons/etool16/newcfile_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewSourceFileCreationWizard">
@@ -414,7 +414,7 @@
       </wizard>
       <wizard
             name="%NewWizards.headerFile"
-            icon="icons/full/ctool16/newhfile_wiz.gif"
+            icon="icons/etool16/newhfile_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewHeaderFileCreationWizard">
@@ -427,7 +427,7 @@
       </wizard>
       <wizard
             name="%NewWizards.file"
-            icon="icons/full/ctool16/newfile_wiz.gif"
+            icon="icons/etool16/newfile_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
@@ -440,7 +440,7 @@
       </wizard>
       <wizard
             name="%NewWizards.sourceFolder"
-            icon="icons/full/ctool16/newsrcfldr_wiz.gif"
+            icon="icons/etool16/newsrcfldr_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
@@ -453,7 +453,7 @@
       </wizard>
       <wizard
             name="%NewWizards.folder"
-            icon="icons/full/ctool16/newfolder_wiz.gif"
+            icon="icons/etool16/newfolder_wiz.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
@@ -523,7 +523,7 @@
             default="true"
             name="%CEditor.name"
             extensions="c,C,cc,cpp,cxx,h,hh,hpp"
-            icon="icons/full/obj16/c_file_obj.gif"
+            icon="icons/obj16/c_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.CEditor"
             contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             symbolicFontName="org.eclipse.cdt.ui.editors.textfont"
@@ -532,14 +532,14 @@
       <editor
             name="%AsmEditor.name"
             extensions="s,asm,S"
-            icon="icons/full/obj16/s_file_obj.gif"
+            icon="icons/obj16/s_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
       </editor>
       <editor
             symbolicFontName="org.eclipse.cdt.ui.editors.textfont"
             class="org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor"
-            icon="icons/full/obj16/c_file_obj.gif"
+            icon="icons/obj16/c_file_obj.gif"
             name="%ExternalSearchEditor.name"
             id="org.eclipse.cdt.ui.editor.ExternalSearchEditor"/>
       
@@ -669,7 +669,7 @@
          </filter>
          <action
                label="%DeleteTaskAction.label"
-               icon="icons/full/ovr16/error_co.gif"
+               icon="icons/ovr16/error_co.gif"
                class="org.eclipse.cdt.internal.ui.util.DeleteTaskAction"
                menubarPath="additions"
                enablesFor="+"
@@ -721,7 +721,7 @@
             id="org.eclipse.cdt.ui.action.DeleteIProblemMarkers">
          <action
                label="%DeleteIProblemMarkerAction.label"
-               icon="icons/full/ovr16/error_co.gif"
+               icon="icons/ovr16/error_co.gif"
                class="org.eclipse.cdt.internal.ui.util.DeleteIProblemMarkerAction"
                menubarPath="additions"
                id="org.eclipse.cdt.ui.action.DeleteIProblemMarkers"/>
@@ -789,8 +789,8 @@
                id="org.eclipse.cdt.ui.actions.NewTypeDropDown"
                toolbarPath="Normal/CCWizards"
                class="org.eclipse.cdt.internal.ui.wizards.NewTypeDropDownAction"
-               disabledIcon="icons/full/dtool16/newclass_wiz.gif"
-               icon="icons/full/etool16/newclass_wiz.gif"
+               disabledIcon="icons/dtool16/newclass_wiz.gif"
+               icon="icons/etool16/newclass_wiz.gif"
                label="%NewTypeDropDownAction.label"
                pulldown="true"
                tooltip="%NewTypeDropDownAction.tooltip">
@@ -799,8 +799,8 @@
                id="org.eclipse.cdt.ui.actions.NewFileDropDown"
                toolbarPath="Normal/CCWizards"
                class="org.eclipse.cdt.internal.ui.wizards.NewFileDropDownAction"
-               disabledIcon="icons/full/dtool16/newcfile_wiz.gif"
-               icon="icons/full/etool16/newcfile_wiz.gif"
+               disabledIcon="icons/dtool16/newcfile_wiz.gif"
+               icon="icons/etool16/newcfile_wiz.gif"
                label="%NewFileDropDownAction.label"
                pulldown="true"
                tooltip="%NewFileDropDownAction.tooltip">
@@ -809,8 +809,8 @@
                id="org.eclipse.cdt.ui.actions.NewFolderDropDown"
                toolbarPath="Normal/CCWizards"
                class="org.eclipse.cdt.internal.ui.wizards.NewFolderDropDownAction"
-               disabledIcon="icons/full/dtool16/newsrcfldr_wiz.gif"
-               icon="icons/full/etool16/newsrcfldr_wiz.gif"
+               disabledIcon="icons/dtool16/newsrcfldr_wiz.gif"
+               icon="icons/etool16/newsrcfldr_wiz.gif"
                label="%NewFolderDropDownAction.label"
                pulldown="true"
                tooltip="%NewFolderDropDownAction.tooltip">
@@ -819,8 +819,8 @@
                id="org.eclipse.cdt.ui.actions.NewProjectDropDown"
                toolbarPath="Normal/CCWizards"
                class="org.eclipse.cdt.internal.ui.wizards.NewProjectDropDownAction"
-               disabledIcon="icons/full/dtool16/newcprj_wiz.gif"
-               icon="icons/full/etool16/newcprj_wiz.gif"
+               disabledIcon="icons/dtool16/newcprj_wiz.gif"
+               icon="icons/etool16/newcprj_wiz.gif"
                label="%NewProjectDropDownAction.label"
                pulldown="true"
                tooltip="%NewProjectDropDownAction.tooltip">
@@ -830,7 +830,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/full/ovr16/c_ovr.gif"
+            icon="icons/ovr16/c_ovr.gif"
             natureId="org.eclipse.cdt.core.cnature"
             id="org.eclipse.cdt.ui.cProjectNatureImage">
       </image>
@@ -1058,7 +1058,7 @@
             showScopeSection="true"
             label="%CSearchPage.label"
             extensions="c:90,cpp:90, cxx:90, cc:90,C:90, h:90, hh:90, hpp:90, H:90"
-            icon="icons/full/obj16/csearch_obj.gif"
+            icon="icons/obj16/csearch_obj.gif"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             sizeHint="460, 160"
             id="org.eclipse.cdt.ui.CSearchPage">
@@ -1069,7 +1069,7 @@
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%ElementNameSorter.label"
-            icon="icons/full/clcl16/search_sortmatch.gif"
+            icon="icons/obj16/search_sortmatch.gif"
             class="org.eclipse.cdt.internal.ui.search.ElementNameSorter"
             tooltip="%ElementNameSorter.tooltip"
             id="org.eclipse.cdt.search.internal.ui.ElementNameSorter">
@@ -1077,7 +1077,7 @@
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%ParentNameSorter.label"
-            icon="icons/full/clcl16/search_sortmatch.gif"
+            icon="icons/obj16/search_sortmatch.gif"
             class="org.eclipse.cdt.internal.ui.search.ParentNameSorter"
             tooltip="%ParentNameSorter.tooltip"
             id="org.eclipse.cdt.search.internal.ui.ParentNameSorter">
@@ -1085,7 +1085,7 @@
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%PathNameSorter.label"
-            icon="icons/full/clcl16/search_sortmatch.gif"
+            icon="icons/obj16/search_sortmatch.gif"
             class="org.eclipse.cdt.internal.ui.search.PathNameSorter"
             tooltip="%PathNameSorter.tooltip"
             id="org.eclipse.cdt.search.internal.ui.PathNameSorter">
@@ -1100,7 +1100,7 @@
             id="org.eclipse.cdt.ui.SearchActionSet">
          <action
                label="%openCSearchPageAction.label"
-               icon="icons/full/obj16/csearch_obj.gif"
+               icon="icons/obj16/csearch_obj.gif"
                class="org.eclipse.cdt.internal.ui.search.OpenCSearchPageAction"
                menubarPath="org.eclipse.search.menu/dialogGroup"
                id="org.eclipse.cdt.ui.actions.OpenCSearchPage">
@@ -1110,7 +1110,7 @@
                toolbarPath="org.eclipse.search.searchActionSet/Search"
                class="org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeAction"
                definitionId="org.eclipse.cdt.ui.navigate.opentype"
-               icon="icons/full/etool16/opentype.gif"
+               icon="icons/etool16/opentype.gif"
                helpContextId="org.eclipse.cdt.ui.open_type_action"
                label="%OpenTypeAction.label"
                menubarPath="navigate/open.ext2"
@@ -1192,7 +1192,7 @@
       <workingSet
             name="%CElementWorkingSetPage.name"
             pageClass="org.eclipse.cdt.internal.ui.workingsets.CElementWorkingSetPage"
-            icon="icons/full/cview16/cview.gif"
+            icon="icons/view16/cview.gif"
             id="org.eclipse.cdt.ui.CElementWorkingSetPage">
       </workingSet>
    </extension>
@@ -1208,7 +1208,7 @@
             presentationLayer="3"
             textStylePreferenceValue="NONE"
             symbolicIcon="warning"
-            icon="icons/full/obj16/unknown_obj.gif"
+            icon="icons/obj16/unknown_obj.gif"
             label="%CDTIndexerMarker.label"
             textPreferenceValue="true"
             textPreferenceKey="indexResultIndication"

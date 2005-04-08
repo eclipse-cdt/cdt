@@ -54,7 +54,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 	 * Returns the image descriptor with the given relative path.
 	 */
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$
+		String iconPath = "icons/"; //$NON-NLS-1$
 		try {
 			URL installURL = CUIPlugin.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 			URL url = new URL(installURL, iconPath + relativePath);

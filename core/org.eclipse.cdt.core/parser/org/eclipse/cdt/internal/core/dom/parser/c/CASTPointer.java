@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 
 /**
@@ -60,6 +61,10 @@ public class CASTPointer extends CASTNode implements ICASTPointer {
      */
     public void setVolatile(boolean value) {
         isVolatile = value;
+    }
+
+    public boolean accept(ASTVisitor visitor) {
+        return true;
     }
 
 }

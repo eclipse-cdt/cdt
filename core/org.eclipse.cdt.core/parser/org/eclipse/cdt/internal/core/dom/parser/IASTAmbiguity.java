@@ -8,25 +8,10 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.c;
+package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 
-/**
- * @author jcamelon
- */
-abstract class CASTProblemOwner extends CASTNode {
-    
-    private IASTProblem problem;
-
-    public IASTProblem getProblem()
-    {
-        return problem;
-    }
-    
-    public void setProblem(IASTProblem p)
-    {
-        problem = p;
-    }
+public interface IASTAmbiguity extends IASTNode {
 
 }

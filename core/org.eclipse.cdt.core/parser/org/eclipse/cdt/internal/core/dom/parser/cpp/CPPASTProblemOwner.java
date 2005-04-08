@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 /**
  * @author jcamelon
  */
-class CPPASTProblemOwner extends CPPASTNode {
+abstract class CPPASTProblemOwner extends CPPASTNode {
 
     private IASTProblem problem;
 

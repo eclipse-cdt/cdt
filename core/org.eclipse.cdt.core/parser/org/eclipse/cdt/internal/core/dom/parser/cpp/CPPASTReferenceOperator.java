@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 
 /**
@@ -17,5 +18,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
  */
 public class CPPASTReferenceOperator extends CPPASTNode implements
         ICPPASTReferenceOperator {
-
+    
+    public boolean accept( ASTVisitor action ){
+        return true;
+    }
+    
 }

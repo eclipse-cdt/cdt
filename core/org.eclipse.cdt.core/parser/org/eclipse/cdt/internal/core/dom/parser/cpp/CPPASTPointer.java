@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 
 /**
@@ -18,34 +19,46 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 public class CPPASTPointer extends CPPASTNode implements IASTPointer {
 
     private boolean isConst;
+
     private boolean isVolatile;
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.core.dom.ast.IASTPointer#isConst()
      */
     public boolean isConst() {
         return isConst;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.core.dom.ast.IASTPointer#isVolatile()
      */
     public boolean isVolatile() {
         return isVolatile;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.core.dom.ast.IASTPointer#setConst(boolean)
      */
     public void setConst(boolean value) {
         isConst = value;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.core.dom.ast.IASTPointer#setVolatile(boolean)
      */
     public void setVolatile(boolean value) {
         isVolatile = value;
     }
 
+    public boolean accept(ASTVisitor action) {
+        return true;
+    }
 }

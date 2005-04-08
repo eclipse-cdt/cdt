@@ -5070,4 +5070,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return visitor.found;
     }
 
+    protected void resolveAmbiguities() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

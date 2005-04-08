@@ -383,17 +383,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     public IASTTranslationUnit parse() {
         long startTime = System.currentTimeMillis();
         translationUnit();
-        // For the debuglog to take place, you have to call
-        // Util.setDebugging(true);
-        // Or set debug to true in the core plugin preference
         log.traceLog("Parse " //$NON-NLS-1$
                 + (++parseCount) + ": " //$NON-NLS-1$
                 + (System.currentTimeMillis() - startTime) + "ms" //$NON-NLS-1$
                 + (parsePassed ? "" : " - parse failure")); //$NON-NLS-1$ //$NON-NLS-2$
+        startTime = System.currentTimeMillis();
+        resolveAmbiguities();
+        log.traceLog("Ambiguity resolution : " //$NON-NLS-1$
+                + (System.currentTimeMillis() - startTime) + "ms" //$NON-NLS-1$
+                ); //$NON-NLS-1$ //$NON-NLS-2$
         IASTTranslationUnit result = getTranslationUnit();
         nullifyTranslationUnit();
         return result;
     }
+
+    protected abstract void resolveAmbiguities();
 
     /**
      * 

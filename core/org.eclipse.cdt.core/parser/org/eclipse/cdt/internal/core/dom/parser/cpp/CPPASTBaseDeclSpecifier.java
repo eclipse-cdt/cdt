@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 /**
  * @author jcamelon
  */
-public class CPPASTBaseDeclSpecifier extends CPPASTNode implements
+public abstract class CPPASTBaseDeclSpecifier extends CPPASTNode implements
         ICPPASTDeclSpecifier {
 
     private boolean friend;

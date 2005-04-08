@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -19,7 +18,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author jcamelon
  */
-public class CPPASTNode extends ASTNode implements IASTNode {
+public abstract class CPPASTNode extends ASTNode implements IASTNode {
 
     private IASTNode parent;
     private ASTNodeProperty property;
@@ -64,7 +63,4 @@ public class CPPASTNode extends ASTNode implements IASTNode {
         this.property = property;
     }
     
-    public boolean accept( ASTVisitor action ){
-        return true;
-    }
 }

@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 /**
  * @author jcamelon
  */
-public class CASTBaseDeclSpecifier extends CASTNode implements ICASTDeclSpecifier {
+public abstract class CASTBaseDeclSpecifier extends CASTNode implements ICASTDeclSpecifier {
 
     protected int storageClass;
     protected boolean isConst;

@@ -2600,4 +2600,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return nc.result;
     }
 
+    protected void resolveAmbiguities() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

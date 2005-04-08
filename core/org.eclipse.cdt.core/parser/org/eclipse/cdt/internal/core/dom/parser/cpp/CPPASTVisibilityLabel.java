@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 
 /**
@@ -34,4 +35,7 @@ public class CPPASTVisibilityLabel extends CPPASTNode implements
         this.visibility = visibility;
     }
 
+    public boolean accept( ASTVisitor action ){
+        return true;
+    }
 }

@@ -95,8 +95,6 @@
 		<antcall target="tunzip"/>
 		<antcall target="tuntar"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip" dest="${buildDirectory}"/>
-		<cvs cvsroot="${eclipseRoot}" dest="${buildDirectory}/eclipse/plugins" package="org.eclipse.test"/>
-		<cvs cvsroot="${eclipseRoot}" dest="${buildDirectory}/eclipse/plugins" package="org.eclipse.ant.optional.junit"/>
 		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
 			<property name="os" value="${baseos}"/>

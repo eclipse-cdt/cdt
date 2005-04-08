@@ -42,6 +42,8 @@ plugin@org.eclipse.cdt.core.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/
 plugin@org.eclipse.cdt.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui.tests
 plugin@org.eclipse.cdt.debug.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui.tests
 plugin@org.eclipse.cdt.testing=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing
+plugin@org.eclipse.test=HEAD,:pserver:anonymous@dev.eclipse.org:/home/eclipse,
+plugin@org.eclipse.ant.optional.junit=HEAD,:pserver:anonymous@dev.eclipse.org:/home/eclipse,
 feature@org.eclipse.cdt.testing=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing-feature
 
 ! SDK Feature

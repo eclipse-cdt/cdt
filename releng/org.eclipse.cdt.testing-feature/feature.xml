@@ -58,4 +58,17 @@
          install-size="0"
          version="3.0.0"/>
 
+   <plugin
+         id="org.eclipse.ant.optional.junit"
+         download-size="0"
+         install-size="0"
+         version="2.1.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.test"
+         download-size="0"
+         install-size="0"
+         version="3.1.0"/>
+
 </feature>

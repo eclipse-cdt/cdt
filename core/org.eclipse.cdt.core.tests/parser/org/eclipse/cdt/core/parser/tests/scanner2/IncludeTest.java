@@ -116,4 +116,52 @@ public class IncludeTest extends FileBasePluginTest {
     	
     	assertFalse( i.hasNext() );  	
 	}
+    
+    public void testIncludePathOrdering() throws Exception
+	{    	
+    	// create directory structure:
+    	//  project/base.cpp
+    	//  project/foo.h
+    	//  project/two/foo.h
+    	//  project/three/foo.h
+    	
+    	// this test sets the include path to be two;three and include foo.h (we should see the contents of two/foo.h
+    	// then we change to three;two and we should see the contents of three/foo.h.
+    	
+    	String baseFile = "#include <foo.h>"; //$NON-NLS-1$
+    	String i1Next = "int one;\n"; //$NON-NLS-1$
+    	String i2Next = "int two;\n"; //$NON-NLS-1$
+    	String i3Next = "int three;\n"; //$NON-NLS-1$   	
+    	
+    	IFile base = importFile( "base.cpp", baseFile ); //$NON-NLS-1$
+    	importFile( "foo.h", i1Next ); //$NON-NLS-1$
+    	IFolder twof = importFolder("two"); //$NON-NLS-1$
+    	IFolder threef = importFolder("three"); //$NON-NLS-1$
+    	importFile( "two/foo.h", i2Next ); //$NON-NLS-1$
+    	importFile( "three/foo.h", i3Next ); //$NON-NLS-1$
+    	
+    	String [] path = new String[2];
+    	path[0] = twof.getFullPath().toOSString();
+       	path[1] = threef.getFullPath().toOSString();
+   	
+    	IScannerInfo scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, path, EMPTY_STRING_ARRAY, path );
+    	Iterator i = parse( base, ParserLanguage.C, scannerInfo ).getDeclarations();
+    	IASTVariable v;
+    	
+    	assertTrue( i.hasNext() );
+    	v = (IASTVariable) i.next(); 	
+    	assertEquals( v.getName(), "two" ); //$NON-NLS-1$
+    	assertFalse( i.hasNext() ); 
+    	 	
+    	path[0] = threef.getFullPath().toOSString();
+       	path[1] = twof.getFullPath().toOSString();
+
+    	scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, path, EMPTY_STRING_ARRAY, path );
+    	i = parse( base, ParserLanguage.C, scannerInfo ).getDeclarations();
+    	
+    	assertTrue( i.hasNext() );
+    	v = (IASTVariable) i.next(); 	
+    	assertEquals( v.getName(), "three" ); //$NON-NLS-1$
+    	assertFalse( i.hasNext() ); 
+	}
 }

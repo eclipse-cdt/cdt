@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
@@ -79,7 +78,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 
     protected void indexFile(IFile file) throws IOException {
         // Add the name of the file to the index
-        IndexedFileEntry indFile = output.addIndexedFile(file.getFullPath().toString());
+        output.addIndexedFile(file.getFullPath().toString());
       
         int problems = indexer.indexProblemsEnabled(resourceFile.getProject());
         setProblemMarkersEnabled(problems);
@@ -242,8 +241,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
      * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object, java.lang.Object)
      */
     protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location) {
-        String fileName;
-        int sourceLineNumber = -1;
         String errorMessage = ""; //$NON-NLS-1$
        
         if (problem instanceof IASTProblem) {
@@ -259,7 +256,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         }
         if (location != null && location instanceof IASTFileLocation) {
             IASTFileLocation fileLoc = (IASTFileLocation) location;
-            fileName = fileLoc.getFileName(); 
             try {
                 //we only ever add index markers on the file, so DEPTH_ZERO is far enough
                 IMarker[] markers = tempFile.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);

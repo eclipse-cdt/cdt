@@ -426,6 +426,7 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
         public AddMarkerProblem(IFile file, IFile orig, Object problem, Object location) {
             super( file, orig );
             this.problem = problem;
+            this.location = location;
         }
         public boolean isAddProblem(){
             return true;

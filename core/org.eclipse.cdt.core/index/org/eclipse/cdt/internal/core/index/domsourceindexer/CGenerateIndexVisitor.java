@@ -10,9 +10,6 @@
  ***********************************************************************/
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -42,7 +39,6 @@ import org.eclipse.core.runtime.Path;
 public class CGenerateIndexVisitor extends CASTVisitor {
     private DOMSourceIndexerRunner indexer; 
     private IFile resourceFile;
-    private List problems;
     {
         shouldVisitNames          = true;
 //        shouldVisitDeclarations   = false;
@@ -64,7 +60,6 @@ public class CGenerateIndexVisitor extends CASTVisitor {
         super();
         this.indexer = indexer;
         this.resourceFile = resourceFile;
-        problems = new ArrayList();
     }
 
     /* (non-Javadoc)

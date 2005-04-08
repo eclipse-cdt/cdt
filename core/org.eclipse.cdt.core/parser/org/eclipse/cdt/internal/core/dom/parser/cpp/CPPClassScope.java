@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -93,7 +94,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    
 	    //copy assignment operator: A& operator = ( const A & ) 
 	    IType refType = new CPPReferenceType( clsType );
-	    m = new CPPImplicitMethod( this, "operator =".toCharArray(), refType, ps ); //$NON-NLS-1$
+	    m = new CPPImplicitMethod( this, ICPPASTOperatorName.OPERATOR_ASSIGN, refType, ps ); //$NON-NLS-1$
 	    implicits[2] = m;
 	    addBinding( m );
 	    

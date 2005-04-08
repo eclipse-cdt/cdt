@@ -3413,5 +3413,101 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertSame( x.getType(), X );
     	assertEquals( problem.getID(), IProblemBinding.SEMANTIC_INVALID_REDEFINITION );
     }
+	
+	public void testOperatorNames() throws Exception {
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("struct C {                               \n"); //$NON-NLS-1$
+			buffer.append("   void* operator new [ ] (unsigned int);\n"); //$NON-NLS-1$
+			buffer.append("   void* operator new (unsigned int);\n"); //$NON-NLS-1$
+			buffer.append("   void operator delete [ ] ( void * );       \n"); //$NON-NLS-1$
+			buffer.append("   void operator delete (void *);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator+=(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator -= (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator *=   (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   cosnt C& operator /= (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator %= (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator^=(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator&= (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator |= (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator >>=(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator<<= (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator<<(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator>>(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator /**/   == /**/  (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator != /**/ (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator <= (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator /**/ >=(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator =(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator&& (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator ||(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator ++(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator-- (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator/**/,/**/(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator->*\n(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator -> (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator /**/ ( /**/ ) /**/ (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator /**/ [ /**/ ] /**/ (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator + (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator- (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator *(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator /(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator % /**/(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator ^(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator &(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator |(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator   ~ (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator \t\r\n ! /**/ (const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator <(const C&);\n"); //$NON-NLS-1$
+			buffer.append("   const C& operator>(const C&);\n"); //$NON-NLS-1$
+			buffer.append("};                                       \n"); //$NON-NLS-1$
+
+	        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+	        CPPNameCollector col = new CPPNameCollector();
+	        tu.accept( col );
+
+	        assertEquals(col.size(), 161);
+			assertEquals(col.getName(1).toString(), "operator new[]"); //$NON-NLS-1$
+			assertEquals(col.getName(3).toString(), "operator new"); //$NON-NLS-1$
+			assertEquals(col.getName(5).toString(), "operator delete[]"); //$NON-NLS-1$
+			assertEquals(col.getName(7).toString(), "operator delete"); //$NON-NLS-1$
+			assertEquals(col.getName(10).toString(), "operator +="); //$NON-NLS-1$
+			assertEquals(col.getName(14).toString(), "operator -="); //$NON-NLS-1$
+			assertEquals(col.getName(18).toString(), "operator *="); //$NON-NLS-1$
+			assertEquals(col.getName(22).toString(), "operator /="); //$NON-NLS-1$
+			assertEquals(col.getName(26).toString(), "operator %="); //$NON-NLS-1$
+			assertEquals(col.getName(30).toString(), "operator ^="); //$NON-NLS-1$
+			assertEquals(col.getName(34).toString(), "operator &="); //$NON-NLS-1$
+			assertEquals(col.getName(38).toString(), "operator |="); //$NON-NLS-1$
+			assertEquals(col.getName(42).toString(), "operator >>="); //$NON-NLS-1$
+			assertEquals(col.getName(46).toString(), "operator <<="); //$NON-NLS-1$
+			assertEquals(col.getName(50).toString(), "operator <<"); //$NON-NLS-1$
+			assertEquals(col.getName(54).toString(), "operator >>"); //$NON-NLS-1$
+			assertEquals(col.getName(58).toString(), "operator =="); //$NON-NLS-1$
+			assertEquals(col.getName(62).toString(), "operator !="); //$NON-NLS-1$
+			assertEquals(col.getName(66).toString(), "operator <="); //$NON-NLS-1$
+			assertEquals(col.getName(70).toString(), "operator >="); //$NON-NLS-1$
+			assertEquals(col.getName(74).toString(), "operator ="); //$NON-NLS-1$
+			assertEquals(col.getName(78).toString(), "operator &&"); //$NON-NLS-1$
+			assertEquals(col.getName(82).toString(), "operator ||"); //$NON-NLS-1$
+			assertEquals(col.getName(86).toString(), "operator ++"); //$NON-NLS-1$
+			assertEquals(col.getName(90).toString(), "operator --"); //$NON-NLS-1$
+			assertEquals(col.getName(94).toString(), "operator ,"); //$NON-NLS-1$
+			assertEquals(col.getName(98).toString(), "operator ->*"); //$NON-NLS-1$
+			assertEquals(col.getName(102).toString(), "operator ->"); //$NON-NLS-1$
+			assertEquals(col.getName(106).toString(), "operator ()"); //$NON-NLS-1$
+			assertEquals(col.getName(110).toString(), "operator []"); //$NON-NLS-1$
+			assertEquals(col.getName(114).toString(), "operator +"); //$NON-NLS-1$
+			assertEquals(col.getName(118).toString(), "operator -"); //$NON-NLS-1$
+			assertEquals(col.getName(122).toString(), "operator *"); //$NON-NLS-1$
+			assertEquals(col.getName(126).toString(), "operator /"); //$NON-NLS-1$
+			assertEquals(col.getName(130).toString(), "operator %"); //$NON-NLS-1$
+			assertEquals(col.getName(134).toString(), "operator ^"); //$NON-NLS-1$
+			assertEquals(col.getName(138).toString(), "operator &"); //$NON-NLS-1$
+			assertEquals(col.getName(142).toString(), "operator |"); //$NON-NLS-1$
+			assertEquals(col.getName(146).toString(), "operator ~"); //$NON-NLS-1$
+			assertEquals(col.getName(150).toString(), "operator !"); //$NON-NLS-1$
+			assertEquals(col.getName(154).toString(), "operator <"); //$NON-NLS-1$
+			assertEquals(col.getName(158).toString(), "operator >"); //$NON-NLS-1$
+	}
 }
 

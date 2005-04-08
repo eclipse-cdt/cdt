@@ -28,7 +28,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	 #define arraycheck(a,b) a[b] || b[a]
 	 --End Example]
 	 */
-	public void test2_3s2()  { // TODO Devin exists bug 64993
+	public void test2_3s2()  { // TODO exists bug 64993
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n"); //$NON-NLS-1$
 		buffer.append("// becomes\n"); //$NON-NLS-1$
@@ -62,7 +62,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	// violates the ODR
 	 --End Example]
 	 */
-	public void test3_2s5()  { // TODO Devin raised bug 90602 
+	public void test3_2s5()  { // TODO raised bug 90602 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("// translation unit 1:\n"); //$NON-NLS-1$
 		buffer.append("struct X {\n"); //$NON-NLS-1$
@@ -110,7 +110,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test3_3_6s5()  { // TODO Devin raised bug 90606
+	public void test3_3_6s5()  { // TODO raised bug 90606
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("typedef int c;\n"); //$NON-NLS-1$
 		buffer.append("enum { i = 1 };\n"); //$NON-NLS-1$
@@ -151,7 +151,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test3_4_1s10()  { // TODO Devin raised bug 90609
+	public void test3_4_1s10()  { // TODO raised bug 90609
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct A {\n"); //$NON-NLS-1$
 		buffer.append("typedef int AT;\n"); //$NON-NLS-1$
@@ -183,7 +183,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	// not to: C::X C::arr[C::number];
 	 --End Example]
 	 */
-	public void test3_4_3s3()  { // TODO Devin raised bug 90610
+	public void test3_4_3s3()  { // TODO raised bug 90610
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("class X { };\n"); //$NON-NLS-1$
 		buffer.append("class C {\n"); //$NON-NLS-1$
@@ -233,7 +233,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test3_4_3_2s3()  { // TODO Devin raised bug 90611
+	public void test3_4_3_2s3()  { // TODO raised bug 90611
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("namespace A {\n"); //$NON-NLS-1$
 		buffer.append("int a;\n"); //$NON-NLS-1$
@@ -282,7 +282,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test6_4s3()  { // TODO Devin raised bug 90618
+	public void test6_4s3()  { // TODO raised bug 90618
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int foo() {\n"); //$NON-NLS-1$
 		buffer.append("if (int x = f()) {\n"); //$NON-NLS-1$
@@ -316,7 +316,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	T(g)(h,2); //declaration
 	 --End Example]
 	 */
-	public void test6_8s2()  { // TODO Devin raised bug 90622
+	public void test6_8s2()  { // TODO raised bug 90622
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("class T {\n"); //$NON-NLS-1$
 		buffer.append("// ...\n"); //$NON-NLS-1$
@@ -347,7 +347,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	typedef I I;
 	 --End Example]
 	 */
-	public void test7_1_3s2()  { // TODO Devin raised bug 90623
+	public void test7_1_3s2()  { // TODO raised bug 90623
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("typedef struct s { //\n"); //$NON-NLS-1$
 		buffer.append("} s;\n"); //$NON-NLS-1$
@@ -391,7 +391,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test7_3_3s10()  { // TODO Devin raised bug 90626
+	public void test7_3_3s10()  { // TODO raised bug 90626
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("namespace A {\n"); //$NON-NLS-1$
 		buffer.append("int x;\n"); //$NON-NLS-1$
@@ -438,7 +438,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test8_2s3()  { // TODO Devin raised bug 90640
+	public void test8_2s3()  { // TODO raised bug 90640
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("// #include <cstddef>\n"); //$NON-NLS-1$
 		buffer.append("char *p;\n"); //$NON-NLS-1$
@@ -465,7 +465,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	S<int(1)> y; // expression (illformed)
 	 --End Example]
 	 */
-	public void test8_2s4()  { // TODO Devin raised bug 90632
+	public void test8_2s4()  { // TODO raised bug 90632
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template <class T>\n"); //$NON-NLS-1$
 		buffer.append("struct S {\n"); //$NON-NLS-1$
@@ -492,7 +492,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test8_2s7a()  { // TODO Devin raised bug 90633
+	public void test8_2s7a()  { // TODO raised bug 90633
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("class C { };\n"); //$NON-NLS-1$
 		buffer.append("void f(int(C)) { } // void f(int (*fp)(C c)) { }\n"); //$NON-NLS-1$
@@ -517,7 +517,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	int c(b);
 	 --End Example]
 	 */
-	public void test8_5s2()  { // TODO Devin raised bug 90641
+	public void test8_5s2()  { // TODO raised bug 90641
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int f(int);\n"); //$NON-NLS-1$
 		buffer.append("int a = 2;\n"); //$NON-NLS-1$
@@ -535,7 +535,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	char msg[] = "Syntax error on line %s\n";
 	 --End Example]
 	 */
-	public void test8_5_2s1()  { // TODO Devin raised bug 90647
+	public void test8_5_2s1()  { // TODO raised bug 90647
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("char msg[] = \"Syntax error on line %s\n\";\n"); //$NON-NLS-1$
 		try {
@@ -563,7 +563,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test8_5_3s1()  { // TODO Devin raised bug 90648
+	public void test8_5_3s1()  { // TODO raised bug 90648
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int g(int);\n"); //$NON-NLS-1$
 		buffer.append("void f()\n"); //$NON-NLS-1$
@@ -598,7 +598,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test9_5s2()  { // TODO Devin raised bug 90650
+	public void test9_5s2()  { // TODO raised bug 90650
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("void f()\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
@@ -627,7 +627,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test10_2s3b()  { // TODO Devin raised bug 90652
+	public void test10_2s3b()  { // TODO raised bug 90652
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct U { static int i; };\n"); //$NON-NLS-1$
 		buffer.append("struct V : U { };\n"); //$NON-NLS-1$
@@ -656,7 +656,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test12s1()  { // TODO Devin raised bug 90653
+	public void test12s1()  { // TODO raised bug 90653
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct A { }; // implicitlydeclared A::operator=\n"); //$NON-NLS-1$
 		buffer.append("struct B : A {\n"); //$NON-NLS-1$
@@ -691,7 +691,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	int c = X(a); // OK: a.operator X().operator int()
 	 --End Example]
 	 */
-	public void test12_3s4()  { // TODO Devin raised bug 90654
+	public void test12_3s4()  { // TODO raised bug 90654
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("class X {\n"); //$NON-NLS-1$
 		buffer.append("// ...\n"); //$NON-NLS-1$
@@ -735,7 +735,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test12_7s2()  { // TODO Devin raised bug 90664
+	public void test12_7s2()  { // TODO raised bug 90664
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct A { };\n"); //$NON-NLS-1$
 		buffer.append("struct B : virtual A { };\n"); //$NON-NLS-1$
@@ -772,7 +772,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	// better than short ® float.
 	 --End Example]
 	 */
-	public void test13_3_3_2s3c()  { // TODO Devin raised bug 90667
+	public void test13_3_3_2s3c()  { // TODO raised bug 90667
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct A {\n"); //$NON-NLS-1$
 		buffer.append("operator short();\n"); //$NON-NLS-1$
@@ -802,7 +802,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test13_4s5a()  { // TODO Devin raised bug 90674
+	public void test13_4s5a()  { // TODO raised bug 90674
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int f(double);\n"); //$NON-NLS-1$
 		buffer.append("int f(int);\n"); //$NON-NLS-1$
@@ -833,7 +833,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	S<v> z; // OK due to both adjustment and conversion
 	 --End Example]
 	 */
-	public void test14_1s8()  { // TODO Devin raised bug 90668
+	public void test14_1s8()  { // TODO raised bug 90668
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<int *a> struct R {  };\n"); //$NON-NLS-1$
 		buffer.append("template<int b[5]> struct S {  };\n"); //$NON-NLS-1$
@@ -856,7 +856,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template<class T> void f(T* p = new T);
 	 --End Example]
 	 */
-	public void test14_1s13()  { // TODO Devin raised bug 60670
+	public void test14_1s13()  { // TODO raised bug 60670
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T, T* p, class U = T> class X {  };\n"); //$NON-NLS-1$
 		buffer.append("template<class T> void f(T* p = new T);\n"); //$NON-NLS-1$
@@ -877,7 +877,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test14_3s2()  { // TODO Devin raised bug 90671
+	public void test14_3s2()  { // TODO raised bug 90671
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> void f();\n"); //$NON-NLS-1$
 		buffer.append("template<int I> void f();\n"); //$NON-NLS-1$
@@ -903,7 +903,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test14_3s5()  { // TODO Devin raised bug 90672
+	public void test14_3s5()  { // TODO raised bug 90672
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
 		buffer.append("~A();\n"); //$NON-NLS-1$
@@ -937,7 +937,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	A<&f> a; // selects f(int)
 	 --End Example]
 	 */
-	public void test14_3_2s5()  { // TODO Devin raised bug 90673
+	public void test14_3_2s5()  { // TODO raised bug 90673
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<const int* pci> struct X {  };\n"); //$NON-NLS-1$
 		buffer.append("int ai[10];\n"); //$NON-NLS-1$
@@ -968,7 +968,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template<class T> T X<T>::s = 0;
 	 --End Example]
 	 */
-	public void test14_5_1_3s1()  { // TODO Devin no bug raised on this, can't reproduce in AST View
+	public void test14_5_1_3s1()  { // TODO no bug raised on this, can't reproduce in AST View
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
 		buffer.append("static T s;\n"); //$NON-NLS-1$
@@ -997,7 +997,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test14_5_3s1()  { // TODO Devin raised bug 90678
+	public void test14_5_3s1()  { // TODO raised bug 90678
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> class task;\n"); //$NON-NLS-1$
 		buffer.append("template<class T> task<T>* preempt(task<T>*);\n"); //$NON-NLS-1$
@@ -1030,7 +1030,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test14_5_3s6()  { // TODO Devin raised bug 90678
+	public void test14_5_3s6()  { // TODO raised bug 90678
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
 		buffer.append("struct B { };\n"); //$NON-NLS-1$
@@ -1060,7 +1060,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	A<short>::C::B<int*> absip; // uses partial specialization
 	 --End Example]
 	 */
-	public void test14_5_4s6()  { // TODO Devin raised bug 90678
+	public void test14_5_4s6()  { // TODO raised bug 90678
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
 		buffer.append("class C {\n"); //$NON-NLS-1$
@@ -1091,7 +1091,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	// the using declaration which refers to the primary template
 	 --End Example]
 	 */
-	public void test14_5_4s7()  { // TODO Devin raised bug 90678
+	public void test14_5_4s7()  { // TODO raised bug 90678
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("namespace N {\n"); //$NON-NLS-1$
 		buffer.append("template<class T1, class T2> class A { }; // primary template\n"); //$NON-NLS-1$
@@ -1121,7 +1121,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	A<char>::B<int> abci; // uses #1
 	 --End Example]
 	 */
-	public void test14_5_4_3s2()  { // TODO Devin raised bug 90681
+	public void test14_5_4_3s2()  { // TODO raised bug 90681
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
 		buffer.append("template<class T2> struct B {}; // #1\n"); //$NON-NLS-1$
@@ -1156,7 +1156,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test14_5_5_1s1()  { // TODO Devin raised bug 90682
+	public void test14_5_5_1s1()  { // TODO raised bug 90682
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("// file1.c \n"); //$NON-NLS-1$
 		buffer.append("template<class T>\n"); //$NON-NLS-1$
@@ -1186,7 +1186,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template <int I, int J> A<IJ> f(A<I>, A<J>); // different from #1
 	 --End Example]
 	 */
-	public void test14_5_5_1s5()  { // TODO Devin raised bug 90683
+	public void test14_5_5_1s5()  { // TODO raised bug 90683
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template <int I, int J> A<I+J> f(A<I>, A<J>); // #1\n"); //$NON-NLS-1$
 		buffer.append("template <int K, int L> A<K+L> f(A<K>, A<L>); // same as #1\n"); //$NON-NLS-1$
@@ -1204,7 +1204,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template <int K, int L> void f(A<K+L>); // same as #1
 	 --End Example]
 	 */
-	public void test14_5_5_1s6()  { // TODO Devin raised bug 90683
+	public void test14_5_5_1s6()  { // TODO raised bug 90683
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template <int I, int J> void f(A<I+J>); // #1\n"); //$NON-NLS-1$
 		buffer.append("template <int K, int L> void f(A<K+L>); // same as #1\n"); //$NON-NLS-1$
@@ -1228,7 +1228,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test14_5_5_2s6()  { // TODO Devin raised bug 90684
+	public void test14_5_5_2s6()  { // TODO raised bug 90684
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> void f(T); // #1\n"); //$NON-NLS-1$
 		buffer.append("template<class T> void f(T*, int=1); // #2\n"); //$NON-NLS-1$
@@ -1255,7 +1255,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test14_6_1s1()  { // TODO Devin can not reproduce IProblemBinding via DOMAST View
+	public void test14_6_1s1()  { // TODO can not reproduce IProblemBinding via DOMAST View
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
 		buffer.append("X* p; // meaning X<T>\n"); //$NON-NLS-1$
@@ -1275,7 +1275,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template<class T> void f(T* p = new T);
 	 --End Example]
 	 */
-	public void test14_6_1s3a()  { // TODO Devin already have bug on this one
+	public void test14_6_1s3a()  { // TODO already have bug on this one
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T, T* p, class U = T> class X {  };\n"); //$NON-NLS-1$
 		buffer.append("template<class T> void f(T* p = new T);\n"); //$NON-NLS-1$
@@ -1299,7 +1299,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test14_6_1s6()  { // TODO Devin raised bug 90686
+	public void test14_6_1s6()  { // TODO raised bug 90686
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("namespace N {\n"); //$NON-NLS-1$
 		buffer.append("class C { };\n"); //$NON-NLS-1$
@@ -1328,7 +1328,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test14_6_2s3()  { // TODO Devin this doesn't compile via g++ ?
+	public void test14_6_2s3()  { // TODO this doesn't compile via g++ ?
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("typedef double A;\n"); //$NON-NLS-1$
 		buffer.append("template<class T> B {\n"); //$NON-NLS-1$
@@ -1355,7 +1355,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	X<char*> bb;
 	 --End Example]
 	 */
-	public void test14_7s6()  { // TODO Devin can't reproduce via ASTDOM View
+	public void test14_7s6()  { // TODO can't reproduce via ASTDOM View
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
 		buffer.append("static T s;\n"); //$NON-NLS-1$
@@ -1385,7 +1385,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test14_7_1s5()  { // TODO Devin already have similar bug
+	public void test14_7_1s5()  { // TODO already have similar bug
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template <class T> struct S {\n"); //$NON-NLS-1$
 		buffer.append("operator int();\n"); //$NON-NLS-1$
@@ -1425,7 +1425,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 	 --End Example]
 	 */
-	public void test14_7_1s10()  { // TODO Devin already have similar bug
+	public void test14_7_1s10()  { // TODO already have similar bug
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("namespace N {\n"); //$NON-NLS-1$
 		buffer.append("template<class T> class List {\n"); //$NON-NLS-1$
@@ -1461,7 +1461,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	};
 	 --End Example]
 	 */
-	public void test14_7_1s14()  { // TODO Devin can't reproduce via DOMAST View
+	public void test14_7_1s14()  { // TODO can't reproduce via DOMAST View
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
 		buffer.append("X<T>* p; // OK\n"); //$NON-NLS-1$
@@ -1484,7 +1484,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template void sort<>(Array<int>&);
 	 --End Example]
 	 */
-	public void test14_7_2s6()  { // TODO Devin raised bug 90689
+	public void test14_7_2s6()  { // TODO raised bug 90689
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> class Array {  };\n"); //$NON-NLS-1$
 		buffer.append("template<class T> void sort(Array<T>& v);\n"); //$NON-NLS-1$
@@ -1506,7 +1506,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template<> void sort<char*>(Array<char*>&) ;
 	 --End Example]
 	 */
-	public void test14_7_3s1()  { // TODO Devin have similar bug
+	public void test14_7_3s1()  { // TODO have similar bug
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> class stream;\n"); //$NON-NLS-1$
 		buffer.append("template<> class stream<char> {  };\n"); //$NON-NLS-1$
@@ -1528,7 +1528,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template<> int g<>(int) {  } // OK: not inline
 	 --End Example]
 	 */
-	public void test14_7_3s14()  { // TODO Devin similar bug already
+	public void test14_7_3s14()  { // TODO similar bug already
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> void f(T) {  }\n"); //$NON-NLS-1$
 		buffer.append("template<class T> inline T g(T) {  }\n"); //$NON-NLS-1$
@@ -1563,7 +1563,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template<> void A<int>::h(int) { }
 	 --End Example]
 	 */
-	public void test14_7_3s16()  { // TODO Devin similar bug already
+	public void test14_7_3s16()  { // TODO similar bug already
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
 		buffer.append("void f(T);\n"); //$NON-NLS-1$
@@ -1601,7 +1601,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	template<> template<> void A<char>::B<char>::mf() { };
 	 --End Example]
 	 */
-	public void test14_7_3s17()  { // TODO Devin doesn't compile via g++
+	public void test14_7_3s17()  { // TODO doesn't compile via g++
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template<class T1> class A {\n"); //$NON-NLS-1$
 		buffer.append("template<class T2> class B {\n"); //$NON-NLS-1$

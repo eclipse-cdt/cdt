@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest.CPPNameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -72,8 +71,8 @@ public class AST2SpecBaseTest extends TestCase {
     }
     
     private IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean checkSemantics, boolean checkBindings ) throws ParserException {
-		// TODO Devin beef this up with tests... i.e. run once with \n, and then run again with \r\n replacing \n ... etc
-		// TODO Devin another example might be to replace all characters with corresponding trigraph/digraph tests...
+		// TODO beef this up with tests... i.e. run once with \n, and then run again with \r\n replacing \n ... etc
+		// TODO another example might be to replace all characters with corresponding trigraph/digraph tests...
 		
 		CodeReader codeReader = new CodeReader(code.toCharArray());
 		return parse(codeReader, lang, useGNUExtensions, expectNoProblems, checkSemantics, checkBindings);
@@ -134,12 +133,12 @@ public class AST2SpecBaseTest extends TestCase {
 				CPPNameResolver res = new CPPNameResolver();
 		        tu.accept( res );
 				if (res.foundProblemBinding)
-					throw new ParserException("found IProblemBinding");
+					throw new ParserException("found IProblemBinding"); //$NON-NLS-1$
 			} else if (lang == ParserLanguage.C ) {
 				CNameResolver res = new CNameResolver();
 		        tu.accept( res );
 				if (res.foundProblemBinding)
-					throw new ParserException("found IProblemBinding");
+					throw new ParserException("found IProblemBinding"); //$NON-NLS-1$
 			}
 		}
 

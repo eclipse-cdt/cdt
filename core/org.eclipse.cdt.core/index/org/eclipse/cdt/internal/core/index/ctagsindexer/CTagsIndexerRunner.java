@@ -125,9 +125,9 @@ public class CTagsIndexerRunner extends AbstractIndexer {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object)
+     * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object, java.lang.Object)
      */
-    protected void addMarkers(IFile tempFile, IFile originator, Object problem) {
+    protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location) {
         // TODO Auto-generated method stub
         
     }

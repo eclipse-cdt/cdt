@@ -118,7 +118,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 			}
 			
 			if( tempFile != null ){
-                indexer.generateMarkerProblem(tempFile, resourceFile, problem);
+                indexer.generateMarkerProblem(tempFile, resourceFile, problem, null);
 			}
 		}
 		

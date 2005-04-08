@@ -1,3 +1,16 @@
+2005-04-08 Vladimir Hirsl
+	Added offset and length parameters for index entries.
+	Refactoring of AbstractIndexer. Moved old parser specific stuff to the appropriate subclass.
+	
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexEncoderUtil.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRequestor.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRunner.java
+
 2005-04-05 Vladimir Hirsl
 	Improved filtering of indexer problem markers
 	

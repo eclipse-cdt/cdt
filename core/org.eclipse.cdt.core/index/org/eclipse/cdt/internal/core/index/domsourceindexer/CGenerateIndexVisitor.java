@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
 import org.eclipse.core.resources.IFile;
@@ -70,15 +71,11 @@ public class CGenerateIndexVisitor extends CASTVisitor {
      * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
      */
     public int visit(IASTName name) {
-        //Check to see if this reference actually occurs in the file being indexed
-        //or if it occurs in another file
-        int indexFlag = IndexEncoderUtil.calculateIndexFlags(indexer, name);
-
         // qualified names are going to be handled segment by segment 
 //        if (name instanceof ICPPASTQualifiedName) return PROCESS_CONTINUE;
         
         try {
-            processName(name, indexFlag);
+            processName(name);
         }
         catch (DOMException e) {
             // TODO Auto-generated catch block
@@ -92,60 +89,63 @@ public class CGenerateIndexVisitor extends CASTVisitor {
      */
     public int visit(IASTProblem problem) {
         if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
-            IFile tempFile = resourceFile;
-          
-            //If we are in an include file, get the include file
-            IASTNodeLocation[] locs = problem.getNodeLocations();
-            if (locs[0] instanceof IASTFileLocation) {
-                IASTFileLocation fileLoc = (IASTFileLocation) locs[0];
-                String fileName = fileLoc.getFileName();
-                tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
-            }
-            
-            if( tempFile != null ){
-                  indexer.generateMarkerProblem(tempFile, resourceFile, problem);
-            }
+            // Get the location
+            IASTFileLocation loc = IndexEncoderUtil.getFileLocation(problem);
+            processProblem(problem, loc);
         }
         return super.visit(problem);
     }
 
     /**
      * @param name
-     * @param indexFlag
      * @throws DOMException
      */
-    private void processName(IASTName name, int indexFlag) throws DOMException {
+    private void processName(IASTName name) throws DOMException {
         IBinding binding = name.resolveBinding();
         // check for IProblemBinding
         if (binding instanceof IProblemBinding) {
             IProblemBinding problem = (IProblemBinding) binding;
             if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
-                IFile tempFile = resourceFile;
-              
-                //If we are in an include file, get the include file
-                IASTNodeLocation[] locs = name.getNodeLocations();
-                if (locs[0] instanceof IASTFileLocation) {
-                    IASTFileLocation fileLoc = (IASTFileLocation) locs[0];
-                    String fileName = fileLoc.getFileName();
-                    tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
-                }
-                
-                if( tempFile != null ){
-                      indexer.generateMarkerProblem(tempFile, resourceFile, problem);
-                }
+                // Get the location
+                IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
+                processProblem(name, loc);
             }
             return;
         }
-        processNameBinding(name, binding, indexFlag);
+        // Get the location
+        IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
+        if (loc != null) {
+            //Check to see if this reference actually occurs in the file being indexed
+            //or if it occurs in another file
+            int indexFlag = IndexEncoderUtil.calculateIndexFlags(indexer, loc);
+    
+            processNameBinding(name, binding, loc, indexFlag);
+        }
     }        
 
     /**
      * @param name
+     */
+    private void processProblem(IASTNode node, IASTFileLocation loc) {
+        IFile tempFile = resourceFile;
+        //If we are in an include file, get the include file
+        if (loc != null) {
+            String fileName = loc.getFileName();
+            tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+            if (tempFile != null) {
+                indexer.generateMarkerProblem(tempFile, resourceFile, node, loc);
+            }
+        }
+    }
+
+    /**
+     * @param name
      * @param binding
+     * @param loc 
      * @param indexFlag
      * @throws DOMException 
      */
-    private void processNameBinding(IASTName name, IBinding binding, int fileNumber) throws DOMException {
+    private void processNameBinding(IASTName name, IBinding binding, IASTFileLocation loc, int fileNumber) throws DOMException {
         // determine type
         EntryType entryType = null;
         if (binding instanceof ICompositeType) {
@@ -183,13 +183,19 @@ public class CGenerateIndexVisitor extends CASTVisitor {
                 indexer.getOutput().addRef(fileNumber,IndexEncoderUtil.encodeEntry(
                             getFullyQualifiedName(name),
                             entryType,
-                            ICSearchConstants.DECLARATIONS));
+                            ICSearchConstants.DECLARATIONS),
+                        loc.getNodeOffset(),
+                        loc.getNodeLength(),
+                        ICIndexStorageConstants.OFFSET);
             }                   
             else if (name.isReference()) {
                 indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
                             getFullyQualifiedName(name),
                             entryType,
-                            ICSearchConstants.REFERENCES));
+                            ICSearchConstants.REFERENCES),
+                        loc.getNodeOffset(),
+                        loc.getNodeLength(),
+                        ICIndexStorageConstants.OFFSET);
             }
         }
     }

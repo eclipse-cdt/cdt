@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
@@ -26,6 +26,10 @@ import org.eclipse.core.runtime.Path;
 public class IndexEncoderUtil {
     
     public static final char[] encodeEntry(char[][] elementName, EntryType entryType, LimitTo encodeType) {
+        // Temporarily
+        if (elementName == null) {
+            return "NPE".toCharArray(); //$NON-NLS-1$
+        }
         int pos, nameLength = 0;
         for (int i=0; i < elementName.length; i++){
             char[] namePart = elementName[i];
@@ -64,7 +68,7 @@ public class IndexEncoderUtil {
         return result;
     }
 
-    public static int calculateIndexFlags(DOMSourceIndexerRunner indexer, IASTName name) {
+    public static int calculateIndexFlags(DOMSourceIndexerRunner indexer, IASTFileLocation loc) {
         int fileNum= 0;
         
         //Initialize the file number to be the file number for the file that triggerd
@@ -77,14 +81,7 @@ public class IndexEncoderUtil {
         if (mainIndexFile != null)
             fileNum = mainIndexFile.getFileID();
         
-        String fileName = null;
-        IASTNodeLocation[] nameLocations = name.getNodeLocations();
-        if (nameLocations.length > 0) {
-            if (nameLocations[0] instanceof IASTFileLocation) {
-                fileName = ((IASTFileLocation) nameLocations[0]).getFileName();
-            }
-        }
-        
+        String fileName = loc.getFileName();
         if (fileName != null) {
             IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));   
             String filePath = ""; //$NON-NLS-1$
@@ -125,6 +122,25 @@ public class IndexEncoderUtil {
         }
         
         return fileNum;
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public static IASTFileLocation getFileLocation(IASTNode node) {
+        IASTFileLocation fileLoc = null;
+        
+        IASTNodeLocation[] locs = node.getNodeLocations();
+        if (locs.length == 1) {
+            if (locs[0] instanceof IASTFileLocation) {
+                fileLoc = (IASTFileLocation) locs[0];
+            }
+        }
+        else if (locs.length > 1) {
+            fileLoc = node.getTranslationUnit().flattenLocationsToFile(locs);
+        }
+        return fileLoc;
     }
 
 }

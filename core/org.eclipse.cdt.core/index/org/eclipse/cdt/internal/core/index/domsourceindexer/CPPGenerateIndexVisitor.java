@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -30,16 +30,16 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBaseClause.CPPBaseProblem;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
 import org.eclipse.core.resources.IFile;
@@ -78,15 +78,11 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
      * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
      */
     public int visit(IASTName name) {
-        //Check to see if this reference actually occurs in the file being indexed
-        //or if it occurs in another file
-        int indexFlag = IndexEncoderUtil.calculateIndexFlags(indexer, name);
-
         // qualified names are going to be handled segment by segment 
         if (name instanceof ICPPASTQualifiedName) return PROCESS_CONTINUE;
         
         try {
-            processName(name, indexFlag);
+            processName(name);
         }
         catch (DOMException e) {
             // TODO Auto-generated catch block
@@ -99,72 +95,66 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
      * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTProblem)
      */
     public int visit(IASTProblem problem) {
-        if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
-            IFile tempFile = resourceFile;
-          
-            //If we are in an include file, get the include file
-            IASTNodeLocation[] locs = problem.getNodeLocations();
-            if (locs[0] instanceof IASTFileLocation) {
-                IASTFileLocation fileLoc = (IASTFileLocation) locs[0];
-                String fileName = fileLoc.getFileName();
-                tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
-            }
-            
-            if( tempFile != null ){
-                  indexer.generateMarkerProblem(tempFile, resourceFile, problem);
-            }
+        if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)) {
+            // Get the location
+            IASTFileLocation loc = IndexEncoderUtil.getFileLocation(problem);
+            processProblem(problem, loc);
         }
         return super.visit(problem);
     }
 
     /**
      * @param name
-     * @param indexFlag
      * @throws DOMException 
      */
-    private void processName(IASTName name, int indexFlag) throws DOMException {
+    private void processName(IASTName name) throws DOMException {
         IBinding binding = name.resolveBinding();
         // check for IProblemBinding
         if (binding instanceof IProblemBinding) {
             IProblemBinding problem = (IProblemBinding) binding;
             if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
-                IFile tempFile = resourceFile;
-              
-                //If we are in an include file, get the include file
-                IASTNodeLocation[] locs = name.getNodeLocations();
-                if (locs[0] instanceof IASTFileLocation) {
-                    IASTFileLocation fileLoc = (IASTFileLocation) locs[0];
-                    String fileName = fileLoc.getFileName();
-                    tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
-                }
-                
-                if (tempFile != null) {
-                    indexer.generateMarkerProblem(tempFile, resourceFile, name);
-                }
+                // Get the location
+                IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
+                processProblem(name, loc);
             }
             return;
         }
         
-        processNameBinding(name, binding, indexFlag, null); // function will determine limitTo
+        // Get the location
+        IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
+        if (loc != null) {
+            //Check to see if this reference actually occurs in the file being indexed
+            //or if it occurs in another file
+            int indexFlag = IndexEncoderUtil.calculateIndexFlags(indexer, loc);
+    
+            processNameBinding(name, binding, loc, indexFlag, null); // function will determine limitTo
+        }
     }
 
     /**
      * @param name
-     * @return
      */
-    private char[][] createEnumeratorFullyQualifiedName(IASTName name) {
-        // TODO Auto-generated method stub
-        return null;
+    private void processProblem(IASTNode node, IASTFileLocation loc) {
+        IFile tempFile = resourceFile;
+        //If we are in an include file, get the include file
+        if (loc != null) {
+            String fileName = loc.getFileName();
+            tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+            if (tempFile != null) {
+                indexer.generateMarkerProblem(tempFile, resourceFile, node, loc);
+            }
+        }
     }
 
     /**
      * @param name
      * @param binding
+     * @param loc 
      * @param indexFlag
      * @param limitTo 
      * @throws DOMException
      */
-    private void processNameBinding(IASTName name, IBinding binding, int fileNumber, LimitTo limitTo) throws DOMException {
+    private void processNameBinding(IASTName name, IBinding binding, IASTFileLocation loc, int fileNumber, LimitTo limitTo) throws DOMException {
         // determine LimitTo
         if (limitTo == null) {
             if (name.isDeclaration()) {
@@ -181,7 +171,8 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         // determine type
         EntryType entryType = null;
         if (binding instanceof ICompositeType) {
-            int compositeKey = ((ICompositeType) binding).getKey();
+            ICompositeType compBinding = (ICompositeType) binding;
+            int compositeKey = compBinding.getKey();
             ASTNodeProperty prop = name.getPropertyInParent();
             switch (compositeKey) {
                 case ICPPClassType.k_class:
@@ -200,6 +191,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
                         entryType = IIndexEncodingConstants.FWD_UNION;
                     break;
             }
+            addDerivedAndFriendDeclaration(name, compBinding, loc, fileNumber);
         }
         else if (binding instanceof IEnumeration)
             entryType = IIndexEncodingConstants.ENUM;
@@ -216,14 +208,17 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             entryType = IIndexEncodingConstants.VAR;
         else if (binding instanceof ICPPMethod)
             entryType = IIndexEncodingConstants.METHOD;
-        else if (binding instanceof IFunction)
+        else if (binding instanceof IFunction) {
             entryType = IIndexEncodingConstants.FUNCTION;
+            // TODO In case we want to add friend function declarations to index
+            // addDerivedAndFriendDeclaration(name, binding, loc, fileNumber);
+        }
         else if (binding instanceof ICPPUsingDeclaration) {
             ICPPDelegate[] delegates = ((ICPPUsingDeclaration)binding).getDelegates();
             for (int i = 0; i < delegates.length; i++) {
                 IBinding orig = delegates[i].getBinding();
-                processNameBinding(name, orig, fileNumber, ICSearchConstants.REFERENCES); // reference to the original binding
-                processNameBinding(name, delegates[i], fileNumber, ICSearchConstants.DECLARATIONS); // declaration of the new name
+                processNameBinding(name, orig, loc, fileNumber, ICSearchConstants.REFERENCES); // reference to the original binding
+                processNameBinding(name, delegates[i], loc, fileNumber, ICSearchConstants.DECLARATIONS); // declaration of the new name
             }
             return;
         }
@@ -232,38 +227,71 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
                         getFullyQualifiedName(binding),
                         entryType,
-                        limitTo));
+                        limitTo),
+                    loc.getNodeOffset(),
+                    loc.getNodeLength(),
+                    ICIndexStorageConstants.OFFSET);
         }
-        
-        // add base classes and friends
-        if (binding instanceof ICPPClassType &&
-                limitTo.equals(ICSearchConstants.DECLARATIONS) &&
-                (IIndexEncodingConstants.CLASS.equals(entryType) || 
-                IIndexEncodingConstants.STRUCT.equals(entryType))) {
-            ICPPClassType classBinding = (ICPPClassType) binding;
-            //Get base clauses
-            ICPPBase[] baseClauses = classBinding.getBases();
-            for (int i = 0; i < baseClauses.length; ++i) {
-                if (!(baseClauses[i] instanceof CPPBaseProblem)) {
-                    ICompositeType baseClass = (ICompositeType) ((ICPPBase)baseClauses[i]).getBaseClass();
+    }
+
+    /**
+     * @param name
+     * @param fileNumber 
+     * @param loc 
+     * @param compBinding
+     * @throws DOMException 
+     */
+    private void addDerivedAndFriendDeclaration(IASTName name, IBinding binding, IASTFileLocation loc, int fileNumber) throws DOMException {
+        ASTNodeProperty prop = name.getPropertyInParent();
+        if (binding instanceof ICompositeType) {
+            ICompositeType compBinding = (ICompositeType) binding;
+            int compositeKey = compBinding.getKey();
+            if (compositeKey == ICPPClassType.k_class ||
+                    compositeKey == ICompositeType.k_struct) {
+                if (prop == ICPPASTBaseSpecifier.NAME) {
+                    // base class
                     indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
-                                getFullyQualifiedName(baseClass),
+                                getFullyQualifiedName(binding),
                                 IIndexEncodingConstants.DERIVED,
-                                ICSearchConstants.DECLARATIONS));
+                                ICSearchConstants.DECLARATIONS),
+                            loc.getNodeOffset(),
+                            loc.getNodeLength(),
+                            ICIndexStorageConstants.OFFSET);
                 }
-            }
-            //Get friends
-            IBinding[] friendClauses = classBinding.getFriends();
-            for (int i = 0; i < friendClauses.length; ++i) {
-                IBinding friendClause = friendClauses[i];
-                if (friendClause instanceof ICompositeType) {
+                else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
+                    // friend 
                     indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
-                                getFullyQualifiedName(friendClause),
+                                getFullyQualifiedName(binding),
                                 IIndexEncodingConstants.FRIEND,
-                                ICSearchConstants.DECLARATIONS));
+                                ICSearchConstants.DECLARATIONS),
+                            loc.getNodeOffset(),
+                            loc.getNodeLength(),
+                            ICIndexStorageConstants.OFFSET);
                 }
             }
         }
+        // TODO In case we want to add friend function declarations to index
+//        else if (binding instanceof IFunction) {
+//            IFunction funBinding = (IFunction) binding;
+//            if (prop == IASTFunctionDeclarator.DECLARATOR_NAME) {
+//                IASTFunctionDeclarator fDecl = (IASTFunctionDeclarator) name.getParent();
+//                IASTNode fDeclParent = fDecl.getParent();
+//                if (fDeclParent instanceof IASTSimpleDeclaration) {
+//                    IASTSimpleDeclaration sDecl = (IASTSimpleDeclaration) fDeclParent;
+//                    IASTDeclSpecifier declSpec = sDecl.getDeclSpecifier();
+//                    if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
+//                        ICPPASTSimpleDeclSpecifier fDeclSpec = (ICPPASTSimpleDeclSpecifier) declSpec;
+//                        if (fDeclSpec.isFriend()) {
+//                            // friend 
+//                            indexer.getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
+//                                        getFullyQualifiedName(binding),
+//                                        IIndexEncodingConstants.FRIEND,
+//                                        ICSearchConstants.DECLARATIONS));
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**

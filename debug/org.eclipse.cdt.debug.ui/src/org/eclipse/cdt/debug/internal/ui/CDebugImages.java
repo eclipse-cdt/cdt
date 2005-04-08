@@ -36,7 +36,7 @@ public class CDebugImages
 
 	static 
 	{
-		String pathSuffix = "icons/full/"; //$NON-NLS-1$
+		String pathSuffix = "icons/"; //$NON-NLS-1$
 		try
 		{
 			fgIconBaseURL = new URL( CDebugUIPlugin.getDefault().getBundle().getEntry( "/" ), pathSuffix ); //$NON-NLS-1$
@@ -135,10 +135,8 @@ public class CDebugImages
 	private static final String T_OVR = "ovr16"; //$NON-NLS-1$
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
 	private static final String T_LCL = "lcl16"; //$NON-NLS-1$
-	private static final String T_CLCL = "clcl16"; //$NON-NLS-1$
 	private static final String T_ELCL = "elcl16"; //$NON-NLS-1$
 	private static final String T_DLCL = "dlcl16"; //$NON-NLS-1$
-	private static final String T_CTOOL = "ctool16"; //$NON-NLS-1$
 //	private static final String T_CVIEW = "cview16"; //$NON-NLS-1$
 //	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
 //	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
@@ -192,11 +190,7 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE_LOCATION );
 	public static final ImageDescriptor DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION );
 	public static final ImageDescriptor DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION );
-	public static final ImageDescriptor DESC_TOOLS_ADD_PRJ_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION );
-	public static final ImageDescriptor DESC_TOOLS_ADD_DIR_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_DIR_SOURCE_LOCATION );
-	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_CLCL, IMG_LCL_CAST_TO_TYPE );
-	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_CLCL, IMG_LCL_DISPLAY_AS_ARRAY );
-	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE = createManaged( T_CLCL, IMG_LCL_RESUME_AT_LINE );
+	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE = createManaged( T_ELCL, IMG_LCL_RESUME_AT_LINE );
 	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE_DISABLED = createManaged( T_DLCL, IMG_LCL_RESUME_AT_LINE );
 	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_UNDER );
 	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_UNDER );

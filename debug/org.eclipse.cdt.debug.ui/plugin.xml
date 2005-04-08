@@ -42,20 +42,20 @@
          point="org.eclipse.ui.views">
       <view
             name="%SignalsView.name"
-            icon="icons/full/cview16/signals_view.gif"
+            icon="icons/view16/signals_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.cdt.debug.internal.ui.views.signals.SignalsView"
             id="org.eclipse.cdt.debug.ui.SignalsView">
       </view>
       <view
             name="%DisassemblyView.name"
-            icon="icons/full/cview16/disassembly_view.gif"
+            icon="icons/view16/disassembly_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"
             id="org.eclipse.cdt.debug.ui.DisassemblyView">
       </view>
       <view
-            icon="icons/full/cview16/modules_view.gif"
+            icon="icons/view16/modules_view.gif"
             class="org.eclipse.cdt.debug.internal.ui.views.modules.ModulesView"
             category="org.eclipse.debug.ui"
             name="%ModulesView.name"
@@ -130,11 +130,10 @@
          </menu>
          <action
                id="org.eclipse.cdt.debug.ui.actions.ResumeAtLine"
-               hoverIcon="icons/full/clcl16/jump_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RetargetResumeAtLineAction"
-               disabledIcon="icons/full/dlcl16/jump_co.gif"
+              class="org.eclipse.cdt.debug.internal.ui.actions.RetargetResumeAtLineAction"
+               disabledIcon="icons/dlcl16/jump_co.gif"
                enablesFor="1"
-               icon="icons/full/elcl16/jump_co.gif"
+               icon="icons/elcl16/jump_co.gif"
                helpContextId="jump_to_line_action_context"
                label="%GlobalJumpToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
@@ -147,11 +146,10 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
-               hoverIcon="icons/full/clcl16/signal0_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
-               disabledIcon="icons/full/dlcl16/signal0_co.gif"
+               disabledIcon="icons/dlcl16/signal0_co.gif"
                enablesFor="1"
-               icon="icons/full/elcl16/signal0_co.gif"
+               icon="icons/elcl16/signal0_co.gif"
                helpContextId="resume_without_signal_action_context"
                label="%SignalZeroAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"
@@ -165,11 +163,10 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
-               hoverIcon="icons/full/clcl16/restart.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               disabledIcon="icons/full/dlcl16/restart.gif"
+               disabledIcon="icons/dlcl16/restart.gif"
                enablesFor="1"
-               icon="icons/full/elcl16/restart.gif"
+               icon="icons/elcl16/restart.gif"
                helpContextId="restart_action_context"
                label="%RestartAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
@@ -189,7 +186,7 @@
             id="org.eclipse.cdt.debug.ui.debugview.popupMenu">
          <action
                label="%RestartAction.label"
-               icon="icons/full/clcl16/restart.gif"
+               icon="icons/elcl16/restart.gif"
                helpContextId="restart_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
                menubarPath="stepGroup"
@@ -203,7 +200,7 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                enablesFor="1"
-               icon="icons/full/clcl16/instr_step.gif"
+               icon="icons/elcl16/instr_step.gif"
                helpContextId="toggle_instruction_step_mode_action_context"
                label="%ToggleInstructionStepModeAction.label"
                menubarPath="renderGroup"
@@ -220,7 +217,7 @@
                enablesFor="1"
                label="%SignalZeroAction.label"
                tooltip="%SignalZeroAction.tooltip"
-               icon="icons/full/clcl16/signal0_co.gif"
+               icon="icons/elcl16/signal0_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
                menubarPath="threadGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate">
@@ -265,7 +262,7 @@
          </visibility>
          <action
                label="%AddExpressionAction.label"
-               icon="icons/full/etool16/watch_exp.gif"
+               icon="icons/etool16/watch_exp.gif"
                helpContextId="add_expression_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionEditorActionDelegate"
                menubarPath="additions"
@@ -273,7 +270,7 @@
          </action>
          <action
                label="%JumpToLineAction.label"
-               icon="icons/full/clcl16/jump_co.gif"
+               icon="icons/elcl16/jump_co.gif"
                helpContextId="jump_to_line_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
                menubarPath="additions"
@@ -311,7 +308,7 @@
 <!--
          <action
                label="%RunToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
+               icon="icons/elcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate"
                menubarPath="debug"
@@ -353,7 +350,7 @@
          </visibility>
          <action
                label="%AddExpressionAction.label"
-               icon="icons/full/etool16/watch_exp.gif"
+               icon="icons/etool16/watch_exp.gif"
                helpContextId="add_expression_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionEditorActionDelegate"
                menubarPath="additions"
@@ -361,7 +358,7 @@
          </action>
          <action
                label="%JumpToLineAction.label"
-               icon="icons/full/clcl16/jump_co.gif"
+               icon="icons/elcl16/jump_co.gif"
                helpContextId="jump_to_line_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
                menubarPath="additions"
@@ -418,7 +415,7 @@
             id="org.eclipse.cdt.debug.ui.SignalActions">
          <action
                label="%SignalAction.label"
-               icon="icons/full/clcl16/signal_co.gif"
+               icon="icons/elcl16/signal_co.gif"
                helpContextId="signal_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalActionDelegate"
                tooltip="%SignalAction.tooltip"
@@ -472,7 +469,7 @@
          </action>
          <action
                label="%CastToTypeAction.label"
-               icon="icons/full/clcl16/casttotype_co.gif"
+               icon="icons/elcl16/casttotype_co.gif"
                helpContextId="cast_to_type_action_context"
                tooltip="%CastToTypeAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate"
@@ -488,7 +485,7 @@
          </action>
          <action
                label="%CastToArrayAction.label"
-               icon="icons/full/clcl16/showasarray_co.gif"
+               icon="icons/elcl16/showasarray_co.gif"
                helpContextId="cast_to_array_action_context"
                tooltip="%CastToArrayAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate"
@@ -508,7 +505,7 @@
             id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
          <action
                label="%ManageFunctionBreakpointAction.label"
-               icon="icons/full/elcl16/function_brkpt_co.gif"
+               icon="icons/elcl16/function_brkpt_co.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
@@ -522,7 +519,7 @@
             id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
          <action
                label="%ManageFunctionBreakpointAction.label"
-               icon="icons/full/elcl16/function_brkpt_co.gif"
+               icon="icons/elcl16/function_brkpt_co.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
@@ -538,7 +535,7 @@
                helpContextId="toggle_watchpoint_action_context"
                enablesFor="1"
                label="%ToggleWatchpointAction.label"
-               icon="icons/full/elcl16/watchpoint_co.gif"
+               icon="icons/elcl16/watchpoint_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleWatchpointActionDelegate"
                tooltip="%ToggleWatchpointAction.tooltip"
                menubarPath="additions"
@@ -552,7 +549,7 @@
                enablesFor="*"
                label="%RemoveAllGlobalsAction.label"
                tooltip="%RemoveAllGlobalsAction.tooltip"
-               icon="icons/full/elcl16/rem_all_co.gif"
+               icon="icons/elcl16/rem_all_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate">
@@ -567,7 +564,7 @@
                enablesFor="+"
                label="%RemoveGlobalsAction.label"
                tooltip="%RemoveGlobalsAction.tooltip"
-               icon="icons/full/elcl16/rem_co.gif"
+               icon="icons/elcl16/rem_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate">
@@ -582,7 +579,7 @@
                enablesFor="1"
                label="%AddGlobalsAction.label"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
-               icon="icons/full/clcl16/watch_globals.gif"
+               icon="icons/elcl16/watch_globals.gif"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
             <enablement>
@@ -593,7 +590,7 @@
          </action>
          <action
                label="%DisableVariablesAction.label"
-               icon="icons/full/clcl16/disabled_co.gif"
+               icon="icons/elcl16/disabled_co.gif"
                helpContextId="disable_variables_action_context"
                tooltip="%DisableVariablesAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.DisableVariablesActionDelegate"
@@ -606,7 +603,7 @@
          </action>
          <action
                label="%EnableVariablesAction.label"
-               icon="icons/full/clcl16/enabled_co.gif"
+               icon="icons/elcl16/enabled_co.gif"
                helpContextId="enable_variables_action_context"
                tooltip="%EnableVariablesAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.EnableVariablesActionDelegate"
@@ -629,7 +626,7 @@
          </menu>
          <action
                label="%DisableVariablesAction.label"
-               icon="icons/full/clcl16/disabled_co.gif"
+               icon="icons/elcl16/disabled_co.gif"
                helpContextId="disable_variables_action_context"
                tooltip="%DisableVariablesAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.DisableVariablesActionDelegate"
@@ -642,7 +639,7 @@
          </action>
          <action
                label="%EnableVariablesAction.label"
-               icon="icons/full/clcl16/enabled_co.gif"
+               icon="icons/elcl16/enabled_co.gif"
                helpContextId="enable_variables_action_context"
                tooltip="%EnableVariablesAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.EnableVariablesActionDelegate"
@@ -669,7 +666,7 @@
                helpContextId="jump_to_line_action_context"
                enablesFor="1"
                label="%JumpToLineAction.label"
-               icon="icons/full/clcl16/jump_co.gif"
+               icon="icons/elcl16/jump_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"/>
@@ -682,7 +679,7 @@
                enablesFor="1"
                label="%LoadSymbolsAction.label"
                tooltip="%LoadSymbolsAction.tooltip"
-               icon="icons/full/elcl16/load_symbols_co.gif"
+               icon="icons/elcl16/load_symbols_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.LoadModuleSymbolsActionDelegate"
                menubarPath="modulesGroup"
                id="org.eclipse.cdt.debug.ui.LoadSymbolsAction"/>
@@ -703,7 +700,7 @@
                helpContextId="load_symbols_for_all_context"
                label="%LoadSymbolsForAllAction.label"
                tooltip="%LoadSymbolsForAllAction.tooltip"
-               icon="icons/full/elcl16/load_all_symbols_co.gif"
+               icon="icons/elcl16/load_all_symbols_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
                style="push"
                menubarPath="modulesGroup"
@@ -724,11 +721,10 @@
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
                toolbarPath="threadGroup"
-               hoverIcon="icons/full/clcl16/restart.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               disabledIcon="icons/full/dlcl16/restart.gif"
+               disabledIcon="icons/dlcl16/restart.gif"
                enablesFor="1"
-               icon="icons/full/elcl16/restart.gif"
+               icon="icons/elcl16/restart.gif"
                helpContextId="restart_action_context"
                label="%RestartAction.label"
                tooltip="%RestartAction.tooltip">
@@ -739,10 +735,9 @@
                style="toggle"
                id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
                toolbarPath="renderGroup"
-               hoverIcon="icons/full/clcl16/instr_step.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               disabledIcon="icons/full/dlcl16/instr_step.gif"
-               icon="icons/full/elcl16/instr_step.gif"
+               disabledIcon="icons/dlcl16/instr_step.gif"
+               icon="icons/elcl16/instr_step.gif"
                enablesFor="1"
                label="%ToggleInstructionStepModeAction.label"
                helpContextId="toggle_instruction_step_mode_action_context"
@@ -760,7 +755,7 @@
             id="org.eclipse.cdt.debug.ui.debugView.menu">
          <action
                label="%ShowFullPathsAction.label"
-               icon="icons/full/clcl16/show_paths.gif"
+               icon="icons/elcl16/show_paths.gif"
                style="toggle"
                helpContextId="show_full_paths_context"
                tooltip="%ShowFullPathsAction.tooltip"
@@ -778,7 +773,7 @@
             id="org.eclipse.cdt.debug.ui.breakpointView.menu">
          <action
                label="%ShowFullPathsAction.label"
-               icon="icons/full/clcl16/show_paths.gif"
+               icon="icons/elcl16/show_paths.gif"
                style="toggle"
                helpContextId="show_full_paths_context"
                tooltip="%ShowFullPathsAction.tooltip"
@@ -792,13 +787,12 @@
             id="org.eclipse.debug.ui.variablesView.toolbar">
          <action
                helpContextId="remove_all_globals_action_context"
-               disabledIcon="icons/full/dlcl16/rem_all_co.gif"
-               hoverIcon="icons/full/elcl16/rem_all_co.gif"
+               disabledIcon="icons/dlcl16/rem_all_co.gif"
                enablesFor="*"
                toolbarPath="additions"
                label="%RemoveAllGlobalsAction.label"
                tooltip="%RemoveAllGlobalsAction.tooltip"
-               icon="icons/full/elcl16/rem_all_co.gif"
+               icon="icons/elcl16/rem_all_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate"
                id="org.eclipse.cdt.debug.internal.ui.actions.RemoveAllGlobalsActionDelegate">
             <enablement>
@@ -809,13 +803,12 @@
          </action>
          <action
                helpContextId="remove_globals_action_context"
-               disabledIcon="icons/full/dlcl16/rem_co.gif"
-               hoverIcon="icons/full/elcl16/rem_co.gif"
+               disabledIcon="icons/dlcl16/rem_co.gif"
                enablesFor="+"
                toolbarPath="additions"
                label="%RemoveGlobalsAction.label"
                tooltip="%RemoveGlobalsAction.tooltip"
-               icon="icons/full/elcl16/rem_co.gif"
+               icon="icons/elcl16/rem_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate"
                id="org.eclipse.cdt.debug.internal.ui.actions.RemoveGlobalsActionDelegate">
             <enablement>
@@ -826,13 +819,12 @@
          </action>
          <action
                helpContextId="add_globals_action_context"
-               disabledIcon="icons/full/dlcl16/watch_globals.gif"
-               hoverIcon="icons/full/clcl16/watch_globals.gif"
+               disabledIcon="icons/dlcl16/watch_globals.gif"
                enablesFor="1"
                toolbarPath="additions"
                label="%AddGlobalsAction.label"
                tooltip="%AddGlobalsAction.tooltip"
-               icon="icons/full/elcl16/watch_globals.gif"
+               icon="icons/elcl16/watch_globals.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
             <enablement>
@@ -857,12 +849,11 @@
             id="org.eclipse.debug.ui.modulesView.toolbar">
          <action
                helpContextId="load_symbols_for_all_context"
-               disabledIcon="icons/full/dlcl16/load_all_symbols_co.gif"
-               hoverIcon="icons/full/elcl16/load_all_symbols_co.gif"
+               disabledIcon="icons/dlcl16/load_all_symbols_co.gif"
                toolbarPath="modulesGroup"
                label="%LoadSymbolsForAllAction.label"
                tooltip="%LoadSymbolsForAllAction.tooltip"
-               icon="icons/full/elcl16/load_all_symbols_co.gif"
+               icon="icons/elcl16/load_all_symbols_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllActionDelegate"
                style="push"
                id="org.eclipse.cdt.debug.ui.LoadSymbolsForAllAction">
@@ -874,12 +865,11 @@
          </action>
          <action
                helpContextId="collapse_all_modules_context"
-               disabledIcon="icons/full/dlcl16/collapseall.gif"
-               hoverIcon="icons/full/clcl16/collapseall.gif"
+               disabledIcon="icons/dlcl16/collapseall.gif"
                toolbarPath="additions"
                label="%CollapseAllModulesAction.label"
                tooltip="%CollapseAllModulesAction.tooltip"
-               icon="icons/full/elcl16/collapseall.gif"
+               icon="icons/elcl16/collapseall.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.CollapseAllModulesAction"
                style="push"
                id="org.eclipse.cdt.debug.ui.CollapseAllModulesAction"/>
@@ -985,7 +975,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%CDebugEditor.name"
-            icon="icons/full/obj16/filenotfound_obj.gif"
+            icon="icons/obj16/filenotfound_obj.gif"
             contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             class="org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor"
             id="org.eclipse.cdt.debug.ui.editor.CDebugEditor">
@@ -1058,7 +1048,7 @@
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
             annotationImageProvider="org.eclipse.cdt.debug.internal.ui.BreakpointImageProvider"
-            icon="icons/full/obj16/brkp_obj.gif"
+            icon="icons/obj16/brkp_obj.gif"
             annotationType="org.eclipse.cdt.debug.core.breakpoint">
       </specification>
       <specification
@@ -1070,7 +1060,7 @@
             overviewRulerPreferenceValue="true"
             highlightPreferenceValue="true"
             presentationLayer="6"
-            icon="icons/full/obj16/inst_ptr_top.gif"
+            icon="icons/obj16/inst_ptr_top.gif"
             label="%DisassemblyCurrentInstructionPointer"
             textPreferenceValue="false"
             textPreferenceKey="currentDisassemblyIPIndication"
@@ -1086,7 +1076,7 @@
             overviewRulerPreferenceValue="true"
             highlightPreferenceValue="true"
             presentationLayer="6"
-            icon="icons/full/obj16/inst_ptr.gif"
+            icon="icons/obj16/inst_ptr.gif"
             label="%DisassemblySecondaryInstructionPointer"
             textPreferenceValue="false"
             textPreferenceKey="secondaryDisassemblyIPIndication"
@@ -1203,11 +1193,11 @@
       <sourceContainerPresentation
             browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.MappingSourceContainerBrowser"
             containerTypeID="org.eclipse.cdt.debug.core.containerType.mapping"
-            icon="icons/full/obj16/mapping_obj.gif"
+            icon="icons/obj16/mapping_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapping"/>
       <sourceContainerPresentation
             containerTypeID="org.eclipse.cdt.debug.core.containerType.mapEntry"
-            icon="icons/full/obj16/mapentry_obj.gif"
+            icon="icons/obj16/mapentry_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapEntry"/>
    </extension>
 

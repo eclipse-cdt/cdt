@@ -1,3 +1,6 @@
+2005-04-07 Mikhail Khodjaiants
+	Applied patch from Dave Daoust (new images).
+
 2005-03-21 Mikhail Khodjaiants
 	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
 	* icons/full/obj16/mapentry_obj.gif: new

@@ -23,7 +23,7 @@
 <!-- Add one target for each root element and each configuration -->
 <!-- ===================================================================== -->
 
-<target name="assemble.org.eclipse.cdt.testing.*.*.*-zip">
+<target name="assemble.org.eclipse.cdt.testing.*.*.*">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip"/>
 	</ant>

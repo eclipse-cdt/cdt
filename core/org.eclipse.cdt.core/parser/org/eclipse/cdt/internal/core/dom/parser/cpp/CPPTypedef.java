@@ -97,8 +97,15 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
 	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */
 	public IType getType() {
-	    if( type == null )
+	    if( type == null ){
 	        type = CPPVisitor.createType( (IASTDeclarator) typedefName.getParent() );
+	        if( type instanceof ITypedef ){
+	            try {
+                    type = ((ITypedef)type).getType();
+                } catch ( DOMException e ) {
+                }
+	        }
+	    }
 		return type;
 	}
 	

@@ -270,29 +270,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 7.1.3-2):
-	typedef struct s { //
-	} s;
-	typedef int I;
-	typedef int I;
-	typedef I I;
-	 --End Example]
-	 */
-	public void test7_1_3s2()  { // TODO raised bug 90623
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("typedef struct s { //\n"); //$NON-NLS-1$
-		buffer.append("} s;\n"); //$NON-NLS-1$
-		buffer.append("typedef int I;\n"); //$NON-NLS-1$
-		buffer.append("typedef int I;\n"); //$NON-NLS-1$
-		buffer.append("typedef I I;\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 7.3.3-10):
 	namespace A {
 	int x;
@@ -892,27 +869,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 14.5.1.3-1):
-	template<class T> class X {
-	static T s;
-	};
-	template<class T> T X<T>::s = 0;
-	 --End Example]
-	 */
-	public void test14_5_1_3s1()  { // TODO no bug raised on this, can't reproduce in AST View
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
-		buffer.append("static T s;\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("template<class T> T X<T>::s = 0;\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 14.5.3-1):
 	template<class T> class task;
 	template<class T> task<T>* preempt(task<T>*);
@@ -1268,33 +1224,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("template<class T> struct X : B<T> {\n"); //$NON-NLS-1$
 		buffer.append("A a; // a has type double\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
-	 [--Start Example(CPP 14.7-6):
-	template<class T> class X {
-	static T s;
-	// ...
-	};
-	template<class T> T X<T>::s = 0;
-	X<int> aa;
-	X<char*> bb;
-	 --End Example]
-	 */
-	public void test14_7s6()  { // TODO can't reproduce via ASTDOM View
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
-		buffer.append("static T s;\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("template<class T> T X<T>::s = 0;\n"); //$NON-NLS-1$
-		buffer.append("X<int> aa;\n"); //$NON-NLS-1$
-		buffer.append("X<char*> bb;\n"); //$NON-NLS-1$
 		try {
 		parse(buffer.toString(), ParserLanguage.CPP, true, true);
 		assertTrue(false);

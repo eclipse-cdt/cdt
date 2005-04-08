@@ -3509,5 +3509,45 @@ public class AST2CPPTests extends AST2BaseTest {
 			assertEquals(col.getName(154).toString(), "operator <"); //$NON-NLS-1$
 			assertEquals(col.getName(158).toString(), "operator >"); //$NON-NLS-1$
 	}
+	
+	public void testBug90623() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append( "typedef int I;             \n"); //$NON-NLS-1$
+	    buffer.append( "typedef int I;             \n"); //$NON-NLS-1$
+	    buffer.append( "typedef I I;               \n"); //$NON-NLS-1$
+	    buffer.append( "class A {                  \n"); //$NON-NLS-1$
+	    buffer.append( "   typedef char I;         \n"); //$NON-NLS-1$
+	    buffer.append( "   typedef char I;         \n"); //$NON-NLS-1$
+	    buffer.append( "   typedef I I;            \n"); //$NON-NLS-1$
+	    buffer.append( "};                         \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ITypedef I1 = (ITypedef) col.getName(0).resolveBinding();
+    	ITypedef I2 = (ITypedef) col.getName(1).resolveBinding();
+    	ITypedef I3 = (ITypedef) col.getName(2).resolveBinding();
+    	ITypedef I4 = (ITypedef) col.getName(3).resolveBinding();
+    	ITypedef I8 = (ITypedef) col.getName(5).resolveBinding();
+    	ITypedef I5 = (ITypedef) col.getName(8).resolveBinding();
+    	ITypedef I6 = (ITypedef) col.getName(7).resolveBinding();
+    	ITypedef I7 = (ITypedef) col.getName(6).resolveBinding();
+    	//ITypedef I8 = (ITypedef) col.getName(5).resolveBinding();
+    	
+    	assertSame( I1, I2 );
+    	assertSame( I2, I3 );
+    	assertSame( I3, I4 );
+    	assertNotSame( I4, I5 );
+    	assertSame( I5, I6 );
+    	assertSame( I6, I7 );
+    	assertSame( I7, I8 );
+    	
+    	assertTrue( I1.getType() instanceof IBasicType );
+    	assertEquals( ((IBasicType)I1.getType()).getType(), IBasicType.t_int );
+    	
+    	assertTrue( I8.getType() instanceof IBasicType );
+    	assertEquals( ((IBasicType)I8.getType()).getType(), IBasicType.t_char );    	
+	}
 }
 

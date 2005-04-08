@@ -1915,6 +1915,27 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 7.1.3-2):
+	typedef struct s { //
+	} s;
+	typedef int I;
+	typedef int I;
+	typedef I I;
+	 --End Example]
+	 */
+	public void test7_1_3s2() throws Exception { 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("typedef struct s { //\n"); //$NON-NLS-1$
+		buffer.append("} s;\n"); //$NON-NLS-1$
+		buffer.append("typedef int I;\n"); //$NON-NLS-1$
+		buffer.append("typedef int I;\n"); //$NON-NLS-1$
+		buffer.append("typedef I I;\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, true);
+	}
+
+	
+	/**
 	 [--Start Example(CPP 7.1.3-3a):
 	class complex { //
 	};
@@ -8888,6 +8909,24 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 14.5.1.3-1):
+	template<class T> class X {
+	static T s;
+	};
+	template<class T> T X<T>::s = 0;
+	 --End Example]
+	 */
+	public void test14_5_1_3s1() throws Exception { 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
+		buffer.append("static T s;\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("template<class T> T X<T>::s = 0;\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, true);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.5.3-2):
 	namespace N {
 	template <class T> void f(T);
@@ -9677,6 +9716,30 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("static int x;\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("template<> int B<>::x = 1; // specialize for T == int\n"); //$NON-NLS-1$
+		parse(buffer.toString(), ParserLanguage.CPP, true, true);
+	}
+	
+	/**
+	 [--Start Example(CPP 14.7-6):
+	template<class T> class X {
+	static T s;
+	// ...
+	};
+	template<class T> T X<T>::s = 0;
+	X<int> aa;
+	X<char*> bb;
+	 --End Example]
+	 */
+	public void test14_7s6() throws Exception { 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class X {\n"); //$NON-NLS-1$
+		buffer.append("static T s;\n"); //$NON-NLS-1$
+		buffer.append("// ...\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("template<class T> T X<T>::s = 0;\n"); //$NON-NLS-1$
+		buffer.append("X<int> aa;\n"); //$NON-NLS-1$
+		buffer.append("X<char*> bb;\n"); //$NON-NLS-1$
+		
 		parse(buffer.toString(), ParserLanguage.CPP, true, true);
 	}
 	

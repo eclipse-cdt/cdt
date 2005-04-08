@@ -461,6 +461,7 @@ public class CPPVisitor {
             binding = null;
         }
         
+        IASTSimpleDeclaration simpleDecl = ( parent instanceof IASTSimpleDeclaration ) ? (IASTSimpleDeclaration)parent : null;
         if( parent instanceof ICPPASTParameterDeclaration ){
 			ICPPASTParameterDeclaration param = (ICPPASTParameterDeclaration) parent;
 			parent = param.getParent();
@@ -478,6 +479,32 @@ public class CPPVisitor {
 			} else if( parent instanceof ICPPASTTemplateDeclaration ) {
 				return CPPTemplates.createBinding( param );
 			}
+		} else if( simpleDecl != null && simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
+		    if( binding == null ){
+		        binding = CPPSemantics.resolveBinding( name );
+		        try {
+			        if( (binding instanceof IProblemBinding && ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND) ||
+			            binding.getScope() != scope )
+			        {
+			            binding = null;
+			        }
+		        } catch ( DOMException e ){
+		            binding = null;
+		        }
+		    }
+		    if( binding != null && binding instanceof ITypedef ){
+		        try {
+                    IType t1 = ((ITypedef)binding).getType();
+                    IType t2 = createType( declarator );
+                    if( t1 != null && t2 != null && t1.equals( t2 ) ){
+                        ((ICPPInternalBinding)binding).addDeclaration( name );
+                        return binding;
+                    }
+                } catch ( DOMException e1 ) {
+                }
+                return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray() );
+		    }
+			binding = new CPPTypedef( name );
 		} else if( declarator instanceof ICPPASTFunctionDeclarator ){
 			if( binding != null && binding instanceof IFunction ){
 			    IFunction function = (IFunction) binding;
@@ -495,10 +522,8 @@ public class CPPVisitor {
 			        return function;
 			    }
 			} 
-			IASTSimpleDeclaration simpleDecl = ( parent instanceof IASTSimpleDeclaration ) ? (IASTSimpleDeclaration)parent : null;
-			if( simpleDecl != null && simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-				binding = new CPPTypedef( name );
-			} else if( scope instanceof ICPPClassScope ){
+			
+			if( scope instanceof ICPPClassScope ){
 				if( isConstructor( scope, declarator) )
 					binding = template ? (ICPPConstructor)  new CPPConstructorTemplate( name )
 									   : new CPPConstructor( (ICPPASTFunctionDeclarator) declarator );
@@ -510,33 +535,26 @@ public class CPPVisitor {
 								   : new CPPFunction( (ICPPASTFunctionDeclarator) declarator );
 			}
 		} else if( parent instanceof IASTSimpleDeclaration ){
-		    
-			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
-			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-				binding = new CPPTypedef( name );
-			} else {
-			    IType t1 = null, t2 = null;
-			    
-			    if( binding != null && binding instanceof IVariable ){
-			        t1 = createType( declarator );
-			        try {
-                        t2 = ((IVariable)binding).getType();
-                    } catch ( DOMException e1 ) {
-                    }
-			    }
-			    if( t1 != null && t2 != null ){
-			    	if( t1.equals( t2 ) ){
-			    		if( binding instanceof ICPPInternalBinding )
-			    			((ICPPInternalBinding)binding).addDeclaration( name );
-			    	} else {
-			    		binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, declarator.getName().toCharArray() );
-			    	}
-			    } else if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
-					binding = new CPPField( name ); 
-			    } else {
-			        binding = new CPPVariable( name );
-			    }
-			}
+    	    IType t1 = null, t2 = null;
+		    if( binding != null && binding instanceof IVariable ){
+		        t1 = createType( declarator );
+		        try {
+                    t2 = ((IVariable)binding).getType();
+                } catch ( DOMException e1 ) {
+                }
+		    }
+		    if( t1 != null && t2 != null ){
+		    	if( t1.equals( t2 ) ){
+		    		if( binding instanceof ICPPInternalBinding )
+		    			((ICPPInternalBinding)binding).addDeclaration( name );
+		    	} else {
+		    		binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, declarator.getName().toCharArray() );
+		    	}
+		    } else if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
+				binding = new CPPField( name ); 
+		    } else {
+		        binding = new CPPVariable( name );
+		    }
 		} 
 
 		if( scope != null && binding != null ){

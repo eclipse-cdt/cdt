@@ -91,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -123,6 +124,7 @@ public class CPPSemantics {
 		public ObjectSet inheritanceChain;	//used to detect circular inheritance
 		public ObjectSet associated = ObjectSet.EMPTY_SET;
 		
+		public boolean checkWholeClassScope = false;
 		public boolean ignoreUsingDirectives = false;
 		public boolean usingDirectivesOnly = false;
 		public boolean forceQualified = false;
@@ -142,6 +144,7 @@ public class CPPSemantics {
 			this.name = n.toCharArray();
 			typesOnly = typesOnly();
 			considerConstructors = considerConstructors();
+			checkWholeClassScope = checkWholeClassScope();
 		}
 		public LookupData( char [] n ){
 			astName = null;
@@ -235,25 +238,35 @@ public class CPPSemantics {
 		        p1 = p1.getParent();
 		    return ( p1 instanceof IASTIdExpression && p1.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME );
 		}
-        public boolean checkWholeClassScope() {
+        private boolean checkWholeClassScope() {
             if( astName == null ) return false;
             if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
-            ASTNodeProperty prop = astName.getPropertyInParent();
-            if( prop == ICPPASTQualifiedName.SEGMENT_NAME )
-                prop = astName.getParent().getPropertyInParent();
-            if( prop == IASTIdExpression.ID_NAME || 
-				prop == IASTFieldReference.FIELD_NAME || 
-				prop == ICASTFieldDesignator.FIELD_NAME ||
-				prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
-				prop == ICPPASTUsingDeclaration.NAME ||
-				prop == IASTFunctionCallExpression.FUNCTION_NAME ||
-				prop == ICPPASTUsingDeclaration.NAME ||
-				prop == IASTNamedTypeSpecifier.NAME )
-            {
-                return true;
+            
+            IASTNode parent = astName.getParent();
+            while( parent != null && !(parent instanceof IASTFunctionDefinition) ){
+                parent = parent.getParent();
+            }
+            if( parent instanceof IASTFunctionDefinition ){
+                if( parent.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION )
+                    return false;
+                
+                ASTNodeProperty prop = astName.getPropertyInParent();
+                if( prop == ICPPASTQualifiedName.SEGMENT_NAME )
+                    prop = astName.getParent().getPropertyInParent();
+                if( prop == IASTIdExpression.ID_NAME || 
+    				prop == IASTFieldReference.FIELD_NAME || 
+    				prop == ICASTFieldDesignator.FIELD_NAME ||
+    				prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
+    				prop == ICPPASTUsingDeclaration.NAME ||
+    				prop == IASTFunctionCallExpression.FUNCTION_NAME ||
+    				prop == IASTNamedTypeSpecifier.NAME )
+                {
+                    return true;
+                }
             }
             return false;
         }
+        
         public boolean hasResults(){
             if( foundItems == null )
                 return false;
@@ -491,6 +504,12 @@ public class CPPSemantics {
 			parent = parent.getParent();
 		}
 		
+		if( parent instanceof IASTDeclarator && parent.getPropertyInParent() == IASTSimpleDeclaration.DECLARATOR ){
+		    IASTSimpleDeclaration simple = (IASTSimpleDeclaration) parent.getParent();
+		    if( simple.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef )
+		        data.forceQualified = true;
+		}
+		
 		if( parent instanceof ICPPASTFunctionDeclarator ){
 			data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
 		} else if( parent instanceof IASTIdExpression ){
@@ -694,7 +713,7 @@ public class CPPSemantics {
 					IBinding binding = data.prefixLookup ? null : scope.getBinding( data.astName, true );
 					if( binding != null && 
 						( CPPSemantics.declaredBefore( binding, data.astName ) || 
-						  (scope instanceof ICPPClassScope && data.checkWholeClassScope()) ) )
+						  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
 					{
 						mergeResults( data, binding, true );	
 					}
@@ -1024,7 +1043,7 @@ public class CPPSemantics {
 		}
 		
 		int idx = -1;
-		boolean checkWholeClassScope = ( scope instanceof ICPPClassScope ) && data.checkWholeClassScope();
+		boolean checkWholeClassScope = ( scope instanceof ICPPClassScope ) && data.checkWholeClassScope;
 		IASTNode item = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
 		IASTNode [][] nodeStack = null;
 		int [] nodeIdxStack = null;
@@ -1132,7 +1151,7 @@ public class CPPSemantics {
 					IBinding binding = temp.getBinding( data.astName, true );
 					if( binding != null && 
 						( CPPSemantics.declaredBefore( binding, data.astName ) || 
-						  (scope instanceof ICPPClassScope && data.checkWholeClassScope()) ) )
+						  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
 					{
 						mergeResults( data, binding, true );
 						found = true;
@@ -1335,6 +1354,10 @@ public class CPPSemantics {
 	    if( node.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 	    
 	    ASTNode nd = null;
+	    if( obj instanceof ICPPTemplateInstance ){
+	        obj = ((ICPPTemplateInstance)obj).getOriginalBinding();
+	    }
+	    
 	    if( obj instanceof ICPPInternalBinding ){
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
@@ -1397,7 +1420,7 @@ public class CPPSemantics {
 	    for( int i = 0; i < items.length && items[i] != null; i++ ){
 	        Object o = items[i];
 	        boolean declaredBefore = declaredBefore( o, name );
-	        if( !data.checkWholeClassScope() && !declaredBefore )
+	        if( !data.checkWholeClassScope && !declaredBefore )
 	        	continue;
 	        if( o instanceof IASTName ){
 	            temp = ((IASTName) o).resolveBinding();

@@ -207,20 +207,20 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		assertTrue("Entry Results exist", eresults != null); //$NON-NLS-1$
 		
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"}; //$NON-NLS-1$
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }, offsets={ [ 288] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/Unknown, refs={ 1 }, offsets={ [ 2732] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/container, refs={ 1 }, offsets={ [ 21078] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/first_class, refs={ 1 }, offsets={ [ 2500] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/postcard, refs={ 1 }, offsets={ [ 2292] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/D/Mail, refs={ 1 }, offsets={ [ 288] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/D/first_class, refs={ 1 }, offsets={ [ 2500] }",  //$NON-NLS-1$ 
-				"EntryResult: word=typeDecl/D/postcard, refs={ 1 }, offsets={ [ 2292] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }, offsets={ [ 21361] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/index, refs={ 1 }, offsets={ [ 21299, 21842] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/mail, refs={ 1 }, offsets={ [ 21330, 21906] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/size, refs={ 1 }, offsets={ [ 21923] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/temp, refs={ 1 }, offsets={ [ 21960] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/x, refs={ 1 }, offsets={ [ 21197, 21522] }"}; //$NON-NLS-1$ 
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }, offsets={ [ 294] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/C/Unknown, refs={ 1 }, offsets={ [ 2738] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/C/container, refs={ 1 }, offsets={ [ 21084] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/C/first_class, refs={ 1 }, offsets={ [ 2506] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/C/postcard, refs={ 1 }, offsets={ [ 2298] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/D/Mail, refs={ 1 }, offsets={ [ 294] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/D/first_class, refs={ 1 }, offsets={ [ 2506] }",  //$NON-NLS-1$ 
+				"EntryResult: word=typeDecl/D/postcard, refs={ 1 }, offsets={ [ 2298] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }, offsets={ [ 21371] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/V/index, refs={ 1 }, offsets={ [ 21303, 21846] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/V/mail, refs={ 1 }, offsets={ [ 21336, 21912] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/V/size, refs={ 1 }, offsets={ [ 21927] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/V/temp, refs={ 1 }, offsets={ [ 21964] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDecl/V/x, refs={ 1 }, offsets={ [ 21201, 21526] }"}; //$NON-NLS-1$ 
 		
 		
 		if (qresults.length != queryResultModel.length)
@@ -259,7 +259,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		ind = sourceIndexer.getIndex(testProjectPath,true,true);
 		
 		char[] prefix = "typeDecl/C/CDocumentManager".toCharArray(); //$NON-NLS-1$
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }, offsets={ [ 2121] }"}; //$NON-NLS-1$
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }, offsets={ [ 2127] }"}; //$NON-NLS-1$
 		IEntryResult[] eresults =ind.queryEntries(prefix);
 		IEntryResult[] bogRe = ind.queryEntries(IIndexConstants.TYPE_DECL);
 		assertTrue("Entry Result exists", eresults != null); //$NON-NLS-1$
@@ -702,7 +702,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	 IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/G/ForwardA/A".toCharArray()); //$NON-NLS-1$ 
 	 assertTrue("Entry exists",fwdDclResults != null); //$NON-NLS-1$ 
 	 
-	 String [] fwdDclModel = {"EntryResult: word=typeDecl/G/ForwardA/A, refs={ 1 }, offsets={ [ 219] }"}; //$NON-NLS-1$
+	 String [] fwdDclModel = {"EntryResult: word=typeDecl/G/ForwardA/A, refs={ 1 }, offsets={ [ 225] }"}; //$NON-NLS-1$
 	
 	 if (fwdDclResults.length != fwdDclModel.length)
 		fail("Entry Result length different from model for forward declarations"); //$NON-NLS-1$
@@ -715,7 +715,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	IEntryResult[] fwdDclRefResults = ind.queryEntries("typeRef/G/ForwardA/A".toCharArray()); //$NON-NLS-1$ 
 	assertTrue("Entry exists", fwdDclRefResults!= null); //$NON-NLS-1$
 	
-	String [] fwdDclRefModel = {"EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 219] }"}; //$NON-NLS-1$  
+	String [] fwdDclRefModel = {"EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 225] }"}; //$NON-NLS-1$  
 
 	if (fwdDclRefResults.length != fwdDclRefModel.length)
 	   fail("Entry Result length different from model for forward declarations refs"); //$NON-NLS-1$  

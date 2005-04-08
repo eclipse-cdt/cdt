@@ -1,3 +1,9 @@
+2005-04-07 Mikhail Khodjaiants
+	Removed unused icons.
+	- icons/full/clcl16/auto_solib_co.gif
+	- icons/full/dlcl16/auto_solib_co.gif
+	- icons/full/elcl16/auto_solib_co.gif
+
 2005-03-09 Mikhail Khodjaiants
 	Fix for bug 87546: Obsolete debug MI settings in Preference need to be removed.
 	* MIPreferencePage.java

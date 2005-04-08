@@ -602,6 +602,72 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 3.4.3.2-3):
+	namespace A {
+	int a;
+	}
+	namespace B {
+	using namespace A;
+	}
+	namespace C {
+	using namespace A;
+	}
+	namespace BC {
+	using namespace B;
+	using namespace C;
+	}
+	void f()
+	{
+	BC::a++; //OK: S is { A::a, A::a }
+	}
+	namespace D {
+	using A::a;
+	}
+	namespace BD {
+	using namespace B;
+	using namespace D;
+	}
+	void g()
+	{
+	BD::a++; //OK: S is { A::a, A::a }
+	}
+	 --End Example]
+	 */
+	public void test3_4_3_2s3() throws Exception { 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace A {\n"); //$NON-NLS-1$
+		buffer.append("int a;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("namespace B {\n"); //$NON-NLS-1$
+		buffer.append("using namespace A;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("namespace C {\n"); //$NON-NLS-1$
+		buffer.append("using namespace A;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("namespace BC {\n"); //$NON-NLS-1$
+		buffer.append("using namespace B;\n"); //$NON-NLS-1$
+		buffer.append("using namespace C;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("void f()\n"); //$NON-NLS-1$
+		buffer.append("{\n"); //$NON-NLS-1$
+		buffer.append("BC::a++; //OK: S is { A::a, A::a }\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("namespace D {\n"); //$NON-NLS-1$
+		buffer.append("using A::a;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("namespace BD {\n"); //$NON-NLS-1$
+		buffer.append("using namespace B;\n"); //$NON-NLS-1$
+		buffer.append("using namespace D;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("void g()\n"); //$NON-NLS-1$
+		buffer.append("{\n"); //$NON-NLS-1$
+		buffer.append("BD::a++; //OK: S is { A::a, A::a }\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		
+		parse(buffer.toString(), ParserLanguage.CPP, true, true);
+	}
+	
+	/**
 	 [--Start Example(CPP 3.4.3.2-4):
 	namespace B {
 	int b;

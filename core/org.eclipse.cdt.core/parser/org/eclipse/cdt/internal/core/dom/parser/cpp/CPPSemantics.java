@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -1418,7 +1419,11 @@ public class CPPSemantics {
 	        } else if( temp instanceof IType ){
 	        	if( type == null ){
 	                type = temp;
-	            } else if( type != temp ) {
+	        	} else if( (temp instanceof ICPPDelegate && ((ICPPDelegate)temp).getBinding() == type) ||
+		        	       (type instanceof ICPPDelegate && ((ICPPDelegate)type).getBinding() == temp) )
+	        	{
+	        	    //ok, delegates are synonyms
+	        	} else if( type != temp ) {
 	                return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	            }
 	        } else if( temp instanceof IFunction ){
@@ -1434,7 +1439,11 @@ public class CPPSemantics {
 	        } else {
 	        	if( obj == null )
 	        		obj = temp;
-	        	else if( obj != temp ){
+	        	else if( (temp instanceof ICPPDelegate && ((ICPPDelegate)temp).getBinding() == obj) ||
+	        	         (obj instanceof ICPPDelegate && ((ICPPDelegate)obj).getBinding() == temp) )
+	        	{
+	        	    //ok, delegates are synonyms
+	        	} else if( obj != temp ){
 	        	    return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	        	}
 	        }
@@ -1666,8 +1675,12 @@ public class CPPSemantics {
 		outer: for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
 			currFn = (IFunction) fns[fnIdx];
 			
-			if( currFn == null || bestFn == currFn )
+			if( currFn == null || bestFn == currFn ||
+			    ( bestFn instanceof ICPPDelegate && ((ICPPDelegate)bestFn).getBinding() == currFn ) ||
+			    ( currFn instanceof ICPPDelegate && ((ICPPDelegate)currFn).getBinding() == bestFn ) )
+			{
 				continue;
+			}
 			
 			IASTNode node = ((ICPPInternalBinding)currFn).getDefinition();
 			ICPPASTFunctionDeclarator currDtor = ( node == null ) ? null : (ICPPASTFunctionDeclarator)(( node instanceof ICPPASTFunctionDeclarator ) ? node : node.getParent()); 

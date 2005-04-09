@@ -71,12 +71,6 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	public final static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
 	public final static QualifiedName problemsActivationKey = new QualifiedName( INDEX_MODEL_ID, PROBLEM_ACTIVATION );
 	
-	/*public static final String INDEXER_ENABLED = "indexEnabled"; //$NON-NLS-1$
-	public static final String INDEXER_PROBLEMS_ENABLED = "indexerProblemsEnabled"; //$NON-NLS-1$
-	public static final String SOURCE_INDEXER = "cdt_source_indexer"; //$NON-NLS-1$
-	public static final String INDEXER_VALUE = "indexValue"; //$NON-NLS-1$
-	public static final String INDEXER_PROBLEMS_VALUE = "indexProblemsValue"; //$NON-NLS-1$
-	*/
 	public static final int PREPROCESSOR_PROBLEMS_BIT = 1;
 	public static final int SEMANTIC_PROBLEMS_BIT = 1 << 1;
 	public static final int SYNTACTIC_PROBLEMS_BIT = 1 << 2;
@@ -658,4 +652,17 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
     public void notifyIndexerChange(IProject project) {
         this.indexAll(project);
     }
+
+	public void indexerChangeNotification(IProject project) {
+		//Remove any existing problem markers
+		/*try {
+			 IMarker[] markers = project.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
+			for (int i=0; i<markers.length; i++){
+				removeIndexerProblems(markers[i].getResource());
+			}
+		} catch (CoreException e) {}*/
+		
+	}
+	
+	
 }

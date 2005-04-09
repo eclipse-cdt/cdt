@@ -128,4 +128,11 @@ public interface ICDTIndexer extends IIndexer {
      */
     public IIndex getIndex(IPath path, boolean reuseExistingFile, boolean createIfMissing);
 
+	/**
+	 * Called the index manager when a project changes its indexer to a new indexer. This can be
+	 * used to clean up specific indexer properties.
+	 * @param project
+	 */
+	public void indexerChangeNotification(IProject project);
+
 }

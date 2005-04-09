@@ -20,7 +20,7 @@ public class CTagsHeader {
 	final static String TAG_FILE_FORMAT =
 		"!_TAG_FILE_FORMAT\t2\t/extended format; --format=1 will not append ;\" to lines/"; //$NON-NLS-1$
 	final static String TAG_FILE_SORTED = 
-		"!_TAG_FILE_SORTED\t0\t/0=unsorted, 1=sorted/"; //$NON-NLS-1$
+		"!_TAG_FILE_SORTED\t0\t/0=unsorted, 1=sorted, 2=foldcase/"; //$NON-NLS-1$
 	final static String TAG_PROGRAM_AUTHOR =
 		"!_TAG_PROGRAM_AUTHOR\tDarren Hiebert\t/dhiebert@users.sourceforge.net/"; //$NON-NLS-1$
 	final static String TAG_PROGRAM_NAME =
@@ -57,16 +57,15 @@ public class CTagsHeader {
 	void parse (BufferedReader in) throws IOException {
 		// !_TAG_FILE_FORMAT   2      /extended format; --format=1 will not append ;" to lines/
 		format = in.readLine();
-		//If we care about verifying header info we can put this back in
-		/*if (format == null || !format.equals(TAG_FILE_FORMAT)) {
-			throw new IOException("Wrong Tag Format Header");
-		}*/
+		if (format == null || !format.equals(TAG_FILE_FORMAT)) {
+			throw new IOException("Wrong Tag Format Header: Needs to be --format=2"); //$NON-NLS-1$
+		}
 		
 		// !_TAG_FILE_SORTED       0       /0=unsorted, 1=sorted/
 		sorted = in.readLine();
-		/*if (sorted == null || !sorted.equals(TAG_FILE_SORTED)) {
-			throw new IOException("Wrong Tag Format Header");
-		}*/
+		if (sorted == null || !sorted.equals(TAG_FILE_SORTED)) {
+			throw new IOException("Wrong Tag Format Header: Sort needs to be --sort=no"); //$NON-NLS-1$
+		}
 
 		// !_TAG_PROGRAM_AUTHOR    Darren Hiebert  /dhiebert@users.sourceforge.net/
 		author = in.readLine();
@@ -76,20 +75,20 @@ public class CTagsHeader {
 
 		// !_TAG_PROGRAM_NAME      Exuberant Ctags //
 		name = in.readLine();
-		/*if (name == null || !name.equals(TAG_PROGRAM_NAME)) {
-			throw new IOException("Wrong Tag Format Header");
-		}*/
+		if (name == null || !name.equals(TAG_PROGRAM_NAME)) {
+			throw new IOException("Wrong Tag Format Header: Must use Exuberant Ctags"); //$NON-NLS-1$
+		}
 
 		// !_TAG_PROGRAM_URL       http://ctags.sourceforge.net    /official site/
 		url = in.readLine();
 		/*if (url == null || !url.equals(TAG_PROGRAM_URL)) {
-			throw new IOException("Wrong Tag Format Header");
+			throw new IOException("Wrong Tag Format Header"); //$NON-NLS-1$
 		}*/
 
-		// !_TAG_PROGRAM_VERSION   5.2.3   //
+		// !_TAG_PROGRAM_VERSION   5.5.4   //
 		version = in.readLine();
 		/*if (version == null || !version.equals(TAG_PROGRAM_VERSION)) {
-			throw new IOException("Wrong Tag Format Header");
+			throw new IOException("Wrong Tag Format Header: Need Exuberant CTags 5.5.4"); //$NON-NLS-1$
 		}*/
 	} 
 

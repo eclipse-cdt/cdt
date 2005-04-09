@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
@@ -22,6 +23,8 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -31,7 +34,7 @@ import org.eclipse.core.runtime.Path;
  */
 class CTagsIndexAll extends CTagsIndexRequest {
 	IProject project;
-	static String ctagsFile = CCorePlugin.getDefault().getStateLocation().toOSString() + "\\tempctags"; //$NON-NLS-1$
+	static String ctagsFile = CCorePlugin.getDefault().getStateLocation().append("tempctags").toOSString(); //$NON-NLS-1$
 	
 	public CTagsIndexAll(IProject project, CTagsIndexer indexer) {
 		super(project.getFullPath(), indexer);
@@ -67,6 +70,11 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			//Timing support
 			long startTime=0, cTagsEndTime=0, endTime=0;
 			
+			//Remove any existing problem markers
+			try {
+				project.deleteMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+			} catch (CoreException e) {}
+			
 			if (AbstractIndexer.TIMING)
 			  startTime = System.currentTimeMillis();
 			
@@ -81,7 +89,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			
 			 if (success) {
 			     //Parse the CTag File
-			     CTagsFileReader reader = new CTagsFileReader(project,ctagsFile);
+			     CTagsFileReader reader = new CTagsFileReader(project,ctagsFile,indexer);
 			     reader.setIndex(index);
 			     reader.parse();
 			     
@@ -113,8 +121,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
      * @return
      */
     private boolean runCTags() { 
-    	String[] args = {"ctags",  //$NON-NLS-1$
-		        "--excmd=number", //$NON-NLS-1$
+    	String[] args = {"--excmd=number", //$NON-NLS-1$
 		        "--format=2", //$NON-NLS-1$
 				"--sort=no",  //$NON-NLS-1$
 				"--fields=aiKlmnsz", //$NON-NLS-1$
@@ -136,12 +143,17 @@ class CTagsIndexAll extends CTagsIndexRequest {
          
          IPath fileDirectory = project.getLocation();
          //Process p = launcher.execute(fCompileCommand, args, setEnvironment(launcher), fWorkingDirectory);
-         Process p = launcher.execute(new Path(""), args, null, fileDirectory); //$NON-NLS-1$
+         Process p = launcher.execute(new Path("ctags"), args, null, fileDirectory); //$NON-NLS-1$
          p.waitFor();
        
     	} catch (InterruptedException e) {
     	    return false;
         }
+		catch (NullPointerException e){
+			//CTags not installed
+			indexer.createProblemMarker(CCorePlugin.getResourceString("CTagsIndexMarker.CTagsMissing"), project); //$NON-NLS-1$
+			return false;
+		}
      
         return true;
     }
@@ -157,5 +169,5 @@ class CTagsIndexAll extends CTagsIndexRequest {
 	public String toString() {
 		return "indexing project " + this.project.getFullPath(); //$NON-NLS-1$
 	}
-
+	
 }

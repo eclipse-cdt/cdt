@@ -12,10 +12,12 @@
 package org.eclipse.cdt.internal.core.index.ctagsindexer;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
@@ -30,21 +32,37 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
 public class CTagsFileReader {
+	
 	String filename = null;
 	List list = null;
     IProject project;
 	IIndex index;
+	CTagsIndexer indexer;
 	
-	public CTagsFileReader(IProject project,String filename) {
+	public CTagsFileReader(IProject project,String filename, CTagsIndexer indexer) {
 		this.filename = filename;
 		this.project = project;
+		this.indexer = indexer;
 	}
 
-	public void parse() throws IOException {
-	    BufferedReader reader = new BufferedReader(new FileReader(filename));
+	public void parse() {
+		BufferedReader reader = null;
+		try{
+			reader = new BufferedReader(new FileReader(filename));
+		} catch (FileNotFoundException ex){
+			indexer.createProblemMarker(CCorePlugin.getResourceString("CTagsIndexMarker.fileMissing") + " - " + filename, project);  //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		
 		CTagsHeader header = new CTagsHeader();
 		// Skip the header.
-		header.parse(reader);
+		
+		try {
+			header.parse(reader);
+		} catch (IOException e) {
+			indexer.createProblemMarker(e.getMessage(), project);
+			return;
+		}
 		
 		String s;
 		String currentFileName = null;
@@ -56,27 +74,29 @@ public class CTagsFileReader {
 		if (index == null)
 		    return;
 		
-		while ((s = reader.readLine()) != null) {
-		   CTagEntry tagEntry = parser.processLineReturnTag(s);
-		   
-		   String fileName = tagEntry.fileName;
-		   
-		   if (currentFileName == null ||
-		      (!currentFileName.equals(fileName))){
-		      currentFileName = fileName; 
-		      currentFile = (IFile) project.findMember(fileName);
-		      indexer = new MiniIndexer(currentFile);
-		      index.add(currentFile,indexer);
-		   }
-		  
-		   //encode new tag in current file
-		   char[][] fullName = parser.getQualifiedName(tagEntry);
-		   //encode name
-		   String lineNumber = (String) tagEntry.tagExtensionField.get(CTagsConsoleParser.LINE);
-		   indexer.addToOutput(fullName,(String)tagEntry.tagExtensionField.get(CTagsConsoleParser.KIND), Integer.parseInt(lineNumber));
-		}
+		try {
+			while ((s = reader.readLine()) != null) {
+			   CTagEntry tagEntry = parser.processLineReturnTag(s);
+			   
+			   String fileName = tagEntry.fileName;
+			   
+			   if (currentFileName == null ||
+			      (!currentFileName.equals(fileName))){
+			      currentFileName = fileName; 
+			      currentFile = (IFile) project.findMember(fileName);
+			      indexer = new MiniIndexer(currentFile);
+			      index.add(currentFile,indexer);
+			   }
+			  
+			   //encode new tag in current file
+			   char[][] fullName = parser.getQualifiedName(tagEntry);
+			   //encode name
+			   String lineNumber = (String) tagEntry.tagExtensionField.get(CTagsConsoleParser.LINE);
+			   indexer.addToOutput(fullName,(String)tagEntry.tagExtensionField.get(CTagsConsoleParser.KIND), Integer.parseInt(lineNumber));
+			}
+		} catch (IOException e){}
 	}
-
+	
 	class MiniIndexer implements IIndexer, IIndexConstants {
 		
 	    IIndexerOutput output;

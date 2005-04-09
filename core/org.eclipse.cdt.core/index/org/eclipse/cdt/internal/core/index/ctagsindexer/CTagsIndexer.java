@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
@@ -25,8 +26,11 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -324,6 +328,46 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
        this.indexAll(project);
     }
 	
+	protected void createProblemMarker(String message, IProject project){
+
+		try {
+			IMarker[] markers = project.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+		
+           boolean newProblem = true;
+           
+           if (markers.length > 0) {
+               IMarker tempMarker = null;
+               String tempMsgString = null;
+        
+               for (int i=0; i<markers.length; i++) {
+                   tempMarker = markers[i];
+                   tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+                   if (tempMsgString.equalsIgnoreCase( message )){
+                       newProblem = false;
+                       break;
+                   }
+               }
+           }
+		  
+		   if (newProblem){
+		        IMarker marker = project.createMarker(ICModelMarker.INDEXER_MARKER);
+		        int start = 0;
+		        int end = 1;
+		        marker.setAttribute(IMarker.MESSAGE, message); 
+		        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+		        marker.setAttribute(IMarker.CHAR_START, start);
+		        marker.setAttribute(IMarker.CHAR_END, end); 
+		   }
+		} catch (CoreException e1) {}
+	}
+
+	public void indexerChangeNotification(IProject project) {
+		//Remove any existing problem markers
+		try {
+			project.deleteMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+		} catch (CoreException e) {}
+		
+	}
 	
 
 }

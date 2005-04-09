@@ -102,7 +102,7 @@
 			<property name="ws" value="${basews}"/>
 			<property name="arch" value="${basearch}"/>
 		</ant>
-		<xslt style="${buildDirectory}/eclipse/plugins/org.eclipse.test/JUNIT.XSL"
+		<xslt style="${buildDirectory}/eclipse/plugins/org.eclipse.test_3.1.0/JUNIT.XSL"
 			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 			out="${zipsdir}/junits.html"/>
 	</target>

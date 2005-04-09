@@ -97,6 +97,7 @@
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip" dest="${buildDirectory}"/>
 		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
+			<property name="library-file" value="${buildDirectory}/eclipse/plugins/org.eclipse.test_3.1.0"/>
 			<property name="os" value="${baseos}"/>
 			<property name="ws" value="${basews}"/>
 			<property name="arch" value="${basearch}"/>

@@ -1617,7 +1617,8 @@ abstract class BaseScanner implements IScanner {
      *  
      */
     protected void errorHandle() {
-        ++bufferPos[bufferStackPos];
+        if( bufferStackPos > 0 )
+            ++bufferPos[bufferStackPos];
     }
 
     /**

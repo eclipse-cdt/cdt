@@ -49,6 +49,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
  */
 public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
+    
+    public LocationMap() {
+        tu = new _TranslationUnit();
+        currentContext = tu;
+    }
+    
     public class MacroExpansionLocation implements IASTMacroExpansion {
 
         public MacroExpansionLocation(
@@ -1087,13 +1093,19 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     protected static class _CompositeFileContext extends _CompositeContext {
-        public final CodeReader reader;
+        public CodeReader reader;
 
         public _CompositeFileContext(_CompositeContext parent, int startOffset,
                 int endOffset, CodeReader reader) {
             super(parent, startOffset, endOffset);
             this.reader = reader;
         }
+        
+        public _CompositeFileContext(_CompositeContext parent, int startOffset,
+               int endOffset ) {
+            super(parent, startOffset, endOffset);
+        }
+        
 
         public int getLineNumber(int nodeOffset) {
             if( nodeOffset >= reader.buffer.length )
@@ -1124,8 +1136,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          * @param startOffset
          * @param endOffset
          */
-        public _TranslationUnit(CodeReader reader) {
-            super(null, 0, 0, reader);
+        public _TranslationUnit() {
+            super(null, 0, 0 );
         }
 
         IMacroDefinition [] builtins = new IMacroDefinition[2];
@@ -1773,8 +1785,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#startTranslationUnit()
      */
     public void startTranslationUnit(CodeReader tu_reader) {
-        tu = new _TranslationUnit(tu_reader);
-        currentContext = tu;
+        tu.reader = tu_reader;
     }
 
     /*

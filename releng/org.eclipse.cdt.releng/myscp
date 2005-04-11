@@ -3,6 +3,6 @@
 set passwd [lindex $argv 0]
 set timeout 6000
 
-set id [eval spawn scp -q [lrange $argv 1 end]]
+set id [eval spawn scp -qp [lrange $argv 1 end]]
 expect "Password:" { send "$passwd\r" }
 expect

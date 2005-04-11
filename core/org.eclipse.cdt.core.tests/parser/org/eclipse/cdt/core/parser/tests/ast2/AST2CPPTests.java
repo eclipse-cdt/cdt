@@ -3549,5 +3549,19 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertTrue( I8.getType() instanceof IBasicType );
     	assertEquals( ((IBasicType)I8.getType()).getType(), IBasicType.t_char );    	
 	}
+	
+	public void testBug90623_2() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append( "typedef int I;             \n"); //$NON-NLS-1$
+	    buffer.append( "void f11( I i );           \n"); //$NON-NLS-1$
+	    buffer.append( "void main(){ f a; }          \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+
+    	IASTName f = col.getName( 5 );
+    	f.resolvePrefix();
+	}
 }
 

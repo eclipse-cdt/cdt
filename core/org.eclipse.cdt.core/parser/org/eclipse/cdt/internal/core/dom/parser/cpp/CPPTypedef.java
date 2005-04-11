@@ -99,12 +99,12 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
 	public IType getType() {
 	    if( type == null ){
 	        type = CPPVisitor.createType( (IASTDeclarator) typedefName.getParent() );
-	        if( type instanceof ITypedef ){
-	            try {
-                    type = ((ITypedef)type).getType();
-                } catch ( DOMException e ) {
-                }
-	        }
+//	        if( type instanceof ITypedef ){
+//	            try {
+//                    type = ((ITypedef)type).getType();
+//                } catch ( DOMException e ) {
+//                }
+//	        }
 	    }
 		return type;
 	}

@@ -1324,9 +1324,11 @@ public class CPPSemantics {
 	    if( bindings == null || bindings.length == 0 )
 	        return null;
 	    else if( bindings.length == 1 ){
-	    	if( bindings[0] instanceof IASTName )
-	    		return ((IASTName) bindings[ 0 ]).resolveBinding();
-    		return (IBinding) bindings[0];
+	        if( bindings[0] instanceof IBinding )
+	    	    return (IBinding) bindings[0];
+	    	else if( bindings[0] instanceof IASTName && ((IASTName) bindings[0]).getBinding() != null )
+	    	    return ((IASTName) bindings[ 0 ]).getBinding();
+
 	    }
 	    
 	    if( name.getPropertyInParent() != STRING_LOOKUP_PROPERTY ) {

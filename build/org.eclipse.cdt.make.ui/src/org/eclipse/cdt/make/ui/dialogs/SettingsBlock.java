@@ -9,6 +9,7 @@
 package org.eclipse.cdt.make.ui.dialogs;
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
@@ -21,8 +22,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -78,21 +79,28 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_BUILD_CLEAN_TARGET = PREFIX + ".makeWorkbench.cleanTarget"; //$NON-NLS-1$
 
 	Button stopOnErrorButton;
-
 	Button defButton;
 	Text buildCommand;
+	Button argumentVariablesButton;
 
 	Text buildLocation;
+	Button locationVariablesButton;
 
 	Text targetFull;
 	Text targetIncr;
 	Text targetAuto;
 	Text targetClean;
+
 	Button fullButton;
 	Button incrButton;
 	Button autoButton;
 	Button cleanButton;
 
+	Button fullVariableButton;
+	Button incrVariableButton;
+	Button autoVariableButton;
+	Button cleanVariableButton;
+	
 	IMakeBuilderInfo fBuildInfo;
 	Preferences fPrefs;
 	String fBuilderID;
@@ -117,9 +125,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 	protected void createBuildCmdControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_CMD_GROUP), 1);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = false;
-		layout.horizontalSpacing = 0;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_DEFAULT));
@@ -128,17 +135,19 @@ public class SettingsBlock extends AbstractCOptionPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
 					buildCommand.setEnabled(false);
+					argumentVariablesButton.setEnabled(false);
 					stopOnErrorButton.setEnabled(true);
 					getContainer().updateContainer();
 				} else {
 					buildCommand.setEnabled(true);
+					argumentVariablesButton.setEnabled(true);
 					stopOnErrorButton.setEnabled(false);
 					getContainer().updateContainer();
 				}
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		defButton.setLayoutData(gd);
 		Label label = ControlFactory.createLabel(group, MakeUIPlugin.getResourceString(MAKE_CMD_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
@@ -153,10 +162,10 @@ public class SettingsBlock extends AbstractCOptionPage {
 				getContainer().updateContainer();
 			}
 		});
-		if (fBuildInfo.getBuildCommand() != null) {
-			StringBuffer cmd = new StringBuffer(fBuildInfo.getBuildCommand().toOSString());
+		if (fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, null) != null) {
+			StringBuffer cmd = new StringBuffer(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "")); //$NON-NLS-1$
 			if (!fBuildInfo.isDefaultBuildCmd()) {
-				String args = fBuildInfo.getBuildArguments();
+				String args = fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "");
 				if (args != null && !args.equals("")) { //$NON-NLS-1$
 					cmd.append(" "); //$NON-NLS-1$
 					cmd.append(args);
@@ -164,8 +173,10 @@ public class SettingsBlock extends AbstractCOptionPage {
 			}
 			buildCommand.setText(cmd.toString());
 		}
+		argumentVariablesButton = addVariablesButton(group, buildCommand); 
 		if (fBuildInfo.isDefaultBuildCmd()) {
 			buildCommand.setEnabled(false);
+			argumentVariablesButton.setEnabled(false);
 		}
 		defButton.setSelection(fBuildInfo.isDefaultBuildCmd());
 	}
@@ -175,16 +186,20 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 			public void widgetSelected(SelectionEvent e) {
 				targetAuto.setEnabled(autoButton.getSelection());
+				autoVariableButton.setEnabled(autoButton.getSelection());
 				targetFull.setEnabled(fullButton.getSelection());
+				fullVariableButton.setEnabled(fullButton.getSelection());
 				targetIncr.setEnabled(incrButton.getSelection());
+				incrVariableButton.setEnabled(incrButton.getSelection());
 				targetClean.setEnabled(cleanButton.getSelection());
+				cleanVariableButton.setEnabled(cleanButton.getSelection());
 				getContainer().updateContainer();
 			}
 
 		};
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_GROUP), 1);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = false;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -192,49 +207,70 @@ public class SettingsBlock extends AbstractCOptionPage {
 		label.setText(MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_TYPE));
 		label = new Label(group, SWT.NONE);
 		label.setText(MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_TARGET));
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 		autoButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_AUTO));
 		autoButton.addSelectionListener(selectionAdapter);
 		autoButton.setSelection(fBuildInfo.isAutoBuildEnable());
-		//		if (!MakeUIPlugin.getWorkspace().isAutoBuilding()) {
-		//			autoButton.setEnabled(false);
-		//		}
 		targetAuto = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		targetAuto.setText(fBuildInfo.getAutoBuildTarget());
+		targetAuto.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
 		((GridData) (targetAuto.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetAuto.getLayoutData())).grabExcessHorizontalSpace = true;
 		addControlAccessibleListener(targetAuto, MakeUIPlugin.getResourceString(MAKE_BUILD_AUTO_TARGET));
+		autoVariableButton = addVariablesButton(group, targetAuto);
 		String noteTitle = MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.note"); //$NON-NLS-1$
 		String noteMessage = MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.autobuildMessage"); //$NON-NLS-1$
 		Composite noteControl = createNoteComposite(JFaceResources.getDialogFont(), group, noteTitle, noteMessage);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 3;
 		noteControl.setLayoutData(gd);
 		incrButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_INCR));
 		incrButton.addSelectionListener(selectionAdapter);
 		incrButton.setSelection(fBuildInfo.isIncrementalBuildEnabled());
 		targetIncr = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		targetIncr.setText(fBuildInfo.getIncrementalBuildTarget());
+		targetIncr.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, "")); //$NON-NLS-1$
 		((GridData) (targetIncr.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetIncr.getLayoutData())).grabExcessHorizontalSpace = true;
 		addControlAccessibleListener(targetIncr, MakeUIPlugin.getResourceString(MAKE_BUILD_INCREMENTAL_TARGET));
+		incrVariableButton = addVariablesButton(group, targetIncr);
 		fullButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_FULL));
 		fullButton.addSelectionListener(selectionAdapter);
 		fullButton.setSelection(fBuildInfo.isFullBuildEnabled());
 		targetFull = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		targetFull.setText(fBuildInfo.getFullBuildTarget());
+		targetFull.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, "")); //$NON-NLS-1$
 		((GridData) (targetFull.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetFull.getLayoutData())).grabExcessHorizontalSpace = true;
 		addControlAccessibleListener(targetFull, MakeUIPlugin.getResourceString(MAKE_BUILD_FULL_TARGET));
+		fullVariableButton = addVariablesButton(group, targetFull);
 		cleanButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_CLEAN));
 		cleanButton.addSelectionListener(selectionAdapter);
 		cleanButton.setSelection(fBuildInfo.isCleanBuildEnabled());
 		targetClean = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		targetClean.setText(fBuildInfo.getCleanBuildTarget());
+		targetClean.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, ""));
 		((GridData) (targetClean.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetClean.getLayoutData())).grabExcessHorizontalSpace = true;
 		addControlAccessibleListener(targetClean, MakeUIPlugin.getResourceString(MAKE_BUILD_CLEAN_TARGET));
+		cleanVariableButton = addVariablesButton(group, targetClean);
 		selectionAdapter.widgetSelected(null);
+	}
 
+	private Button addVariablesButton(Composite parent, final Text control) {
+		Button variablesButton = createPushButton(parent, "Variables...", null);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		variablesButton.setLayoutData(gd);
+		variablesButton.addSelectionListener(new SelectionAdapter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent arg0) {
+				handleVariablesButtonSelected(control);
+			}
+		});
+		return variablesButton;
 	}
 
 	protected Composite createNoteComposite(Font font, Composite composite, String title, String message) {
@@ -289,7 +325,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	protected void createBuilderWorkingDirControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_GROUP), 1);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 4;
 		layout.makeColumnsEqualWidth = false;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -320,9 +356,30 @@ public class SettingsBlock extends AbstractCOptionPage {
 				}
 			}
 		});
-		buildLocation.setText(fBuildInfo.getBuildLocation().toOSString());
+		buildLocation.setText(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, ""));
+		locationVariablesButton = addVariablesButton(group, buildLocation);
 	}
 
+	/**
+	 * A variable entry button has been pressed for the given text field. Prompt
+	 * the user for a variable and enter the result in the given field.
+	 */
+	private void handleVariablesButtonSelected(Text textField) {
+		String variable = getVariable();
+		if (variable != null) {
+			textField.append(variable);
+		}
+	}
+
+	/**
+	 * Prompts the user to choose and configure a variable and returns the
+	 * resulting string, suitable to be used as an attribute.
+	 */
+	private String getVariable() {
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+		dialog.open();
+		return dialog.getVariableExpression();
+	}
 	public void createControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 1);
 		setControl(composite);
@@ -373,7 +430,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 					try {
 						info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
 					} catch (CoreException e) {
-						// disabled builder... just log it 
+						// disabled builder... just log it
 						MakeCorePlugin.log(e);
 						return;
 					}
@@ -392,29 +449,29 @@ public class SettingsBlock extends AbstractCOptionPage {
 						start = 1;
 						end = bldLine.indexOf('"', 1);
 					}
-					IPath path;
+					String path;
 					if (end == -1) {
-						path = new Path(bldLine);
+						path = bldLine;
 					} else {
-						path = new Path(bldLine.substring(start, end));
+						path = bldLine.substring(start, end);
 					}
-					info.setBuildCommand(path);
+					info.setBuildAttribute(IMakeBuilderInfo.BUILD_COMMAND, path);
 					String args = ""; //$NON-NLS-1$
 					if (end != -1) {
 						args = bldLine.substring(end + 1);
 					}
-					info.setBuildArguments(args);
+					info.setBuildAttribute(IMakeBuilderInfo.BUILD_ARGUMENTS, args);
 				}
 				info.setAutoBuildEnable(autoButton.getSelection());
-				info.setAutoBuildTarget(targetAuto.getText().trim());
+				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, targetAuto.getText().trim());
 				info.setIncrementalBuildEnable(incrButton.getSelection());
-				info.setIncrementalBuildTarget(targetIncr.getText().trim());
+				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, targetIncr.getText().trim());
 				info.setFullBuildEnable(fullButton.getSelection());
-				info.setFullBuildTarget(targetFull.getText().trim());
+				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, targetFull.getText().trim());
 				info.setCleanBuildEnable(cleanButton.getSelection());
-				info.setCleanBuildTarget(targetClean.getText().trim());
+				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, targetClean.getText().trim());
 				if (buildLocation != null) {
-					info.setBuildLocation(new Path(buildLocation.getText().trim()));
+					info.setBuildAttribute(IMakeBuilderInfo.BUILD_LOCATION, buildLocation.getText().trim());
 				}
 			}
 		};
@@ -453,9 +510,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 		}
 		if (info.isDefaultBuildCmd()) {
 			buildCommand.setEnabled(false);
+			argumentVariablesButton.setEnabled(false);
 			stopOnErrorButton.setEnabled(true);
 		} else {
 			buildCommand.setEnabled(true);
+			argumentVariablesButton.setEnabled(true);
 			stopOnErrorButton.setEnabled(false);
 		}
 		defButton.setSelection(info.isDefaultBuildCmd());

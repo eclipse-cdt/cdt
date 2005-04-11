@@ -40,6 +40,7 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 
 	protected void addTabs() {
 		addTab(new SettingsBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
+		addTab(new MakeEnvironmentBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
 		addTab(new ErrorParserBlock(MakeCorePlugin.getDefault().getPluginPreferences()));
 		addTab(new BinaryParserBlock());
 		addTab(new DiscoveryOptionsBlock());

@@ -73,12 +73,14 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_MAKEFILE_INCLUDE = NAME_PREFIX + "include_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_INCLUDE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INCLUDE);
 
-	public static final String IMG_TOOLS_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENVIRONMNET = NAME_PREFIX + "environment_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ENVIRONMENT = createManaged(OBJ, IMG_OBJS_ENVIRONMNET);
 
-	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
-
-	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX + "environment_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX + "envvar_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ENV_VAR = createManaged(OBJ, IMG_OBJS_ENV_VAR);
+
+	public static final String IMG_TOOLS_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

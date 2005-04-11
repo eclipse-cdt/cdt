@@ -10,57 +10,53 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
-public interface IMakeBuilderInfo {
-	IPath getBuildLocation();
-	void setBuildLocation(IPath location) throws CoreException;
+public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 
-	boolean isStopOnError();
-	void setStopOnError(boolean on) throws CoreException;
-
-	boolean isDefaultBuildCmd();
-	void setUseDefaultBuildCmd(boolean on) throws CoreException;
-
-	IPath getBuildCommand();
-	void setBuildCommand(IPath command) throws CoreException;
-
-	String getBuildArguments();
-	void setBuildArguments(String args) throws CoreException;
+	public final static String BUILD_TARGET_FULL = ARGS_PREFIX + ".build.target.full"; //$NON-NLS-1$
+	public final static String BUILD_TARGET_INCREAMENTAL = ARGS_PREFIX + ".build.target.inc"; //$NON-NLS-1$
+	public final static String BUILD_TARGET_AUTO = ARGS_PREFIX + ".build.target.auto"; //$NON-NLS-1$
+	public final static String BUILD_TARGET_CLEAN = ARGS_PREFIX + ".build.target.clean"; //$NON-NLS-1$
 
 	boolean isAutoBuildEnable();
 	void setAutoBuildEnable(boolean enabled) throws CoreException;
 
 	String getAutoBuildTarget();
+
+	/**
+	 * @deprecated
+	 */
 	void setAutoBuildTarget(String target) throws CoreException;
 
 	boolean isIncrementalBuildEnabled();
 	void setIncrementalBuildEnable(boolean enabled) throws CoreException;
 
 	String getIncrementalBuildTarget();
+
+	/**
+	 * @deprecated
+	 */
 	void setIncrementalBuildTarget(String target) throws CoreException;
 
 	boolean isFullBuildEnabled();
 	void setFullBuildEnable(boolean enabled) throws CoreException;
 
 	String getFullBuildTarget();
+
+	/**
+	 * @deprecated
+	 */
 	void setFullBuildTarget(String target) throws CoreException;
 
 	String getCleanBuildTarget();
+
+	/**
+	 * @deprecated
+	 */
 	void setCleanBuildTarget(String target) throws CoreException;
 
 	boolean isCleanBuildEnabled();
 	void setCleanBuildEnable(boolean enabled) throws CoreException;
-	
-	String[] getErrorParsers();
-	void setErrorParsers(String[] parsers) throws CoreException;
 
-	Map getEnvironment();
-	void setEnvironment(Map env) throws CoreException;
-	
-	boolean appendEnvironment();
-	void setAppendEnvironment(boolean append) throws CoreException;
 }

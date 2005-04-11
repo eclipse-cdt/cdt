@@ -130,23 +130,24 @@ public class MakeProjectNature implements IProjectNature {
 		addBuildSpec();
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
 		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), MakeBuilder.BUILDER_ID);
-		projectInfo.setBuildLocation(info.getBuildLocation());
-
+		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
 
 		projectInfo.setUseDefaultBuildCmd(info.isDefaultBuildCmd());
 		projectInfo.setStopOnError(info.isStopOnError());
-		projectInfo.setBuildCommand(info.getBuildCommand());
 
 		projectInfo.setAutoBuildEnable(info.isAutoBuildEnable());
-		projectInfo.setAutoBuildTarget(info.getAutoBuildTarget());
-
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
+		
 		projectInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
-		projectInfo.setIncrementalBuildTarget(info.getIncrementalBuildTarget());
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, "")); //$NON-NLS-1$
 
 		projectInfo.setFullBuildEnable(info.isFullBuildEnabled());
-		projectInfo.setFullBuildTarget(info.getFullBuildTarget());
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, "")); //$NON-NLS-1$
+
 		projectInfo.setCleanBuildEnable(info.isCleanBuildEnabled());
-		projectInfo.setCleanBuildTarget(info.getCleanBuildTarget());
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "")); //$NON-NLS-1$
+
 		projectInfo.setErrorParsers(info.getErrorParsers());
 		projectInfo.setAppendEnvironment(info.appendEnvironment());
 		projectInfo.setEnvironment(info.getEnvironment());

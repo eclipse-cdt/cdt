@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IContainer;
@@ -39,7 +40,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -209,17 +209,19 @@ public class ProjectTargets {
 		targetElem.setAttribute(TARGET_ATTR_PATH, target.getContainer().getProjectRelativePath().toString());
 		Element elem = doc.createElement(TARGET_COMMAND);
 		targetElem.appendChild(elem);
-		elem.appendChild(doc.createTextNode(target.getBuildCommand().toString()));
+		elem.appendChild(doc.createTextNode(target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make"))); //$NON-NLS-1$
 
-		if (target.getBuildArguments().length() > 0) {
+		String targetAttr = target.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, null);
+		if ( targetAttr != null) {
 			elem = doc.createElement(TARGET_ARGUMENTS);
-			elem.appendChild(doc.createTextNode(target.getBuildArguments()));
+			elem.appendChild(doc.createTextNode(targetAttr));
 			targetElem.appendChild(elem);
 		}
 
-		if (target.getBuildTarget().length() > 0) {
+		targetAttr = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, null);
+		if (targetAttr != null) {
 			elem = doc.createElement(TARGET);
-			elem.appendChild(doc.createTextNode(target.getBuildTarget()));
+			elem.appendChild(doc.createTextNode(targetAttr));
 			targetElem.appendChild(elem);
 		}
 
@@ -363,19 +365,19 @@ public class ProjectTargets {
 						}
 						option = getString(node, TARGET_COMMAND);
 						if (option != null) {
-							target.setBuildCommand(new Path(option));
+							target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, option);
 						}
 						option = getString(node, TARGET_ARGUMENTS);
 						if (option != null) {
-							target.setBuildArguments(option);
+							target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, option);
 						}
 						option = getString(node, BAD_TARGET);
 						if (option != null) {
-							target.setBuildTarget(option);
+							target.setBuildAttribute(IMakeTarget.BUILD_TARGET, option);
 						}
 						option = getString(node, TARGET);
 						if (option != null) {
-							target.setBuildTarget(option);
+							target.setBuildAttribute(IMakeTarget.BUILD_TARGET, option);
 						}
 						add(target);
 					} catch (CoreException e) {

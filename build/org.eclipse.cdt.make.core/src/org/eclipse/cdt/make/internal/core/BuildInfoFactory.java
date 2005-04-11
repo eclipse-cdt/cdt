@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
@@ -36,6 +37,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.service.environment.*;
 
 public class BuildInfoFactory {
 
@@ -55,24 +58,77 @@ public class BuildInfoFactory {
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
 	static final String ENVIRONMENT = PREFIX + ".environment"; //$NON-NLS-1$
-	static final String BUILD_APPEND_ENVIRONMENT = ".append_environment"; //$NON-NLS-1$ 
+	static final String BUILD_APPEND_ENVIRONMENT = PREFIX + ".append_environment"; //$NON-NLS-1$ 
 
 	private abstract static class AbstractBuildInfo implements IMakeBuilderInfo {
-
 
 		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
 			putString(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
 		}
 
 		public boolean isDefaultBuildCmd() {
-			if (getString(USE_DEFAULT_BUILD_CMD) == null) { // if no property then default to true
+			if (getString(USE_DEFAULT_BUILD_CMD) == null) { // if no property
+				// then default to
+				// true
 				return true;
 			}
 			return getBoolean(USE_DEFAULT_BUILD_CMD);
 		}
 
+		public String getBuildAttribute(String name, String defaultValue) {
+			String value = getString(name);
+			if (value == null ) {
+				if (IMakeCommonBuildInfo.BUILD_COMMAND.equals(name)) {
+					value = getString(BuildInfoFactory.BUILD_COMMAND);
+				} else if (IMakeCommonBuildInfo.BUILD_ARGUMENTS.equals(name)) {
+					value = getString(BuildInfoFactory.BUILD_ARGUMENTS);
+				} else if (IMakeCommonBuildInfo.BUILD_LOCATION.equals(name)) {
+					value = getString(BuildInfoFactory.BUILD_LOCATION);
+				} else if (IMakeBuilderInfo.BUILD_TARGET_AUTO.equals(name)) {
+					value = getString(BuildInfoFactory.BUILD_TARGET_AUTO);
+				} else if (IMakeBuilderInfo.BUILD_TARGET_CLEAN.equals(name)) {
+					value = getString(BuildInfoFactory.BUILD_TARGET_CLEAN);
+				} else if (IMakeBuilderInfo.BUILD_TARGET_FULL.equals(name)) {
+					value = getString(BuildInfoFactory.BUILD_TARGET_FULL);
+				} else if (IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL.equals(name)) {
+					value = getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL);
+				} 
+			} 
+			return value != null ? value : defaultValue != null ? defaultValue : ""; //$NON-NLS-1$
+		}
+
+		public void setBuildAttribute(String name, String value) throws CoreException {
+			putString(name, value);
+		}
+
+		public Map getExpandedEnvironment() {
+			Map env = getEnvironment();
+			HashMap envMap = new HashMap(env.entrySet().size());
+			Iterator iter = env.entrySet().iterator();
+			boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry)iter.next();
+				String key = (String)entry.getKey();
+				if (win32) {
+					// Win32 vars are case insensitive. Uppercase everything so
+					// that (for example) "pAtH" will correctly replace "PATH"
+					key = key.toUpperCase();
+				}
+				String value = (String)entry.getValue();
+				// translate any string substitution variables
+				String translated = value;
+				try {
+					translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value, false);
+				} catch (CoreException e) {
+				}
+				envMap.put(key, translated);
+			}
+			return envMap;
+		}
+
 		public void setBuildCommand(IPath location) throws CoreException {
-			putString(BUILD_COMMAND, location.toString());
+			putString(IMakeCommonBuildInfo.BUILD_COMMAND, null);
+			putString(BuildInfoFactory.BUILD_COMMAND, location.toString());
 		}
 
 		public IPath getBuildCommand() {
@@ -83,21 +139,23 @@ public class BuildInfoFactory {
 				}
 				return new Path(command);
 			}
-			return new Path(getString(BUILD_COMMAND));
+			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, getString(BuildInfoFactory.BUILD_COMMAND));
+			try {
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+			} catch (CoreException e) {
+			}
+			return new Path(result);
 		}
 
 		protected String getBuildParameter(String name) {
-			IExtension extension =
-				Platform.getExtensionRegistry().getExtension(
-					ResourcesPlugin.PI_RESOURCES,
-					ResourcesPlugin.PT_BUILDERS,
-					getBuilderID());
+			IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES,
+					ResourcesPlugin.PT_BUILDERS, getBuilderID());
 			if (extension == null)
 				return null;
 			IConfigurationElement[] configs = extension.getConfigurationElements();
 			if (configs.length == 0)
 				return null;
-			//The nature exists, or this builder doesn't specify a nature
+			// The nature exists, or this builder doesn't specify a nature
 			IConfigurationElement[] runElement = configs[0].getChildren("run"); //$NON-NLS-1$
 			IConfigurationElement[] paramElement = runElement[0].getChildren("parameter"); //$NON-NLS-1$
 			for (int i = 0; i < paramElement.length; i++) {
@@ -111,14 +169,36 @@ public class BuildInfoFactory {
 		protected abstract String getBuilderID();
 
 		public void setBuildLocation(IPath location) throws CoreException {
-			putString(BUILD_LOCATION, location.toString());
+			putString(IMakeCommonBuildInfo.BUILD_LOCATION, null);
+			putString(BuildInfoFactory.BUILD_LOCATION, location.toString());
 		}
 
 		public IPath getBuildLocation() {
-			String location = getString(BUILD_LOCATION);
-			return new Path(location == null ? "" : location); //$NON-NLS-1$
+			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, getString(BuildInfoFactory.BUILD_LOCATION));
+			try {
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+			} catch (CoreException e) {
+			}
+			return new Path(result);
 		}
 
+		public String getBuildArguments() {
+			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, getString(BuildInfoFactory.BUILD_ARGUMENTS));
+			if (result == null) {
+				return ""; //$NON-NLS-1$
+			}
+			try {
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+			} catch (CoreException e) {
+			}
+			return result;
+		}
+
+		public void setBuildArguments(String args) throws CoreException {
+			putString(IMakeCommonBuildInfo.BUILD_ARGUMENTS, null);
+			putString(BuildInfoFactory.BUILD_ARGUMENTS, args);
+		}
+		
 		public void setStopOnError(boolean enabled) throws CoreException {
 			putString(STOP_ON_ERROR, new Boolean(enabled).toString());
 		}
@@ -128,43 +208,61 @@ public class BuildInfoFactory {
 		}
 
 		public void setAutoBuildTarget(String target) throws CoreException {
-			putString(BUILD_TARGET_AUTO, target);
+			putString(IMakeBuilderInfo.BUILD_TARGET_AUTO, null);
+			putString(BuildInfoFactory.BUILD_TARGET_AUTO, target);
 		}
 
 		public String getAutoBuildTarget() {
-			return getString(BUILD_TARGET_AUTO);
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, getString(BuildInfoFactory.BUILD_TARGET_AUTO));
+			try {
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+			} catch (CoreException e) {
+			}
+			return result;
 		}
 
 		public void setIncrementalBuildTarget(String target) throws CoreException {
-			putString(BUILD_TARGET_INCREMENTAL, target);
+			putString(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, null);
+			putString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL, target);
 		}
 
 		public String getIncrementalBuildTarget() {
-			return getString(BUILD_TARGET_INCREMENTAL);
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL,
+					getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
+			try {
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+			} catch (CoreException e) {
+			}
+			return result;
 		}
 
 		public void setFullBuildTarget(String target) throws CoreException {
-			putString(BUILD_TARGET_FULL, target);
+			putString(IMakeBuilderInfo.BUILD_TARGET_FULL, null);
+			putString(BuildInfoFactory.BUILD_TARGET_FULL, target);
 		}
 
 		public String getFullBuildTarget() {
-			return getString(BUILD_TARGET_FULL);
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, getString(BuildInfoFactory.BUILD_TARGET_FULL));
+			try {
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+			} catch (CoreException e) {
+			}
+			return result;
 		}
 
 		public void setCleanBuildTarget(String target) throws CoreException {
-			putString(BUILD_TARGET_CLEAN, target);
+			putString(IMakeBuilderInfo.BUILD_TARGET_CLEAN, null);
+			putString(BuildInfoFactory.BUILD_TARGET_CLEAN, target);
 		}
 
 		public String getCleanBuildTarget() {
-			return getString(BUILD_TARGET_CLEAN);
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, getString(BuildInfoFactory.BUILD_TARGET_CLEAN));
+			try {
+				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
+			} catch (CoreException e) {
+			}
+			return result;
 		}
-
-		public boolean getBoolean(String property) {
-			return Boolean.valueOf(getString(property)).booleanValue();
-		}
-
-		protected abstract void putString(String name, String value) throws CoreException;
-		protected abstract String getString(String property);
 
 		public void setAutoBuildEnable(boolean enabled) throws CoreException {
 			putString(BUILD_AUTO_ENABLED, new Boolean(enabled).toString());
@@ -198,14 +296,6 @@ public class BuildInfoFactory {
 			return getBoolean(BUILD_CLEAN_ENABLED);
 		}
 
-		public String getBuildArguments() {
-			return getString(BUILD_ARGUMENTS);
-		}
-
-		public void setBuildArguments(String args) throws CoreException {
-			putString(BUILD_ARGUMENTS, args);
-		}
-
 		public String[] getErrorParsers() {
 			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
 			if (parsers != null && parsers.length() > 0) {
@@ -214,7 +304,7 @@ public class BuildInfoFactory {
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
-				return (String[]) list.toArray(new String[list.size()]);
+				return (String[])list.toArray(new String[list.size()]);
 			}
 			return new String[0];
 		}
@@ -236,53 +326,61 @@ public class BuildInfoFactory {
 		}
 
 		public boolean appendEnvironment() {
-			if (getString(BUILD_APPEND_ENVIRONMENT).length() > 0) {
+			if (getString(BUILD_APPEND_ENVIRONMENT) != null) {
 				return getBoolean(BUILD_APPEND_ENVIRONMENT);
 			}
 			return true;
 		}
-		
+
 		public void setAppendEnvironment(boolean append) throws CoreException {
 			putString(BUILD_APPEND_ENVIRONMENT, new Boolean(append).toString());
 		}
-		
+
+		public boolean getBoolean(String property) {
+			return Boolean.valueOf(getString(property)).booleanValue();
+		}
+
 		protected Map decodeMap(String value) {
 			Map map = new HashMap();
-			StringBuffer envStr = new StringBuffer(value);
-			String escapeChars = "|\\"; //$NON-NLS-1$
-			char escapeChar = '\\';
-			try {
-				while (envStr.length() > 0) {
-					int ndx = 0;
-					while (ndx < envStr.length() ) {
-						if (escapeChars.indexOf(envStr.charAt(ndx)) != -1) {
-							if (envStr.charAt(ndx - 1) == escapeChar) { // escaped '|' - remove '\' and continue on.
-								envStr.deleteCharAt(ndx - 1);
-								if (ndx == envStr.length()) {
+			if (value != null) {
+				StringBuffer envStr = new StringBuffer(value);
+				String escapeChars = "|\\"; //$NON-NLS-1$
+				char escapeChar = '\\';
+				try {
+					while (envStr.length() > 0) {
+						int ndx = 0;
+						while (ndx < envStr.length()) {
+							if (escapeChars.indexOf(envStr.charAt(ndx)) != -1) {
+								if (envStr.charAt(ndx - 1) == escapeChar) { 
+									// escaped '|' - remove '\' and continue on.
+									envStr.deleteCharAt(ndx - 1);
+									if (ndx == envStr.length()) {
+										break;
+									}
+								}
+								if (envStr.charAt(ndx) == '|')
+									break;
+							}
+							ndx++;
+						}
+						StringBuffer line = new StringBuffer(envStr.substring(0, ndx));
+						int lndx = 0;
+						while (lndx < line.length()) {
+							if (line.charAt(lndx) == '=') {
+								if (line.charAt(lndx - 1) == escapeChar) {
+									// escaped '=' - remove '\' and continue on.
+									line.deleteCharAt(lndx - 1);
+								} else {
 									break;
 								}
 							}
-							if (envStr.charAt(ndx) == '|')
-								break;
+							lndx++;
 						}
-						ndx++;
+						map.put(line.substring(0, lndx), line.substring(lndx + 1));
+						envStr.delete(0, ndx + 1);
 					}
-					StringBuffer line = new StringBuffer(envStr.substring(0, ndx));
-					int lndx = 0;
-					while (lndx < line.length() ) {
-						if (line.charAt(lndx) == '=') {
-							if (line.charAt(lndx - 1) == escapeChar) { // escaped '=' - remove '\' and continue on.
-								line.deleteCharAt(lndx - 1);
-							} else {
-								break;
-							}
-						}
-						lndx++;
-					}
-					map.put(line.substring(0, lndx), line.substring(lndx + 1));
-					envStr.delete(0, ndx+1);
+				} catch (StringIndexOutOfBoundsException e) {
 				}
-			} catch (StringIndexOutOfBoundsException e) {
 			}
 			return map;
 		}
@@ -291,10 +389,10 @@ public class BuildInfoFactory {
 			StringBuffer str = new StringBuffer();
 			Iterator entries = values.entrySet().iterator();
 			while (entries.hasNext()) {
-				Entry entry = (Entry) entries.next();
-				str.append(escapeChars((String) entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
+				Entry entry = (Entry)entries.next();
+				str.append(escapeChars((String)entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
 				str.append("="); //$NON-NLS-1$
-				str.append(escapeChars((String) entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
+				str.append(escapeChars((String)entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
 				str.append("|"); //$NON-NLS-1$
 			}
 			return str.toString();
@@ -302,17 +400,21 @@ public class BuildInfoFactory {
 
 		protected String escapeChars(String string, String escapeChars, char escapeChar) {
 			StringBuffer str = new StringBuffer(string);
-			for(int i = 0; i < str.length(); i++) {
-				if ( escapeChars.indexOf(str.charAt(i)) != -1) {
+			for (int i = 0; i < str.length(); i++) {
+				if (escapeChars.indexOf(str.charAt(i)) != -1) {
 					str.insert(i, escapeChar);
 					i++;
 				}
 			}
 			return str.toString();
 		}
-	}
+
+		protected abstract void putString(String name, String value) throws CoreException;
+		protected abstract String getString(String property);
+ 	}
 
 	private static class BuildInfoPreference extends AbstractBuildInfo {
+
 		private Preferences prefs;
 		private String builderID;
 		private boolean useDefaults;
@@ -325,13 +427,22 @@ public class BuildInfoFactory {
 
 		protected void putString(String name, String value) {
 			if (useDefaults) {
-				prefs.setDefault(name, value);
+				if (value != null) {
+					prefs.setDefault(name, value);
+				}
 			} else {
+				if (value == null) {
+					prefs.setValue(name, prefs.getDefaultString(name));
+					return;
+				}
 				prefs.setValue(name, value);
 			}
 		}
 
 		protected String getString(String property) {
+			if (!prefs.contains(property)) {
+				return null;
+			}
 			if (useDefaults) {
 				return prefs.getDefaultString(property);
 			}
@@ -344,6 +455,7 @@ public class BuildInfoFactory {
 	}
 
 	private static class BuildInfoProject extends AbstractBuildInfo {
+
 		private IProject project;
 		private String builderID;
 		private Map args;
@@ -354,19 +466,24 @@ public class BuildInfoFactory {
 			ICommand builder;
 			builder = MakeProjectNature.getBuildSpec(project.getDescription(), builderID);
 			if (builder == null) {
-				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeMessages.getString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
 			}
 			args = builder.getArguments();
 		}
 
 		protected void putString(String name, String value) throws CoreException {
-			String curValue = (String) args.get(name);
+			String curValue = (String)args.get(name);
 			if (curValue != null && curValue.equals(value)) {
 				return;
 			}
+			if (value == null) {
+				args.remove(name);
+			} else {
+				args.put(name, value);
+			}
 			IProjectDescription description = project.getDescription();
 			ICommand builder = MakeProjectNature.getBuildSpec(description, builderID);
-			args.put(name, value);
 			builder.setArguments(args);
 			builder.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, isAutoBuildEnable());
 			builder.setBuilding(IncrementalProjectBuilder.FULL_BUILD, isFullBuildEnabled());
@@ -377,8 +494,7 @@ public class BuildInfoFactory {
 		}
 
 		protected String getString(String name) {
-			String value = (String) args.get(name);
-			return value == null ? "" : value; //$NON-NLS-1$
+			return (String)args.get(name);
 		}
 
 		protected String getBuilderID() {
@@ -387,6 +503,7 @@ public class BuildInfoFactory {
 	}
 
 	private static class BuildInfoMap extends AbstractBuildInfo {
+
 		private Map args;
 		private String builderID;
 
@@ -396,11 +513,15 @@ public class BuildInfoFactory {
 		}
 
 		protected void putString(String name, String value) {
-			args.put(name, value);
+			if (value == null) {
+				args.remove(name);
+			} else {
+				args.put(name, value);
+			}
 		}
 
 		protected String getString(String name) {
-			return args.get(name) != null ? (String)args.get(name) : ""; //$NON-NLS-1$
+			return (String)args.get(name);
 		}
 
 		protected String getBuilderID() {

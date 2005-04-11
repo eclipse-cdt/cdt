@@ -33,21 +33,22 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.osgi.service.environment.Constants;
 
 public class MakeBuilder extends ACBuilder {
 
@@ -90,12 +91,23 @@ public class MakeBuilder extends ACBuilder {
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		final IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(getProject(), BUILDER_ID);
 		if (shouldBuild(CLEAN_BUILD, info)) {
+			IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
+			final ISchedulingRule rule = ruleFactory.modifyRule(getProject());
 			Job backgroundJob = new Job("Standard Make Builder"){  //$NON-NLS-1$
 				/* (non-Javadoc)
 				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
 				protected IStatus run(IProgressMonitor monitor) {
-					invokeMake(CLEAN_BUILD, info, monitor);
+					try {
+						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+
+							public void run(IProgressMonitor monitor) {
+								invokeMake(CLEAN_BUILD, info, monitor);
+							}
+						}, rule, IWorkspace.AVOID_UPDATE, monitor);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
 					IStatus returnStatus = Status.OK_STATUS;
 					return returnStatus;
 				}
@@ -103,7 +115,7 @@ public class MakeBuilder extends ACBuilder {
 				
 			};
 			
-			backgroundJob.setRule(getProject());
+			backgroundJob.setRule(rule);
 			backgroundJob.schedule();
 		}
 	}
@@ -138,6 +150,7 @@ public class MakeBuilder extends ACBuilder {
 				if (workingDirectory == null) {
 					workingDirectory = currProject.getLocation();
 				}
+
 				String[] targets = getTargets(kind, info);
 				if (targets.length != 0 && targets[targets.length - 1].equals(info.getCleanBuildTarget())) //$NON-NLS-1$
 					isClean = true;
@@ -155,24 +168,8 @@ public class MakeBuilder extends ACBuilder {
 				envMap.put("CWD", workingDirectory.toOSString()); //$NON-NLS-1$
 				envMap.put("PWD", workingDirectory.toOSString()); //$NON-NLS-1$
 				// Add variables from build info
-				Map userEnv = info.getEnvironment();
-				Iterator iter= userEnv.entrySet().iterator();
-				boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
-				while (iter.hasNext()) {
-					Map.Entry entry= (Map.Entry) iter.next();
-					String key= (String) entry.getKey();
-					if (win32) {
-						// Win32 vars are case insensitive. Uppercase everything so
-						// that (for example) "pAtH" will correctly replace "PATH"
-						key= key.toUpperCase();
-					}
-					String value = (String) entry.getValue();
-					// translate any string substitution variables
-					String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
-					envMap.put(key, translated);
-				}		
-				
-				iter= envMap.entrySet().iterator();
+				envMap.putAll(info.getExpandedEnvironment());
+				Iterator iter = envMap.entrySet().iterator();
 				List strings= new ArrayList(envMap.size());
 				while (iter.hasNext()) {
 					Map.Entry entry = (Map.Entry) iter.next();
@@ -191,8 +188,7 @@ public class MakeBuilder extends ACBuilder {
 				} else {
 					String args = info.getBuildArguments();
 					if (args != null && !args.equals("")) { //$NON-NLS-1$
-						String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
-						String[] newArgs = makeArray(translated);
+						String[] newArgs = makeArray(args);
 						buildArguments = new String[targets.length + newArgs.length];
 						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
 						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
@@ -297,7 +293,7 @@ public class MakeBuilder extends ACBuilder {
 		return true;
 	}
 
-	protected String[] getTargets(int kind, IMakeBuilderInfo info) throws CoreException {
+	protected String[] getTargets(int kind, IMakeBuilderInfo info) {
 		String targets = ""; //$NON-NLS-1$
 		switch (kind) {
 			case IncrementalProjectBuilder.AUTO_BUILD :
@@ -313,8 +309,7 @@ public class MakeBuilder extends ACBuilder {
 				targets = info.getCleanBuildTarget();
 				break;
 		}
-		String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(targets);
-		return makeArray(translated);
+		return makeArray(targets);
 	}
 
 	// Turn the string into an array.

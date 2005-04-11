@@ -10,41 +10,31 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
-import java.util.Map;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public interface IMakeTarget extends IAdaptable {
+public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
+	
+	public final static String BUILD_TARGET = ARGS_PREFIX + ".build.target"; //$NON-NLS-1$
+
 	String getName();
 	String getTargetBuilderID();
 	
-	boolean isStopOnError();
-	void setStopOnError(boolean stopOnError) throws CoreException;
-
-	boolean isDefaultBuildCmd();
-	void setUseDefaultBuildCmd(boolean useDefault) throws CoreException;
-
+	/**
+	 * @deprecated
+	 */
 	void setBuildTarget(String target) throws CoreException;
+
+	
+	/**
+	 * @deprecated
+	 */
 	String getBuildTarget() ;
 	
-	IPath getBuildCommand();
-	void setBuildCommand(IPath command) throws CoreException;
-
-	String getBuildArguments();
-	void setBuildArguments(String arguments) throws CoreException;
-
-	void setRunAllBuilders(boolean runAllBuilders);
+	void setRunAllBuilders(boolean runAllBuilders) throws CoreException;
 	boolean runAllBuilders();
-	
-	void setBuildEnvironment(Map env) throws CoreException;
-	Map getBuildEnvironment();
-	
-	void setAppendEnvironment(boolean append) throws CoreException;
-	boolean isAppendEnvironment(); 
 	
 	/**
 	 * Get the target build container.

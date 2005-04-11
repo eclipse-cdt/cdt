@@ -9,6 +9,7 @@
 package org.eclipse.cdt.make.internal.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -29,18 +30,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
 		try {
-			info.setBuildCommand(new Path("make")); //$NON-NLS-1$
-			info.setBuildLocation(new Path("")); //$NON-NLS-1$
+			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make"); //$NON-NLS-1$
+			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, ""); //$NON-NLS-1$
 			info.setStopOnError(false);
 			info.setUseDefaultBuildCmd(true);
 			info.setAutoBuildEnable(false);
-			info.setAutoBuildTarget("all"); //$NON-NLS-1$
+			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "all"); //$NON-NLS-1$
 			info.setIncrementalBuildEnable(true);
-			info.setIncrementalBuildTarget("all"); //$NON-NLS-1$
+			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, "all"); //$NON-NLS-1$
 			info.setFullBuildEnable(true);
-			info.setFullBuildTarget("clean all"); //$NON-NLS-1$
+			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, "clean all"); //$NON-NLS-1$
 			info.setCleanBuildEnable(true);
-			info.setCleanBuildTarget("clean"); //$NON-NLS-1$
+			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "clean"); //$NON-NLS-1$
 			info.setAppendEnvironment(true);
 			info.setErrorParsers(CCorePlugin.getDefault().getAllErrorParsersIDs());
 		} catch (CoreException e) {

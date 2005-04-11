@@ -1383,6 +1383,16 @@ public class CPPSemantics {
 	    } else if( obj instanceof ASTNode ){
 	        nd = (ASTNode) obj;
 	    }
+	    
+	    //avoid recursive loops in case of a malformed AST by requiring the decl of the type of a function parameter
+	    //to occur before the start of that function's declarator.
+	    if( node instanceof IASTName && node.getPropertyInParent() == IASTNamedTypeSpecifier.NAME ) {
+	        IASTNode n = node.getParent();
+	        if( n.getPropertyInParent() == IASTParameterDeclaration.DECL_SPECIFIER ){
+	            node = (ASTNode) n.getParent().getParent();  //parent is param, parent.parent is fnDtor
+	        }
+	    }
+	    
 	    if( nd != null ){
 	        int pointOfDecl = 0;
             ASTNodeProperty prop = nd.getPropertyInParent();

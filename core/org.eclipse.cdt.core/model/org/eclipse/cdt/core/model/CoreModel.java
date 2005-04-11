@@ -454,7 +454,7 @@ public class CoreModel {
 	 * @return IIncludeEntry
 	 */
 	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath) {
-		return newIncludeEntry(resourcePath, basePath, includePath, false);
+		return newIncludeEntry(resourcePath, basePath, includePath, true);
 	}
 
 	/**
@@ -529,7 +529,7 @@ public class CoreModel {
 	 * @return IIincludeEntry
 	 */
 	public static IIncludeEntry newIncludeRefEntry(IPath resourcePath, IPath baseRef, IPath includePath) {
-		return new IncludeEntry(resourcePath, null, baseRef, includePath, false, null, false);
+		return new IncludeEntry(resourcePath, null, baseRef, includePath, true, null, false);
 	}
 
 	/**

@@ -1,3 +1,10 @@
+2005-04-11 Vladimir Hirsl
+	Fix for PR 90193: Scanner faililng on Local/User paths as provided in Std. Make
+	User specified include paths (through the UI) are now created with 
+	isSystemInclude attribute set to true.
+	
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+
 2005-04-08 Vladimir Hirsl
 	Added offset and length parameters for index entries.
 	Refactoring of AbstractIndexer. Moved old parser specific stuff to the appropriate subclass.

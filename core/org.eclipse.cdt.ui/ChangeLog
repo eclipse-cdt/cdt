@@ -1,3 +1,10 @@
+2005-04-11 Vladimir Hirsl
+	Fix for PR 90193: Scanner faililng on Local/User paths as provided in Std. Make
+	User specified include paths (through the UI) are now created with 
+	isSystemInclude attribute set to true.
+	
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPElement.java
+
 2005-04-08 Alain Magloire
 	New icons from the IBM folks(Patch from DDaoust)
 	* icons/*

@@ -96,7 +96,7 @@ public class CPElement {
 			case IPathEntry.CDT_INCLUDE :
 				createAttributeElement(INCLUDE, new Path("")); //$NON-NLS-1$
 				createAttributeElement(EXCLUSION, new Path[0]);
-				createAttributeElement(SYSTEM_INCLUDE, Boolean.valueOf(false));
+				createAttributeElement(SYSTEM_INCLUDE, Boolean.valueOf(true));
 				createAttributeElement(BASE_REF, new Path("")); //$NON-NLS-1$
 				createAttributeElement(BASE, new Path("")); //$NON-NLS-1$
 				break;

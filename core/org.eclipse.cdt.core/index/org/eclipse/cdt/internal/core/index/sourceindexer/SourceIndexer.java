@@ -653,7 +653,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
         this.indexAll(project);
     }
 
-	public void indexerChangeNotification(IProject project) {
+	public void indexerRemoved(IProject project) {
 		//Remove any existing problem markers
 		/*try {
 			 IMarker[] markers = project.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);

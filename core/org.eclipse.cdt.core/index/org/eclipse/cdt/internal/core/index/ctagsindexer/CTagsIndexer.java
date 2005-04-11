@@ -65,15 +65,15 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	public void addRequest(IProject project, IResourceDelta delta, int kind) {
 	    
 		switch (kind) {
-		 /*
+		 
 			case ICDTIndexer.PROJECT:
-			    this.indexAll(element.getCProject().getProject());
+			    this.indexAll(project);
 				break;
 	        
-			case ICDTIndexer.FOLDER:
+			/*case ICDTIndexer.FOLDER:
 				this.indexSourceFolder(element.getCProject().getProject(),element.getPath(),null);
-			break;
-		*/
+			break;*/
+		
 			
 			case ICDTIndexer.COMPILATION_UNIT:
 				IFile file = (IFile) delta.getResource();
@@ -102,22 +102,27 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	 * @see org.eclipse.cdt.core.index.ICDTIndexer#removeRequest(org.eclipse.cdt.core.model.ICElement, org.eclipse.core.resources.IResourceDelta)
 	 */
 	public void removeRequest(IProject project, IResourceDelta delta, int kind) {
-	    
 		switch (kind) {
-		 /*
-			case ICDTIndexer.PROJECT:
-			    this.indexAll(element.getCProject().getProject());
-				break;
-	        
-			case ICDTIndexer.FOLDER:
-				this.indexSourceFolder(element.getCProject().getProject(),element.getPath(),null);
+		case ICDTIndexer.PROJECT :
+			IPath fullPath = project.getFullPath();
+			if( delta.getKind() == IResourceDelta.CHANGED )
+				indexManager.discardJobs(fullPath.segment(0));
+			indexStorage.removeIndexFamily(fullPath);
+			// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
 			break;
-		*/
-		case ICDTIndexer.COMPILATION_UNIT:
-		break;
+			// NB: Update of index if project is opened, closed, or its c nature is added or removed
+			//     is done in updateCurrentDeltaAndIndex
 		
-		}
-			
+		/*
+		  case ICDTIndexer.FOLDER :
+			this.removeSourceFolderFromIndex(project,project.getFullPath(),null);
+			break;*/
+		
+		case ICDTIndexer.COMPILATION_UNIT:
+			IFile file = (IFile) delta.getResource();
+			this.remove(file.getFullPath().toString(), file.getProject().getFullPath());
+			break;				
+	}	
 	}
 
 	/* (non-Javadoc)
@@ -361,7 +366,7 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 		} catch (CoreException e1) {}
 	}
 
-	public void indexerChangeNotification(IProject project) {
+	public void indexerRemoved(IProject project) {
 		//Remove any existing problem markers
 		try {
 			project.deleteMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);

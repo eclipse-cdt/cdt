@@ -341,7 +341,7 @@ public class IndexManager extends JobManager{
 		//Get rid of the old index file
 	    ICDTIndexer currentIndexer = getIndexerForProject(project);
 		
-		currentIndexer.indexerChangeNotification(project);
+		currentIndexer.indexerRemoved(project);
 		
 	    IIndexStorage storage = currentIndexer.getIndexStorage();
 	    if (storage instanceof CIndexStorage)

@@ -207,9 +207,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 				setPage();
 			}
 		});
-        //Add button
-        ControlFactory.createPushButton(group,"Info ..."); //$NON-NLS-1$
-        
+		//Make sure that the combo box takes up two cells
+        GridData gridData = (GridData) indexersComboBox.getLayoutData();
+		gridData.verticalSpan=2;
+		
         // fill the combobox and set the initial value
         for (Iterator items = getIndexerPageIdList().iterator(); items.hasNext();) {
             String profileId = (String)items.next();

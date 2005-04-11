@@ -319,14 +319,36 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
 
     public void testBug90851() throws Exception {
         IFile imacro_file = importFile( "macro.h", "#define BEAST 666\n"); //$NON-NLS-1$ //$NON-NLS-2$
-        IFile include_file = importFile( "include.h", "int value = BEAST;\n"); //$NON-NLS-1$ //$NON-NLS-2$
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#ifndef _INCLUDE_H_\n" ); //$NON-NLS-1$
+        buffer.append( "#define _INCLUDE_H_\n" ); //$NON-NLS-1$
+        buffer.append( "typedef void (*vfp)();\n" ); //$NON-NLS-1$
+        buffer.append( "typedef int (*ifp)();\n" ); //$NON-NLS-1$
+        buffer.append( "struct Include {\n" ); //$NON-NLS-1$
+        buffer.append( "int i;\n" ); //$NON-NLS-1$
+        buffer.append( "};\n" ); //$NON-NLS-1$
+        buffer.append( "#endif /*_INCLUDE_H_*/\n" ); //$NON-NLS-1$
+        final String inc_file_code = buffer.toString();
+        IFile include_file = importFile( "include.h", inc_file_code ); //$NON-NLS-1$ //$NON-NLS-2$
         String [] macros =  { imacro_file.getLocation().toOSString() };
         String [] includes = { include_file.getLocation().toOSString() }; 
         IExtendedScannerInfo scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, EMPTY_STRING_ARRAY,  macros, includes  );
-        IFile code = importFile( "main.c", "int main() { return value; } "); //$NON-NLS-1$ //$NON-NLS-2$
+        IFile code = importFile( "main.c", "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ //$NON-NLS-2$
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
                 : null) {
-            parse(code, p, scannerInfo ); //$NON-NLS-1$
+            IASTTranslationUnit tu = parse(code, p, scannerInfo ); //$NON-NLS-1$
+            IASTPreprocessorMacroDefinition [] macro_defs = tu.getMacroDefinitions();
+            assertEquals( macro_defs.length, 2 );
+            IASTPreprocessorMacroDefinition BEAST = macro_defs[0];
+            assertEquals( BEAST.getName().toString(), "BEAST"); //$NON-NLS-1$
+            IASTPreprocessorMacroDefinition INCLUDE_H = macro_defs[1];
+            final IASTNodeLocation[] nodeLocations = INCLUDE_H.getName().getNodeLocations();
+            assertEquals( nodeLocations.length, 1 );
+            final IASTFileLocation flatLoc = tu.flattenLocationsToFile( nodeLocations );
+            assertNotNull( flatLoc );
+            assertEquals( include_file.getLocation().toOSString(), flatLoc.getFileName() );
+            assertEquals( inc_file_code.indexOf( "#define _INCLUDE_H_") + "#define ".length(), flatLoc.getNodeOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
+            assertEquals( "_INCLUDE_H_".length(), flatLoc.getNodeLength() ); //$NON-NLS-1$
         }        
     }
 

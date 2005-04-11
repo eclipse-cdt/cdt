@@ -266,16 +266,18 @@ public class CEditorHoverConfigurationBlock {
 				if (id == null)
 					return;
 				CEditorTextHoverDescriptor[] descriptors= getContributedHovers();
+				HoverConfig hoverConfig = null;
 				int i= 0, length= fHoverConfigs.length;
 				while (i < length) {
 					if (id.equals(descriptors[i].getId())) {
-						fHoverConfigs[i].fIsEnabled= event.getChecked();
+						hoverConfig = fHoverConfigs[i];
+						hoverConfig.fIsEnabled= event.getChecked();
 						fModifierEditor.setEnabled(event.getChecked());
 						break;
 					}
 					i++;
 				}
-				updateStatus();
+				updateStatus(hoverConfig);
 			}
 		});
 		
@@ -431,7 +433,7 @@ public class CEditorHoverConfigurationBlock {
 		fStatus= new StatusInfo();
 		restoreFromPreferences();
 		initializeFields();
-		updateStatus();
+		updateStatus(null);
 	}
 
 	private void restoreFromPreferences() {
@@ -501,7 +503,7 @@ public class CEditorHoverConfigurationBlock {
 		// update table
 		fHoverTableViewer.refresh(getContributedHovers()[i]);
 		
-		updateStatus();
+		updateStatus(fHoverConfigs[i]);
 	}
 
 	void handleHoverListSelection() {	
@@ -528,7 +530,12 @@ public class CEditorHoverConfigurationBlock {
 		return fStatus;
 	}
 
-	void updateStatus() {
+	void updateStatus(HoverConfig hoverConfig) {
+		if (hoverConfig != null && hoverConfig.fIsEnabled && hoverConfig.fStateMask == -1)
+			fStatus= new StatusInfo(IStatus.ERROR, PreferencesMessages.getFormattedString("CEditorHoverConfigurationBlock.modifierIsNotValid", hoverConfig.fModifierString)); //$NON-NLS-1$
+		else
+			fStatus= new StatusInfo();
+
 		int i= 0;
 		HashMap stateMasks= new HashMap(fHoverConfigs.length);
 		while (fStatus.isOK() && i < fHoverConfigs.length) {

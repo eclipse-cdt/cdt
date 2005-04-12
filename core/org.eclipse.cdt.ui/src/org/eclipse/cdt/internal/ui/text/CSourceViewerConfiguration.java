@@ -6,6 +6,10 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Vector;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
@@ -16,6 +20,8 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -192,14 +198,20 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-		if(getEditor() == null) {
+		if (getEditor() == null) {
 			return null;
 		}
 
 		ContentAssistant assistant = new ContentAssistant();
 		
+		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditor().getEditorInput());
+		IResource resource = workingCopy.getResource();
+		IProject project = resource.getProject();
+		ICFileType type = CCorePlugin.getDefault().getFileType(project, resource.getLocation().lastSegment());
+		
 		IContentAssistProcessor processor
-			= getPreferenceStore().getBoolean(ContentAssistPreference.DONT_USE_DOM)
+			= (type.getLanguage().getId().equals(ICFileTypeConstants.LANG_C)
+					|| getPreferenceStore().getBoolean(ContentAssistPreference.DONT_USE_DOM))
 			? (IContentAssistProcessor)new CCompletionProcessor(getEditor())
 			: (IContentAssistProcessor)new CCompletionProcessor2(getEditor());
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);

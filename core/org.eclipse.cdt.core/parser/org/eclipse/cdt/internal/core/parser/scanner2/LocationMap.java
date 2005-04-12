@@ -974,10 +974,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return parent;
         }
 
-        public boolean contains(int offset) {
-            if (offset >= context_directive_start && offset <= context_ends)
-                return true;
-            return false;
+        public final boolean contains(int offset) {
+            return (offset >= context_directive_start && offset <= context_ends);
         }
 
         public boolean containsInDirective(int offset, int length) {
@@ -1057,28 +1055,65 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
         public _Context findContextContainingOffset(int offset) {
             if (!hasSubContexts()) {
-                if (contains(offset))
+                if (offset >= context_directive_start && offset <= context_ends)
                     return this;
                 return null;
             }
             _Context[] l = getSubContexts();
-            for (int i = 0; i < l.length; ++i) {
-                _Context c = l[i];
-                if (c.contains(offset)) {
-                    if (c instanceof _CompositeContext) {
-                        _Context trial = ((_CompositeContext) c)
-                                .findContextContainingOffset(offset);
-                        if (trial == null)
+            int low = 0;
+            int high = l.length-1;
+
+            while (low <= high) {
+                int mid = (low + high) >> 1;
+                _Context midVal = l[mid];
+                int cmp;
+                if( (offset >= midVal.context_directive_start && offset <= midVal.context_ends) )
+                    cmp = 0;
+                else if( midVal.context_directive_start > offset )
+                    cmp = 1;
+                else
+                    cmp = -1;
+
+                if (cmp < 0)
+                    low = mid + 1;
+                else if (cmp > 0)
+                    high = mid - 1;
+                else
+                {
+                    if( midVal instanceof _CompositeContext )
+                    {
+                        _Context c = ((_CompositeContext)midVal).findContextContainingOffset(offset);
+                        if( c != null )
                             return c;
-                        return trial;
                     }
-                    return c;
+                    return midVal;
                 }
             }
-            if (contains(offset))
+            if (offset >= context_directive_start && offset <= context_ends)
                 return this;
             return null;
+
+            
+            
+//            for (int i = 0; i < l.length; ++i) {
+//                _Context c = l[i];
+//                if (c.contains(offset)) {
+//                    if (c instanceof _CompositeContext) {
+//                        _Context trial = ((_CompositeContext) c)
+//                                .findContextContainingOffset(offset);
+//                        if (trial == null)
+//                            return c;
+//                        return trial;
+//                    }
+//                    return c;
+//                }
+//            }
+            //if no sub context contains this, do it this way
+//            if (contains(offset))
+//                return this;
+//            return null;
         }
+        
 
         public int getNumberOfContexts() {
             final _Context[] contextz = getSubContexts();
@@ -1090,7 +1125,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return result;
         }
 
-    }
+    }    
 
     protected static class _CompositeFileContext extends _CompositeContext {
         public CodeReader reader;
@@ -1586,7 +1621,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         if (tu == null)
             return EMPTY_LOCATION_ARRAY;
         _Context c = findContextForOffset(offset);
-        if (c.contains(offset + length)) {
+        int offset1 = offset + length;
+        if ((offset1 >= c.context_directive_start && offset1 <= c.context_ends)) {
             if (c instanceof _CompositeContext) {
                 _Context[] subz = ((_CompositeContext) c).getSubContexts();
                 boolean foundNested = false;

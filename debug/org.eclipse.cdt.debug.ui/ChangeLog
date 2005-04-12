@@ -1,3 +1,8 @@
+2005-04-12 Mikhail Khodjaiants
+	Bug 91155: Wrong icon for "Restart".
+	* icons/dlcl16/restart.gif
+	* icons/elcl16/restart.gif
+
 2005-04-07 Mikhail Khodjaiants
 	Applied patch from Dave Daoust (new images).
 

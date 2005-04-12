@@ -147,13 +147,21 @@ public class AST2SpecBaseTest extends TestCase {
          
         if( lang == ParserLanguage.C && expectNoProblems )
         {
-        	assertEquals( CVisitor.getProblems(tu).length, 0 );
-        	assertEquals( tu.getPreprocessorProblems().length, 0 );
+			if (CVisitor.getProblems(tu).length != 0) {
+				throw new ParserException (" CVisitor has AST Problems " ); //$NON-NLS-1$
+			}
+			if (tu.getPreprocessorProblems().length != 0) {
+				throw new ParserException (" C TranslationUnit has Preprocessor Problems " ); //$NON-NLS-1$
+			}
         }
         else if ( lang == ParserLanguage.CPP && expectNoProblems )
         {
-        	assertEquals( CPPVisitor.getProblems(tu).length, 0 );
-        	assertEquals( tu.getPreprocessorProblems().length, 0 );
+			if (CPPVisitor.getProblems(tu).length != 0) {
+				throw new ParserException (" CPPVisitor has AST Problems " ); //$NON-NLS-1$
+			}
+			if (tu.getPreprocessorProblems().length != 0) {
+				throw new ParserException (" CPP TranslationUnit has Preprocessor Problems " ); //$NON-NLS-1$
+			}
         }
         
         return tu;

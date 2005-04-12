@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 /**
  * Assembly text editor
  */
-public class AsmTextEditor extends AbstractDecoratedTextEditor {
+public class AsmTextEditor extends TextEditor {
 //public class AsmTextEditor extends StatusTextEditor {
 // FIXME: Should this editor have a different preference store ?
 // For now we are sharing with the CEditor and any changes will in the

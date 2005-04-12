@@ -49,7 +49,7 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
@@ -422,6 +422,20 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		
 	}
 	
+	public boolean affectsBehavior(PropertyChangeEvent event) {
+		return fTextTools.affectsBehavior(event);
+	}
+
+	/**
+	 * Adapts the behavior of the contained components to the change
+	 * encoded in the given event.
+	 * 
+	 * @param event the event to whch to adapt
+	 */
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		fTextTools.adaptToPreferenceChange(event);
+	}
+
 	protected IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}

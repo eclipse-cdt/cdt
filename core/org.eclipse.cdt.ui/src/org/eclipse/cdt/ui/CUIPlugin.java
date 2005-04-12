@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
-import org.eclipse.cdt.internal.ui.browser.typehierarchy.ITypeHierarchyViewPart;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;

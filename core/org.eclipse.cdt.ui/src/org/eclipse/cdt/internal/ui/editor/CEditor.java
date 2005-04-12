@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
 import org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeHierarchyAction;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
@@ -1289,9 +1288,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
-		AsmTextTools asmTools = CUIPlugin.getDefault().getAsmTextTools();
-		return textTools.affectsBehavior(event) || asmTools.affectsBehavior(event);
+		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+		if (configuration instanceof CSourceViewerConfiguration) {
+			return ((CSourceViewerConfiguration)configuration).affectsBehavior(event);
+		}
+		return false;
 	}
 
 	/**

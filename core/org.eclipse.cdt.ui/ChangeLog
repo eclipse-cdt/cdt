@@ -1,4 +1,18 @@
 2005-04-12 Alain Magloire
+	Fix for PR 91163, 91165 and 91169
+	* src/org/eclipse/cdt/internal/ui/compare/CMergeViewer.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.properties
+	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmTextEditor.java
+	* src/org/eclipse/cdt/internal/ui/preferences/AbstractPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CodeAssistPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CSourcePreviewerUpdater.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	* src/org/eclipse/cdt/internal/ui/text/CTextTools.java
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+
+2005-04-12 Alain Magloire
 	- icons/full: Remove obsolete directory.
 
 2005-04-11 Alain Magloire

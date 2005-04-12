@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -46,6 +47,14 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public abstract class AbstractPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	protected OverlayPreferenceStore fOverlayStore;
+
+	/**
+	 * List of master/slave listeners when there's a dependency.
+	 * 
+	 * @see #createDependency(Button, String, Control)
+	 * @since 3.0
+	 */
+	private ArrayList fMasterSlaveListeners= new ArrayList();
 
 	protected Map fTextFields = new HashMap();
 	private ModifyListener fTextFieldListener = new ModifyListener() {
@@ -157,6 +166,21 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		filler.setLayoutData(gd);
 	}
 
+	protected void createDependency(final Button master, String masterKey, final Control slave) {
+		indent(slave);
+		boolean masterState= fOverlayStore.getBoolean(masterKey);
+		slave.setEnabled(masterState);
+		SelectionListener listener= new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				slave.setEnabled(master.getSelection());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		};
+		master.addSelectionListener(listener);
+		fMasterSlaveListeners.add(listener);
+	}
+
 	protected void numberFieldChanged(Text textControl) {
 		String number = textControl.getText();
 		IStatus status = validatePositiveNumber(number);
@@ -245,13 +269,6 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 	protected abstract OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys();
 	
-    public void createControl(Composite parent){
-    	super.createControl(parent);
-		fOverlayStore.load();
-		fOverlayStore.start();
-    	initializeFields();
-	}
-
 	protected void initializeFields() {
 
 		Iterator e = fColorButtons.keySet().iterator();
@@ -290,6 +307,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	 */
 	public boolean performOk() {
 		fOverlayStore.propagate();
+		CUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 

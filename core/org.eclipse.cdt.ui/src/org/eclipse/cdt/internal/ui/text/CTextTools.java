@@ -228,7 +228,7 @@ public class CTextTools {
 	 * 
 	 * @param event the event to whch to adapt
 	 */
-	protected void adaptToPreferenceChange(PropertyChangeEvent event) {
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (fCodeScanner.affectsBehavior(event))
 			fCodeScanner.adaptToPreferenceChange(event);
 		if (fCppCodeScanner.affectsBehavior(event))

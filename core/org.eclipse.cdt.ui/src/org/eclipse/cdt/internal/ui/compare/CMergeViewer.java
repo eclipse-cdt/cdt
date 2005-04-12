@@ -38,7 +38,6 @@ public class CMergeViewer extends TextMergeViewer {
 	private IPreferenceStore fPreferenceStore;
 	private boolean fUseSystemColors;
 	private CSourceViewerConfiguration fSourceViewerConfiguration;
-	private CTextTools fCTextTools;
 		
 	public CMergeViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(parent, styles, mp);
@@ -101,7 +100,8 @@ public class CMergeViewer extends TextMergeViewer {
 			}
 		}
 		
-		if (getTextTools().affectsBehavior(event)) {
+		if (getSourceViewerConfiguration().affectsBehavior(event)) {
+			getSourceViewerConfiguration().adaptToPreferenceChange(event);
 			invalidateTextPresentation();
 		}
 	}
@@ -118,16 +118,9 @@ public class CMergeViewer extends TextMergeViewer {
 		return PreferenceConverter.getColor(store, key);
 	}
 
-	private CTextTools getTextTools() {
-		if (fCTextTools == null) {
-			fCTextTools = CUIPlugin.getDefault().getTextTools();
-		}
-		return fCTextTools;
-	}
-
 	private CSourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
-			CTextTools tools= getTextTools();
+			CTextTools tools= CUIPlugin.getDefault().getTextTools();
 			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools, null);
 		}
 		return fSourceViewerConfiguration;

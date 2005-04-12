@@ -73,6 +73,9 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		fOverlayStore.load();
+		fOverlayStore.start();
+
 		Composite contentAssistComposite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -139,6 +142,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 //
 //		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterForegroundColor");
 //		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
+
+    	initializeFields();
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
 

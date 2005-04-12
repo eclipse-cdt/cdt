@@ -25,8 +25,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -70,14 +68,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	};
 
 	private CTextTools fCTextTools;
-
-	/**
-	 * List of master/slave listeners when there's a dependency.
-	 * 
-	 * @see #createDependency(Button, String, Control)
-	 * @since 3.0
-	 */
-	private ArrayList fMasterSlaveListeners= new ArrayList();
 
 	protected List fList;
 	protected ColorEditor fForegroundColorEditor;
@@ -287,8 +277,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	private Control createPreviewer(Composite parent) {
 
 		fCTextTools = CUIPlugin.getDefault().getTextTools();
+		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(fCTextTools, null);
 		fPreviewViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
-		fPreviewViewer.configure(new CSourceViewerConfiguration(fCTextTools, null));
+		fPreviewViewer.configure(configuration);
 		fPreviewViewer.getTextWidget().setFont(JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
 		fPreviewViewer.setEditable(false);
 
@@ -300,14 +291,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		fPreviewViewer.setDocument(document);
 
-		fOverlayStore.addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				fPreviewViewer.getDocument().set(fPreviewViewer.getDocument().get());
-				fPreviewViewer.invalidateTextPresentation();
-				//fPreviewViewer.refresh();
-			}
-		});
-
+		CSourcePreviewerUpdater.registerPreviewer(fPreviewViewer, configuration, fOverlayStore);
 		return fPreviewViewer.getControl();
 	}
 
@@ -355,21 +339,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		return link;
 	}
 
-	private void createDependency(final Button master, String masterKey, final Control slave) {
-		indent(slave);
-		boolean masterState= fOverlayStore.getBoolean(masterKey);
-		slave.setEnabled(masterState);
-		SelectionListener listener= new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				slave.setEnabled(master.getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		};
-		master.addSelectionListener(listener);
-		fMasterSlaveListeners.add(listener);
-	}
-
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
@@ -377,6 +346,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		fCEditorHoverConfigurationBlock= new CEditorHoverConfigurationBlock(this, fOverlayStore);
 		fFoldingConfigurationBlock= new FoldingConfigurationBlock(fOverlayStore);
+
+		fOverlayStore.load();
+		fOverlayStore.start();
 
 		createHeader(parent);
 
@@ -409,8 +381,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		initializeFields();
 
-		for (int i = 0; i < fListModel.length; i++)
+		for (int i = 0; i < fListModel.length; i++) {
 			fList.add(fListModel[i][0]);
+		}
 		fList.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				fList.select(0);
@@ -436,14 +409,12 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	 */
 	protected void performDefaults() {
 
-		fOverlayStore.loadDefaults();
-		initializeFields();
+		super.performDefaults();
+
 		handleListSelection();
 
 		fCEditorHoverConfigurationBlock.performDefaults();
 		fFoldingConfigurationBlock.performDefaults();
-
-		super.performDefaults();
 
 		fPreviewViewer.invalidateTextPresentation();
 	}

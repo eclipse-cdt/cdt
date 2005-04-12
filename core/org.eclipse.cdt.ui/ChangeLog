@@ -1,3 +1,6 @@
+2005-04-12 Alain Magloire
+	- icons/full: Remove obsolete directory.
+
 2005-04-11 Alain Magloire
 	Fix PR 91000: NPE in CEditorHoverConfigurationBlock
 	* src/org/eclipse/cdt/internal/ui/preferences/CEditorHoverConfigurationBlock.java

@@ -43,7 +43,14 @@ public interface IASTNode {
 	 * @return <code>IASTNodeLocation []</code>
 	 */
 	public IASTNodeLocation[] getNodeLocations();
-
+	
+	/**
+	 * Lightweight check for understanding what file we are in.  
+	 * 
+	 * @return <code>String</code> absolute path
+	 */
+	public String getContainingFilename();
+	
 	/**
 	 * Get the parent node of this node in the tree.
 	 * 

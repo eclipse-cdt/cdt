@@ -161,6 +161,8 @@ public interface IASTTranslationUnit extends IASTNode {
     }
     
     public IDependencyTree getDependencyTree();
+
+	public String getContainingFilename(int offset);
     
     
     

@@ -129,7 +129,12 @@ public class CodeReader {
 	}
     
     public String toString() {
-        return new String( filename );
+		return getPath();
     }
+	
+	public String getPath()
+	{
+		return new String( filename );
+	}
 	
 }

@@ -497,5 +497,10 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return resolver.getDependencyTree();
     }
 
+	public String getContainingFilename(int offset) {
+		if( resolver == null )
+			return EMPTY_STRING;
+		return resolver.getContainingFilename( offset );
+	}
     
 }

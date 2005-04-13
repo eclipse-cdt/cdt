@@ -69,4 +69,8 @@ public abstract class ASTNode implements IASTNode {
    public String getRawSignature() {
       return getTranslationUnit().getUnpreprocessedSignature( getNodeLocations() );
    }
+   
+   public String getContainingFilename() {
+		return getTranslationUnit().getContainingFilename( offset );
+	}
 }

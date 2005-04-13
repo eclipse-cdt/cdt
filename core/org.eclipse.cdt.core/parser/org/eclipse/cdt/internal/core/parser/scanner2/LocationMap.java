@@ -994,6 +994,15 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             }
             return false;
         }
+
+		public _CompositeFileContext getContainingFileContext() {
+			if( this instanceof _CompositeFileContext )
+				return (_CompositeFileContext) this;
+			_CompositeContext result = getParent();
+			while( !( result instanceof _CompositeFileContext ) )
+				result = result.getParent();
+			return (_CompositeFileContext) result;
+		}
     }
 
     protected static class _CompositeContext extends _Context {
@@ -2116,6 +2125,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     
     protected IASTTranslationUnit rootNode;
 
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
     
 
     protected static int collectContexts(int key, _Context source,
@@ -2521,4 +2532,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         tu.addBuiltinMacro( result );
         return result;
     }
+
+	public String getContainingFilename(int offset) {
+		_Context c = findContextForOffset(offset);
+		if( c == null ) return EMPTY_STRING;
+		_CompositeFileContext file = c.getContainingFileContext();
+		if( file == null ) return EMPTY_STRING;
+		return file.reader.getPath();
+	}
 }

@@ -49,5 +49,6 @@ public interface ILocationResolver {
     public IASTName[] getDeclarations(IMacroBinding binding);
     public IASTName[] getMacroExpansions();
     public IDependencyTree getDependencyTree();
+	public String getContainingFilename(int offset);
     
 }

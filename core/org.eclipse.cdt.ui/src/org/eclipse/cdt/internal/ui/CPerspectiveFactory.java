@@ -43,6 +43,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 
 		layout.addActionSet(CUIPlugin.SEARCH_ACTION_SET_ID);
 		layout.addActionSet(CUIPlugin.ID_CELEMENT_CREATION_ACTION_SET);
+		layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET);
 		
 		// views - build console
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);

@@ -1,3 +1,7 @@
+2005-04-13 Alain Magloire
+	Fix PR 91239
+	* src/org/eclipse/cdt/internal/ui/CPerspectiveFactory.java
+
 2005-04-12 Alain Magloire
 	Fix for PR 91163, 91165 and 91169
 	* src/org/eclipse/cdt/internal/ui/compare/CMergeViewer.java

@@ -1,3 +1,7 @@
+2005-04-13 Alain Magloire
+	Fix PR 91002
+	* src/org/eclipse/cdt/debug/mi/internal/preferences/MIPreferencePage.java
+
 2005-04-07 Mikhail Khodjaiants
 	Removed unused icons.
 	- icons/full/clcl16/auto_solib_co.gif

@@ -21,7 +21,6 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -40,8 +39,36 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 /**
  * Page for preferences that apply specifically to GDB MI.
  */
-public class MIPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class MIPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPropertyChangeListener {
 
+	/**
+	 * This class exists to provide visibility to the
+	 * <code>refreshValidState</code> method and to perform more intelligent
+	 * clearing of the error message.
+	 */
+	protected class MIIntegerFieldEditor extends IntegerFieldEditor {						
+		
+		public MIIntegerFieldEditor(String name, String labelText, Composite parent) {
+			super(name, labelText, parent);
+		}
+		
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
+		 */
+		protected void refreshValidState() {
+			super.refreshValidState();
+		}
+		
+		/**
+		 * Clears the error message from the message line if the error
+		 * message is the error message from this field editor.
+		 */
+		protected void clearErrorMessage() {
+			if (canClearErrorMessage()) {
+				super.clearErrorMessage();
+			}
+		}
+	}
 	public class MIPreferenceStore implements IPreferenceStore {
 		
 		private Preferences fPreferences;
@@ -293,10 +320,10 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	private IWorkbench fWorkbench;
 
 	// Debugger timeout preference widgets
-	private IntegerFieldEditor fDebugTimeoutText;
+	private MIIntegerFieldEditor fDebugTimeoutText;
 
 	// Launch timeout preference widgets
-	private IntegerFieldEditor fLaunchTimeoutText;
+	private MIIntegerFieldEditor fLaunchTimeoutText;
 
 	private BooleanFieldEditor fRefreshSolibsButton;
 
@@ -399,21 +426,9 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		data.horizontalSpan = 2;
 		spacingComposite.setLayoutData( data );
 		fDebugTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_TIMEOUT, PreferenceMessages.getString( "MIPreferencePage.2" ), spacingComposite ); //$NON-NLS-1$
-		fDebugTimeoutText.setPropertyChangeListener( new IPropertyChangeListener() {
-
-			public void propertyChange( PropertyChangeEvent event ) {
-				if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
-					setValid( getDebugTimeoutText().isValid() );
-			}
-		} );
+		fDebugTimeoutText.setPropertyChangeListener( this );
 		fLaunchTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, PreferenceMessages.getString( "MIPreferencePage.3" ), spacingComposite ); //$NON-NLS-1$
-		fLaunchTimeoutText.setPropertyChangeListener( new IPropertyChangeListener() {
-
-			public void propertyChange( PropertyChangeEvent event ) {
-				if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
-					setValid( getLaunchTimeoutText().isValid() );
-			}
-		} );
+		fLaunchTimeoutText.setPropertyChangeListener( this );
 		fRefreshSolibsButton = createRefreshField( IMIConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, PreferenceMessages.getString( "MIPreferencePage.6" ), spacingComposite ); //$NON-NLS-1$
 	}
 
@@ -426,8 +441,8 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		fRefreshSolibsButton.store();
 	}
 
-	private IntegerFieldEditor createTimeoutField( String preference, String label, Composite parent ) {
-		IntegerFieldEditor toText = new IntegerFieldEditor( preference, label, parent );
+	private MIIntegerFieldEditor createTimeoutField( String preference, String label, Composite parent ) {
+		MIIntegerFieldEditor toText = new MIIntegerFieldEditor( preference, label, parent );
 		GridData data = new GridData();
 		data.widthHint = convertWidthInCharsToPixels( 10 );
 		toText.getTextControl( parent ).setLayoutData( data );
@@ -464,15 +479,53 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		super.dispose();
 	}
 
-	protected IntegerFieldEditor getLaunchTimeoutText() {
+	protected MIIntegerFieldEditor getLaunchTimeoutText() {
 		return fLaunchTimeoutText;
 	}
 
-	protected IntegerFieldEditor getDebugTimeoutText() {
+	protected MIIntegerFieldEditor getDebugTimeoutText() {
 		return fDebugTimeoutText;
 	}
 
-	
+	/**
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+
+		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+			boolean newValue = ((Boolean) event.getNewValue()).booleanValue();
+			// If the new value is true then we must check all field editors.
+			// If it is false, then the page is invalid in any case.
+			MIIntegerFieldEditor launchTimeout = getLaunchTimeoutText();
+			MIIntegerFieldEditor debugTimeout = getDebugTimeoutText();
+			if (newValue) {
+				if (launchTimeout != null && event.getSource() != launchTimeout) {
+					launchTimeout.refreshValidState();
+				} 
+				if (debugTimeout != null && event.getSource() != debugTimeout) {
+					debugTimeout.refreshValidState();
+				}
+			} 
+			setValid(launchTimeout.isValid() && debugTimeout.isValid());
+			getContainer().updateButtons();
+			updateApplyButton();
+		}
+	}
+
+	protected boolean canClearErrorMessage() {
+		MIIntegerFieldEditor launchTimeout = getLaunchTimeoutText();
+		MIIntegerFieldEditor debugTimeout = getDebugTimeoutText();
+		boolean validLaunch = false;
+		boolean validDebug = false;
+		if (launchTimeout != null) {
+			validLaunch = launchTimeout.isValid();
+		}
+		if (debugTimeout != null) {
+			validDebug = debugTimeout.isValid();
+		}
+		return validLaunch && validDebug;
+	}
+
 	private IWorkbench getWorkbench() {
 		return fWorkbench;
 	}

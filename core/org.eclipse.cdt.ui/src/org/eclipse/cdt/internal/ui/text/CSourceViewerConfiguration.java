@@ -20,6 +20,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -204,16 +205,21 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		ContentAssistant assistant = new ContentAssistant();
 		
+        IContentAssistProcessor processor = null;
+
 		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditor().getEditorInput());
-		IResource resource = workingCopy.getResource();
-		IProject project = resource.getProject();
-		ICFileType type = CCorePlugin.getDefault().getFileType(project, resource.getLocation().lastSegment());
-		
-		IContentAssistProcessor processor
-			= (type.getLanguage().getId().equals(ICFileTypeConstants.LANG_C)
-					|| getPreferenceStore().getBoolean(ContentAssistPreference.DONT_USE_DOM))
-			? (IContentAssistProcessor)new CCompletionProcessor(getEditor())
-			: (IContentAssistProcessor)new CCompletionProcessor2(getEditor());
+        IResource resource = workingCopy.getResource();
+        if (resource != null) {
+            IProject project = resource.getProject();
+            ICFileType type = CCorePlugin.getDefault().getFileType(project, resource.getLocation().lastSegment());
+            
+            processor = type.getLanguage().getId().equals(ICFileTypeConstants.LANG_C)
+					|| getPreferenceStore().getBoolean(ContentAssistPreference.DONT_USE_DOM)
+                ? (IContentAssistProcessor)new CCompletionProcessor(getEditor())
+                : (IContentAssistProcessor)new CCompletionProcessor2(getEditor());
+        } else
+            processor = new CCompletionProcessor(getEditor());
+    
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
 		//Will this work as a replacement for the configuration lines below?

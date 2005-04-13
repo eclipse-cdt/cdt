@@ -105,6 +105,11 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 			}
 		}
 
+		//Project has just been created and its values have been store - don't need to request 
+		//an indexAll as one will come through the DeltaProcessor
+		if (currentProject == null)
+			return;
+		
         ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(currentProject);
 
         int indexMarkersInt = Integer.parseInt(indexMarkers);

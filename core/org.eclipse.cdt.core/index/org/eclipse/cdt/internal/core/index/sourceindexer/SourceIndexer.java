@@ -456,11 +456,11 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 		    
 		switch (kind) {
 			case ICDTIndexer.PROJECT :
-				this.indexAll(project);
+					this.indexAll(project);
 				break;
 	        
 			case ICDTIndexer.FOLDER : 
-				this.indexSourceFolder(project,project.getFullPath(),null);
+				this.indexSourceFolder(project,delta.getFullPath(),null);
 			break;
 			
 			case ICDTIndexer.COMPILATION_UNIT:
@@ -488,7 +488,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 				//     is done in updateCurrentDeltaAndIndex
 			
 			case ICDTIndexer.FOLDER :
-				this.removeSourceFolderFromIndex(project,project.getFullPath(),null);
+				this.removeSourceFolderFromIndex(project,delta.getFullPath(),null);
 				break;
 			
 			case ICDTIndexer.COMPILATION_UNIT:

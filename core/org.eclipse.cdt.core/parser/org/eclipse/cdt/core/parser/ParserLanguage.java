@@ -32,4 +32,9 @@ public class ParserLanguage extends Enum {
 	public boolean isCPP() {
 		return ( this == CPP );
 	}
+    
+    public String toString() {
+        if( isCPP() ) return "C++"; //$NON-NLS-1$
+        return "C"; //$NON-NLS-1$
+    }
 }

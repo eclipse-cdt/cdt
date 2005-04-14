@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor2;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -50,6 +49,7 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -208,7 +208,11 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
         IContentAssistProcessor processor = null;
 
 		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditor().getEditorInput());
-        IResource resource = workingCopy.getResource();
+        
+		if (workingCopy == null)
+			return null;
+		
+		IResource resource = workingCopy.getResource();
         if (resource != null) {
             IProject project = resource.getProject();
             ICFileType type = CCorePlugin.getDefault().getFileType(project, resource.getLocation().lastSegment());

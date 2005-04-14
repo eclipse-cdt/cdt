@@ -137,6 +137,31 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 						ITextEditor textEditor= (ITextEditor) editorPart;
 						textEditor.selectAndReveal(searchMatch.startOffset, searchMatch.endOffset - searchMatch.startOffset);
 					}
+					
+				//TODO: Put in once we have marker support for External Translation Units
+				/*	//Get all the CProjects off the model
+					ICProject[] cprojects = CoreModel.getDefault().getCModel().getCProjects();
+					
+					ICProject containingProject=null;
+					ICElement celem = null;
+					//Find the CProject that the element belongs to
+					for (int i=0; i<cprojects.length; i++){
+						celem = cprojects[i].findElement(searchMatch.referringElement);
+						containingProject=celem.getCProject();
+						if (containingProject != null)
+							break;
+					}
+					//Create a translation unit, open in editor
+					ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(containingProject, searchMatch.path);
+					IEditorPart editorPart = null;
+					if (unit != null) {
+						editorPart = EditorUtility.openInEditor(unit);
+					}
+					//Show with marker
+					if (editorPart instanceof ITextEditor) {
+						ITextEditor textEditor= (ITextEditor) editorPart;
+						showWithMarker(textEditor,(IFile) celem.getUnderlyingResource(),searchMatch.startOffset, searchMatch.endOffset - searchMatch.startOffset);
+					}*/
 				} catch (CModelException e) {}
 				  catch (CoreException e) {}
 			}

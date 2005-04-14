@@ -2038,6 +2038,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTName createName(IToken t) {
         IASTName n = new CASTName(t.getCharImage());
+        switch (t.getType()) {
+        case IToken.tCOMPLETION:
+        case IToken.tEOC:
+            createCompletionNode(t).addName(n);
+            break;
+        }
         ((ASTNode) n).setOffsetAndLength(t.getOffset(), t.getEndOffset()
                 - t.getOffset());
         return n;

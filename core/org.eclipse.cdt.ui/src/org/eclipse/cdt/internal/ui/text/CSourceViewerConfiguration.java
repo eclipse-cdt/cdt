@@ -49,7 +49,6 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -205,25 +204,10 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		ContentAssistant assistant = new ContentAssistant();
 		
-        IContentAssistProcessor processor = null;
-
-		IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditor().getEditorInput());
-        
-		if (workingCopy == null)
-			return null;
-		
-		IResource resource = workingCopy.getResource();
-        if (resource != null) {
-            IProject project = resource.getProject();
-            ICFileType type = CCorePlugin.getDefault().getFileType(project, resource.getLocation().lastSegment());
-            
-            processor = type.getLanguage().getId().equals(ICFileTypeConstants.LANG_C)
-					|| getPreferenceStore().getBoolean(ContentAssistPreference.DONT_USE_DOM)
-                ? (IContentAssistProcessor)new CCompletionProcessor(getEditor())
-                : (IContentAssistProcessor)new CCompletionProcessor2(getEditor());
-        } else
-            processor = new CCompletionProcessor(getEditor());
-    
+		IContentAssistProcessor processor
+			= getPreferenceStore().getBoolean(ContentAssistPreference.DONT_USE_DOM)
+			? (IContentAssistProcessor)new CCompletionProcessor(getEditor())
+			: (IContentAssistProcessor)new CCompletionProcessor2(getEditor());
 		assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 
 		//Will this work as a replacement for the configuration lines below?

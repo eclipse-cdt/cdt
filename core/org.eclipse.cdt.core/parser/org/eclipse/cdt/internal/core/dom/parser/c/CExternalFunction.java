@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,41 @@ public class CExternalFunction implements IFunction, ICExternalBinding {
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
      */
     public boolean isStatic() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
+     */
+    public boolean isExtern() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
+     */
+    public boolean isAuto() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
+     */
+    public boolean isRegister() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isInline()
+     */
+    public boolean isInline() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
+     */
+    public boolean takesVarArgs() {
         return false;
     }
 }

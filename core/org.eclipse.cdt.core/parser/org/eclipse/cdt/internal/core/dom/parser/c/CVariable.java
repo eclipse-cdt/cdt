@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -39,7 +40,15 @@ public class CVariable implements IVariable, ICInternalBinding {
         public boolean isStatic() throws DOMException {
             throw new DOMException( this );
         }
-        
+        public boolean isExtern() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isAuto() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isRegister() throws DOMException {
+            throw new DOMException( this );
+        }
     }
 	private IASTName [] declarations = null;
 	private IType type = null;
@@ -84,12 +93,41 @@ public class CVariable implements IVariable, ICInternalBinding {
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
      */
     public boolean isStatic() {
-        IASTDeclarator dtor = (IASTDeclarator) declarations[0].getParent();
-        while( dtor.getParent() instanceof IASTDeclarator )
-            dtor = (IASTDeclarator) dtor.getParent();
-        
-        IASTSimpleDeclaration simple = (IASTSimpleDeclaration) dtor.getParent();
-        IASTDeclSpecifier declSpec = simple.getDeclSpecifier();
-        return ( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
+        return hasStorageClass( IASTDeclSpecifier.sc_static );
+    }
+    
+    public boolean hasStorageClass( int storage ){
+        if( declarations == null )
+            return false;
+        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
+            IASTNode parent = declarations[i].getParent();
+            while( !(parent instanceof IASTDeclaration) )
+                parent = parent.getParent();
+            
+            if( parent instanceof IASTSimpleDeclaration ){
+                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+                if( declSpec.getStorageClass() == storage )
+                    return true;
+            }
+        }
+        return false;
+	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() {
+        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() {
+        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() {
+        return hasStorageClass( IASTDeclSpecifier.sc_register );
     }
 }

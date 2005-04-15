@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -61,6 +62,24 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         public boolean isStatic() throws DOMException {
             return ((ICPPFunction)getBinding()).isStatic();
         }
+        public boolean isMutable() throws DOMException {
+            return ((ICPPFunction)getBinding()).isMutable();
+        }
+        public boolean isInline() throws DOMException {
+            return ((ICPPFunction)getBinding()).isInline();
+        }
+        public boolean isExtern() throws DOMException {
+            return ((ICPPFunction)getBinding()).isExtern();
+        }
+        public boolean isAuto() throws DOMException {
+            return ((ICPPFunction)getBinding()).isAuto();
+        }
+        public boolean isRegister() throws DOMException {
+            return ((ICPPFunction)getBinding()).isRegister();
+        }
+        public boolean takesVarArgs() throws DOMException {
+            return ((ICPPFunction)getBinding()).takesVarArgs();
+        }
     }
     public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
         public CPPFunctionProblem( IASTNode node, int id, char[] arg ) {
@@ -78,7 +97,6 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         public IFunctionType getType() throws DOMException {
             throw new DOMException( this );
         }
-
         public boolean isStatic() throws DOMException {
             throw new DOMException( this );
         }
@@ -89,6 +107,24 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
             throw new DOMException( this );
         }
         public boolean isGloballyQualified() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isMutable() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isInline() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isExtern() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isAuto() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isRegister() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean takesVarArgs() throws DOMException {
             throw new DOMException( this );
         }
     }
@@ -415,6 +451,105 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
      */
     public ICPPDelegate createDelegate( IASTName name ) {
         return new CPPFunctionDelegate( name, this );
+    }
+
+	public boolean hasStorageClass( int storage ){
+	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
+        ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) getDeclarations();
+        int i = -1;
+        do{
+            if( dtor != null ){
+                IASTNode parent = dtor.getParent();
+	            while( !(parent instanceof IASTDeclaration) )
+	                parent = parent.getParent();
+	            
+	            IASTDeclSpecifier declSpec = null;
+	            if( parent instanceof IASTSimpleDeclaration )
+	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	            else if( parent instanceof IASTFunctionDefinition )
+	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+                if( declSpec.getStorageClass() == storage )
+                    return true;
+            }
+            if( ds != null && ++i < ds.length )
+                dtor = ds[i];
+            else
+                break;
+        } while( dtor != null );
+        return false;
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
+     */
+    public boolean isMutable() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
+     */
+    public boolean isInline() throws DOMException {
+	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
+        ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) getDeclarations();
+        int i = -1;
+        do{
+            if( dtor != null ){
+                IASTNode parent = dtor.getParent();
+	            while( !(parent instanceof IASTDeclaration) )
+	                parent = parent.getParent();
+	            
+	            IASTDeclSpecifier declSpec = null;
+	            if( parent instanceof IASTSimpleDeclaration )
+	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	            else if( parent instanceof IASTFunctionDefinition )
+	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+	            
+	            if( declSpec.isInline() )
+                    return true;
+            }
+            if( ds != null && ++i < ds.length )
+                dtor = ds[i];
+            else
+                break;
+        } while( dtor != null );
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
+     */
+    public boolean isExtern() {
+        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
+     */
+    public boolean isAuto() {
+        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
+     */
+    public boolean isRegister() {
+        return hasStorageClass( IASTDeclSpecifier.sc_register );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
+     */
+    public boolean takesVarArgs() {
+        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
+        if( dtor != null ){
+            return dtor.takesVarArgs();
+        }
+        ICPPASTFunctionDeclarator [] ds = (ICPPASTFunctionDeclarator[]) getDeclarations();
+        if( ds != null && ds.length > 0 ){
+            return ds[0].takesVarArgs();
+        }
+        return false;
     }
 
 }

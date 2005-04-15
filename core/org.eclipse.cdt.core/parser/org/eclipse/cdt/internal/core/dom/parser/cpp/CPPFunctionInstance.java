@@ -100,9 +100,8 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
 	 */
-	public boolean isStatic() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isStatic() throws DOMException {
+		return ((ICPPFunction)getOriginalBinding()).isStatic();
 	}
 
 	/* (non-Javadoc)
@@ -128,4 +127,46 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
+     */
+    public boolean isMutable() throws DOMException {
+        return ((ICPPFunction)getOriginalBinding()).isMutable();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
+     */
+    public boolean isInline() throws DOMException {
+        return ((ICPPFunction)getOriginalBinding()).isInline();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
+     */
+    public boolean isExtern() throws DOMException {
+        return ((ICPPFunction)getOriginalBinding()).isExtern();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
+     */
+    public boolean isAuto() throws DOMException {
+        return ((ICPPFunction)getOriginalBinding()).isAuto();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
+     */
+    public boolean isRegister() throws DOMException {
+        return ((ICPPFunction)getOriginalBinding()).isRegister();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
+     */
+    public boolean takesVarArgs() throws DOMException {
+        return ((ICPPFunction)getOriginalBinding()).takesVarArgs();
+    }
 }

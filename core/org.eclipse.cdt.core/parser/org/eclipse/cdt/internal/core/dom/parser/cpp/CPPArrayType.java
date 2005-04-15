@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -24,9 +25,15 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  */
 public class CPPArrayType implements IArrayType, ITypeContainer {
     private IType type = null;
+    private IASTExpression sizeExpression = null;
     
     public CPPArrayType( IType type ){
         this.type = type;
+    }
+    
+    public CPPArrayType( IType type, IASTExpression sizeExp ){
+        this.type = type;
+        this.sizeExpression = sizeExp;
     }
     
     public IType getType(){
@@ -56,5 +63,12 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
             //not going to happen
         }
         return t;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IArrayType#getArraySizeExpression()
+     */
+    public IASTExpression getArraySizeExpression() {
+        return sizeExpression;
     }
 }

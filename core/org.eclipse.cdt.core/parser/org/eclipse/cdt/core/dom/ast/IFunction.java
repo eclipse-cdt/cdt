@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,5 +42,28 @@ public interface IFunction extends IBinding {
 	 */
 	public IFunctionType getType() throws DOMException;
 	
+	/**
+	 * Does this function have the static storage-class specifier
+	 * similarily for extern, auto, register
+	 * @return
+	 * @throws DOMException
+	 */
 	public boolean isStatic() throws DOMException;
+	public boolean isExtern() throws DOMException;
+	public boolean isAuto() throws DOMException;
+	public boolean isRegister() throws DOMException;
+
+	/**
+	 * is this function inline
+	 * @return
+	 * @throws DOMException
+	 */
+	public boolean isInline() throws DOMException;
+	
+	/**
+	 * Whether or not this function takes variable arguments
+	 * @return
+	 * @throws DOMException
+	 */
+	public boolean takesVarArgs()throws DOMException;
 }

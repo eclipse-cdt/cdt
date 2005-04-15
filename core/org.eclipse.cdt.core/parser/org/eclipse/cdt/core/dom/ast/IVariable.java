@@ -22,9 +22,13 @@ public interface IVariable extends IBinding {
 	
 	
 	/**
-	 * whether or not this is a static variable
+	 * Does this function have the static storage-class specifier
+	 * similarily for extern, auto, register
 	 * @return
 	 * @throws DOMException
 	 */
 	public boolean isStatic() throws DOMException;
+	public boolean isExtern() throws DOMException;
+	public boolean isAuto() throws DOMException;
+	public boolean isRegister() throws DOMException;
 }

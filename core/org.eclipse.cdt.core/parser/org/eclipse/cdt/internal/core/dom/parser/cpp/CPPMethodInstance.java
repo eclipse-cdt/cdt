@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -41,5 +42,12 @@ public class CPPMethodInstance extends CPPFunctionInstance implements
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
+     */
+    public boolean isVirtual() throws DOMException {
+        return ((ICPPMethod)getOriginalBinding()).isVirtual();
+    }
 
 }

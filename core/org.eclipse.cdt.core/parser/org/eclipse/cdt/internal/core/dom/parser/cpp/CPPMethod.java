@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
@@ -42,6 +44,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         public int getVisibility() throws DOMException {
             return ((ICPPMethod)getBinding()).getVisibility();
         }
+        public boolean isVirtual() throws DOMException {
+            return ((ICPPMethod)getBinding()).isVirtual();
+        }
     }
     
     public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
@@ -58,6 +63,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         }
         public boolean isStatic() throws DOMException {
             throw new DOMException( this );        
+        }
+        public boolean isVirtual() throws DOMException {
+            throw new DOMException( this );
         }
     }
     
@@ -163,4 +171,30 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         return new CPPMethodDelegate( name, this );
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
+     */
+    public boolean isVirtual() throws DOMException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
+     */
+    public boolean isInline() throws DOMException {
+        IASTDeclaration decl = getPrimaryDeclaration();
+        if( decl instanceof IASTFunctionDefinition )
+            return true;
+
+        IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+        return declSpec.isInline();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
+     */
+    public boolean isMutable() {
+        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable );
+    }
 }

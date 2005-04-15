@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,27 @@ public class CExternalVariable implements ICExternalBinding, IVariable {
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
      */
     public boolean isStatic() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() {
         return false;
     }
 }

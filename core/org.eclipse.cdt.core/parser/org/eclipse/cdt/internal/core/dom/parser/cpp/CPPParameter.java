@@ -14,11 +14,13 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -39,6 +41,18 @@ public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariab
         }
         public boolean isStatic() throws DOMException {
             return ((IParameter)getBinding()).isStatic();
+        }
+        public boolean isExtern() {
+            return false;
+        }
+        public boolean isAuto() throws DOMException {
+            return ((IParameter)getBinding()).isAuto();
+        }
+        public boolean isRegister() throws DOMException {
+            return ((IParameter)getBinding()).isRegister();
+        }
+        public boolean isMutable() {
+            return false;
         }
     }
     
@@ -180,5 +194,54 @@ public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariab
 	 */
 	public void addDefinition(IASTNode node) {
 		addDeclaration( node );
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() {
+        //7.1.1-5 extern can not be used in the declaration of a parameter
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
+     */
+    public boolean isMutable() {
+        //7.1.1-8 mutable can only apply to class members
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() {
+        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() {
+        return hasStorageClass( IASTDeclSpecifier.sc_register );
+    }
+    
+    public boolean hasStorageClass( int storage ){
+	    IASTNode[] ns = getDeclarations();
+        if( ns == null )
+            return false;
+        
+        for( int i = 0; i < ns.length && ns[i] != null; i++ ){
+            IASTNode parent = ns[i].getParent();
+            while( !(parent instanceof IASTDeclaration) )
+                parent = parent.getParent();
+            
+            if( parent instanceof IASTSimpleDeclaration ){
+                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+                if( declSpec.getStorageClass() == storage )
+                    return true;
+            }
+        }
+        return false;
 	}
 }

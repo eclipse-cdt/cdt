@@ -1,6 +1,6 @@
 
 /**********************************************************************
- * Copyright (c) 2002-2004 IBM Canada and others.
+ * Copyright (c) 2004, 2005 IBM Canada and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -13,11 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -34,12 +37,19 @@ public class CParameter implements IParameter {
         public CParameterProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
         }
-
         public IType getType() throws DOMException {
             throw new DOMException( this );
         }
-
         public boolean isStatic() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isExtern() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isAuto() throws DOMException {
+            throw new DOMException( this );        
+        }
+        public boolean isRegister() throws DOMException {
             throw new DOMException( this );
         }
     }
@@ -109,4 +119,41 @@ public class CParameter implements IParameter {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() {
+        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() {
+        return hasStorageClass( IASTDeclSpecifier.sc_register );
+    }
+
+    public boolean hasStorageClass( int storage ){
+        if( declarations == null )
+            return false;
+        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
+            IASTNode parent = declarations[i].getParent();
+            while( !(parent instanceof IASTDeclaration) )
+                parent = parent.getParent();
+            
+            if( parent instanceof IASTSimpleDeclaration ){
+                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+                if( declSpec.getStorageClass() == storage )
+                    return true;
+            }
+        }
+        return false;
+	}
 }

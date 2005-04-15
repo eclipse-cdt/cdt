@@ -90,4 +90,32 @@ public class CPPFieldInstance extends CPPInstance implements ICPPField {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() throws DOMException {
+        return ((ICPPField)getOriginalBinding()).isExtern();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() throws DOMException {
+        return ((ICPPField)getOriginalBinding()).isAuto();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() throws DOMException {
+        return ((ICPPField)getOriginalBinding()).isRegister();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
+     */
+    public boolean isMutable() throws DOMException {
+        return ((ICPPField)getOriginalBinding()).isMutable();
+    }
+
 }

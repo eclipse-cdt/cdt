@@ -103,4 +103,32 @@ public class CPPParameterInstance extends CPPInstance implements IParameter,
 		return false;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() throws DOMException {
+        return ((IParameter)getOriginalBinding()).isAuto();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() throws DOMException {
+        return ((IParameter)getOriginalBinding()).isRegister();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
+     */
+    public boolean isMutable() {
+        return false;
+    }
+
 }

@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 
 /**
@@ -21,4 +22,15 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
  */
 public interface ICPPFunction extends IFunction, ICPPBinding {
 
+    /**
+     * does this function have the mutable storage class specifier
+     * @return
+     * @throws DOMException
+     */
+    public boolean isMutable() throws DOMException;
+    
+    /**
+     * is this an inline function
+     */
+    public boolean isInline() throws DOMException;
 }

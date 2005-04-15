@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -44,6 +45,18 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
         public boolean isStatic() throws DOMException {
             return ((ICPPVariable)getBinding()).isStatic();
         }
+        public boolean isMutable() throws DOMException {
+            return ((ICPPVariable)getBinding()).isMutable();
+        }
+        public boolean isExtern() throws DOMException {
+            return ((ICPPVariable)getBinding()).isExtern();
+        }
+        public boolean isAuto() throws DOMException {
+            return ((ICPPVariable)getBinding()).isAuto();
+        }
+        public boolean isRegister() throws DOMException {
+            return ((ICPPVariable)getBinding()).isRegister();
+        }
     }
     public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable{
         public CPPVariableProblem( IASTNode node, int id, char[] arg ) {
@@ -64,6 +77,18 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
             throw new DOMException( this );
         }
         public boolean isGloballyQualified() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isMutable() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isExtern() throws DOMException {
+             throw new DOMException( this );
+        }
+        public boolean isAuto() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isRegister() throws DOMException {
             throw new DOMException( this );
         }
     }
@@ -261,5 +286,58 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
 	public void addDefinition(IASTNode node) {
 		addDeclaration( node );
 	}
+
+	public boolean hasStorageClass( int storage ){
+	    IASTName name = (IASTName) getDefinition();
+        IASTNode[] ns = getDeclarations();
+        int i = -1;
+        do{
+            if( name != null ){
+                IASTNode parent = name.getParent();
+	            while( !(parent instanceof IASTDeclaration) )
+	                parent = parent.getParent();
+	            
+	            if( parent instanceof IASTSimpleDeclaration ){
+	                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	                if( declSpec.getStorageClass() == storage )
+	                    return true;
+	            }
+            }
+            if( ns != null && ++i < ns.length )
+                name = (IASTName) ns[i];
+            else
+                break;
+        } while( name != null );
+        return false;
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
+     */
+    public boolean isMutable() {
+        //7.1.1-8 the mutable specifier can only be applied to names of class data members
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() {
+        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() {
+        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() {
+        return hasStorageClass( IASTDeclSpecifier.sc_register );
+    }
 
 }

@@ -89,4 +89,28 @@ public class CKnRParameter implements IParameter {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExtern() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+     */
+    public boolean isAuto() {
+        if( declaration instanceof IASTSimpleDeclaration )
+            return ((IASTSimpleDeclaration)declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_auto;
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+     */
+    public boolean isRegister() {
+        if( declaration instanceof IASTSimpleDeclaration )
+            return ((IASTSimpleDeclaration)declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_register;
+        return false;
+    }
 }

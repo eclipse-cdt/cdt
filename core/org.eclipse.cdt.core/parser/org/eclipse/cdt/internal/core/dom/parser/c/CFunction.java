@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002-2004 IBM Canada and others.
+ * Copyright (c) 2004, 2005 IBM Canada and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -42,7 +43,6 @@ public class CFunction implements IFunction, ICInternalBinding {
 	
 	private static final int FULLY_RESOLVED         = 1;
 	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
-	private static final int IS_STATIC              = 3 << 2;
 	private int bits = 0;
 	
 	IFunctionType type = null;
@@ -301,35 +301,112 @@ public class CFunction implements IFunction, ICInternalBinding {
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
      */
     public boolean isStatic() {
+        return hasStorageClass( IASTDeclSpecifier.sc_static );
+    }
+
+	public boolean hasStorageClass( int storage ){
+	    if( (bits & FULLY_RESOLVED) == 0 ){
+            resolveAllDeclarations();
+        }
+	    IASTDeclarator dtor = definition;
+	    IASTDeclarator[] ds = declarators;
+        int i = -1;
+        do{ 
+            if( dtor != null ){
+	            IASTNode parent = dtor.getParent();
+	            while( !(parent instanceof IASTDeclaration) )
+	                parent = parent.getParent();
+	            
+	            IASTDeclSpecifier declSpec = null;
+	            if( parent instanceof IASTSimpleDeclaration ){
+	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	            } else if( parent instanceof IASTFunctionDefinition )
+	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+	            
+	            if( declSpec.getStorageClass() == storage )
+	                return true;
+            }
+            
+            if( ds != null && ++i < ds.length )
+                dtor = ds[i];
+            else
+            	break;
+        } while( dtor != null );
+        return false;
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
+     */
+    public boolean isExtern() {
+        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
+     */
+    public boolean isAuto() {
+        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
+     */
+    public boolean isRegister() {
+        return hasStorageClass( IASTDeclSpecifier.sc_register );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#isInline()
+     */
+    public boolean isInline() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
-
-        //2 state bits, most significant = whether or not we've figure this out yet
-        //least significant = whether or not we are static
-        int state = ( bits & IS_STATIC ) >> 2;
-        if( state > 1 ) return (state % 2 != 0);
-        
-        
-        IASTFunctionDeclarator dtor = definition;
-        IASTDeclSpecifier declSpec = null;
-        if( dtor != null ){
-	        declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
-	        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
-	            bits |= 3 << 2;
-	            return true;
-	        }
-        }
-        
-        for( int i = 0; i < declarators.length; i++ ){
-            IASTNode parent = declarators[i].getParent();
-            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-            if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
-                bits |= 3 << 2;
-                return true;
+	    IASTDeclarator dtor = definition;
+	    IASTDeclarator[] ds = declarators;
+        int i = -1;
+        do{
+            if( dtor != null ){
+	            IASTNode parent = dtor.getParent();
+	            while( !(parent instanceof IASTDeclaration) )
+	                parent = parent.getParent();
+	            
+	            IASTDeclSpecifier declSpec = null;
+	            if( parent instanceof IASTSimpleDeclaration ){
+	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	            } else if( parent instanceof IASTFunctionDefinition )
+	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+	
+	            if( declSpec.isInline() )
+	                return true;
             }
+            if( ds != null && ++i < ds.length )
+                dtor = ds[i];
+            else
+                break;
+        } while( dtor != null );
+        
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
+     */
+    public boolean takesVarArgs() {
+        if( (bits & FULLY_RESOLVED) == 0 ){
+            resolveAllDeclarations();
         }
-        bits |= 2 << 2;
+           
+        if( definition != null ){
+            if( definition instanceof IASTStandardFunctionDeclarator )
+                return ((IASTStandardFunctionDeclarator)definition).takesVarArgs();
+            return false;
+        }
+
+        if( declarators != null && declarators.length > 0 ){
+            return declarators[0].takesVarArgs();
+        }
         return false;
     }
 }

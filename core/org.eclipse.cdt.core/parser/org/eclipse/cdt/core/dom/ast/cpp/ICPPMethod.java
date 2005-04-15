@@ -10,10 +10,18 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 
 /**
  * @author Doug Schaefer
  */
 public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	public static final ICPPMethod [] EMPTY_CPPMETHOD_ARRAY = new ICPPMethod[0];
+	
+	/**
+	 * is this a virtual method
+	 * @return
+	 * @throws DOMException
+	 */
+	public boolean isVirtual() throws DOMException;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
@@ -97,8 +98,8 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICArrayType#isVariableLength()
 	 */
 	public boolean isVariableLength() {
-		// TODO Auto-generated method stub
-		return false;
+		if( mod == null ) return false;
+		return mod.isVariableSized();
 	}
 
     public Object clone(){
@@ -116,5 +117,14 @@ public class CArrayType implements ICArrayType, ITypeContainer {
      */
     public ICASTArrayModifier getModifier() {
         return mod;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IArrayType#getArraySizeExpression()
+     */
+    public IASTExpression getArraySizeExpression() {
+        if( mod != null )
+            return mod.getConstantExpression();
+        return null;
     }
 }

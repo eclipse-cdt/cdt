@@ -1337,7 +1337,7 @@ public class CPPVisitor {
 	private static IType getArrayTypes( IType type, IASTArrayDeclarator declarator ){
 	    IASTArrayModifier [] mods = declarator.getArrayModifiers();
 	    for( int i = 0; i < mods.length; i++ ){
-	        type = new CPPArrayType( type );
+	        type = new CPPArrayType( type, mods[i].getConstantExpression() );
 	    }
 	    return type;
 	}

@@ -1,3 +1,11 @@
+2005-04-15 Vladimir Hirsl
+	Fix for PR 91405: Search does not find declarations of printf
+	Index entries form include files external to workspace were erroneously stored 
+	under compilation unit's file id.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexEncoderUtil.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRequestor.java
+
 2005-04-11 Vladimir Hirsl
 	Fix for PR 90193: Scanner faililng on Local/User paths as provided in Std. Make
 	User specified include paths (through the UI) are now created with 

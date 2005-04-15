@@ -302,12 +302,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 			else {
 				//Need to add file to index and get a fileNumber
 				if (tempFile != null){
-				indFile = indexer.output.addIndexedFile(tempFile.getFullPath().toString());
-				if (indFile != null)
-					fileNum = indFile.getFileID();
-				}
-				else {
-					indFile = indexer.output.addIndexedFile(include.getFullFileName());
+					indFile = indexer.output.addIndexedFile(filePath);
 					if (indFile != null)
 						fileNum = indFile.getFileID();
 				}

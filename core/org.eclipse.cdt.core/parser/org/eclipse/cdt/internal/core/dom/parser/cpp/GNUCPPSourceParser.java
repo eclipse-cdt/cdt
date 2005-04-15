@@ -1519,7 +1519,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					secondExpression = expression();
 				else
 					secondExpression = null;
-				lastOffset = consume(IToken.tRPAREN).getEndOffset();
+				if (LT(1) == IToken.tRPAREN)
+					lastOffset = consume(IToken.tRPAREN).getEndOffset();
+				else
+					// must be tEOC
+					lastOffset = Integer.MAX_VALUE;
 
 				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
@@ -1783,7 +1787,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			idExpression.setName(name);
 			name.setParent(idExpression);
 			name.setPropertyInParent(IASTIdExpression.ID_NAME);
-			createCompletionNode(token).addName(name);
 			return idExpression;
 		}
 		default:
@@ -3733,6 +3736,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 								last = consume();
 								finalOffset = last.getEndOffset();
 								break parameterDeclarationLoop;
+							case IToken.tEOC:
+								break parameterDeclarationLoop;								
 							case IToken.tELLIPSIS:
 								last = consume();
 								encounteredVarArgs = true;

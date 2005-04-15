@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -18,6 +20,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -537,7 +540,7 @@ public class DeltaProcessor {
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
 				if (element != null) {
-					updateIndexAddResource(element, delta);
+					updateIndexAddResource(element, delta, false);
 					elementAdded(element, delta);
 					return element instanceof ICContainer;
 				}
@@ -556,7 +559,7 @@ public class DeltaProcessor {
 					// content has changed
 					if (element != null) {
 						elementChanged(element, delta);
-						updateIndexAddResource(element, delta);
+						updateIndexAddResource(element, delta, true);
 						//check to see if any projects need to be reindexed
 						updateDependencies(element);
 						
@@ -568,7 +571,7 @@ public class DeltaProcessor {
 						if (element != null) {
 							if (project.isOpen()) {
 								elementOpened(element, delta);
-								updateIndexAddResource(element, delta);
+								updateIndexAddResource(element, delta, true);
 								return false;
 							}
 							elementClosed(element, delta);
@@ -588,7 +591,7 @@ public class DeltaProcessor {
 								// note its resources are still visible as roots to other projects
 								if (isCProject) {
 									elementOpened(element, delta);
-									updateIndexAddResource(element, delta);
+									updateIndexAddResource(element, delta, true);
 								} else {
 									elementRemoved(element, delta);
 									updateIndexRemoveResource(element, delta);
@@ -603,7 +606,7 @@ public class DeltaProcessor {
 		return true;
 	}
 
-	protected void updateIndexAddResource(ICElement element, IResourceDelta delta) {
+	protected void updateIndexAddResource(ICElement element, IResourceDelta delta, boolean elementHasChanged) {
 	
 		if (indexManager == null)
 			return;
@@ -618,9 +621,21 @@ public class DeltaProcessor {
 		 	break;
 		 	
 		 	case ICElement.C_UNIT:
-		 	indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.COMPILATION_UNIT);
+			//if the element has changed check to see if file is header, if it is don't schedule for index - update dependencies will
+			//take care of it.
+			//otherwise just schedule element for index
+			boolean shouldAddFile=false;
+			IProject project = element.getCProject().getProject();
+			if (elementHasChanged){
+				ICFileType type = CCorePlugin.getDefault().getFileType(project,((IFile) delta.getResource()).getName());
+				if (type.isSource())
+					shouldAddFile=true;
+			} else {
+				shouldAddFile = true;
+			}
+			if (shouldAddFile)
+				indexManager.addResourceEvent(project,delta, ICDTIndexer.COMPILATION_UNIT);
 		 	break;
-		 	   
 		}
 		
 		

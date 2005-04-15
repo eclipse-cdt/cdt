@@ -41,14 +41,16 @@ import org.eclipse.core.runtime.Path;
  */
 public class UpdateDependency implements IIndexJob {
 	PathCollector pathCollector;
-	IResource resource;
+	IFile resource=null;
 	SourceIndexer indexer;
 	
 	/**
 	 * @param resource
 	 */
 	public UpdateDependency(IResource resource, SourceIndexer indexer) {
-		this.resource = resource;
+		if (resource instanceof IFile)
+			this.resource = (IFile) resource;
+		
 		this.indexer = indexer;
 	}
 
@@ -94,16 +96,24 @@ public class UpdateDependency implements IIndexJob {
 				this );
 					
 		String[] iPath = pathCollector.getPaths();
-		for (int i=0;i<iPath.length; i++){
-			IPath pathToReindex = new Path(iPath[i]);
-			IWorkspaceRoot workRoot = resource.getWorkspace().getRoot();
-			IFile fileToReindex = workRoot.getFile(pathToReindex);
-				
-			if (fileToReindex!=null && fileToReindex.exists() ) {
-//			if (VERBOSE)
-//			 System.out.println("Going to reindex " + fileToReindex.getName());
-			 indexer.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath());
+		
+		if (iPath.length > 0){
+        //If we found any dependents on this header file, indexing them will also index the header
+			for (int i=0;i<iPath.length; i++){
+				IPath pathToReindex = new Path(iPath[i]);
+				IWorkspaceRoot workRoot = resource.getWorkspace().getRoot();
+				IFile fileToReindex = workRoot.getFile(pathToReindex);
+					
+				if (fileToReindex!=null && fileToReindex.exists() ) {
+	//			if (VERBOSE)
+	//			 System.out.println("Going to reindex " + fileToReindex.getName());
+				 indexer.addSource(fileToReindex,fileToReindex.getProject().getFullPath());
+				}
 			}
+		}
+		else {
+			//No dependents found, just index the stand alone header	
+			indexer.addSource(resource,resource.getProject().getFullPath());
 		}
 		return false;
 	}

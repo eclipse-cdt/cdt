@@ -4096,58 +4096,59 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (LT(1) == IToken.tLBRACE) {
 			consume(IToken.tLBRACE);
 
-			
-				memberDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
-					int checkToken = LA(1).hashCode();
-					switch (LT(1)) {
-					case IToken.t_public:
-					case IToken.t_protected:
-					case IToken.t_private:
-						IToken key = consume();
-						int l = consume(IToken.tCOLON).getEndOffset();
-						ICPPASTVisiblityLabel label = createVisibilityLabel();
-						((ASTNode) label).setOffsetAndLength(key.getOffset(), l
-								- key.getOffset());
-						label.setVisibility(token2Visibility(key.getType()));
-						astClassSpecifier.addMemberDeclaration(label);
-						label.setParent(astClassSpecifier);
-						label
-								.setPropertyInParent(ICPPASTCompositeTypeSpecifier.VISIBILITY_LABEL);
-						break;
-					case IToken.tRBRACE:
-						consume(IToken.tRBRACE);
-						break memberDeclarationLoop;
-					default:
-						try {
-							IASTDeclaration d = declaration();
-							astClassSpecifier.addMemberDeclaration(d);
-							d.setParent(astClassSpecifier);
-							d
-									.setPropertyInParent(IASTCompositeTypeSpecifier.MEMBER_DECLARATION);
-						} catch (BacktrackException bt) {
-							IASTProblem p = failParse(bt);
-							IASTProblemDeclaration pd = createProblemDeclaration();
-							pd.setProblem(p);
-							((CPPASTNode) pd)
-									.setOffsetAndLength(((CPPASTNode) p));
-							p.setParent(pd);
-							p.setPropertyInParent(IASTProblemHolder.PROBLEM);
-							astClassSpecifier.addMemberDeclaration(pd);
-							pd.setParent(astClassSpecifier);
-							pd
-									.setPropertyInParent(IASTCompositeTypeSpecifier.MEMBER_DECLARATION);
-							if (checkToken == LA(1).hashCode())
-								errorHandling();
-						}
-
-						if (checkToken == LA(1).hashCode())
-							failParseWithErrorHandling();
-					}
+			memberDeclarationLoop: while (true) {
+				int checkToken = LA(1).hashCode();
+				switch (LT(1)) {
+				case IToken.t_public:
+				case IToken.t_protected:
+				case IToken.t_private: {
+					IToken key = consume();
+					int l = consume(IToken.tCOLON).getEndOffset();
+					ICPPASTVisiblityLabel label = createVisibilityLabel();
+					((ASTNode) label).setOffsetAndLength(key.getOffset(), l
+							- key.getOffset());
+					label.setVisibility(token2Visibility(key.getType()));
+					astClassSpecifier.addMemberDeclaration(label);
+					label.setParent(astClassSpecifier);
+					label
+							.setPropertyInParent(ICPPASTCompositeTypeSpecifier.VISIBILITY_LABEL);
+					break;
 				}
-		
-			// consume the }
-			int l = consume(IToken.tRBRACE).getEndOffset();
-			((ASTNode) astClassSpecifier).setLength(l - classKey.getOffset());
+				case IToken.tRBRACE: {
+					int l = consume(IToken.tRBRACE).getEndOffset();
+					((ASTNode) astClassSpecifier).setLength(l
+							- classKey.getOffset());
+					break memberDeclarationLoop;
+				}
+				case IToken.tEOC:
+					// Don't care about the offsets
+					break memberDeclarationLoop;
+				default:
+					try {
+						IASTDeclaration d = declaration();
+						astClassSpecifier.addMemberDeclaration(d);
+						d.setParent(astClassSpecifier);
+						d
+								.setPropertyInParent(IASTCompositeTypeSpecifier.MEMBER_DECLARATION);
+					} catch (BacktrackException bt) {
+						IASTProblem p = failParse(bt);
+						IASTProblemDeclaration pd = createProblemDeclaration();
+						pd.setProblem(p);
+						((CPPASTNode) pd).setOffsetAndLength(((CPPASTNode) p));
+						p.setParent(pd);
+						p.setPropertyInParent(IASTProblemHolder.PROBLEM);
+						astClassSpecifier.addMemberDeclaration(pd);
+						pd.setParent(astClassSpecifier);
+						pd
+								.setPropertyInParent(IASTCompositeTypeSpecifier.MEMBER_DECLARATION);
+						if (checkToken == LA(1).hashCode())
+							errorHandling();
+					}
+
+					if (checkToken == LA(1).hashCode())
+						failParseWithErrorHandling();
+				}
+			}
 
 		}
 		return astClassSpecifier;

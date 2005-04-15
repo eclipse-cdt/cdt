@@ -231,18 +231,21 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		IProject project = resource.getProject();
 		ICFileType type = CCorePlugin.getDefault().getFileType(project, resource.getLocation().lastSegment());
 		String lid = type.getLanguage().getId();
-		if( lid != null )
-		{
-		    if( lid.equals(ICFileTypeConstants.LANG_C ))
-		        return ParserLanguage.C;
-		    if( lid.equals(ICFileTypeConstants.LANG_CXX))
-		        return ParserLanguage.CPP;
-		}
 		try {
-            if( project.hasNature( CCProjectNature.CC_NATURE_ID ))
-                return ParserLanguage.CPP;
-        } catch (CoreException e) {
+			if( lid != null ) {
+				if( lid.equals(ICFileTypeConstants.LANG_C )) {
+					if (type.isHeader() && project.hasNature(CCProjectNature.CC_NATURE_ID))
+						return ParserLanguage.CPP; 
+					else
+						return ParserLanguage.C;
+				} else if( lid.equals(ICFileTypeConstants.LANG_CXX))
+					return ParserLanguage.CPP;
+			} else if( project.hasNature( CCProjectNature.CC_NATURE_ID ))
+				return ParserLanguage.CPP;
+		} catch (CoreException e) {
         }
+
+		// Actually, it probably isn't a C file, but anyway...
 		return ParserLanguage.C;
     }
 }

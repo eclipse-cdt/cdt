@@ -60,7 +60,9 @@ public class DOMCompletionContributor implements ICompletionContributor {
 				if (bindings != null)
 					for (int j = 0; j < bindings.length; ++j) {
 						IBinding binding = bindings[j];
-						if (!allBindings.contains(binding))
+						//if (!allBindings.contains(binding))
+						// TODO I removed this check since equals in the IBinding tree is currently broken
+						// It is returning true at times when I don't think it should (Bug 91577)
 							allBindings.add(binding);
 					}
 			}

@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -71,36 +70,50 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		if (monitor != null && monitor.isCanceled()) return PROCESS_ABORT;
 		if (node == null) return PROCESS_CONTINUE;
 		
-		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
-        if (!(nodeLocations.length > 0 ) )
-			return PROCESS_CONTINUE;
-		
-		DOMASTNodeParent parent = root.findTreeParentForNode(node);
-		
-		if (parent == null)
-			parent = root;
-		
-		DOMASTNodeParent tree = new DOMASTNodeParent(node);
-		parent.addChild(tree);
-		
-		// set filter flags
-		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) { 
-			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
-			
-			if (node instanceof IASTProblemHolder)
-				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
-			else
-				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, node);
-		}
-		if (node instanceof IASTPreprocessorStatement)
-			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PREPROCESSOR);
-		if (node instanceof IASTPreprocessorIncludeStatement)
-			tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS);
-		
-	
-		
-		return PROCESS_CONTINUE;
+        // only do length check for ASTNode (getNodeLocations on PreprocessorStatements is very expensive)
+        if (node instanceof ASTNode && ((ASTNode)node).getLength() <= 0)
+            return PROCESS_CONTINUE;
+        
+        DOMASTNodeParent parent = null;
+        
+        // if it's a preprocessor statement being merged then do a special search for parent (no search)
+        if (node instanceof IASTPreprocessorStatement) {
+            parent = root;  
+        } else {
+            IASTNode tempParent = node.getParent();
+            if (tempParent instanceof IASTPreprocessorStatement) {
+                parent = root.findTreeParentForMergedNode(node);
+            } else {
+                parent = root.findTreeParentForNode(node);              
+            }
+        }
+        
+        if (parent == null)
+            parent = root;
+        
+        createNode(parent, node);
+        
+        return PROCESS_CONTINUE;
 	}
+    
+    private void createNode(DOMASTNodeParent parent, IASTNode node) {
+        DOMASTNodeParent tree = new DOMASTNodeParent(node);
+        parent.addChild(tree);
+        
+        // set filter flags
+        if (node instanceof IASTProblemHolder || node instanceof IASTProblem) { 
+            tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
+            
+            if (node instanceof IASTProblemHolder)
+                astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
+            else
+                astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, node);
+        }
+        if (node instanceof IASTPreprocessorStatement)
+            tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PREPROCESSOR);
+        if (node instanceof IASTPreprocessorIncludeStatement)
+            tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS);
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)

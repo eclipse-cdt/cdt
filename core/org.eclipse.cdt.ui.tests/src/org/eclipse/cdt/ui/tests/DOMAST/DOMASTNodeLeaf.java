@@ -346,6 +346,9 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			return null;
 		}
 		public IPropertyDescriptor[] getPropertyDescriptors() {
+            if (node instanceof IASTTranslationUnit) // skip the properties for the TU (too expensive)
+                return BLANK_DESCRIPTORS;
+            
 			IPropertyDescriptor[] descriptors = new IPropertyDescriptor[DEFAULT_DESCRIPTOR_SIZE];
 			
 			if (node instanceof IASTName) {

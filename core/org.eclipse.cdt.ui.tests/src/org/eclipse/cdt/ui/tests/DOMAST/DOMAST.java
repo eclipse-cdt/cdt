@@ -45,6 +45,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CProject;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -948,6 +952,7 @@ public class DOMAST extends ViewPart {
    }
       
    private class ASTHighlighterAction extends Action {
+       private static final String A_PART_INSTANCEOF = "aPart instanceof "; //$NON-NLS-1$
        IEditorPart aPart = null;
 
       public ASTHighlighterAction(IEditorPart part) {
@@ -974,47 +979,54 @@ public class DOMAST extends ViewPart {
       }
 
       public void run() {
-         ISelection selection = viewer.getSelection();
-         Object obj = ((IStructuredSelection) selection).getFirstElement();
-         if (obj instanceof DOMASTNodeLeaf) {
-            String filename = ((DOMASTNodeLeaf) obj).getFilename();
-            
-            if (filename.equals(DOMASTNodeLeaf.BLANK_STRING))
-            	return;
-            
-            IResource r = ParserUtil.getResourceForFilename(filename);
-            if (r != null) {
-               try {
-                  aPart = EditorUtility.openInEditor(r);
-               } catch (PartInitException pie) {
-                  return;
-               } catch (CModelException e) {
-                  return;
-               }
-            } else {
-               IPath path = new Path( filename );
-       			FileStorage storage = new FileStorage(null, path);
-       			try {
-                  aPart = EditorUtility.openInEditor(storage);
-               } catch (PartInitException e) {
-                  return;
-               } catch (CModelException e) {
-                  return;
-               }
-            }
-            
-            if( aPart instanceof AbstractTextEditor )
-            {
-                ((AbstractTextEditor) aPart).selectAndReveal(((DOMASTNodeLeaf) obj).getOffset(),
-                      ((DOMASTNodeLeaf) obj).getLength());
-            }
-            else
-                System.out.println( "aPart instanceof " + aPart.getClass().getName() );
-    
-            aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(VIEW_ID));
-            
-         }
-      }
+          ISelection selection = viewer.getSelection();
+          Object obj = ((IStructuredSelection) selection).getFirstElement();
+          if (obj instanceof DOMASTNodeLeaf) {
+             if (((DOMASTNodeLeaf)obj).getNode() instanceof IASTTranslationUnit) // don't do anything for TU
+                 return;
+             
+             String filename = ((DOMASTNodeLeaf) obj).getFilename();
+             
+             if (filename.equals(DOMASTNodeLeaf.BLANK_STRING))
+                return;
+             
+             IResource r = ParserUtil.getResourceForFilename(filename);
+             if (r != null) {
+                try {
+                   aPart = EditorUtility.openInEditor(r);
+                } catch (PartInitException pie) {
+                   return;
+                } catch (CModelException e) {
+                   return;
+                }
+             } else {
+                IPath path = new Path( filename );
+
+                ICProject cproject = new CProject(null, file.getProject());
+                ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
+                if (unit != null) 
+                    try {
+                     aPart = EditorUtility.openInEditor(unit);
+                } catch (PartInitException e) {
+                   return;
+                } catch (CModelException e) {
+                   return;
+                }
+             }
+             
+             if( aPart instanceof AbstractTextEditor )
+             {
+                 ((AbstractTextEditor) aPart).selectAndReveal(((DOMASTNodeLeaf) obj).getOffset(),
+                       ((DOMASTNodeLeaf) obj).getLength());
+             }
+             else
+                 System.out.println( A_PART_INSTANCEOF + aPart.getClass().getName() );
+     
+             aPart.getSite().getPage().activate(aPart.getSite().getPage().findView(VIEW_ID));
+             
+          }
+       }
+
    }
 
    private class DisplayDeclarationsAction extends DisplaySearchResultAction {

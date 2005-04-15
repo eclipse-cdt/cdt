@@ -16,6 +16,7 @@ import java.util.Comparator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -24,12 +25,14 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author dsteffle
  */
 public class DOMASTNodeParent extends DOMASTNodeLeaf {
+    private static final int NO_PREPROCESSOR_STATMENT = -1;
 	private static final DOMASTNodeLeaf[] EMPTY_CHILDREN_ARRAY = new DOMASTNodeLeaf[0];
 	private static final int DEFAULT_NODE_CHAIN_SIZE = 4;
 	private static final int DEFAULT_CHILDREN_SIZE = 4;
 	int index=0;
 	private DOMASTNodeLeaf[] children;
 	boolean cleanupedElements = false;
+    private int indexFirstPreproStmnt=NO_PREPROCESSOR_STATMENT;
 	
 	public int getStartSearch() {
 		return index;
@@ -45,6 +48,10 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 		children = new DOMASTNodeLeaf[DEFAULT_CHILDREN_SIZE];
 	}
 	public void addChild(DOMASTNodeLeaf child) {
+        if (child.getNode() instanceof IASTPreprocessorStatement && indexFirstPreproStmnt == NO_PREPROCESSOR_STATMENT) {
+            indexFirstPreproStmnt=index;
+        }
+        
 		if (index==children.length) {
 			children = (DOMASTNodeLeaf[])ArrayUtil.append(DOMASTNodeLeaf.class, children, child);
 			index++;
@@ -64,49 +71,112 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 		child.setParent(null);
 	}
 	
-	public DOMASTNodeLeaf[] getChildren(boolean cleanupElements) {
-		if (cleanupElements) {
-			return getChildren();
-		} else {
-			return children;
-		}
-	}
-	
+    public DOMASTNodeLeaf[] getChildren(boolean cleanupElements) {
+        if (cleanupElements) {
+            return getChildren();
+        }
+        
+        return children;
+    }
+    
 	public DOMASTNodeLeaf [] getChildren() {
-		// remove null children from the array (if not already done so)
-		if (!cleanupedElements) {
-			// remove null elements
-			children = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
-			
-			// sort the elements
-			Arrays.sort(children, new Comparator() {
-	            public int compare(Object a, Object b) {
-	                if(a instanceof DOMASTNodeLeaf && b instanceof DOMASTNodeLeaf &&
-							((DOMASTNodeLeaf)a).getNode() instanceof ASTNode &&
-							((DOMASTNodeLeaf)b).getNode() instanceof ASTNode) {
-						return ((ASTNode)((DOMASTNodeLeaf)a).getNode()).getOffset() - ((ASTNode)((DOMASTNodeLeaf)b).getNode()).getOffset();
-	                }
-					
-					return 0;
-	            }
-	        });
-			
-			// need to also clean up the children's children, to make sure all nulls are removed (prevent expansion sign when there isn't one)
-			for(int i=0; i<children.length; i++) {
-				if (children[i] instanceof DOMASTNodeParent) {
-					((DOMASTNodeParent)children[i]).setChildren((DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, ((DOMASTNodeParent)children[i]).getChildren()));
-				}
-			}
-			
-			cleanupedElements = true;
-		}
-		
-		return children;
+        // remove null children from the array (if not already done so)
+        if (!cleanupedElements) {
+            cleanChildren();
+        }
+        
+        return children;
 	}
+    
+    public void cleanChildren() {
+        // remove null elements
+        children = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
+        
+        // sort the elements
+        Arrays.sort(children, new Comparator() {
+            public int compare(Object a, Object b) {
+                if(a instanceof DOMASTNodeLeaf && b instanceof DOMASTNodeLeaf &&
+                        ((DOMASTNodeLeaf)a).getNode() instanceof ASTNode &&
+                        ((DOMASTNodeLeaf)b).getNode() instanceof ASTNode) {
+                    return ((ASTNode)((DOMASTNodeLeaf)a).getNode()).getOffset() - ((ASTNode)((DOMASTNodeLeaf)b).getNode()).getOffset();
+                }
+                
+                return 0;
+            }
+        });
+        
+        // need to also clean up the children's children, to make sure all nulls are removed (prevent expansion sign when there isn't one)
+        for(int i=0; i<children.length; i++) {
+            if (children[i] instanceof DOMASTNodeParent) {
+                DOMASTNodeLeaf[] kids = ((DOMASTNodeParent)children[i]).children;
+                // remove null elements
+                kids = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, kids);
+                ((DOMASTNodeParent)children[i]).setChildren(kids);
+            }
+        }
+        
+        cleanupedElements = true;
+    }
+    
 	public boolean hasChildren() {
 		return children.length>0;
 	}
 
+    /**
+     * Returns the DOMASTNodeParent whose IASTNode is the parent of the IASTNode.
+     *
+     * This function is an optimization function used to only search merged preprocessor nodes.
+     * 
+     * @param node
+     * @return
+     */
+    public DOMASTNodeParent findTreeParentForMergedNode(IASTNode node) {
+        if (node == null || node.getParent() == null) return null;
+        
+        IASTNode parentToFind = node.getParent();
+        
+        // first check this node before checking children
+        if (this.getNode() == parentToFind) {
+            return this;
+        }
+        
+        // build the chain of nodes... and use it to search the tree for the DOMASTNodeParent that owns the node's parent
+        IASTNode[] nodeChain = new IASTNode[DEFAULT_NODE_CHAIN_SIZE];
+        IASTNode topNode = node.getParent();
+        ArrayUtil.append(IASTNode.class, nodeChain, node);
+        nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
+        while(topNode.getParent() != null && !(topNode.getParent() instanceof IASTTranslationUnit)) {
+            topNode = topNode.getParent();
+            nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
+        }
+        
+        // loop through the chain of nodes and use it to only search the necessary children required to find the node
+        DOMASTNodeLeaf[] childrenToSearch = children;
+        int j=childrenToSearch.length-1;
+        outerLoop: for(int i=nodeChain.length-1; i>=0; i--) {
+            if (nodeChain[i] != null) {
+                parentToFind = nodeChain[i];
+                
+                for(; j>=indexFirstPreproStmnt; j--) {
+                    if (childrenToSearch[j] instanceof DOMASTNodeParent) {
+                        if ( childrenToSearch[j].getNode() == node.getParent() ) {
+                            return (DOMASTNodeParent)childrenToSearch[j];
+                        }
+                                                
+                        if (childrenToSearch[j].getNode() == parentToFind) {
+                            int pos = j;
+                            j = ((DOMASTNodeParent)childrenToSearch[pos]).getStartSearch();
+                            childrenToSearch = ((DOMASTNodeParent)childrenToSearch[pos]).getChildren(false);
+                            continue outerLoop;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return null; // nothing found
+    }
+    
 	/**
 	 * Returns the DOMASTNodeParent whose IASTNode is the parent of the IASTNode.
 	 * 

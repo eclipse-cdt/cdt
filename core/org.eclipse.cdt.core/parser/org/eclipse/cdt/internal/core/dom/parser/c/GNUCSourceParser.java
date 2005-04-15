@@ -952,7 +952,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 consume(IToken.tLPAREN);
                 if (LT(1) != IToken.tRPAREN)
                     secondExpression = expression();
-                last = consume(IToken.tRPAREN).getEndOffset();
+				if (LT(1) == IToken.tRPAREN)
+					last = consume(IToken.tRPAREN).getEndOffset();
+				else
+					// must be EOC
+					last = Integer.MAX_VALUE;
                 IASTFunctionCallExpression f = createFunctionCallExpression();
                 ((ASTNode) f).setOffsetAndLength(((ASTNode) firstExpression)
                         .getOffset(), last
@@ -1132,7 +1136,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     IASTUnaryExpression.op_bracketedPrimary, lhs,
                     t.getOffset(), finalOffset);
         case IToken.tIDENTIFIER:
-
+        case IToken.tCOMPLETION:
+        case IToken.tEOC:
             int startingOffset = LA(1).getOffset();
             IToken t1 = identifier();
             IASTIdExpression idExpression = createIdExpression();

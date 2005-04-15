@@ -287,7 +287,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      *             request a backtrack
      */
     protected IToken identifier() throws EndOfFileException, BacktrackException {
-        return consume(IToken.tIDENTIFIER);
+		switch (LT(1)) {
+		case IToken.tIDENTIFIER:
+		case IToken.tCOMPLETION:
+		case IToken.tEOC:
+			return consume();
+		default:
+			throw backtrack;
+		}
+        
     }
 
     /**

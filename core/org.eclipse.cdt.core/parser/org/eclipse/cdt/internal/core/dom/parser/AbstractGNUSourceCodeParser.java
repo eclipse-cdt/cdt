@@ -484,7 +484,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         IASTCompoundStatement result = createCompoundStatement();
         ((ASTNode) result).setOffset(startingOffset);
-        result.setParent(mostRelevantScopeNode);
         result.setPropertyInParent(IASTFunctionDefinition.FUNCTION_BODY);
         while (LT(1) != IToken.tRBRACE && LT(1) != IToken.tCOMPLETION && LT(1) != IToken.tEOC) {
             int checkToken = LA(1).hashCode();
@@ -2087,6 +2086,5 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throwBacktrack(token.getOffset(), token.getLength());
     }
 
-    protected IASTNode mostRelevantScopeNode;
 
 }

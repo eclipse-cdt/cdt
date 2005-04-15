@@ -559,7 +559,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         translationUnit.setLocationResolver(scanner.getLocationResolver());
-        mostRelevantScopeNode = translationUnit;
 
         int lastBacktrack = -1;
         while (true) {

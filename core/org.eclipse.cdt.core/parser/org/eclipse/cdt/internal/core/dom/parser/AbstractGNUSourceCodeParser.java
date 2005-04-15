@@ -1869,6 +1869,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             IASTExpression condition = null;
             try {
                 condition = condition();
+				if (LT(1) == IToken.tEOC) {
+					// Completing in the condition
+					result = createIfStatement();
+					result.setCondition(condition);
+					condition.setParent(result);
+					condition.setPropertyInParent(IASTIfStatement.CONDITION);
+					return result; 
+				}
                 consume(IToken.tRPAREN);
             } catch (BacktrackException b) {
                 IASTProblem p = failParse(b);

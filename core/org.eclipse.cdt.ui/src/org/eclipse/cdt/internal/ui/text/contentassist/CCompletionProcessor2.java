@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.CDOM;
@@ -86,6 +87,38 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				}
 			}
 
+			ICompletionProposal[] propsArray = null;
+			
+			if (!proposals.isEmpty()) {
+				errorMessage = null;
+				propsArray = (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+				CCompletionProposalComparator propsComp = new CCompletionProposalComparator();
+				propsComp.setOrderAlphabetically(true);
+				Arrays.sort(propsArray, propsComp); 
+				
+				// remove duplicates
+				ICompletionProposal last = propsArray[0];
+				int removed = 0;
+				for (int i = 1; i < propsArray.length; ++i) {
+					if (propsComp.compare(last, propsArray[i]) == 0) {
+						// Remove the duplicate
+						++removed;
+						propsArray[i] = null;
+					} else
+						// update last
+						last = propsArray[i];
+				}
+				if (removed > 0) {
+					// Strip out the null entries
+					ICompletionProposal[] newArray = new ICompletionProposal[propsArray.length - removed];
+					int j = 0;
+					for (int i = 0; i < propsArray.length; ++i)
+						if (propsArray[i] != null)
+							newArray[j++] = propsArray[i];
+					propsArray = newArray;
+				}
+			}
+			
 			if (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.TIME_DOM)) {
 				long propTime = System.currentTimeMillis();
 				System.out.println("Completion Parse: " + (stopTime - startTime) + " + Proposals: " //$NON-NLS-1$ //$NON-NLS-2$
@@ -93,10 +126,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				System.out.flush();
 			}
 			
-			if (!proposals.isEmpty()) {
-				errorMessage = null;
-				return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
-			}
+			return propsArray; 
 			
 		} catch (UnsupportedDialectException e) {
 			errorMessage = "Unsupported Dialect Exception";

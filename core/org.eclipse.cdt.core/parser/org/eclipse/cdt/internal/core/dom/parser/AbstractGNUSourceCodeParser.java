@@ -1871,11 +1871,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 condition = condition();
 				if (LT(1) == IToken.tEOC) {
 					// Completing in the condition
-					result = createIfStatement();
-					result.setCondition(condition);
-					condition.setParent(result);
+					IASTIfStatement new_if = createIfStatement();
+					new_if.setCondition(condition);
+					condition.setParent(new_if);
 					condition.setPropertyInParent(IASTIfStatement.CONDITION);
-					return result; 
+					
+					if (if_statement != null) {
+                        if_statement.setElseClause(new_if);
+                        new_if.setParent(if_statement);
+                        new_if.setPropertyInParent(IASTIfStatement.ELSE);
+					}
+					return result != null ? result : new_if; 
 				}
                 consume(IToken.tRPAREN);
             } catch (BacktrackException b) {

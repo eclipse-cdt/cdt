@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.framework.msg.MessageFormat;
+import java.text.MessageFormat;
 
 /**
  * A breakpoint that suspend the execution when a particular address is reached.

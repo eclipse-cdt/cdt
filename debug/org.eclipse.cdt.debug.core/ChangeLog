@@ -1,3 +1,7 @@
+2005-04-15 Alain Magloire
+	Fix Pr 91581
+	* src/org/eclipse/cdt/debug/internal/core/breakpoint/CAddressBreakpoint.java
+
 2005-04-07 Mikhail Khodjaiants
 	Move to Eclipse-31M6.
 	* CMemoryBlockRetrievalExtension.java

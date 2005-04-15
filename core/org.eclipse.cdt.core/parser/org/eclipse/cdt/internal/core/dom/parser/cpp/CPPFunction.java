@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -174,26 +175,23 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
 			node = node.getParent();
 		if( !(node instanceof ICPPASTFunctionDeclarator) )
 			return;
+		
 		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
 		updateParameterBindings( dtor );
+		
 		if( declarations == null ){
 			declarations = new ICPPASTFunctionDeclarator [] { dtor };
 			return;
 		}
-		for( int i = 0; i < declarations.length; i++ ){
-		    if( declarations[i] == dtor ){
-		        //already in
-		        return;
-		    } else if( declarations[i] == null ){
-				declarations[i] = dtor;
-				updateParameterBindings( dtor );
-				return;
-			}
+		
+		//keep the lowest offset declaration in [0]
+		if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
+		    ICPPASTFunctionDeclarator temp = declarations[0];
+		    declarations[0] = dtor;
+		    dtor = temp;
 		}
-		ICPPASTFunctionDeclarator [] tmp = new ICPPASTFunctionDeclarator[ declarations.length * 2 ];
-		System.arraycopy( declarations, 0, tmp, 0, declarations.length );
-		tmp[ declarations.length ] = dtor;
-		declarations = tmp;
+		
+		declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.append( ICPPASTFunctionDeclarator.class, declarations, dtor );
 	}
 	
 	/* (non-Javadoc)

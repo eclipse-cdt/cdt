@@ -582,47 +582,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 12.3-4):
-	class X {
-	// ...
-	public:
-	operator int();
-	};
-	class Y {
-	// ...
-	public:
-	operator X();
-	};
-	Y a;
-	int b = a; // error:
-	// a.operator X().operator int() not tried
-	int c = X(a); // OK: a.operator X().operator int()
-	 --End Example]
-	 */
-	public void test12_3s4()  { // TODO raised bug 90654
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("class X {\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("public:\n"); //$NON-NLS-1$
-		buffer.append("operator int();\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("class Y {\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("public:\n"); //$NON-NLS-1$
-		buffer.append("operator X();\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("Y a;\n"); //$NON-NLS-1$
-		buffer.append("int b = a; // error:\n"); //$NON-NLS-1$
-		buffer.append("// a.operator X().operator int() not tried\n"); //$NON-NLS-1$
-		buffer.append("int c = X(a); // OK: a.operator X().operator int()\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, false, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 12.7-2):
 	struct A { };
 	struct B : virtual A { };
@@ -662,33 +621,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("// C/B/D/A sublattice is fully constructed\n"); //$NON-NLS-1$
 		buffer.append("{ }\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
-	 [--Start Example(CPP 13.3.3.2-3c):
-	struct A {
-	operator short();
-	} a;
-	int f(int);
-	int f(float);
-	int i = f(a); // Calls f(int), because short ® int is
-	// better than short ® float.
-	 --End Example]
-	 */
-	public void test13_3_3_2s3c()  { // TODO raised bug 90667
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct A {\n"); //$NON-NLS-1$
-		buffer.append("operator short();\n"); //$NON-NLS-1$
-		buffer.append("} a;\n"); //$NON-NLS-1$
-		buffer.append("int f(int);\n"); //$NON-NLS-1$
-		buffer.append("int f(float);\n"); //$NON-NLS-1$
-		buffer.append("int i = f(a); // Calls f(int), because short ® int is\n"); //$NON-NLS-1$
-		buffer.append("// better than short ® float.\n"); //$NON-NLS-1$
 		try {
 		parse(buffer.toString(), ParserLanguage.CPP, true, true);
 		assertTrue(false);
@@ -1257,53 +1189,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("f(sr); //instantiation of S<int> allowed but not required\n"); //$NON-NLS-1$
 		buffer.append("// instantiation of S<float> allowed but not required\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, true);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
-	 [--Start Example(CPP 14.7.1-10):
-	namespace N {
-	template<class T> class List {
-	public:
-	T* get();
-	// ...
-	};
-	}
-	template<class K, class V> class Map {
-	N::List<V> lt;
-	V get(K);
-	// ...
-	};
-	void g(Map<char*,int>& m)
-	{
-	int i = m.get("Nicholas");
-	// ...
-	}
-	 --End Example]
-	 */
-	public void test14_7_1s10()  { // TODO already have similar bug
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("namespace N {\n"); //$NON-NLS-1$
-		buffer.append("template<class T> class List {\n"); //$NON-NLS-1$
-		buffer.append("public:\n"); //$NON-NLS-1$
-		buffer.append("T* get();\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		buffer.append("template<class K, class V> class Map {\n"); //$NON-NLS-1$
-		buffer.append("N::List<V> lt;\n"); //$NON-NLS-1$
-		buffer.append("V get(K);\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("void g(Map<char*,int>& m)\n"); //$NON-NLS-1$
-		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("int i = m.get(\"Nicholas\");\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
 		try {
 		parse(buffer.toString(), ParserLanguage.CPP, true, true);
 		assertTrue(false);

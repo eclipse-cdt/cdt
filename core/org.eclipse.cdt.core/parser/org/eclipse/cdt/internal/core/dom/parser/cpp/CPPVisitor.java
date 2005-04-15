@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -480,18 +481,6 @@ public class CPPVisitor {
 				return CPPTemplates.createBinding( param );
 			}
 		} else if( simpleDecl != null && simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-		    if( binding == null ){
-		        binding = CPPSemantics.resolveBinding( name );
-		        try {
-			        if( (binding instanceof IProblemBinding && ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND) ||
-			            binding.getScope() != scope )
-			        {
-			            binding = null;
-			        }
-		        } catch ( DOMException e ){
-		            binding = null;
-		        }
-		    }
 		    if( binding != null && binding instanceof ITypedef ){
 		        try {
                     IType t1 = ((ITypedef)binding).getType();
@@ -1293,8 +1282,13 @@ public class CPPVisitor {
 	        
 	        pTypes[i] = pt;
 	    }
-	    
-	    returnType = getPointerTypes( returnType, fnDtor );
+	     
+	    IASTName name = fnDtor.getName();
+	    if( name instanceof ICPPASTConversionName ){
+	    	returnType = createType( ((ICPPASTConversionName)name).getTypeId() );
+	    } else {
+	    	returnType = getPointerTypes( returnType, fnDtor );
+	    }
 	    
 	    IType type = new CPPFunctionType( returnType, pTypes );
 	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
@@ -1407,13 +1401,13 @@ public class CPPVisitor {
 			name = ((IASTEnumerationSpecifier)declSpec).getName();
 		} else if( declSpec instanceof ICPPASTSimpleDeclSpecifier ){
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
-			int bits = ( spec.isLong()     ? CPPBasicType.IS_LONG  : 0 ) &
-					   ( spec.isShort()    ? CPPBasicType.IS_SHORT : 0 ) &
-					   ( spec.isSigned()   ? CPPBasicType.IS_SIGNED: 0 ) &
+			int bits = ( spec.isLong()     ? CPPBasicType.IS_LONG  : 0 ) |
+					   ( spec.isShort()    ? CPPBasicType.IS_SHORT : 0 ) |
+					   ( spec.isSigned()   ? CPPBasicType.IS_SIGNED: 0 ) |
 					   ( spec.isUnsigned() ? CPPBasicType.IS_SHORT : 0 );
 			if( spec instanceof IGPPASTSimpleDeclSpecifier ){
 				IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) spec;
-				bits &= ( gspec.isLongLong() ? GPPBasicType.IS_LONGLONG : 0 );
+				bits |= ( gspec.isLongLong() ? GPPBasicType.IS_LONGLONG : 0 );
 				type = new GPPBasicType( spec.getType(), bits, getExpressionType(gspec.getTypeofExpression()) );
 			} else {
 			    type = new CPPBasicType( spec.getType(), bits );
@@ -1503,6 +1497,7 @@ public class CPPVisitor {
 	    		case IASTLiteralExpression.lk_string_literal:
 	    			IType type = new CPPBasicType( IBasicType.t_char, 0 );
 	    			type = new CPPQualifierType( type, true, false );
+	    			((CPPQualifierType)type).setFromStringLiteral( true );
 	    			return new CPPPointerType( type );
 	    	}
 	    	

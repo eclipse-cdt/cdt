@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 public interface ICPPInternalBinding extends IBinding {
     //methods required by the CPPVisitor but not meant for the public interface
     
+    //implementors should keep the node with the lowest offset in declarations[0]
     IASTNode [] getDeclarations();
     IASTNode getDefinition();
     

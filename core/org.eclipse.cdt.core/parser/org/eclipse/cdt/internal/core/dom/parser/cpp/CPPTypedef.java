@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
@@ -44,31 +46,29 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
             return null;
         }
     }
-	private IASTName typedefName = null;
+	private IASTName [] declarations = null;
 	private IType type = null;
 	
 	/**
 	 * @param declarator
 	 */
 	public CPPTypedef(IASTName name) {
-		this.typedefName = name;
+		this.declarations = new IASTName[] { name };
 		name.setBinding( this );
-		
-		// TODO Auto-generated constructor stub
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
      */
     public IASTNode[] getDeclarations() {
-        return null;
+        return declarations;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
      */
     public IASTNode getDefinition() {
-        return typedefName;
+        return declarations[0];
     }
 
     public boolean equals( Object o ){
@@ -98,13 +98,7 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
 	 */
 	public IType getType() {
 	    if( type == null ){
-	        type = CPPVisitor.createType( (IASTDeclarator) typedefName.getParent() );
-//	        if( type instanceof ITypedef ){
-//	            try {
-//                    type = ((ITypedef)type).getType();
-//                } catch ( DOMException e ) {
-//                }
-//	        }
+	        type = CPPVisitor.createType( (IASTDeclarator) declarations[0].getParent() );
 	    }
 		return type;
 	}
@@ -117,30 +111,23 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return typedefName.toString();
+		return declarations[0].toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return typedefName.toCharArray();
+		return declarations[0].toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( typedefName.getParent() );
+		return CPPVisitor.getContainingScope( declarations[0].getParent() );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-	 */
-	public IASTNode getPhysicalNode() {
-		return typedefName;
-	}
-	
     public Object clone(){
         IType t = null;
    		try {
@@ -188,16 +175,27 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
+	    addDeclaration( node );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
-	}
+	    if( !(node instanceof IASTName) )
+			return;
+		IASTName name = (IASTName) node;
 
+		if( declarations == null )
+	        declarations = new IASTName[] { name };
+	    else {
+	        //keep the lowest offset declaration in [0]
+			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
+			    IASTName temp = declarations[0];
+			    declarations[0] = name;
+			    name = temp;
+			}
+	        declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+	    }
+	}
 }

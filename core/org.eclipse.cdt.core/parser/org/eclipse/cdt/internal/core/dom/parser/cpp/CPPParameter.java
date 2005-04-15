@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author aniefer
@@ -75,16 +76,8 @@ public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariab
 		    declarations = new IASTName [] { name };
 			return;
 		}
-		for( int i = 0; i < declarations.length; i++ ){
-			if( declarations[i] == null ){
-				declarations[i] = name;
-				return;
-			}
-		}
-		IASTName [] tmp = new IASTName[ declarations.length * 2 ];
-		System.arraycopy( declarations, 0, tmp, 0, declarations.length );
-		tmp[ declarations.length ] = name;
-		declarations = tmp;
+		
+		declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
 	}
 	
 	private IASTName getPrimaryDeclaration(){
@@ -186,7 +179,6 @@ public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariab
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
+		addDeclaration( node );
 	}
 }

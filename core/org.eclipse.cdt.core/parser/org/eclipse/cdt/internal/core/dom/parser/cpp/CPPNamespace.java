@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author aniefer
@@ -221,8 +222,22 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		if( node instanceof IASTName )
-			namespaceDefinitions = (IASTName[]) ArrayUtil.append( IASTName.class, namespaceDefinitions, node );
+		if( !(node instanceof IASTName) )
+		    return;
+		IASTName name = (IASTName) node;
+		
+		if( namespaceDefinitions == null ){
+		    namespaceDefinitions = new IASTName[] { name };
+		    return;
+		}
+		
+		if( namespaceDefinitions.length > 0 && ((ASTNode)name).getOffset() < ((ASTNode)namespaceDefinitions[0]).getOffset() ){
+		    IASTName temp = namespaceDefinitions[0];
+		    namespaceDefinitions[0] = name;
+		    name = temp;
+		}
+		
+		namespaceDefinitions = (IASTName[]) ArrayUtil.append( IASTName.class, namespaceDefinitions, name );
 	}
 
 	/* (non-Javadoc)

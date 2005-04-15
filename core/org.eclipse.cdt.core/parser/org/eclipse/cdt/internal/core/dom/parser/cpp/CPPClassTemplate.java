@@ -39,7 +39,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  * @author aniefer
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements
-		ICPPClassTemplate, ICPPClassType, ICPPInternalBinding {
+		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType {
 
 	/**
 	 * @param decl
@@ -227,5 +227,12 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		} catch (CloneNotSupportedException e) {
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalClassType#getConversionOperators()
+	 */
+	public ICPPMethod[] getConversionOperators() {
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 }

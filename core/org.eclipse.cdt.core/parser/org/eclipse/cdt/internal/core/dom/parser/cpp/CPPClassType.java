@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -50,13 +51,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
-public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
-    public static class CPPClassTypeDelegate extends CPPDelegate implements ICPPClassType {
+public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
+    public static class CPPClassTypeDelegate extends CPPDelegate implements ICPPClassType, ICPPInternalClassType {
         public CPPClassTypeDelegate( IASTName name, ICPPClassType cls ){
             super( name, cls );
         }
@@ -96,6 +98,15 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
         public Object clone() {
             return ((ICPPClassType)getBinding()).clone();
         }
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalClassType#getConversionOperators()
+		 */
+		public ICPPMethod[] getConversionOperators() {
+			IBinding binding = getBinding();
+			if( binding instanceof ICPPInternalClassType )
+				return ((ICPPInternalClassType)binding).getConversionOperators();
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		}
     }
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
         public CPPClassTypeProblem( IASTNode node, int id, char[] arg ) {
@@ -351,22 +362,22 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 	public void addDeclaration( IASTNode node ) {
 		if( !(node instanceof ICPPASTElaboratedTypeSpecifier) )
 			return;
-		ICPPASTElaboratedTypeSpecifier elabSpec = (ICPPASTElaboratedTypeSpecifier) node;
+		
+		IASTName name = ((ICPPASTElaboratedTypeSpecifier) node).getName();
+
 		if( declarations == null ){
-			declarations = new IASTName[] { elabSpec.getName() };
+			declarations = new IASTName[] { name };
 			return;
 		}
 
-        for( int i = 0; i < declarations.length; i++ ){
-            if( declarations[i] == null ){
-                declarations[i] = elabSpec.getName();
-                return;
-            }
-        }
-        IASTName tmp [] = new IASTName[ declarations.length * 2 ];
-        System.arraycopy( declarations, 0, tmp, 0, declarations.length );
-        tmp[ declarations.length ] = elabSpec.getName();
-        declarations = tmp;
+		//keep the lowest offset declaration in [0]
+		if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
+		    IASTName temp = declarations[0];
+		    declarations[0] = name;
+		    node = temp;
+		}
+		
+		declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
 	}
 
 	/* (non-Javadoc)
@@ -430,6 +441,56 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
             }
         }
 		return (ICPPField[]) ArrayUtil.trim( ICPPField.class, result );
+	}
+	
+	public ICPPMethod[] getConversionOperators() {
+		if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new ICPPMethod[] { new CPPMethod.CPPMethodProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+            }
+        }
+	    IBinding binding = null;
+	    ICPPMethod [] result = null;
+	    
+	    IASTDeclaration [] decls = getCompositeTypeSpecifier().getMembers();
+	    IASTName name = null;
+	    for ( int i = 0; i < decls.length; i++ ) {
+            if( decls[i] instanceof IASTSimpleDeclaration ){
+                IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
+                for ( int j = 0; j < dtors.length; j++ ) {
+                	name = CPPVisitor.getMostNestedDeclarator( dtors[j] ).getName();
+                	if( name instanceof ICPPASTConversionName ){
+                		binding = name.resolveBinding();
+                        if( binding instanceof ICPPMethod)
+                            result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );	
+                	}
+                }
+            } else if( decls[i] instanceof IASTFunctionDefinition ){
+                IASTDeclarator dtor = ((IASTFunctionDefinition)decls[i]).getDeclarator();
+                name = CPPVisitor.getMostNestedDeclarator( dtor ).getName();
+                if( name instanceof ICPPASTConversionName ){
+                	binding = name.resolveBinding();
+                    if( binding instanceof ICPPMethod ){
+                        result = (ICPPMethod[]) ArrayUtil.append( ICPPMethod.class, result, binding );
+                    }
+                }
+            } 
+        }
+	    
+	    ICPPBase [] bases = getBases();
+		for ( int i = 0; i < bases.length; i++ ) {
+			ICPPClassType cls;
+			try {
+				cls = bases[i].getBaseClass();
+			} catch (DOMException e) {
+				continue;
+			}
+			if( cls instanceof CPPClassType )
+				result = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, result, ((CPPClassType)cls).getConversionOperators() );
+        }
+		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, result );
 	}
 
 	/* (non-Javadoc)

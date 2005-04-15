@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,16 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.dom.ast.cpp;
+/*
+ * Created on Apr 12, 2005
+ */
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
 /**
- * @author Doug Schaefer
+ * @author aniefer
  */
-public interface ICPPMethod extends ICPPFunction, ICPPMember {
-	public static final ICPPMethod [] EMPTY_CPPMETHOD_ARRAY = new ICPPMethod[0];
+public interface ICPPInternalClassType extends ICPPInternalBinding {
+	public ICPPMethod [] getConversionOperators();
 }

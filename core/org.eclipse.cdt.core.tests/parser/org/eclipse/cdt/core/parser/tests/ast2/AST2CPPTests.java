@@ -3549,7 +3549,7 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertTrue( I8.getType() instanceof IBasicType );
     	assertEquals( ((IBasicType)I8.getType()).getType(), IBasicType.t_char );    	
 	}
-	
+		
 	public void testBug90623_2() throws Exception {
 	    StringBuffer buffer = new StringBuffer();
 	    buffer.append( "typedef int I;             \n"); //$NON-NLS-1$
@@ -3562,6 +3562,85 @@ public class AST2CPPTests extends AST2BaseTest {
 
     	IASTName f = col.getName( 5 );
     	f.resolvePrefix();
+	}
+	
+	public void testBug90654_1() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class X {            \n"); //$NON-NLS-1$
+		buffer.append("   X( const X & );   \n"); //$NON-NLS-1$
+		buffer.append("};                   \n"); //$NON-NLS-1$
+		buffer.append("class Y {            \n"); //$NON-NLS-1$
+		buffer.append("   operator X ();    \n"); //$NON-NLS-1$
+		buffer.append("};                   \n"); //$NON-NLS-1$
+		buffer.append("Y y;                 \n"); //$NON-NLS-1$
+		buffer.append("X x = new X( y );    \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPConstructor ctor1 = (ICPPConstructor) col.getName(1).resolveBinding();
+    	ICPPConstructor ctor = (ICPPConstructor) col.getName(11).resolveBinding();
+    	assertSame( ctor, ctor1 );
+	}
+	public void testBug90654_2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct A {                \n"); //$NON-NLS-1$
+		buffer.append("   operator short();      \n"); //$NON-NLS-1$
+		buffer.append("} a;                      \n"); //$NON-NLS-1$
+		buffer.append("int f( int );             \n"); //$NON-NLS-1$
+		buffer.append("int f( float );           \n"); //$NON-NLS-1$
+		buffer.append("int x = f(a);             \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	IFunction f1 = (IFunction) col.getName(3).resolveBinding();
+    	IFunction f2 = (IFunction) col.getName(8).resolveBinding();
+    	assertSame( f1, f2 );
+	}
+	
+	public void testBug90653() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct A {};                    \n"); //$NON-NLS-1$
+		buffer.append("struct B : public A {           \n"); //$NON-NLS-1$
+		buffer.append("   B& operator = (const B & );  \n"); //$NON-NLS-1$
+		buffer.append("};                              \n"); //$NON-NLS-1$
+		buffer.append("B& B::operator = (const B & s){ \n"); //$NON-NLS-1$
+		buffer.append("   this->A::operator=(s);       \n"); //$NON-NLS-1$
+		buffer.append("   return *this;                \n"); //$NON-NLS-1$
+		buffer.append("}                               \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+    	ICPPMethod implicit = A.getMethods()[2];
+    	
+    	ICPPMethod op1 = (ICPPMethod) col.getName(4).resolveBinding();
+    	ICPPMethod op2 = (ICPPMethod) col.getName(10).resolveBinding();
+    	
+    	ICPPMethod op = (ICPPMethod) col.getName(15).resolveBinding();
+    	
+    	assertSame( op1, op2 );
+    	assertSame( op, implicit );
+	}
+	
+	public void testBug86618() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void f( char * );            \n"); //$NON-NLS-1$
+		buffer.append("void foo() {                 \n"); //$NON-NLS-1$
+		buffer.append("   f( \"test\" );            \n"); //$NON-NLS-1$
+		buffer.append("}                            \n"); //$NON-NLS-1$
+
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+
+    	IFunction f = (IFunction) col.getName(0).resolveBinding();
+    	assertInstances( col, f, 2 );
 	}
 }
 

@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -1363,20 +1364,13 @@ public class CPPSemantics {
 	    if( obj instanceof ICPPInternalBinding ){
 	        ICPPInternalBinding cpp = (ICPPInternalBinding) obj;
 	        IASTNode[] n = cpp.getDeclarations();
-	        int o, offset = -1;
 	        if( n != null && n.length > 0 ) {
 	        	nd = (ASTNode) n[0];
-	        	offset = ((ASTNode) n[0]).getOffset();
-	        	for (int i = 1; i < n.length && n[i] != null; i++) {
-					o = ((ASTNode) n[i]).getOffset();
-					if( o < offset ) 
-						nd = (ASTNode) n[i];
-				}
-	        } 
-	        if( cpp.getDefinition() != null ){
-	        	if( nd == null || ((ASTNode)cpp.getDefinition()).getOffset() < nd.getOffset() )
-	        		nd = (ASTNode) cpp.getDefinition();
-	        	
+	        }
+	        ASTNode def = (ASTNode) cpp.getDefinition();
+	        if( def != null ){
+	        	if( nd == null || def.getOffset() < nd.getOffset() )
+	        		nd = def;
 	        }
 	        if( nd == null ) 
 	            return true;
@@ -1384,21 +1378,22 @@ public class CPPSemantics {
 	        nd = (ASTNode) obj;
 	    }
 	    
-	    //avoid recursive loops in case of a malformed AST by requiring the decl of the type of a function parameter
-	    //to occur before the start of that function's declarator.
-	    if( node instanceof IASTName && node.getPropertyInParent() == IASTNamedTypeSpecifier.NAME ) {
-	        IASTNode n = node.getParent();
-	        if( n.getPropertyInParent() == IASTParameterDeclaration.DECL_SPECIFIER ){
-	            node = (ASTNode) n.getParent().getParent();  //parent is param, parent.parent is fnDtor
-	        }
-	    }
-	    
 	    if( nd != null ){
 	        int pointOfDecl = 0;
             ASTNodeProperty prop = nd.getPropertyInParent();
-            if( prop == IASTDeclarator.DECLARATOR_NAME ){
-                pointOfDecl = nd.getOffset() + nd.getLength(); 
-            } else if( prop == IASTEnumerator.ENUMERATOR_NAME) {
+            //point of declaration for a name is immediately after its complete declarator and before its initializer
+            if( prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator ){
+                IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
+                while( dtor.getParent() instanceof IASTDeclarator )
+                    dtor = (IASTDeclarator) dtor.getParent();
+                IASTInitializer init = dtor.getInitializer();
+                if( init != null )
+                    pointOfDecl = ((ASTNode)init).getOffset() - 1;
+                else
+                    pointOfDecl = ((ASTNode)dtor).getOffset() + ((ASTNode)dtor).getLength();
+            } 
+            //point of declaration for an enumerator is immediately after it enumerator-definition
+            else if( prop == IASTEnumerator.ENUMERATOR_NAME) {
                 IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
                 if( enumtor.getValue() != null ){
                     ASTNode exp = (ASTNode) enumtor.getValue();
@@ -1410,7 +1405,7 @@ public class CPPSemantics {
             	nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset() + nd.getLength();
             } else 
-                pointOfDecl = nd.getOffset();
+                pointOfDecl = nd.getOffset() + nd.getLength();
             
             return ( pointOfDecl < ((ASTNode)node).getOffset() );
 	        
@@ -2128,32 +2123,38 @@ public class CPPSemantics {
 			    		constructor = (ICPPConstructor) binding;
 			    }
 			}
-			if( constructor != null && constructor.isExplicit() ){
-				constructor = null;
+			if( constructor != null && !constructor.isExplicit() ){
+				constructorCost = checkStandardConversionSequence( t, target );
 			}
 		}
 		
 		//conversion operators
-		if( s instanceof ICPPClassType ){
-			char[] name = EMPTY_NAME_ARRAY;//TODO target.toCharArray();
-			
-			if( !CharArrayUtils.equals( name, EMPTY_NAME_ARRAY) ){
-				LookupData data = new LookupData( CharArrayUtils.concat( OPERATOR_, name ));
-				data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
-				data.forUserDefinedConversion = true;
-				
-				ICPPScope scope = (ICPPScope) ((ICPPClassType) s).getCompositeScope();
-				data.foundItems = lookupInScope( data, scope, null );
-				IBinding [] fns = (IBinding[]) ArrayUtil.append( IBinding.class, null, data.foundItems );
-				conversion = (ICPPMethod) ( (data.foundItems != null ) ? resolveFunction( data, fns ) : null );	
+		if( s instanceof ICPPInternalClassType ){
+			ICPPMethod [] ops = ((ICPPInternalClassType)s).getConversionOperators();
+			Cost [] costs = null;
+			for (int i = 0; i < ops.length; i++) {
+				cost = checkStandardConversionSequence( ops[i].getType().getReturnType(), target );
+				if( cost.rank != Cost.NO_MATCH_RANK )
+					costs = (Cost[]) ArrayUtil.append( Cost.class, costs, cost );
 			}
-		}
-		
-		if( constructor != null ){
-			constructorCost = checkStandardConversionSequence( t, target );
-		}
-		if( conversion != null ){
-			conversionCost = checkStandardConversionSequence( conversion.getType().getReturnType(), target );
+			if( costs != null ){
+				Cost best = costs[0];
+				boolean bestIsBest = true;
+				int bestIdx = 0;
+				for (int i = 1; i < costs.length && costs[i] != null; i++) {
+					int comp = best.compare( costs[i] );
+					if( comp == 0 )
+						bestIsBest = false;
+					else if( comp > 0 ){
+						best = costs[ bestIdx = i ];
+						bestIsBest = true;
+					}
+				}
+				if( bestIsBest ){
+					conversion = ops[ bestIdx ]; 
+					conversionCost = best;
+				}
+			}
 		}
 		
 		//if both are valid, then the conversion is ambiguous
@@ -2284,8 +2285,14 @@ public class CPPSemantics {
 		if( s instanceof IQualifierType ^ t instanceof IQualifierType ){
 		    if( t instanceof IQualifierType )
 		        canConvert = true;
-		    else 
-		        canConvert = false;
+		    else {
+		    	//4.2-2 a string literal can be converted to pointer to char
+		    	if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_char &&
+		    		s instanceof CPPQualifierType && ((CPPQualifierType)s).fromStringLiteral() )
+		    		canConvert = true;
+		    	else
+		    		canConvert = false;
+		    }
 		} else if( s instanceof IQualifierType && t instanceof IQualifierType ){
 			IQualifierType qs = (IQualifierType) s, qt = (IQualifierType) t;
 			if( qs.isConst() && !qt.isConst() || qs.isVolatile() && !qt.isVolatile() )
@@ -2327,13 +2334,15 @@ public class CPPSemantics {
 			int tType = ((IBasicType)trg).getType();
 			if( ( tType == IBasicType.t_int && ( sType == IBasicType.t_char    || 
 												 sType == ICPPBasicType.t_bool || 
-												 sType == ICPPBasicType.t_wchar_t ) ) ||
+												 sType == ICPPBasicType.t_wchar_t ||
+												 sType == IBasicType.t_unspecified ) ) || //treat unspecified as int
 				( tType == IBasicType.t_double && sType == IBasicType.t_float ) )
 			{
 				cost.promotion = 1; 
 			}
 		} else if( src instanceof IEnumeration && trg instanceof IBasicType &&
-				   ((IBasicType) trg).getType() == IBasicType.t_int )
+				   ( ((IBasicType)trg).getType() == IBasicType.t_int || 
+				     ((IBasicType)trg).getType() == IBasicType.t_unspecified ) )
 		{
 			cost.promotion = 1; 
 		}
@@ -2453,8 +2462,11 @@ public class CPPSemantics {
 	}
 	
 	public static IBinding[] findBindings( IScope scope, String name, boolean qualified ) throws DOMException{
+		return findBindings( scope, name.toCharArray(), qualified );
+	}
+	public static IBinding[] findBindings( IScope scope, char []name, boolean qualified ) throws DOMException{
 	    CPPASTName astName = new CPPASTName();
-	    astName.setName( name.toCharArray() );
+	    astName.setName( name );
 	    astName.setParent( scope.getPhysicalNode() );
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
 	    

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -119,8 +120,17 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
 		IASTName name = (IASTName) node;
 	    if( isDefinition( name ) )
 	        definition = name;
-	    else 
+	    else if( declarations == null )
+	        declarations = new IASTName[] { name };
+	    else {
+	        //keep the lowest offset declaration in [0]
+			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
+			    IASTName temp = declarations[0];
+			    declarations[0] = name;
+			    name = temp;
+			}
 	        declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+	    }
 	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
@@ -249,8 +259,7 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
+		addDeclaration( node );
 	}
 
 }

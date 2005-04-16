@@ -1305,10 +1305,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				try {
 					consume(IToken.tLPAREN);
 					typeId = typeId(true, false);
-					if (LT(1) == IToken.tRPAREN)
+					switch (LT(1)) {
+					case IToken.tRPAREN:
 						lastOffset = consume(IToken.tRPAREN).getEndOffset();
-					else
-						lastOffset = Integer.MAX_VALUE; // tEOC
+						break;
+					case IToken.tEOC:
+						lastOffset = Integer.MAX_VALUE;
+						break;
+					default:
+						throw backtrack;
+					}
 				} catch (BacktrackException bt) {
 					backup(mark);
 					unaryExpression = unaryExpression();

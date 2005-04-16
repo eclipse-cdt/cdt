@@ -493,7 +493,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IASTCompoundStatement result = createCompoundStatement();
         ((ASTNode) result).setOffset(startingOffset);
         result.setPropertyInParent(IASTFunctionDefinition.FUNCTION_BODY);
-        while (LT(1) != IToken.tRBRACE && LT(1) != IToken.tCOMPLETION && LT(1) != IToken.tEOC) {
+        while (LT(1) != IToken.tRBRACE && LT(1) != IToken.tEOC) {
             int checkToken = LA(1).hashCode();
             try {
                 IASTStatement s = statement();
@@ -519,44 +519,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IToken token = consume();
         int lastOffset = token.getEndOffset();
         ((ASTNode) result).setLength(lastOffset - startingOffset);
-        
-        if (token.getType() == IToken.tCOMPLETION) {
-         	if (token.getLength() > 0) {
-         		// At the beginning of a statement, this could be either an expression
-         		// statement or a declaration statement. We'll create both and add them
-         		// to the completion node.
-         		
-         		// First the expression statement
-         		IASTExpressionStatement exprStmt = createExpressionStatement();
-         		exprStmt.setParent(result);
-                exprStmt.setPropertyInParent(IASTCompoundStatement.NESTED_STATEMENT);
-         		IASTIdExpression expr = createIdExpression();
-         		exprStmt.setExpression(expr);
-         		expr.setParent(exprStmt);
-         		expr.setPropertyInParent(IASTExpressionStatement.EXPFRESSION);
-         		IASTName exprName = createName(token);
-         		expr.setName(exprName);
-         		exprName.setParent(expr);
-         		exprName.setPropertyInParent(IASTIdExpression.ID_NAME);
-
-         		// Now the declaration statement
-         		IASTDeclarationStatement declStmt = createDeclarationStatement();
-         		declStmt.setParent(result);
-         		declStmt.setPropertyInParent(IASTCompoundStatement.NESTED_STATEMENT);
-         		IASTSimpleDeclaration decl = createSimpleDeclaration();
-         		declStmt.setDeclaration(decl);
-         		decl.setParent(declStmt);
-         		decl.setPropertyInParent(IASTDeclarationStatement.DECLARATION);
-         		IASTNamedTypeSpecifier declSpec = createNamedTypeSpecifier();
-         		decl.setDeclSpecifier(declSpec);
-         		declSpec.setParent(decl);
-         		declSpec.setPropertyInParent(IASTSimpleDeclaration.DECL_SPECIFIER);
-         		IASTName declSpecName = createName(token);
-         		declSpec.setName(declSpecName);
-         		declSpecName.setParent(declSpec);
-         		declSpecName.setPropertyInParent(IASTNamedTypeSpecifier.NAME);
-         	}
-        }
         
         return result;
     }

@@ -1768,6 +1768,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tIDENTIFIER:
 		case IToken.tCOLONCOLON:
 		case IToken.t_operator:
+		case IToken.tCOMPLETION:
 		case IToken.tCOMPL: {
 			IASTName name = idExpression();
 			IASTIdExpression idExpression = createIdExpression();
@@ -1775,15 +1776,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					.getOffset(), ((ASTNode) name).getOffset()
 					+ ((ASTNode) name).getLength()
 					- ((ASTNode) name).getOffset());
-			idExpression.setName(name);
-			name.setParent(idExpression);
-			name.setPropertyInParent(IASTIdExpression.ID_NAME);
-			return idExpression;
-		}
-		case IToken.tCOMPLETION: {
-			IToken token = consume();
-			IASTName name = createName(token);
-			IASTIdExpression idExpression = createIdExpression();
 			idExpression.setName(name);
 			name.setParent(idExpression);
 			name.setPropertyInParent(IASTIdExpression.ID_NAME);

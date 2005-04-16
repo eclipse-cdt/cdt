@@ -1305,7 +1305,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				try {
 					consume(IToken.tLPAREN);
 					typeId = typeId(true, false);
-					lastOffset = consume(IToken.tRPAREN).getEndOffset();
+					if (LT(1) == IToken.tRPAREN)
+						lastOffset = consume(IToken.tRPAREN).getEndOffset();
+					else
+						lastOffset = Integer.MAX_VALUE; // tEOC
 				} catch (BacktrackException bt) {
 					backup(mark);
 					unaryExpression = unaryExpression();
@@ -1758,7 +1761,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				templateIdScopes.push(IToken.tLPAREN);
 			}
 			IASTExpression lhs = expression();
-			int finalOffset = consume(IToken.tRPAREN).getEndOffset();
+			int finalOffset = Integer.MAX_VALUE;
+			if (LT(1) == IToken.tRPAREN)
+				finalOffset = consume(IToken.tRPAREN).getEndOffset();
 			if (templateIdScopes.size() > 0) {
 				templateIdScopes.pop();
 			}

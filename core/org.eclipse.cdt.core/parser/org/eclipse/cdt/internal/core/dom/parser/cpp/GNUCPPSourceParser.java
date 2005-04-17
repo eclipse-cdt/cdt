@@ -1498,7 +1498,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					templateIdScopes.push(IToken.tLBRACKET);
 				}
 				secondExpression = expression();
-				int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
+				int lastOffset;
+				switch (LT(1)) {
+				case IToken.tRBRACKET:
+					lastOffset = consume(IToken.tRBRACKET).getEndOffset();
+					break;
+				case IToken.tEOC:
+					lastOffset = Integer.MAX_VALUE;
+					break;
+				default:
+					throw backtrack;
+				}
 				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
 				}
@@ -4520,10 +4530,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			int o = consume(IToken.tLBRACKET).getOffset(); // eat the '['
 
 			IASTExpression exp = null;
-			if (LT(1) != IToken.tRBRACKET) {
+			if (LT(1) != IToken.tRBRACKET && LT(1) != IToken.tEOC) {
 				exp = constantExpression();
 			}
-			int l = consume(IToken.tRBRACKET).getEndOffset();
+			int l;
+			switch (LT(1)) {
+			case IToken.tRBRACKET:
+				l = consume(IToken.tRBRACKET).getEndOffset();
+				break;
+			case IToken.tEOC:
+				l = Integer.MAX_VALUE;
+				break;
+			default:
+				throw backtrack;
+			}
 			IASTArrayModifier arrayMod = createArrayModifier();
 			((ASTNode) arrayMod).setOffsetAndLength(o, l - o);
 			if (exp != null) {

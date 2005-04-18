@@ -1703,19 +1703,46 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         consume(IToken.tLPAREN);
         IASTNode init = forInitStatement();
         IASTExpression for_condition = null;
-        if (LT(1) != IToken.tSEMI)
+		switch (LT(1)) {
+		case IToken.tSEMI:
+		case IToken.tEOC:
+			break;
+		default:
             for_condition = condition();
-        consume(IToken.tSEMI);
+		}
+		switch (LT(1)) {
+		case IToken.tSEMI:
+	        consume(IToken.tSEMI);
+			break;
+		case IToken.tEOC:
+			break;
+		default:
+			throw backtrack;
+		}
         IASTExpression iterationExpression = null;
-        if (LT(1) != IToken.tRPAREN) {
+		switch (LT(1)) {
+		case IToken.tRPAREN:
+		case IToken.tEOC:
+			break;
+		default:
             iterationExpression = expression();
-
-        }
-        consume(IToken.tRPAREN);
-        IASTStatement for_body = statement();
+		}
+		switch (LT(1)) {
+		case IToken.tRPAREN:
+        	consume(IToken.tRPAREN);
+			break;
+		case IToken.tEOC:
+			break;
+		default:
+			throw backtrack;
+		}
         IASTForStatement for_statement = createForStatement();
-        ((ASTNode) for_statement).setOffsetAndLength(startOffset,
+		IASTStatement for_body = null;
+		if (LT(1) != IToken.tEOC) {
+			for_body = statement();
+			((ASTNode) for_statement).setOffsetAndLength(startOffset,
                 calculateEndOffset(for_body) - startOffset);
+		}
 
         if (init instanceof IASTDeclaration) {
             for_statement.setInit((IASTDeclaration) init);
@@ -1738,9 +1765,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             iterationExpression.setParent(for_statement);
             iterationExpression.setPropertyInParent(IASTForStatement.ITERATION);
         }
-        for_statement.setBody(for_body);
-        for_body.setParent(for_statement);
-        for_body.setPropertyInParent(IASTForStatement.BODY);
+		if (for_body != null) {
+			for_statement.setBody(for_body);
+			for_body.setParent(for_statement);
+			for_body.setPropertyInParent(IASTForStatement.BODY);
+		}
         return for_statement;
     }
 

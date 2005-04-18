@@ -4420,7 +4420,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			IASTExpression e = null;
 			if (LT(1) != IToken.tSEMI)
 				e = expression();
-			consume(IToken.tSEMI);
+			switch (LT(1)) {
+			case IToken.tSEMI:
+				consume(IToken.tSEMI);
+				break;
+			case IToken.tEOC:
+				break;
+			default:
+				throw backtrack;
+			}
 			return e;
 		} catch (BacktrackException bt) {
 			backup(mark);

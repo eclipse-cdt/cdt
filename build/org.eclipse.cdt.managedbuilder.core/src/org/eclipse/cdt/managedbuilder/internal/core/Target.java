@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1034,7 +1034,7 @@ public class Target extends BuildObject implements ITarget {
 			targetPlatform.setIsAbstract(isAbstract);
 			targetPlatform.setOSList(getTargetOSList());
 			targetPlatform.setArchList(getTargetArchList());
-			targetPlatform.setBinaryParserId(getBinaryParserId());
+			targetPlatform.setBinaryParserList(new String[]{getBinaryParserId()});  // Older projects will always have only one binary parser set.
 				
 			// Handle ConfigurationV2 children (ToolReference)
 			// The tools references fetched here are strictly local to the configuration,

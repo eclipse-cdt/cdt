@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 Rational Software Corporation and others.
+ * Copyright (c) 2002, 2005 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -77,6 +78,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private static final String MANAGE_TITLE = PREFIX + ".manage.title";	//$NON-NLS-1$
 	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
 	private static final String MSG_CLOSEDPROJECT = "MngMakeProjectPropertyPage.closedproject"; //$NON-NLS-1$
+	
+	private static final String MSG_UNSUPPORTED_PROJ = PREFIX + ".unsupported.proj"; //$NON-NLS-1$
+	private static final String MSG_UNSUPPORTED_CONFIG = PREFIX + ".unsupported.config"; //$NON-NLS-1$
+	private static final String MSG_CONFIG_NOTSELECTED = PREFIX + ".config.notselected"; //$NON-NLS-1$
 	
 	/*
 	 * Dialog widgets
@@ -454,8 +459,27 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				// TODO: Set the appropriate error parsers...
 				// TODO: Binary parsers too?
 				fOptionBlock.updateValues();
+				
+				doUpdateMessage();
 			}
 		}
+	}
+	
+	private void doUpdateMessage(){
+		if(selectedProjectType != null && !selectedProjectType.isSupported()){
+			setMessage(ManagedBuilderUIMessages.getResourceString(MSG_UNSUPPORTED_PROJ),IMessageProvider.WARNING);
+		}
+		else if(selectedConfiguration != null){
+			if(selectedConfiguration.isSupported()){
+				setMessage(null,IMessageProvider.NONE);
+			}
+			else{
+				setMessage(ManagedBuilderUIMessages.getResourceString(MSG_UNSUPPORTED_CONFIG),IMessageProvider.WARNING);
+			}
+		}
+		else
+			setMessage(ManagedBuilderUIMessages.getResourceString(MSG_CONFIG_NOTSELECTED),IMessageProvider.WARNING);
+		getContainer().updateMessage();		
 	}
 
 	// Event handler for the manage configuration button event

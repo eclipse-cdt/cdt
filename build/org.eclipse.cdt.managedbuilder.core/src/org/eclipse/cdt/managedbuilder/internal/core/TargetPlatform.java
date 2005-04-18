@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	private Boolean isAbstract;
 	private List osList;
 	private List archList;
-	private String binaryParserId;
+	private List binaryParserList;
 	//  Miscellaneous
 	private boolean isExtensionTargetPlatform = false;
 	private boolean isDirty = false;
@@ -146,8 +146,8 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (targetPlatform.archList != null) {
 			archList = new ArrayList(targetPlatform.archList);
 		}
-		if (targetPlatform.binaryParserId != null) {
-			binaryParserId = new String(targetPlatform.binaryParserId);
+		if (targetPlatform.binaryParserList != null) {
+			binaryParserList = new ArrayList(targetPlatform.binaryParserList);
 		}
 		
 		setDirty(true);
@@ -204,8 +204,15 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			}
 		}
 		
-		// Get the ID of the binary parser
-		binaryParserId = element.getAttribute(BINARY_PARSER);
+		// Get the IDs of the binary parsers from a semi-colon-separated list.
+		String bpars = element.getAttribute(BINARY_PARSER); 
+		if (bpars != null) {
+			binaryParserList = new ArrayList();
+			String[] bparsTokens = bpars.split(";"); //$NON-NLS-1$
+			for (int j = 0; j < bparsTokens.length; ++j) {
+				binaryParserList.add(bparsTokens[j].trim());
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -270,9 +277,16 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			}
 		}
 		
-		// binaryParserId
+		// Get the semi-colon-separated list of binaryParserIds
 		if (element.hasAttribute(BINARY_PARSER)) {
-			binaryParserId = element.getAttribute(BINARY_PARSER);
+			String bpars = element.getAttribute(BINARY_PARSER);
+			if (bpars != null) {
+				binaryParserList = new ArrayList();
+				String[] bparsTokens = bpars.split(";"); //$NON-NLS-1$
+				for (int j = 0; j < bparsTokens.length; ++j) {
+					binaryParserList.add(bparsTokens[j].trim());
+				}
+			}
 		}
 
 	}
@@ -301,8 +315,17 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			element.setAttribute(IProjectType.IS_ABSTRACT, isAbstract.toString());
 		}
 
-		if (binaryParserId != null) {
-			element.setAttribute(BINARY_PARSER, binaryParserId);
+		if (binaryParserList != null) {
+			Iterator bparsIter = binaryParserList.listIterator();
+			String listValue = EMPTY_STRING;
+			while (bparsIter.hasNext()) {
+				String current = (String) bparsIter.next();
+				listValue += current;
+				if ((bparsIter.hasNext())) {
+					listValue += ";"; //$NON-NLS-1$
+				}
+			}
+			element.setAttribute(BINARY_PARSER, listValue);
 		}
 
 		if (osList != null) {
@@ -386,18 +409,28 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getBinaryParserI()
+	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getBinaryParserId()
+	 * @deprecated
 	 */
 	public String getBinaryParserId() {
-		if (binaryParserId == null) {
+		String[] ids = getBinaryParserList();
+		if (ids.length > 0) return ids[0];
+		return EMPTY_STRING;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getBinaryParserList()
+	 */
+	public String[] getBinaryParserList() {
+		if (binaryParserList == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				return superClass.getBinaryParserId();
+				return superClass.getBinaryParserList();
 			} else {
-				return EMPTY_STRING;
+				return new String[0];
 			}
 		}
-		return binaryParserId;
+		return (String[]) binaryParserList.toArray(new String[binaryParserList.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -434,13 +467,26 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuilder#setBinaryParserId(String)
+	 * @deprecated
 	 */
 	public void setBinaryParserId(String id) {
-		if (id == null && binaryParserId == null) return;
-		if (binaryParserId == null || id == null || !id.equals(binaryParserId)) {
-			binaryParserId = id;
-			setDirty(true);
+		String[] ids = new String[]{id};
+		setBinaryParserList(ids);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IBuilder#setBinaryParserList(String[])
+	 */
+	public void setBinaryParserList(String[] ids) {
+		if (binaryParserList == null) {
+			binaryParserList = new ArrayList();
+		} else {
+			binaryParserList.clear();
 		}
+		for (int i = 0; i < ids.length; i++) {
+			binaryParserList.add(ids[i]);
+		}		
+		setDirty(true);
 	}
 
 	/* (non-Javadoc)

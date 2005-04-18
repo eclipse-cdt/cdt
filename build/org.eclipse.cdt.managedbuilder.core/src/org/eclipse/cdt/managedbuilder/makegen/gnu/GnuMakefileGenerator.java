@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -601,6 +601,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String flags = info.getFlagsForConfiguration(extension);
 		String outflag = info.getOutputFlag(extension);
 		String outputPrefix = info.getOutputPrefix(extension);
+		String prebuildStep = info.getPrebuildStep();
+		prebuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
+		String postbuildStep = info.getPostbuildStep();
+		postbuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
+		String preannouncebuildStep = info.getPreannouncebuildStep();
+		String postannouncebuildStep = info.getPostannouncebuildStep();
+		String prebuild = "pre-build"; //$NON-NLS-1$ 
+		String mainbuild = "main-build"; //$NON-NLS-1$ 
+		String postbuild = "post-build"; //$NON-NLS-1$ 
 		String targets = rebuild ? "clean all" : "all"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Get all the projects the build target depends on
@@ -612,9 +621,32 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// and neither conditions apply if we are building for it ....
 		}
 		
-		// Write out the all target first in case someone just runs make
-		// 	all: targ_<target_name> 
+        // If a prebuild step exists, redefine the all target to be
+		// all: {pre-build} main-build
+		// and then reset the "traditional" all target to main-build
+		// This will allow something meaningful to happen if the generated
+		// makefile is
+		// extracted and run standalone via "make all"
+		// 
 		String defaultTarget = "all:"; //$NON-NLS-1$
+		if (prebuildStep.length() > 0) {
+
+			buffer.append(defaultTarget + WHITESPACE);
+			buffer.append(prebuild + WHITESPACE);
+
+			// Reset defaultTarget for now and for subsequent use, below
+			defaultTarget = mainbuild;
+			buffer.append(defaultTarget);
+
+			// Update the defaultTarget, main-build, by adding a colon, which is
+			// needed below
+			defaultTarget = defaultTarget.concat(COLON);
+			buffer.append(NEWLINE + NEWLINE);
+		}
+
+		// Write out the all target first in case someone just runs make
+		// all: <target_name> or mainbuild: <target_name>
+               
 		buffer.append(defaultTarget + WHITESPACE + outputPrefix + buildTargetName);
 		if (extension.length() > 0) {
 			buffer.append(DOT + extension);
@@ -622,10 +654,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append(NEWLINE + NEWLINE);
 
 		/*
-		 * The build target may depend on other projects in the workspace. These are
-		 * captured in the deps target:
-		 * deps:
-		 * 		<cd <Proj_Dep_1/build_dir>; $(MAKE) [clean all | all]> 
+		 * The build target may depend on other projects in the workspace. These
+		 * are captured in the deps target: deps: <cd <Proj_Dep_1/build_dir>;
+		 * $(MAKE) [clean all | all]>
 		 */
 		Vector managedProjectOutputs = new Vector(refdProjects.length);
 		if (refdProjects.length > 0) {
@@ -671,7 +702,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		 * 		@echo 'Building target: $@'
 		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG)$@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 * 		@echo 'Finished building: $@'
-		 * 		@echo
+                *              $(MAKE) --no-print-directory post-build  //if postbuild step present 
 		 */
 		buffer.append(outputPrefix + buildTargetName);
 		if (extension.length() > 0) {
@@ -685,18 +716,65 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
 		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + OUT_MACRO + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE + NEWLINE);
+        buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
+       
+        // If there is a post build step, then add a recursive invocation of MAKE to invoke it after the main build
+        // Note that $(MAKE) will instantiate in the recusive invocation to the make command that was used to invoke
+        // the makefile originally 
+        if (postbuildStep.length() > 0) { 
+            buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE);
+            buffer.append(TAB + MAKE + WHITESPACE + NO_PRINT_DIR + WHITESPACE + postbuild + NEWLINE);       
+        } 
+       
+       buffer.append(NEWLINE); 
 
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
-		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + "$(DEPS)" + WHITESPACE + outputPrefix + buildTargetName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		buffer.append(TAB
+				+ "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + "$(DEPS)" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+				+ WHITESPACE + outputPrefix + buildTargetName);
 		if (extension.length() > 0) {
 			buffer.append(DOT + extension);
 		}
-		buffer.append(NEWLINE + NEWLINE); 
-		
+		buffer.append(NEWLINE);
+		buffer.append(TAB + DASH + AT + ECHO + WHITESPACE + SINGLE_QUOTE
+				+ WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
+
+		// Add the prebuild step target, if specified
+		if (prebuildStep.length() > 0) {
+			buffer.append(prebuild + COLON + NEWLINE);
+			if (preannouncebuildStep.length() > 0) {
+				buffer.append(TAB + DASH + AT + ECHO + WHITESPACE
+						+ SINGLE_QUOTE + preannouncebuildStep + SINGLE_QUOTE
+						+ NEWLINE);
+			}
+			buffer.append(TAB + DASH + prebuildStep + NEWLINE);
+			buffer.append(TAB + DASH + AT + ECHO + WHITESPACE + SINGLE_QUOTE
+					+ WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
+		}
+
+		// Add the postbuild step, if specified
+		if (postbuildStep.length() > 0) {
+			buffer.append(postbuild + COLON + NEWLINE);
+			if (postannouncebuildStep.length() > 0) {
+				buffer.append(TAB + DASH + AT + ECHO + WHITESPACE
+						+ SINGLE_QUOTE + postannouncebuildStep + SINGLE_QUOTE
+						+ NEWLINE);
+			}
+			buffer.append(TAB + DASH + postbuildStep + NEWLINE);
+			buffer.append(TAB + DASH + AT + ECHO + WHITESPACE + SINGLE_QUOTE
+					+ WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
+		} 
+ 
 		// Add all the eneded dummy and phony targets
-		buffer.append(".PHONY: all clean dependents" + NEWLINE); //$NON-NLS-1$
+        buffer.append(".PHONY: all clean dependents"); //$NON-NLS-1$ 
+		if (prebuildStep.length() > 0) {
+			buffer.append(WHITESPACE + mainbuild + WHITESPACE + prebuild);
+		}
+		if (postbuildStep.length() > 0) {
+			buffer.append(WHITESPACE + postbuild);
+		}
+		buffer.append(NEWLINE); 
 		refIter = managedProjectOutputs.listIterator();
 		while(refIter.hasNext()) {
 			buffer.append((String)refIter.next() + COLON + NEWLINE);

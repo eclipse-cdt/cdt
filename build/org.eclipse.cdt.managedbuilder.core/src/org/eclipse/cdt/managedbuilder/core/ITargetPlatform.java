@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,15 +94,31 @@ public interface ITargetPlatform extends IBuildObject {
 	 * Returns the unique ID of the binary parser associated with the target platform.
 	 * 
 	 * @return String
+	 * @deprecated  Use getBinaryParserList
 	 */
 	public String getBinaryParserId();
+
+	/**
+	 * Returns the unique IDs of the binary parsers associated with the target platform.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getBinaryParserList();
 
 	/**
 	 * Sets the string id of the binary parser for this target platform.
 	 * 
 	 * @param id
+	 * @deprecated  Use setBinaryParserList
 	 */
 	public void setBinaryParserId(String id);
+
+	/**
+	 * Sets the string ids of the binary parsers for this target platform.
+	 * 
+	 * @param ids
+	 */
+	public void setBinaryParserList(String[] ids);
 
 	/**
 	 * Returns <code>true</code> if this element has changes that need to 

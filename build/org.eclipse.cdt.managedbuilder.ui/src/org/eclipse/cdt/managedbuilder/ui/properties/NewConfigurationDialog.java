@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class NewConfigurationDialog extends StatusDialog {
 	private static final String GROUP = LABEL + ".group";	//$NON-NLS-1$
 	private static final String COPY = LABEL + ".copy";	//$NON-NLS-1$
 	private static final String CLONE = LABEL + ".clone";	//$NON-NLS-1$
+	private static final String SHOWALL = LABEL + ".showall";	//$NON-NLS-1$
 	private static final String DUPLICATE = ERROR + ".duplicateName";	//$NON-NLS-1$	
 	private static final String CASE = ERROR + ".caseName";	//$NON-NLS-1$	
 	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
@@ -55,6 +56,7 @@ public class NewConfigurationDialog extends StatusDialog {
 	private Text configName;
 	private Combo copyConfigSelector;
 	private Combo cloneConfigSelector;
+	private Button btnShowAll;
 		
 	// Bookeeping
 	private boolean clone;
@@ -201,7 +203,6 @@ public class NewConfigurationDialog extends StatusDialog {
 		
 		copyConfigSelector = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		copyConfigSelector.setFont(group.getFont());
-		copyConfigSelector.setItems(getDefaultConfigNames());
 		int index = copyConfigSelector.indexOf(newName);
 		copyConfigSelector.select(index < 0 ? 0 : index);
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
@@ -238,6 +239,22 @@ public class NewConfigurationDialog extends StatusDialog {
 			}
 		});	
 
+		// Create a "show all configurations" button 
+		btnShowAll = new Button(composite, SWT.CHECK);
+		btnShowAll.setFont(composite.getFont());
+		btnShowAll.setText(ManagedBuilderUIMessages.getResourceString(SHOWALL));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		btnShowAll.setLayoutData(gd);
+		btnShowAll.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateDefaultConfigs();
+			}
+		});
+		
+		updateComboState();
+		updateDefaultConfigs();
+
 		return composite;
 	}
 
@@ -250,18 +267,45 @@ public class NewConfigurationDialog extends StatusDialog {
 		return parentConfig;
 	}
 
-	/*
-	 * Returns the array of configuration names defined for all projects  
-	 * of this type in the plugin manifest. This list will be used to
-	 * populate the the configurations to copy default settings from.
+	/**
+	 * updates the list of default configurations
 	 */
-	private String [] getDefaultConfigNames() {
-		String [] names = new String[defaultConfigs.length];
-		for (int index = 0; index < defaultConfigs.length; ++index) {
-			IConfiguration config = defaultConfigs[index];
-			names[index] = config.getName();
+	private void updateDefaultConfigs(){
+		IConfiguration cfgs[] = managedProject.getProjectType().getConfigurations();
+		boolean showAll = btnShowAll != null ? btnShowAll.getSelection() : false;
+		
+		if(showAll)
+			defaultConfigs = cfgs;
+		else {
+			ArrayList list = new ArrayList();
+			for (int i = 0; i < cfgs.length; i++){
+				if(cfgs[i].isSupported())
+					list.add(cfgs[i]);
+			}
+			defaultConfigs = (IConfiguration[])list.toArray(new IConfiguration[list.size()]);
 		}
-		return names; 
+	
+		if(defaultConfigs.length != 0){
+			String names[] = new String[defaultConfigs.length];
+			for (int i = 0; i < defaultConfigs.length; ++i)
+				names[i] = defaultConfigs[i].getName();
+			
+			int selectionIndex = copyConfigSelector.getSelectionIndex();
+			String oldSelection = null;
+			if(selectionIndex != -1)
+				oldSelection = copyConfigSelector.getItem(selectionIndex);
+			
+			copyConfigSelector.setItems(names);
+			if(oldSelection != null)
+				selectionIndex = copyConfigSelector.indexOf(oldSelection);
+			if(selectionIndex == -1)
+				selectionIndex = 0;
+			copyConfigSelector.select(selectionIndex);
+		}
+		else{
+			copyConfigSelector.removeAll();
+		}
+		validateState();
 	}
 	
 	/*
@@ -338,6 +382,8 @@ public class NewConfigurationDialog extends StatusDialog {
 	protected void updateComboState() {
 		cloneConfigSelector.setEnabled(clone);
 		copyConfigSelector.setEnabled(!clone);
+		btnShowAll.setVisible(!clone);
+		validateState();
 	}
 
 	/* (non-Javadoc)
@@ -383,6 +429,9 @@ public class NewConfigurationDialog extends StatusDialog {
 		int nameLength = currentName.length();
 		// Make sure the name is not a duplicate
 		if (nameLength == 0) {
+			// Not an error
+			status.setError("");	//$NON-NLS-1$
+		} else if(clone ? definedConfigs.length == 0 : defaultConfigs.length == 0) {
 			// Not an error
 			status.setError("");	//$NON-NLS-1$
 		} else if (isDuplicateName(currentName)) {

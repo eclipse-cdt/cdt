@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,11 @@ public interface IManagedBuilderMakefileGenerator {
 	public final String COLON = ":";	//$NON-NLS-1$
 	public final int COLS_PER_LINE = 80;
 	public final String COMMENT_SYMBOL = "#";	//$NON-NLS-1$
+    public final String DOLLAR_SYMBOL = "$";        //$NON-NLS-1$ 
 	public final String DEP_EXT = "d";	//$NON-NLS-1$
 	public final String DEPFILE_NAME = "subdir.dep";	//$NON-NLS-1$
 	public final String DOT = ".";	//$NON-NLS-1$
+    public final String DASH = "-"; //$NON-NLS-1$   
 	public final String ECHO = "echo";	//$NON-NLS-1$
 	public final String IN_MACRO = "$<";	//$NON-NLS-1$
 	public final String LINEBREAK = "\\\n";	//$NON-NLS-1$
@@ -39,6 +41,8 @@ public interface IManagedBuilderMakefileGenerator {
 	public final String MAKEFILE_INIT = "makefile.init"; //$NON-NLS-1$
 	public final String MAKEFILE_NAME = "makefile";	//$NON-NLS-1$
 	public final String MAKEFILE_TARGETS = "makefile.targets"; //$NON-NLS-1$
+    public final String MAKE = "$(MAKE)";   //$NON-NLS-1$ 
+    public final String NO_PRINT_DIR = "--no-print-directory";      //$NON-NLS-1$ 
 
 	public final String MODFILE_NAME = "subdir.mk";	//$NON-NLS-1$
 	public final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$

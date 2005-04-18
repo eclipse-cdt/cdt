@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 Rational Software Corporation and others.
+ * Copyright (c) 2003,2005 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -97,6 +97,34 @@ public interface IManagedBuildInfo {
 	public String getBuildCommand();
 
 	/**
+     * Answers the prebuild step for the default configuration 
+     * 
+     * @return String 
+     */ 
+    public String getPrebuildStep(); 
+       
+    /** 
+     * Answers the postbuild step for the default configuration 
+     * 
+     * @return String 
+     */ 
+    public String getPostbuildStep(); 
+       
+    /** 
+     * Answers the display string associated with the prebuild step for the default configuration 
+     * 
+     * @return String 
+     */ 
+    public String getPreannouncebuildStep(); 
+ 
+    /** 
+     * Answers the display string associated with the postbuild step for the default configuration 
+     * 
+     * @return String 
+     */ 
+    public String getPostannouncebuildStep();
+	
+    /** 
 	 * Answers the command needed to remove files on the build machine
 	 * 
 	 * @return

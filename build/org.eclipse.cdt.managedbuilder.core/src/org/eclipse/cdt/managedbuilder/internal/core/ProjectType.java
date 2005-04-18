@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -338,4 +338,16 @@ public class ProjectType extends BuildObject implements IProjectType {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IProjectType#isSupported()
+	 */
+	public boolean isSupported(){
+		Iterator configIter = getConfigurationList().iterator();
+		while (configIter.hasNext()) {
+			Configuration current = (Configuration)configIter.next();
+			if(current.isSupported())
+				return true;
+		}
+		return false;
+	}
 }

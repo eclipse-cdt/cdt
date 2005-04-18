@@ -188,6 +188,34 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="prebuildStep" type="string"> 
+            <annotation> 
+               <documentation> 
+                  Specifies the pre-build command, which runs prior to the standard MBS build. 
+               </documentation> 
+            </annotation> 
+         </attribute> 
+         <attribute name="postbuildStep" type="string"> 
+            <annotation> 
+               <documentation> 
+                  Specifies the post-build command, which runs after the standard MBS build. 
+               </documentation> 
+            </annotation> 
+         </attribute>         
+            <attribute name="preannouncebuildStep" type="string"> 
+            <annotation> 
+               <documentation> 
+                  Specifies the string to be displayed when the pre-build command step is run. 
+               </documentation> 
+            </annotation> 
+         </attribute>                  
+            <attribute name="postannouncebuildStep" type="string"> 
+            <annotation> 
+               <documentation> 
+                  Specifies the string to be displayed when the post-build command step is run. 
+               </documentation> 
+            </annotation> 
+         </attribute>                  
       </complexType>
    </element>
 
@@ -264,6 +292,16 @@
                <documentation>
                   Specifies an id of scanner configuration discovery profile for gathering the built-in compiler settings for a toolchain.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isToolChainSupported" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the name of the class that implements IManagedIsToolChainSupported
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

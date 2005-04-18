@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -143,11 +143,22 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 					IConfiguration newConfig = newManagedProject.createConfiguration(config, config.getId() + "." + id); //$NON-NLS-1$
 					newConfig.setArtifactName(newManagedProject.getDefaultArtifactName());
 				}
-				// Now add the first config in the list as the default
+				// Now add the first supported config in the list as the default
+				IConfiguration defaultCfg = null;
 				IConfiguration[] newConfigs = newManagedProject.getConfigurations();
-				if (newConfigs.length > 0) {
-					ManagedBuildManager.setDefaultConfiguration(newProject, newConfigs[0]);
-					ManagedBuildManager.setSelectedConfiguration(newProject, newConfigs[0]);
+				for(int i = 0; i < newConfigs.length; i++) {
+					if(newConfigs[i].isSupported()){
+						defaultCfg = newConfigs[i];
+						break;
+					}
+				}
+				
+				if(defaultCfg == null && newConfigs.length > 0)
+					defaultCfg = newConfigs[0];
+				
+				if(defaultCfg != null) {
+					ManagedBuildManager.setDefaultConfiguration(newProject, defaultCfg);
+					ManagedBuildManager.setSelectedConfiguration(newProject, defaultCfg);
 				}
 				ManagedBuildManager.setNewProjectVersion(newProject);
 				ICDescriptor desc = null;
@@ -155,12 +166,16 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 					desc = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
 					desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 					//  TODO:  The binary parser setting is currently per-project in the rest of CDT.
-					//         In the MBS, it is per-coonfiguration.  For now, select the binary parser of the
+					//         In the MBS, it is per-coonfiguration.  For now, select the binary parsers of the
 					//         first configuration.
 					if (newConfigs.length > 0) {
 						IToolChain tc = newConfigs[0].getToolChain();
 						ITargetPlatform targetPlatform = tc.getTargetPlatform();
-					    desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, targetPlatform.getBinaryParserId());
+						// Create entries for all binary parsers
+						String[] binaryParsers = targetPlatform.getBinaryParserList();
+						for (int i=0; i<binaryParsers.length; i++) {
+						    desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, binaryParsers[i]);
+						}
 					}
 				} catch (CoreException e) {
 					ManagedBuilderUIPlugin.log(e);

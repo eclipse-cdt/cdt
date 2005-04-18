@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,10 @@ import org.eclipse.core.resources.IResource;
 public interface IConfiguration extends IBuildObject {
 	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
+       public static final String PREBUILD_STEP = "prebuildStep";      //$NON-NLS-1$ 
+       public static final String POSTBUILD_STEP = "postbuildStep";    //$NON-NLS-1$ 
+       public static final String PREANNOUNCEBUILD_STEP = "preannouncebuildStep";              //$NON-NLS-1$ 
+       public static final String POSTANNOUNCEBUILD_STEP = "postannouncebuildStep";    //$NON-NLS-1$ 
 	// Schema element names
 	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
@@ -83,6 +87,34 @@ public interface IConfiguration extends IBuildObject {
 	public String getBuildCommand();
 	
 	/**
+     * Returns the prebuild step from this configuration's builder 
+     * 
+     * @return String 
+     */ 
+    public String getPrebuildStep(); 
+       
+    /** 
+     * Returns the postbuild step from this configuration's builder 
+     * 
+     * @return String 
+     */ 
+    public String getPostbuildStep(); 
+ 
+    /** 
+     * Returns the display string associated with the prebuild step from this configuration's builder 
+     * 
+     * @return String 
+     */ 
+    public String getPreannouncebuildStep(); 
+       
+    /** 
+     * Returns the display string associated with the postbuild step from this configuration's builder 
+     * 
+     * @return String 
+     */ 
+    public String getPostannouncebuildStep();       
+       
+    /** 
 	 * Answers the OS-specific command to remove files created by the build
 	 * of this configuration.
 	 *  
@@ -266,6 +298,34 @@ public interface IConfiguration extends IBuildObject {
 	public void setBuildCommand(String command);
 
 	/**
+     * Sets the prebuild step for the receiver to the value in the argument. 
+     * 
+     * @param step 
+     */ 
+    public void setPrebuildStep(String step); 
+   
+    /** 
+     * Sets the postbuild step for the receiver to the value in the argument. 
+     * 
+     * @param step 
+     */ 
+    public void setPostbuildStep(String step); 
+ 
+    /** 
+     * Sets the prebuild step display string for the receiver to the value in the argument. 
+     * 
+     * @param announceStep 
+     */     
+    public void setPreannouncebuildStep(String announceStep); 
+   
+    /** 
+     * Sets the postbuild step display string for the receiver to the value in the argument. 
+     * 
+     * @param announceStep 
+     */     
+    public void setPostannouncebuildStep(String announceStep); 
+   
+    /** 
 	 * Sets the command used to clean the outputs of this configuration.
 	 * 
 	 * @param name
@@ -350,4 +410,12 @@ public interface IConfiguration extends IBuildObject {
 	 * @param command The command
 	 */
 	public void setToolCommand(ITool tool, String command);
+		
+	/**
+	 * Returns <code>true</code> if the configuration's tool-chain is supported on the system
+	 * otherwise returns <code>false</code>
+	 * 
+	 * @return boolean 
+	 */	
+	public boolean isSupported();
 }

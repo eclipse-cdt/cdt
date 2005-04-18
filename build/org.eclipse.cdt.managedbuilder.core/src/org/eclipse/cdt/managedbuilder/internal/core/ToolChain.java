@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,14 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,6 +54,8 @@ public class ToolChain extends BuildObject implements IToolChain {
 	private List archList;
 	private Boolean isAbstract;
     private String scannerConfigDiscoveryProfileId;
+	private IConfigurationElement managedIsToolChainSupportedElement = null;
+	private IManagedIsToolChainSupported managedIsToolChainSupported = null;
 	//  Miscellaneous
 	private boolean isExtensionToolChain = false;
 	private boolean isDirty = false;
@@ -208,6 +213,8 @@ public class ToolChain extends BuildObject implements IToolChain {
         if (toolChain.scannerConfigDiscoveryProfileId != null) {
             scannerConfigDiscoveryProfileId = new String(toolChain.scannerConfigDiscoveryProfileId);
         }
+		managedIsToolChainSupportedElement = toolChain.managedIsToolChainSupportedElement; 
+		managedIsToolChainSupported = toolChain.managedIsToolChainSupported; 
 
 		//  Clone the children
 		if (toolChain.builder != null) {
@@ -314,6 +321,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 				archList.add(archTokens[j].trim());
 			}
 		}
+		
+		// Get the isToolchainSupported configuration element
+		String managedIsToolChainSupported = element.getAttribute(IS_TOOL_CHAIN_SUPPORTED); 
+		if (managedIsToolChainSupported != null && element instanceof DefaultManagedConfigElement) {
+			managedIsToolChainSupportedElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		} 
 	}
 	
 	/* (non-Javadoc)
@@ -467,6 +480,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 			tool.serialize(doc, toolElement);
 		}
 		
+		// Note: isToolChainSupported cannot be specified in a project file because
+		//       an IConfigurationElement is needed to load it!
+		if (managedIsToolChainSupportedElement != null) {
+			//  TODO:  issue warning?
+		}
+
 		// I am clean now
 		isDirty = false;
 	}
@@ -972,6 +991,35 @@ public class ToolChain extends BuildObject implements IToolChain {
 				}
 			}
 		}
+	}
+
+	private IManagedIsToolChainSupported getIsToolChainSupported(){
+		if(managedIsToolChainSupported == null && managedIsToolChainSupportedElement != null){
+			try{
+				if(managedIsToolChainSupportedElement.getAttribute(IS_TOOL_CHAIN_SUPPORTED) != null)
+					managedIsToolChainSupported = 
+						(IManagedIsToolChainSupported)managedIsToolChainSupportedElement.createExecutableExtension(IS_TOOL_CHAIN_SUPPORTED);
+				
+			}
+			catch(CoreException e){
+			}
+		}
+		return managedIsToolChainSupported;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#isSupported()
+	 */
+	public boolean isSupported(){
+		IManagedIsToolChainSupported isSupported = getIsToolChainSupported();
+		if(isSupported != null){
+			//TODO: pass the version to the "isSupported" method
+			return isSupported.isSupported(this,null,null);
+		}
+		else if(superClass != null)
+			return superClass.isSupported();
+		else
+			return true;
 	}
 
 }

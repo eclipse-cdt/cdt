@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2005 IBM Software Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -240,7 +240,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				}
 				if (defaultConfig == null) {
 					IConfiguration[] configs = managedProject.getConfigurations();
-					if (configs.length > 0) {
+					for (int i = 0; i < configs.length; i++){
+						if (configs[i].isSupported()){
+							defaultConfig = configs[i];
+							defaultConfigId = defaultConfig.getId();
+							break;
+						}
+					}
+					if (defaultConfig == null && configs.length > 0) {
 						defaultConfig = configs[0];
 						defaultConfigId = defaultConfig.getId();
 					}
@@ -514,7 +521,69 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return EMPTY_STRING;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPrebuildStep()
+	 */
+	public String getPrebuildStep() {
+		// Get the default configuration and use its value
+		String name = new String();
+		IConfiguration config = getDefaultConfiguration();
+		if (config != null) {
+			name = config.getPrebuildStep();
+		}
+		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPostbuildStep()
+	 */
+	public String getPostbuildStep() {
+		// Get the default configuration and use its value
+		String name = new String();
+		IConfiguration config = getDefaultConfiguration();
+		if (config != null) {
+			name = config.getPostbuildStep();
+		}
+		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPreannouncebuildStep()
+	 */
+	public String getPreannouncebuildStep() {
+		// Get the default configuration and use its value
+		String name = new String();
+		IConfiguration config = getDefaultConfiguration();
+		if (config != null) {
+			name = config.getPreannouncebuildStep();
+		}
+		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPostannouncebuildStep()
+	 */
+	public String getPostannouncebuildStep() {
+		// Get the default configuration and use its value
+		String name = new String();
+		IConfiguration config = getDefaultConfiguration();
+		if (config != null) {
+			name = config.getPostannouncebuildStep();
+		}
+		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputExtension(java.lang.String)
 	 */
 	public String getOutputExtension(String resourceExtension) {
@@ -530,7 +599,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputFlag()
 	 */
 	public String getOutputFlag(String outputExt) {

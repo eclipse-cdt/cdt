@@ -1650,6 +1650,7 @@
                      osList="win32"
                      name="%ToolChainName.Dbg"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.debug"
@@ -1720,6 +1721,7 @@
                      osList="win32"
                      name="%ToolChainName.Rel"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.release"
@@ -1797,6 +1799,7 @@
                      osList="win32"
                      name="%ToolChainName.Dbg"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.debug"
@@ -1877,6 +1880,7 @@
                      osList="win32"
                      name="%ToolChainName.Rel"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.release"
@@ -1964,6 +1968,7 @@
                      osList="win32"
                      name="%ToolChainName.Dbg"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug"
@@ -2030,6 +2035,7 @@
                      osList="win32"
                      name="%ToolChainName.Rel"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.release"

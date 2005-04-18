@@ -890,7 +890,9 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("make", configs[0].getBuildCommand());
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
-		assertEquals(expectedParserId, targetPlatform.getBinaryParserId());
+		String[] binaryParsers = targetPlatform.getBinaryParserList();
+		assertEquals(binaryParsers.length, 1);
+	    assertEquals(binaryParsers[0], expectedParserId);
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		assertTrue(Arrays.equals(expectedArchList, toolChain.getArchList()));
 		// This configuration defines no errors parsers.
@@ -1114,7 +1116,9 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("make", configs[0].getBuildCommand());
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
-		assertEquals(expectedParserId, targetPlatform.getBinaryParserId());
+		String[] binaryParsers = targetPlatform.getBinaryParserList();
+		assertEquals(binaryParsers.length, 1);
+	    assertEquals(binaryParsers[0], expectedParserId);
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		assertTrue(Arrays.equals(expectedArchList, toolChain.getArchList()));
 		// This configuration defines no errors parsers.
@@ -1382,7 +1386,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Make sure we get the proper binary parser
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
-		assertEquals("org.eclipse.cdt.core.ELF", targetPlatform.getBinaryParserId());
+		assertEquals("org.eclipse.cdt.core.ELF", targetPlatform.getBinaryParserList()[0]);
 		// Make sure the os list is inherited
 		String[] expectedOSList = {"win32","linux","solaris"};
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
@@ -1536,7 +1540,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Make sure the binary parser is hard-coded and available
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
-		assertEquals("org.eclipse.cdt.core.PE", targetPlatform.getBinaryParserId());
+		assertEquals("org.eclipse.cdt.core.PE", targetPlatform.getBinaryParserList()[0]);
 		String[] expectedOSList = {"win32","linux","solaris"};
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		// Make sure the list is overridden
@@ -1833,7 +1837,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IConfiguration[] configs = proj.getConfigurations();
 		IToolChain toolChain = configs[0].getToolChain();
 		ITargetPlatform targetPlatform = toolChain.getTargetPlatform();
-		assertEquals(expectedBinParserId, targetPlatform.getBinaryParserId());
+		assertEquals(expectedBinParserId, targetPlatform.getBinaryParserList()[0]);
 		// This target defines errors parsers.  Check that the error parsers
 		// have been assigned.
 		assertEquals("org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser", configs[0].getErrorParserIds());

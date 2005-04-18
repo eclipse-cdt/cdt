@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public interface IToolChain extends IBuildObject {
 	public static final String OS_LIST = "osList";						//$NON-NLS-1$
 	public static final String ARCH_LIST = "archList";					//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";			//$NON-NLS-1$
+	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
 
@@ -247,4 +248,11 @@ public interface IToolChain extends IBuildObject {
 	 */
 	public boolean isExtensionElement();
 	
+	/**
+	 * Returns <code>true</code> if the tool-chain support is installed on the system
+	 * otherwise returns <code>false</code>
+	 * 
+	 * @return boolean 
+	 */	
+	public boolean isSupported();
 }

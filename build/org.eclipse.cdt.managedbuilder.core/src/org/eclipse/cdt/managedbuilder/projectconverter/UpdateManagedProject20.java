@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -244,7 +244,7 @@ class UpdateManagedProject20 {
 				String builderName = targetPlatform.getName() + "." + newConfig.getName(); 	//$NON-NLS-1$				
 				toolChain.createTargetPlatform(targetPlatform,subId,builderName,false);
 			}
-			targetPlatform.setBinaryParserId(binaryParser);
+			targetPlatform.setBinaryParserList(new String[]{binaryParser});  // Older projects have only a single binary parser.
 		}
 		
 		if(targetEl.hasAttribute(ITarget.MAKE_COMMAND)){

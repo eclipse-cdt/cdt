@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Rational Software and others.
+ * Copyright (c) 2003,2005 IBM Rational Software and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private String cleanCommand;
 	private String artifactExtension;
 	private String errorParserIds;
+    private String prebuildStep; 
+    private String postbuildStep; 
+    private String preannouncebuildStep; 
+    private String postannouncebuildStep;   
 	//  Miscellaneous
 	private boolean isExtensionConfig = false;
 	private boolean isDirty = false;
@@ -225,9 +229,21 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (cloneConfig.errorParserIds != null) {
 			errorParserIds = new String(cloneConfig.errorParserIds);
 		}
+        if (cloneConfig.prebuildStep != null) {
+			prebuildStep = new String(cloneConfig.prebuildStep);
+		}
+		if (cloneConfig.postbuildStep != null) {
+			postbuildStep = new String(cloneConfig.postbuildStep);
+		}
+		if (cloneConfig.preannouncebuildStep != null) {
+			preannouncebuildStep = new String(cloneConfig.preannouncebuildStep);
+		}
+		if (cloneConfig.postannouncebuildStep != null) {
+			postannouncebuildStep = new String(	cloneConfig.postannouncebuildStep);
+		} 
 		
 		// Clone the configuration's children
-		//  Tool Chain
+		// Tool Chain
 		int nnn = ManagedBuildManager.getRandomNumber();
 		String subId;
 		String subName;
@@ -316,6 +332,14 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		// Get the clean command
 		cleanCommand = element.getAttribute(CLEAN_COMMAND);
+               
+        // Get the pre-build and post-build commands            
+        prebuildStep = element.getAttribute(PREBUILD_STEP);     
+        postbuildStep = element.getAttribute(POSTBUILD_STEP);           
+               
+        // Get the pre-build and post-build announcements               
+        preannouncebuildStep = element.getAttribute(PREANNOUNCEBUILD_STEP); 
+        postannouncebuildStep = element.getAttribute(POSTANNOUNCEBUILD_STEP); 
 	}
 	
 	/* (non-Javadoc)
@@ -362,6 +386,25 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (element.hasAttribute(CLEAN_COMMAND)) {
 			cleanCommand = element.getAttribute(CLEAN_COMMAND);
 		}
+               
+        // Get the pre-build and post-build commands
+		if (element.hasAttribute(PREBUILD_STEP)) {
+			prebuildStep = element.getAttribute(PREBUILD_STEP);
+		}
+
+		if (element.hasAttribute(POSTBUILD_STEP)) {
+			postbuildStep = element.getAttribute(POSTBUILD_STEP);
+		}
+
+		// Get the pre-build and post-build announcements
+		if (element.hasAttribute(PREANNOUNCEBUILD_STEP)) {
+			preannouncebuildStep = element.getAttribute(PREANNOUNCEBUILD_STEP);
+		}
+
+		if (element.hasAttribute(POSTANNOUNCEBUILD_STEP)) {
+			postannouncebuildStep = element
+					.getAttribute(POSTANNOUNCEBUILD_STEP);
+		}               
 	}
 
 	/**
@@ -390,7 +433,19 @@ public class Configuration extends BuildObject implements IConfiguration {
 
 		if (cleanCommand != null)
 			element.setAttribute(CLEAN_COMMAND, cleanCommand);
-				
+
+		if (prebuildStep != null)
+			element.setAttribute(PREBUILD_STEP, prebuildStep);
+
+		if (postbuildStep != null)
+			element.setAttribute(POSTBUILD_STEP, postbuildStep);
+
+		if (preannouncebuildStep != null)
+			element.setAttribute(PREANNOUNCEBUILD_STEP, preannouncebuildStep);
+
+		if (postannouncebuildStep != null)
+			element.setAttribute(POSTANNOUNCEBUILD_STEP, postannouncebuildStep);
+
 		// Serialize my children
 		Element toolChainElement = doc.createElement(IToolChain.TOOL_CHAIN_ELEMENT_NAME);
 		element.appendChild(toolChainElement);
@@ -783,7 +838,85 @@ public class Configuration extends BuildObject implements IConfiguration {
 		return new String("make"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPrebuildStep()
+	 */
+	public String getPrebuildStep() {
+		if (prebuildStep == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getPrebuildStep();
+			} else {
+				// I'm it
+				return EMPTY_STRING;
+			}
+		} else {
+			return prebuildStep;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPostbuildStep()
+	 */
+	public String getPostbuildStep() {
+		if (postbuildStep == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getPostbuildStep();
+			} else {
+				// I'm it
+				return EMPTY_STRING;
+			}
+		} else {
+			return postbuildStep;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPreannouncebuildStep()
+	 */
+	public String getPreannouncebuildStep() {
+		if (preannouncebuildStep == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getPreannouncebuildStep();
+			} else {
+				// I'm it
+				return EMPTY_STRING;
+			}
+		} else {
+			return preannouncebuildStep;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPostannouncebuildStep()
+	 */
+	public String getPostannouncebuildStep() {
+		if (postannouncebuildStep == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getPostannouncebuildStep();
+			} else {
+				// I'm it
+				return EMPTY_STRING;
+			}
+		} else {
+			return postannouncebuildStep;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getCleanCommand()
 	 */
 	public String getCleanCommand() {
@@ -805,7 +938,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserIds()
 	 */
 	public String getErrorParserIds() {
@@ -817,7 +952,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (parent != null) {
 			errorParsers = parent.getErrorParserIds();
 		}
-		// If no error parsers are specified by the configuration, the default is 
+		// If no error parsers are specified by the configuration, the default
+		// is
 		// the error parsers from the tool-chain
 		if (errorParsers == null && toolChain != null) {
 			errorParsers = toolChain.getErrorParserIds(this);
@@ -928,8 +1064,66 @@ public class Configuration extends BuildObject implements IConfiguration {
 		}
 		builder.setCommand(command);
 	}
+ 
+    /* (non-Javadoc) 
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPrebuildStep(java.lang.String) 
+     */ 
+    public void setPrebuildStep(String step) { 
+        if (step == null && prebuildStep == null) return; 
+        if (prebuildStep == null || step == null || !prebuildStep.equals(step)) { 
+                prebuildStep = step; 
+                setRebuildState(true); 
+                isDirty = true; 
+        } 
+    } 
 	
+ 
+    /* (non-Javadoc) 
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostbuildStep(java.lang.String) 
+     */ 
+    public void setPostbuildStep(String step) { 
+        if (step == null && postbuildStep == null) return; 
+        if (postbuildStep == null || step == null || !postbuildStep.equals(step)) { 
+                postbuildStep = step; 
+                setRebuildState(true); 
+                isDirty = true; 
+        }       
+    } 
 	
+    /* (non-Javadoc) 
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPreannouncebuildStep(java.lang.String) 
+     */ 
+    public void setPreannouncebuildStep(String announceStep) { 
+        if (announceStep == null && preannouncebuildStep == null) return; 
+        if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
+                preannouncebuildStep = announceStep; 
+                setRebuildState(true); 
+                isDirty = true; 
+        } 
+    } 
+ 
+    /* (non-Javadoc) 
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostannouncebuildStep(java.lang.String) 
+     */ 
+    public void setPostannouncebuildStep(String announceStep) { 
+        if (announceStep == null && postannouncebuildStep == null) return; 
+        if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
+                postannouncebuildStep = announceStep; 
+                setRebuildState(true); 
+                isDirty = true; 
+        } 
+    } 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isSupported()
+	 */
+	public boolean isSupported(){
+		IToolChain toolChain = getToolChain();
+		if(toolChain != null)
+			return toolChain.isSupported();
+		return false;
+	}
+
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */

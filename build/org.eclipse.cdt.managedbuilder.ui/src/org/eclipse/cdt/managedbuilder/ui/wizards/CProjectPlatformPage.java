@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public class CProjectPlatformPage extends WizardPage {
 	private static final String TIP = PREFIX + ".tip"; //$NON-NLS-1$
 	private static final String CONFIG_LABEL = LABEL + ".configs"; //$NON-NLS-1$
 	private static final String SHOWALL_LABEL = LABEL + ".showall"; //$NON-NLS-1$
+	private static final String SHOWALL_CONFIG_LABEL = LABEL + ".showall.config"; //$NON-NLS-1$
 	private static final String TARGET_LABEL = LABEL + ".platform"; //$NON-NLS-1$
 	private static final String TARGET_TIP = TIP + ".platform"; //$NON-NLS-1$
 
@@ -66,10 +67,12 @@ public class CProjectPlatformPage extends WizardPage {
 	protected Combo platformSelection;
 	private ArrayList selectedConfigurations;
 	protected IProjectType selectedProjectType;
-	protected Button showAll;
+	protected Button showAllProjTypes;
+	protected Button showAllConfigs;
 	protected CheckboxTableViewer tableViewer;
 	protected String[] projectTypeNames;
 	protected ArrayList projectTypes;
+	protected IConfiguration configurations[];
 
 	/**
 	 * Constructor.
@@ -163,19 +166,33 @@ public class CProjectPlatformPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		showAll = new Button(composite, SWT.CHECK | SWT.LEFT);
-		showAll.setFont(composite.getFont());
-		showAll.setText(ManagedBuilderUIMessages.getResourceString(SHOWALL_LABEL));
-		showAll.addListener(SWT.Selection, new Listener() {
+		showAllProjTypes = new Button(composite, SWT.CHECK | SWT.LEFT);
+		showAllProjTypes.setFont(composite.getFont());
+		showAllProjTypes.setText(ManagedBuilderUIMessages.getResourceString(SHOWALL_LABEL));
+		showAllProjTypes.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				populateTypes();
 				platformSelection.select(0);
 				handleTypeSelection();
 			}
 		});
-		showAll.addDisposeListener(new DisposeListener() {
+		showAllProjTypes.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
-				showAll = null;
+				showAllProjTypes = null;
+			}
+		});
+
+		showAllConfigs = new Button(composite, SWT.CHECK | SWT.LEFT);
+		showAllConfigs.setFont(composite.getFont());
+		showAllConfigs.setText(ManagedBuilderUIMessages.getResourceString(SHOWALL_CONFIG_LABEL));
+		showAllConfigs.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				populateConfigurations();
+			}
+		});
+		showAllConfigs.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				showAllConfigs = null;
 			}
 		});
 	}
@@ -267,16 +284,44 @@ public class CProjectPlatformPage extends WizardPage {
 	}
 
 	/**
-	 * Populate the table viewer with the known configurations. 
-	 * By default, all the configurations are selected.
+	 * Populate the table viewer with either all known configurations
+	 * or only with the supported configurations depending on whether a user
+	 * has chosen to diaplay unsupported configurations or not 
+	 * By default, only supported configurations are selected.
 	 */
 	private void populateConfigurations() {
-		// Make the root of the content provider the new project type
-		tableViewer.setInput(selectedProjectType);
-		tableViewer.setAllChecked(true);
+		if(selectedProjectType == null)
+			return;
+		boolean showAll = showAllConfigs != null ? showAllConfigs.getSelection() : false;
+		IConfiguration selected[] = null;
+		
+		if(showAll){
+			configurations = selectedProjectType.getConfigurations();
+			selected = filterSupportedConfigurations(configurations);
+		}
+		else{
+			configurations = filterSupportedConfigurations(selectedProjectType.getConfigurations());
+			selected = configurations;
+		}
+		
+		tableViewer.setInput(configurations);
+		tableViewer.setCheckedElements(selected);
 		handleConfigurationSelectionChange();
 	}
 
+	/**
+	 * Returns the array of supported configurations found in the configuurations
+	 * passes to this method
+	 */
+	IConfiguration[] filterSupportedConfigurations(IConfiguration cfgs[]){
+		ArrayList supported = new ArrayList();
+		for(int i = 0; i < cfgs.length; i++){
+			if(cfgs[i].isSupported())
+					supported.add(cfgs[i]);
+		}
+		return (IConfiguration[])supported.toArray(new IConfiguration[supported.size()]);
+	}
+	
 	/* (non-Javadoc)
 	 * Extracts the names from the project types that are valid for the wizard
 	 * session and populates the combo widget with them.
@@ -308,9 +353,9 @@ public class CProjectPlatformPage extends WizardPage {
 			IProjectType type = allProjectTypes[index];
 			if (!type.isAbstract() && !type.isTestProjectType()) {
 				// If the check box is selected show all the targets
-				if (showAll != null && showAll.getSelection() == true) {
+				if (showAllProjTypes != null && showAllProjTypes.getSelection() == true) {
 					projectTypes.add(type);
-				} else {
+				} else if (type.isSupported()) {
 					// Apply the OS and ARCH filters to determine if the target should be shown
 					// Determine if the project type has any configuration with a tool-chain
 					// that supports this OS & Architecture.

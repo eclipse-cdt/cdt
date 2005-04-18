@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration; 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
@@ -166,6 +167,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
 	private static final String TYPE_FULL = "ManagedMakeBuilder.type.full";	//$NON-NLS-1$
 	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
+	private static final String WARNING_UNSUPPORTED_CONFIGURATION = "ManagedMakeBuilder.warning.unsupported.configuration";	//$NON-NLS-1$
 	public static boolean VERBOSE = false;
 	
 	// Local variables
@@ -431,6 +433,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	
 	/* (non-javadoc)
 	 * Answers an array of strings with the proper make targets
+        * for a build with no custom prebuild/postbuild steps 
 	 * 
 	 * @param fullBuild
 	 * @return
@@ -541,9 +544,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 }
 
 	/* (non-Javadoc)
-	 * @param fullBuild
+     * @param buildType 
 	 * @param buildDir
 	 * @param info
+     * @param generator 
 	 * @param monitor
 	 */
 	protected void invokeMake(int buildType, IPath buildDir, IManagedBuildInfo info, IManagedBuilderMakefileGenerator generator, IProgressMonitor monitor) {
@@ -601,23 +605,18 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				
+				IConfiguration cfg = info.getDefaultConfiguration();
+				if(!cfg.isSupported()){
+					buf.append(ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()}));
+					buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+					buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				}
 				consoleOutStream.write(buf.toString().getBytes());
 				consoleOutStream.flush();
 				
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
-
-				// Get the arguments to be passed to make from build model
-				ArrayList makeArgs = new ArrayList();
-				String arg = info.getBuildArguments();
-				if (arg.length() > 0) {
-					String[] args = arg.split("\\s"); //$NON-NLS-1$
-					for (int i = 0; i < args.length; ++i) {
-						makeArgs.add(args[i]);
-					}
-				}
-				makeArgs.addAll(Arrays.asList(getMakeTargets(buildType)));
-				String[] makeTargets = (String[]) makeArgs.toArray(new String[makeArgs.size()]);
 			
 				// Get a launcher for the make command
 				String errMsg = null;
@@ -646,58 +645,173 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
 			
-				// Launch make
-				Process proc = launcher.execute(makeCommand, makeTargets, env, workingDirectory);
-				if (proc != null) {
-					try {
-						// Close the input of the process since we will never write to it
-						proc.getOutputStream().close();
-					} catch (IOException e) {
+                // Get the arguments to be passed to make from build model 
+				ArrayList makeArgs = new ArrayList();
+				String arg = info.getBuildArguments();
+				if (arg.length() > 0) {
+					String[] args = arg.split("\\s"); //$NON-NLS-1$ 
+					for (int i = 0; i < args.length; ++i) {
+						makeArgs.add(args[i]);
 					}
-				
-					if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) { 
+				}
+
+				String[] makeTargets;
+				String prebuildStep = info.getPrebuildStep();
+				boolean prebuildStepPresent = (prebuildStep.length() > 0);
+				Process proc = null;
+				boolean isuptodate = false;
+
+				if (prebuildStepPresent) {
+					ArrayList premakeArgs = (ArrayList) makeArgs.clone();
+					String[] premakeTargets;
+					switch (buildType) {
+					case INCREMENTAL_BUILD: {
+						// For an incremental build with a prebuild step: 
+						// Check the status of the main build with "make -q main-build" 
+						// If up to date: 
+						// then: don't invoke the prebuild step, which should be run only if 
+						//       something needs to be built in the main build 
+						// else: invoke the prebuild step and the main build step 
+						boolean quit = false;
+						premakeArgs.add("-q"); //$NON-NLS-1$ 
+						premakeArgs.add("main-build"); //$NON-NLS-1$ 
+						premakeTargets = (String[]) premakeArgs
+								.toArray(new String[premakeArgs.size()]);
+						proc = launcher.execute(makeCommand, premakeTargets,
+								env, workingDirectory);
+						if (proc != null) {
+							try {
+								// Close the input of the process since we will never write to it
+								proc.getOutputStream().close();
+							} catch (IOException e) {
+							}
+							if (launcher.waitAndRead(stdout, stderr,
+									new SubProgressMonitor(monitor,
+											IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+								errMsg = launcher.getErrorMessage();
+							}
+						} else {
+							errMsg = launcher.getErrorMessage();
+						}
+
+						if ((errMsg != null && errMsg.length() > 0)
+								|| proc == null) {
+							// Can't tell if the build is needed, so assume it is, and let any errors be triggered
+							// when the "real" build is invoked below 
+							makeArgs.add("pre-build"); //$NON-NLS-1$ 
+							makeArgs.add("main-build"); //$NON-NLS-1$ 
+						} else {
+							// The "make -q" command launch was successful 
+							if (proc.exitValue() == 0) {
+								// If the status value returned from "make -q" is 0, then the build state is up-to-date
+								isuptodate = true;
+								// Report that the build was up to date, and thus nothing needs to be built
+								String uptodateMsg = ManagedMakeMessages
+										.getFormattedString(NOTHING_BUILT,
+												currentProject.getName());
+								buf.append(uptodateMsg);
+								buf.append(System.getProperty(
+										"line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+								// Write message on the console 
+								consoleOutStream.write(buf.toString()
+										.getBytes());
+								consoleOutStream.flush();
+								consoleOutStream.close();
+								stdout.close();
+								stderr.close();
+							} else {
+								// The status value was other than 0, so press on with the build process
+								makeArgs.add("pre-build"); //$NON-NLS-1$                        
+								makeArgs.add("main-build"); //$NON-NLS-1$ 
+							}
+						}
+						break;
+					}
+					case FULL_BUILD: {
+						makeArgs.add("clean"); //$NON-NLS-1$        
+						makeArgs.add("pre-build"); //$NON-NLS-1$ 
+						makeArgs.add("main-build"); //$NON-NLS-1$                           
+						break;
+					}
+					case CLEAN_BUILD: {
+						makeArgs.add("clean"); //$NON-NLS-1$                                                            
+						break;
+					}
+					}
+
+				} else {
+					// No prebuild step 
+					// 
+					makeArgs.addAll(Arrays.asList(getMakeTargets(buildType)));
+				}
+
+				makeTargets = (String[]) makeArgs.toArray(new String[makeArgs
+						.size()]);
+
+				// Launch make - main invocation 
+				if (!isuptodate) {
+					proc = launcher.execute(makeCommand, makeTargets, env,
+							workingDirectory);
+					if (proc != null) {
+						try {
+							// Close the input of the process since we will never write to it
+							proc.getOutputStream().close();
+						} catch (IOException e) {
+						}
+
+						if (launcher.waitAndRead(stdout, stderr,
+								new SubProgressMonitor(monitor,
+										IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+							errMsg = launcher.getErrorMessage();
+						}
+
+						// Force a resync of the projects without allowing the user to cancel. 
+						// This is probably unkind, but short of this there is no way to insure 
+						// the UI is up-to-date with the build results 
+						monitor.subTask(ManagedMakeMessages
+								.getResourceString(REFRESH));
+						try {
+							currentProject.refreshLocal(
+									IResource.DEPTH_INFINITE, null);
+						} catch (CoreException e) {
+							monitor.subTask(ManagedMakeMessages
+									.getResourceString(REFRESH_ERROR));
+						}
+					} else {
 						errMsg = launcher.getErrorMessage();
 					}
-				
-					// Force a resync of the projects without allowing the user to cancel.
-					// This is probably unkind, but short of this there is no way to insure
-					// the UI is up-to-date with the build results
-					monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH));
-					try {
-						currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-					} catch (CoreException e) {
-						monitor.subTask(ManagedMakeMessages.getResourceString(REFRESH_ERROR));
+
+					// Report either the success or failure of our mission 
+					buf = new StringBuffer();
+					if (errMsg != null && errMsg.length() > 0) {
+						String errorDesc = ManagedMakeMessages
+								.getResourceString(BUILD_ERROR);
+						buf.append(errorDesc);
+						buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+						buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+					} else {
+						// Report a successful build 
+						String successMsg = ManagedMakeMessages
+								.getFormattedString(BUILD_FINISHED,
+										currentProject.getName());
+						buf.append(successMsg);
+						buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 					}
-				} else {
-					errMsg = launcher.getErrorMessage();
-				}
-				
-				// Report either the success or failure of our mission
-				buf = new StringBuffer();
-				if (errMsg != null && errMsg.length() > 0) {
-					String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
-					buf.append(errorDesc);
-					buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
-					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					// Report a successful build
-					String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, currentProject.getName());
-					buf.append(successMsg);
-					buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
-				}
 
-				// Write message on the console
-				consoleOutStream.write(buf.toString().getBytes());
-				consoleOutStream.flush();
-				stdout.close();
-				stderr.close();				
+					// Write message on the console 
+					consoleOutStream.write(buf.toString().getBytes());
+					consoleOutStream.flush();
+					stdout.close();
+					stderr.close();
 
-				// Generate any error markers that the build has discovered
-				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
-				addBuilderMarkers(epm);
-				epm.reportProblems();
-				consoleOutStream.close();
-			}
+					// Generate any error markers that the build has discovered 
+					monitor.subTask(ManagedMakeMessages
+							.getResourceString(MARKERS));
+					addBuilderMarkers(epm);
+					epm.reportProblems();
+					consoleOutStream.close();
+				}
+			}                               
 		} catch (Exception e) {
 			forgetLastBuiltState();
 		} finally {

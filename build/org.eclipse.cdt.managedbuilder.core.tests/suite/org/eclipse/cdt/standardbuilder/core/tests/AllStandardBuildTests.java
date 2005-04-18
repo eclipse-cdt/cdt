@@ -35,6 +35,7 @@ public class AllStandardBuildTests extends TestSuite {
 		TestSuite suite = new AllStandardBuildTests("Test for org.eclipse.cdt.standardbuild.core.tests");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(ScannerConfigConsoleParserTests.class);
+		suite.addTestSuite(ScannerConfigDiscoveryTests.class);
 		//$JUnit-END$
 		return suite;
 	}

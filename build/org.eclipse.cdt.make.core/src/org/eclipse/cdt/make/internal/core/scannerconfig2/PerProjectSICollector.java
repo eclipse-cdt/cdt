@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -19,14 +20,22 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
@@ -36,8 +45,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Element;
 
 /**
@@ -424,4 +436,62 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
         return pathInfo; 
     }
 
+	/**
+	 * Static method to return compiler built-in scanner info.
+	 * Preconditions: resource has to be contained by a project that has following natures:
+	 *     C nature, CC nature (for C++ projects), Make nature and ScannerConfig nature  
+	 * 
+	 * @param project
+	 * @throws CModelException 
+	 */
+	public static void calculateCompilerBuiltins(final IProject project) throws CModelException {
+		createDiscoveredPathContainer(project, new NullProgressMonitor());
+		String scdProfileId = ScannerConfigProfileManager.PER_PROJECT_PROFILE_ID;
+        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+        		getSCProfileInstance(project, scdProfileId);
+        final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.
+        		createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(),
+						scdProfileId, true);
+		final IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
+		if (collector instanceof IScannerInfoCollectorCleaner) {
+			((IScannerInfoCollectorCleaner) collector).deleteAll(project);
+		}
+		final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider("specsFile");//$NON-NLS-1$
+		
+		// Set the arguments for the provider
+		
+		ISafeRunnable runnable = new ISafeRunnable() {
+			public void run() throws CoreException {
+				IProgressMonitor monitor = new NullProgressMonitor();
+				esiProvider.invokeProvider(monitor, project, "specsFile", buildInfo, collector);//$NON-NLS-1$
+				if (collector instanceof IScannerInfoCollector2) {
+					IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
+					collector2.updateScannerConfiguration(monitor);
+				}
+			}
+		
+			public void handleException(Throwable exception) {
+				if (exception instanceof OperationCanceledException) {
+					throw (OperationCanceledException) exception;
+				}
+			}
+		};
+		Platform.run(runnable);
+	}
+	
+    private static void createDiscoveredPathContainer(IProject project, IProgressMonitor monitor) throws CModelException {
+        IPathEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
+        ICProject cProject = CoreModel.getDefault().create(project);
+        if (cProject != null) {
+            IPathEntry[] entries = cProject.getRawPathEntries();
+            List newEntries = new ArrayList(Arrays.asList(entries));
+            if (!newEntries.contains(container)) {
+                newEntries.add(container);
+                cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
+            }
+        }
+        // create a new discovered scanner config store
+        MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
+    }
+	
 }

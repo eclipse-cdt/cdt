@@ -455,6 +455,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             consumedSemi = true;
             break;
         case IToken.tLBRACE:
+        case IToken.tEOC:
             break;
         default:
             throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
@@ -932,7 +933,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 // array access
                 consume(IToken.tLBRACKET);
                 secondExpression = expression();
-                int last = consume(IToken.tRBRACKET).getEndOffset();
+                int last;
+				switch (LT(1)) {
+				case IToken.tRBRACKET:
+					last = consume(IToken.tRBRACKET).getEndOffset();
+					break;
+				case IToken.tEOC:
+					last = Integer.MAX_VALUE;
+					break;
+				default:
+					throw backtrack;
+				}
+				
                 IASTArraySubscriptExpression s = createArraySubscriptExpression();
                 ((ASTNode) s).setOffsetAndLength(((ASTNode) firstExpression)
                         .getOffset(), last
@@ -2108,7 +2120,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 else
                     exp = constantExpression();
             }
-            int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
+            int lastOffset;
+			switch (LT(1)) {
+			case IToken.tRBRACKET:
+				lastOffset = consume(IToken.tRBRACKET).getEndOffset();
+				break;
+			case IToken.tEOC:
+				lastOffset = Integer.MAX_VALUE;
+				break;
+			default:
+				throw backtrack;
+			}
+
 
             IASTArrayModifier arrayMod = null;
             if (!(isStatic || isRestrict || isConst || isVolatile || isVarSized))

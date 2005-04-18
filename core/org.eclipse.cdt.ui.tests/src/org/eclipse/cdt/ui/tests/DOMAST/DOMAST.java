@@ -149,20 +149,20 @@ public class DOMAST extends ViewPart {
    private Action			   displayNodeSignatureAction;
    private Action			   displayExpressionAction;
    private Action			   displayInitializerAction;
-   private Action              singleClickAction;
+   protected Action            singleClickAction;
    private Action              loadActiveEditorAction;
    private Action              refreshAction;
    private Action			   expandAllAction;
    private Action			   collapseAllAction;
    private Action			   clearAction;
    private Action			   searchNamesAction;
-   private IFile               file              = null;
+   protected IFile             file              = null;
    private IEditorPart         part              = null;
-   private ParserLanguage              lang              = null;
+   protected ParserLanguage    lang              = null;
    
    private CustomFiltersActionGroup customFiltersActionGroup;
    
-   private static ViewContentProvider.StartInitializingASTView initializeASTViewJob = null;
+   protected static ViewContentProvider.StartInitializingASTView initializeASTViewJob = null;
 
    /*
     * The content provider class is responsible for providing objects to the
@@ -177,7 +177,7 @@ public class DOMAST extends ViewPart {
 	  private DOMASTNodeParent invisibleRoot;
       private DOMASTNodeParent tuTreeParent = null;
       private IASTTranslationUnit tu = null;
-	  private IASTProblem[] astProblems = null;
+	  protected IASTProblem[] astProblems = null;
 
       public ViewContentProvider() {
       }
@@ -283,16 +283,16 @@ public class DOMAST extends ViewPart {
 						
 					}
 					
-					private void expandTreeIfNecessary(TreeItem[] tree, Object[] expanded) {
+					private void expandTreeIfNecessary(TreeItem[] tree, Object[] theExpanded) {
 			     		for( int i=0; i<tree.length; i++) {
-			     			for( int j=0; j<expanded.length; j++) {
-				     			if (expanded[j] instanceof DOMASTNodeLeaf &&
+			     			for( int j=0; j<theExpanded.length; j++) {
+				     			if (theExpanded[j] instanceof DOMASTNodeLeaf &&
 				     					tree[i].getData() instanceof DOMASTNodeLeaf &&
-				     					((DOMASTNodeLeaf)expanded[j]).toString().equals(((DOMASTNodeLeaf)tree[i].getData()).toString()) && 
-				     					((DOMASTNodeLeaf)expanded[j]).getOffset() == (((DOMASTNodeLeaf)tree[i].getData()).getOffset())) {
+				     					((DOMASTNodeLeaf)theExpanded[j]).toString().equals(((DOMASTNodeLeaf)tree[i].getData()).toString()) && 
+				     					((DOMASTNodeLeaf)theExpanded[j]).getOffset() == (((DOMASTNodeLeaf)tree[i].getData()).getOffset())) {
 				     				tree[i].setExpanded(true);
 				     				viewer.refresh();
-				     				expandTreeIfNecessary(tree[i].getItems(), expanded);
+				     				expandTreeIfNecessary(tree[i].getItems(), theExpanded);
 				     			}
 			     			}
 			     		}
@@ -306,7 +306,10 @@ public class DOMAST extends ViewPart {
       
       private class InitializeView extends Job {
 
-      	private static final String RETRIEVING_PREPROCESSOR_PROBLEMS = "Retrieving all preprocessor problems from TU"; //$NON-NLS-1$
+		private static final String COLON_SPACE = ": "; //$NON-NLS-1$
+        private static final String DOM_AST_VIEW_DONE = "[DOM AST View] done "; //$NON-NLS-1$
+        private static final String DOM_AST_VIEW_FINISHED = "[DOM AST View] finished: "; //$NON-NLS-1$
+        private static final String RETRIEVING_PREPROCESSOR_PROBLEMS = "Retrieving all preprocessor problems from TU"; //$NON-NLS-1$
 		private static final String RETRIEVING_PREPROCESSOR_STATEMENTS = "Retrieving all preprocessor statements from TU"; //$NON-NLS-1$
 		private static final String _PREPROCESSOR_PROBLEMS_ = " preprocessor problems"; //$NON-NLS-1$
 		private static final String _PREPROCESSOR_STATEMENTS_ = " preprocessor statements"; //$NON-NLS-1$
@@ -318,7 +321,7 @@ public class DOMAST extends ViewPart {
       	DOMASTNodeParent root = null;
       	ViewContentProvider provider = null;
       	TreeViewer view = null;
-      	IFile file = null;
+      	IFile aFile = null;
       	
     	/**
 		 * @param name
@@ -329,7 +332,7 @@ public class DOMAST extends ViewPart {
 			setUser(true);
 			this.provider = provider;
 			this.view = view;
-			this.file = file;
+			this.aFile = file;
 		}
 		
 	    public DOMASTNodeParent getInvisibleRoot() {
@@ -350,24 +353,24 @@ public class DOMAST extends ViewPart {
     		long start=0;
 			long overallStart=System.currentTimeMillis();
 			
-    		if (file == null || lang == null || monitor == null)
+    		if (aFile == null || lang == null || monitor == null)
 	            return Status.CANCEL_STATUS;
 
 			if (monitor.isCanceled()) return Status.CANCEL_STATUS;
-			monitor.beginTask(name, 8);
+			monitor.beginTask(name, 100);
 			start=System.currentTimeMillis();
 			
 	         IPopulateDOMASTAction action = null;
-	         IASTTranslationUnit tu = null;
+	         IASTTranslationUnit aTu = null;
 	         try {
 	         	monitor.subTask(PARSING_TRANSLATION_UNIT);
 	         	start=System.currentTimeMillis();
-	            tu = CDOM.getInstance().getASTService().getTranslationUnit(
-	                  file,
+	            aTu = CDOM.getInstance().getASTService().getTranslationUnit(
+	                  aFile,
 	                  CDOM.getInstance().getCodeReaderFactory(
 	                        CDOM.PARSE_SAVED_RESOURCES));
-	            monitor.worked(1);
-	            System.out.println("[DOM AST View] done " + PARSING_TRANSLATION_UNIT + ": " + (System.currentTimeMillis()- start) );
+	            monitor.worked(30);
+	            System.out.println(DOM_AST_VIEW_DONE + PARSING_TRANSLATION_UNIT + COLON_SPACE + (System.currentTimeMillis()- start) );
 	         } catch (IASTServiceProvider.UnsupportedDialectException e) {
 	         	return Status.CANCEL_STATUS;
 	         }
@@ -376,14 +379,14 @@ public class DOMAST extends ViewPart {
 	         monitor.subTask(GENERATING_INITIAL_TREE);
 	         start=System.currentTimeMillis();
 	         if (lang == ParserLanguage.CPP) {
-	            action = new CPPPopulateASTViewAction(tu, monitor);
-	            tu.accept( (CPPASTVisitor) action);
+	            action = new CPPPopulateASTViewAction(aTu, monitor);
+	            aTu.accept( (CPPASTVisitor) action);
 	         } else {
-	            action = new CPopulateASTViewAction(tu, monitor);
-	            tu.accept( (CASTVisitor) action);
+	            action = new CPopulateASTViewAction(aTu, monitor);
+	            aTu.accept( (CASTVisitor) action);
 	         }
-	         monitor.worked(2);
-             System.out.println("[DOM AST View] done " + GENERATING_INITIAL_TREE + ": " + (System.currentTimeMillis()- start) );
+	         monitor.worked(30);
+             System.out.println(DOM_AST_VIEW_DONE + GENERATING_INITIAL_TREE + COLON_SPACE + (System.currentTimeMillis()- start) );
 	         
 	         // display roots
 	         root = new DOMASTNodeParent(null); //$NON-NLS-1$
@@ -391,38 +394,38 @@ public class DOMAST extends ViewPart {
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(RETRIEVING_PREPROCESSOR_STATEMENTS);
 	         start=System.currentTimeMillis();
-	         IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
-	         monitor.worked(3);
-	         System.out.println("[DOM AST View] done " + RETRIEVING_PREPROCESSOR_STATEMENTS + ": " + (System.currentTimeMillis()- start) );
+	         IASTPreprocessorStatement[] statements = aTu.getAllPreprocessorStatements();
+	         monitor.worked(5);
+	         System.out.println(DOM_AST_VIEW_DONE + RETRIEVING_PREPROCESSOR_STATEMENTS + COLON_SPACE + (System.currentTimeMillis()- start) );
 	         
 	         monitor.subTask(MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_);
 	         start=System.currentTimeMillis();
 	         // merge preprocessor statements to the tree
 	         action.mergePreprocessorStatements(statements);
-	         monitor.worked(4);
-	         System.out.println("[DOM AST View] done " + MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_ + ": " + (System.currentTimeMillis()- start) );
+	         monitor.worked(2);
+	         System.out.println(DOM_AST_VIEW_DONE + MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_ + COLON_SPACE + (System.currentTimeMillis()- start) );
 	         
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(RETRIEVING_PREPROCESSOR_PROBLEMS);
 	         start=System.currentTimeMillis();
-	         IASTProblem[] problems = tu.getPreprocessorProblems();
-	         monitor.worked(5);
-	         System.out.println("[DOM AST View] done " + RETRIEVING_PREPROCESSOR_PROBLEMS + ": " + (System.currentTimeMillis()- start) );
+	         IASTProblem[] problems = aTu.getPreprocessorProblems();
+	         monitor.worked(2);
+	         System.out.println(DOM_AST_VIEW_DONE + RETRIEVING_PREPROCESSOR_PROBLEMS + COLON_SPACE + (System.currentTimeMillis()- start) );
 	         	         
 	         monitor.subTask(MERGING_ + problems.length + _PREPROCESSOR_PROBLEMS_);
 	         start=System.currentTimeMillis();
 	         // merge preprocessor problems to the tree
 	         action.mergePreprocessorProblems(problems);
-	         monitor.worked(6);
-	         System.out.println("[DOM AST View] done " + MERGING_ + problems.length + _PREPROCESSOR_PROBLEMS_ + ": " + (System.currentTimeMillis()- start) );
+	         monitor.worked(1);
+	         System.out.println(DOM_AST_VIEW_DONE + MERGING_ + problems.length + _PREPROCESSOR_PROBLEMS_ + COLON_SPACE + (System.currentTimeMillis()- start) );
 
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(GROUPING_AST);
 	         start=System.currentTimeMillis();
 	         // group #includes
 	         action.groupIncludes(statements);
-	         monitor.worked(7);
-	         System.out.println("[DOM AST View] done " + GROUPING_AST + ": " + (System.currentTimeMillis()- start) );
+	         monitor.worked(30);
+	         System.out.println(DOM_AST_VIEW_DONE + GROUPING_AST + COLON_SPACE + (System.currentTimeMillis()- start) );
 
 	         root.addChild(action.getTree());
 			 
@@ -436,7 +439,7 @@ public class DOMAST extends ViewPart {
 	         
 	         monitor.done();
 			
-	         System.out.println("[DOM AST View] finished: " + (System.currentTimeMillis()- overallStart) );
+	         System.out.println(DOM_AST_VIEW_FINISHED + (System.currentTimeMillis()- overallStart) );
 	         
 			return Status.OK_STATUS;
 		}
@@ -481,7 +484,7 @@ public class DOMAST extends ViewPart {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		public void inputChanged(Viewer aViewer, Object oldInput, Object newInput) {
 		}
 		
 		private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, DOMASTNodeLeaf treeObj) {
@@ -553,8 +556,10 @@ public class DOMAST extends ViewPart {
 
    class ViewLabelProvider extends LabelProvider {
 
-      public String getText(Object obj) {
-		  if (obj == null) return "";
+      private static final String BLANK_STRING = ""; //$NON-NLS-1$
+
+    public String getText(Object obj) {
+		  if (obj == null) return BLANK_STRING;
          return obj.toString();
       }
 
@@ -808,7 +813,7 @@ public class DOMAST extends ViewPart {
      };
      loadActiveEditorAction.setText(LOAD_ACTIVE_EDITOR);
      loadActiveEditorAction.setToolTipText(LOAD_ACTIVE_EDITOR);
-     loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_DEFAULT);
+     loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_RELOAD_VIEW);
    	
      refreshAction = new Action() {
          public void run() {
@@ -821,7 +826,7 @@ public class DOMAST extends ViewPart {
       };
       refreshAction.setText(REFRESH_DOM_AST);
       refreshAction.setToolTipText(REFRESH_DOM_AST);
-      refreshAction.setImageDescriptor(DOMASTPluginImages.DESC_IASTInitializer);
+      refreshAction.setImageDescriptor(DOMASTPluginImages.DESC_REFRESH_VIEW);
 
      expandAllAction = new Action() {
         public void run() {
@@ -938,7 +943,7 @@ public class DOMAST extends ViewPart {
       singleClickAction = new ASTHighlighterAction(part);
    }
 
-   private IEditorPart getActiveEditor() {
+   protected IEditorPart getActiveEditor() {
    	IEditorPart editor = null;
    	
    	if (getSite().getPage().isEditorAreaVisible() &&
@@ -1122,6 +1127,7 @@ public class DOMAST extends ViewPart {
     * Passing the focus request to the viewer's control.
     */
    public void setFocus() {
+       if (viewer==null) return;
       viewer.getControl().setFocus();
 	  
 	  ISelection selection = viewer.getSelection();

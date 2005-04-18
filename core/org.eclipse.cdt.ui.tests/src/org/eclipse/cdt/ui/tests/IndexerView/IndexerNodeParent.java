@@ -32,6 +32,9 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
     private boolean firstDisplay=true;
     private IndexerFilterManager filterManager = null;
     private IndexerView.ViewContentProvider view=null;
+    private boolean sort=true;
+    private boolean displayFullName=true;
+    private boolean navigate=false;
     
     public IndexerNodeParent(IEntryResult result, File indexerFile, IndexerView.ViewContentProvider view) {
         super(result, indexerFile);
@@ -52,6 +55,14 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
     public IndexerNodeLeaf[] getChildren() {
         // if there is nothing to display return an empty list
         if (children.length == 0) return EMPTY_INDEXER_NODE_LEAVES;
+
+        // navigate is used to determine if the array should be traversed or not (button pressed or first loading)
+        if (!navigate) {
+            return (IndexerNodeLeaf[])ArrayUtil.removeNulls(IndexerNodeLeaf.class, childrenToDisplay);
+        } else {
+            navigate = false;
+        }
+        
         // obey the bounds of the list!
         if (!firstDisplay && (!isForward && lastBackwardDisplayed==0 ||
                 isForward && lastForwardDisplayed==children.length-1)) {
@@ -61,6 +72,14 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
                 view.setDisplayBackwards(false);
 
             return (IndexerNodeLeaf[])ArrayUtil.removeNulls(IndexerNodeLeaf.class, childrenToDisplay);
+        }
+        
+        if (firstDisplay && children.length > 1) {
+            if (sort) {// sort children based on name
+                quickSort(children, 0, children.length - 1, true);
+            } else {// sort children based on word
+                quickSort(children, 0, children.length - 1, false);
+            }
         }
         
         int start=0;
@@ -139,6 +158,57 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
         return (IndexerNodeLeaf[])ArrayUtil.removeNulls(IndexerNodeLeaf.class, childrenToDisplay);
     }
     
+    private static void quickSort(IndexerNodeLeaf[] list, int left, int right, boolean sortName) {
+        int original_left= left;
+        int original_right= right;
+        String mid=null;
+        if (sortName) {
+            mid= list[(left + right) / 2].getName().toUpperCase();
+        } else {
+            mid= new String(list[(left + right) / 2].getResult().getWord()).toUpperCase();
+        }
+        do {
+            String compareL = null;
+            String compareR = null;
+            if (sortName) {
+                compareL = list[left].getName().toUpperCase();
+                compareR = list[right].getName().toUpperCase();
+            } else {
+                compareL = new String(list[left].getResult().getWord()).toUpperCase();
+                compareR = new String(list[right].getResult().getWord()).toUpperCase();
+            }
+            while (compareL.compareTo(mid) < 0) {
+                left++;
+                if (sortName) {
+                    compareL = list[left].getName().toUpperCase();
+                } else {
+                    compareL = new String(list[left].getResult().getWord()).toUpperCase();
+                }
+            }
+            while (mid.compareTo(compareR) < 0) {
+                right--;
+                if (sortName) {
+                    compareR = list[right].getName().toUpperCase();
+                } else {
+                    compareR = new String(list[right].getResult().getWord()).toUpperCase();
+                }
+            }
+            if (left <= right) {
+                IndexerNodeLeaf tmp= list[left];
+                list[left]= list[right];
+                list[right]= tmp;
+                left++;
+                right--;
+            }
+        } while (left <= right);
+        if (original_left < right) {
+            quickSort(list, original_left, right, sortName);
+        }
+        if (left < original_right) {
+            quickSort(list, left, original_right, sortName);
+        }
+    }
+    
     public void setChildren(IndexerNodeLeaf[] children) {
         this.children = children;
     }
@@ -160,6 +230,7 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
     }
     
     public void reset() {
+        navigate=true;
         lastBackwardDisplayed = 0;
         lastForwardDisplayed=0;
         isForward=true;
@@ -181,5 +252,29 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
             if (filterManager.isFiltered(children[i])) filteredCount++;
         }
         return filteredCount;
+    }
+
+    public boolean isSort() {
+        return sort;
+    }
+
+    public void setSort(boolean sort) {
+        this.sort = sort;
+    }
+
+    public boolean isDisplayFullName() {
+        return displayFullName;
+    }
+
+    public void setDisplayFullName(boolean displayFullName) {
+        this.displayFullName = displayFullName;
+    }
+
+    public boolean isNavigate() {
+        return navigate;
+    }
+
+    public void setNavigate(boolean navigate) {
+        this.navigate = navigate;
     }
 }

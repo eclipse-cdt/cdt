@@ -90,6 +90,11 @@ public class IndexerViewPluginImages {
     public static final String IMG_GROUPED_DECL= NAME_PREFIX + "grouped_decl.gif"; //$NON-NLS-1$
     public static final String IMG_GROUPED_REF= NAME_PREFIX + "grouped_ref.gif"; //$NON-NLS-1$
     public static final String IMG_GROUPED_TYPE= NAME_PREFIX + "grouped_type.gif"; //$NON-NLS-1$
+    public static final String IMG_SEARCH_LOCATION= NAME_PREFIX + "search_decl_obj.gif"; //$NON-NLS-1$
+    public static final String IMG_SORT= NAME_PREFIX + "alphab_sort.gif"; //$NON-NLS-1$
+    public static final String IMG_SORTED= NAME_PREFIX + "alphab_sorted.gif"; //$NON-NLS-1$
+    public static final String IMG_FULL_NAME_DISPLAYED= NAME_PREFIX + "full_name_displayed.gif"; //$NON-NLS-1$
+    public static final String IMG_DISPLAY_FULL_NAME= NAME_PREFIX + "display_full_name.gif"; //$NON-NLS-1$
     
     public static final ImageDescriptor DESC_REF= createManaged(ICON_PREFIX, IMG_REF);
     public static final ImageDescriptor DESC_TYPE_REF= createManaged(ICON_PREFIX, IMG_TYPE_REF);
@@ -129,6 +134,11 @@ public class IndexerViewPluginImages {
     public static final ImageDescriptor DESC_GROUPED_DECL= createManaged(ICON_PREFIX, IMG_GROUPED_DECL);
     public static final ImageDescriptor DESC_GROUPED_REF= createManaged(ICON_PREFIX, IMG_GROUPED_REF);
     public static final ImageDescriptor DESC_GROUPED_TYPE= createManaged(ICON_PREFIX, IMG_GROUPED_TYPE);
+    public static final ImageDescriptor DESC_SEARCH_LOCATION= createManaged(ICON_PREFIX, IMG_SEARCH_LOCATION);
+    public static final ImageDescriptor DESC_SORT= createManaged(ICON_PREFIX, IMG_SORT);
+    public static final ImageDescriptor DESC_SORTED= createManaged(ICON_PREFIX, IMG_SORTED);
+    public static final ImageDescriptor DESC_FULL_NAME_DISPLAYED= createManaged(ICON_PREFIX, IMG_FULL_NAME_DISPLAYED);
+    public static final ImageDescriptor DESC_DISPLAY_FULL_NAME= createManaged(ICON_PREFIX, IMG_DISPLAY_FULL_NAME);
     
     private static ImageDescriptor createManaged(String prefix, String name) {
         return createManaged(imageRegistry, prefix, name);

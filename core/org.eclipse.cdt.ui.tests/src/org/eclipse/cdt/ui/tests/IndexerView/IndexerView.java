@@ -13,7 +13,6 @@ package org.eclipse.cdt.ui.tests.IndexerView;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.index.ICDTIndexer;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -36,12 +35,14 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -57,6 +58,10 @@ import org.eclipse.ui.views.properties.PropertySheet;
  * @author dsteffle
  */
 public class IndexerView extends ViewPart {
+    private static final int DEFAULT_INDEXER_SIZE = 1;
+    private static final String SWITCH_FULL_NAMES = "Switch Full Names"; //$NON-NLS-1$
+    private static final String SORT_RESULTS = "Sort Results"; //$NON-NLS-1$
+    private static final String SEARCH_LOCATIONS = "Search Locations"; //$NON-NLS-1$
     private static final String _TOTAL_IENTRYRESULTS = " total IEntryResults"; //$NON-NLS-1$
     private static final String _FILTERED_IENTRY_RESULTS_ = " filtered IEntry Results\n"; //$NON-NLS-1$
     private static final String INDEXER_STATS = "Indexer Stats"; //$NON-NLS-1$
@@ -70,14 +75,17 @@ public class IndexerView extends ViewPart {
     private static final String PROPERTIES_VIEW = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
     protected static final String BLANK_STRING = ""; //$NON-NLS-1$
     static TableViewer viewer;
+    protected Action searchLocationAction;
     protected Action previousPageAction;
     protected Action nextPageAction;
     protected Action singleClickAction;
     protected Action setFiltersAction;
+    protected Action sortAction;
+    protected Action displayFullNameAction;
     protected Action displayStatsAction;
-    protected IIndexer[] indexers = new IIndexer[CTestPlugin.getWorkspace().getRoot().getProjects().length];
+    protected IIndexer[] indexers =  new IIndexer[DEFAULT_INDEXER_SIZE]; // support 1 indexer for now new IIndexer[CTestPlugin.getWorkspace().getRoot().getProjects().length];
     protected IProject project = null;
-        
+    
     protected static ViewContentProvider.StartInitializingIndexerView initializeIndexerViewJob = null;
 
     public class ViewContentProvider implements IStructuredContentProvider,
@@ -143,7 +151,6 @@ public class IndexerView extends ViewPart {
                             
                             invisibleRoot.setIsForward(true); // initial display direction is forward
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
@@ -167,7 +174,8 @@ public class IndexerView extends ViewPart {
              */
             public void run() {
                 if (!updateView) return; 
-                    
+                
+                enableButtons(false);
                 view.refresh();
                 
                 if (view.getTable().getItems().length > 0) {
@@ -178,6 +186,7 @@ public class IndexerView extends ViewPart {
                     view.getTable().setSelection(selection);
                 }
                 
+                enableButtons(true);
                 previousPageAction.setEnabled(displayBackwards);
                 nextPageAction.setEnabled(displayForwards);
             }
@@ -234,6 +243,7 @@ public class IndexerView extends ViewPart {
                 initializeIndexerViewJob.schedule();
             }
             
+            invisibleRoot.reset();
             this.displayForwards=displayForwards;
             this.displayBackwards=displayBackwards;
         }
@@ -247,7 +257,7 @@ public class IndexerView extends ViewPart {
 
         public void dispose() {}
 
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        public void inputChanged(Viewer aViewer, Object oldInput, Object newInput) {
             // TODO Auto-generated method stub
         }
 
@@ -381,12 +391,25 @@ public class IndexerView extends ViewPart {
         contributeToActionBars();
     }
 
+    protected void enableButtons(boolean value) {
+        setFiltersAction.setEnabled(value);
+        setFiltersAction.setEnabled(value);
+        sortAction.setEnabled(value);
+        displayFullNameAction.setEnabled(value);
+    }
+    
     private void makeActions() {
+        searchLocationAction = new SearchLocationsAction();
+        searchLocationAction.setText(SEARCH_LOCATIONS);
+        searchLocationAction.setToolTipText(SEARCH_LOCATIONS);
+        searchLocationAction.setImageDescriptor(IndexerViewPluginImages.DESC_SEARCH_LOCATION);
+        
         previousPageAction = new Action() {
             public void run() {
                 if (viewer.getContentProvider() instanceof ViewContentProvider) {
                     IndexerNodeParent root = ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot();
                     root.setIsForward(false);
+                    root.setNavigate(true);
                 }
                 viewer.refresh();
                 
@@ -403,6 +426,7 @@ public class IndexerView extends ViewPart {
                 if (viewer.getContentProvider() instanceof ViewContentProvider) {
                     IndexerNodeParent root = ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot();
                     root.setIsForward(true);
+                    root.setNavigate(true);
                 }
                 viewer.refresh();
                 
@@ -422,17 +446,57 @@ public class IndexerView extends ViewPart {
                 int result = dialog.open();
                 
                 if (result == IDialogConstants.OK_ID) {
-                    viewer.setContentProvider(new ViewContentProvider(((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot(), true, true));
-                    ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().setView((ViewContentProvider)viewer.getContentProvider()); // update the root's content provider
-                    
-                    previousPageAction.setEnabled(((ViewContentProvider)viewer.getContentProvider()).isDisplayBackwards());
-                    nextPageAction.setEnabled(((ViewContentProvider)viewer.getContentProvider()).isDisplayForwards());
+                    // reset the view but remember the buttons being displayed from the old content provider
+                    ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().reset();
+                    viewer.refresh();
                 }
             }
         };
         setFiltersAction.setText(SET_FILTERS);
         setFiltersAction.setToolTipText(SET_FILTERS);
         setFiltersAction.setImageDescriptor(IndexerViewPluginImages.DESC_FILTER_BUTTON);
+        
+        sortAction = new Action() {
+            public void run() {
+                if (viewer.getContentProvider() instanceof ViewContentProvider) {
+                    enableButtons(false);
+                    if (((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().isSort()) {
+                        ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().setSort(false);
+                        ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().reset();
+                        viewer.refresh();
+                        this.setImageDescriptor(IndexerViewPluginImages.DESC_SORT);
+                    } else {
+                        ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().setSort(true);
+                        ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().reset();
+                        viewer.refresh();
+                        this.setImageDescriptor(IndexerViewPluginImages.DESC_SORTED);
+                    }
+                    enableButtons(true);
+                }
+            }
+        };
+        sortAction.setText(SORT_RESULTS);
+        sortAction.setToolTipText(SORT_RESULTS);
+        sortAction.setImageDescriptor(IndexerViewPluginImages.DESC_SORTED);
+        
+        displayFullNameAction = new Action() {
+            public void run() {
+                if (viewer.getContentProvider() instanceof ViewContentProvider) {
+                    if (((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().isDisplayFullName()) {
+                        ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().setDisplayFullName(false);
+                        viewer.refresh();
+                        this.setImageDescriptor(IndexerViewPluginImages.DESC_DISPLAY_FULL_NAME);
+                    } else {
+                        ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot().setDisplayFullName(true);
+                        viewer.refresh();
+                        this.setImageDescriptor(IndexerViewPluginImages.DESC_FULL_NAME_DISPLAYED);
+                    }
+                }
+            }
+        };
+        displayFullNameAction.setText(SWITCH_FULL_NAMES);
+        displayFullNameAction.setToolTipText(SWITCH_FULL_NAMES);
+        displayFullNameAction.setImageDescriptor(IndexerViewPluginImages.DESC_FULL_NAME_DISPLAYED);
         
         displayStatsAction = new Action() {
             public void run() {
@@ -454,7 +518,7 @@ public class IndexerView extends ViewPart {
         
         singleClickAction = new IndexerHighlighterAction();
     }
-
+    
     private void hookContextMenu() {
         MenuManager menuMgr = new MenuManager(_INDEXER_MENU_MANAGER);
         menuMgr.setRemoveAllWhenShown(true);
@@ -473,6 +537,8 @@ public class IndexerView extends ViewPart {
     }
 
     void fillContextMenu(IMenuManager manager) {
+        manager.add(searchLocationAction);
+        manager.add(new Separator());
         // Other plug-ins can contribute there actions here
         manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
     }
@@ -502,13 +568,14 @@ public class IndexerView extends ViewPart {
         fillLocalToolBar(bars.getToolBarManager());
     }
 
-    private void fillLocalPullDown(IMenuManager manager) {
-    }
+    private void fillLocalPullDown(IMenuManager manager) {}
 
     private void fillLocalToolBar(IToolBarManager manager) {
         manager.add(previousPageAction);
         manager.add(nextPageAction);
         manager.add(new Separator());
+        manager.add(sortAction);
+        manager.add(displayFullNameAction);
         manager.add(setFiltersAction);
         manager.add(new Separator());
         manager.add(displayStatsAction);
@@ -523,11 +590,14 @@ public class IndexerView extends ViewPart {
     }
 
     public void appendIndexer(IIndexer indexer) {
-        indexers = (IIndexer[])ArrayUtil.append(IIndexer.class, indexers, indexer);
+//        indexers = (IIndexer[])ArrayUtil.append(IIndexer.class, indexers, indexer);
+        // only support 1 indexer for now
+        indexers[0] = indexer;
     }
     
     public void clearIndexers() {
-        indexers = new IIndexer[CTestPlugin.getWorkspace().getRoot().getProjects().length];
+        // for now only support 1 indexer at a time
+        indexers = new IIndexer[1];
     }
     
     public void setContentProvider(ViewContentProvider provider) {
@@ -548,4 +618,22 @@ public class IndexerView extends ViewPart {
         
         return project.getName();
     }
+    
+    private class SearchLocationsAction extends Action {
+        private static final String LOCATIONS = "Locations"; //$NON-NLS-1$
+        private static final String INDEX = "Index"; //$NON-NLS-1$
+        protected void displayLocations(IndexerNodeLeaf leaf, String queryLabel, String pattern) {
+            IndexerQuery job = new IndexerQuery(leaf, queryLabel, pattern);
+            NewSearchUI.activateSearchResultView();
+            NewSearchUI.runQuery(job);
+         }
+                
+        public void run() {
+            if (viewer.getSelection() instanceof IStructuredSelection &&
+                    ((IStructuredSelection)viewer.getSelection()).getFirstElement() instanceof IndexerNodeLeaf) {
+                displayLocations((IndexerNodeLeaf)((IStructuredSelection)viewer.getSelection()).getFirstElement(), 
+                        INDEX, LOCATIONS);
+            }
+        }
+  }
 }

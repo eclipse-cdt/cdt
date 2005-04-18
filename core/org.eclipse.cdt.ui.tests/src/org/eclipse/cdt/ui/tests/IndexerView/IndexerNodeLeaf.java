@@ -147,9 +147,12 @@ public class IndexerNodeLeaf implements IAdaptable {
             int start = word.indexOf(stringBeforeName) + stringBeforeName.length();
             stringBeforeName = stringBeforeName + word.substring(start, start + 2);
         }
-        int end = word.length();
-        if (word.indexOf(IIndexConstants.SEPARATOR, word.indexOf(stringBeforeName) + stringBeforeName.length() ) > 0) end = word.indexOf(IIndexConstants.SEPARATOR, word.indexOf(stringBeforeName) + stringBeforeName.length() );
-        name = word.substring(word.indexOf(stringBeforeName) + stringBeforeName.length(), end);
+		if (stringBeforeName == null) {
+			name = word;
+			return;
+		}
+
+        name = word.substring(word.indexOf(stringBeforeName) + stringBeforeName.length());
         
     }
     
@@ -291,6 +294,9 @@ public class IndexerNodeLeaf implements IAdaptable {
     }
 
     public String toString() {
+        if (!parent.isDisplayFullName() && name.indexOf(IIndexConstants.SEPARATOR) > 0)
+            return name.substring(0, name.indexOf(IIndexConstants.SEPARATOR));
+        
         return name;
     }
     

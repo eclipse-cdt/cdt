@@ -564,6 +564,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int lastBacktrack = -1;
         while (true) {
             try {
+				if (LT(1) == IToken.tEOC)
+					break;
                 int checkOffset = LA(1).hashCode();
                 IASTDeclaration d = declaration();
                 d.setParent(translationUnit);
@@ -1420,6 +1422,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 break;
 
             case IToken.tIDENTIFIER:
+            case IToken.tCOMPLETION:
+            case IToken.tEOC:
                 // TODO - Kludgy way to handle constructors/destructors
                 if (flags.haveEncounteredRawType()) {
                     break declSpecifiers;

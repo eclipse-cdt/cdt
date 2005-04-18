@@ -7,9 +7,13 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.prefix;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -85,4 +89,18 @@ public class CompletionTestBase extends TestCase {
 		return getCompletionNode(code, ParserLanguage.C, true);
 	}
 	
+	private static class BindingsComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			IBinding b1 = (IBinding)o1;
+			IBinding b2 = (IBinding)o2;
+			return b1.getName().compareTo(b2.getName());
+		}
+	}
+	
+	private static BindingsComparator bindingsComparator  = new BindingsComparator();
+	
+	protected IBinding[] sortBindings(IBinding[] bindings) {
+		Arrays.sort(bindings, bindingsComparator);
+		return bindings;
+	}
 }

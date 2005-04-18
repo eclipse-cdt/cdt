@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -44,7 +43,6 @@ import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfigurat
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
@@ -230,22 +228,14 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     {    
 		IProject project = resource.getProject();
 		ICFileType type = CCorePlugin.getDefault().getFileType(project, resource.getLocation().lastSegment());
-		String lid = type.getLanguage().getId();
-		try {
-			if( lid != null ) {
-				if( lid.equals(ICFileTypeConstants.LANG_C )) {
-					if (type.isHeader() && project.hasNature(CCProjectNature.CC_NATURE_ID))
-						return ParserLanguage.CPP; 
-					else
-						return ParserLanguage.C;
-				} else if( lid.equals(ICFileTypeConstants.LANG_CXX))
-					return ParserLanguage.CPP;
-			} else if( project.hasNature( CCProjectNature.CC_NATURE_ID ))
-				return ParserLanguage.CPP;
-		} catch (CoreException e) {
-        }
-
-		// Actually, it probably isn't a C file, but anyway...
-		return ParserLanguage.C;
+        boolean isHeader= type.isHeader();
+        if( isHeader ) 
+            return ParserLanguage.CPP; // assumption
+        String lid = type.getLanguage().getId();
+        if( lid.equals(ICFileTypeConstants.LANG_CXX))
+            return ParserLanguage.CPP;
+        if( lid.equals( ICFileTypeConstants.LANG_C ) )
+            return ParserLanguage.C;
+		return ParserLanguage.CPP;
     }
 }

@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
+import org.eclipse.cdt.core.parser.tests.prefix.CompletionTestSuite;
 
 /**
  * @author jcamelon
@@ -42,6 +43,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( AST2CPPSpecFailingTest.class );
 		suite.addTestSuite( AST2CSpecTest.class );
 		suite.addTestSuite( AST2CSpecFailingTest.class );
+		suite.addTest( CompletionTestSuite.suite() );
 		return suite;
 	}	
 

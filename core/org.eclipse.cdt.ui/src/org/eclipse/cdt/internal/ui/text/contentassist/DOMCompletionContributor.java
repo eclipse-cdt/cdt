@@ -123,6 +123,12 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					}
 				}
 			
+			if (function.takesVarArgs()) {
+				if (args.length() > 0)
+					args.append(',');
+				args.append(" ...");
+			}
+			
 			IType returnType = function.getType().getReturnType();
 			if (returnType != null)
 				returnTypeStr = ASTTypeUtil.getType(returnType);

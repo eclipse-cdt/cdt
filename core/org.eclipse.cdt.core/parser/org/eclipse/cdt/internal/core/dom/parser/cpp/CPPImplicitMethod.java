@@ -198,7 +198,7 @@ public class CPPImplicitMethod extends CPPMethod {
 					if( ps.length == params.length ){
 						int idx = 0;
 						for( ; idx < ps.length && ps[idx] != null; idx++ ){
-							if( !ps[idx].equals(params[idx]) )
+							if( !ps[idx].isSameType(params[idx]) )
 								break;
 						}
 						if( idx == ps.length ){

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
@@ -207,4 +208,15 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 		definition = compositeTypeSpec.getName();
 		compositeTypeSpec.getName().setBinding( this );
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     */
+    public boolean isSameType( IType type ) {
+        if( type == this )
+            return true;
+        if( type instanceof ITypedef )
+            return type.isSameType( this );
+        return false;
+    }
 }

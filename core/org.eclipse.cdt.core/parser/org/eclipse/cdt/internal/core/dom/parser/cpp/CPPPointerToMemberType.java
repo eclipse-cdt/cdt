@@ -39,22 +39,17 @@ public class CPPPointerToMemberType extends CPPPointerType implements
 		this.operator = operator;
 	}
 
-	public boolean equals( Object o ){
-	    if( !super.equals( o ) )
+	public boolean isSameType( IType o ){
+	    if( !super.isSameType( o ) )
 	        return false;
 	    
 	    if( !( o instanceof CPPPointerToMemberType ) ) 
-	        return false;
-	    
-	    
-	    if( o instanceof ITypedef )
-	        return o.equals( this );
-	    
+	        return false;   
 	    
 	    CPPPointerToMemberType pt = (CPPPointerToMemberType) o;
-	    IBinding cls = pt.getMemberOfClass();
+	    ICPPClassType cls = pt.getMemberOfClass();
 	    if( cls != null )
-	        return cls.equals( getMemberOfClass() );
+	        return cls.isSameType( getMemberOfClass() );
 	    return false;
 	}
 	

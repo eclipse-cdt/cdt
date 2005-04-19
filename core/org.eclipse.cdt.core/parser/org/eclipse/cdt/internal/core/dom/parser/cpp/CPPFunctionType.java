@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 
 /**
  * @author aniefer
@@ -34,7 +35,9 @@ public class CPPFunctionType implements IFunctionType {
         this.parameters = types;
     }
 
-    public boolean equals( Object o ){
+    public boolean isSameType( IType o ){
+        if( o instanceof ITypedef )
+            return o.isSameType( this );
         if( o instanceof IFunctionType ){
             IFunctionType ft = (IFunctionType) o;
             IType [] fps;
@@ -50,13 +53,13 @@ public class CPPFunctionType implements IFunctionType {
                 //constructors & destructors have null return type
                 if( ( returnType == null ) ^ ( ft.getReturnType() == null ) )
                     return false;
-                else if( returnType != null && ! returnType.equals( ft.getReturnType() ) )
+                else if( returnType != null && ! returnType.isSameType( ft.getReturnType() ) )
                     return false;
             } catch ( DOMException e1 ) {
                 return false;
             }
             for( int i = 0; i < parameters.length; i++ )
-                if( ! parameters[i].equals( fps[i] ) )
+                if( ! parameters[i].isSameType( fps[i] ) )
                     return false;
             return true;
         }

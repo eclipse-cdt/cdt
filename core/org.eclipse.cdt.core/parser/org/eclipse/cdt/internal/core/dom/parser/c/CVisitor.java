@@ -747,7 +747,7 @@ public class CVisitor {
 	                        t2 = ((IVariable)binding).getType();
 	                    } catch ( DOMException e1 ) {
 	                    }
-	                    if( t1 != null && t2 != null && t1.equals( t2 ) ){
+	                    if( t1 != null && t2 != null && t1.isSameType( t2 ) ){
 	    			        if( binding instanceof CVariable )
 	    			            ((CVariable)binding).addDeclaration( name );
 	    			    } else {

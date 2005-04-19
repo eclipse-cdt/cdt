@@ -16,4 +16,10 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IType extends Cloneable {
     public Object clone();
 
+    /**
+     * is the given type the same as this type?
+     * @param type
+     * @return
+     */
+    public boolean isSameType( IType type );
 }

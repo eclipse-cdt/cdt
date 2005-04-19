@@ -180,4 +180,11 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
     public boolean isFullyCached() throws DOMException {
         throw new DOMException( this );
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     */
+    public boolean isSameType( IType type ) {
+        return type == this;
+    }
 }

@@ -472,7 +472,7 @@ public class CompleteParser2Tests extends TestCase {
  		assertSame( ((IQualifierType)rt.getType()).getType(), B );
  		
  		IType pt = ftype.getParameterTypes()[0];
- 		assertEquals( p.getType(), pt );
+ 		assertTrue( p.getType().isSameType( pt ) );
  		assertTrue( pt instanceof IPointerType );
  		assertSame( ((IPointerType) pt).getType(), A );
 	}

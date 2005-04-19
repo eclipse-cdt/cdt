@@ -41,8 +41,8 @@ public class GPPPointerToMemberType extends CPPPointerToMemberType implements
         return isRestrict;
     }
 
-    public boolean equals( Object o ){
-        if( !super.equals( o ) ) return false;
+    public boolean isSameType( IType o ){
+        if( !super.isSameType( o ) ) return false;
         
         if( o instanceof IGPPPointerToMemberType ){
             return (isRestrict == ((IGPPPointerToMemberType) o).isRestrict());

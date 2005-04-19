@@ -34,15 +34,15 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer {
         this.isVolatile = isVolatile;
     }
     
-    public boolean equals( Object o ){
+    public boolean isSameType( IType o ){
 	    if( o instanceof ITypedef )
-	        return o.equals( this );
+	        return o.isSameType( this );
 	    if( !( o instanceof CPPQualifierType ) ) 
 	        return false;
 	    
 	    CPPQualifierType pt = (CPPQualifierType) o;
 	    if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() )
-	        return type.equals( pt.getType() );
+	        return type.isSameType( pt.getType() );
 	    return false;
 	}
     

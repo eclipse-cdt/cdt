@@ -1761,7 +1761,7 @@ public class CPPSemantics {
 				if( varArgs ){
 					cost = new Cost( source, null );
 					cost.rank = Cost.ELLIPSIS_CONVERSION;
-				} else if( source.equals( target ) ){
+				} else if( source.isSameType( target ) ){
 					cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
@@ -1872,7 +1872,7 @@ public class CPPSemantics {
                 } catch ( DOMException e ) {
                     ft = e.getProblem();
                 }
-                if( type.equals( ft ) ){
+                if( type.isSameType( ft ) ){
                     if( result == null )
                         result = fn;
                     else
@@ -2056,7 +2056,7 @@ public class CPPSemantics {
 			return cost;
 		}
 			
-		if( cost.source.equals( cost.target ) ){
+		if( cost.source.isSameType( cost.target ) ){
 			cost.rank = Cost.IDENTITY_RANK;
 			return cost;
 		}
@@ -2077,7 +2077,7 @@ public class CPPSemantics {
 			return cost;
 		}
 		
-		if( s.equals( t ) ){
+		if( s.isSameType( t ) ){
 			return cost;
 		}
 		
@@ -2326,7 +2326,7 @@ public class CPPSemantics {
 		IType src = getUltimateType( cost.source, true );
 		IType trg = getUltimateType( cost.target, true );
 		 
-		if( src.equals( trg ) )
+		if( src.isSameType( trg ) )
 			return;
 		
 		if( src instanceof IBasicType && trg instanceof IBasicType ){
@@ -2390,7 +2390,7 @@ public class CPPSemantics {
 			//derived class of B
 		    ICPPPointerToMemberType spm = (ICPPPointerToMemberType) s;
 		    ICPPPointerToMemberType tpm = (ICPPPointerToMemberType) t;
-		    if( spm.getType().equals( tpm.getType() ) ){
+		    if( spm.getType().isSameType( tpm.getType() ) ){
 		        temp = hasBaseClass( tpm.getMemberOfClass(), spm.getMemberOfClass(), false );
 		        cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion = ( temp > -1 ) ? temp : 0;
@@ -2565,7 +2565,7 @@ public class CPPSemantics {
 		IType type = null;
 		try {
 			type = function.getType();
-			return type.equals( CPPVisitor.createType( declarator ) );
+			return type.isSameType( CPPVisitor.createType( declarator ) );
 		} catch (DOMException e) {
 		}
 		return false;

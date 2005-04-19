@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -98,15 +99,15 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
         public Object clone() {
             return ((ICPPClassType)getBinding()).clone();
         }
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalClassType#getConversionOperators()
-		 */
 		public ICPPMethod[] getConversionOperators() {
 			IBinding binding = getBinding();
 			if( binding instanceof ICPPInternalClassType )
 				return ((ICPPInternalClassType)binding).getConversionOperators();
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
+        public boolean isSameType( IType type ) {
+            return ((ICPPClassType)getBinding()).isSameType( type );
+        }
     }
 	public static class CPPClassTypeProblem extends ProblemBinding implements ICPPClassType{
         public CPPClassTypeProblem( IASTNode node, int id, char[] arg ) {
@@ -691,5 +692,16 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
      */
     public ICPPDelegate createDelegate( IASTName name ) {
         return new CPPClassTypeDelegate( name, this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     */
+    public boolean isSameType( IType type ) {
+        if( type == this )
+            return true;
+        if( type instanceof ITypedef )
+            return ((ITypedef)type).isSameType( this );
+        return false;
     }
 }

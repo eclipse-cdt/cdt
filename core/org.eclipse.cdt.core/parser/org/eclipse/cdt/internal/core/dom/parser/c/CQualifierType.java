@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
@@ -38,7 +39,12 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 		this.declSpec = declSpec;
 	}
 	
-	public boolean equals( Object obj ){
+	public boolean isSameType( IType obj ){
+	    if( obj == this )
+	        return true;
+	    if( obj instanceof ITypedef )
+	        return obj.isSameType( this );
+	    
 	    if( obj instanceof ICQualifierType ){
 	        ICQualifierType qt = (ICQualifierType) obj;
             try {
@@ -46,7 +52,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 		        if( isRestrict() != qt.isRestrict() ) return false;
 		        if( isVolatile() != qt.isVolatile() ) return false;
             
-                return qt.getType().equals( getType() );
+                return qt.getType().isSameType( getType() );
             } catch ( DOMException e ) {
                 return false;
             }

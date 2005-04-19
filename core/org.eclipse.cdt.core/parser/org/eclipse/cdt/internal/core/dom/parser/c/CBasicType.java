@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 
@@ -69,10 +70,12 @@ public class CBasicType implements ICBasicType {
 		return sds.isLongLong();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object obj) {
+	public boolean isSameType(IType obj) {
+	    if( obj == this )
+	        return true;
+	    if( obj instanceof ITypedef )
+	        return obj.isSameType( this );
+	    
 		if (!(obj instanceof CBasicType)) return false;
 		
 		CBasicType cObj = (CBasicType)obj;

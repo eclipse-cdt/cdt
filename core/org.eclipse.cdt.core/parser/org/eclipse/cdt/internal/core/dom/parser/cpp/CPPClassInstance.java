@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -191,5 +193,16 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	 */
 	public void addDefinition(IASTNode node) {
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     */
+    public boolean isSameType( IType type ) {
+        if( type == this )
+            return true;
+        if( type instanceof ITypedef )
+            return ((ITypedef)type).isSameType( this );
+        return false;
+    }
 
 }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -71,5 +72,22 @@ public class CQualifiedPointerType implements ICPointerType, ITypeContainer {
             //not going to happen
         }
         return t;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     */
+    public boolean isSameType( IType type ) {
+        if( type == this )
+            return true;
+        if( type instanceof ITypedef )
+            return type.isSameType( this );
+
+        if( type instanceof CQualifiedPointerType ){
+            CQualifiedPointerType qual = (CQualifiedPointerType) type;
+            if( qual.isConst() == isConst() && qual.isRestrict() == isRestrict() && qual.isVolatile() == isVolatile() )
+                return getType().isSameType( qual.getType() );
+        }
+        return false;
     }
 }

@@ -45,6 +45,9 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
             }
             return null;
         }
+        public boolean isSameType( IType type ) {
+            return ((ITypedef)getBinding()).isSameType( type );
+        }
     }
 	private IASTName [] declarations = null;
 	private IType type = null;
@@ -71,25 +74,22 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
         return declarations[0];
     }
 
-    public boolean equals( Object o ){
+    public boolean isSameType( IType o ){
         if( o == this )
             return true;
 	    if( o instanceof ITypedef )
             try {
                 IType t = getType();
                 if( t != null )
-                    return t.equals( ((ITypedef)o).getType());
+                    return t.isSameType( ((ITypedef)o).getType());
                 return false;
             } catch ( DOMException e ) {
                 return false;
             }
-	    
-	    if( !( o instanceof IType ) ) 
-	        return false;
-	    
+	        
 	    IType t = getType();
 	    if( t != null )
-	        return t.equals( o );
+	        return t.isSameType( o );
 	    return false;
 	}
     

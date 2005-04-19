@@ -356,7 +356,7 @@ public class CPPTemplates {
 			IType type = CPPVisitor.createType( (IASTDeclarator) parent );
 			try {
 				IType ftype = ((ICPPFunction)definition).getType();
-				if( ftype.equals( type ) )
+				if( ftype.isSameType( type ) )
 					result = true;
 			} catch (DOMException e) {
 			}
@@ -370,7 +370,7 @@ public class CPPTemplates {
 						for (; i < args.length; i++) {
 							IType t1 = CPPVisitor.createType( spec.getArguments()[i] );
 							IType t2 = CPPVisitor.createType( args[i] );
-							if( t1 != null && t2 != null && t1.equals( t2 ) )
+							if( t1 != null && t2 != null && t1.isSameType( t2 ) )
 								continue;
 							break;
 						}

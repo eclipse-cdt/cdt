@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
@@ -44,10 +45,15 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
         this.type = t;
     }
     
-    public boolean equals(Object obj) {
+    public boolean isSameType(IType obj) {
+        if( obj == this )
+            return true;
+        if( obj instanceof ITypedef )
+            return ((ITypedef)obj).isSameType( this );
+        
         if( obj instanceof IArrayType ){
             try {
-                return ((IArrayType) obj).getType().equals( type );
+                return ((IArrayType) obj).getType().isSameType( type );
             } catch ( DOMException e ) {
                 return false;
             }

@@ -34,9 +34,9 @@ public class CPPBasicType implements ICPPBasicType {
 		qualifierBits = bits;
 	}
 
-	public boolean equals( Object object ) {
+	public boolean isSameType( IType object ) {
 	    if( object instanceof CPPTypedef )
-	        return object.equals( this );
+	        return object.isSameType( this );
 	    
 		if( !(object instanceof CPPBasicType) )
 			return false;

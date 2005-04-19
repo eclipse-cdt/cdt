@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -29,7 +30,11 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 		this.type = type;
 	}
 	
-    public boolean equals(Object obj) {
+    public boolean isSameType(IType obj) {
+        if( obj == this )
+            return true;
+        if( obj instanceof ITypedef )
+            return obj.isSameType( this );
         if( obj instanceof ICArrayType ){
             ICArrayType at = (ICArrayType) obj;
             try {
@@ -39,7 +44,7 @@ public class CArrayType implements ICArrayType, ITypeContainer {
 		        if( isVolatile() != at.isVolatile() ) return false;
 		        if( isVariableLength() != at.isVariableLength() ) return false;
             
-                return at.getType().equals( type );
+                return at.getType().isSameType( type );
             } catch ( DOMException e ) {
                 return false;
             }

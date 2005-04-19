@@ -52,8 +52,8 @@ public class GPPPointerType extends CPPPointerType implements IGPPPointerType {
         
     }
     
-    public boolean equals( Object o ){
-        if( !super.equals( o ) ) return false;
+    public boolean isSameType( IType o ){
+        if( !super.isSameType( o ) ) return false;
         
         if( o instanceof IGPPPointerType ){
             return (isRestrict == ((IGPPPointerType) o).isRestrict());

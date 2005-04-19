@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -39,6 +40,9 @@ public class CPPEnumeration implements IEnumeration, ICPPInternalBinding, ICPPBi
         }
         public Object clone() {
             return ((IEnumeration)getBinding()).clone();
+        }
+        public boolean isSameType( IType type ) {
+            return ((IEnumeration)getBinding()).isSameType( type );
         }
         
     }
@@ -165,4 +169,15 @@ public class CPPEnumeration implements IEnumeration, ICPPInternalBinding, ICPPBi
 		// TODO Auto-generated method stub
 		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     */
+    public boolean isSameType( IType type ) {
+        if( type == this )
+            return true;
+        if( type instanceof ITypedef )
+            return ((ITypedef)type).isSameType( this );
+        return false;
+    }
 }

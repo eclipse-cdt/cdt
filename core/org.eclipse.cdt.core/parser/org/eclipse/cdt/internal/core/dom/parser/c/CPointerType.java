@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -30,7 +31,12 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 		this.nextType = next;
 	}
 	
-	public boolean equals( Object obj ){
+	public boolean isSameType( IType obj ){
+	    if( obj == this )
+	        return true;
+	    if( obj instanceof ITypedef )
+	        return obj.isSameType( this );
+	    
 	    if( obj instanceof ICPointerType ){
 	        ICPointerType pt = (ICPointerType) obj;
             try {
@@ -38,7 +44,7 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 		        if( isRestrict() != pt.isRestrict() ) return false;
 		        if( isVolatile() != pt.isVolatile() ) return false;
             
-                return pt.getType().equals( nextType );
+                return pt.getType().isSameType( nextType );
             } catch ( DOMException e ) {
                 return false;
             }

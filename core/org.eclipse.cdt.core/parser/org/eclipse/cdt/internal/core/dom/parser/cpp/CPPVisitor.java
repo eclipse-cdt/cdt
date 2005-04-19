@@ -485,7 +485,7 @@ public class CPPVisitor {
 		        try {
                     IType t1 = ((ITypedef)binding).getType();
                     IType t2 = createType( declarator );
-                    if( t1 != null && t2 != null && t1.equals( t2 ) ){
+                    if( t1 != null && t2 != null && t1.isSameType( t2 ) ){
                         ((ICPPInternalBinding)binding).addDeclaration( name );
                         return binding;
                     }
@@ -533,7 +533,7 @@ public class CPPVisitor {
                 }
 		    }
 		    if( t1 != null && t2 != null ){
-		    	if( t1.equals( t2 ) ){
+		    	if( t1.isSameType( t2 ) ){
 		    		if( binding instanceof ICPPInternalBinding )
 		    			((ICPPInternalBinding)binding).addDeclaration( name );
 		    	} else {

@@ -11,6 +11,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -73,5 +74,27 @@ public class CTypeDef implements ITypedef, ITypeContainer {
             //not going to happen
         }
         return t;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+     */
+    public boolean isSameType( IType t ) {
+        if( t == this )
+            return true;
+	    if( t instanceof ITypedef )
+            try {
+                IType temp = getType();
+                if( temp != null )
+                    return temp.isSameType( ((ITypedef)t).getType());
+                return false;
+            } catch ( DOMException e ) {
+                return false;
+            }
+	        
+	    IType temp = getType();
+	    if( temp != null )
+	        return temp.isSameType( t );
+	    return false;
     }
 }

@@ -49,9 +49,12 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	    this.type = type;
 	}
 
-	public boolean equals( Object o ){
-	    if( o instanceof ITypedef )
-	        return o.equals( this );
+	public boolean isSameType( IType o ){
+	    if( o == this )
+            return true;
+        if( o instanceof ITypedef )
+            return ((ITypedef)o).isSameType( this );
+        
 	    if( !( o instanceof CPPPointerType ) ) 
 	        return false;
 	    
@@ -60,7 +63,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	    
 	    CPPPointerType pt = (CPPPointerType) o;
 	    if( isConst == pt.isConst && isVolatile == pt.isVolatile )
-	        return type.equals( pt.getType() );
+	        return type.isSameType( pt.getType() );
 	    return false;
 	}
 	

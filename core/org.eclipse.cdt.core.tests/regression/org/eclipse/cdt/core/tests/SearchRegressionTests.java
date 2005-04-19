@@ -810,7 +810,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         IFile h = importFile( "FunctionDefinition.h", header ); //$NON-NLS-1$
         
         writer = new StringWriter();
-        writer.write("#include \"FunctionDeclaration.h\"\n" ); //$NON-NLS-1$
+        writer.write("#include \"FunctionDefinition.h\"\n" ); //$NON-NLS-1$
         writer.write("int f2/*def*/(){return 2;}		\n" ); //$NON-NLS-1$
         writer.write("void f5/*def*/(){					\n" ); //$NON-NLS-1$
         writer.write("	int i = N::f1();				\n" ); //$NON-NLS-1$

@@ -80,8 +80,12 @@ public class ScannerUtility {
 	 */
 	public static String createReconciledPath(String path, String fileName) {
 		//TODO assert pathFile.isDirectory();	
-		StringBuffer newPathBuffer = new StringBuffer( new File(path).getPath() );
-		newPathBuffer.append( File.separatorChar );
+		StringBuffer newPathBuffer = new StringBuffer();
+        if( ! path.equals( "" )) //$NON-NLS-1$
+        {
+            newPathBuffer.append( new File(path).getPath() );
+            newPathBuffer.append( File.separatorChar );
+        }
 		newPathBuffer.append( fileName );
 		//remove ".." and "." segments
 		return reconcilePath( newPathBuffer.toString() );

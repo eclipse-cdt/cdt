@@ -2885,7 +2885,7 @@ abstract class BaseScanner implements IScanner {
         // if not found by this point, and the inclusion is local, try just the 
         // path as is (bug 91086)
         
-        if( local )
+        if( local && !include_next )
         {
             reader = createReader( EMPTY_STRING, filename );
             if (reader != null) {

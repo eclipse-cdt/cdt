@@ -33,6 +33,9 @@ public class ASTCompletionNode {
 	
 	private IASTTranslationUnit translationUnit;
 
+	// used for debug
+	public int count;
+	
 	/**
 	 * Only constructor.
 	 * 

@@ -121,12 +121,17 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 			
 			if (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.TIME_DOM)) {
 				long propTime = System.currentTimeMillis();
-				System.out.println("Completion Parse: " + (stopTime - startTime) + " + Proposals: " //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.print("Completion Parse: " + (stopTime - startTime) + " + Proposals: " //$NON-NLS-1$ //$NON-NLS-2$
 						+ (propTime - stopTime));
+				if (completionNode != null)
+					System.out.print(" - tokens: " + completionNode.count);
+				else
+					System.out.print(" - no completion node");
+				System.out.println();
 				System.out.flush();
 			}
 			
-			return propsArray; 
+			return propsArray;
 			
 		} catch (UnsupportedDialectException e) {
 			errorMessage = "Unsupported Dialect Exception";

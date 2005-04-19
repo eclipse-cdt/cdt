@@ -212,7 +212,10 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		
 		// Run the parse and return the completion node
 		parser.parse();
-		return parser.getCompletionNode();
+		ASTCompletionNode node = parser.getCompletionNode();
+		if (node != null)
+			node.count = scanner.getCount();
+		return node;
 	}
 	
     /*

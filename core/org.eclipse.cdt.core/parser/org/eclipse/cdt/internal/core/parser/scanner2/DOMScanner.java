@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
-import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
+import org.eclipse.cdt.internal.core.parser.token2.ImagedToken2;
+import org.eclipse.cdt.internal.core.parser.token2.SimpleToken2;
 
 /**
  * @author jcamelon
@@ -283,15 +283,14 @@ public class DOMScanner extends BaseScanner {
      * @return
      */
     protected IToken newToken(int signal) {
-        return new SimpleToken(signal,
+        return new SimpleToken2(signal,
                 resolveOffset(bufferPos[bufferStackPos] + 1),
-                getCurrentFilename(),
                 getLineNumber(bufferPos[bufferStackPos] + 1));
     }
 
     protected IToken newToken(int signal, char[] buffer) {
-        IToken i = new ImagedToken(signal, buffer,
-                resolveOffset(bufferPos[bufferStackPos] + 1), EMPTY_CHAR_ARRAY,
+        IToken i = new ImagedToken2(signal, buffer,
+                resolveOffset(bufferPos[bufferStackPos] + 1), 
                 getLineNumber(bufferPos[bufferStackPos] + 1));
         if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
                 && signal != IToken.tLSTRING)

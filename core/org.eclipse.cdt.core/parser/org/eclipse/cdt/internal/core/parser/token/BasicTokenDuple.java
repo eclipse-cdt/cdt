@@ -437,7 +437,7 @@ public class BasicTokenDuple implements ITokenDuple {
 	    if( argLists == null || argLists[ argLists.length - 1 ] == null )
 	        return nameDuple.toCharArray();
 	 	
-	    AbstractToken i = (AbstractToken) nameDuple.getFirstToken();
+	    IToken i = nameDuple.getFirstToken();
 	    IToken last = nameDuple.getLastToken();
     	
     	if( i == null )
@@ -458,22 +458,22 @@ public class BasicTokenDuple implements ITokenDuple {
     	    	
     	//destructors
     	if( i.getType() == IToken.tCOMPL ){
-    		i = (AbstractToken) i.next;
+    		i = i.getNext();
     		tempArray = i.getCharImage();
     		CharArrayUtils.overWrite( nameBuffer, idx, tempArray );
     		idx += tempArray.length;
     	} 
     	//operators
     	else if( i.getType() == IToken.t_operator ){
-    		i = (AbstractToken) i.next;
+    		i =  i.getNext();
     		nameBuffer[ idx++ ] = ' ';
 	
 		    IToken first = i;
 		    IToken temp = null;
 		    while( i != last ){
-		        temp = i.next;
+		        temp = i.getNext();
 		        if( temp.getType() != IToken.tLT )
-		            i = (AbstractToken) temp;
+		            i =  temp;
 		        else
 		            break;
 		    }

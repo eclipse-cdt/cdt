@@ -2882,6 +2882,22 @@ abstract class BaseScanner implements IScanner {
             }
         }
         
+        // if not found by this point, and the inclusion is local, try just the 
+        // path as is (bug 91086)
+        
+        if( local )
+        {
+            reader = createReader( EMPTY_STRING, filename );
+            if (reader != null) {
+                pushContext(reader.buffer, new InclusionData(reader,
+                        createInclusionConstruct(fileNameArray,
+                                reader.filename, local, startOffset,
+                                startingLine, nameOffset,
+                                nameEndOffset, nameLine, endOffset,
+                                endLine, false)));
+                return;
+            }            
+        }
         handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
                 fileNameArray);
     }

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest;
@@ -164,4 +165,22 @@ public class IncludeTest extends FileBasePluginTest {
     	assertEquals( v.getName(), "three" ); //$NON-NLS-1$
     	assertFalse( i.hasNext() ); 
 	}
+    
+    public void testBug91086() throws Exception {
+        IFile inclusion = importFile( "file.h", "#define FOUND 666\n" ); //$NON-NLS-1$ //$NON-NLS-2$
+        StringBuffer buffer = new StringBuffer( "#include \"" ); //$NON-NLS-1$
+        buffer.append( inclusion.getLocation().toOSString() );
+        buffer.append( "\"\n"); //$NON-NLS-1$
+        buffer.append( "int var = FOUND;\n"); //$NON-NLS-1$
+        IFile code = importFile( "code.c", buffer.toString() ); //$NON-NLS-1$
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            Iterator i = parse( code, p, new ScannerInfo() ).getDeclarations();
+            IASTVariable var = (IASTVariable) i.next();
+            assertEquals( var.getInitializerClause().getAssigmentExpression().getLiteralString(), "666" ); //$NON-NLS-1$
+            assertFalse( i.hasNext() );
+        }
+        
+        
+    }
 }

@@ -14,12 +14,12 @@ import org.eclipse.cdt.core.parser.IToken;
 
 public class ImagedToken2 extends SimpleToken2 {
 
-    protected char [] image = null;
+    private char [] image = null;
     
-    public ImagedToken2( int t, char[] i, int endOffset, int l ) {
-        super( t, 0, l );
+    public ImagedToken2( int t, char[] i, int endOffset ) {
+        super( t, 0 );
         setImage(i);
-        setOffsetAndLength( endOffset );
+        setOffsetByLength( endOffset );
     }
     
     

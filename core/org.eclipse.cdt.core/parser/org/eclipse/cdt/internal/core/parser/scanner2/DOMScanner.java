@@ -284,14 +284,12 @@ public class DOMScanner extends BaseScanner {
      */
     protected IToken newToken(int signal) {
         return new SimpleToken2(signal,
-                resolveOffset(bufferPos[bufferStackPos] + 1),
-                getLineNumber(bufferPos[bufferStackPos] + 1));
+                resolveOffset(bufferPos[bufferStackPos] + 1));
     }
 
     protected IToken newToken(int signal, char[] buffer) {
         IToken i = new ImagedToken2(signal, buffer,
-                resolveOffset(bufferPos[bufferStackPos] + 1), 
-                getLineNumber(bufferPos[bufferStackPos] + 1));
+                resolveOffset(bufferPos[bufferStackPos] + 1));
         if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
                 && signal != IToken.tLSTRING)
             bufferPos[bufferStackPos] += 1; // TODO - remove this hack at some

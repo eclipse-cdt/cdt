@@ -289,12 +289,12 @@ public class DOMScanner extends BaseScanner {
      * @return
      */
     protected IToken newToken(int signal) {
-        return new SimpleToken2(signal,
+        return new _BasicToken(signal,
                 resolveOffset(bufferPos[bufferStackPos] + 1));
     }
 
     protected IToken newToken(int signal, char[] buffer) {
-        IToken i = new ImagedToken2(signal, buffer,
+        IToken i = new _ImagedToken(signal, buffer,
                 resolveOffset(bufferPos[bufferStackPos] + 1));
         if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
                 && signal != IToken.tLSTRING)
@@ -458,9 +458,9 @@ public class DOMScanner extends BaseScanner {
         return reader;
     }
 
-    public static class SimpleToken2 implements IToken, ITokenDuple {
+    private static class _BasicToken implements IToken, ITokenDuple {
 
-        public SimpleToken2( int type, int endOffset )
+        public _BasicToken( int type, int endOffset )
         {
             setType( type );
             setOffsetByLength( endOffset );
@@ -717,7 +717,7 @@ public class DOMScanner extends BaseScanner {
              */
             public Object next() {
                 hasNext = false;
-                return SimpleToken2.this;
+                return _BasicToken.this;
             }
             
         }
@@ -1092,11 +1092,11 @@ public class DOMScanner extends BaseScanner {
         
     }
 
-    public static class ImagedToken2 extends SimpleToken2 {
+    private static class _ImagedToken extends _BasicToken {
 
         private char [] image = null;
         
-        public ImagedToken2( int t, char[] i, int endOffset ) {
+        public _ImagedToken( int t, char[] i, int endOffset ) {
             super( t, 0 );
             setImage(i);
             setOffsetByLength( endOffset );
@@ -1144,7 +1144,7 @@ public class DOMScanner extends BaseScanner {
     }
 
     
-    static public char[] getCharImage( int type ){
+    static char[] getCharImage( int type ){
         switch ( type ) {
         case IToken.tCOLONCOLON :   return Keywords.cpCOLONCOLON; 
         case IToken.tCOLON :        return Keywords.cpCOLON;

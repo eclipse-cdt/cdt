@@ -35,38 +35,9 @@ abstract public class CPPScope implements ICPPScope{
         public CPPScopeProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
         }
-        public void addName( IASTName name ) throws DOMException {
-            throw new DOMException( this );
-        }
-
-        public IBinding getBinding( IASTName name, boolean resolve ) throws DOMException {
-            throw new DOMException( this );
-        }
-
-        public IScope getParent() throws DOMException {
-            throw new DOMException( this );
-        }
-
-        public IBinding[] find( String name ) throws DOMException {
-            throw new DOMException( this );
-        }
-		public void setFullyCached(boolean b) {
-		}
-		public boolean isFullyCached() {
-			return false;
-		}
-        public IASTName getScopeName() throws DOMException {
-            throw new DOMException( this );
-        }
-    }
-    public static class CPPTemplateProblem extends CPPScopeProblem {
-		public CPPTemplateProblem( IASTNode node, int id, char[] arg) {
-			super( node, id, arg);
-		}
     }
 
-    
-	private IASTNode physicalNode;
+    private IASTNode physicalNode;
 	public CPPScope( IASTNode physicalNode ) {
 		this.physicalNode = physicalNode;
 	}
@@ -78,7 +49,7 @@ abstract public class CPPScope implements ICPPScope{
 		return CPPVisitor.getContainingScope( physicalNode );
 	}
 	
-	public IASTNode getPhysicalNode() throws DOMException{
+	public IASTNode getPhysicalNode() {
 		return physicalNode;
 	}
 
@@ -99,7 +70,6 @@ abstract public class CPPScope implements ICPPScope{
 		if( o != null ){
 		    if( o instanceof ObjectSet ){
 		    	((ObjectSet)o).put( name );
-		        //bindings.put( c, ArrayUtil.append( Object.class, (Object[]) o, name ) );
 		    } else {
 		    	ObjectSet temp = new ObjectSet( 2 );
 		    	temp.put( o );
@@ -165,6 +135,36 @@ abstract public class CPPScope implements ICPPScope{
 	
 	public boolean isFullyCached(){
 		return isfull;
+	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+     */
+	public void removeBinding(IBinding binding) {
+	    char [] name = binding.getNameCharArray();
+	    if( ! bindings.containsKey( name ) )
+	        return;
+	    
+	    Object obj = bindings.get( name );
+	    if( obj instanceof ObjectSet ){
+	        ObjectSet set = (ObjectSet) obj;
+	        for ( int i = set.size() - 1; i > 0; i-- ) {
+                Object o = set.keyAt( i );
+                if( (o instanceof IBinding && o == binding) ||
+                    (o instanceof IASTName && ((IASTName)o).getBinding() == binding) )
+                {
+                    set.remove( o );
+                }
+            }
+	        if( set.size() == 0 )
+	            bindings.remove( name, 0, name.length );
+	    } else if( (obj instanceof IBinding && obj == binding) ||
+                   (obj instanceof IASTName && ((IASTName)obj).getBinding() == binding) )
+	    {
+	        bindings.remove( name, 0, name.length );
+	    }
+	
+		isfull = false;
 	}
 	
 	/* (non-Javadoc)

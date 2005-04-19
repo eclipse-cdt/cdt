@@ -101,7 +101,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope#getBodyScope()
      */
-    public IScope getBodyScope() throws DOMException {
+    public IScope getBodyScope() {
         IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) getPhysicalNode();
         IASTNode parent = fnDtor.getParent();
         if( parent instanceof IASTFunctionDefinition ){
@@ -116,7 +116,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
-    public IASTName getScopeName() throws DOMException {
+    public IASTName getScopeName() {
         IASTNode node = getPhysicalNode();
         if( node instanceof ICPPASTFunctionDeclarator ){
             return ((ICPPASTFunctionDeclarator)node).getName();

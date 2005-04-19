@@ -13,7 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -28,7 +27,7 @@ public class CPPBlockScope extends CPPNamespaceScope implements ICPPBlockScope {
 		super( physicalNode );
 	}
 	
-	public IASTName getScopeName() throws DOMException{
+	public IASTName getScopeName(){
 	    IASTNode node = getPhysicalNode();
 	    if( node instanceof IASTCompoundStatement && node.getParent() instanceof IASTFunctionDefinition ){
 	        return ((IASTFunctionDefinition)node.getParent()).getDeclarator().getName();

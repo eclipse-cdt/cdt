@@ -143,7 +143,41 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
 	 */
-	public IASTName getScopeName() throws DOMException {
+	public IASTName getScopeName() {
 		return null;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public void addName( IASTName name ) throws DOMException {
+        throw new DOMException( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+     */
+    public void removeBinding( IBinding binding ) throws DOMException {
+        throw new DOMException( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
+     */
+    public IBinding getBinding( IASTName name, boolean resolve ) throws DOMException {
+        throw new DOMException( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#setFullyCached(boolean)
+     */
+    public void setFullyCached( boolean b ) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#isFullyCached()
+     */
+    public boolean isFullyCached() throws DOMException {
+        throw new DOMException( this );
+    }
 }

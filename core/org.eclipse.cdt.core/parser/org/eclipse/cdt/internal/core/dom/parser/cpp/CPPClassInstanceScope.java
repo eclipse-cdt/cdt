@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -194,5 +194,26 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	public IASTNode getPhysicalNode() throws DOMException {
 		ICPPClassScope scope = (ICPPClassScope) getOriginalClass().getCompositeScope();
 		return scope.getPhysicalNode();
+	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+     */
+	public void removeBinding(IBinding binding) {
+	    char [] name = binding.getNameCharArray();
+	    if( ! bindings.containsKey( name ) )
+	        return;
+	    
+	    Object obj = bindings.get( name );
+	    if( obj instanceof ObjectSet ){
+	        ObjectSet set = (ObjectSet) obj;
+	        set.remove( binding );
+	        if( set.size() == 0 )
+	            bindings.remove( name, 0, name.length );
+	    } else {
+	        bindings.remove( name, 0, name.length );
+	    }
+	
+		isFullyCached = false;
 	}
 }

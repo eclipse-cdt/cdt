@@ -192,7 +192,7 @@ public class CScope implements ICScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
 	 */
-	public IASTName getScopeName() throws DOMException {
+	public IASTName getScopeName() {
 		if( physicalNode instanceof IASTCompositeTypeSpecifier ){
 			return ((IASTCompositeTypeSpecifier) physicalNode).getName();
 		}

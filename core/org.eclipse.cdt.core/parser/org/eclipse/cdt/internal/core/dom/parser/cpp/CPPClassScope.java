@@ -58,12 +58,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	private void createImplicitMembers(){
 	    //create bindings for the implicit members, if the user declared them then those declarations
 	    //will resolve to these bindings.
-	    ICPPASTCompositeTypeSpecifier compTypeSpec;
-        try {
-            compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-        } catch ( DOMException e ) {
-            return;
-        }
+	    ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
         
         IASTName name = compTypeSpec.getName();
         if( name instanceof ICPPASTQualifiedName ){
@@ -118,10 +113,13 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		char [] c = binding.getNameCharArray();
 		Object o = bindings.get( c );
 		if( o != null ){
-		    if( o instanceof Object[] ){
-		        bindings.put( c, ArrayUtil.append( Object.class, (Object[]) o, binding ) );
+		    if( o instanceof ObjectSet ){
+		        ((ObjectSet)o).put( binding );
 		    } else {
-		        bindings.put( c, new Object[] { o, binding } );
+		        ObjectSet set = new ObjectSet(2);
+		        set.put( o );
+		        set.put( binding );
+		        bindings.put( c, set );
 		    }
 		} else {
 		    bindings.put( c, binding );
@@ -228,12 +226,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getClassType()
 	 */
 	public ICPPClassType getClassType() {
-		ICPPASTCompositeTypeSpecifier compSpec;
-		try {
-			compSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-		} catch (DOMException e) {
-			return null;
-		}
+		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 		return (ICPPClassType) compSpec.getName().resolveBinding();
 		
 	}
@@ -250,11 +243,24 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getScopeName()
      */
-    public IASTName getScopeName() throws DOMException {
+    public IASTName getScopeName() {
         IASTNode node = getPhysicalNode();
         if( node instanceof ICPPASTCompositeTypeSpecifier ){
             return ((ICPPASTCompositeTypeSpecifier)node).getName();
         }
         return null;
     }
+    
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+     */
+	public void removeBinding(IBinding binding) {
+	    if( binding instanceof ICPPConstructor ){
+	        if( constructorBindings.containsKey( binding ) )
+	            constructorBindings.remove( binding );
+	        setFullyCached( false );
+	    } else {
+	        super.removeBinding( binding );
+	    }
+	}
 }

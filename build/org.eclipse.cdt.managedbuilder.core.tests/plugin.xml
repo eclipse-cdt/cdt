@@ -1219,7 +1219,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.exe.debug"
 		              name="Dbg Platform"
-		              binaryParser="org.eclipse.cdt.core.ELF"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
@@ -1286,7 +1286,7 @@
 		          <targetPlatform
 		              id="cdt.managedbuild.target.testgnu.platform.exe.release"
 		              name="Rel Platform"		             
-		              binaryParser="org.eclipse.cdt.core.ELF"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
 		              osList="solaris,linux,hpux,aix,qnx"
 		              archList="all">		              
 		          </targetPlatform>

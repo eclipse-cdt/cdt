@@ -75,7 +75,8 @@ public class ManagedBuildCoreTests extends TestCase {
 		String expectedOSList = "solaris,linux,hpux,aix,qnx";
 		int expectedSizeOSList = 5;
 		String[] expectedArchList = {"all"};
-		String expectedBinaryParser = "org.eclipse.cdt.core.ELF";
+		String expectedBinaryParserELF = "org.eclipse.cdt.core.ELF";
+		String expectedBinaryParserPE = "org.eclipse.cdt.core.PE";
 		String[] expectedPlatformName = {"Dbg Platform",
 				                         "Rel Platform"};
 		String expectedCommand = "make";
@@ -147,7 +148,11 @@ public class ManagedBuildCoreTests extends TestCase {
 			 }
 		     assertTrue(Arrays.equals(platform.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(platform.getArchList(), expectedArchList));		     
-		     assertEquals(platform.getBinaryParserId(), expectedBinaryParser);
+		     // Target platform may have several binary parsers.
+		     String[] binaryParsers = platform.getBinaryParserList();
+		     assertEquals(binaryParsers.length, 2);
+		     assertEquals(binaryParsers[0], expectedBinaryParserELF);
+		     assertEquals(binaryParsers[1], expectedBinaryParserPE);
 			 assertEquals(platform.getName(), expectedPlatformName[iconfig]);
 			 
 			 // Fetch and check builder			 		     
@@ -342,7 +347,10 @@ public class ManagedBuildCoreTests extends TestCase {
 		     ITargetPlatform platform = toolChain.getTargetPlatform();	     		     						 
 		     assertTrue(Arrays.equals(platform.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(platform.getArchList(), expectedArchList));		     
-		     assertEquals(platform.getBinaryParserId(), expectedBinaryParser);
+		     // Make the test work as before after introducing multiple binary parsers
+		     String[] binaryParsers = platform.getBinaryParserList();
+		     assertEquals(binaryParsers.length, 1);
+		     assertEquals(binaryParsers[0], expectedBinaryParser);
 			 assertEquals(platform.getName(), expectedPlatformName[iconfig]);
 			 
 			 // Fetch and check builder			 		     
@@ -542,7 +550,10 @@ public class ManagedBuildCoreTests extends TestCase {
 		     ITargetPlatform platform = toolChain.getTargetPlatform();	     		     						 
 		     assertTrue(Arrays.equals(platform.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(platform.getArchList(), expectedArchList));		     
-		     assertEquals(platform.getBinaryParserId(), expectedBinaryParser);
+		     // Make the test work as before after introducing multiple binary parsers
+		     String[] binaryParsers = platform.getBinaryParserList();
+		     assertEquals(binaryParsers.length, 1);
+		     assertEquals(binaryParsers[0], expectedBinaryParser);
 			 assertEquals(platform.getName(), expectedPlatformName[iconfig]);
 			 
 			 // Fetch and check builder			 		     

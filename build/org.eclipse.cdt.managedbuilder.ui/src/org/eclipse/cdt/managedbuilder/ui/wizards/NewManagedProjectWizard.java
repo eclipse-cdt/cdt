@@ -160,7 +160,11 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 					if (newConfigs.length > 0) {
 						IToolChain tc = newConfigs[0].getToolChain();
 						ITargetPlatform targetPlatform = tc.getTargetPlatform();
-					    desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, targetPlatform.getBinaryParserId());
+						String[] binaryParsers = targetPlatform.getBinaryParserList();
+						// Create binary parser entries for all pre-selected binary parsers (semicolon-separated list).
+						for (int i=0; i<binaryParsers.length; i++) {
+						    desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, binaryParsers[i]);
+						}
 					}
 				} catch (CoreException e) {
 					ManagedBuilderUIPlugin.log(e);

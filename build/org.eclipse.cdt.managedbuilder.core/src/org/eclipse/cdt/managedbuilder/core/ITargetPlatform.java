@@ -105,6 +105,20 @@ public interface ITargetPlatform extends IBuildObject {
 	public void setBinaryParserId(String id);
 
 	/**
+	 * Returns the unique IDs of the binary parsers associated with the target platform.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getBinaryParserList();
+
+	/**
+	 * Sets the string ids of the binary parsers for this target platform.
+	 * 
+	 * @param ids
+	 */
+	public void setBinaryParserList(String[] ids);
+
+	/**
 	 * Returns <code>true</code> if this element has changes that need to 
 	 * be saved in the project file, else <code>false</code>.
 	 * 

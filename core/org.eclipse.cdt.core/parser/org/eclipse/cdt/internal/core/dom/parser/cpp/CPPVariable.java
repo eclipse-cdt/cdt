@@ -118,7 +118,7 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
 	    if( !( node instanceof IASTDeclarator ) )
 	        return false;
 	    
-	    IASTDeclarator dtor = (IASTDeclarator) name.getParent();
+	    IASTDeclarator dtor = (IASTDeclarator) node;
 	    while( dtor.getParent() instanceof IASTDeclarator )
 	        dtor = (IASTDeclarator) dtor.getParent();
 	    

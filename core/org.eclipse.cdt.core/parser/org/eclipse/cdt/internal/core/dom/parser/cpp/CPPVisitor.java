@@ -982,7 +982,10 @@ public class CPPVisitor {
                     } catch ( DOMException e ) {
                         return PROCESS_CONTINUE;
                     }
-			        candidate = bs[ ++n ];
+                    if( bs == null || bs.length == 0 )
+                        candidate = null;
+                    else
+                        candidate = bs[ ++n ];
 			    } else {
 			        candidate = potential;
 			    }

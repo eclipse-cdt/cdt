@@ -120,10 +120,17 @@ public class ParserUtil
         if( root.getLocation().isPrefixOf( path ) )
 			path = path.removeFirstSegments(root.getLocation().segmentCount() );
 
-		IResource resultingResource = root.getFile(path);
-		if( resultingResource != null && resultingResource.exists() ) 
-		    return resultingResource;
-		return null;
+        try
+        {
+    		IFile resultingResource = root.getFile(path);
+    		if( resultingResource != null && resultingResource.exists() ) 
+    		    return resultingResource;
+    		return null;
+        }
+        catch( IllegalArgumentException iae ) //thrown on invalid paths
+        {
+            return null;
+        }
 	}
 
 	/**

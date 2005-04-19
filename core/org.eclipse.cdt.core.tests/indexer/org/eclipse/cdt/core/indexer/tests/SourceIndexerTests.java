@@ -577,6 +577,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	
   public void testExactDeclarations() throws Exception
   {
+     //TODO Bogdan - you may want to import c.h here a.h includes it! - JC
   	 importFile("a.h","resources/dependency/a.h");//$NON-NLS-1$ //$NON-NLS-2$ 
 	 
   	  //Make sure project got added to index

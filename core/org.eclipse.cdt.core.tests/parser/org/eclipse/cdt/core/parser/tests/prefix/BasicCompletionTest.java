@@ -33,12 +33,35 @@ public class BasicCompletionTest extends CompletionTestBase {
 		testVar(getGCCCompletionNode(code.toString()));
 	}
 
-	private void testFunction(ASTCompletionNode node) throws Exception {
+	public void testFunction() throws Exception {
+		StringBuffer code = new StringBuffer();
+		code.append("void func(int x) { }");
+		code.append("void func2() { fu");
+		
+		// C++
+		ASTCompletionNode node = getGPPCompletionNode(code.toString());
 		IASTName[] names = node.getNames();
+		// There are three names, one as an expression, one that isn't connected, one as a declaration
+		assertEquals(3, names.length);
+		// The expression points to our functions
+		IBinding[] bindings = names[0].resolvePrefix();
+		// There should be two since they both start with fu
+		assertEquals(2, bindings.length);
+		assertEquals("func", ((IFunction)bindings[0]).getName());
+		assertEquals("func2", ((IFunction)bindings[1]).getName());
+		// The second name shouldn't be hooked up
+		assertNull(names[1].getTranslationUnit());
+		// The declaration should point to nothing since there are no types
+		bindings = names[2].resolvePrefix();
+		assertEquals(0, bindings.length);
+
+		// C
+		node = getGCCCompletionNode(code.toString());
+		names = node.getNames();
 		// There are two names, one as an expression, one as a declaration
 		assertEquals(2, names.length);
 		// The expression points to our functions
-		IBinding[] bindings = sortBindings(names[0].resolvePrefix());
+		bindings = sortBindings(names[0].resolvePrefix());
 		// There should be two since they both start with fu
 		assertEquals(2, bindings.length);
 		assertEquals("func", ((IFunction)bindings[0]).getName());
@@ -47,29 +70,28 @@ public class BasicCompletionTest extends CompletionTestBase {
 		bindings = names[1].resolvePrefix();
 		assertEquals(0, bindings.length);
 	}
-	
-	public void testFunction() throws Exception {
-		StringBuffer code = new StringBuffer();
-		code.append("void func(int x) { }");
-		code.append("void func2() { fu");
-		testFunction(getGPPCompletionNode(code.toString()));
-		testFunction(getGCCCompletionNode(code.toString()));
-	}
 
-	public void testTypedef(ASTCompletionNode node) {
-		IASTName[] names = node.getNames();
-		assertEquals(1, names.length);
-		IBinding[] bindings = names[0].resolvePrefix();
-		assertEquals(1, bindings.length);
-		assertEquals("blah", ((ITypedef)bindings[0]).getName());
-	}
-	
 	public void testTypedef() throws Exception {
 		StringBuffer code = new StringBuffer();
 		code.append("typedef int blah;");
 		code.append("bl");
-		testTypedef(getGPPCompletionNode(code.toString()));
-		testTypedef(getGCCCompletionNode(code.toString()));
+		
+		// C++
+		ASTCompletionNode node = getGPPCompletionNode(code.toString());
+		IASTName[] names = node.getNames();
+		assertEquals(2, names.length);
+		assertNull(names[0].getTranslationUnit());
+		IBinding[] bindings = names[1].resolvePrefix();
+		assertEquals(1, bindings.length);
+		assertEquals("blah", ((ITypedef)bindings[0]).getName());
+		
+		// C
+		node = getGCCCompletionNode(code.toString());
+		names = node.getNames();
+		assertEquals(1, names.length);
+		bindings = names[0].resolvePrefix();
+		assertEquals(1, bindings.length);
+		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 	}
 	
 }

@@ -30,9 +30,6 @@ public interface IToken {
 	public int getLineNumber();
 	public IToken getNext();
 	
-	// setters
-	public void setImage( String i );
-	public void setImage( char [] i );
 	public void setNext(IToken t);
 	public void setType(int i);	
 

@@ -16,9 +16,6 @@ import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexEncoderUtil;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
 
 /**
  * @author Bogdan Gheorghe
@@ -76,7 +73,6 @@ public class CTagsConsoleParser implements IConsoleParser {
      * @param tempTag
      */
     private void encodeTag(CTagEntry tempTag) {
-        EntryType entryType = null;
     	String kind = (String)tempTag.tagExtensionField.get(KIND);
     
     	if (kind == null)
@@ -84,40 +80,36 @@ public class CTagsConsoleParser implements IConsoleParser {
     	
     	char[][] fullName = getQualifiedName(tempTag);
     	ICSearchConstants.LimitTo type = ICSearchConstants.DECLARATIONS;
+    	int lineNumber = Integer.parseInt( (String)tempTag.tagExtensionField.get(LINE) );
     	
     	if (kind.equals(CLASS)){
-    	    entryType = IIndexEncodingConstants.CLASS;
+    		indexer.getOutput().addClassDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(MACRO)){
-    	    entryType = IIndexEncodingConstants.MACRO;
+    		indexer.getOutput().addMacroDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(ENUMERATOR)){
-    	    entryType = IIndexEncodingConstants.ENUMERATOR;
+    		indexer.getOutput().addEnumtorDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(FUNCTION)){
-    	    entryType = IIndexEncodingConstants.FUNCTION;
+    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(ENUM)){
-    	    entryType = IIndexEncodingConstants.ENUM;
+    		indexer.getOutput().addEnumDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(MEMBER)){
-    	    entryType = IIndexEncodingConstants.FIELD;
+    		indexer.getOutput().addFieldDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(NAMESPACE)){
-    	    entryType = IIndexEncodingConstants.NAMESPACE;
+    		indexer.getOutput().addNamespaceDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(PROTOTYPE)){
-    	    entryType = IIndexEncodingConstants.FUNCTION;
+    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	    //type = ICSearchConstants.DEFINITIONS;
     	} else if (kind.equals(STRUCT)){
-    	    entryType = IIndexEncodingConstants.STRUCT;
+    		indexer.getOutput().addStructDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(TYPEDEF)){
-    	    entryType = IIndexEncodingConstants.TYPEDEF;
+    		indexer.getOutput().addTypedefDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(UNION)){
-    	    entryType = IIndexEncodingConstants.UNION;
+    		indexer.getOutput().addUnionDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(VARIABLE)){
-    	    entryType = IIndexEncodingConstants.VAR;
+    		indexer.getOutput().addVariableDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
     	} else if (kind.equals(EXTERNALVAR)){
     	
     	}
-    
-    	String lineNumber = (String)tempTag.tagExtensionField.get(LINE);
-    	
-    	if (entryType != null)
-    	    indexer.getOutput().addRef(getFileNumber(),IndexEncoderUtil.encodeEntry(fullName,entryType,type), Integer.parseInt(lineNumber), 1, ICIndexStorageConstants.LINE);
     }
 
     /**

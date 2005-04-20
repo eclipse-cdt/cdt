@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 
 /**
@@ -101,9 +101,9 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 		char[] word = entryResult.getWord();
 		int size = word.length;
 
-		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
+		int firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
 		
-		int slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+		int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 		
 		this.decodedSimpleName = CharOperation.subarray(word, firstSlash+1, slash);
 	
@@ -121,7 +121,7 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#indexEntryPrefix()
 	 */
 	public char[] indexEntryPrefix() {
-		return AbstractIndexer.bestNamespacePrefix(
+		return IndexerOutput.bestNamespacePrefix(
 				_limitTo,
 				simpleName,
 				qualifications,

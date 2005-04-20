@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 
 /**
  * @author bgheorgh
@@ -46,7 +46,7 @@ public class DerivedTypesPattern extends ClassDeclarationPattern {
 	}
 	
 	public char[] indexEntryPrefix() {
-		return AbstractIndexer.bestTypePrefix(
+		return IndexerOutput.bestTypePrefix(
 				searchFor,
 				getLimitTo(),
 				simpleName,
@@ -57,7 +57,7 @@ public class DerivedTypesPattern extends ClassDeclarationPattern {
 	}
 	
 	protected boolean matchIndexEntry() {
-	    if( decodedType != DERIVED_SUFFIX ){
+	    if( decodedType != IndexerOutput.DERIVED_SUFFIX ){
 			return false;
 		}
 	    

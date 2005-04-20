@@ -23,9 +23,9 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -63,7 +63,7 @@ public class IndexerTypesJob extends IndexerJob {
 		if (monitor.isCanceled())
 			throw new InterruptedException();
 
-		IEntryResult[] namespaceEntries = input.queryEntriesPrefixedBy(IIndexConstants.NAMESPACE_DECL);
+		IEntryResult[] namespaceEntries = input.queryEntriesPrefixedBy(IndexerOutput.NAMESPACE_DECL);
 		if (namespaceEntries != null) {
 			//TODO subprogress monitor
 			for (int i = 0; i < namespaceEntries.length; ++i) {
@@ -72,8 +72,8 @@ public class IndexerTypesJob extends IndexerJob {
 				
 				IEntryResult entry = namespaceEntries[i];
 				char[] word = entry.getWord();
-				int firstSlash = CharOperation.indexOf(IIndexConstants.SEPARATOR, word, 0);
-				int slash = CharOperation.indexOf(IIndexConstants.SEPARATOR, word, firstSlash + 1);
+				int firstSlash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, 0);
+				int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 				String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
 				if (name.length() != 0) {
 					String[] enclosingNames = getEnclosingNames(word, slash);
@@ -88,7 +88,7 @@ public class IndexerTypesJob extends IndexerJob {
 		if (monitor.isCanceled())
 			throw new InterruptedException();
 
-		IEntryResult[] typeEntries = input.queryEntriesPrefixedBy(IIndexConstants.TYPE_DECL);
+		IEntryResult[] typeEntries = input.queryEntriesPrefixedBy(IndexerOutput.TYPE_DECL);
 		if (typeEntries != null) {
 			//TODO subprogress monitor
 			for (int i = 0; i < typeEntries.length; ++i) {
@@ -97,20 +97,20 @@ public class IndexerTypesJob extends IndexerJob {
 				
 				IEntryResult entry = typeEntries[i];
 				char[] word = entry.getWord();
-				int firstSlash = CharOperation.indexOf(IIndexConstants.SEPARATOR, word, 0);
+				int firstSlash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, 0);
 				char decodedType = word[firstSlash + 1];
 				int type = getElementType(decodedType);
 				if (type != 0) {
 					firstSlash += 2;
-					int slash = CharOperation.indexOf(IIndexConstants.SEPARATOR, word, firstSlash + 1);
+					int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 					String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
 					if (name.length() != 0) {  // skip anonymous structs
 						String[] enclosingNames = getEnclosingNames(word, slash);
 						addType(input, project, entry, type, name, enclosingNames, monitor);
 					}
-				} else if (decodedType == IIndexConstants.DERIVED_SUFFIX) {
+				} else if (decodedType == IndexerOutput.DERIVED_SUFFIX) {
 					firstSlash += 2;
-					int slash = CharOperation.indexOf(IIndexConstants.SEPARATOR, word, firstSlash + 1);
+					int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 					String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
 					if (name.length() != 0) {  // skip anonymous structs
 						String[] enclosingNames = getEnclosingNames(word, slash);
@@ -123,15 +123,15 @@ public class IndexerTypesJob extends IndexerJob {
 
 	private int getElementType(char decodedType) {
 		switch (decodedType) {
-			case IIndexConstants.CLASS_SUFFIX :
+			case IndexerOutput.CLASS_SUFFIX :
 				return ICElement.C_CLASS;
-			case IIndexConstants.STRUCT_SUFFIX :
+			case IndexerOutput.STRUCT_SUFFIX :
 				return ICElement.C_STRUCT;
-			case IIndexConstants.TYPEDEF_SUFFIX :
+			case IndexerOutput.TYPEDEF_SUFFIX :
 				return ICElement.C_TYPEDEF;
-			case IIndexConstants.ENUM_SUFFIX :
+			case IndexerOutput.ENUM_SUFFIX :
 				return ICElement.C_ENUMERATION;
-			case IIndexConstants.UNION_SUFFIX :
+			case IndexerOutput.UNION_SUFFIX :
 				return ICElement.C_UNION;
 		}
 		return 0;

@@ -18,9 +18,9 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -59,7 +59,7 @@ public class IndexerDependenciesJob extends IndexerJob {
 		if (progressMonitor.isCanceled())
 			throw new InterruptedException();
 
-		IEntryResult[] includeEntries = input.queryEntriesPrefixedBy(IIndexConstants.INCLUDE_REF);
+		IEntryResult[] includeEntries = input.queryEntriesPrefixedBy(IndexerOutput.INCLUDE_REF);
 		if (includeEntries != null) {
 			//TODO subprogress monitor
 			for (int i = 0; i < includeEntries.length; ++i) {
@@ -90,7 +90,7 @@ public class IndexerDependenciesJob extends IndexerJob {
 
 	private IPath getIncludePath(IEntryResult entry) {
 		char[] word = entry.getWord();
-		int firstSlash = CharOperation.indexOf(IIndexConstants.SEPARATOR, word, 0);
+		int firstSlash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, 0);
 		String include = String.valueOf(CharOperation.subarray(word, firstSlash + 1, -1));
 		return PathUtil.getWorkspaceRelativePath(include);
 	}

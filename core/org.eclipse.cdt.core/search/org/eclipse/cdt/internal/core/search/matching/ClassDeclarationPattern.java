@@ -27,8 +27,8 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 
 
@@ -155,7 +155,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 
 	
 	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references,IndexInput input, ICSearchScope scope) throws IOException {
-		boolean isClass = decodedType == CLASS_SUFFIX;
+		boolean isClass = decodedType == IndexerOutput.CLASS_SUFFIX;
 		for (int i = 0, max = references.length; i < max; i++) {
 			IndexedFileEntry file = input.getIndexedFile(references[i]);
 			String path;
@@ -180,12 +180,12 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		char[] word = entryResult.getWord();
 		int size = word.length;
 		
-		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
+		int firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
 		
 		this.decodedType = word[ firstSlash + 1 ];
 		firstSlash += 2;
 		
-		int slash = CharOperation.indexOf( SEPARATOR, word, firstSlash + 1 );
+		int slash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, firstSlash + 1 );
 		
 		this.decodedSimpleName = CharOperation.subarray( word, firstSlash + 1, slash );
 	
@@ -199,7 +199,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	}
 
 	public char[] indexEntryPrefix() {
-		return AbstractIndexer.bestTypePrefix(
+		return IndexerOutput.bestTypePrefix(
 				searchFor,
 				getLimitTo(),
 				simpleName,
@@ -212,30 +212,30 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected boolean matchIndexEntry() {
 		//check type matches
 		if( classKind == null ){
-			if( searchFor == TYPEDEF && decodedType != TYPEDEF_SUFFIX ){
+			if( searchFor == TYPEDEF && decodedType != IndexerOutput.TYPEDEF_SUFFIX ){
 				return false;
 			}
 			//don't match variable entries
-			if( decodedType == VAR_SUFFIX ){
+			if( decodedType == IndexerOutput.VAR_SUFFIX ){
 				return false;
 			}
 		} else if( classKind == ASTClassKind.CLASS ) {
-			if( decodedType != CLASS_SUFFIX &&
-				decodedType != FWD_CLASS_SUFFIX){
+			if( decodedType != IndexerOutput.CLASS_SUFFIX &&
+				decodedType != IndexerOutput.FWD_CLASS_SUFFIX){
 				return false;
 			} 
 		} else if ( classKind == ASTClassKind.STRUCT ) {
-			if( decodedType != STRUCT_SUFFIX &&
-				decodedType != FWD_STRUCT_SUFFIX){
+			if( decodedType != IndexerOutput.STRUCT_SUFFIX &&
+				decodedType != IndexerOutput.FWD_STRUCT_SUFFIX){
 				return false;
 			}
 		} else if ( classKind == ASTClassKind.UNION ) {
-			if( decodedType != UNION_SUFFIX &&
-				decodedType != FWD_UNION_SUFFIX){
+			if( decodedType != IndexerOutput.UNION_SUFFIX &&
+				decodedType != IndexerOutput.FWD_UNION_SUFFIX){
 				return false;
 			}
 		} else if ( classKind == ASTClassKind.ENUM ) {
-			if( decodedType != ENUM_SUFFIX ) {
+			if( decodedType != IndexerOutput.ENUM_SUFFIX ) {
 				return false;
 			}
 		}

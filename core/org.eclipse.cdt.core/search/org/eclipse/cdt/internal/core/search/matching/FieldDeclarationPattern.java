@@ -28,8 +28,8 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 
 
@@ -108,15 +108,15 @@ public class FieldDeclarationPattern extends CSearchPattern {
 	
 	public char[] indexEntryPrefix() {
 		if( searchFor == FIELD ){
-			return AbstractIndexer.bestFieldPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+			return IndexerOutput.bestFieldPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
 		} else if( searchFor == VAR ) {
-			return AbstractIndexer.bestVariablePrefix(
+			return IndexerOutput.bestVariablePrefix(
 							_limitTo,
 							simpleName, qualifications,
 							_matchMode, _caseSensitive
 			);
 		} else if (searchFor == ENUMTOR) {
-			return AbstractIndexer.bestEnumeratorPrefix(_limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+			return IndexerOutput.bestEnumeratorPrefix(_limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
 		}
 		return null;		
 	}
@@ -133,15 +133,15 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		int slash = 0;
 		
 		if( searchFor == FIELD ){
-			firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
-			slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+			firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
+			slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 		} else if( searchFor == VAR ) {
-			int realStart = CharOperation.indexOf( SEPARATOR, word, 0 );
-			firstSlash = CharOperation.indexOf( SEPARATOR, word, realStart + 1);
-			slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+			int realStart = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
+			firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, realStart + 1);
+			slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 		} else if ( searchFor == ENUMTOR ){
-			firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
-			slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+			firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
+			slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 		}
 				
 		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, slash);

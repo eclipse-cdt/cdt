@@ -228,8 +228,7 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
      * @see org.eclipse.search.ui.ISearchQuery#canRunInBackground()
      */
     public boolean canRunInBackground() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     /* (non-Javadoc)

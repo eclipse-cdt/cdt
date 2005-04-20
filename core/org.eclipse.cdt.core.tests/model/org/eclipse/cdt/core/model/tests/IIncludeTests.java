@@ -10,7 +10,6 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.CElement;
 
 /**
  * @author bnicolle

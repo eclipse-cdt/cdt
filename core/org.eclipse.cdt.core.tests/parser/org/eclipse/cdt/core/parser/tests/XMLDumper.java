@@ -1,6 +1,5 @@
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -8,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;

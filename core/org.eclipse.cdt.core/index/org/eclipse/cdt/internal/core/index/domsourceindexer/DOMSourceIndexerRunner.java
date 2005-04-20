@@ -35,12 +35,10 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -204,10 +202,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             getOutput().addIncludeRef(fileNumber, include);
             getOutput().addRelatives(fileNumber, include, 
                     (parent != null) ? parent.getIncludeDirective().getPath() : null);
-            getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
-                        new char[][] {include.toCharArray()}, 
-                        IIndexEncodingConstants.INCLUDE,
-                        ICSearchConstants.REFERENCES));
+            getOutput().addIncludeRef(fileNumber, 
+                        new char[][] {include.toCharArray()},
+                        1,1, ICIndexStorageConstants.LINE
+                        );
             
             /* See if this file has been encountered before */
             indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(include));
@@ -226,10 +224,8 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             // Get the location
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(macro);
             int fileNumber = IndexEncoderUtil.calculateIndexFlags(this, loc);
-            getOutput().addRef(fileNumber, IndexEncoderUtil.encodeEntry(
-                        new char[][] {macro.toCharArray()},
-                        IIndexEncodingConstants.MACRO,
-                        ICSearchConstants.DECLARATIONS),
+            getOutput().addMacroDecl(fileNumber,
+                    new char[][] {macro.toCharArray()},
                     loc.getNodeOffset(),
                     loc.getNodeLength(),
                     ICIndexStorageConstants.OFFSET);

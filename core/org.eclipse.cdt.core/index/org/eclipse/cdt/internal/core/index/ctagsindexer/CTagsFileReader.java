@@ -18,16 +18,11 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexEncoderUtil;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
@@ -97,7 +92,7 @@ public class CTagsFileReader {
 		} catch (IOException e){}
 	}
 	
-	class MiniIndexer implements IIndexer, IIndexConstants {
+	class MiniIndexer implements IIndexer {
 		
 	    IIndexerOutput output;
 	    IFile currentFile;
@@ -116,40 +111,35 @@ public class CTagsFileReader {
 	        if (mainIndexFile != null)
 				fileNum = mainIndexFile.getFileID();
 			
-	        EntryType entryType = null;
 	        
-	    	ICSearchConstants.LimitTo type = ICSearchConstants.DECLARATIONS;
-	        
-	        if (kind.equals(CTagsConsoleParser.CLASS)){
-	    	    entryType = IIndexEncodingConstants.CLASS;
+	    	if (kind.equals(CTagsConsoleParser.CLASS)){
+	    		output.addClassDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.MACRO)){
-	    	    entryType = IIndexEncodingConstants.MACRO;
+	    		output.addMacroDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.ENUMERATOR)){
-	    	    entryType = IIndexEncodingConstants.ENUMERATOR;
+	    		output.addEnumtorDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.FUNCTION)){
-	    	    entryType = IIndexEncodingConstants.FUNCTION;
+	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.ENUM)){
-	    	    entryType = IIndexEncodingConstants.ENUM;
+	    		output.addEnumDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.MEMBER)){
-	    	    entryType = IIndexEncodingConstants.FIELD;
+	    		output.addFieldDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.NAMESPACE)){
-	    	    entryType = IIndexEncodingConstants.NAMESPACE;
+	    		output.addNamespaceDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.PROTOTYPE)){
-	    	    entryType = IIndexEncodingConstants.FUNCTION;
+	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    	    //type = ICSearchConstants.DEFINITIONS;
 	    	} else if (kind.equals(CTagsConsoleParser.STRUCT)){
-	    	    entryType = IIndexEncodingConstants.STRUCT;
+	    		output.addStructDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.TYPEDEF)){
-	    	    entryType = IIndexEncodingConstants.TYPEDEF;
+	    		output.addTypedefDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.UNION)){
-	    	    entryType = IIndexEncodingConstants.UNION;
+	    		output.addUnionDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.VARIABLE)){
-	    	    entryType = IIndexEncodingConstants.VAR;
+	    		output.addVariableDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.EXTERNALVAR)){
 	    	
 	    	}
-	    	
-	    	if (entryType != null)
-	    	    output.addRef(fileNum, IndexEncoderUtil.encodeEntry(fullName,entryType,type), lineNumber, 1, ICIndexStorageConstants.LINE);
 	    }
         /* (non-Javadoc)
          * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)

@@ -124,7 +124,7 @@ public abstract class FindAction extends SelectionParseAction {
 		CSearchQuery job = createSearchQuery( element.getElementName(), CSearchUtil.getSearchForFromElement(element));
 		NewSearchUI.activateSearchResultView();
 		
-		NewSearchUI.runQuery(job);
+		NewSearchUI.runQueryInBackground(job);
 	}
 	
 	public void run(ITextSelection sel){
@@ -169,7 +169,7 @@ public abstract class FindAction extends SelectionParseAction {
 		
 		NewSearchUI.activateSearchResultView();
 		
-		NewSearchUI.runQuery(job);
+		NewSearchUI.runQueryInBackground(job);
 	}
 	
 	abstract protected String getScopeDescription(); 

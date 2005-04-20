@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoMessages;
 import org.eclipse.jface.dialogs.Dialog;
@@ -66,63 +66,63 @@ public class FilterIndexerViewDialog extends Dialog {
 
     private String message = "Filter Indexer Results (. = any character, .* = any string):"; //$NON-NLS-1$
 
-    public static final int ENTRY_REF = 1;
-    public static final String ENTRY_REF_STRING = String.valueOf(IIndexConstants.REF);
+    //public static final int ENTRY_REF = 1;
+    //public static final String ENTRY_REF_STRING = String.valueOf(IndexerOutput.REF);
     public static final int ENTRY_TYPE_REF = 2;
-    public static final String ENTRY_TYPE_REF_STRING = String.valueOf(IIndexConstants.TYPE_REF);
-    public static final String ENTRY_TYPE_DECL_STRING = String.valueOf(IIndexConstants.TYPE_DECL);
+    public static final String ENTRY_TYPE_REF_STRING = String.valueOf(IndexerOutput.TYPE_REF);
+    public static final String ENTRY_TYPE_DECL_STRING = String.valueOf(IndexerOutput.TYPE_DECL);
     public static final int ENTRY_FUNCTION_REF = 4;
-    public static final String ENTRY_FUNCTION_REF_STRING = String.valueOf(IIndexConstants.FUNCTION_REF);
+    public static final String ENTRY_FUNCTION_REF_STRING = String.valueOf(IndexerOutput.FUNCTION_REF);
     public static final int ENTRY_FUNCTION_DECL = 5;
-    public static final String ENTRY_FUNCTION_DECL_STRING = String.valueOf(IIndexConstants.FUNCTION_DECL);
+    public static final String ENTRY_FUNCTION_DECL_STRING = String.valueOf(IndexerOutput.FUNCTION_DECL);
     public static final int ENTRY_CONSTRUCTOR_REF = 6;
-    public static final String ENTRY_CONSTRUCTOR_REF_STRING = String.valueOf(IIndexConstants.CONSTRUCTOR_REF);
-    public static final int ENTRY_CONSTRUCTOR_DECL = 7;
-    public static final String ENTRY_CONSTRUCTOR_DECL_STRING = String.valueOf(IIndexConstants.CONSTRUCTOR_DECL);
+    //public static final String ENTRY_CONSTRUCTOR_REF_STRING = String.valueOf(IndexerOutput.CONSTRUCTOR_REF);
+    //public static final int ENTRY_CONSTRUCTOR_DECL = 7;
+    //public static final String ENTRY_CONSTRUCTOR_DECL_STRING = String.valueOf(IndexerOutput.CONSTRUCTOR_DECL);
     public static final int ENTRY_NAMESPACE_REF = 8;
-    public static final String ENTRY_NAMESPACE_REF_STRING = String.valueOf(IIndexConstants.NAMESPACE_REF);
+    public static final String ENTRY_NAMESPACE_REF_STRING = String.valueOf(IndexerOutput.NAMESPACE_REF);
     public static final int ENTRY_NAMESPACE_DECL = 9;
-    public static final String ENTRY_NAMESPACE_DECL_STRING = String.valueOf(IIndexConstants.NAMESPACE_DECL);
+    public static final String ENTRY_NAMESPACE_DECL_STRING = String.valueOf(IndexerOutput.NAMESPACE_DECL);
     public static final int ENTRY_FIELD_REF = 10;
-    public static final String ENTRY_FIELD_REF_STRING = String.valueOf(IIndexConstants.FIELD_REF);
+    public static final String ENTRY_FIELD_REF_STRING = String.valueOf(IndexerOutput.FIELD_REF);
     public static final int ENTRY_FIELD_DECL = 11;
-    public static final String ENTRY_FIELD_DECL_STRING = String.valueOf(IIndexConstants.FIELD_DECL);
+    public static final String ENTRY_FIELD_DECL_STRING = String.valueOf(IndexerOutput.FIELD_DECL);
     public static final int ENTRY_ENUMTOR_REF = 12;
-    public static final String ENTRY_ENUMTOR_REF_STRING = String.valueOf(IIndexConstants.ENUMTOR_REF);
+    public static final String ENTRY_ENUMTOR_REF_STRING = String.valueOf(IndexerOutput.ENUMTOR_REF);
     public static final int ENTRY_ENUMTOR_DECL = 13;
-    public static final String ENTRY_ENUMTOR_DECL_STRING = String.valueOf(IIndexConstants.ENUMTOR_DECL);
+    public static final String ENTRY_ENUMTOR_DECL_STRING = String.valueOf(IndexerOutput.ENUMTOR_DECL);
     public static final int ENTRY_METHOD_REF = 14;
-    public static final String ENTRY_METHOD_REF_STRING = String.valueOf(IIndexConstants.METHOD_REF);
+    public static final String ENTRY_METHOD_REF_STRING = String.valueOf(IndexerOutput.METHOD_REF);
     public static final int ENTRY_METHOD_DECL = 15;
-    public static final String ENTRY_METHOD_DECL_STRING = String.valueOf(IIndexConstants.METHOD_DECL);
+    public static final String ENTRY_METHOD_DECL_STRING = String.valueOf(IndexerOutput.METHOD_DECL);
     public static final int ENTRY_MACRO_DECL = 16;
-    public static final String ENTRY_MACRO_DECL_STRING = String.valueOf(IIndexConstants.MACRO_DECL);
+    public static final String ENTRY_MACRO_DECL_STRING = String.valueOf(IndexerOutput.MACRO_DECL);
     public static final int ENTRY_INCLUDE_REF = 17;
-    public static final String ENTRY_INCLUDE_REF_STRING = String.valueOf(IIndexConstants.INCLUDE_REF);
-    public static final int ENTRY_SUPER_REF = 18;
-    public static final String ENTRY_SUPER_REF_STRING = String.valueOf(IIndexConstants.SUPER_REF);
+    public static final String ENTRY_INCLUDE_REF_STRING = String.valueOf(IndexerOutput.INCLUDE_REF);
+    //public static final int ENTRY_SUPER_REF = 18;
+    //public static final String ENTRY_SUPER_REF_STRING = String.valueOf(IndexerOutput.SUPER_REF);
     public static final int ENTRY_TYPE_DECL_T = 19;
-    public static final String ENTRY_TYPE_DECL_T_STRING = String.valueOf(IIndexConstants.TYPEDEF_DECL);
+    public static final String ENTRY_TYPE_DECL_T_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.TYPEDEF_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_C = 20;
-    public static final String ENTRY_TYPE_DECL_C_STRING = String.valueOf(IIndexConstants.CLASS_DECL);
+    public static final String ENTRY_TYPE_DECL_C_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.CLASS_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_V = 21;
-    public static final String ENTRY_TYPE_DECL_V_STRING = String.valueOf(IIndexConstants.VAR_DECL);
+    public static final String ENTRY_TYPE_DECL_V_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.VAR_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_S = 22;
-    public static final String ENTRY_TYPE_DECL_S_STRING = String.valueOf(IIndexConstants.STRUCT_DECL);
+    public static final String ENTRY_TYPE_DECL_S_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.STRUCT_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_E = 23;
-    public static final String ENTRY_TYPE_DECL_E_STRING = String.valueOf(IIndexConstants.ENUM_DECL);
+    public static final String ENTRY_TYPE_DECL_E_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.ENUM_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_U = 24;
-    public static final String ENTRY_TYPE_DECL_U_STRING = String.valueOf(IIndexConstants.UNION_DECL);
+    public static final String ENTRY_TYPE_DECL_U_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.UNION_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_D = 25;
-    public static final String ENTRY_TYPE_DECL_D_STRING = String.valueOf(IIndexConstants.TYPE_DECL) + String.valueOf(IIndexConstants.DERIVED_SUFFIX) + String.valueOf(IIndexConstants.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_D_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.DERIVED_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_F = 26;
-    public static final String ENTRY_TYPE_DECL_F_STRING = String.valueOf(IIndexConstants.TYPE_DECL) + String.valueOf(IIndexConstants.FRIEND_SUFFIX) + String.valueOf(IIndexConstants.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_F_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FRIEND_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_G = 27;
-    public static final String ENTRY_TYPE_DECL_G_STRING = String.valueOf(IIndexConstants.TYPE_DECL) + String.valueOf(IIndexConstants.FWD_CLASS_SUFFIX) + String.valueOf(IIndexConstants.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_G_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FWD_CLASS_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_H = 28;
-    public static final String ENTRY_TYPE_DECL_H_STRING = String.valueOf(IIndexConstants.TYPE_DECL) + String.valueOf(IIndexConstants.FWD_STRUCT_SUFFIX) + String.valueOf(IIndexConstants.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_H_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FWD_STRUCT_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_I = 29;
-    public static final String ENTRY_TYPE_DECL_I_STRING = String.valueOf(IIndexConstants.TYPE_DECL) + String.valueOf(IIndexConstants.FWD_UNION_SUFFIX) + String.valueOf(IIndexConstants.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_I_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FWD_UNION_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
 
     private String fDialogSection;
     
@@ -141,9 +141,9 @@ public class FilterIndexerViewDialog extends Dialog {
     
     // this also determines the order that the buttons are displayed
     private static final int[] fAllTypes = { // ENTRY_TYPE_DECL,
-        ENTRY_REF,              ENTRY_SUPER_REF,        ENTRY_MACRO_DECL,
-        ENTRY_FUNCTION_DECL,    ENTRY_NAMESPACE_DECL,   ENTRY_CONSTRUCTOR_DECL,    
-        ENTRY_FUNCTION_REF,     ENTRY_NAMESPACE_REF,    ENTRY_CONSTRUCTOR_REF,
+        /*ENTRY_REF,*/              /*ENTRY_SUPER_REF,*/        ENTRY_MACRO_DECL,
+        ENTRY_FUNCTION_DECL,    ENTRY_NAMESPACE_DECL,   /*ENTRY_CONSTRUCTOR_DECL,*/    
+        ENTRY_FUNCTION_REF,     ENTRY_NAMESPACE_REF,    /*ENTRY_CONSTRUCTOR_REF,*/
         ENTRY_FIELD_DECL,       ENTRY_ENUMTOR_DECL,     ENTRY_METHOD_DECL,
         ENTRY_FIELD_REF,        ENTRY_ENUMTOR_REF,      ENTRY_METHOD_REF,
         ENTRY_TYPE_REF,         ENTRY_TYPE_DECL_T,      ENTRY_TYPE_DECL_C,      
@@ -256,9 +256,9 @@ public class FilterIndexerViewDialog extends Dialog {
         String name;
         int type = typeObject.intValue();
         switch (type) {
-        case ENTRY_REF:
+   /*     case ENTRY_REF:
             name = ENTRY_REF_STRING;
-            break;
+            break;*/
         case ENTRY_TYPE_REF:
             name = ENTRY_TYPE_REF_STRING;
             break;
@@ -271,12 +271,12 @@ public class FilterIndexerViewDialog extends Dialog {
         case ENTRY_FUNCTION_DECL:
             name = ENTRY_FUNCTION_DECL_STRING;
             break;
-        case ENTRY_CONSTRUCTOR_REF:
+/*        case ENTRY_CONSTRUCTOR_REF:
             name = ENTRY_CONSTRUCTOR_REF_STRING;
             break;
         case ENTRY_CONSTRUCTOR_DECL:
             name = ENTRY_CONSTRUCTOR_DECL_STRING;
-            break;
+            break;*/
         case ENTRY_NAMESPACE_REF:
             name = ENTRY_NAMESPACE_REF_STRING;
             break;
@@ -307,9 +307,9 @@ public class FilterIndexerViewDialog extends Dialog {
         case ENTRY_INCLUDE_REF:
             name = ENTRY_INCLUDE_REF_STRING;
             break;
-        case ENTRY_SUPER_REF:
+/*        case ENTRY_SUPER_REF:
             name = ENTRY_SUPER_REF_STRING;
-            break;
+            break;*/
         case ENTRY_TYPE_DECL_T:
             name = ENTRY_TYPE_DECL_T_STRING;
             break;
@@ -382,8 +382,8 @@ public class FilterIndexerViewDialog extends Dialog {
     {
         switch (type)
         {
-        case ENTRY_REF:
-            return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_REF);
+/*        case ENTRY_REF:
+            return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_REF);*/
         case ENTRY_TYPE_REF:
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_TYPE_REF);
 //        case ENTRY_TYPE_DECL:
@@ -392,10 +392,10 @@ public class FilterIndexerViewDialog extends Dialog {
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_FUNCTION_REF);
         case ENTRY_FUNCTION_DECL:
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_FUNCTION_DECL);
-        case ENTRY_CONSTRUCTOR_REF:
+/*        case ENTRY_CONSTRUCTOR_REF:
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_CONSTRUCTOR_REF);
         case ENTRY_CONSTRUCTOR_DECL:
-            return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_CONSTRUCTOR_DECL);
+            return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_CONSTRUCTOR_DECL);*/
         case ENTRY_NAMESPACE_REF:
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_NAMESPACE_REF);
         case ENTRY_NAMESPACE_DECL:
@@ -416,8 +416,8 @@ public class FilterIndexerViewDialog extends Dialog {
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_MACRO_DECL);
         case ENTRY_INCLUDE_REF:
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_INCLUDE_REF);
-        case ENTRY_SUPER_REF:
-            return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_SUPER_REF);
+       /* case ENTRY_SUPER_REF:
+            return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_SUPER_REF);*/
         case ENTRY_TYPE_DECL_T:
             return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_TYPEDEF);
         case ENTRY_TYPE_DECL_C:
@@ -757,13 +757,13 @@ public class FilterIndexerViewDialog extends Dialog {
         section.put(SETTINGS_WIDTH, size.x);
         section.put(SETTINGS_HEIGHT, size.y);
 
-        section.put(ENTRY_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_REF)));
+        //section.put(ENTRY_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_REF)));
         section.put(ENTRY_TYPE_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_TYPE_REF)));
 //        section.put(ENTRY_TYPE_DECL_STRING, fFilterMatcher.contains(new Integer(ENTRY_TYPE_DECL)));
         section.put(ENTRY_FUNCTION_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_FUNCTION_REF)));
         section.put(ENTRY_FUNCTION_DECL_STRING, fFilterMatcher.contains(new Integer(ENTRY_FUNCTION_DECL)));
-        section.put(ENTRY_CONSTRUCTOR_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_CONSTRUCTOR_REF)));
-        section.put(ENTRY_CONSTRUCTOR_DECL_STRING, fFilterMatcher.contains(new Integer(ENTRY_CONSTRUCTOR_DECL)));
+        //section.put(ENTRY_CONSTRUCTOR_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_CONSTRUCTOR_REF)));
+        //section.put(ENTRY_CONSTRUCTOR_DECL_STRING, fFilterMatcher.contains(new Integer(ENTRY_CONSTRUCTOR_DECL)));
         section.put(ENTRY_NAMESPACE_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_NAMESPACE_REF)));
         section.put(ENTRY_NAMESPACE_DECL_STRING, fFilterMatcher.contains(new Integer(ENTRY_NAMESPACE_DECL)));
         section.put(ENTRY_FIELD_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_FIELD_REF)));
@@ -774,7 +774,7 @@ public class FilterIndexerViewDialog extends Dialog {
         section.put(ENTRY_METHOD_DECL_STRING, fFilterMatcher.contains(new Integer(ENTRY_METHOD_DECL)));
         section.put(ENTRY_MACRO_DECL_STRING, fFilterMatcher.contains(new Integer(ENTRY_MACRO_DECL)));
         section.put(ENTRY_INCLUDE_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_INCLUDE_REF)));
-        section.put(ENTRY_SUPER_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_SUPER_REF)));
+        //section.put(ENTRY_SUPER_REF_STRING, fFilterMatcher.contains(new Integer(ENTRY_SUPER_REF)));
         section.put(ENTRY_TYPE_DECL_T_STRING, fFilterMatcher.contains(new Integer(ENTRY_TYPE_DECL_T)));
         section.put(ENTRY_TYPE_DECL_C_STRING, fFilterMatcher.contains(new Integer(ENTRY_TYPE_DECL_C)));
         section.put(ENTRY_TYPE_DECL_V_STRING, fFilterMatcher.contains(new Integer(ENTRY_TYPE_DECL_V)));
@@ -799,13 +799,13 @@ public class FilterIndexerViewDialog extends Dialog {
      * Stores default dialog settings.
      */
     protected void writeDefaultSettings(IDialogSettings section) {
-        section.put(ENTRY_REF_STRING, true); 
+        //section.put(ENTRY_REF_STRING, true); 
         section.put(ENTRY_TYPE_REF_STRING, true); 
 //        section.put(ENTRY_TYPE_DECL_STRING, true); 
         section.put(ENTRY_FUNCTION_REF_STRING, true); 
         section.put(ENTRY_FUNCTION_DECL_STRING, true); 
-        section.put(ENTRY_CONSTRUCTOR_REF_STRING, true); 
-        section.put(ENTRY_CONSTRUCTOR_DECL_STRING, true); 
+        //section.put(ENTRY_CONSTRUCTOR_REF_STRING, true); 
+        //section.put(ENTRY_CONSTRUCTOR_DECL_STRING, true); 
         section.put(ENTRY_NAMESPACE_REF_STRING, true); 
         section.put(ENTRY_NAMESPACE_DECL_STRING, true); 
         section.put(ENTRY_FIELD_REF_STRING, true); 
@@ -816,7 +816,7 @@ public class FilterIndexerViewDialog extends Dialog {
         section.put(ENTRY_METHOD_DECL_STRING, true); 
         section.put(ENTRY_MACRO_DECL_STRING, true); 
         section.put(ENTRY_INCLUDE_REF_STRING, true); 
-        section.put(ENTRY_SUPER_REF_STRING, true); 
+        //section.put(ENTRY_SUPER_REF_STRING, true); 
         section.put(ENTRY_TYPE_DECL_T_STRING, true); 
         section.put(ENTRY_TYPE_DECL_C_STRING, true); 
         section.put(ENTRY_TYPE_DECL_V_STRING, true); 
@@ -881,11 +881,11 @@ public class FilterIndexerViewDialog extends Dialog {
             fSize = null;
         }
         
-        if (section.getBoolean(ENTRY_REF_STRING)) {
+       /* if (section.getBoolean(ENTRY_REF_STRING)) {
             Integer typeObject = new Integer(ENTRY_REF);
             if (fKnownTypes.contains(typeObject))
                 fFilterMatcher.add(typeObject);
-        }
+        }*/
         if (section.getBoolean(ENTRY_TYPE_REF_STRING)) {
             Integer typeObject = new Integer(ENTRY_TYPE_REF);
             if (fKnownTypes.contains(typeObject))
@@ -906,7 +906,7 @@ public class FilterIndexerViewDialog extends Dialog {
             if (fKnownTypes.contains(typeObject))
                 fFilterMatcher.add(typeObject);
         }
-        if (section.getBoolean(ENTRY_CONSTRUCTOR_REF_STRING)) {
+    /*    if (section.getBoolean(ENTRY_CONSTRUCTOR_REF_STRING)) {
             Integer typeObject = new Integer(ENTRY_CONSTRUCTOR_REF);
             if (fKnownTypes.contains(typeObject))
                 fFilterMatcher.add(typeObject);
@@ -915,7 +915,7 @@ public class FilterIndexerViewDialog extends Dialog {
             Integer typeObject = new Integer(ENTRY_CONSTRUCTOR_DECL);
             if (fKnownTypes.contains(typeObject))
                 fFilterMatcher.add(typeObject);
-        }
+        }*/
         if (section.getBoolean(ENTRY_NAMESPACE_REF_STRING)) {
             Integer typeObject = new Integer(ENTRY_NAMESPACE_REF);
             if (fKnownTypes.contains(typeObject))
@@ -966,11 +966,11 @@ public class FilterIndexerViewDialog extends Dialog {
             if (fKnownTypes.contains(typeObject))
                 fFilterMatcher.add(typeObject);
         }
-        if (section.getBoolean(ENTRY_SUPER_REF_STRING)) {
+        /*if (section.getBoolean(ENTRY_SUPER_REF_STRING)) {
             Integer typeObject = new Integer(ENTRY_SUPER_REF);
             if (fKnownTypes.contains(typeObject))
                 fFilterMatcher.add(typeObject);
-        }
+        }*/
         if (section.getBoolean(ENTRY_TYPE_DECL_T_STRING)) {
             Integer typeObject = new Integer(ENTRY_TYPE_DECL_T);
             if (fKnownTypes.contains(typeObject))

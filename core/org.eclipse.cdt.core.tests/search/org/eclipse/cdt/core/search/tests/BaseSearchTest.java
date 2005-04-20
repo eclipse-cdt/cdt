@@ -18,8 +18,6 @@ import java.io.FileInputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -31,7 +29,6 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;

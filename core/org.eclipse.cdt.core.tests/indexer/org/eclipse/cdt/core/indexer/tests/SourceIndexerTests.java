@@ -32,8 +32,8 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -199,7 +199,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		IIndex ind = sourceIndexer.getIndex(testProject.getFullPath(),true,true);
 		assertTrue("Index exists for project",ind != null); //$NON-NLS-1$
 		
-		char[] prefix = "typeDecl/".toCharArray(); //$NON-NLS-1$
+		char[] prefix = IndexerOutput.TYPE_DECL; //$NON-NLS-1$
 		IQueryResult[] qresults = ind.queryPrefix(prefix);
 		IEntryResult[] eresults = ind.queryEntries(prefix);
 		
@@ -261,7 +261,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		char[] prefix = "typeDecl/C/CDocumentManager".toCharArray(); //$NON-NLS-1$
 		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }, offsets={ [ 2127] }"}; //$NON-NLS-1$
 		IEntryResult[] eresults =ind.queryEntries(prefix);
-		IEntryResult[] bogRe = ind.queryEntries(IIndexConstants.TYPE_DECL);
+		IEntryResult[] bogRe = ind.queryEntries(IndexerOutput.TYPE_DECL);
 		assertTrue("Entry Result exists", eresults != null); //$NON-NLS-1$
 		
 		if (eresults.length != entryResultModel.length)
@@ -322,7 +322,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		 
 	 //Do a "before" deletion comparison
 	 //ind = indexManager.getIndex(testProjectPath,true,true);
-	 char[] prefix = "typeDecl/".toCharArray(); //$NON-NLS-1$
+	 char[] prefix = IndexerOutput.TYPE_DECL; //$NON-NLS-1$
 	 IEntryResult[] eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry result found for typdeDecl/", eresults != null); //$NON-NLS-1$
 	 
@@ -383,7 +383,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		IIndex ind = sourceIndexer.getIndex(testProjectPath,true,true);
 		assertTrue("Index exists for project",ind != null);  //$NON-NLS-1$ //$NON-NLS-2$ 
 	
-		IEntryResult[] typerefreesults = ind.queryEntries(IIndexConstants.TYPE_REF);
+		IEntryResult[] typerefreesults = ind.queryEntries(IndexerOutput.TYPE_REF);
 		assertTrue("Type Ref Results exist", typerefreesults != null);  //$NON-NLS-1$
 		
 		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }, offsets={ [ 2335] }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }, offsets={ [ 21063] }",  //$NON-NLS-1$ //$NON-NLS-2$ 
@@ -396,7 +396,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 				"EntryResult: word=typeDecl/V/temp, refs={ 1 }, offsets={ [ 22463] }", "EntryResult: word=typeDecl/V/x, refs={ 1 }, offsets={ [ 21589, 21965] }",  //$NON-NLS-1$ //$NON-NLS-2$ 
 				"EntryResult: word=typeDecl/V/x/Z, refs={ 1 }, offsets={ [ 2259] }"}; //$NON-NLS-1$ 
 		
-		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
+		IEntryResult[] typedeclresults =ind.queryEntries(IndexerOutput.TYPE_DECL);
 		assertTrue("Type Decl Results exist", typedeclresults != null);  //$NON-NLS-1$ 
 		
 		if (typedeclresults.length != typeDeclEntryResultModel.length)
@@ -408,7 +408,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		}
 	
 		String [] typeDefEntryResultModel ={"EntryResult: word=typeDecl/T/int32, refs={ 1 }, offsets={ [ 2200] }"};  //$NON-NLS-1$
-		IEntryResult[] typedefresults =ind.queryEntries(IIndexConstants.TYPEDEF_DECL);
+		IEntryResult[] typedefresults =ind.queryEntries((new String(IndexerOutput.TYPE_DECL) + IndexerOutput.TYPEDEF_SUFFIX).toCharArray());
 		assertTrue("Type Def Results exist", typedefresults != null);  //$NON-NLS-1$  
 		
 		if (typedefresults.length != typeDefEntryResultModel.length)
@@ -422,7 +422,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		String [] namespaceResultModel = {"EntryResult: word=namespaceDecl/X/Z, refs={ 1 }, offsets={ [ 2274] }", "EntryResult: word=namespaceDecl/Y/X/Z, refs={ 1 }, offsets={ [ 2290] }",  //$NON-NLS-1$ //$NON-NLS-2$ 
 				"EntryResult: word=namespaceDecl/Z, refs={ 1 }, offsets={ [ 2250] }"};  //$NON-NLS-1$ 
 		
-		IEntryResult[] namespaceresults =ind.queryEntries(IIndexConstants.NAMESPACE_DECL);
+		IEntryResult[] namespaceresults =ind.queryEntries(IndexerOutput.NAMESPACE_DECL);
 		assertTrue("Namespace Results exist", namespaceresults != null);  //$NON-NLS-1$  
 		
 		if (namespaceresults.length != namespaceResultModel.length)
@@ -436,7 +436,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		String [] fieldResultModel = {"EntryResult: word=fieldDecl/array/container/Y/X/Z, refs={ 1 }, offsets={ [ 21485] }", "EntryResult: word=fieldDecl/index/container/Y/X/Z, refs={ 1 }, offsets={ [ 21500] }", 
 				"EntryResult: word=fieldDecl/postage/Mail/Y/X/Z, refs={ 1 }, offsets={ [ 2469] }", "EntryResult: word=fieldDecl/sz/container/Y/X/Z, refs={ 1 }, offsets={ [ 21515] }", 
 				"EntryResult: word=fieldDecl/type/Mail/Y/X/Z, refs={ 1 }, offsets={ [ 2488] }"};  //$NON-NLS-1$ //$NON-NLS-2$ 
-		IEntryResult[] fieldresults =ind.queryEntries(IIndexConstants.FIELD_DECL);
+		IEntryResult[] fieldresults =ind.queryEntries(IndexerOutput.FIELD_DECL);
 		assertTrue("Field Results exist", fieldresults != null);  //$NON-NLS-1$
 		
 		if (fieldresults.length != fieldResultModel.length)
@@ -450,7 +450,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		String [] enumeratorResultModel = {"EntryResult: word=enumtorDecl/bye/Y/X/Z, refs={ 1 }, offsets={ [ 2315] }", "EntryResult: word=enumtorDecl/cool/Y/X/Z, refs={ 1 }, offsets={ [ 2307] }", 
 				"EntryResult: word=enumtorDecl/hi/Y/X/Z, refs={ 1 }, offsets={ [ 2312] }", "EntryResult: word=enumtorDecl/why/Y/X/Z, refs={ 1 }, offsets={ [ 2319] }"}; 
 		
-		IEntryResult[] enumeratorresults =ind.queryEntries(IIndexConstants.ENUMTOR_DECL);
+		IEntryResult[] enumeratorresults =ind.queryEntries(IndexerOutput.ENUMTOR_DECL);
 		assertTrue("Enumerator Results exist", enumeratorresults != null);  //$NON-NLS-1$ 
 		
 		if (enumeratorresults.length != enumeratorResultModel.length)
@@ -462,7 +462,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		}
 	
 		String [] functionResultModel = {"EntryResult: word=functionDecl/doSomething, refs={ 1 }, offsets={ [ 2222] }", "EntryResult: word=functionDecl/main/Y/X/Z, refs={ 1 }, offsets={ [ 21765] }"};  //$NON-NLS-1$ //$NON-NLS-2$ 
-		IEntryResult[] functionresults =ind.queryEntries(IIndexConstants.FUNCTION_DECL);
+		IEntryResult[] functionresults =ind.queryEntries(IndexerOutput.FUNCTION_DECL);
 		
 		if (functionresults.length != functionResultModel.length)
 					fail("Entry Result length different from model for functionDecl");  //$NON-NLS-1$ 
@@ -489,7 +489,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 									    
 									   
 	
-		IEntryResult[] methodresults =ind.queryEntries(IIndexConstants.METHOD_DECL);
+		IEntryResult[] methodresults =ind.queryEntries(IndexerOutput.METHOD_DECL);
 		assertTrue("Entry exists", methodresults != null);  //$NON-NLS-1$ 
 		
 		if (methodresults.length != methodResultModel.length)
@@ -515,7 +515,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 				  "EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 225] }", 
 				  "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }, offsets={ [ 2128] }"}; 
 		  
-		  IEntryResult[] typerefresults = ind.queryEntries(IIndexConstants.TYPE_REF);
+		  IEntryResult[] typerefresults = ind.queryEntries(IndexerOutput.TYPE_REF);
 		  assertTrue("Entry exists",typerefresults != null); //$NON-NLS-1$ 
 		  
 		  if (typerefresults.length != typeRefEntryResultModel.length)
@@ -527,7 +527,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		  }
 	
 		  String [] funRefEntryResultModel ={"EntryResult: word=functionRef/something/A, refs={ 1 }, offsets={ [ 259] }"};//$NON-NLS-1$ 
-		  IEntryResult[] funRefresults = ind.queryEntries(IIndexConstants.FUNCTION_REF);
+		  IEntryResult[] funRefresults = ind.queryEntries(IndexerOutput.FUNCTION_REF);
 		  assertTrue("Entry exists",funRefresults != null); //$NON-NLS-1$ 
 		  
 		  if (funRefresults.length != funRefEntryResultModel.length)
@@ -539,7 +539,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		  }
 				
 		  String [] namespaceRefResultModel = {"EntryResult: word=namespaceRef/A, refs={ 1 }, offsets={ [ 210] }", "EntryResult: word=namespaceRef/B/A, refs={ 1 }, offsets={ [ 288] }"}; //$NON-NLS-1$ //$NON-NLS-2$ 
-		  IEntryResult[] namespacerefresults = ind.queryEntries(IIndexConstants.NAMESPACE_REF);
+		  IEntryResult[] namespacerefresults = ind.queryEntries(IndexerOutput.NAMESPACE_REF);
 		  assertTrue("Entry exists",namespacerefresults!=null); //$NON-NLS-1$ 
 		  
 		  if (namespacerefresults.length != namespaceRefResultModel.length)
@@ -551,7 +551,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		  }
 				
 		  String [] fieldRefResultModel = {"EntryResult: word=fieldRef/y/C/B/A, refs={ 1 }, offsets={ [ 2161] }"}; //$NON-NLS-1$
-		  IEntryResult[] fieldrefresults = ind.queryEntries(IIndexConstants.FIELD_REF);
+		  IEntryResult[] fieldrefresults = ind.queryEntries(IndexerOutput.FIELD_REF);
 		  assertTrue("Entry exists",fieldrefresults!=null); //$NON-NLS-1$ 
 		  
 		  if (fieldrefresults.length != fieldRefResultModel.length)
@@ -563,7 +563,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		  }
 	
 		  String [] methodRefResultModel = {"EntryResult: word=methodRef/bar/C/B/A, refs={ 1 }, offsets={ [ 2184] }"}; //$NON-NLS-1$	 
-		  IEntryResult[] methodrefresults = ind.queryEntries(IIndexConstants.METHOD_REF);
+		  IEntryResult[] methodrefresults = ind.queryEntries(IndexerOutput.METHOD_REF);
 		  assertTrue("Entry exists", methodrefresults != null); //$NON-NLS-1$  
 		   
 		  if (methodrefresults.length != methodRefResultModel.length)
@@ -577,7 +577,6 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	
   public void testExactDeclarations() throws Exception
   {
-     //TODO Bogdan - you may want to import c.h here a.h includes it! - JC
   	 importFile("a.h","resources/dependency/a.h");//$NON-NLS-1$ //$NON-NLS-2$ 
 	 
   	  //Make sure project got added to index
@@ -588,8 +587,8 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	  importFile("DepTest3.h","resources/dependency/DepTest3.h");//$NON-NLS-1$ //$NON-NLS-2$ 
 	  importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");//$NON-NLS-1$ //$NON-NLS-2$ 
 	  
-	  IEntryResult[] eResult = ind.queryEntries(IIndexConstants.CLASS_DECL);
-	  IQueryResult[] qResult = ind.queryPrefix(IIndexConstants.CLASS_DECL);
+	  IEntryResult[] eResult = ind.queryEntries((new String(IndexerOutput.TYPE_DECL) + IndexerOutput.CLASS_SUFFIX).toCharArray());
+	  IQueryResult[] qResult = ind.queryPrefix((new String(IndexerOutput.TYPE_DECL) + IndexerOutput.CLASS_SUFFIX).toCharArray());
 	  
 	  assertTrue("Expected 2 files indexed", qResult.length == 2); //$NON-NLS-1$ 
 	  assertTrue("Checking DepTest3.h location", qResult[0].getPath().equals("/IndexerTestProject/DepTest3.h")); //$NON-NLS-1$ //$NON-NLS-2$ 
@@ -656,7 +655,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	  IIndex ind = sourceIndexer.getIndex(testProjectPath,true,true);
 	  assertTrue("Index exists for project",ind != null); //$NON-NLS-1$ 
 	
-	  IEntryResult[] macroresults = ind.queryEntries(IIndexConstants.MACRO_DECL);
+	  IEntryResult[] macroresults = ind.queryEntries(IndexerOutput.MACRO_DECL);
 	  assertTrue("Entry exists", macroresults != null); //$NON-NLS-1$ 
 	  
 	  String [] macroResultModel = {"EntryResult: word=macroDecl/CASE, refs={ 1 }, offsets={ [ 2131] }",

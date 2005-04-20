@@ -48,14 +48,13 @@ import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * @author aniefer
  */
-public abstract class CSearchPattern implements ICSearchConstants, ICSearchPattern, IIndexConstants {
+public abstract class CSearchPattern implements ICSearchConstants, ICSearchPattern {
 	
 	public static final int IMPOSSIBLE_MATCH = 0;
 	public static final int POSSIBLE_MATCH   = 1;

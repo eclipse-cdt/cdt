@@ -385,7 +385,7 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( c );
 		compUnit.addSymbol( d );
 		
-		IContainerSymbol enum = table.newContainerSymbol( "enum".toCharArray(), ITypeInfo.t_enumeration ); //$NON-NLS-1$
+		IContainerSymbol enum1 = table.newContainerSymbol( "enum".toCharArray(), ITypeInfo.t_enumeration ); //$NON-NLS-1$
 		
 		ISymbol enumerator = table.newSymbol( "enumerator".toCharArray(), ITypeInfo.t_enumerator ); //$NON-NLS-1$
 		
@@ -394,11 +394,11 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ISymbol x = table.newSymbol( "x".toCharArray(), ITypeInfo.t_int ); //$NON-NLS-1$
 		
-		d.addSymbol( enum );
+		d.addSymbol( enum1 );
 		d.addSymbol( stat );
 		d.addSymbol( x );
 		
-		enum.addSymbol( enumerator );
+		enum1.addSymbol( enumerator );
 		
 		a.addParent( b );
 		a.addParent( c );

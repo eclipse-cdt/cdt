@@ -9,7 +9,6 @@ package org.eclipse.cdt.core.suite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.filetype.tests.ResolverTests;
 import org.eclipse.cdt.core.indexer.tests.DependencyTests;

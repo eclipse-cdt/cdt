@@ -211,8 +211,8 @@ public class CPathEntryTest extends TestCase {
 			}
 			
 		};
-		CoreModel.getDefault().setRawPathEntries(testProject, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
-		CoreModel.getDefault().setPathEntryContainer(new ICProject[]{testProject}, container, new NullProgressMonitor());
+		CoreModel.setRawPathEntries(testProject, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
+		CoreModel.setPathEntryContainer(new ICProject[]{testProject}, container, new NullProgressMonitor());
 		IPathEntry[] entries = testProject.getResolvedPathEntries();
 		// We always have at least two entries:
 		//  1) the default sourceEntry becomes the project

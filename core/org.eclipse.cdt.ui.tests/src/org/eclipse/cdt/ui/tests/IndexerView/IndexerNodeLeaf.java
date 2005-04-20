@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -53,10 +53,10 @@ public class IndexerNodeLeaf implements IAdaptable {
         String stringBeforeName = null;
 
         // set the filtersFlag
-        if (word.startsWith(FilterIndexerViewDialog.ENTRY_REF_STRING)) {
+        /*if (word.startsWith(FilterIndexerViewDialog.ENTRY_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING)) {
+        } else */if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_TYPE_REF;
 //        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_STRING)) {
@@ -68,13 +68,13 @@ public class IndexerNodeLeaf implements IAdaptable {
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_FUNCTION_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING)) {
+        } /*else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF;
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
+        }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_NAMESPACE_REF;
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL_STRING)) {
@@ -104,10 +104,10 @@ public class IndexerNodeLeaf implements IAdaptable {
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_INCLUDE_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING)) {
+        } /*else if (word.startsWith(FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_SUPER_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
+        }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_T;
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_C_STRING)) {
@@ -294,8 +294,8 @@ public class IndexerNodeLeaf implements IAdaptable {
     }
 
     public String toString() {
-        if (!parent.isDisplayFullName() && name.indexOf(IIndexConstants.SEPARATOR) > 0)
-            return name.substring(0, name.indexOf(IIndexConstants.SEPARATOR));
+        if (!parent.isDisplayFullName() && name.indexOf(IndexerOutput.SEPARATOR) > 0)
+            return name.substring(0, name.indexOf(IndexerOutput.SEPARATOR));
         
         return name;
     }

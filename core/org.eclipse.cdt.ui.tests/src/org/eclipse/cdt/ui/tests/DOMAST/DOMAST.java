@@ -1086,7 +1086,7 @@ public class DOMAST extends ViewPart {
 	   	protected void displayNames(IASTName[] names, String queryLabel, String pattern) {
 	        DOMQuery job = new DOMQuery(names, queryLabel, pattern);
 	        NewSearchUI.activateSearchResultView();
-	        NewSearchUI.runQuery(job);
+	        NewSearchUI.runQueryInBackground(job);
 	     }
    }
    
@@ -1096,7 +1096,7 @@ public class DOMAST extends ViewPart {
 		protected void displayProblems(IASTProblem[] problems, String queryLabel, String pattern) {
 	        DOMQuery job = new DOMQuery(problems, queryLabel, pattern);
 	        NewSearchUI.activateSearchResultView();
-	        NewSearchUI.runQuery(job);
+	        NewSearchUI.runQueryInBackground(job);
 	     }
 		
 		public void run() {

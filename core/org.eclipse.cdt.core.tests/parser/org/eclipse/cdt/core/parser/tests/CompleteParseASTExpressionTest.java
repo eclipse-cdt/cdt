@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;

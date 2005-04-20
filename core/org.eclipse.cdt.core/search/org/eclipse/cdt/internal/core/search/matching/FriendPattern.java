@@ -22,7 +22,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 
 /**
  * @author bgheorgh
@@ -45,7 +45,7 @@ public class FriendPattern extends ClassDeclarationPattern {
 	}
 	
 	public char[] indexEntryPrefix() {
-		return AbstractIndexer.bestTypePrefix(
+		return IndexerOutput.bestTypePrefix(
 				searchFor,
 				getLimitTo(),
 				simpleName,
@@ -56,7 +56,7 @@ public class FriendPattern extends ClassDeclarationPattern {
 	}
 	
 	protected boolean matchIndexEntry() {
-	    if( decodedType != FRIEND_SUFFIX ){
+	    if( decodedType != IndexerOutput.FRIEND_SUFFIX ){
 			return false;
 		}
 	    

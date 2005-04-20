@@ -16,7 +16,7 @@ package org.eclipse.cdt.internal.ui.search;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -44,7 +44,7 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 			beep();
 			return;
 		}
-		SearchUI.openSearchDialog(fWindow, C_SEARCH_PAGE_ID);
+		NewSearchUI.openSearchDialog(fWindow, C_SEARCH_PAGE_ID);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

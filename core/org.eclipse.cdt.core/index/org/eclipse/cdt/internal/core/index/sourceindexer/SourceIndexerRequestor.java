@@ -65,7 +65,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexProblemHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -80,7 +79,7 @@ import org.eclipse.core.runtime.Path;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexConstants {
+public class SourceIndexerRequestor implements ISourceElementRequestor {
 	
 	SourceIndexerRunner indexer;
 	IFile resourceFile;
@@ -302,7 +301,12 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 			else {
 				//Need to add file to index and get a fileNumber
 				if (tempFile != null){
-					indFile = indexer.output.addIndexedFile(filePath);
+				indFile = indexer.output.addIndexedFile(tempFile.getFullPath().toString());
+				if (indFile != null)
+					fileNum = indFile.getFileID();
+				}
+				else {
+					indFile = indexer.output.addIndexedFile(include.getFullFileName());
 					if (indFile != null)
 						fileNum = indFile.getFileID();
 				}

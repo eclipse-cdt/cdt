@@ -135,7 +135,7 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	 */
 	public boolean canRunInBackground() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)

@@ -42,7 +42,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class CoreModel {

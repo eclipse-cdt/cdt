@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -135,7 +135,7 @@ public class IndexerView extends ViewPart {
                             int matchMode = ICSearchConstants.PATTERN_MATCH;
                             boolean isCaseSensitive = false;
                             
-                            char[] queryString = AbstractIndexer.bestPrefix( prefix, optionalType, name, containingTypes, matchMode, isCaseSensitive);
+                            char[] queryString = IndexerOutput.bestPrefix( prefix, optionalType, name, containingTypes, matchMode, isCaseSensitive);
                             
                             IEntryResult[] results = index.queryEntries(queryString);
                             if (results == null) return Status.CANCEL_STATUS;
@@ -313,17 +313,17 @@ public class IndexerView extends ViewPart {
            if (obj instanceof IndexerNodeLeaf) {
                String word = String.valueOf(((IndexerNodeLeaf)obj).getResult().getWord());
                
-               if (word.startsWith(FilterIndexerViewDialog.ENTRY_REF_STRING)) {
+               /*if (word.startsWith(FilterIndexerViewDialog.ENTRY_REF_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_REF_STRING)) {
+               } else*/ if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_REF_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_FUNCTION_REF;
                } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_FUNCTION_DECL;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING)) {
+               } /*else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_CONSTRUCTOR_REF;
                } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_CONSTRUCTOR_DECL;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
+               }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_NAMESPACE_REF;
                } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_NAMESPACE_DECL;
@@ -343,9 +343,9 @@ public class IndexerView extends ViewPart {
                    imageKey = IndexerViewPluginImages.IMG_MACRO_DECL;
                } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_INCLUDE_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING)) {
+               }/* else if (word.startsWith(FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_SUPER_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
+               }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_TYPEDEF;
                } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_C_STRING)) {
                    imageKey = IndexerViewPluginImages.IMG_CLASS;
@@ -625,7 +625,7 @@ public class IndexerView extends ViewPart {
         protected void displayLocations(IndexerNodeLeaf leaf, String queryLabel, String pattern) {
             IndexerQuery job = new IndexerQuery(leaf, queryLabel, pattern);
             NewSearchUI.activateSearchResultView();
-            NewSearchUI.runQuery(job);
+            NewSearchUI.runQueryInBackground(job);
          }
                 
         public void run() {

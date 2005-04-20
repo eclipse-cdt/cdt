@@ -25,9 +25,13 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -229,7 +233,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			if (binding instanceof ITypedef) {
 				imageDescriptor = CElementImageProvider.getTypedefImageDescriptor();
 			} else if (binding instanceof ICompositeType) {
-				if (((ICompositeType)binding).getKey() == ICPPClassType.k_class)
+				if (((ICompositeType)binding).getKey() == ICPPClassType.k_class || binding instanceof ICPPClassTemplate)
 					imageDescriptor = CElementImageProvider.getClassImageDescriptor();
 				else if (((ICompositeType)binding).getKey() == ICompositeType.k_struct)
 					imageDescriptor = CElementImageProvider.getStructImageDescriptor();
@@ -253,6 +257,12 @@ public class DOMCompletionContributor implements ICompletionContributor {
 				imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
 			} else if (binding instanceof ICPPNamespace) {
 				imageDescriptor = CElementImageProvider.getNamespaceImageDescriptor();
+			} else if (binding instanceof ICPPFunctionTemplate) {
+				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
+			} else if (binding instanceof ICPPUsingDeclaration) {
+				ICPPDelegate[] delegates = ((ICPPUsingDeclaration)binding).getDelegates();
+				if (delegates.length > 0)
+					return getImage(delegates[0]);
 			}
 		} catch (DOMException e) {
 		}

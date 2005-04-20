@@ -1307,10 +1307,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					typeId = typeId(true, false);
 					switch (LT(1)) {
 					case IToken.tRPAREN:
-						lastOffset = consume(IToken.tRPAREN).getEndOffset();
-						break;
 					case IToken.tEOC:
-						lastOffset = Integer.MAX_VALUE;
+						lastOffset = consume().getEndOffset();
 						break;
 					default:
 						throw backtrack;
@@ -1501,10 +1499,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				int lastOffset;
 				switch (LT(1)) {
 				case IToken.tRBRACKET:
-					lastOffset = consume(IToken.tRBRACKET).getEndOffset();
-					break;
 				case IToken.tEOC:
-					lastOffset = Integer.MAX_VALUE;
+					lastOffset = consume().getEndOffset();
 					break;
 				default:
 					throw backtrack;
@@ -1540,10 +1536,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					secondExpression = null;
 				switch (LT(1)) {
 				case IToken.tRPAREN:
-					lastOffset = consume(IToken.tRPAREN).getEndOffset();
-					break;
 				case IToken.tEOC:
-					lastOffset = Integer.MAX_VALUE;
+					lastOffset = consume().getEndOffset();
 					break;
 				default:
 					throw backtrack;
@@ -1959,13 +1953,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			// using-directive
 			int endOffset = consume(IToken.t_namespace).getEndOffset();
 			IASTName name = null;
-			if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
+			switch (LT(1)) {
+			case IToken.tIDENTIFIER:
+			case IToken.tCOLONCOLON:
+			case IToken.tCOMPLETION:
 				name = createName(name());
-			else
+				break;
+			default:
 				throwBacktrack(firstToken.getOffset(), endOffset
 						- firstToken.getOffset());
+			}
 
-			endOffset = consume(IToken.tSEMI).getEndOffset();
+			switch (LT(1)) {
+			case IToken.tSEMI:
+			case IToken.tEOC:
+				endOffset = consume().getEndOffset();
+				break;
+			default:
+				throw backtrack;
+			}
+
 			ICPPASTUsingDirective astUD = createUsingDirective();
 			((ASTNode) astUD).setOffsetAndLength(firstToken.getOffset(),
 					endOffset - firstToken.getOffset());
@@ -1983,7 +1990,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		IASTName name = createName(name());
-		int end = consume(IToken.tSEMI).getEndOffset();
+		int end;
+		switch (LT(1)) {
+		case IToken.tSEMI:
+		case IToken.tEOC:
+			end = consume().getEndOffset();
+			break;
+		default:
+			throw backtrack;
+		}
+		
 		ICPPASTUsingDeclaration result = createUsingDeclaration();
 		((ASTNode) result).setOffsetAndLength(firstToken.getOffset(), end
 				- firstToken.getOffset());
@@ -4549,10 +4565,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			int l;
 			switch (LT(1)) {
 			case IToken.tRBRACKET:
-				l = consume(IToken.tRBRACKET).getEndOffset();
-				break;
 			case IToken.tEOC:
-				l = Integer.MAX_VALUE;
+				l = consume().getEndOffset();
 				break;
 			default:
 				throw backtrack;

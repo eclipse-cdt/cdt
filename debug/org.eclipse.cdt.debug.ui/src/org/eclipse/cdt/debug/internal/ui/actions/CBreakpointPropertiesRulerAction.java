@@ -43,7 +43,7 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	 */
 	public void run() {
 		if ( getBreakpoint() != null ) {
-			PropertyDialogAction action = new PropertyDialogAction( getTargetPart().getSite().getShell(), new ISelectionProvider() {
+			PropertyDialogAction action = new PropertyDialogAction( getTargetPart().getSite(), new ISelectionProvider() {
 
 				public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 				}

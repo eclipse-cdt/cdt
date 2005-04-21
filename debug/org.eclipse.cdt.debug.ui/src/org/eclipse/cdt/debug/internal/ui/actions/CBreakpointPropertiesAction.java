@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -49,7 +48,7 @@ public class CBreakpointPropertiesAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run( IAction action ) {
-		PropertyDialogAction propertyAction = new PropertyDialogAction( CDebugUIPlugin.getActiveWorkbenchShell(), new ISelectionProvider() {
+		PropertyDialogAction propertyAction = new PropertyDialogAction( getActivePart().getSite(), new ISelectionProvider() {
 
 			public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 			}

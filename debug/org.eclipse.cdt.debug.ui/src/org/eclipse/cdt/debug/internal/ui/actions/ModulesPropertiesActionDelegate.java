@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
 import org.eclipse.cdt.debug.core.model.ICModule;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -29,6 +28,8 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 public class ModulesPropertiesActionDelegate extends ActionDelegate implements IObjectActionDelegate {
 
 	private ICModule fModule;
+
+	private IWorkbenchPart fTargetPart;
 
 	/** 
 	 * Constructor for ModulesPropertiesActionDelegate. 
@@ -49,13 +50,14 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+		fTargetPart = targetPart;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run( IAction action ) {
-		PropertyDialogAction propertyAction = new PropertyDialogAction( CDebugUIPlugin.getActiveWorkbenchShell(), new ISelectionProvider() {
+		PropertyDialogAction propertyAction = new PropertyDialogAction( getActivePart().getSite(), new ISelectionProvider() {
 
 			public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 			}
@@ -87,5 +89,9 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 		}
 		action.setEnabled( false );
 		setModule( null );
+	}
+
+	protected IWorkbenchPart getActivePart() {
+		return fTargetPart;
 	}
 }

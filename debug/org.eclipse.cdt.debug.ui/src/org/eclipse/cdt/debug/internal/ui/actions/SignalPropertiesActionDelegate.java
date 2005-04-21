@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICSignal;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -30,6 +29,8 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 
 	private ICSignal fSignal;
 
+	private IWorkbenchPart fTargetPart;
+
 	/**
 	 * Constructor for SignalPropertiesActionDelegate.
 	 * 
@@ -43,6 +44,7 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
+		fTargetPart = targetPart;
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +75,7 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run( IAction action ) {
-		PropertyDialogAction propertyAction = new PropertyDialogAction( CDebugUIPlugin.getActiveWorkbenchShell(), new ISelectionProvider() {
+		PropertyDialogAction propertyAction = new PropertyDialogAction( getActivePart().getSite(), new ISelectionProvider() {
 
 			public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 			}
@@ -89,5 +91,9 @@ public class SignalPropertiesActionDelegate extends ActionDelegate implements IO
 			}
 		} );
 		propertyAction.run();
+	}
+
+	protected IWorkbenchPart getActivePart() {
+		return fTargetPart;
 	}
 }

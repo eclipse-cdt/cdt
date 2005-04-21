@@ -1,4 +1,9 @@
 2005-04-21 Mikhail Khodjaiants
+	Changed the labels of the "Source Lookup Path" preference page to "Common Source Lookup Path".
+	* PreferenceMessages.properties
+	* plugin.properties
+
+2005-04-21 Mikhail Khodjaiants
 	Bug 92292: [artwork] "Instruction Stepping Mode" image is same as "Use Step Filters".
 	* icons/dlcl16/instr_step.gif
 	* icons/elcl16/instr_step.gif

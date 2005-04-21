@@ -66,8 +66,6 @@ public class FilterIndexerViewDialog extends Dialog {
 
     private String message = "Filter Indexer Results (. = any character, .* = any string):"; //$NON-NLS-1$
 
-    //public static final int ENTRY_REF = 1;
-    //public static final String ENTRY_REF_STRING = String.valueOf(IndexerOutput.REF);
     public static final int ENTRY_TYPE_REF = 2;
     public static final String ENTRY_TYPE_REF_STRING = String.valueOf(IndexerOutput.TYPE_REF);
     public static final String ENTRY_TYPE_DECL_STRING = String.valueOf(IndexerOutput.TYPE_DECL);
@@ -75,10 +73,6 @@ public class FilterIndexerViewDialog extends Dialog {
     public static final String ENTRY_FUNCTION_REF_STRING = String.valueOf(IndexerOutput.FUNCTION_REF);
     public static final int ENTRY_FUNCTION_DECL = 5;
     public static final String ENTRY_FUNCTION_DECL_STRING = String.valueOf(IndexerOutput.FUNCTION_DECL);
-    public static final int ENTRY_CONSTRUCTOR_REF = 6;
-    //public static final String ENTRY_CONSTRUCTOR_REF_STRING = String.valueOf(IndexerOutput.CONSTRUCTOR_REF);
-    //public static final int ENTRY_CONSTRUCTOR_DECL = 7;
-    //public static final String ENTRY_CONSTRUCTOR_DECL_STRING = String.valueOf(IndexerOutput.CONSTRUCTOR_DECL);
     public static final int ENTRY_NAMESPACE_REF = 8;
     public static final String ENTRY_NAMESPACE_REF_STRING = String.valueOf(IndexerOutput.NAMESPACE_REF);
     public static final int ENTRY_NAMESPACE_DECL = 9;
@@ -99,8 +93,6 @@ public class FilterIndexerViewDialog extends Dialog {
     public static final String ENTRY_MACRO_DECL_STRING = String.valueOf(IndexerOutput.MACRO_DECL);
     public static final int ENTRY_INCLUDE_REF = 17;
     public static final String ENTRY_INCLUDE_REF_STRING = String.valueOf(IndexerOutput.INCLUDE_REF);
-    //public static final int ENTRY_SUPER_REF = 18;
-    //public static final String ENTRY_SUPER_REF_STRING = String.valueOf(IndexerOutput.SUPER_REF);
     public static final int ENTRY_TYPE_DECL_T = 19;
     public static final String ENTRY_TYPE_DECL_T_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.TYPEDEF_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
     public static final int ENTRY_TYPE_DECL_C = 20;

@@ -36,7 +36,7 @@ public class IndexerFilterManager {
         if (leaf.getName() != null && nameFilters != null && nameFilters.length > 0) {
             boolean matchesPattern=false;
             for(int l=0; l<nameFilters.length; l++) {
-                if (nameFilters[l].equals(BLANK_STRING) || leaf.getName().matches(nameFilters[l])) {
+                if (nameFilters[l].equals(BLANK_STRING) || leaf.getShortName().matches(nameFilters[l])) {
                     matchesPattern=true;
                     break;
                 }

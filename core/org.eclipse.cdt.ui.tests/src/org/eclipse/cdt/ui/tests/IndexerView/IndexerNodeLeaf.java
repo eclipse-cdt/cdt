@@ -53,28 +53,16 @@ public class IndexerNodeLeaf implements IAdaptable {
         String stringBeforeName = null;
 
         // set the filtersFlag
-        /*if (word.startsWith(FilterIndexerViewDialog.ENTRY_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_REF;
-        } else */if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING)) {
+		if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_TYPE_REF;
-//        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_STRING)) {
-//            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_STRING;
-//            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL;
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_FUNCTION_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_FUNCTION_REF;
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_FUNCTION_DECL;
-        } /*else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL;
-        }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
+        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_NAMESPACE_REF;
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL_STRING)) {
@@ -104,10 +92,7 @@ public class IndexerNodeLeaf implements IAdaptable {
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_INCLUDE_REF;
-        } /*else if (word.startsWith(FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_SUPER_REF;
-        }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
+        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
             stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING;
             filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_T;
         } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_C_STRING)) {
@@ -295,7 +280,7 @@ public class IndexerNodeLeaf implements IAdaptable {
 
     public String toString() {
         if (!parent.isDisplayFullName() && name.indexOf(IndexerOutput.SEPARATOR) > 0)
-            return name.substring(0, name.indexOf(IndexerOutput.SEPARATOR));
+            return getShortName();
         
         return name;
     }
@@ -311,4 +296,11 @@ public class IndexerNodeLeaf implements IAdaptable {
     public String getName() {
         return name;
     }
+	
+	public String getShortName() {
+		if (name.indexOf(IndexerOutput.SEPARATOR) > 0)
+			return name.substring(0, name.indexOf(IndexerOutput.SEPARATOR));
+		
+		return name;
+	}
 }

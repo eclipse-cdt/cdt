@@ -1,3 +1,10 @@
+2005-04-21 Mikhail Khodjaiants
+	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
+	* CoreFileLaunchConfigurationTabGroup.java
+	* LocalAttachLaunchConfigurationTabGroup.java
+	* LocalRunLaunchConfigurationTabGroup.java
+	* plugin.xml
+
 2005-04-07 David Daoust
 	Update icons
 	

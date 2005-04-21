@@ -13,11 +13,11 @@ package org.eclipse.cdt.launch.internal.ui;
 import org.eclipse.cdt.launch.ui.CArgumentsTab;
 import org.eclipse.cdt.launch.ui.CDebuggerTab;
 import org.eclipse.cdt.launch.ui.CMainTab;
-import org.eclipse.cdt.launch.ui.CSourceLookupTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 
 public class LocalRunLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 	
@@ -30,7 +30,8 @@ public class LocalRunLaunchConfigurationTabGroup extends AbstractLaunchConfigura
 			new CArgumentsTab(),
 			new MigratingCEnvironmentTab(),
 			new CDebuggerTab(false),
-			new CSourceLookupTab(),
+//			new CSourceLookupTab(),
+			new SourceLookupTab(),
 			new CommonTab() 
 		};
 		setTabs(tabs);

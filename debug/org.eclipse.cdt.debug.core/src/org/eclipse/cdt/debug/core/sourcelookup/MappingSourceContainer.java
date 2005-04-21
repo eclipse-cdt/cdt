@@ -17,13 +17,14 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  
 /**
  * The source container for path mappings.
@@ -36,27 +37,22 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	 */
 	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapping";	 //$NON-NLS-1$
 
+	private String fName;
 	private ArrayList fContainers;
 
 	/** 
 	 * Constructor for MappingSourceContainer. 
 	 */
-	public MappingSourceContainer() {
+	public MappingSourceContainer( String name ) {
+		fName = name;
 		fContainers = new ArrayList();
-	}
-
-	/** 
-	 * Constructor for MappingSourceContainer. 
-	 */
-	public MappingSourceContainer( MapEntrySourceContainer[] entries ) {
-		super();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		return "Path Mappings";
+		return fName;
 	}
 
 	/* (non-Javadoc)
@@ -110,7 +106,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 					single = e;
 				}
 				else if ( multiStatus == null ) {
-					multiStatus = new MultiStatus( DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{ single.getStatus() }, SourceLookupMessages.getString( "CompositeSourceContainer.0" ), null ); //$NON-NLS-1$
+					multiStatus = new MultiStatus( DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{ single.getStatus() }, SourceLookupMessages.getString( "MappingSourceContainer.0" ), null ); //$NON-NLS-1$
 					multiStatus.add( e.getStatus() );
 				}
 				else {
@@ -171,5 +167,37 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 			((ISourceContainer)it.next()).dispose();
 		}
 		fContainers.clear();
+	}
+
+	public MappingSourceContainer copy() {
+		MappingSourceContainer copy = new MappingSourceContainer( fName );
+		MapEntrySourceContainer[] entries = new MapEntrySourceContainer[fContainers.size()];
+		for ( int i = 0; i < entries.length; ++i ) {
+			copy.addMapEntry( ((MapEntrySourceContainer)fContainers.get( i )).copy() );
+		}
+		return copy;
+	}
+	
+	public void setName( String name ) {
+		fName = name;
+	}	
+
+	public IPath getCompilationPath( String sourceName ) {
+		IPath path = new Path( sourceName );
+		IPath result = null;
+		try {
+			ISourceContainer[] containers = getSourceContainers();
+			for ( int i = 0; i < containers.length; ++i ) {
+				MapEntrySourceContainer entry = (MapEntrySourceContainer)containers[i];
+				IPath local = entry.getLocalPath();
+				if ( local.isPrefixOf( path ) ) {
+					result = entry.getBackendPath().append( path.removeFirstSegments( local.segmentCount() ) );
+					break;
+				}
+			}
+		}
+		catch( CoreException e ) {
+		}
+		return result;
 	}
 }

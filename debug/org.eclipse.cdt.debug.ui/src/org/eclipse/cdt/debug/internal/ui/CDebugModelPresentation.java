@@ -41,7 +41,6 @@ import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
-import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.EditorInputDelegate;
 import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -153,20 +152,20 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
 	public String getEditorId( IEditorInput input, Object element ) {
-		if ( input instanceof EditorInputDelegate ) {
-			if ( ((EditorInputDelegate)input).getDelegate() == null )
-				return CDebugEditor.EDITOR_ID;
-			return getEditorId( ((EditorInputDelegate)input).getDelegate(), element );
-		}
+//		if ( input instanceof EditorInputDelegate ) {
+//			if ( ((EditorInputDelegate)input).getDelegate() == null )
+//				return CDebugEditor.EDITOR_ID;
+//			return getEditorId( ((EditorInputDelegate)input).getDelegate(), element );
+//		}
 		String id = null;
 		if ( input != null ) {
 			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
 			id = (descriptor != null) ? descriptor.getId() : CUIPlugin.EDITOR_ID;
 		}
-		if ( CUIPlugin.EDITOR_ID.equals( id ) ) {
-			return CDebugEditor.EDITOR_ID;
-		}
+//		if ( CUIPlugin.EDITOR_ID.equals( id ) ) {
+//			return CDebugEditor.EDITOR_ID;
+//		}
 		return id;
 	}
 

@@ -30,6 +30,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 
 	private final static String ELEMENT_MAPPING = "mapping"; //$NON-NLS-1$
 	private final static String ELEMENT_MAP_ENTRY = "mapEntry"; //$NON-NLS-1$
+	private final static String ATTR_NAME = "name"; //$NON-NLS-1$
 	private final static String ATTR_MEMENTO = "memento"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
@@ -40,6 +41,9 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 		if ( node.getNodeType() == Node.ELEMENT_NODE ) {
 			Element element = (Element)node;
 			if ( ELEMENT_MAPPING.equals( element.getNodeName() ) ) {
+				String name = element.getAttribute( ATTR_NAME );
+				if ( name == null ) 
+					name = ""; //$NON-NLS-1$
 				List entries = new ArrayList();
 				Node childNode = element.getFirstChild();
 				while( childNode != null ) {
@@ -48,7 +52,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 						if ( ELEMENT_MAP_ENTRY.equals( child.getNodeName() ) ) {
 							String childMemento = child.getAttribute( ATTR_MEMENTO );
 							if ( childMemento == null || childMemento.length() == 0 ) {
-								abort( "Source lookup: unable to restore map entry - expecting memnto attribute.", null );
+								abort( InternalSourceLookupMessages.getString( "MappingSourceContainerType.0" ), null ); //$NON-NLS-1$
 							}
 							ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager().getSourceContainerType( MapEntrySourceContainer.TYPE_ID );
 							MapEntrySourceContainer entry = (MapEntrySourceContainer)type.createSourceContainer( childMemento );
@@ -57,16 +61,16 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 					}
 					childNode = childNode.getNextSibling();
 				}
-				MappingSourceContainer container = new MappingSourceContainer();
+				MappingSourceContainer container = new MappingSourceContainer( name );
 				Iterator it = entries.iterator();
 				while( it.hasNext() ) {
 					container.addMapEntry( (MapEntrySourceContainer)it.next() );
 				}
 				return container;
 			}
-			abort( "Source lookup: unable to restore mapping - expecting mapping element.", null );
+			abort( InternalSourceLookupMessages.getString( "MappingSourceContainerType.1" ), null ); //$NON-NLS-1$
 		}
-		abort( "Source lookup: unable to restore mapping - invalid memento.", null );
+		abort( InternalSourceLookupMessages.getString( "MappingSourceContainerType.2" ), null ); //$NON-NLS-1$
 		return null;		
 	}
 
@@ -76,6 +80,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 	public String getMemento( ISourceContainer container ) throws CoreException {
 		Document document = newDocument();
 		Element element = document.createElement( ELEMENT_MAPPING );
+		element.setAttribute( ATTR_NAME, container.getName() );
 		ISourceContainer[] entries = ((MappingSourceContainer)container).getSourceContainers();
 		for ( int i = 0; i < entries.length; ++i ) {
 			Element child = document.createElement( ELEMENT_MAP_ENTRY );

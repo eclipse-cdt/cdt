@@ -20,10 +20,8 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -186,8 +184,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		PreferenceConverter.setDefault( store, IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR, IInternalCDebugUIConstants.DEFAULT_DISASSEMBLY_SOURCE_LINE_RGB );
 	}
 
-	/**
-	 * @see DialogPage#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
@@ -274,8 +272,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		label.setLayoutData( gd );
 	}
 
-	/**
-	 * @see IPreferencePage#performOk() Also, notifies interested listeners
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		storeValues();

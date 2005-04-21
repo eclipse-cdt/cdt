@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
+import java.io.File;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
@@ -22,9 +23,11 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -57,8 +60,9 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 	class MapEntryDialog extends TitleAreaDialog {
 
-		protected Text fBackendPathText;
+		private MapEntrySourceContainer fEntry;
 
+		protected Text fBackendPathText;
 		protected Text fLocalPathText;
 
 		/**
@@ -66,13 +70,22 @@ public class PathMappingDialog extends TitleAreaDialog {
 		 */
 		public MapEntryDialog( Shell parentShell ) {
 			super( parentShell );
+			fEntry = null;
 		}
 
+		/**
+		 * Constructor for MapEntryDialog.
+		 */
+		public MapEntryDialog( Shell parentShell, MapEntrySourceContainer entry ) {
+			super( parentShell );
+			fEntry = entry;
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 		 */
 		protected Control createDialogArea( Composite parent ) {
-			setTitle( "Specify the mapping paths" );
+			setTitle( SourceLookupUIMessages.getString( "PathMappingDialog.0" ) ); //$NON-NLS-1$
 
 			Font font = parent.getFont();
 			Composite composite = new Composite( parent, SWT.NONE );
@@ -93,7 +106,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			setMessage( null );
 
 			Label label = new Label( composite, SWT.LEFT );
-			label.setText( "Compilation path:" );
+			label.setText( SourceLookupUIMessages.getString( "PathMappingDialog.1" ) ); //$NON-NLS-1$
 			data = new GridData( GridData.FILL_HORIZONTAL );
 			data.horizontalSpan = 2;
 			label.setLayoutData( data );
@@ -111,7 +124,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			} );
 
 			label = new Label( composite, SWT.LEFT );
-			label.setText( "Local file system path:" );
+			label.setText( SourceLookupUIMessages.getString( "PathMappingDialog.2" ) ); //$NON-NLS-1$
 			data = new GridData( GridData.FILL_HORIZONTAL );
 			data.horizontalSpan = 2;
 			label.setLayoutData( data );
@@ -129,7 +142,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 			Button button = new Button( composite, SWT.PUSH );
 			button.setFont( font );
-			button.setText( "&Browse..." );
+			button.setText( SourceLookupUIMessages.getString( "PathMappingDialog.3" ) ); //$NON-NLS-1$
 			button.addSelectionListener( new SelectionListener() { 
 
 				public void widgetSelected( SelectionEvent e ) {
@@ -149,13 +162,21 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 		protected Control createContents( Composite parent ) {
 			Control control = super.createContents( parent );
+			initialize();
 			update();
 			return control;
 		}
 
 		protected void configureShell( Shell newShell ) {
-			newShell.setText( "Path Mapping" );
+			newShell.setText( SourceLookupUIMessages.getString( "PathMappingDialog.4" ) ); //$NON-NLS-1$
 			super.configureShell( newShell );
+		}
+
+		private void initialize() {
+			if ( fEntry != null ) {
+				fBackendPathText.setText( fEntry.getBackendPath().toOSString() );
+				fLocalPathText.setText( fEntry.getLocalPath().toOSString() );
+			}
 		}
 
 		protected void update() {
@@ -169,20 +190,29 @@ public class PathMappingDialog extends TitleAreaDialog {
 			setErrorMessage( null );
 			String backendText = fBackendPathText.getText().trim();
 			if ( backendText.length() == 0 ) {
-				setErrorMessage( "The compilation path must not be empty" );
+				setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.5" ) ); //$NON-NLS-1$
 				return false;
 			}
 			if ( !new Path( backendText ).isValidPath( backendText ) ) {
-				setErrorMessage( "Invalid compilation path." );
+				setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.6" ) ); //$NON-NLS-1$
 				return false;
 			}
 			String localText = fLocalPathText.getText().trim();
 			if ( localText.length() == 0 ) {
-				setErrorMessage( "The local file systems path must not be empty" );
+				setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.7" ) ); //$NON-NLS-1$
 				return false;
 			}
-			if ( !new Path( localText ).isValidPath( localText ) ) {
-				setErrorMessage( "Invalid local file system path." );
+			File localPath = new File( localText );
+			if ( !localPath.exists() ) {
+				setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.8" ) ); //$NON-NLS-1$
+				return false;
+			}
+			if ( !localPath.isDirectory() ) {
+				setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.9" ) ); //$NON-NLS-1$
+				return false;
+			}
+			if ( !localPath.isAbsolute() ) {
+				setErrorMessage( SourceLookupUIMessages.getString( "PathMappingDialog.10" ) ); //$NON-NLS-1$
 				return false;
 			}
 			return true;
@@ -197,7 +227,12 @@ public class PathMappingDialog extends TitleAreaDialog {
 		}
 
 		protected void okPressed() {
-			fMapping.addMapEntry( new MapEntrySourceContainer( getBackendPath(), getLocalPath() ) );
+			if ( fEntry == null ) {
+				fEntry = new MapEntrySourceContainer();
+				fMapping.addMapEntry( fEntry );
+			}
+			fEntry.setBackendPath( getBackendPath() );
+			fEntry.setLocalPath( getLocalPath() );
 			super.okPressed();
 		}
 	}
@@ -287,26 +322,31 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 	private TableViewer fViewer;
 
+	private Text fNameText;
 	private Button fAddButton;
+	private Button fEditButton;
 	private Button fRemoveButton;
 
 	public PathMappingDialog( Shell parentShell, MappingSourceContainer mapping ) {
 		super( parentShell );
 		fOriginalMapping = mapping;
-		fMapping = new MappingSourceContainer();
-		try {
-			fMapping.addMapEntries( (MapEntrySourceContainer[])mapping.getSourceContainers() );
-		}
-		catch( CoreException e ) {
-			setErrorMessage( e.getMessage() );
-		}
+		fMapping = fOriginalMapping.copy();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents( Composite parent ) {
+		Control control = super.createContents( parent );
+		updateButtons();
+		return control;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea( Composite parent ) {
-		setTitle( "Modify the list of path mappings" );
+		setTitle( SourceLookupUIMessages.getString( "PathMappingDialog.11" ) ); //$NON-NLS-1$
 		//TODO Add image
 		
 		Font font = parent.getFont();
@@ -325,10 +365,39 @@ public class PathMappingDialog extends TitleAreaDialog {
 		Dialog.applyDialogFont( composite );
 		PlatformUI.getWorkbench().getHelpSystem().setHelp( getShell(), ICDebugHelpContextIds.SOURCE_PATH_MAPPING_DIALOG );
 
+		Composite nameComp = new Composite( composite, SWT.NONE );
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		nameComp.setLayout( layout );
+		data = new GridData( GridData.FILL_HORIZONTAL );
+		data.horizontalSpan = 2;
+		nameComp.setLayoutData( data );
+		nameComp.setFont( font );
+
+		Label label = new Label( nameComp, SWT.LEFT );
+		data = new GridData( GridData.HORIZONTAL_ALIGN_BEGINNING );
+		label.setLayoutData( data );
+		label.setFont( font );
+		label.setText( SourceLookupUIMessages.getString( "PathMappingDialog.12" ) ); //$NON-NLS-1$
+		fNameText = new Text( nameComp, SWT.SINGLE | SWT.BORDER );
+		data = new GridData( GridData.FILL_HORIZONTAL );
+		fNameText.setLayoutData( data );
+		fNameText.setFont( font );
+		fNameText.setText( getMapping().getName() );
+		fNameText.addModifyListener( new ModifyListener() {
+			public void modifyText( ModifyEvent e ) {
+			}
+		} );
+		
 		fViewer = createViewer( composite );
 		data = new GridData( GridData.FILL_BOTH );
 		fViewer.getControl().setLayoutData( data );
 		fViewer.getControl().setFont( font );
+		fViewer.addSelectionChangedListener( new ISelectionChangedListener() { 
+			public void selectionChanged( SelectionChangedEvent event ) {
+				updateButtons();
+			}
+		} );
 
 		Composite buttonComp = new Composite( composite, SWT.NONE );
 		GridLayout buttonLayout = new GridLayout();
@@ -344,7 +413,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
 
-		fAddButton = createPushButton( buttonComp, "&Add...", fontMetrics );
+		fAddButton = createPushButton( buttonComp, SourceLookupUIMessages.getString( "PathMappingDialog.13" ), fontMetrics ); //$NON-NLS-1$
 		fAddButton.addSelectionListener( new SelectionAdapter() {
 				public void widgetSelected( SelectionEvent evt ) {
 					MapEntryDialog dialog = new MapEntryDialog( getShell() );
@@ -354,17 +423,27 @@ public class PathMappingDialog extends TitleAreaDialog {
 				}
 			} );
 
-		fRemoveButton = createPushButton( buttonComp, "Re&move", fontMetrics );
+		fEditButton = createPushButton( buttonComp, SourceLookupUIMessages.getString( "PathMappingDialog.14" ), fontMetrics ); //$NON-NLS-1$
+		fEditButton.addSelectionListener( new SelectionAdapter() {
+				public void widgetSelected( SelectionEvent evt ) {
+					MapEntrySourceContainer[] entries = getSelection();
+					if ( entries.length > 0 ) {
+						MapEntryDialog dialog = new MapEntryDialog( getShell(), entries[0] );
+						if ( dialog.open() == Window.OK ) {
+							getViewer().refresh();
+						}
+					}
+				}
+			} );
+
+		fRemoveButton = createPushButton( buttonComp, SourceLookupUIMessages.getString( "PathMappingDialog.15" ), fontMetrics ); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener( new SelectionAdapter() {
 				public void widgetSelected( SelectionEvent evt ) {
-					ISelection s = getViewer().getSelection();
-					if ( s instanceof IStructuredSelection ) {
-						Object[] ss = ((IStructuredSelection)s).toArray();
-						for ( int i = 0; i < ss.length; ++i ) {
-							fMapping.removeMapEntry( (MapEntrySourceContainer)ss[i] );
+					MapEntrySourceContainer[] entries = getSelection();
+						for ( int i = 0; i < entries.length; ++i ) {
+							fMapping.removeMapEntry( entries[i] );
 						}
 						getViewer().refresh();
-					}
 				}
 			} );
 
@@ -406,7 +485,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell( Shell newShell ) {
-		newShell.setText( "Path Mappings" );
+		newShell.setText( SourceLookupUIMessages.getString( "PathMappingDialog.16" ) ); //$NON-NLS-1$
 		super.configureShell( newShell );
 	}
 
@@ -419,6 +498,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 	 */
 	protected void okPressed() {
 		fOriginalMapping.clear();
+		fOriginalMapping.setName( fNameText.getText().trim() );
 		try {
 			fOriginalMapping.addMapEntries( (MapEntrySourceContainer[])fMapping.getSourceContainers() );
 		}
@@ -427,4 +507,24 @@ public class PathMappingDialog extends TitleAreaDialog {
 		fMapping.dispose();
 		super.okPressed();
 	}	
+
+	protected MapEntrySourceContainer[] getSelection() {
+		MapEntrySourceContainer[] result = new MapEntrySourceContainer[0];
+		ISelection s = getViewer().getSelection();
+		if ( s instanceof IStructuredSelection ) {
+			int size = ((IStructuredSelection)s).size();
+			result = (MapEntrySourceContainer[])((IStructuredSelection)s).toList().toArray( new MapEntrySourceContainer[size] );
+		}
+		return result; 
+	}
+
+	protected void updateButtons() {
+		MapEntrySourceContainer[] entries = getSelection();
+		if ( fEditButton != null ) {
+			fEditButton.setEnabled( entries.length == 1 );
+		}
+		if ( fRemoveButton != null ) {
+			fRemoveButton.setEnabled( entries.length > 0 );
+		}
+	}
 }

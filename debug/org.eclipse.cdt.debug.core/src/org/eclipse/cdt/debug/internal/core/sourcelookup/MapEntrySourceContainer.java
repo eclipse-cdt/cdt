@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,6 +37,14 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	private IPath fLocalPath;
 
 	private IPath fBackendPath;
+
+	/** 
+	 * Constructor for MapEntrySourceContainer. 
+	 */
+	public MapEntrySourceContainer() {
+		fBackendPath = Path.EMPTY;
+		fLocalPath = Path.EMPTY;
+	}
 
 	/** 
 	 * Constructor for MapEntrySourceContainer. 
@@ -80,7 +87,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format( "{0} - {1}", new String[] { getBackendPath().toString(), getLocalPath().toOSString() } ); //$NON-NLS-1$
+		return MessageFormat.format( "{0} - {1}", new String[] { getBackendPath().toOSString(), getLocalPath().toOSString() } ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -90,12 +97,20 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		return getSourceContainerType( TYPE_ID );
 	}
 	
-	protected IPath getLocalPath() {
+	public IPath getLocalPath() {
 		return fLocalPath;
 	}
 	
-	protected IPath getBackendPath() {
+	public IPath getBackendPath() {
 		return fBackendPath;
+	}
+
+	public void setLocalPath( IPath local ) {
+		fLocalPath = local;
+	}
+	
+	public void setBackendPath( IPath backend ) {
+		fBackendPath = backend;
 	}
 
 	/* (non-Javadoc)
@@ -106,5 +121,9 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 			return false;
 		MapEntrySourceContainer entry = (MapEntrySourceContainer)o;
 		return ( entry.getBackendPath().equals( getBackendPath() ) && entry.getLocalPath().equals( getLocalPath() ) );
+	}
+
+	public MapEntrySourceContainer copy() {
+		return new MapEntrySourceContainer( fBackendPath, fLocalPath );
 	}
 }

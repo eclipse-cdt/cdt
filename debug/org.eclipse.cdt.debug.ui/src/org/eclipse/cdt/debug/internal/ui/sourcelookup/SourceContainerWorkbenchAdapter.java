@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
@@ -44,7 +45,9 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 		}
 		if ( o instanceof ProjectSourceContainer ) {
 			IProject project = ((ProjectSourceContainer)o).getProject();
-			return getImageDescriptor( CCorePlugin.getDefault().getCoreModel().create( project ) );
+			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create( project );
+			if ( cProject != null )
+				return getImageDescriptor( cProject );
 		}
 		return null;
 	}
@@ -62,7 +65,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	public String getLabel( Object o ) {
 		if ( o instanceof MappingSourceContainer ) {
-			return ((MappingSourceContainer)o).getName();
+			return SourceLookupUIMessages.getString( "SourceContainerWorkbenchAdapter.0" ) + ((MappingSourceContainer)o).getName(); //$NON-NLS-1$
 		}
 		if ( o instanceof MapEntrySourceContainer ) {
 			return ((MapEntrySourceContainer)o).getName();

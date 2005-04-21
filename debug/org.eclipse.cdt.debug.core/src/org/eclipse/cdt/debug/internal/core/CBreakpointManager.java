@@ -44,6 +44,7 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -211,19 +212,18 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	public boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
-		// Problem: gdb doesn't accept breakpoint if the file is specified by full path (depends on the current directory).
-		// This prevents us from using gdb as a breakpoint filter. The case when two unrelated projects contain files 
-		// with the same name will cause problems.
-		// Current solution: the source locator is used as a breakpoint filter.
 		IResource resource = breakpoint.getMarker().getResource();
 		if ( breakpoint instanceof ICAddressBreakpoint )
 			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
 		if ( breakpoint instanceof ICLineBreakpoint ) {
 			try {
 				String handle = breakpoint.getSourceHandle();
-				ICSourceLocator sl = getSourceLocator();
-				if ( sl != null )
-					return ( sl.findSourceElement( handle ) != null );
+				ISourceLocator sl = getSourceLocator();
+				if ( sl instanceof ICSourceLocator )
+					return ( ((ICSourceLocator)sl).findSourceElement( handle ) != null );
+				else if ( sl instanceof CSourceLookupDirector ) {
+					return true;//( ((CSourceLookupDirector)sl).getCompilationPath( handle ) != null || ((CSourceLookupDirector)sl).findSourceElements( handle ).length > 0 );
+				}
 			}
 			catch( CoreException e ) {
 				return false;
@@ -232,9 +232,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		else {
 			IProject project = resource.getProject();
 			if ( project != null && project.exists() ) {
-				ICSourceLocator sl = getSourceLocator();
-				if ( sl != null )
-					return sl.contains( project );
+				ISourceLocator sl = getSourceLocator();
+				if ( sl instanceof ICSourceLocator )
+					return ((ICSourceLocator)sl).contains( project );
+				else if ( sl instanceof CSourceLookupDirector )
+					return ((CSourceLookupDirector)sl).contains( project );
 				if ( project.equals( getProject() ) )
 					return true;
 				return CDebugUtils.isReferencedProject( getProject(), project );
@@ -554,15 +556,13 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private void setLineBreakpoint( ICLineBreakpoint breakpoint ) throws CDIException, CoreException {
-		final boolean enabled = breakpoint.isEnabled();
-		final ICDITarget cdiTarget = getCDITarget();
+		boolean enabled = breakpoint.isEnabled();
+		ICDITarget cdiTarget = getCDITarget();
 		String handle = breakpoint.getSourceHandle();
-		IPath path = new Path( handle );
-		if ( path.isValidPath( handle ) ) {
-			final ICDILocation location = cdiTarget.createLocation( path.lastSegment(), null, breakpoint.getLineNumber() );
-			final ICDICondition condition = createCondition( breakpoint );
-			setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
-		}
+		IPath path = convertPath( handle );
+		ICDILocation location = cdiTarget.createLocation( path.toPortableString(), null, breakpoint.getLineNumber() );
+		ICDICondition condition = createCondition( breakpoint );
+		setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
 	}
 
 	private void setWatchpointOnTarget( final ICWatchpoint watchpoint, final ICDITarget target, final int accessType, final String expression, final ICDICondition condition, final boolean enabled ) {
@@ -617,20 +617,26 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		ICLineBreakpoint breakpoint = null;
 		try {
 			if ( !isEmpty( cdiBreakpoint.getLocation().getFile() ) ) {
-				ICSourceLocator locator = getSourceLocator();
-				if ( locator != null ) {
-					Object sourceElement = locator.findSourceElement( cdiBreakpoint.getLocation().getFile() );
+				ISourceLocator locator = getSourceLocator();
+				if ( locator instanceof ICSourceLocator || locator instanceof CSourceLookupDirector ) {
+					String sourceHandle = cdiBreakpoint.getLocation().getFile();
+					IResource resource = getProject();
+					Object sourceElement = null;
+					if ( locator instanceof ICSourceLocator )
+						sourceElement = ((ICSourceLocator)locator).findSourceElement( cdiBreakpoint.getLocation().getFile() );
+					else
+						sourceElement = ((CSourceLookupDirector)locator).getSourceElement( cdiBreakpoint.getLocation().getFile() );
 					if ( sourceElement instanceof IFile || sourceElement instanceof IStorage ) {
-						String sourceHandle = ( sourceElement instanceof IFile ) ? ((IFile)sourceElement).getLocation().toOSString() : ((IStorage)sourceElement).getFullPath().toOSString();
-						IResource resource = ( sourceElement instanceof IFile ) ? (IResource)sourceElement : ResourcesPlugin.getWorkspace().getRoot();
-						breakpoint = createLineBreakpoint( sourceHandle, resource, cdiBreakpoint );
+						sourceHandle = ( sourceElement instanceof IFile ) ? ((IFile)sourceElement).getLocation().toOSString() : ((IStorage)sourceElement).getFullPath().toOSString();
+						resource = ( sourceElement instanceof IFile ) ? (IResource)sourceElement : ResourcesPlugin.getWorkspace().getRoot();
 					}
-					else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
-						breakpoint = createFunctionBreakpoint( cdiBreakpoint );
-					}
-					else if ( ! cdiBreakpoint.getLocation().getAddress().equals( BigInteger.ZERO ) ) {
-						breakpoint = createAddressBreakpoint( cdiBreakpoint );
-					}
+					breakpoint = createLineBreakpoint( sourceHandle, resource, cdiBreakpoint );
+//					else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
+//						breakpoint = createFunctionBreakpoint( cdiBreakpoint );
+//					}
+//					else if ( ! cdiBreakpoint.getLocation().getAddress().equals( BigInteger.ZERO ) ) {
+//						breakpoint = createAddressBreakpoint( cdiBreakpoint );
+//					}
 				}
 			}
 			else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
@@ -711,9 +717,8 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		return watchpoint;
 	}
 
-	private ICSourceLocator getSourceLocator() {
-		ISourceLocator locator = getDebugTarget().getLaunch().getSourceLocator();
-		return (locator instanceof IAdaptable) ? (ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class ) : null;
+	private ISourceLocator getSourceLocator() {
+		return getDebugTarget().getLaunch().getSourceLocator();
 	}
 
 	private IProject getProject() {
@@ -815,5 +820,19 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 
 	private ICDICondition createCondition( ICBreakpoint breakpoint ) throws CoreException, CDIException {
 		return getCDITarget().createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition(), getThreadNames( breakpoint ) );
+	}
+
+	private IPath convertPath( String sourceHandle ) {
+		IPath path = null;
+		if ( Path.EMPTY.isValidPath( sourceHandle ) ) {
+			ISourceLocator sl = getSourceLocator();
+			if ( sl instanceof CSourceLookupDirector ) {
+				path = ((CSourceLookupDirector)sl).getCompilationPath( sourceHandle );
+			}
+			if ( path == null ) {
+				path = new Path( sourceHandle );
+			}
+		}
+		return path;
 	}
 }

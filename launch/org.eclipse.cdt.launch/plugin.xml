@@ -32,25 +32,31 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            name="%LocalCDTLaunch.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             delegate="org.eclipse.cdt.launch.internal.LocalRunLaunchDelegate"
-            modes="run,debug"
             public="true"
-            id="org.eclipse.cdt.launch.localCLaunch">
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            name="%LocalCDTLaunch.name"
+            id="org.eclipse.cdt.launch.localCLaunch"
+            modes="run,debug">
       </launchConfigurationType>
       <launchConfigurationType
-            name="%LocalAttachCDTLaunch.name"
             delegate="org.eclipse.cdt.launch.internal.LocalAttachLaunchDelegate"
+            id="org.eclipse.cdt.launch.localAttachCLaunch"
             modes="debug"
+            name="%LocalAttachCDTLaunch.name"
             public="true"
-            id="org.eclipse.cdt.launch.localAttachCLaunch">
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
-            name="%CoreFileCDTLaunch.name"
             delegate="org.eclipse.cdt.launch.internal.CoreFileLaunchDelegate"
+            id="org.eclipse.cdt.launch.coreFileCLaunch"
             modes="debug"
+            name="%CoreFileCDTLaunch.name"
             public="true"
-            id="org.eclipse.cdt.launch.coreFileCLaunch">
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchConfigurationType>
    </extension>
    <extension

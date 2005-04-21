@@ -1,3 +1,29 @@
+2005-04-21 Mikhail Khodjaiants
+	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
+	* CDebugModelPresentation.java
+	* ICDebugHelpContextIds.java
+	* CDebugPreferencePage.java
+	* PreferenceMessages.properties
+	* SourcePreferencePage.java
+	* AddContainerAction.java: new
+	* AddSourceContainerDialog.java: new
+	* DownAction.java: new
+	* EditContainerAction.java: new
+	* MappingSourceContainerBrowser.java
+	* PathMappingDialog.java
+	* RemoveAction.java: new
+	* SourceContainerAction.java: new
+	* SourceContainerLabelProvider.java: new
+	* SourceContainerViewer.java: new
+	* SourceContainerWorkbenchAdapter.java
+	* SourceLookupUIMessages.java: new
+	* SourceLookupUIMessages.properties: new
+	* UpAction.java: new
+	* CDebugUIPlugin.java
+	* DefaultSourceLocator.java
+	* OldDefaultSourceLocator.java: new
+	* plugin.properties
+
 2005-04-12 Mikhail Khodjaiants
 	Bug 91155: Wrong icon for "Restart".
 	* icons/dlcl16/restart.gif

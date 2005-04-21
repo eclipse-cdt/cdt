@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
+import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -230,14 +231,14 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static String getDefaultSourceLocatorID() {
-		return DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR;
+		return OldDefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR;
 	}
 
 	/*
 	 * to support old launch configurations
 	 */
 	public static String getDefaultSourceLocatorOldID() {
-		return DefaultSourceLocator.ID_OLD_DEFAULT_SOURCE_LOCATOR;
+		return OldDefaultSourceLocator.ID_OLD_DEFAULT_SOURCE_LOCATOR;
 	}
 
 	/*

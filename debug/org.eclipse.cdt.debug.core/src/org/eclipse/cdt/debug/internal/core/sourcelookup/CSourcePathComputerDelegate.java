@@ -10,6 +10,9 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -36,13 +39,16 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ISourceContainer[] computeSourceContainers( ILaunchConfiguration configuration, IProgressMonitor monitor ) throws CoreException {
+		ISourceContainer[] common = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().getSourceContainers();
+		ArrayList containers = new ArrayList( common.length + 1 );
+		containers.addAll( Arrays.asList( common ) );
 		String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null );
 		if ( projectName != null ) {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
 			if ( project.exists() ) {
-				return new ISourceContainer[] { new ProjectSourceContainer( project, true ) };
+				containers.add( 0, new ProjectSourceContainer( project, true ) );
 			}
 		}
-		return new ISourceContainer[0];
+		return (ISourceContainer[])containers.toArray( new ISourceContainer[containers.size()] );
 	}
 }

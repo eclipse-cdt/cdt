@@ -66,4 +66,5 @@ public interface ICDebugHelpContextIds
 	// dialogs
 	public static final String SOURCE_PATH_MAPPING_DIALOG = PREFIX + "source_path_mapping_dialog_context"; //$NON-NLS-1$
 	public static final String SOURCE_PATH_MAP_ENTRY_DIALOG = PREFIX + "source_path_map_entry_dialog_context"; //$NON-NLS-1$
+	public static final String ADD_SOURCE_CONTAINER_DIALOG = PREFIX + "add_source_container_dialog"; //$NON-NLS-1$
 }

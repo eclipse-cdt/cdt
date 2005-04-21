@@ -22,11 +22,13 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class MappingSourceContainerBrowser extends AbstractSourceContainerBrowser {
 
+	private static final String MAPPING = SourceLookupUIMessages.getString( "MappingSourceContainerBrowser.0" ); //$NON-NLS-1$
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#addSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
 	public ISourceContainer[] addSourceContainers( Shell shell, ISourceLookupDirector director ) {
-		return new ISourceContainer[] { new MappingSourceContainer() };
+		return new ISourceContainer[] { new MappingSourceContainer( generateName( director ) ) };
 	}
 
 	/* (non-Javadoc)
@@ -54,5 +56,26 @@ public class MappingSourceContainerBrowser extends AbstractSourceContainerBrowse
 			}
 		}
 		return new ISourceContainer[0];
+	}
+
+	private String generateName( ISourceLookupDirector director ) {
+//		int counter = 1;
+//		ISourceContainer[] containers = director.getSourceContainers();
+//		for ( int i = 0; i < containers.length; ++i ) {
+//			if ( MappingSourceContainer.TYPE_ID.equals( containers[i].getType().getId() ) ) {
+//				String name = containers[i].getName(); 
+//				if ( name.startsWith( MAPPING ) ) {
+//					try {
+//						int number = Integer.valueOf( name.substring( MAPPING.length() ) ).intValue();
+//						if ( number == counter )
+//							++counter;
+//					}
+//					catch( NumberFormatException e ) {
+//					}
+//				}
+//			}
+//		}
+//		return MAPPING + counter;
+		return MAPPING;
 	}
 }

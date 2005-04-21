@@ -39,18 +39,18 @@ public class MapEntrySourceContainerType extends AbstractSourceContainerTypeDele
 				String path = element.getAttribute( BACKEND_PATH );
 				IPath backend = new Path( path );
 				if ( !backend.isValidPath( path ) ) {
-					abort( "Source lookup: unable to restore map entry - missing backend path attribute.", null );
+					abort( InternalSourceLookupMessages.getString( "MapEntrySourceContainerType.0" ), null ); //$NON-NLS-1$
 				}
 				path = element.getAttribute( LOCAL_PATH );
 				IPath local = new Path( path );
 				if ( !local.isValidPath( path ) ) {
-					abort( "Source lookup: unable to restore map entry - missing local path attribute.", null );
+					abort( InternalSourceLookupMessages.getString( "MapEntrySourceContainerType.1" ), null ); //$NON-NLS-1$
 				}
 				return new MapEntrySourceContainer( backend, local );
 			}
-			abort( "Source lookup: unable to restore map entry - expecting map entry element.", null );
+			abort( InternalSourceLookupMessages.getString( "MapEntrySourceContainerType.2" ), null ); //$NON-NLS-1$
 		}
-		abort( "Source lookup: unable to restore map entry - invalid memento.", null );
+		abort( InternalSourceLookupMessages.getString( "MapEntrySourceContainerType.3" ), null ); //$NON-NLS-1$
 		return null;
 	}
 

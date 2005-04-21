@@ -1,3 +1,21 @@
+2005-04-21 Mikhail Khodjaiants
+	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
+	* CDebugCorePlugin.java
+	* MappingSourceContainer.java
+	* SourceLookupMessages.java: new
+	* SourceLookupMessages.properties: new
+	* CBreakpointManager.java
+	* ICDebugInternalConstants.java
+	* CommonSourceLookupDirector.java: new
+	* CSourceLookupDirector.java
+	* CSourceLookupParticipant.java
+	* CSourcePathComputerDelegate.java
+	* InternalSourceLookupMessages.properties
+	* MapEntrySourceContainer.java
+	* MapEntrySourceContainerType.java
+	* MappingSourceContainerType.java
+	* SourceUtils.java
+
 2005-04-15 Alain Magloire
 	Fix Pr 91581
 	* src/org/eclipse/cdt/debug/internal/core/breakpoint/CAddressBreakpoint.java

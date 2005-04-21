@@ -13,9 +13,12 @@ package org.eclipse.cdt.debug.core;
 import java.util.HashMap;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.cdt.debug.internal.core.SessionManager;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CommonSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.SourceUtils;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -58,6 +61,11 @@ public class CDebugCorePlugin extends Plugin {
 	 * Breakpoint listener list.
 	 */
 	private ListenerList fBreakpointListeners;
+	
+	/**
+	 * Dummy source lookup director needed to manage common source containers.
+	 */
+	private CommonSourceLookupDirector fCommonSourceLookupDirector;
 
 	private SessionManager fSessionManager = null;
 
@@ -243,6 +251,7 @@ public class CDebugCorePlugin extends Plugin {
 	 */
 	public void start( BundleContext context ) throws Exception {
 		super.start( context );
+		initializeCommonSourceLookupDirector();
 		createBreakpointListenersList();
 		resetBreakpointsInstallCount();
 		setSessionManager( new SessionManager() );
@@ -255,6 +264,39 @@ public class CDebugCorePlugin extends Plugin {
 		setSessionManager( null );
 		disposeBreakpointListenersList();
 		resetBreakpointsInstallCount();
+		disposeCommonSourceLookupDirector();
 		super.stop( context );
+	}
+
+	private void initializeCommonSourceLookupDirector() {
+		if ( fCommonSourceLookupDirector == null ) {
+			fCommonSourceLookupDirector = new CommonSourceLookupDirector();
+			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS );
+			if ( newMemento.length() == 0 ) {
+				// Convert source locations to source containers
+				convertSourceLocations( fCommonSourceLookupDirector );
+			}
+			else {
+				try {
+					fCommonSourceLookupDirector.initializeFromMemento( newMemento );
+				}
+				catch( CoreException e ) {
+					log( e.getStatus() );
+				}
+			}
+		}
+	}
+
+	private void disposeCommonSourceLookupDirector() {
+		if ( fCommonSourceLookupDirector != null )
+			fCommonSourceLookupDirector.dispose();
+	}
+
+	public CSourceLookupDirector getCommonSourceLookupDirector() {
+		return fCommonSourceLookupDirector;
+	}
+
+	private void convertSourceLocations( CommonSourceLookupDirector director ) {
+		director.setSourceContainers( SourceUtils.convertSourceLocations( getCommonSourceLocations() ) );
 	}
 }

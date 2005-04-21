@@ -84,7 +84,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		
-		assertEquals( matches.size(), 1 );	
+		assertEquals( 1, matches.size());	
 	}
 	
 	public void testMethodDeclarationParameterMatching(){
@@ -92,17 +92,17 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 1 );
+		assertEquals( 1,matches.size() );
 		
 		pattern = SearchEngine.createSearchPattern( "f( A * )", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 1 );
+		assertEquals( 1, matches.size());
 		
 		pattern = SearchEngine.createSearchPattern( "f( int &, const char  [],  A** )", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 1 );
+		assertEquals( 1, matches.size() );
 	}
 	
 	public void testMethodWithNoParameters(){
@@ -110,19 +110,19 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 2 );
+		assertEquals( 2, matches.size());
 		
 		pattern = SearchEngine.createSearchPattern( "turn(void)", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 2 );
+		assertEquals( 2, matches.size());
 		
 		pattern = SearchEngine.createSearchPattern( "turnAgain()", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 1 );
+		assertEquals( 1, matches.size());
 		
 	}
 	

@@ -571,7 +571,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 		ReadWriteMonitor monitor = null;
 		try{
 			storageMonitor.enterRead();
-			monitor=indexStorage.getMonitorFor(index);
+			monitor=indexStorage.getMonitorForIndex();
 		}
 		finally{
 			storageMonitor.exitRead();

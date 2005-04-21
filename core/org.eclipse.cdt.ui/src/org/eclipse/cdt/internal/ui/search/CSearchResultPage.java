@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.ExternalSearchFile;
@@ -105,28 +105,15 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		}
 	}
 
-	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activateEditor)
+	protected void showMatch(Match match,  int currentOffset, int currentLength, boolean activateEditor)
 			throws PartInitException {
-		// TODO Auto-generated method stub
+	
 		IEditorPart editor= null;
-		Object element= match.getElement();
-		if (element instanceof ICElement) {
-			ICElement cElement= (ICElement) element;
-			try {
-				editor= EditorUtility.openInEditor(cElement, false);
-			} catch (PartInitException e1) {
-				return;
-			} catch (CModelException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-		} else if (element instanceof IFile) {
-			editor= IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) element), false);
-		} else if (match instanceof CSearchMatch){
+		if (match instanceof CSearchMatch){
 			BasicSearchMatch searchMatch = ((CSearchMatch) match).getSearchMatch();
 			if (searchMatch.resource != null){
 				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.resource), false);
-				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), currentOffset, currentLength);
+				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), searchMatch.getOffsetType(), currentOffset, currentLength);
 			}
 			else {
 				try {
@@ -166,15 +153,6 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 				  catch (CoreException e) {}
 			}
 		}
-		if (editor instanceof ITextEditor) {
-		ITextEditor textEditor= (ITextEditor) editor;
-			textEditor.selectAndReveal(currentOffset, currentLength);
-		} else if (editor != null){
-			if (element instanceof IFile) {
-				IFile file= (IFile) element;
-				showWithMarker(editor, getCanonicalFile(file), currentOffset, currentLength);
-			}
-		} 
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
@@ -213,12 +191,16 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		setSortOrder(_currentSortOrder);
 	}
 	
-	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
+	private void showWithMarker(IEditorPart editor, IFile file,int offsetType, int offset, int length) throws PartInitException {
 		try {
 			IMarker marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap attributes= new HashMap(4);
-			attributes.put(IMarker.CHAR_START, new Integer(offset));
-			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
+			if (offsetType==ICIndexStorageConstants.OFFSET){
+				attributes.put(IMarker.CHAR_START, new Integer(offset));
+				attributes.put(IMarker.CHAR_END, new Integer(offset + length));
+			} else if (offsetType == ICIndexStorageConstants.LINE){
+			   attributes.put(IMarker.LINE_NUMBER, new Integer(offset));	
+			}
 			marker.setAttributes(attributes);
 			IDE.gotoMarker(editor, marker);
 			marker.delete();

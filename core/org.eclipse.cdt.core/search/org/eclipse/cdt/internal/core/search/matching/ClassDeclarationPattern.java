@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
@@ -23,13 +25,19 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 
 /**
@@ -154,10 +162,11 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected boolean isForward;
 
 	
-	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references,IndexInput input, ICSearchScope scope) throws IOException {
+	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] fileRefs, int[][] offsets, int[][] offsetLengths,IndexInput input, ICSearchScope scope) throws IOException {
 		boolean isClass = decodedType == IndexerOutput.CLASS_SUFFIX;
-		for (int i = 0, max = references.length; i < max; i++) {
-			IndexedFileEntry file = input.getIndexedFile(references[i]);
+		
+		for (int i = 0, max = fileRefs.length; i < max; i++) {
+			IndexedFileEntry file = input.getIndexedFile(fileRefs[i]);
 			String path;
 			if (file != null && scope.encloses(path =file.getPath())) {
 				//TODO: BOG Fix this up - even if it's not a class we still care 
@@ -165,6 +174,46 @@ public class ClassDeclarationPattern extends CSearchPattern {
 					requestor.acceptClassDeclaration(path, decodedSimpleName, decodedContainingTypes);
 				}  else {
 					requestor.acceptClassDeclaration(path, decodedSimpleName, decodedContainingTypes);
+				}
+				//For each file, create a new search match for each offset occurrence
+				for (int j=0; j<offsets[i].length; j++){
+					BasicSearchMatch match = new BasicSearchMatch();
+					match.name = new String(this.decodedSimpleName);
+					//Don't forget that offsets are encoded ICIndexStorageConstants
+					//Offsets can either be LINE or OFFSET 
+					int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
+					if (offsetType==ICIndexStorageConstants.LINE){
+						match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
+						match.offsetType = ICIndexStorageConstants.LINE;
+					}else if (offsetType==ICIndexStorageConstants.OFFSET){
+						match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
+						match.endOffset= match.startOffset + offsetLengths[i][j];
+						match.offsetType=ICIndexStorageConstants.OFFSET;
+					}
+					
+					match.parentName = ""; //$NON-NLS-1$
+					
+					if (decodedType == IndexerOutput.CLASS_SUFFIX){
+						match.type=ICElement.C_CLASS;
+					} else if (decodedType == IndexerOutput.STRUCT_SUFFIX){
+						match.type=ICElement.C_STRUCT;
+					} else if (decodedType == IndexerOutput.UNION_SUFFIX){
+						match.type=ICElement.C_UNION;
+					} else if (decodedType == IndexerOutput.ENUM_SUFFIX) {
+					    match.type=ICElement.C_ENUMERATION;
+					} else if (decodedType == IndexerOutput.TYPEDEF_SUFFIX){
+						match.type=ICElement.C_TYPEDEF;
+					}
+					                                 
+				    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+					if (tempFile != null && tempFile.exists())
+						match.resource =tempFile;
+					else {
+						IPath tempPath = PathUtil.getWorkspaceRelativePath(file.getPath());
+						match.path = tempPath;
+						match.referringElement = tempPath;
+					}
+					requestor.acceptSearchMatch(match);
 				}
 			}
 		}
@@ -195,7 +244,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			for( int i = 0; i < temp.length; i++ ){
 				this.decodedContainingTypes[ i ] = temp[ temp.length - i - 1 ];
 			}
-		} 
+		}  
 	}
 
 	public char[] indexEntryPrefix() {

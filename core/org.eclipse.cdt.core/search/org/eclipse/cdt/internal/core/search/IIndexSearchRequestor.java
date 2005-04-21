@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.search;
 
+import org.eclipse.cdt.core.search.BasicSearchMatch;
+
 public interface IIndexSearchRequestor {
+ 
+void acceptSearchMatch(BasicSearchMatch match);
 /**
  * Accepts the declaration of a class in the compilation unit with the given resource path.
  * The class is declared in the given package and with the given type name. 

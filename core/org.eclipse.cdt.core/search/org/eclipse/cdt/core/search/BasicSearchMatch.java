@@ -155,6 +155,8 @@ public class BasicSearchMatch implements IMatch, Comparable {
 
 	public IPath referringElement = null;
 	
+	public int offsetType;
+	
 	public int getElementType() {
 		return type;
 	}
@@ -284,6 +286,14 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	 */
 	public void setVisibility(int i) {
 		visibility = i;
+	}
+
+	public int getOffsetType() {
+		return offsetType;
+	}
+
+	public void setOffsetType(int offsetType) {
+		this.offsetType = offsetType;
 	}
 
 }

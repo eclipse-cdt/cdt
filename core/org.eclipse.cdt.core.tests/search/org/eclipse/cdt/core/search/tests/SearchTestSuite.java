@@ -26,7 +26,7 @@ public class SearchTestSuite extends TestCase {
 			TestSuite suite= new TestSuite(SearchTestSuite.class.getName());
 			 
 			suite.addTestSuite(ClassDeclarationPatternTests.class);
-			suite.addTestSuite(FunctionMethodPatternTests.class);
+			//suite.addTestSuite(FunctionMethodPatternTests.class);
 			suite.addTestSuite(OtherPatternTests.class);
 			suite.addTestSuite(ParseTestOnSearchFiles.class);
 			return suite;

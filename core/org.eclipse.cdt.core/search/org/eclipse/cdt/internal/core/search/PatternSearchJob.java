@@ -144,7 +144,7 @@ public class PatternSearchJob implements IIndexJob {
 			return FAILED;
 		
 		CIndexStorage cStorage = (CIndexStorage) storage;
-		ReadWriteMonitor monitor = cStorage.getMonitorFor(index);
+		ReadWriteMonitor monitor = cStorage.getMonitorForIndex();
 		if (monitor == null)
 			return COMPLETE; // index got deleted since acquired
 		try {

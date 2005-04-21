@@ -15,15 +15,23 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author aniefer
@@ -79,12 +87,41 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#feedIndexRequestor(org.eclipse.cdt.internal.core.search.IIndexSearchRequestor, int, int[], org.eclipse.cdt.internal.core.index.impl.IndexInput, org.eclipse.cdt.core.search.ICSearchScope)
 	 */
-	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope) throws IOException {
-		for (int i = 0, max = references.length; i < max; i++) {
-			IndexedFileEntry file = input.getIndexedFile(references[i]);
-			String path;
+	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] fileRefs, int[][] offsets, int[][] offsetLengths, IndexInput input, ICSearchScope scope) throws IOException {
+
+		for (int i = 0, max = fileRefs.length; i < max; i++) {
+			IndexedFileEntry file = input.getIndexedFile(fileRefs[i]);
+			String path=null;
 			if (file != null && scope.encloses(path =file.getPath())) {
 				requestor.acceptNamespaceDeclaration(path, decodedSimpleName, decodedContainingTypes);
+			}
+			
+			for (int j=0; j<offsets[i].length; j++){
+				BasicSearchMatch match = new BasicSearchMatch();
+				match.name = new String(this.decodedSimpleName);
+				//Don't forget that offsets are encoded ICIndexStorageConstants
+				//Offsets can either be LINE or OFFSET 
+				int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
+				if (offsetType==ICIndexStorageConstants.LINE){
+					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
+					match.offsetType = ICIndexStorageConstants.LINE;
+				}else if (offsetType==ICIndexStorageConstants.OFFSET){
+					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
+					match.endOffset= match.startOffset + offsetLengths[i][j];
+					match.offsetType=ICIndexStorageConstants.OFFSET;
+				}
+				match.parentName = ""; //$NON-NLS-1$
+				match.type=ICElement.C_NAMESPACE;
+				
+			    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+				if (tempFile != null && tempFile.exists())
+					match.resource =tempFile;
+				else {
+					IPath tempPath = PathUtil.getWorkspaceRelativePath(file.getPath());
+					match.path = tempPath;
+					match.referringElement = tempPath;
+				}
+				requestor.acceptSearchMatch(match);
 			}
 		}
 	}
@@ -101,7 +138,7 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 		char[] word = entryResult.getWord();
 		int size = word.length;
 
-		int firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
+		int firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 ); 
 		
 		int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
 		

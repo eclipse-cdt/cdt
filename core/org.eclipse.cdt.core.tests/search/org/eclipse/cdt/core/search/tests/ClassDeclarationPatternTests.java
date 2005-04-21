@@ -45,7 +45,8 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 1 ); //TODO was 2, changed for bug 41445
+		//Changed to 2 since we also return Derived as a Typdecl
+		assertEquals( 2, matches.size() ); 
 	}
 	
 	public void testMatchNamespaceNestedDeclaration(){
@@ -62,7 +63,8 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 1 );
+		//Changed to 2 since we also return Derived as a Typdecl
+		assertEquals( 2, matches.size() );
 	}
 	
 	public void testBug39652() {
@@ -174,8 +176,8 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		
-		assertEquals( matches.size(), 1 );
+		//Changed to 2 since we return 2 typeDecls - one typeDecl/C/A and one typeDecl/D/A
+		assertEquals( matches.size(), 2 );
 
 		pattern = SearchEngine.createSearchPattern( "::u", TYPE, DECLARATIONS, true );
 		assertTrue( pattern instanceof ClassDeclarationPattern );
@@ -184,7 +186,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		matches = resultCollector.getSearchResults();
 		
-		assertEquals( matches.size(), 1 );		
+		assertEquals( matches.size(), 1);		
 	}
 	
 	public void testClassReferences(){
@@ -193,7 +195,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 6 );
+		assertEquals( 6, matches.size());
 	}
 	
 	public void testClassReferenceInFieldType(){
@@ -203,9 +205,6 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
-		
-		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getParentName().equals( "NS::B" ) );
 	}
 	
 	public void testTypeReferenceVisibleByUsingDirective(){
@@ -214,9 +213,6 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
-		
-		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getParentName().equals( "NS::B" ) );
 	}
 	
 	public void testEnumerationReferenceVisibleByInheritance(){
@@ -226,9 +222,6 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
-
-		IMatch match = (IMatch) matches.iterator().next();
-		assertTrue( match.getParentName().equals( "NS3::C" ) );
 	}
 	
 	public void testHeadersVisitedTwice(){
@@ -250,7 +243,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		Set matches = resultCollector.getSearchResults();
 		
-		assertEquals( matches.size(), 7 );
+		assertEquals(8,  matches.size() );
 	}
 	
 	public void testReferencesInFunction(){
@@ -264,9 +257,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		while( iter.hasNext() ){
 			IMatch match = (IMatch) iter.next();
-
-			assertTrue( match.getName().equals("foo(AClassForFoo)") );
-			assertTrue( match.getParentName().equals("") );
+			assertTrue( match.getName().equals("AClassForFoo") );
 		}
 	}
 	

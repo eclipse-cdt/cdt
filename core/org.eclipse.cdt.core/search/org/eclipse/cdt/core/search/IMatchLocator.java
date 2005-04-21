@@ -17,7 +17,6 @@
 package org.eclipse.cdt.core.search;
 
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -27,10 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public interface IMatchLocator
-		extends
-			ISourceElementRequestor,
-			ICSearchConstants {
+public interface IMatchLocator extends ICSearchConstants {
 	
 	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ) throws InterruptedException;
 	

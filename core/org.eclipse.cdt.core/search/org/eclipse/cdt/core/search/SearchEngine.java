@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -222,10 +223,22 @@ public class SearchEngine implements ICSearchConstants{
 		if( progressMonitor != null )
 			progressMonitor.subTask( Util.bind( "engine.searching" ) );	//$NON-NLS-1$
 		
-		String[] indexerPaths = pathCollector.getPaths();
-		pathCollector = null; // release
+		//String[] indexerPaths = pathCollector.getPaths();
+		//BasicSearchMatch[] matches = pathCollector.getMatches();
+		//pathCollector = null; // release
 		
-		matchLocator.locateMatches( indexerPaths, workspace, filterWorkingCopies(this.workingCopies, scope));
+		//TODO: BOG Put MatchLocator in for Working Copy
+		//matchLocator.locateMatches( indexerPaths, workspace, filterWorkingCopies(this.workingCopies, scope));
+		Iterator i =pathCollector.getMatches();
+		
+		while (i.hasNext()){
+			try {
+				collector.acceptMatch((BasicSearchMatch) i.next() );
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		collector.done();
 	}
 

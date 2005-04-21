@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.search;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
@@ -25,6 +27,8 @@ import org.eclipse.core.runtime.Path;
 		
 		/* a set of resource paths */
 		public HashSet paths = new HashSet(5);
+		
+		public ArrayList matches = new ArrayList();
 	/**
 	 * @see IIndexSearchRequestor
 	 */
@@ -162,7 +166,12 @@ import org.eclipse.core.runtime.Path;
 	public void acceptIncludeDeclaration(String resourcePath, char[] decodedSimpleName) {
 		this.paths.add(resourcePath);
 	}
+	public void acceptSearchMatch(BasicSearchMatch match) {
+		matches.add(match);
+	}
 
-	
+	public Iterator getMatches(){
+		return matches.iterator();
+	}
 
 }

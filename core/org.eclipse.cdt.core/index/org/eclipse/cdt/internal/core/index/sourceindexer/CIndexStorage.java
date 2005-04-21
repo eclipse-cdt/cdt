@@ -14,10 +14,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.zip.CRC32;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -48,11 +44,12 @@ public class CIndexStorage implements IIndexStorage {
 	 
 	public IWorkspace workspace;
 	public SimpleLookupTable indexNames = new SimpleLookupTable();
-	private Map indexes = new HashMap(5);
 
-	/* read write monitors */
-	private Map monitors = new HashMap(5);
-
+	/* index */
+	private IIndex index;
+	/* read write monitor */
+	private ReadWriteMonitor monitor;
+	
 	/* need to save ? */
 	private boolean needToSave = false;
 	private static final CRC32 checksumCalculator = new CRC32();
@@ -94,7 +91,7 @@ public class CIndexStorage implements IIndexStorage {
 		if (compare > 0) {
 			// so UPDATING_STATE replaces SAVED_STATE and REBUILDING_STATE replaces everything
 			updateIndexState(indexName, newIndexState);
-		} else if (compare < 0 && this.indexes.get(path) == null) {
+		} else if (compare < 0 && index == null) {
 			// if already cached index then there is nothing more to do
 			rebuildIndex(indexName, path);
 		}
@@ -126,14 +123,12 @@ public class CIndexStorage implements IIndexStorage {
 	 */
 	public synchronized IIndex getIndex(IPath path, boolean reuseExistingFile, boolean createIfMissing) {
 		// Path is already canonical per construction
-		IIndex index = (IIndex) indexes.get(path);
 		if (index == null) {
 			String indexName = computeIndexName(path);
 			Object state = getIndexStates().get(indexName);
 			Integer currentIndexState = state == null ? UNKNOWN_STATE : (Integer) state;
 			if (currentIndexState == UNKNOWN_STATE) {
 				// should only be reachable for query jobs
-				// IF you put an index in the cache, then AddJarFileToIndex fails because it thinks there is nothing to do
 				rebuildIndex(indexName, path);
 				return null;
 			}
@@ -144,8 +139,7 @@ public class CIndexStorage implements IIndexStorage {
 				if (indexFile.exists()) { // check before creating index so as to avoid creating a new empty index if file is missing
 					try {
 						index = new Index(indexName, "Index for " + path.toOSString(), true /*reuse index file*/, indexer); //$NON-NLS-1$
-						indexes.put(path, index);
-						monitors.put(index, new ReadWriteMonitor());
+						monitor= new ReadWriteMonitor();
 						return index;
 					} catch (IOException e) {
 						// failed to read the existing file or its no longer compatible
@@ -169,8 +163,7 @@ public class CIndexStorage implements IIndexStorage {
 					if (VERBOSE)
 						JobManager.verbose("-> create empty index: "+indexName+" path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 					index = new Index(indexName, "Index for " + path.toOSString(), false /*do not reuse index file*/, indexer); //$NON-NLS-1$
-					indexes.put(path, index);
-					monitors.put(index, new ReadWriteMonitor());
+					monitor=new ReadWriteMonitor();
 					return index;
 				} catch (IOException e) {
 					if (VERBOSE)
@@ -227,8 +220,8 @@ public class CIndexStorage implements IIndexStorage {
 	 * to ensure there is no concurrent read and write operations
 	 * (only concurrent reading is allowed).
 	 */
-	public ReadWriteMonitor getMonitorFor(IIndex index){
-		return (ReadWriteMonitor) monitors.get(index);
+	public ReadWriteMonitor getMonitorForIndex(){
+		return monitor;
 	}
 	private void rebuildIndex(String indexName, IPath path) {
 		Object target = org.eclipse.cdt.internal.core.Util.getTarget(ResourcesPlugin.getWorkspace().getRoot(), path, true);
@@ -258,16 +251,12 @@ public class CIndexStorage implements IIndexStorage {
 	public synchronized IIndex recreateIndex(IPath path) {
 		// only called to over write an existing cached index...
 		try {
-			IIndex index = (IIndex) this.indexes.get(path);
-			ReadWriteMonitor monitor = (ReadWriteMonitor) this.monitors.remove(index);
-
 			// Path is already canonical
 			String indexPath = computeIndexName(path);
 			if (IndexManager.VERBOSE)
 				JobManager.verbose("-> recreating index: "+indexPath+" for path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			index = new Index(indexPath, "Index for " + path.toOSString(), false /*reuse index file*/,indexer); //$NON-NLS-1$
-			indexes.put(path, index);
-			monitors.put(index, monitor);
+			//Monitor can be left alone - no need to recreate
 			return index;
 		} catch (IOException e) {
 			// The file could not be created. Possible reason: the project has been deleted.
@@ -290,10 +279,8 @@ public class CIndexStorage implements IIndexStorage {
 		File indexFile = new File(indexName);
 		if (indexFile.exists())
 			indexFile.delete();
-		Object o = this.indexes.get(path);
-		if (o instanceof IIndex)
-			this.monitors.remove(o);
-		this.indexes.remove(path);
+		index=null;
+		monitor=null;
 		updateIndexState(indexName, null);
 	}
 	
@@ -302,19 +289,7 @@ public class CIndexStorage implements IIndexStorage {
 	 */
 	public synchronized void removeIndexFamily(IPath path) {
 		// only finds cached index files... shutdown removes all non-cached index files
-		ArrayList toRemove = null;
-		Iterator iterator = this.indexes.keySet().iterator();
-		while (iterator.hasNext()) {
-			IPath indexPath = (IPath) iterator.next();
-			if (path.isPrefixOf(indexPath)) {
-				if (toRemove == null)
-					toRemove = new ArrayList();
-				toRemove.add(indexPath);
-			}
-		}
-		if (toRemove != null)
-			for (int i = 0, length = toRemove.size(); i < length; i++)
-				this.removeIndex((IPath) toRemove.get(i));
+		this.removeIndex(path);
 	}
 	
 	public void saveIndex(IIndex index) throws IOException {
@@ -343,19 +318,8 @@ public class CIndexStorage implements IIndexStorage {
 	 */
 	public void saveIndexes() {
 		// only save cached indexes... the rest were not modified
-		ArrayList toSave = new ArrayList();
-		synchronized(this) {
-			for (Iterator iter = this.indexes.values().iterator(); iter.hasNext();) {
-				Object o = iter.next();
-				if (o instanceof IIndex)
-					toSave.add(o);
-			}
-		}
-
-		for (int i = 0, length = toSave.size(); i < length; i++) {
-			IIndex index = (IIndex) toSave.get(i);
-			ReadWriteMonitor monitor = getMonitorFor(index);
-			if (monitor == null) continue; // index got deleted since acquired
+			ReadWriteMonitor monitor = getMonitorForIndex();
+			if (monitor == null) return; // index got deleted since acquired
 			try {
 				monitor.enterWrite();
 				try {
@@ -370,7 +334,6 @@ public class CIndexStorage implements IIndexStorage {
 			} finally {
 				monitor.exitWrite();
 			}
-		}
 		needToSave = false;
 	}
 	
@@ -424,9 +387,7 @@ public class CIndexStorage implements IIndexStorage {
 		buffer.append(super.toString());
 		buffer.append("In-memory indexes:\n"); //$NON-NLS-1$
 		int count = 0;
-		for (Iterator iter = this.indexes.values().iterator(); iter.hasNext();) {
-			buffer.append(++count).append(" - ").append(iter.next().toString()).append('\n'); //$NON-NLS-1$
-		}
+		buffer.append(++count).append(" - ").append(index.toString()).append('\n'); //$NON-NLS-1$
 		return buffer.toString();
 	}
 
@@ -530,11 +491,8 @@ public class CIndexStorage implements IIndexStorage {
 	}
 	
 	public void jobWasCancelled(IPath path) {
-		Object o = this.indexes.get(path);
-		if (o instanceof IIndex) {
-			this.monitors.remove(o);
-			this.indexes.remove(path);
-		}
+		index=null;
+		monitor=null;
 		updateIndexState(computeIndexName(path), UNKNOWN_STATE);
 	}
 	public ReadWriteMonitor getIndexAccessMonitor() {

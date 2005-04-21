@@ -57,7 +57,6 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
@@ -255,10 +254,10 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if (reference.getReferencedElement() instanceof IASTClassSpecifier)
-			indexer.addClassReference((IASTClassSpecifier)reference.getReferencedElement(), indexFlag);
+			indexer.addClassReference(reference, indexFlag);
 		else if (reference.getReferencedElement() instanceof IASTElaboratedTypeSpecifier)
 		{
-		    indexer.addForwardClassReference((IASTTypeSpecifier) reference.getReferencedElement(), indexFlag);
+		    indexer.addForwardClassReference(reference, indexFlag);
 		} 
 	}
 
@@ -347,7 +346,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if( reference.getReferencedElement() instanceof IASTTypedefDeclaration )
-			indexer.addTypedefReference( (IASTTypedefDeclaration) reference.getReferencedElement(),indexFlag);
+			indexer.addTypedefReference( reference,indexFlag);
 	}
 	
 	public void acceptNamespaceReference(IASTNamespaceReference reference) {
@@ -356,7 +355,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if (reference.getReferencedElement() instanceof IASTNamespaceDefinition)
-		indexer.addNamespaceReference((IASTNamespaceDefinition)reference.getReferencedElement(),indexFlag);	
+		indexer.addNamespaceReference(reference,indexFlag);	
 	}
 
 	public void acceptEnumerationReference(IASTEnumerationReference reference) {
@@ -365,7 +364,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if (reference.getReferencedElement() instanceof IASTEnumerationSpecifier)
-		  indexer.addEnumerationReference((IASTEnumerationSpecifier) reference.getReferencedElement(),indexFlag);
+		  indexer.addEnumerationReference(reference,indexFlag);
 	}
 	
 	public void acceptVariableReference(IASTVariableReference reference) {
@@ -374,7 +373,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if (reference.getReferencedElement() instanceof IASTVariable)
-			indexer.addVariableReference((IASTVariable)reference.getReferencedElement(),indexFlag);
+			indexer.addVariableReference(reference,indexFlag);
 	}
 	
 	public void acceptFunctionReference(IASTFunctionReference reference) {
@@ -383,7 +382,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if (reference.getReferencedElement() instanceof IASTFunction)
-			indexer.addFunctionReference((IASTFunction) reference.getReferencedElement(), indexFlag);
+			indexer.addFunctionReference(reference, indexFlag);
 	}
 	
 	public void acceptFieldReference(IASTFieldReference reference) {
@@ -392,7 +391,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if (reference.getReferencedElement() instanceof IASTField)
-		  indexer.addFieldReference((IASTField) reference.getReferencedElement(),indexFlag);
+		  indexer.addFieldReference(reference,indexFlag);
 	}
 	
 	public void acceptMethodReference(IASTMethodReference reference) {
@@ -401,7 +400,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
 		if (reference.getReferencedElement() instanceof IASTMethod)
-		 indexer.addMethodReference((IASTMethod) reference.getReferencedElement(),indexFlag);
+		 indexer.addMethodReference(reference,indexFlag);
 	}
     
     public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType){
@@ -420,7 +419,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
      	if( reference.getReferencedElement() instanceof IASTEnumerator )
-     		indexer.addEnumeratorReference( (IASTEnumerator)reference.getReferencedElement(), indexFlag);
+     		indexer.addEnumeratorReference( reference, indexFlag);
         
     }
     
@@ -430,7 +429,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		int indexFlag = calculateIndexFlags();
 		
         if( reference.getReferencedElement() instanceof IASTParameterDeclaration )
-        	indexer.addParameterReference( (IASTParameterDeclaration) reference.getReferencedElement(), indexFlag);
+        	indexer.addParameterReference( reference, indexFlag);
         
     }
     

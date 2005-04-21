@@ -308,7 +308,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				ITool[] tools = getDefaultConfiguration().getFilteredTools();
 				for (int index = 0; index < tools.length; ++index) {
 					if(tools[index].buildsFileType(sourceExtension)) {
-						return tools[index].getDependencyGenerator();
+						return tools[index].getDependencyGeneratorForExtension(sourceExtension);
 					}
 				}
 			}
@@ -663,7 +663,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolInvocation(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolForConfiguration(java.lang.String)
 	 */
 	public String getToolForConfiguration(String extension) {
 		// Treat a null argument as an empty string
@@ -677,6 +677,38 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolFromInputExtension(java.lang.String)
+	 */
+	public ITool getToolFromInputExtension(String sourceExtension) {
+		// Get all the tools for the current config
+		ITool[] tools = getFilteredTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.buildsFileType(sourceExtension)) {
+				return tool;
+			}
+		}
+		return null;		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolFromOutputExtension(java.lang.String)
+	 */
+	public ITool getToolFromOutputExtension(String extension) {
+		// Treat a null argument as an empty string
+		String ext = extension == null ? new String() : extension;
+		// Get all the tools for the current config
+		ITool[] tools = getFilteredTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.producesFileType(ext)) {
+				return tool;
+			}
+		}
+		return null;		
 	}
 	
 	/* (non-Javadoc)

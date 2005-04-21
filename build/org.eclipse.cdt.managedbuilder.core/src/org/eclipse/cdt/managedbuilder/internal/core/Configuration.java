@@ -597,6 +597,29 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTargetTool()
+	 */
+	public ITool getTargetTool() {
+		String targetToolId = toolChain.getTargetToolId();
+		if (targetToolId == null) return null;
+		
+		//  Look for a tool with this ID, or a tool with a superclass with this id
+		ITool[] tools = getFilteredTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool targetTool = tools[i];
+			ITool tool = targetTool;
+			do {
+				if (targetToolId.equals(tool.getId())) {
+					return targetTool;
+				}		
+				tool = tool.getSuperClass();
+			} while (tool != null);
+		}
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
 	public String getToolCommand(ITool tool) {

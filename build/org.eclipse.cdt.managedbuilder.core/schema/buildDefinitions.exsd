@@ -188,34 +188,34 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="prebuildStep" type="string"> 
-            <annotation> 
-               <documentation> 
-                  Specifies the pre-build command, which runs prior to the standard MBS build. 
-               </documentation> 
-            </annotation> 
-         </attribute> 
-         <attribute name="postbuildStep" type="string"> 
-            <annotation> 
-               <documentation> 
-                  Specifies the post-build command, which runs after the standard MBS build. 
-               </documentation> 
-            </annotation> 
-         </attribute>         
-            <attribute name="preannouncebuildStep" type="string"> 
-            <annotation> 
-               <documentation> 
-                  Specifies the string to be displayed when the pre-build command step is run. 
-               </documentation> 
-            </annotation> 
-         </attribute>                  
-            <attribute name="postannouncebuildStep" type="string"> 
-            <annotation> 
-               <documentation> 
-                  Specifies the string to be displayed when the post-build command step is run. 
-               </documentation> 
-            </annotation> 
-         </attribute>                  
+         <attribute name="prebuildStep" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the pre-build command, which runs prior to the standard MBS build.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="postbuildStep" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the post-build command, which runs after the standard MBS build.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="preannouncebuildStep" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the string to be displayed when the pre-build command step is run.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="postannouncebuildStep" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the string to be displayed when the post-build command step is run.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -294,6 +294,20 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="targetTool" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the id of the Tool that creates the final build artifact (the end target of the build).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="secondaryOutputs" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of IDs of other outputTypes, besides the primary outputType of the targetTool, that are also considered to be build artifacts.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="isToolChainSupported" type="string">
             <annotation>
                <documentation>
@@ -344,6 +358,8 @@
          <sequence>
             <element ref="option"/>
             <element ref="optionCategory"/>
+            <element ref="inputType"/>
+            <element ref="outputType"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -383,22 +399,31 @@
          <attribute name="sources" type="string">
             <annotation>
                <documentation>
-                  A comma-separated list of file extensions that the tool will produce output for.
+                  Deprecated - use the InputType element.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="headerExtensions" type="string">
             <annotation>
                <documentation>
-                  A comma-separated list of file extensions that are used for header files. Since many other files depend on the interfaces defined in header files, the build system needs to be able to determine that a header file has changed to properly rebuild its dependents.
+                  Deprecated - use the InputType element.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="outputs" type="string">
             <annotation>
                <documentation>
-                  The extension that the tool will produce from a given input.
+                  Deprecated - use the OutputType element.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="outputFlag" type="string">
@@ -411,8 +436,11 @@
          <attribute name="outputPrefix" type="string">
             <annotation>
                <documentation>
-                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be lib&lt;target&gt;.a, so &apos;lib&apos; would be the prefix.
+                  Deprecated - use the OutputType element.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="natureFilter">
@@ -442,7 +470,7 @@
          <attribute name="commandLinePattern" type="string">
             <annotation>
                <documentation>
-                  Specifies the command &quot;pattern&quot; that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables command, flags, outputFlag, output, and inputs.  The default pattern is ${command} ${flags} ${outputflag}${output} ${inputs}  White space and other characters are significant and are copied to the generated command.
+                  Specifies the command &quot;pattern&quot; that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables command, flags, outputFlag, output, and inputs.  The default pattern is ${command} ${flags} ${outputflag}${output} ${inputs}, except when customBuildStep is true, where the default is $(command).  White space and other characters are significant and are copied to the generated command.
                </documentation>
             </annotation>
          </attribute>
@@ -459,10 +487,10 @@
          <attribute name="dependencyCalculator" type="string">
             <annotation>
                <documentation>
-                  This is an optional field that specifies the class that provides the source file dependency calculation for a given tool. You can replace the default calculator with a class that implements the &lt;code&gt;IManagedDependencyGenerator&lt;/code&gt; interface.
+                  Deprecated - use the InputType element.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator" deprecated="true"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -470,6 +498,304 @@
             <annotation>
                <documentation>
                   Specifies the default list of error parsers used by the tool.  Error parsers specified by the tool are added to this list specified by the tool-chain when a project resource is defined to use the tool.  It is automatically removed when there are no more project resources using the tool.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="advancedInputCategory" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether the Tool wants the MBS to display the Advanced Input category with the Tool&apos;s property categories.  This allows the user to specify input order and additional inputs.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="customBuildStep" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether this Tool represents a user-define custom build step.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="announcement" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a string that is written to the build output prior to each invocation of the tool.  The default value is “Invoking tool-name (tool-id)…”
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="inputType">
+      <annotation>
+         <documentation>
+            Defines a type of input for the tool.  Note that the calculated dependencies of an input type are not described by a separate input type, but are described by attributes of this element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="inputOrder"/>
+            <element ref="additionalInput"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the input-type that will be used by the build model.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The name of the input type that is displayed to the user in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of an input-type that this input-type is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="sourceContentType" type="string">
+            <annotation>
+               <documentation>
+                  The id of an Eclipse content type that describes this type of input.  Either this attribute or the sources attribute must be specified by this element or a superclass.  If both are specified, and the content type specified here is defined by Eclipse, the sources attribute is not used.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="sources" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of file extensions that identify files of this input type. Note that the user will not be able to modify the set of file extensions as they can when sourceContentType is specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="dependencyContentType" type="string">
+            <annotation>
+               <documentation>
+                  The id of an Eclipse content type that describes the calculated dependencies for this type of input.  If dependencyExtensions is also specified, and the content type specified here is defined by Eclipse, the dependencyExtensions attribute is not used.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="dependencyExtensions" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of file extensions that are used for calculated dependencies of this input-type. Note that the user will not be able to modify the set of file extensions as they can when dependencyContentType is specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="option" type="string">
+            <annotation>
+               <documentation>
+                  The id of an Option element that is used on the command line to identify inputs of this type. The default when not specified is to assign the inputs to the ${Inputs} part of the command line.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="multipleOfType" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether all inputs of this type are used in one invocation of the tool. The inputs can be project resources, and the outputs of other Tools in the Tool-chain. The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="primaryInput" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether this is considered the primary input of the tool. The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="dependencyCalculator" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the class that provides the source file dependency calculation for this input-type. You can replace the default calculator with a class that implements the &lt;code&gt;IManagedDependencyGenerator&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="buildVariable" type="string">
+            <annotation>
+               <documentation>
+                  A variable used in the build file to represent the input files when multipleOfType is True.  The same variable name can be used in an outputType element to identify a set of output files that contribute to this tool&apos;s input.  The default name is chosen by MBS.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="inputOrder">
+      <annotation>
+         <documentation>
+            Describes optional, ordering, information regarding the inputs of an inputType.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Defines the relative or absolute path of the resource to which this element applies.  The resource must be a member of the project, or the output from another tool in the tool-chain.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="order" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of integer values that specify the input order of this resource.  In most cases, a single value is used.  A list is used if the same input resource appears multiple times in the input list.  The order number begins at 1.  All unordered input resources fill the first gap in the specified order values.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="excluded" type="boolean">
+            <annotation>
+               <documentation>
+                  If True, this input resource is not used as an input to the tool.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="additionalInput">
+      <annotation>
+         <documentation>
+            Describes optional information regarding additional inputs and/or dependencies.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="paths" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Defines a semi-colon delimited list of relative or absolute paths of the resource to which this element applies.  The resources must be a member of the project, the output from another tool in the tool-chain, or an external file.  The file name of the path can use GNU Make pattern rule syntax in order to generate the name from the filename of the input file.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="kind">
+            <annotation>
+               <documentation>
+                  Defines the type of additional input, whether the resource is added to the dependency list, the inputs on the command line, or both.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="additionalinput">
+                  </enumeration>
+                  <enumeration value="additionalinputdependency">
+                  </enumeration>
+                  <enumeration value="additionaldependency">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="outputType">
+      <annotation>
+         <documentation>
+            Defines a type of output for the tool.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the output-type that will be used by the build model.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The name of the output type that is displayed to the user in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of an output-type that this output-type is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputContentType" type="string">
+            <annotation>
+               <documentation>
+                  The id of an Eclipse content type that describes this type of output.  Either this attribute or the outputs attribute must be specified by this element or a superclass.  If both are specified, and the content type specified here is defined by Eclipse, the outputs attribute is not used.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputs" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of file extensions that identify files of this output type. Note that the user will not be able to modify the set of file extensions as they can when outputContentType is specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="option" type="string">
+            <annotation>
+               <documentation>
+                  The id of an Option element that is used on the command line to identify outputs of this type. The default is to use the Tool outputFlag attribute if primaryOutput is True. If primaryOutput is False, the default is to not add the output(s) to the command line.  If specified, the nameProvider, namePattern and outputNames are ignored.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="multipleOfType" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether multiple outputs of this type are created by one invocation of the tool. The default is False. If True, the nameProvider attribute or outputNames attribute must be specified.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="primaryInputType" type="string">
+            <annotation>
+               <documentation>
+                  The id of the input-type that this output-type is created from. It is used in determining the build &quot;rules&quot; for the output-type, and for the default name of the output file.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="primaryOutput" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether this is the primary output of the tool. The default is False.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputPrefix" type="string">
+            <annotation>
+               <documentation>
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputNames" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon delimited list of the complete set of output file names generated for this outputType. If specified, the namePattern is ignored.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="namePattern" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a pattern, using the Gnu Make pattern rule syntax, for deriving the output resource name from the input resource name. The default is to use the input resource base name with the first output extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="nameProvider" type="string">
+            <annotation>
+               <documentation>
+                  The name of the class that implements the &lt;code&gt;IManagedOutputNameProvider&lt;/code&gt; interface.  If specified, the outputNames and namePattern are ignored.  This attribute must be specified when multipleOfType is True.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="buildVariable" type="string">
+            <annotation>
+               <documentation>
+                  A variable used in the build file to represent the output file(s).  The same variable name can be used in an inputType element to identify a set of output files that contribute to a tool&apos;s input.  The default name is chosen by MBS.
                </documentation>
             </annotation>
          </attribute>
@@ -976,7 +1302,7 @@ Version identifier for the managed build extension point. It is a string represe
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2003, 2004 IBM Corporation and others.
+         Copyright (c) 2003, 2005 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available on the &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt; Eclipse&lt;/a&gt; website.
       </documentation>
    </annotation>

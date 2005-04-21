@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1146,8 +1146,15 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#setCategory(org.eclipse.cdt.core.build.managed.IOptionCategory)
 	 */
 	public void setCategory(IOptionCategory category) {
-		this.category = category;
-		setDirty(true);
+		if (this.category != category) {
+			this.category = category;
+			if (category != null) {
+				categoryId = category.getId();
+			} else {
+				categoryId = null;
+			}
+			setDirty(true);
+		}
 	}
 
 	/* (non-Javadoc)

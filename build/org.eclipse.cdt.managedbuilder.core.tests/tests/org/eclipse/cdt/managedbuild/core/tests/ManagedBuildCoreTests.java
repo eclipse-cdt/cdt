@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,8 +89,8 @@ public class ManagedBuildCoreTests extends TestCase {
         String expectedSuperToolId1 = "cdt.managedbuild.tool.testgnu.c.compiler";		    
         String expectedSuperOutputFlag1 = "-o";
         String expectedSuperGetToolCommand1 = "gcc";
-        String expectedSuperInputExt1 = "c";
-	    String expectedSuperToolInterfaceExt1 = "h";
+        String[] expectedSuperInputExt1 = {"c"};
+	    String[] expectedSuperToolInterfaceExt1 = {"h"};
 	    String[] expectedSuperToolOutputExt1 = {"o"};
 	    String expectedOptionCategory1 = "testgnu.c.compiler.category.preprocessor";        
 	    String[] OptionId1 = {"testgnu.c.compiler.exe.debug.option.optimization.level",
@@ -180,21 +180,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		     assertEquals(tool.getId(), expectedToolId1[iconfig]);		     
 		     assertEquals(superTool.getId(), expectedSuperToolId1);
 		     assertEquals(tool.getNatureFilter(), expecectedCNature);		     
-		     List expectedSuperInputExt1List = new ArrayList();
-			 String[] expectedSuperInputExt1Tokens = expectedSuperInputExt1.split(","); //$NON-NLS-1$
-			 for (i = 0; i < expectedSuperInputExt1Tokens.length; ++i) {
-			 	expectedSuperInputExt1List.add(expectedSuperInputExt1Tokens[i].trim());
-			 }			 
-			 assertEquals(superTool.getInputExtensions(), expectedSuperInputExt1List);			 
+			 assertTrue(Arrays.equals(superTool.getAllInputExtensions(), expectedSuperInputExt1));			 
 		     assertEquals(superTool.getOutputFlag(), expectedSuperOutputFlag1);
 		     assertEquals(superTool.getToolCommand(), expectedSuperGetToolCommand1);
-		     assertTrue(Arrays.equals(superTool.getOutputExtensions(), expectedSuperToolOutputExt1));
-		     List expectedSuperInterfaceExt1List = new ArrayList();
-			 String[] expectedSuperInterfaceExt1Tokens = expectedSuperToolInterfaceExt1.split(","); //$NON-NLS-1$
-			 for (i = 0; i < expectedSuperInterfaceExt1Tokens.length; ++i) {
-			 	expectedSuperInterfaceExt1List.add(expectedSuperInterfaceExt1Tokens[i].trim());
-			 }
-		     assertEquals(superTool.getInterfaceExtensions(), expectedSuperInterfaceExt1List);
+		     assertTrue(Arrays.equals(superTool.getAllDependencyExtensions(), expectedSuperToolInterfaceExt1));
+		     assertTrue(Arrays.equals(superTool.getOutputsAttribute(), expectedSuperToolOutputExt1));
 		     
 		     assertTrue(superTool.isAbstract());
 		     
@@ -276,7 +266,7 @@ public class ManagedBuildCoreTests extends TestCase {
 	    String[] expectedToolOutput = {""};
 	    String expectedSuperOutputFlag1 = "-o";
 	    String expectedSuperGetToolCommand1 = "gcc";
-	    String expectedSuperInputExt1 = "o";    
+	    String[] expectedSuperInputExt1 = {"o"};    
 	    String[] expectedSuperToolOutputExt1 = {""};
 	    String expectedOptionCategory1 = "testgnu.c.link.category.general";  
 	    String OptionId1A = "testgnu.c.link.option.libs";
@@ -371,16 +361,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		     assertEquals(superTool.getId(), expectedSuperToolId1);
 		     assertEquals(tool.getNatureFilter(), expecectedCNature);
 		     assertEquals(tool.getOutputPrefix(), expectedToolOutputPrefix);
-		     assertTrue(Arrays.equals(superTool.getOutputExtensions(), expectedToolOutput));		     
-		     List expectedSuperInputExt1List = new ArrayList();
-			 String[] expectedSuperInputExt1Tokens = expectedSuperInputExt1.split(","); //$NON-NLS-1$
-			 for (i = 0; i < expectedSuperInputExt1Tokens.length; ++i) {
-			 	expectedSuperInputExt1List.add(expectedSuperInputExt1Tokens[i].trim());
-			 }			 
-			 assertEquals(superTool.getInputExtensions(), expectedSuperInputExt1List);			 
+		     assertTrue(Arrays.equals(superTool.getOutputsAttribute(), expectedToolOutput));		     
+			 assertTrue(Arrays.equals(superTool.getAllInputExtensions(), expectedSuperInputExt1));			 
 		     assertEquals(superTool.getOutputFlag(), expectedSuperOutputFlag1);
 		     assertEquals(superTool.getToolCommand(), expectedSuperGetToolCommand1);	    	   
-		     assertTrue(Arrays.equals(superTool.getOutputExtensions(), expectedSuperToolOutputExt1));	     
+		     assertTrue(Arrays.equals(superTool.getOutputsAttribute(), expectedSuperToolOutputExt1));	     
 		     
 		     // Fetch and check an option category
 		     //
@@ -476,8 +461,8 @@ public class ManagedBuildCoreTests extends TestCase {
 	    String expectedSuperToolId1 = "cdt.managedbuild.tool.testgnu.cpp.compiler";		    
 	    String expectedSuperOutputFlag1 = "-o";
 	    String expectedSuperGetToolCommand1 = "g++";
-	    String expectedSuperInputExt1 = "c,C,cc,cxx,cpp";
-	    String expectedSuperToolInterfaceExt1 = "h,H,hpp";
+	    String[] expectedSuperInputExt1 = {"c","C","cc","cxx","cpp"};
+	    String[] expectedSuperToolInterfaceExt1 = {"h","H","hpp"};
 	    String[] expectedSuperToolOutputExt1 = {"o"};
 	    String expectedOptionCategory1 = "testgnu.cpp.compiler.category.preprocessor";        
 	    String[] OptionId1 = {"testgnu.cpp.compiler.lib.debug.option.optimization.level",
@@ -569,22 +554,11 @@ public class ManagedBuildCoreTests extends TestCase {
 		     assertEquals(tool.getId(), expectedToolId1[iconfig]);		     
 		     assertEquals(superTool.getId(), expectedSuperToolId1);
 		     assertEquals(tool.getNatureFilter(), expecectedCCNature);
-		     
-		     List expectedSuperInputExt1List = new ArrayList();
-			 String[] expectedSuperInputExt1Tokens = expectedSuperInputExt1.split(","); //$NON-NLS-1$
-			 for (i = 0; i < expectedSuperInputExt1Tokens.length; ++i) {
-			 	expectedSuperInputExt1List.add(expectedSuperInputExt1Tokens[i].trim());
-			 }			 
-			 assertEquals(superTool.getInputExtensions(), expectedSuperInputExt1List);			 
+			 assertTrue(Arrays.equals(superTool.getAllInputExtensions(), expectedSuperInputExt1));			 
 		     assertEquals(superTool.getOutputFlag(), expectedSuperOutputFlag1);
 		     assertEquals(superTool.getToolCommand(), expectedSuperGetToolCommand1);
-		     List expectedSuperInterfaceExt1List = new ArrayList();
-			 String[] expectedSuperInterfaceExt1Tokens = expectedSuperToolInterfaceExt1.split(","); //$NON-NLS-1$
-			 for (i = 0; i < expectedSuperInterfaceExt1Tokens.length; ++i) {
-			 	expectedSuperInterfaceExt1List.add(expectedSuperInterfaceExt1Tokens[i].trim());
-			 }
-		     assertEquals(superTool.getInterfaceExtensions(), expectedSuperInterfaceExt1List);
-		     assertTrue(Arrays.equals(superTool.getOutputExtensions(), expectedSuperToolOutputExt1));	     
+		     assertTrue(Arrays.equals(superTool.getAllDependencyExtensions(), expectedSuperToolInterfaceExt1));
+		     assertTrue(Arrays.equals(superTool.getOutputsAttribute(), expectedSuperToolOutputExt1));	     
 		     
 		     // Fetch and check an option category
 		     //

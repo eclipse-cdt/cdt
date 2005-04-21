@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,8 +77,8 @@ public class Builder extends BuildObject implements IBuilder {
 	 * 
 	 * @param ToolChain The parent of the builder, if any
 	 * @param Builder The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
+	 * @param String The id for the new Builder
+	 * @param String The name for the new Builder
 	 * @param boolean Indicates whether this is an extension element or a managed project element
 	 */
 	public Builder(ToolChain parent, IBuilder superClass, String Id, String name, boolean isExtensionElement) {
@@ -157,10 +157,10 @@ public class Builder extends BuildObject implements IBuilder {
 	 */
 	
 	/* (non-Javadoc)
-	 * Loads the project-type information from the ManagedConfigElement specified in the 
+	 * Loads the builder information from the ManagedConfigElement specified in the 
 	 * argument.
 	 * 
-	 * @param element Contains the tool-chain information 
+	 * @param element Contains the Builder information 
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);

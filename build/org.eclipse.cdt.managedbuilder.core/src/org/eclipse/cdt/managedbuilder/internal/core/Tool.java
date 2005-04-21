@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -29,11 +28,14 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -47,11 +49,15 @@ import org.w3c.dom.NodeList;
 public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
+	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
 
 	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
 	private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 	private static final IOption[] EMPTY_OPTIONS = new IOption[0];
 	private static final String EMPTY_STRING = new String();
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	private static final String DEFAULT_ANNOUNCEMENT_PREFIX = "Tool.default.announcement";	//$NON-NLS-1$
+	private static final String WHITESPACE = " ";	//$NON-NLS-1$
 
 	//  Superclass
 	private ITool superClass;
@@ -63,6 +69,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private List childOptionCategories;
 	private Vector optionList;
 	private Map optionMap;
+	private Vector inputTypeList;
+	private Map inputTypeMap;
+	private Vector outputTypeList;
+	private Map outputTypeMap;
 	//  Managed Build model attributes
 	private String unusedChildren;
 	private Boolean isAbstract;
@@ -75,6 +85,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private String outputPrefix;
 	private String errorParserIds;
 	private String commandLinePattern;
+	private Boolean advancedInputCategory;
+	private Boolean customBuildStep;
+	private String announcement;
 	private IConfigurationElement commandLineGeneratorElement = null;
 	private IManagedCommandLineGenerator commandLineGenerator = null;
 	private IConfigurationElement dependencyGeneratorElement = null;
@@ -108,7 +121,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		// set up the category map
 		addOptionCategory(this);
 
-		// Check for optionList
+		// Load children
 		IManagedConfigElement[] toolElements = element.getChildren();
 		for (int l = 0; l < toolElements.length; ++l) {
 			IManagedConfigElement toolElement = toolElements[l];
@@ -117,6 +130,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				addOption(option);
 			} else if (toolElement.getName().equals(ITool.OPTION_CAT)) {
 				new OptionCategory(this, toolElement);
+			} else if (toolElement.getName().equals(ITool.INPUT_TYPE)) {
+				InputType inputType = new InputType(this, toolElement);
+				addInputType(inputType);
+			} else if (toolElement.getName().equals(ITool.OUTPUT_TYPE)) {
+				OutputType outputType = new OutputType(this, toolElement);
+				addOutputType(outputType);
 			}
 		}
 	}
@@ -207,7 +226,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		// set up the category map
 		addOptionCategory(this);
 
-		// Check for optionList
+		// Load children
 		NodeList toolElements = element.getChildNodes();
 		for (int i = 0; i < toolElements.getLength(); ++i) {
 			Node toolElement = toolElements.item(i);
@@ -216,6 +235,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				addOption(option);
 			} else if (toolElement.getNodeName().equals(ITool.OPTION_CAT)) {
 				new OptionCategory(this, (Element)toolElement);
+			} else if (toolElement.getNodeName().equals(ITool.INPUT_TYPE)) {
+				new InputType(this, (Element)toolElement);
+			} else if (toolElement.getNodeName().equals(ITool.OUTPUT_TYPE)) {
+				new OutputType(this, (Element)toolElement);
 			}
 		}
 	}
@@ -272,6 +295,15 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (tool.outputPrefix != null) {
 			outputPrefix = new String(tool.outputPrefix);
 		}
+		if (tool.advancedInputCategory != null) {
+			advancedInputCategory = new Boolean(tool.advancedInputCategory.booleanValue());
+		}
+		if (tool.customBuildStep != null) {
+			customBuildStep = new Boolean(tool.customBuildStep.booleanValue());
+		}
+		if (tool.announcement != null) {
+			announcement = new String(tool.announcement);
+		}
 
 		commandLineGeneratorElement = tool.commandLineGeneratorElement; 
 		commandLineGenerator = tool.commandLineGenerator; 
@@ -280,7 +312,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 		//  Clone the children
 		//  Note: This constructor ignores OptionCategories since they should not be
-		//        found on an non-extension tool
+		//        found on an non-extension tool - TODO: This may need to change!
 		if (tool.optionList != null) {
 			Iterator iter = tool.getOptionList().listIterator();
 			while (iter.hasNext()) {
@@ -297,6 +329,42 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				}
 				Option newOption = new Option(this, subId, subName, option);
 				addOption(newOption);
+			}
+		}
+		if (tool.inputTypeList != null) {
+			Iterator iter = tool.getInputTypeList().listIterator();
+			while (iter.hasNext()) {
+				InputType inputType = (InputType) iter.next();
+				int nnn = ManagedBuildManager.getRandomNumber();
+				String subId;
+				String subName;
+				if (inputType.getSuperClass() != null) {
+					subId = inputType.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+					subName = inputType.getSuperClass().getName();
+				} else {
+					subId = inputType.getId() + "." + nnn;		//$NON-NLS-1$
+					subName = inputType.getName();
+				}
+				InputType newInputType = new InputType(this, subId, subName, inputType);
+				addInputType(newInputType);
+			}
+		}
+		if (tool.outputTypeList != null) {
+			Iterator iter = tool.getOutputTypeList().listIterator();
+			while (iter.hasNext()) {
+				OutputType outputType = (OutputType) iter.next();
+				int nnn = ManagedBuildManager.getRandomNumber();
+				String subId;
+				String subName;
+				if (outputType.getSuperClass() != null) {
+					subId = outputType.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+					subName = outputType.getSuperClass().getName();
+				} else {
+					subId = outputType.getId() + "." + nnn;		//$NON-NLS-1$
+					subName = outputType.getName();
+				}
+				OutputType newOutputType = new OutputType(this, subId, subName, outputType);
+				addOutputType(newOutputType);
 			}
 		}
 
@@ -383,6 +451,21 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		
 		// Get command line pattern
 		commandLinePattern = element.getAttribute( ITool.COMMAND_LINE_PATTERN );
+		
+		// Get advancedInputCategory
+        String advInput = element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY);
+        if (advInput != null){
+			advancedInputCategory = new Boolean("true".equals(advInput)); //$NON-NLS-1$
+        }
+		
+		// Get customBuildStep
+        String cbs = element.getAttribute(ITool.CUSTOM_BUILD_STEP);
+        if (cbs != null){
+			customBuildStep = new Boolean("true".equals(cbs)); //$NON-NLS-1$
+        }
+		
+		// Get the announcement text
+		announcement = element.getAttribute(ITool.ANNOUNCEMENT);
 		
 		// Store the configuration element IFF there is a command line generator defined 
 		String commandLineGenerator = element.getAttribute(COMMAND_LINE_GENERATOR); 
@@ -507,6 +590,27 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if( element.hasAttribute( ITool.COMMAND_LINE_PATTERN ) ) {
 			commandLinePattern = element.getAttribute( ITool.COMMAND_LINE_PATTERN );
 		}
+		
+		// advancedInputCategory
+		if (element.hasAttribute(ITool.ADVANCED_INPUT_CATEGORY)) {
+			String advInput = element.getAttribute(ITool.ADVANCED_INPUT_CATEGORY);
+			if (advInput != null){
+				advancedInputCategory = new Boolean("true".equals(advInput)); //$NON-NLS-1$
+			}
+		}
+		
+		// customBuildStep
+		if (element.hasAttribute(ITool.CUSTOM_BUILD_STEP)) {
+			String cbs = element.getAttribute(ITool.CUSTOM_BUILD_STEP);
+			if (cbs != null){
+				customBuildStep = new Boolean("true".equals(cbs)); //$NON-NLS-1$
+			}
+		}
+		
+		// Get the announcement text
+		if (element.hasAttribute(ITool.ANNOUNCEMENT)) {
+			announcement = element.getAttribute(ITool.ANNOUNCEMENT);
+		}
 	}
 
 	/**
@@ -607,6 +711,21 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				element.setAttribute(ITool.COMMAND_LINE_PATTERN, commandLinePattern);
 			}
 			
+			// advancedInputCategory
+			if (advancedInputCategory != null) {
+				element.setAttribute(ITool.ADVANCED_INPUT_CATEGORY, advancedInputCategory.toString());
+			}
+			
+			// customBuildStep
+			if (customBuildStep != null) {
+				element.setAttribute(ITool.CUSTOM_BUILD_STEP, customBuildStep.toString());
+			}
+			
+			// announcement text
+			if (announcement != null) {
+				element.setAttribute(ITool.ANNOUNCEMENT, announcement);
+			}
+			
 			// Serialize my children
 			if (childOptionCategories != null) {
 				Iterator iter = childOptionCategories.listIterator();
@@ -624,6 +743,22 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				Element optionElement = doc.createElement(OPTION);
 				element.appendChild(optionElement);
 				option.serialize(doc, optionElement);
+			}
+			List typeElements = getInputTypeList();
+			iter = typeElements.listIterator();
+			while (iter.hasNext()) {
+				InputType type = (InputType) iter.next();
+				Element typeElement = doc.createElement(INPUT_TYPE);
+				element.appendChild(typeElement);
+				type.serialize(doc, typeElement);
+			}
+			typeElements = getOutputTypeList();
+			iter = typeElements.listIterator();
+			while (iter.hasNext()) {
+				OutputType type = (OutputType) iter.next();
+				Element typeElement = doc.createElement(OUTPUT_TYPE);
+				element.appendChild(typeElement);
+				type.serialize(doc, typeElement);
 			}
 
 			// Note: command line generator cannot be specified in a project file because
@@ -674,7 +809,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createOption(IOption, String, String, boolean)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOption(IOption)
 	 */
 	public void removeOption(IOption option) {
 		getOptionList().remove(option);
@@ -766,6 +901,165 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				return EMPTY_CATEGORIES;
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createInputType(IInputType, String, String, boolean)
+	 */
+	public IInputType createInputType(IInputType superClass, String Id, String name, boolean isExtensionElement) {
+		InputType type = new InputType(this, superClass, Id, name, isExtensionElement);
+		addInputType(type);
+		setDirty(true);
+		return type;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeInputType(IInputType)
+	 */
+	public void removeInputType(IInputType type) {
+		getInputTypeList().remove(type);
+		getInputTypeMap().remove(type.getId());
+		setDirty(true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputTypes()
+	 */
+	public IInputType[] getInputTypes() {
+		IInputType[] types = null;
+		// Merge our input types with our superclass' input types.
+		if (superClass != null) {
+			types = superClass.getInputTypes();
+		}
+		// Our options take precedence.
+		Vector ourTypes = getInputTypeList();
+		if (types != null) {
+			for (int i = 0; i < ourTypes.size(); i++) {
+				IInputType ourType = (IInputType)ourTypes.get(i);
+				int j;
+				for (j = 0; j < types.length; j++) {
+					if (ourType.getSuperClass().getId().equals(types[j].getId())) {
+						types[j] = ourType;
+						break;
+					}
+				}
+				//  No Match?  Add it.
+				if (j == types.length) {
+					IInputType[] newTypes = new IInputType[types.length + 1];
+					for (int k = 0; k < types.length; k++) {
+						newTypes[k] = types[k];
+					}						 
+					newTypes[j] = ourType;
+					types = newTypes;
+				}
+			}
+		} else {
+			types = (IInputType[])ourTypes.toArray(new IInputType[ourTypes.size()]);
+		}
+		return types;
+	}
+
+	private boolean hasInputTypes() {
+		Vector ourTypes = getInputTypeList();
+		if (ourTypes.size() > 0) return true;
+		return false;
+	}
+	
+	public IInputType getInputTypeById(String id) {
+		IInputType type = (IInputType)getInputTypeMap().get(id);
+		if (type == null) {
+			if (superClass != null) {
+				return superClass.getInputTypeById(id);
+			}
+		}
+		return type;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createOutputType(IOutputType, String, String, boolean)
+	 */
+	public IOutputType createOutputType(IOutputType superClass, String Id, String name, boolean isExtensionElement) {
+		OutputType type = new OutputType(this, superClass, Id, name, isExtensionElement);
+		addOutputType(type);
+		setDirty(true);
+		return type;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOutputType(IOutputType)
+	 */
+	public void removeOutputType(IOutputType type) {
+		getOutputTypeList().remove(type);
+		getOutputTypeMap().remove(type.getId());
+		setDirty(true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputTypes()
+	 */
+	public IOutputType[] getOutputTypes() {
+		IOutputType[] types = null;
+		// Merge our output types with our superclass' output types.
+		if (superClass != null) {
+			types = superClass.getOutputTypes();
+		}
+		// Our options take precedence.
+		Vector ourTypes = getOutputTypeList();
+		if (types != null) {
+			for (int i = 0; i < ourTypes.size(); i++) {
+				IOutputType ourType = (IOutputType)ourTypes.get(i);
+				int j;
+				for (j = 0; j < types.length; j++) {
+					if (ourType.getSuperClass().getId().equals(types[j].getId())) {
+						types[j] = ourType;
+						break;
+					}
+				}
+				//  No Match?  Add it.
+				if (j == types.length) {
+					IOutputType[] newTypes = new IOutputType[types.length + 1];
+					for (int k = 0; k < types.length; k++) {
+						newTypes[k] = types[k];
+					}						 
+					newTypes[j] = ourType;
+					types = newTypes;
+				}
+			}
+		} else {
+			types = (IOutputType[])ourTypes.toArray(new IOutputType[ourTypes.size()]);
+		}
+		return types;
+	}
+
+	private boolean hasOutputTypes() {
+		Vector ourTypes = getOutputTypeList();
+		if (ourTypes.size() > 0) return true;
+		return false;
+	}
+
+	public IOutputType getPrimaryOutputType() {
+		IOutputType type = null;
+		IOutputType[] types = getOutputTypes();
+		if (types != null && types.length > 0) {
+			for (int i=0; i<types.length; i++) {
+				if (i == 0) type = types[0];
+				if (types[i].getPrimaryOutput() == true) {
+					type = types[i];
+					break;
+				}
+			}
+		}
+		return type;
+	}
+
+	public IOutputType getOutputTypeById(String id) {
+		IOutputType type = (IOutputType)getOutputTypeMap().get(id);
+		if (type == null) {
+			if (superClass != null) {
+				return superClass.getOutputTypeById(id);
+			}
+		}
+		return type;
 	}
 
 	/* (non-Javadoc)
@@ -878,6 +1172,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		getOptionMap().put(option.getId(), option);
 	}
 	
+	/**
+	 * @param category
+	 */
 	protected void addOptionCategory(IOptionCategory category) {
 		// To preserve the order of the categories, record the ids in the order they are read
 		getCategoryIds().add(category.getId());
@@ -924,6 +1221,62 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			optionMap = new HashMap();
 		}
 		return optionMap;
+	}
+	
+	/* (non-Javadoc)
+	 * Memory-safe way to access the list of input types
+	 */
+	private Vector getInputTypeList() {
+		if (inputTypeList == null) {
+			inputTypeList = new Vector();
+		}
+		return inputTypeList;
+	}
+	
+	/* (non-Javadoc)
+	 * Memory-safe way to access the list of IDs to input types
+	 */
+	private Map getInputTypeMap() {
+		if (inputTypeMap == null) {
+			inputTypeMap = new HashMap();
+		}
+		return inputTypeMap;
+	}
+	
+	/**
+	 * @param type
+	 */
+	public void addInputType(InputType type) {
+		getInputTypeList().add(type);
+		getInputTypeMap().put(type.getId(), type);
+	}
+	
+	/* (non-Javadoc)
+	 * Memory-safe way to access the list of output types
+	 */
+	private Vector getOutputTypeList() {
+		if (outputTypeList == null) {
+			outputTypeList = new Vector();
+		}
+		return outputTypeList;
+	}
+	
+	/* (non-Javadoc)
+	 * Memory-safe way to access the list of IDs to output types
+	 */
+	private Map getOutputTypeMap() {
+		if (outputTypeMap == null) {
+			outputTypeMap = new HashMap();
+		}
+		return outputTypeMap;
+	}
+	
+	/**
+	 * @param type
+	 */
+	public void addOutputType(OutputType type) {
+		getOutputTypeList().add(type);
+		getOutputTypeMap().put(type.getId(), type);
 	}
 
 	/*
@@ -1014,12 +1367,22 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
+	 * @deprecated
 	 */
 	public List getInputExtensions() {
+		String[] exts = getPrimaryInputExtensions();
+		List extList = new ArrayList();
+		for (int i=0; i<exts.length; i++) {
+			extList.add(exts[i]);
+		}
+		return extList;
+	}
+
+	private List getInputExtensionsAttribute() {
 		if( (inputExtensions == null) || ( inputExtensions.size() == 0) ) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				return superClass.getInputExtensions();
+				return ((Tool)superClass).getInputExtensionsAttribute();
 			} else {
 				inputExtensions = new ArrayList();
 			}
@@ -1033,12 +1396,169 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		}
 		return inputExtensions;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDefaultInputExtension()
+	 */
+	public String getDefaultInputExtension() {
+		// Find the primary input type
+		IInputType type = getPrimaryInputType();
+		if (type != null) {
+			String[] exts = type.getSourceExtensions();
+			// Use the first entry in the list
+			if (exts.length > 0) return exts[0];
+		}
+		// If none, use the input extensions specified for the Tool (backwards compatibility)
+		List extsList = getInputExtensionsAttribute();
+		// Use the first entry in the list
+		if (extsList != null && extsList.size() > 0) return (String)extsList.get(0);
+		return EMPTY_STRING;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getPrimaryInputExtensions()
+	 */
+	public String[] getPrimaryInputExtensions() {
+		IInputType type = getPrimaryInputType();
+		if (type != null) {
+			String[] exts = type.getSourceExtensions();
+			// Use the first entry in the list
+			if (exts.length > 0) return exts;
+		}
+		// If none, use the input extensions specified for the Tool (backwards compatibility)
+		List extsList = getInputExtensionsAttribute();
+		// Use the first entry in the list
+		if (extsList != null && extsList.size() > 0) {
+			return (String[])extsList.toArray(new String[extsList.size()]);
+		}
+		return EMPTY_STRING_ARRAY;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAllInputExtensions()
+	 */
+	public String[] getAllInputExtensions() {
+		IInputType[] types = getInputTypes();
+		if (types != null && types.length > 0) {
+			List allExts = new ArrayList();
+			for (int i=0; i<types.length; i++) {
+				String[] exts = types[i].getSourceExtensions();
+				for (int j=0; j<exts.length; j++) {
+					allExts.add(exts[j]);
+				}
+			}
+			if (allExts.size() > 0) {
+				return (String[])allExts.toArray(new String[allExts.size()]);
+			}
+		}
+		// If none, use the input extensions specified for the Tool (backwards compatibility)
+		List extsList = getInputExtensionsAttribute();
+		if (extsList != null && extsList.size() > 0) {
+			return (String[])extsList.toArray(new String[extsList.size()]);
+		}
+		return EMPTY_STRING_ARRAY;
+	}
+
+	public IInputType getPrimaryInputType() {
+		IInputType type = null;
+		IInputType[] types = getInputTypes();
+		if (types != null && types.length > 0) {
+			for (int i=0; i<types.length; i++) {
+				if (i == 0) type = types[0];
+				if (types[i].getPrimaryInput() == true) {
+					type = types[i];
+					break;
+				}
+			}
+		}
+		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputInputType()
+	 */
+	public IInputType getInputType(String inputExtension) {
+		IInputType type = null;
+		IInputType[] types = getInputTypes();
+		if (types != null && types.length > 0) {
+			for (int i=0; i<types.length; i++) {
+				if (types[i].isSourceExtension(inputExtension)) {
+					type = types[i];
+					break;
+				}
+			}
+		}
+		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAdditionalDependencies()
+	 */
+	public IPath[] getAdditionalDependencies() {
+		List allDeps = new ArrayList();
+		IInputType[] types = getInputTypes();
+		for (int i=0; i<types.length; i++) {
+			IPath[] deps = types[i].getAdditionalDependencies();
+			for (int j=0; j<deps.length; j++) {
+				allDeps.add(deps[j]);
+			}
+		}
+		return (IPath[])allDeps.toArray(new IPath[allDeps.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAdditionalResources()
+	 */
+	public IPath[] getAdditionalResources() {
+		List allRes = new ArrayList();
+		IInputType[] types = getInputTypes();
+		for (int i=0; i<types.length; i++) {
+			IPath[] res = types[i].getAdditionalResources();
+			for (int j=0; j<res.length; j++) {
+				allRes.add(res[j]);
+			}
+		}
+		return (IPath[])allRes.toArray(new IPath[allRes.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAllDependencyExtensions()
+	 */
+	public String[] getAllDependencyExtensions() {
+		IInputType[] types = getInputTypes();
+		if (types != null && types.length > 0) {
+			List allExts = new ArrayList();
+			for (int i=0; i<types.length; i++) {
+				String[] exts = types[i].getDependencyExtensions();
+				for (int j=0; j<exts.length; j++) {
+					allExts.add(exts[j]);
+				}
+			}
+			if (allExts.size() > 0) {
+				return (String[])allExts.toArray(new String[allExts.size()]);
+			}
+		}
+		// If none, use the header extensions specified for the Tool (backwards compatibility)
+		List extsList = getHeaderExtensionsAttribute();
+		if (extsList != null && extsList.size() > 0) {
+			return (String[])extsList.toArray(new String[extsList.size()]);
+		}
+		return EMPTY_STRING_ARRAY;
+	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInterfaceExtension()
+	 * @deprecated
+	 */
 	public List getInterfaceExtensions() {
+		return getHeaderExtensionsAttribute();
+	}
+
+	private List getHeaderExtensionsAttribute() {
 		if (interfaceExtensions == null || interfaceExtensions.size() == 0) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				return superClass.getInterfaceExtensions();
+				return ((Tool)superClass).getHeaderExtensionsAttribute();
 			} else {
 			    if (interfaceExtensions == null) {
 			        interfaceExtensions = new ArrayList();
@@ -1074,6 +1594,23 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputPrefix()
 	 */
 	public String getOutputPrefix() {
+		// Get the outputPrefix from an OutputType, if any.
+		IOutputType type = null;
+		IOutputType[] types = getOutputTypes();
+		if (types != null && types.length > 0) {
+			for (int i=0; i<types.length; i++) {
+				if (i == 0) type = types[0];
+				if (types[i].getPrimaryOutput() == true) {
+					type = types[i];
+					break;
+				}
+			}
+		}
+		if (type != null) {
+			return type.getOutputPrefix();
+		}
+		
+		// If there are no OutputTypes, use the deprecated Tool attribute
 		if (outputPrefix == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
@@ -1108,10 +1645,59 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			if (superClass != null) {
 				return superClass.getCommandLinePattern();
 			} else {
-				return new String(DEFAULT_PATTERN);  // Default pattern
+				if (getCustomBuildStep()) {
+					return new String(DEFAULT_CBS_PATTERN);  // Default pattern
+				} else {
+					return new String(DEFAULT_PATTERN);  // Default pattern
+				}
 			}
 		}
 		return commandLinePattern;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getAdvancedInputCategory()
+	 */
+	public boolean getAdvancedInputCategory() {
+		if (advancedInputCategory == null) {
+			if (superClass != null) {
+				return superClass.getAdvancedInputCategory();
+			} else {
+				return false;	// default is false
+			}
+		}
+		return advancedInputCategory.booleanValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCustomBuildStep()
+	 */
+	public boolean getCustomBuildStep() {
+		if (customBuildStep == null) {
+			if (superClass != null) {
+				return superClass.getCustomBuildStep();
+			} else {
+				return false;	// default is false
+			}
+		}
+		return customBuildStep.booleanValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getAnnouncement()
+	 */
+	public String getAnnouncement() {
+		if (announcement == null) {
+			if (superClass != null) {
+				return superClass.getAnnouncement();
+			} else {
+				//  Generate the default announcement string for the Tool
+				String defaultAnnouncement = ManagedMakeMessages.getResourceString(DEFAULT_ANNOUNCEMENT_PREFIX) +
+					WHITESPACE + getName();  // + "(" + getId() + ")";  
+				return defaultAnnouncement;
+			}
+		}
+		return announcement;
 	}
 	
 	/* (non-Javadoc)
@@ -1155,18 +1741,50 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGeneratorElement()
+	 * @deprecated
 	 */
 	public IConfigurationElement getDependencyGeneratorElement() {
-		if (dependencyGeneratorElement == null) {
-			if (superClass != null) {
-				return superClass.getDependencyGeneratorElement();
+		//  First try the primary InputType
+		IInputType type = getPrimaryInputType();
+		if (type != null) {
+			IConfigurationElement primary = type.getDependencyGeneratorElement();
+			if (primary != null) return primary;
+		}
+
+		//  If not found, use the deprecated attribute
+		return getToolDependencyGeneratorElement();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGeneratorElementForExtension()
+	 */
+	public IConfigurationElement getDependencyGeneratorElementForExtension(String sourceExt) {
+		IInputType[] types = getInputTypes();
+		if (types != null) {
+			for (int i=0; i<types.length; i++) {
+				if (types[i].isSourceExtension(sourceExt)) {
+					return types[i].getDependencyGeneratorElement();
+				}
 			}
 		}
-		return dependencyGeneratorElement;
+
+		//  If not found, use the deprecated attribute
+		return getToolDependencyGeneratorElement();
+	}
+	
+	private IConfigurationElement getToolDependencyGeneratorElement() {
+		if (dependencyGeneratorElement == null) {
+			if (superClass != null) {
+				return ((Tool)superClass).getToolDependencyGeneratorElement();
+			}
+		}
+		return dependencyGeneratorElement;		
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setDependencyGeneratorElement(String)
+	 * @deprecated
 	 */
 	public void setDependencyGeneratorElement(IConfigurationElement element) {
 		dependencyGeneratorElement = element;
@@ -1175,12 +1793,32 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGenerator()
+	 * @deprecated
 	 */
 	public IManagedDependencyGenerator getDependencyGenerator() {
 		if (dependencyGenerator != null) {
 			return dependencyGenerator;
 		}
 		IConfigurationElement element = getDependencyGeneratorElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(DEP_CALC_ID) != null) {
+					dependencyGenerator = (IManagedDependencyGenerator) element.createExecutableExtension(DEP_CALC_ID);
+					return dependencyGenerator;
+				}
+			} catch (CoreException e) {}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGeneratorForExtension()
+	 */
+	public IManagedDependencyGenerator getDependencyGeneratorForExtension(String sourceExt) {
+		if (dependencyGenerator != null) {
+			return dependencyGenerator;
+		}
+		IConfigurationElement element = getDependencyGeneratorElementForExtension(sourceExt);
 		if (element != null) {
 			try {
 				if (element.getAttribute(DEP_CALC_ID) != null) {
@@ -1208,13 +1846,46 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getAllOutputExtensions()
+	 */
+	public String[] getAllOutputExtensions() {
+		IOutputType[] types = getOutputTypes();
+		if (types != null && types.length > 0) {
+			List allExts = new ArrayList();
+			for (int i=0; i<types.length; i++) {
+				String[] exts = types[i].getOutputExtensions();
+				for (int j=0; j<exts.length; j++) {
+					allExts.add(exts[j]);
+				}
+			}
+			if (allExts.size() > 0) {
+				return (String[])allExts.toArray(new String[allExts.size()]);
+			}
+		}
+		// If none, use the outputs specified for the Tool (backwards compatibility)
+		String[] extsList = getOutputsAttribute();
+		if (extsList != null && extsList.length > 0) {
+			return extsList;
+		}
+		return EMPTY_STRING_ARRAY;		
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtensions()
+	 * @deprecated
 	 */
 	public String[] getOutputExtensions() {
+		return getOutputsAttribute();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputsAttribute()
+	 */
+	public String[] getOutputsAttribute() {
 		// TODO:  Why is this treated differently than inputExtensions?
 		if (outputExtensions == null) {
 			if (superClass != null) {
-				return superClass.getOutputExtensions();
+				return superClass.getOutputsAttribute();
 			} else {
 				return null;
 			}
@@ -1226,12 +1897,34 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputExtension(java.lang.String)
 	 */
 	public String getOutputExtension(String inputExtension) {
-		// Examine the list of input extensions
-		ListIterator iter = getInputExtensions().listIterator();
-		int i = 0;
-		while (iter.hasNext()) {
-			if (((String)iter.next()).equals(inputExtension)) {
-				String[] exts = getOutputExtensions();
+		// Search thru the output-types to find one that has a primary input type with this extension
+		IOutputType[] types = getOutputTypes();
+		int i;
+		if (types != null) {
+			for (i=0; i<types.length; i++) {
+				IInputType inputType = types[i].getPrimaryInputType();
+				if (inputType != null && inputType.isSourceExtension(inputExtension)) {
+					String[] exts = types[i].getOutputExtensions();
+					if (exts != null && exts.length > 0) {
+						return exts[0]; 
+					}
+				}
+			}
+			// Does any input type produce this extension?
+			if (getInputType(inputExtension) != null) {
+				//  Return the first extension of the primary output type
+				IOutputType outType = getPrimaryOutputType();
+				String[] exts = outType.getOutputExtensions();
+				if (exts != null && exts.length > 0) {
+					return exts[0]; 
+				}				
+			}
+		}
+		// If no OutputTypes specified, examine the list of input extensions
+		String[] inputExts = getAllInputExtensions();
+		for (i=0; i<inputExts.length; i++) {
+			if (inputExts[i].equals(inputExtension)) {
+				String[] exts = getOutputsAttribute();
 				if (exts != null) {
 					if (i < exts.length) {
 						return exts[i];
@@ -1240,9 +1933,25 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 					}
 				}
 			}
-			i++;
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputType(java.lang.String)
+	 */
+	public IOutputType getOutputType(String outputExtension) {
+		IOutputType type = null;
+		IOutputType[] types = getOutputTypes();
+		if (types != null && types.length > 0) {
+			for (int i=0; i<types.length; i++) {
+				if (types[i].isOutputExtension(outputExtension)) {
+					type = types[i];
+					break;
+				}
+			}
+		}
+		return type;
 	}
 
 	/* (non-Javadoc)
@@ -1305,13 +2014,41 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputExtensions(java.lang.String)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputsAttribute(java.lang.String)
 	 */
-	public void setOutputExtensions(String ext) {
+	public void setOutputsAttribute(String ext) {
 		if (ext == null && outputExtensions == null) return;
 		if (outputExtensions == null || ext == null || !(ext.equals(outputExtensions))) {
 			outputExtensions = ext;
 			isDirty = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setAdvancedInputCategory(boolean)
+	 */
+	public void setAdvancedInputCategory(boolean b) {
+		if (advancedInputCategory == null || !(b == advancedInputCategory.booleanValue())) {
+			advancedInputCategory = new Boolean(b);
+			setDirty(true);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setCustomBuildStep(boolean)
+	 */
+	public void setCustomBuildStep(boolean b) {
+		if (customBuildStep == null || !(b == customBuildStep.booleanValue())) {
+			customBuildStep = new Boolean(b);
+			setDirty(true);
+		}
+	}
+
+	public void setAnnouncement(String newText) {
+		if (newText == null && announcement == null) return;
+		if (announcement == null || newText == null || !(newText.equals(announcement))) {
+			announcement = newText;
+			setDirty(true);
 		}
 	}
 
@@ -1413,7 +2150,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (ext == null) {
 			return false;
 		}
-		return getInterfaceExtensions().contains(ext);
+		String[] exts = getAllDependencyExtensions();
+		for (int i=0; i<exts.length; i++) {
+			if (ext.equals(exts[i])) return true;
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -1423,18 +2164,35 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (extension == null)  { 
 			return false;
 		}
-		return getInputExtensions().contains(extension);
+		if (getInputType(extension) != null) {
+			return true;
+		}
+		//  If no InputTypes, check the attribute
+		if (!hasInputTypes()) {
+			return getInputExtensionsAttribute().contains(extension);
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
 	 */
-	public boolean producesFileType(String outputExtension) {
-		String[] exts = getOutputExtensions();
-		if (exts != null) {
-			for (int i = 0; i < exts.length; i++) {
-				if (exts[i].equals(outputExtension))
-					return true;
+	public boolean producesFileType(String extension) {
+		if (extension == null)  { 
+			return false;
+		}
+		//  Check the output-types first
+		if (getOutputType(extension) != null) {
+			return true;
+		}
+		//  If there are no OutputTypes, check the attribute
+		if (!hasOutputTypes()) {
+			String[] exts = getOutputsAttribute();
+			if (exts != null) {
+				for (int i = 0; i < exts.length; i++) {
+					if (exts[i].equals(extension))
+						return true;
+				}
 			}
 		}
 		return false;
@@ -1485,7 +2243,18 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				Option option = (Option) iter.next();
 				option.setDirty(false);
 			}
-		    
+			List typeElements = getInputTypeList();
+			iter = typeElements.listIterator();
+			while (iter.hasNext()) {
+				InputType type = (InputType) iter.next();
+				type.setDirty(false);
+			}
+			typeElements = getOutputTypeList();
+			iter = typeElements.listIterator();
+			while (iter.hasNext()) {
+				OutputType type = (OutputType) iter.next();
+				type.setDirty(false);
+			}
 		}
 	}
 
@@ -1513,6 +2282,16 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				Option current = (Option)optionIter.next();
 				current.resolveReferences();
 			}
+			Iterator typeIter = getInputTypeList().iterator();
+			while (typeIter.hasNext()) {
+				InputType current = (InputType)typeIter.next();
+				current.resolveReferences();
+			}
+			typeIter = getOutputTypeList().iterator();
+			while (typeIter.hasNext()) {
+				OutputType current = (OutputType)typeIter.next();
+				current.resolveReferences();
+			}
 			// Somewhat wasteful, but use the vector to retrieve the categories in proper order
 			Iterator catIter = getCategoryIds().iterator();
 			while (catIter.hasNext()) {
@@ -1536,4 +2315,5 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	    	return (new String(command + values)).trim();
 	    }
 	}
+
 }

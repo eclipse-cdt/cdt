@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,15 +18,18 @@ import java.util.List;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -164,7 +167,7 @@ public class ToolReference implements IToolReference {
 		command = tool.getToolCommand();
 		outputFlag = tool.getOutputFlag();
 		outputPrefix = tool.getOutputPrefix();
-		String[] extensions = tool.getOutputExtensions();
+		String[] extensions = tool.getOutputsAttribute();
 		outputExtensions = new String();
 		if (extensions != null) {
 			for (int index = 0; index < extensions.length; ++index) {
@@ -328,7 +331,12 @@ public class ToolReference implements IToolReference {
  	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
  	 */
  	public List getInputExtensions() {
- 		return getTool().getInputExtensions();
+		String[] exts = getPrimaryInputExtensions();
+		List extList = new ArrayList();
+		for (int i=0; i<exts.length; i++) {
+			extList.add(exts[i]);
+		}
+		return extList;
  	}
 	
 	 	/* (non-Javadoc)
@@ -574,7 +582,7 @@ public class ToolReference implements IToolReference {
 	public String[] getOutputExtensions() {
 		if (outputExtensions == null){
 			 if (parent != null) { 
-			 	return parent.getOutputExtensions();
+			 	return parent.getOutputsAttribute();
 			 } else {
 			 	return new String[0];
 			 } 
@@ -751,6 +759,57 @@ public class ToolReference implements IToolReference {
 			isDirty = true;
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setParent(IBuildObject)
+	 */
+	public void setToolParent(IBuildObject newParent) {
+		if (parent == null) {
+			// bad reference
+			return;
+		}
+		// Set the parent in the parent of this ToolRefernce, the tool
+		((Tool)parent).setToolParent(newParent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getParent()
+	 */
+	public IBuildObject getParent() {
+		return owner;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
+	 */
+	public String getCommandLinePattern() {
+		if( parent == null ) return new String();
+		return parent.getCommandLinePattern();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
+	 */
+	public IManagedCommandLineGenerator getCommandLineGenerator() {
+		if( parent == null ) return null;
+		return parent.getCommandLineGenerator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getDependencyGenerator()
+	 */
+	public IManagedDependencyGenerator getDependencyGenerator() {
+		if( parent == null ) return null;
+		return parent.getDependencyGenerator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandFlags()
+	 */
+	public String[] getCommandFlags() throws BuildException {
+		if( parent == null ) return null;
+		return parent.getCommandFlags();
+	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -825,6 +884,180 @@ public class ToolReference implements IToolReference {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createOption()
+	 */
+	public IOption createOption(IOption superClass, String Id, String name, boolean b) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOption()
+	 */
+	public void removeOption(IOption o) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
+	 */
+	public IOptionCategory[] getChildCategories() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setIsAbstract(boolean)
+	 */
+	public void setIsAbstract(boolean b) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
+	 */
+	public void setCommandLinePattern(String pattern) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
+	 */
+	public void setCommandLineGeneratorElement(IConfigurationElement element) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
+	 */
+	public IConfigurationElement getDependencyGeneratorElement() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
+	 */
+	public void setDependencyGeneratorElement(IConfigurationElement element) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGeneratorElement()
+	 */
+	public IConfigurationElement getCommandLineGeneratorElement() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getAdvancedInputCategory()
+	 */
+	public boolean getAdvancedInputCategory() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#setAdvancedInputCategory()
+	 */
+	public void setAdvancedInputCategory(boolean display) {
+	}
+
+	public IInputType createInputType(IInputType superClass, String Id, String name, boolean isExtensionElement) {
+		return null;
+	}
+
+	public IOutputType createOutputType(IOutputType superClass, String Id, String name, boolean isExtensionElement) {
+		return null;
+	}
+
+	public String getAnnouncement() {
+		return null;
+	}
+
+	public IInputType getInputTypeById(String id) {
+		return null;
+	}
+
+	public IInputType[] getInputTypes() {
+		return null;
+	}
+
+	public IOutputType getOutputTypeById(String id) {
+		return null;
+	}
+
+	public IOutputType[] getOutputTypes() {
+		return null;
+	}
+
+	public void removeInputType(IInputType type) {
+	}
+
+	public void removeOutputType(IOutputType type) {
+	}
+
+	public void setAnnouncement(String announcement) {
+	}
+
+	public String getDefaultInputExtension() {
+		return null;
+	}
+
+	public String[] getAllInputExtensions() {
+		return null;
+	}
+
+	public String[] getPrimaryInputExtensions() {
+		return null;
+	}
+
+	public IInputType getInputType(String inputExtension) {
+		return null;
+	}
+
+	public String[] getOutputsAttribute() {
+		return null;
+	}
+
+	public IOutputType getOutputType(String outputExtension) {
+		return null;
+	}
+
+	public void setOutputsAttribute(String extensions) {
+	}
+
+	public String[] getAllOutputExtensions() {
+		return null;
+	}
+
+	public String[] getAllDependencyExtensions() {
+		return null;
+	}
+
+	public IInputType getPrimaryInputType() {
+		return null;
+	}
+
+	public IOutputType getPrimaryOutputType() {
+		return null;
+	}
+
+	public IPath[] getAdditionalDependencies() {
+		return null;
+	}
+
+	public IPath[] getAdditionalResources() {
+		return null;
+	}
+
+	public IConfigurationElement getDependencyGeneratorElementForExtension(String sourceExt) {
+		return null;
+	}
+
+	public IManagedDependencyGenerator getDependencyGeneratorForExtension(String sourceExt) {
+		return null;
+	}
+
+	public boolean getCustomBuildStep() {
+		return false;
+	}
+
+	public void setCustomBuildStep(boolean customBuildStep) {
+	}
+
 	/*
 	 * The following methods are added to allow the converter from ToolReference -> Tool
 	 * to retrieve the actual value of attributes.  These routines do not go to the
@@ -859,112 +1092,4 @@ public class ToolReference implements IToolReference {
 		return command;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createOption()
-	 */
-	public IOption createOption(IOption superClass, String Id, String name, boolean b) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOption()
-	 */
-	public void removeOption(IOption o) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
-	 */
-	public IOptionCategory[] getChildCategories() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setParent(IBuildObject)
-	 */
-	public void setToolParent(IBuildObject newParent) {
-		if (parent == null) {
-			// bad reference
-			return;
-		}
-		// Set the parent in the parent of this ToolRefernce, the tool
-		((Tool)parent).setToolParent(newParent);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setIsAbstract(boolean)
-	 */
-	public void setIsAbstract(boolean b) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getParent()
-	 */
-	public IBuildObject getParent() {
-		return owner;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
-	 */
-	public String getCommandLinePattern() {
-		if( parent == null ) return new String();
-		return parent.getCommandLinePattern();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
-	 */
-	public void setCommandLinePattern(String pattern) {
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
-	 */
-	public IManagedCommandLineGenerator getCommandLineGenerator() {
-		if( parent == null ) return null;
-		return parent.getCommandLineGenerator();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
-	 */
-	public IConfigurationElement getCommandLineGeneratorElement() {
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
-	 */
-	public void setCommandLineGeneratorElement(IConfigurationElement element) {
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getDependencyGenerator()
-	 */
-	public IManagedDependencyGenerator getDependencyGenerator() {
-		if( parent == null ) return null;
-		return parent.getDependencyGenerator();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
-	 */
-	public IConfigurationElement getDependencyGeneratorElement() {
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
-	 */
-	public void setDependencyGeneratorElement(IConfigurationElement element) {
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandFlags()
-	 */
-	public String[] getCommandFlags() throws BuildException {
-		if( parent == null ) return null;
-		return parent.getCommandFlags();
-	}
 }

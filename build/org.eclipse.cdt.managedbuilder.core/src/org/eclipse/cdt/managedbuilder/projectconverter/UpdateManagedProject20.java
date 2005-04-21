@@ -348,7 +348,7 @@ class UpdateManagedProject20 {
 
 		if(oldToolRef.hasAttribute(IToolReference.OUTPUTS)){
 			String outputs = oldToolRef.getAttribute(IToolReference.OUTPUTS);
-			tool.setOutputExtensions(outputs);
+			tool.setOutputsAttribute(outputs);
 		}
 
 		NodeList optRefs = oldToolRef.getElementsByTagName(ITool.OPTION_REF);

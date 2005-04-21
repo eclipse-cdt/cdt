@@ -92,6 +92,8 @@ public interface IManagedBuilderMakefileGenerator {
 	public String getMakefileName();
 	
 	/**
+	 * This method initializes the makefile generator
+	 * 
 	 * @param project
 	 * @param info
 	 * @param monitor

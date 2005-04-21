@@ -12,7 +12,7 @@ package org.eclipse.cdt.managedbuilder.core;
 
 
 /**
- * This class represents a tool-integrator-defined, ordered set of tools 
+ * This interface represents a tool-integrator-defined, ordered set of tools 
  * that transform the project’s input into the project’s outputs.  A 
  * tool-chain can be defined as part of a configuration, or as an 
  * independent specification that is referenced in a separate configuration
@@ -32,6 +32,8 @@ public interface IToolChain extends IBuildObject {
 	public static final String OS_LIST = "osList";						//$NON-NLS-1$
 	public static final String ARCH_LIST = "archList";					//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";			//$NON-NLS-1$
+	public static final String TARGET_TOOL = "targetTool";				//$NON-NLS-1$
+	public static final String SECONDARY_OUTPUTS = "secondaryOutputs";	//$NON-NLS-1$
 	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
@@ -224,6 +226,38 @@ public interface IToolChain extends IBuildObject {
 	 * @param profileId
 	 */
 	public void setScannerConfigDiscoveryProfileId(String profileId);
+
+	/**
+	 * Returns the id in this tool-chain that creates the build artifact.  
+	 * 
+	 * @return String
+	 */
+	public String getTargetToolId();
+
+	/**
+	 * Sets the tool in this tool-chain that creates the build artifact.  
+	 * 
+	 * @param targetToolId
+	 */
+	public void setTargetTool(String targetToolId);
+	
+	/**
+	 * Returns the OutputTypes in this tool-chain, besides the primary 
+	 * output of the targetTool, that are also considered to be build 
+	 * artifacts.  
+	 * 
+	 * @return IOutputType[]
+	 */
+	public IOutputType[] getSecondaryOutputs();
+	
+	/**
+	 * Sets the semicolon separated list of OutputType identifiers in 
+	 * this tool-chain, besides the primary output of the targetTool,
+	 * that are also considered to be build artifacts.  
+	 * 
+	 * @param ids
+	 */
+	public void setSecondaryOutputs(String ids);
 
 	/**
 	 * Returns <code>true</code> if this tool-chain has changes that need to 

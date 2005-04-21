@@ -174,8 +174,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	protected Vector generationProblems;
 	protected IProject[] referencedProjects;
 	protected List resourcesToBuild;
-	protected List ruleList;
-	
 	public static void outputTrace(String resourceName, String message) {
 		if (VERBOSE) {
 			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
@@ -373,7 +371,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		checkCancel(monitor);
 		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.rebuild.makefiles", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
+		//generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 		generator.initialize(getProject(), info, monitor);
 		MultiStatus result = generator.regenerateMakefiles();
 		if (result.getCode() == IStatus.WARNING || result.getCode() == IStatus.INFO) {
@@ -415,7 +413,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			throw e;
 		}
 
-		// Say bye bye
+		//  Build finished message
 		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
 	}
@@ -461,19 +459,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			resourcesToBuild = new ArrayList();
 		}
 		return resourcesToBuild;
-	}
-
-	/* (non-javadoc)
-	 * Answers the list of build rules that have been assembled. If there are none, 
-	 * answers an empty list, never <code>null</code>
-	 * 
-	 * @return
-	 */
-	protected List getRuleList() {
-		if (ruleList == null) {
-			ruleList = new ArrayList();
-		}
-		return ruleList;
 	}
 
 	/* (non-Javadoc)
@@ -538,7 +523,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			throw e;
 		}
 		
-		// Say bye bye
+		// Build finished message
 		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
 }

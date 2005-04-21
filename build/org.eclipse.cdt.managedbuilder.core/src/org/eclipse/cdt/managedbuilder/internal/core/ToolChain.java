@@ -21,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
@@ -52,6 +53,8 @@ public class ToolChain extends BuildObject implements IToolChain {
 	private String errorParserIds;
 	private List osList;
 	private List archList;
+	private String targetToolId;
+	private String secondaryOutputIds;
 	private Boolean isAbstract;
     private String scannerConfigDiscoveryProfileId;
 	private IConfigurationElement managedIsToolChainSupportedElement = null;
@@ -207,6 +210,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (toolChain.archList != null) {
 			archList = new ArrayList(toolChain.archList);
 		}
+		if (toolChain.targetToolId != null) {
+			targetToolId = new String(toolChain.targetToolId);
+		}
+		if (toolChain.secondaryOutputIds != null) {
+			secondaryOutputIds = new String(toolChain.secondaryOutputIds);
+		}
 		if (toolChain.isAbstract != null) {
 			isAbstract = new Boolean(toolChain.isAbstract.booleanValue());
 		}
@@ -299,6 +308,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = element.getAttribute(ERROR_PARSERS);
 		
+		// Get the semicolon separated list of IDs of the secondary outputs
+		secondaryOutputIds = element.getAttribute(SECONDARY_OUTPUTS);
+		
+		// Get the target tool id
+		targetToolId = element.getAttribute(TARGET_TOOL);
+		
 		// Get the scanner config discovery profile id
         scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
         
@@ -372,6 +387,16 @@ public class ToolChain extends BuildObject implements IToolChain {
 			errorParserIds = element.getAttribute(ERROR_PARSERS);
 		}
 		
+		// Get the semicolon separated list of IDs of the secondary outputs
+		if (element.hasAttribute(SECONDARY_OUTPUTS)) {
+			secondaryOutputIds = element.getAttribute(SECONDARY_OUTPUTS);
+		}
+		
+		// Get the target tool id
+		if (element.hasAttribute(TARGET_TOOL)) {
+			targetToolId = element.getAttribute(TARGET_TOOL);
+		}
+		
         // Get the scanner config discovery profile id
         if (element.hasAttribute(SCANNER_CONFIG_PROFILE_ID)) {
             scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
@@ -429,6 +454,14 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (errorParserIds != null) {
 			element.setAttribute(ERROR_PARSERS, errorParserIds);
 		}
+
+		if (secondaryOutputIds != null) {
+			element.setAttribute(SECONDARY_OUTPUTS, secondaryOutputIds);
+		}
+        
+        if (targetToolId != null) {
+            element.setAttribute(TARGET_TOOL, targetToolId);
+        }
         
         if (scannerConfigDiscoveryProfileId != null) {
             element.setAttribute(SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
@@ -727,6 +760,53 @@ public class ToolChain extends BuildObject implements IToolChain {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getSecondaryOutputs()
+	 */
+	public IOutputType[] getSecondaryOutputs() {
+		IOutputType[] types = null;
+		String ids = secondaryOutputIds; 
+		if (ids == null) {
+			if (superClass != null) {
+				return superClass.getSecondaryOutputs();
+			}
+			else {
+				return new IOutputType[0];
+			}			
+		}
+		StringTokenizer tok = new StringTokenizer(ids, ";"); //$NON-NLS-1$
+		types = new IOutputType[tok.countTokens()];
+		ITool[] tools = getTools();
+		int i = 0;
+		while (tok.hasMoreElements()) {
+			String id = tok.nextToken();
+			for (int j=0; j<tools.length; j++) {
+				IOutputType type;
+				type = tools[j].getOutputTypeById(id);
+				if (type != null) {
+					types[i++] = type;
+					break;
+				}
+			}
+		}
+		return types;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTargetTool()
+	 */
+	public String getTargetToolId() {
+		if (targetToolId == null) {
+			// Ask superClass for its list
+			if (superClass != null) {
+				return superClass.getTargetToolId();
+			} else {
+				return null;
+			}
+		}
+		return targetToolId;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getErrorParserIds(IConfiguration)
 	 */
 	public String getErrorParserIds(IConfiguration config) {
@@ -833,6 +913,28 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (currentIds == null || ids == null || !(currentIds.equals(ids))) {
 			errorParserIds = ids;
 			isDirty = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setSecondaryOutputs()
+	 */
+	public void setSecondaryOutputs(String newIds) {
+		if (secondaryOutputIds == null && newIds == null) return;
+		if (secondaryOutputIds == null || newIds == null || !newIds.equals(secondaryOutputIds)) {
+			secondaryOutputIds = newIds;
+			isDirty = true;					
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setTargetTool()
+	 */
+	public void setTargetTool(String newId) {
+		if (targetToolId == null && newId == null) return;
+		if (targetToolId == null || newId == null || !newId.equals(targetToolId)) {
+			targetToolId = newId;
+			isDirty = true;					
 		}
 	}
 	
@@ -980,13 +1082,13 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (tools != null) {
 			for (int i = 0; i < tools.length; i++) {
 				ITool tool = tools[i];
-				String[] extensions = tool.getOutputExtensions();
+				String[] extensions = tool.getOutputsAttribute();
 				if (extensions == null) {
-					tool.setOutputExtensions(""); //$NON-NLS-1$
+					tool.setOutputsAttribute(""); //$NON-NLS-1$
 					continue;
 				}
 				if (extensions.length == 0){ 
-					tool.setOutputExtensions(""); //$NON-NLS-1$
+					tool.setOutputsAttribute(""); //$NON-NLS-1$
 				    continue;
 				}
 			}

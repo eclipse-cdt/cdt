@@ -54,6 +54,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionCategory;
 import org.eclipse.cdt.managedbuilder.internal.core.ProjectType;
+import org.eclipse.cdt.managedbuilder.internal.core.InputType;
+import org.eclipse.cdt.managedbuilder.internal.core.OutputType;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
@@ -132,6 +134,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static Map extensionOptionMap;
 	// Option Categories defined in the manifest files
 	private static Map extensionOptionCategoryMap;
+	// Input types defined in the manifest files
+	private static Map extensionInputTypeMap;
+	// Output types defined in the manifest files
+	private static Map extensionOutputTypeMap;
 	// Targets defined in the manifest files (CDT V2.0 object model)
 	private static Map extensionTargetMap;
 	// "Selected configuraton" elements defined in the manifest files.
@@ -331,6 +337,30 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	/* (non-Javadoc)
+	 * Safe accessor for the map of IDs to InputTypes
+	 * 
+	 * @return Map
+	 */
+	protected static Map getExtensionInputTypeMap() {
+		if (extensionInputTypeMap == null) {
+			extensionInputTypeMap = new HashMap();
+		}
+		return extensionInputTypeMap;
+	}
+
+	/* (non-Javadoc)
+	 * Safe accessor for the map of IDs to OutputTypes
+	 * 
+	 * @return Map
+	 */
+	protected static Map getExtensionOutputTypeMap() {
+		if (extensionOutputTypeMap == null) {
+			extensionOutputTypeMap = new HashMap();
+		}
+		return extensionOutputTypeMap;
+	}
+
+	/* (non-Javadoc)
 	 * Safe accessor for the map of IDs to Targets (CDT V2.0 object model)
 	 * 
 	 * @return Map
@@ -445,6 +475,28 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static IOption getExtensionOption(String id) {
 		return (IOption) getExtensionOptionMap().get(id);
+	}
+
+	/**
+	 * Returns the InputType from the manifest with the ID specified in the argument
+	 *  or <code>null</code>.
+	 * 
+	 * @param id
+	 * @return IInputType
+	 */
+	public static IInputType getExtensionInputType(String id) {
+		return (IInputType) getExtensionInputTypeMap().get(id);
+	}
+
+	/**
+	 * Returns the OutputType from the manifest with the ID specified in the argument
+	 *  or <code>null</code>.
+	 * 
+	 * @param id
+	 * @return IOutputType
+	 */
+	public static IOutputType getExtensionOutputType(String id) {
+		return (IOutputType) getExtensionOutputTypeMap().get(id);
 	}
 
 	/**
@@ -1045,6 +1097,40 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			ManagedBuildManager.OutputDuplicateIdError(
 					"OptionCategory",	//$NON-NLS-1$
 					optionCategory.getId());			
+		}
+	}
+	
+	/**
+	 * Adds an InputType that is is specified in the manifest to the 
+	 * build system. It is available to any element that 
+	 * has a reference to it as part of its description.
+	 *  
+	 * @param inputType 
+	 */
+	public static void addExtensionInputType(InputType inputType) {
+		Object previous = getExtensionInputTypeMap().put(inputType.getId(), inputType);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"InputType",	//$NON-NLS-1$
+					inputType.getId());			
+		}
+	}
+	
+	/**
+	 * Adds an OutputType that is is specified in the manifest to the 
+	 * build system. It is available to any element that 
+	 * has a reference to it as part of its description.
+	 *  
+	 * @param outputType 
+	 */
+	public static void addExtensionOutputType(OutputType outputType) {
+		Object previous = getExtensionOutputTypeMap().put(outputType.getId(), outputType);
+		if (previous != null) {
+			// Report error
+			ManagedBuildManager.OutputDuplicateIdError(
+					"OutputType",	//$NON-NLS-1$
+					outputType.getId());			
 		}
 	}
 	

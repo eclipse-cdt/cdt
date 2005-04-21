@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2005 Rational Software Corporation and others.
+ * Copyright (c) 2003, 2005 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -250,9 +250,9 @@ public interface IManagedBuildInfo {
 
 	/**
 	 * Returns a <code>String</code> containing the command-line invocation 
-	 * for the tool associated with the extension.
+	 * for the tool associated with the output extension.
 	 * 
-	 * @param extension the file extension of the build goal
+	 * @param extension the file extension of the output file
 	 * @return a String containing the command line invocation for the tool
 	 */
 	public String getToolForConfiguration(String extension);
@@ -266,6 +266,24 @@ public interface IManagedBuildInfo {
 	 */
 	public String getToolForSource(String sourceExtension);
 	
+	/**
+	 * Returns a <code>ITool</code> for the tool associated with the 
+	 * input extension.
+	 * 
+	 * @param extension the file extension of the input file
+	 * @return ITool
+	 */
+	public ITool getToolFromInputExtension(String extension);
+	
+	/**
+	 * Returns a <code>ITool</code> for the tool associated with the 
+	 * output extension.
+	 * 
+	 * @param extension the file extension of the output file
+	 * @return ITool
+	 */
+	public ITool getToolFromOutputExtension(String extension);
+
 	/**
 	 * Answers a <code>String</code> array containing the contents of the 
 	 * user objects option, if one is defined for the target.

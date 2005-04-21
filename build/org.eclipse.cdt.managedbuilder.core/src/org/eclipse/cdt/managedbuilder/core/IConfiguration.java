@@ -225,6 +225,13 @@ public interface IConfiguration extends IBuildObject {
 	public ITool[] getTools();
 
 	/**
+	 * Returns the tool in this configuration that creates the build artifact.  
+	 * 
+	 * @return ITool
+	 */
+	public ITool getTargetTool();
+
+	/**
 	 * Returns <code>true</code> if this configuration has overridden the default build
 	 * build command in this configuration, otherwise <code>false</code>.
 	 * 

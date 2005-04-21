@@ -470,8 +470,11 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 * @deprecated
 	 */
 	public void setBinaryParserId(String id) {
-		String[] ids = new String[]{id};
-		setBinaryParserList(ids);
+		if (id == null) {
+			setBinaryParserList(new String[0]);
+		} else {
+			setBinaryParserList(new String[]{id});
+		}
 	}
 
 	/* (non-Javadoc)

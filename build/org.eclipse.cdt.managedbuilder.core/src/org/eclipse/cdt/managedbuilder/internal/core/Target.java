@@ -1067,7 +1067,7 @@ public class Target extends BuildObject implements ITarget {
 				newTool.setToolCommand(toolRef.getRawToolCommand());
 				newTool.setOutputPrefix(toolRef.getRawOutputPrefix());
 				newTool.setOutputFlag(toolRef.getRawOutputFlag());
-				newTool.setOutputExtensions(toolRef.getRawOutputExtensions());
+				newTool.setOutputsAttribute(toolRef.getRawOutputExtensions());
 				// Handle ToolReference children (OptionReference)
 				Iterator optRefIter = toolRef.getOptionReferenceList().listIterator();
 				while (optRefIter.hasNext()) {

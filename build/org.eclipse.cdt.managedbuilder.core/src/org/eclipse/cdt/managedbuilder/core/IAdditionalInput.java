@@ -1,0 +1,89 @@
+/**********************************************************************
+ * Copyright (c) 2005 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * Intel Corporation - Initial API and implementation
+ **********************************************************************/
+package org.eclipse.cdt.managedbuilder.core;
+
+/**
+ * This interface represents an additionalInput instance in the managed build system.
+ * This element is only present if the user or a tool integrator needs to define
+ * additional inputs or dependencies to a tool.  An inputType element can have 
+ * multiple additionalInput children.
+ * 
+ * @since 3.0
+ */
+public interface IAdditionalInput {
+
+	// Schema attribute names for additionalInput elements
+	public static final String ADDITIONAL_INPUT_ELEMENT_NAME = "additionalInput";	//$NON-NLS-1$
+	public static final String PATHS = "paths";	//$NON-NLS-1$
+	public static final String KIND = "kind";	//$NON-NLS-1$
+	public static final String ADDITIONAL_DEPENDENCY = "additionaldependency"; //$NON-NLS-1$
+	public static final int KIND_ADDITIONAL_DEPENDENCY = 1;
+	public static final String ADDITIONAL_INPUT = "additionalinput"; //$NON-NLS-1$
+	public static final int KIND_ADDITIONAL_INPUT = 2;
+	public static final String ADDITIONAL_INPUT_DEPENDENCY = "additionalinputdependency"; //$NON-NLS-1$
+	public static final int KIND_ADDITIONAL_INPUT_DEPENDENCY = 3;
+
+	/**
+	 * Returns the InputType parent of this AdditionalInput.
+	 * 
+	 * @return IInputType
+	 */
+	public IInputType getParent();
+
+	/**
+	 * Returns a semi-colon separated list of the relative or absolute paths of the resources
+	 * to which this element applies.
+	 * The resources must be a member of the project, the output from another tool in the 
+	 * tool-chain, or an external file.  The file name of the path can use GNU Make pattern 
+	 * rule syntax (in order to generate the name from the input file name).
+	 * 
+	 * @return String
+	 */
+	public String getPaths();
+
+	/**
+	 * Sets semi-colon separated list of the relative or absolute paths of the resources to 
+	 * which this element applies.
+	 * 
+	 * @param paths
+	 */
+	public void setPaths(String paths);
+
+	/**
+	 * Returns the kind of additional input.  The valid values are: 
+	 *   •	KIND_ADDITIONAL_DEPENDENCY – added as a tool dependency, but not to the command line.
+	 *   •	KIND_ADDITIONAL_INPUT – added as an additional input to the command line, but not as a dependency.
+	 *   •	KIND_ADDITIONAL_INPUT_DEPENDENCY – added as both.
+	 * The default is KIND_ADDITIONAL_INPUT_DEPENDENCY
+     */
+	public int getKind();
+	
+	/**
+	 * Sets the kind of additional input.
+	 */ 
+	public void setKind(int kind);
+
+	/**
+	 * Returns <code>true</code> if this element has changes that need to 
+	 * be saved in the project file, else <code>false</code>.
+	 * 
+	 * @return boolean 
+	 */
+	public boolean isDirty();
+	
+	/**
+	 * Sets the element's "dirty" (have I been modified?) flag.
+	 * 
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty);
+	
+}

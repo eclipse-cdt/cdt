@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,12 @@ package org.eclipse.cdt.managedbuilder.core;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 
 /**
- * This class represents a utility of some sort that is used in the build process.
+ * This interface represents a utility of some sort that is used in the build process.
  * A tool will generally process one or more resources to produce output resources.
  * Most tools have a set of options that can be used to modify the behavior of the tool.
  */
@@ -33,9 +34,14 @@ public interface ITool extends IBuildObject {
 	public static final String OPTION_CAT = "optionCategory";	//$NON-NLS-1$
 	public static final String OPTION_REF = "optionReference";	//$NON-NLS-1$
 	public static final String OUTPUT_FLAG = "outputFlag";	//$NON-NLS-1$
+	public static final String INPUT_TYPE = "inputType";	//$NON-NLS-1$
+	public static final String OUTPUT_TYPE = "outputType";	//$NON-NLS-1$
 	public static final String OUTPUT_PREFIX = "outputPrefix";	//$NON-NLS-1$
 	public static final String OUTPUTS = "outputs";	//$NON-NLS-1$
 	public static final String SOURCES = "sources";	//$NON-NLS-1$
+	public static final String ADVANCED_INPUT_CATEGORY = "advancedInputCategory";	//$NON-NLS-1$
+	public static final String CUSTOM_BUILD_STEP = "customBuildStep";	//$NON-NLS-1$
+	public static final String ANNOUNCEMENT = "announcement";	//$NON-NLS-1$
 	public static final String TOOL_ELEMENT_NAME = "tool";	//$NON-NLS-1$
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
 	
@@ -105,6 +111,165 @@ public interface ITool extends IBuildObject {
 	public IOption[] getOptions();
 
 	/**
+	 * Creates a child InputType for this tool.
+	 * 
+	 * @param InputType The superClass, if any
+	 * @param String The id for the new InputType 
+	 * @param String The name for the new InputType
+	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * 
+	 * @return IInputType
+	 * @since 3.0
+	 */
+	public IInputType createInputType(IInputType superClass, String Id, String name, boolean isExtensionElement);
+
+	/**
+	 * Removes an InputType from the tool's list.
+	 * 
+	 * @param type
+	 * @since 3.0
+	 */
+	public void removeInputType(IInputType type);
+	
+	/**
+	 * Returns the complete list of input types that are available for this tool.
+	 * The list is a merging of the input types specified for this tool with the 
+	 * input types of its superclasses.  The lowest input type instance in the hierarchy
+	 * takes precedence.  
+	 * 
+	 * @return IInputType[]
+	 * @since 3.0
+	 */
+	public IInputType[] getInputTypes();
+
+	/**
+	 * Returns the <code>IInputType</code> in the tool with the specified 
+	 * ID. This is an efficient search in the receiver.
+	 * 
+	 * <p>If the receiver does not have an InputType with that ID, the method 
+	 * returns <code>null</code>. It is the responsibility of the caller to 
+	 * verify the return value.  
+	 * 
+	 * @param id unique identifier of the InputType to search for
+	 * @return <code>IInputType</code>
+	 * @since 3.0
+	 */
+	public IInputType getInputTypeById(String id);
+
+	/**
+	 * Returns the <code>IInputType</code> in the tool that uses the 
+	 * specified extension.
+	 * 
+	 * <p>If the receiver does not have an InputType that uses the extension, 
+	 * the method returns <code>null</code>. It is the responsibility of the 
+	 * caller to verify the return value.  
+	 * 
+	 * @param inputExtension File extension
+	 * @return <code>IInputType</code>
+	 * @since 3.0
+	 */
+	public IInputType getInputType(String inputExtension);
+
+	/**
+	 * Returns the primary <code>IInputType</code> in this tool
+	 * 
+	 * <p>If the receiver has no InputTypes, 
+	 * the method returns <code>null</code>. It is the responsibility of the 
+	 * caller to verify the return value.  
+	 * 
+	 * @return <code>IInputType</code>
+	 * @since 3.0
+	 */
+	public IInputType getPrimaryInputType();
+
+	/**
+	 * Returns all of the additional input resources of all InputType children.
+	 * Note: This does not include additional dependencies.
+	 * 
+	 * @return IPath[]
+	 */
+	public IPath[] getAdditionalResources();
+
+	/**
+	 * Returns all of the additional dependency resources of all InputType children.
+	 * Note: This does not include additional inputs.
+	 * 
+	 * @return IPath[]
+	 */
+	public IPath[] getAdditionalDependencies();
+
+	/**
+	 * Creates a child OutputType for this tool.
+	 * 
+	 * @param OutputType The superClass, if any
+	 * @param String The id for the new OutputType 
+	 * @param String The name for the new OutputType
+	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * 
+	 * @return IOutputType
+	 * @since 3.0
+	 */
+	public IOutputType createOutputType(IOutputType superClass, String Id, String name, boolean isExtensionElement);
+
+	/**
+	 * Removes an OutputType from the tool's list.
+	 * 
+	 * @param type
+	 * @since 3.0
+	 */
+	public void removeOutputType(IOutputType type);
+	
+	/**
+	 * Returns the complete list of output types that are available for this tool.
+	 * The list is a merging of the output types specified for this tool with the 
+	 * output types of its superclasses.  The lowest output type instance in the hierarchy
+	 * takes precedence.  
+	 * 
+	 * @return IOutputType[]
+	 * @since 3.0
+	 */
+	public IOutputType[] getOutputTypes();
+	/**
+	 * Get the <code>IOutputType</code> in the receiver with the specified 
+	 * ID. This is an efficient search in the receiver.
+	 * 
+	 * <p>If the receiver does not have an OutputType with that ID, the method 
+	 * returns <code>null</code>. It is the responsibility of the caller to 
+	 * verify the return value.  
+	 * 
+	 * @param id unique identifier of the OutputType to search for
+	 * @return <code>IOutputType</code>
+	 * @since 3.0
+	 */
+	public IOutputType getOutputTypeById(String id);
+
+	/**
+	 * Returns the <code>IOutputType</code> in the tool that creates the 
+	 * specified extension.
+	 * 
+	 * <p>If the receiver does not have an OutputType that creates the extension, 
+	 * the method returns <code>null</code>. It is the responsibility of the 
+	 * caller to verify the return value.  
+	 * 
+	 * @param outputExtension File extension
+	 * @return <code>IOutputType</code>
+	 * @since 3.0
+	 */
+	public IOutputType getOutputType(String outputExtension);
+
+	/**
+	 * Returns the primary <code>IOutputType</code> in this tool
+	 * 
+	 * <p>If the receiver has no OutputTypes, 
+	 * the method returns <code>null</code>. It is the responsibility of the 
+	 * caller to verify the return value.  
+	 * 
+	 * @return <code>IOutputType</code>
+	 * @since 3.0
+	 */
+	public IOutputType getPrimaryOutputType();
+
+	/**
 	 * Returns the <code>ITool</code> that is the superclass of this
 	 * tool, or <code>null</code> if the attribute was not specified.
 	 * 
@@ -162,14 +327,48 @@ public interface ITool extends IBuildObject {
 	 * The list may be empty but will never be <code>null</code>.
 	 * 
 	 * @return List
+	 * @deprecated - use getPrimaryInputExtensions or getAllInputExtensions
 	 */
 	public List getInputExtensions();
 	
 	/**
+	 * Returns the array of valid primary source extensions this tool knows how to build.
+	 * The array may be empty but will never be <code>null</code>.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getPrimaryInputExtensions();
+	
+	/**
+	 * Returns the array of all valid source extensions this tool knows how to build.
+	 * The array may be empty but will never be <code>null</code>.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getAllInputExtensions();
+	
+	/**
+	 * Returns the default input extension for the primary input of the tool
+	 * 
+	 * @return String
+	 */
+	public String getDefaultInputExtension();
+	
+	/**
+	 * Returns the array of all valid dependency extensions for this tool's inputs.
+	 * The array may be empty but will never be <code>null</code>.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getAllDependencyExtensions();
+	
+	/**
 	 * Returns the list of valid header extensions for this tool.
+	 * Returns the value of the headerExtensions attribute
 	 * The list may be empty but will never be <code>null</code>.
 	 * 
 	 * @return List
+	 * @deprecated - use getDependency* methods
 	 */
 	public List getInterfaceExtensions();
 
@@ -193,11 +392,29 @@ public interface ITool extends IBuildObject {
 	public int getNatureFilter();
 	
 	/**
+	 * Returns the array of all valid output extensions this tool can create.
+	 * The array may be empty but will never be <code>null</code>.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getAllOutputExtensions();
+	
+	/**
 	 * Answers all of the output extensions that the receiver can build.
+	 * This routine returns the value if the outputs attribute.
+	 * 
+	 * @return <code>String[]</code> of extensions
+	 * @deprecated - use getAllOutputExtensions
+	 */
+	public String[] getOutputExtensions();
+	
+	/**
+	 * Answers all of the output extensions that the receiver can build,
+	 * from the value of the outputs attribute
 	 * 
 	 * @return <code>String[]</code> of extensions
 	 */
-	public String[] getOutputExtensions();
+	public String[] getOutputsAttribute();
 	
 	/**
 	 * Answer the output extension the receiver will create from the input, 
@@ -209,11 +426,13 @@ public interface ITool extends IBuildObject {
 	public String getOutputExtension(String inputExtension);
 	
 	/**
-	 * Sets all of the output extensions that the receiver can build.
+	 * Sets all of the output extensions that the receiver can build,
+	 * into the outputs attribute.  Note that the outputs attribute is
+	 * ignored when one or more outputTypes are specified.  
 	 * 
 	 * @param String
 	 */
-	public void setOutputExtensions(String extensions);
+	public void setOutputsAttribute(String extensions);
 	
 	/**
 	 * Answers the argument that must be passed to a specific tool in order to 
@@ -246,6 +465,51 @@ public interface ITool extends IBuildObject {
 	 * @param String
 	 */
 	public void setOutputPrefix(String prefix);
+	
+	/**
+	 * Returns <code>true</code> if the Tool wants the MBS to display the Advanced 
+	 * Input category that allows the user to specify additional input resources and
+	 * dependencies, else <code>false</code>.
+	 * 
+	 * @return boolean 
+	 */
+	public boolean getAdvancedInputCategory();
+	
+	/**
+	 * Sets whether the Tool wants the MBS to display the Advanced 
+	 * Input category that allows the user to specify additional input resources and
+	 * dependencies. 
+	 * 
+	 * @param display   
+	 */
+	public void setAdvancedInputCategory(boolean display);
+	
+	/**
+	 * Returns <code>true</code> if the Tool represents a user-define custom build
+	 * step, else <code>false</code>.
+	 * 
+	 * @return boolean 
+	 */
+	public boolean getCustomBuildStep();
+	
+	/**
+	 * Sets whether the Tool represents a user-define custom build step.
+	 * 
+	 * @param customBuildStep
+	 */
+	public void setCustomBuildStep(boolean customBuildStep);
+	
+	/**
+	 * Returns the announcement string for this tool 
+	 * @return String
+	 */
+	public String getAnnouncement();
+	
+	/**
+	 * Sets the announcement string for this tool 
+	 * @param announcement
+	 */
+	public void setAnnouncement(String announcement);
 	
 	/**
 	 * Answers the command-line invocation defined for the receiver.
@@ -299,13 +563,23 @@ public interface ITool extends IBuildObject {
 	 * Returns the plugin.xml element of the dependencyGenerator extension or <code>null</code> if none. 
 	 *  
 	 * @return IConfigurationElement
+	 * @deprecated - use getDependencyGeneratorElementForExtension or IInputType method
 	 */
 	public IConfigurationElement getDependencyGeneratorElement();
+	
+	/**
+	 * Returns the plugin.xml element of the dependencyGenerator extension or <code>null</code> if none. 
+	 *  
+	 * @param sourceExt  source file extension
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getDependencyGeneratorElementForExtension(String sourceExt);
 	
 	/**
 	 * Sets the DependencyGenerator plugin.xml element
 	 * 
 	 * @param element
+	 * @deprecated - use IInputType method
 	 */
 	public void setDependencyGeneratorElement(IConfigurationElement element);
 	
@@ -317,8 +591,21 @@ public interface ITool extends IBuildObject {
 	 * when the project is built.
 	 *
 	 * @return IManagedDependencyGenerator
+	 * @deprecated - use getDependencyGeneratorForExtension or IInputType method
 	 */
 	public IManagedDependencyGenerator getDependencyGenerator();
+	
+	/**
+	 * Returns a class instance that implements an interface to generate 
+	 * source-level dependencies for the tool specified in the argument. 
+	 * This method may return <code>null</code> in which case, the receiver 
+	 * should assume that the tool does not require dependency information 
+	 * when the project is built.
+	 *
+	 * @param sourceExt  source file extension
+	 * @return IManagedDependencyGenerator
+	 */
+	public IManagedDependencyGenerator getDependencyGeneratorForExtension(String sourceExt);
 	
 	/**
 	 * Returns an array of command line arguments that have been specified for
@@ -329,7 +616,7 @@ public interface ITool extends IBuildObject {
 	public String[] getCommandFlags() throws BuildException;
 	
 	/**
-	 * Answers the additional command line arguments the user has specified for
+	 * Returns the command line arguments that have been specified for
 	 * the tool.
 	 * 
 	 * @return String

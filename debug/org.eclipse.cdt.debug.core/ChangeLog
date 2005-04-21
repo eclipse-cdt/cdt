@@ -1,4 +1,8 @@
 2005-04-21 Mikhail Khodjaiants
+	Cleanup. Removed the session manager from the CDebugCorePlugin class.
+	* CDebugCorePlugin.java
+	
+2005-04-21 Mikhail Khodjaiants
 	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
 	* CDebugCorePlugin.java
 	* MappingSourceContainer.java

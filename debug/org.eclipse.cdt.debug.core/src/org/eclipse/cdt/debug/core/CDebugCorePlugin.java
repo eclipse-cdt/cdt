@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
-import org.eclipse.cdt.debug.internal.core.SessionManager;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CommonSourceLookupDirector;
@@ -66,8 +65,6 @@ public class CDebugCorePlugin extends Plugin {
 	 * Dummy source lookup director needed to manage common source containers.
 	 */
 	private CommonSourceLookupDirector fCommonSourceLookupDirector;
-
-	private SessionManager fSessionManager = null;
 
 	/**
 	 * The constructor.
@@ -192,16 +189,6 @@ public class CDebugCorePlugin extends Plugin {
 		}
 	}
 
-	protected SessionManager getSessionManager() {
-		return fSessionManager;
-	}
-
-	protected void setSessionManager( SessionManager sm ) {
-		if ( fSessionManager != null )
-			fSessionManager.dispose();
-		fSessionManager = sm;
-	}
-
 	public void saveCommonSourceLocations( ICSourceLocation[] locations ) {
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SOURCE_LOCATIONS, SourceUtils.getCommonSourceLocationsMemento( locations ) );
 	}
@@ -254,14 +241,12 @@ public class CDebugCorePlugin extends Plugin {
 		initializeCommonSourceLookupDirector();
 		createBreakpointListenersList();
 		resetBreakpointsInstallCount();
-		setSessionManager( new SessionManager() );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop( BundleContext context ) throws Exception {
-		setSessionManager( null );
 		disposeBreakpointListenersList();
 		resetBreakpointsInstallCount();
 		disposeCommonSourceLookupDirector();

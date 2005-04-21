@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexerOutputWrapper.EntryType;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 
@@ -93,12 +94,7 @@ public class CGenerateIndexVisitor extends CASTVisitor {
      * @throws DOMException
      */
     private void processName(IASTName name) throws DOMException {
-        // Quick check to see if the name is a reference in an external header file
-		//if (IndexEncoderUtil.nodeInExternalHeader(name) && name.isReference())
-		if (IndexEncoderUtil.nodeInExternalHeader(name))
-			return;
-
-		IBinding binding = name.resolveBinding();
+        IBinding binding = name.resolveBinding();
         // check for IProblemBinding
         if (binding instanceof IProblemBinding) {
             IProblemBinding problem = (IProblemBinding) binding;
@@ -109,7 +105,6 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             }
             return;
         }
-
         // Get the location
         IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
         if (loc != null) {
@@ -143,90 +138,59 @@ public class CGenerateIndexVisitor extends CASTVisitor {
      * @param indexFlag
      * @throws DOMException 
      */
-    
     private void processNameBinding(IASTName name, IBinding binding, IASTFileLocation loc, int fileNumber) throws DOMException {
         // determine type
+        EntryType entryType = null;
         if (binding instanceof ICompositeType) {
             int compositeKey = ((ICompositeType) binding).getKey();
             ASTNodeProperty prop = name.getPropertyInParent();
             switch (compositeKey) {
                 case ICompositeType.k_struct:
+                    entryType = IndexerOutputWrapper.STRUCT;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
-                        if (name.isDeclaration()) {
-                            indexer.getOutput().addFwd_StructDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }                   
-                        else if (name.isReference()) {
-                            indexer.getOutput().addFwd_StructRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }
-                    else
-                        if (name.isDeclaration()) {
-                            indexer.getOutput().addStructDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }                   
-                        else if (name.isReference()) {
-                            indexer.getOutput().addStructRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }
+                        entryType = IndexerOutputWrapper.FWD_STRUCT;
                     break;
-                case ICompositeType.k_union:     
+                case ICompositeType.k_union:
+                    entryType = IndexerOutputWrapper.UNION;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
-                        if (name.isDeclaration()) {
-                            indexer.getOutput().addFwd_UnionDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }                   
-                        else if (name.isReference()) {
-                            indexer.getOutput().addFwd_UnionRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }
-                    else
-                        if (name.isDeclaration()) {
-                            indexer.getOutput().addUnionDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }                   
-                        else if (name.isReference()) {
-                            indexer.getOutput().addUnionRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-                        }
+                        entryType = IndexerOutputWrapper.FWD_UNION;
                     break;
             }
         }
         else if (binding instanceof IEnumeration)
-            if (name.isDeclaration()) {
-                indexer.getOutput().addEnumDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }                   
-            else if (name.isReference()) {
-                indexer.getOutput().addEnumRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }
+            entryType = IndexerOutputWrapper.ENUM;
         else if (binding instanceof ITypedef)
-            if (name.isDeclaration()) {
-                indexer.getOutput().addTypedefDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }                   
-            else if (name.isReference()) {
-                indexer.getOutput().addTypedefRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }
+            entryType = IndexerOutputWrapper.TYPEDEF;
         else if (binding instanceof IEnumerator)
-            if (name.isDeclaration()) {
-                indexer.getOutput().addEnumtorDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }                   
-            else if (name.isReference()) {
-                indexer.getOutput().addEnumtorRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }
+            entryType = IndexerOutputWrapper.ENUMERATOR;
         else if (binding instanceof IField) 
-            if (name.isDeclaration()) {
-                indexer.getOutput().addFieldDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }                   
-            else if (name.isReference()) {
-                indexer.getOutput().addFieldRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }
+            entryType = IndexerOutputWrapper.FIELD;
         else if (binding instanceof IParameter ||
                  binding instanceof IVariable) 
-            if (name.isDeclaration()) {
-                indexer.getOutput().addVarDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }                   
-            else if (name.isReference()) {
-                indexer.getOutput().addVarRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
-            }
+            entryType = IndexerOutputWrapper.VAR;
         else if (binding instanceof IFunction)
+            entryType = IndexerOutputWrapper.FUNCTION;
+        
+        if (entryType != null) {
             if (name.isDeclaration()) {
-                indexer.getOutput().addFunctionDecl(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
+                IndexerOutputWrapper.addNameDecl(indexer.getOutput(),
+                        getFullyQualifiedName(name),
+                        entryType,
+						fileNumber, 
+                        loc.getNodeOffset(),
+                        loc.getNodeLength(),
+                        ICIndexStorageConstants.OFFSET);
             }                   
             else if (name.isReference()) {
-                indexer.getOutput().addFunctionRef(fileNumber, getFullyQualifiedName(name),loc.getNodeOffset(),loc.getNodeLength(),ICIndexStorageConstants.OFFSET);
+                IndexerOutputWrapper.addNameRef(indexer.getOutput(),
+                        getFullyQualifiedName(name),
+                        entryType,
+						fileNumber, 
+                        loc.getNodeOffset(),
+                        loc.getNodeLength(),
+                        ICIndexStorageConstants.OFFSET);
             }
+        }
     }
 
     /**

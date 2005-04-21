@@ -1,3 +1,16 @@
+2005-04-21 Vladimir Hirsl
+	Fix for PR 91964: Dom Indexer misses give a friend declaration for forward decls
+	    Fixed detection of friend class/struct declaration.
+	Fix for PR 92060: [DOM Indexer] for C projects only seems to do macros now
+	    Taken a different approach by wrapping calls to IIndexerOutput in anticipation
+	    of its soon change.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexerVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexerDOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexerEncoderUtil.java
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexerOutputWrapper.java
+
 2005-04-15 Vladimir Hirsl
 	Fix for PR 91405: Search does not find declarations of printf
 	Index entries form include files external to workspace were erroneously stored 

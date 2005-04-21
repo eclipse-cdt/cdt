@@ -202,10 +202,14 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             getOutput().addIncludeRef(fileNumber, include);
             getOutput().addRelatives(fileNumber, include, 
                     (parent != null) ? parent.getIncludeDirective().getPath() : null);
-            getOutput().addIncludeRef(fileNumber, 
-                        new char[][] {include.toCharArray()},
-                        1,1, ICIndexStorageConstants.LINE
-                        );
+			
+            IndexerOutputWrapper.addNameRef(getOutput(),
+                    new char[][] {include.toCharArray()}, 
+					IndexerOutputWrapper.INCLUDE,
+					fileNumber,
+					1,
+					1,
+					ICIndexStorageConstants.OFFSET);
             
             /* See if this file has been encountered before */
             indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(include));
@@ -224,9 +228,11 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             // Get the location
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(macro);
             int fileNumber = IndexEncoderUtil.calculateIndexFlags(this, loc);
-            getOutput().addMacroDecl(fileNumber,
+            IndexerOutputWrapper.addNameDecl(getOutput(),
                     new char[][] {macro.toCharArray()},
-                    loc.getNodeOffset(),
+					IndexerOutputWrapper.MACRO,
+					fileNumber,
+					loc.getNodeOffset(),
                     loc.getNodeLength(),
                     ICIndexStorageConstants.OFFSET);
         }

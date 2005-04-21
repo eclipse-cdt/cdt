@@ -84,12 +84,5 @@ public class IndexEncoderUtil {
         }
         return fileLoc;
     }
-	
-	public static boolean nodeInExternalHeader(IASTNode node) {
-		String fileName = node.getContainingFilename();
-		return (CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName)) == null)
-				? true : false;
-	}
-
 
 }

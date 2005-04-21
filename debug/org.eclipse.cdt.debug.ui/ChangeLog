@@ -1,4 +1,9 @@
 2005-04-21 Mikhail Khodjaiants
+	Bug 92292: [artwork] "Instruction Stepping Mode" image is same as "Use Step Filters".
+	* icons/dlcl16/instr_step.gif
+	* icons/elcl16/instr_step.gif
+
+2005-04-21 Mikhail Khodjaiants
 	Replaced deprecated methods.
 	* CBreakpointPropertiesAction.java
 	* CBreakpointPropertiesRulerAction.java

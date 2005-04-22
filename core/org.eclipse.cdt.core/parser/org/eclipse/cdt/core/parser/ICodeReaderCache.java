@@ -45,4 +45,9 @@ public interface ICodeReaderCache {
 	 * @return
 	 */
 	public int getCurrentSpace();
+
+	/**
+	 * 
+	 */
+	public void flush();
 }

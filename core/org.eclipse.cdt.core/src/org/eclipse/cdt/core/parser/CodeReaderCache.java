@@ -295,4 +295,8 @@ public class CodeReaderCache implements ICodeReaderCache {
 		return cache.getCurrentSpace(); 
 	}
 
+	public void flush() {
+		cache.flush();
+	}
+
 }

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.CodeReaderCache;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
+import org.eclipse.core.runtime.Preferences;
 
 /**
  * @author jcamelon
@@ -34,13 +35,29 @@ public class SavedCodeReaderFactory implements ICodeReaderFactory {
     private SavedCodeReaderFactory()
     {
 		int size=0;
-		if (CCorePlugin.getDefault() == null || CCorePlugin.getDefault().getPluginPreferences() == null)
+		Preferences pluginPreferences = CCorePlugin.getDefault().getPluginPreferences();
+		if (CCorePlugin.getDefault() == null || pluginPreferences == null)
 			size = CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
 		else
-			size = CCorePlugin.getDefault().getPluginPreferences().getInt(CodeReaderCache.CODE_READER_BUFFER);
-		 
-		if (size >= 0)
+			size = pluginPreferences.getInt(CodeReaderCache.CODE_READER_BUFFER);
+		
+		if (size > 0)
 			cache = new CodeReaderCache(size);
+		else if( size == 0 )
+		{
+			//necessary for cache to work headless
+			String [] properties = pluginPreferences.propertyNames();
+			boolean found = false;
+			for( int j = 0; j < properties.length; ++j )
+				if( properties[j].equals( CodeReaderCache.CODE_READER_BUFFER ) )
+				{
+					found = true;
+					break;
+				}
+					
+			if( !found && size == 0 )
+				cache = new CodeReaderCache(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);
+		}
 		else
 			cache = new CodeReaderCache(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);
     }

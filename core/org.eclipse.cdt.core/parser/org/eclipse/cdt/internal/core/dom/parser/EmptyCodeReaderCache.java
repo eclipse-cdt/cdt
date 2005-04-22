@@ -62,4 +62,9 @@ public class EmptyCodeReaderCache implements ICodeReaderCache {
 		return 0;
 	}
 
+	public void flush() {
+		// nothing to do
+		
+	}
+
 }

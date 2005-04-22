@@ -510,10 +510,10 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		  IIndex ind = sourceIndexer.getIndex(testProjectPath,true,true);
 		  assertTrue("Index exists for project",ind != null);  //$NON-NLS-1$ 
 		  
-		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }, offsets={ [ 2142] }", 
-				  "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }, offsets={ [ 2104] }", 
-				  "EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 225] }", 
-				  "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }, offsets={ [ 2128] }"}; 
+		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }, offsets={ [ 2263, 2279, 2298] }", 
+				  "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }, offsets={ [ 2340] }", 
+				  "EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 237] }", 
+				  "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }, offsets={ [ 2247] }"}; 
 		  
 		  IEntryResult[] typerefresults = ind.queryEntries(IndexerOutput.TYPE_REF);
 		  assertTrue("Entry exists",typerefresults != null); //$NON-NLS-1$ 
@@ -526,7 +526,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 			  assertEquals(typeRefEntryResultModel[i],typerefresults[i].toString());
 		  }
 	
-		  String [] funRefEntryResultModel ={"EntryResult: word=functionRef/something/A, refs={ 1 }, offsets={ [ 259] }"};//$NON-NLS-1$ 
+		  String [] funRefEntryResultModel ={"EntryResult: word=functionRef/something/A, refs={ 1 }, offsets={ [ 2316] }"};//$NON-NLS-1$ 
 		  IEntryResult[] funRefresults = ind.queryEntries(IndexerOutput.FUNCTION_REF);
 		  assertTrue("Entry exists",funRefresults != null); //$NON-NLS-1$ 
 		  
@@ -538,7 +538,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		   assertEquals(funRefEntryResultModel[i],funRefresults[i].toString());
 		  }
 				
-		  String [] namespaceRefResultModel = {"EntryResult: word=namespaceRef/A, refs={ 1 }, offsets={ [ 210] }", "EntryResult: word=namespaceRef/B/A, refs={ 1 }, offsets={ [ 288] }"}; //$NON-NLS-1$ //$NON-NLS-2$ 
+		  String [] namespaceRefResultModel = {"EntryResult: word=namespaceRef/A, refs={ 1 }, offsets={ [ 2228, 2241, 2257, 2273, 2292, 2313, 2334] }", "EntryResult: word=namespaceRef/B/A, refs={ 1 }, offsets={ [ 2231, 2244, 2260, 2276, 2295, 2337] }"}; //$NON-NLS-1$ //$NON-NLS-2$ 
 		  IEntryResult[] namespacerefresults = ind.queryEntries(IndexerOutput.NAMESPACE_REF);
 		  assertTrue("Entry exists",namespacerefresults!=null); //$NON-NLS-1$ 
 		  
@@ -550,7 +550,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 			  assertEquals(namespaceRefResultModel[i],namespacerefresults[i].toString());
 		  }
 				
-		  String [] fieldRefResultModel = {"EntryResult: word=fieldRef/y/C/B/A, refs={ 1 }, offsets={ [ 2161] }"}; //$NON-NLS-1$
+		  String [] fieldRefResultModel = {"EntryResult: word=fieldRef/y/C/B/A, refs={ 1 }, offsets={ [ 2282] }"}; //$NON-NLS-1$
 		  IEntryResult[] fieldrefresults = ind.queryEntries(IndexerOutput.FIELD_REF);
 		  assertTrue("Entry exists",fieldrefresults!=null); //$NON-NLS-1$ 
 		  
@@ -562,7 +562,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 			  assertEquals(fieldRefResultModel[i],fieldrefresults[i].toString());
 		  }
 	
-		  String [] methodRefResultModel = {"EntryResult: word=methodRef/bar/C/B/A, refs={ 1 }, offsets={ [ 2184] }"}; //$NON-NLS-1$	 
+		  String [] methodRefResultModel = {"EntryResult: word=methodRef/bar/C/B/A, refs={ 1 }, offsets={ [ 2301] }"}; //$NON-NLS-1$	 
 		  IEntryResult[] methodrefresults = ind.queryEntries(IndexerOutput.METHOD_REF);
 		  assertTrue("Entry exists", methodrefresults != null); //$NON-NLS-1$  
 		   
@@ -731,7 +731,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	IEntryResult[] fwdDclRefResults = ind.queryEntries("typeRef/G/ForwardA/A".toCharArray()); //$NON-NLS-1$ 
 	assertTrue("Entry exists", fwdDclRefResults!= null); //$NON-NLS-1$
 	
-	String [] fwdDclRefModel = {"EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 225] }"}; //$NON-NLS-1$  
+	String [] fwdDclRefModel = {"EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 237] }"}; //$NON-NLS-1$  
 
 	if (fwdDclRefResults.length != fwdDclRefModel.length)
 	   fail("Entry Result length different from model for forward declarations refs"); //$NON-NLS-1$  

@@ -33,11 +33,13 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -68,6 +70,10 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     protected void setUp() throws Exception {
         super.setUp();
 		try{
+			if (project == null){
+			   cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+			   project = cproject.getProject();
+			}
 			project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
 		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( true ) );
 		} catch ( CoreException e ) { //boo
@@ -90,6 +96,8 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         sourceIndexer.removeIndexChangeListener( this );
 		try{
 		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( false ) );
+			project.delete(true,true,new NullProgressMonitor());
+			project = null;
 		} catch ( CoreException e ) { //boo
 		}
         super.tearDown();
@@ -157,11 +165,11 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new SearchRegressionTests("testClassStructReference") ); //$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testNamespaceDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("testNamespaceDefinition") ); //$NON-NLS-1$
+        suite.addTest( new FailingTest( new SearchRegressionTests("testNamespaceDefinition"),92296)); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testNamespaceReference") ); //$NON-NLS-1$
         
-        suite.addTest( new SearchRegressionTests("testMethodDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("testMethodDefinition") ); //$NON-NLS-1$
+        suite.addTest( new FailingTest( new SearchRegressionTests("testMethodDeclaration"), 92299) ); //$NON-NLS-1$
+        suite.addTest(  new FailingTest( new SearchRegressionTests("testMethodDefinition"), 92296)); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodReference") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodReferenceOperator") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new SearchRegressionTests("testMethodReferenceImplicitOperator"), 80117 ) ); //defect80117 //$NON-NLS-1$ 
@@ -177,23 +185,23 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new SearchRegressionTests("testDestructorReference") );     //defect79792 //$NON-NLS-1$
                
         suite.addTest( new SearchRegressionTests("testFunctionDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("testFunctionDefinition") ); //$NON-NLS-1$
+        suite.addTest( new FailingTest(new SearchRegressionTests("testFunctionDefinition"), 92296) ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testFunctionReference") ); //$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testFieldDeclaration") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testBitFieldDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("testFieldDefinition") ); //$NON-NLS-1$
+        suite.addTest( new FailingTest(new SearchRegressionTests("testFieldDefinition"),92296 )); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testFieldReference") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new SearchRegressionTests("testNestedFieldReference"), 76203 ) );       //defect76203//$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testVarDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("testVarDefinition") ); //$NON-NLS-1$
+        suite.addTest( new FailingTest(new SearchRegressionTests("testVarDefinition"), 92296) ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testVarReference") ); //$NON-NLS-1$
-        suite.addTest( new FailingTest( new SearchRegressionTests("testVarDeclarationArgument"), 75901 ) );     //defect75901 //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testVarDeclarationArgument"));     //defect75901 //$NON-NLS-1$
         //var in initializer list of constructor not found
         suite.addTest( new FailingTest( new SearchRegressionTests("testVarReferenceInitializer"), 72735 ) );    //defect72735 //$NON-NLS-1$
         //definition of a var in an argument list is not found
-        suite.addTest( new FailingTest( new SearchRegressionTests("testVarDefinitionArgument"), 75901 ) );     //defect75901 //$NON-NLS-1$
+        suite.addTest(  new SearchRegressionTests("testVarDefinitionArgument") );     //defect75901 //$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testUnionDeclaration") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testUnionReference") ); //$NON-NLS-1$

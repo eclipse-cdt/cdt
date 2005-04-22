@@ -20,6 +20,7 @@ import java.io.Writer;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -31,7 +32,13 @@ import org.eclipse.cdt.core.parser.IParser.ISelectionParseResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest.FullParseCallback;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
+import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author aniefer
@@ -89,6 +96,34 @@ public class SelectionRegressionTest extends BaseTestFramework {
 	    return suite;
     }
     
+    protected void setUp() throws Exception {
+        super.setUp();
+		try{
+			if (project == null){
+			   cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+			   project = cproject.getProject();
+			}
+			project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
+		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( true ) );
+		} catch ( CoreException e ) { //boo
+		}
+		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
+		typeCacheManager.setProcessTypeCacheEvents(false);
+    }
+    
+    protected void tearDown() throws Exception {
+        if( project == null || !project.exists() ) 
+            return;
+    
+		try{
+		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( false ) );
+			project.delete(true,true,new NullProgressMonitor());
+			project = null;
+		} catch ( CoreException e ) { //boo
+		}
+        super.tearDown();
+	}
+	
     protected IASTNode getSelection(IFile code, int startOffset, int endOffset) throws Exception {
 		return getSelection( code, startOffset, endOffset, ParserLanguage.CPP );
 	}

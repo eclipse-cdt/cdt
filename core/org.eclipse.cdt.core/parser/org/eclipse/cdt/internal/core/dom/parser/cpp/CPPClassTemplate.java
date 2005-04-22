@@ -199,6 +199,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
 	public IScope getCompositeScope() {
+	    if( definition == null )
+	        checkForDefinition();
 		if( definition != null ){
 			ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) definition.getParent(); 
 			return compSpec.getScope();

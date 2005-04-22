@@ -778,4 +778,64 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertSame( ((ICPPTemplateInstance)f2).getOriginalBinding(), f1 );
     	assertSame( g1, g2 );
 	}
+	
+	public void testBug76951_1() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("template <class T, class U = T > U f( T );   \n"); //$NON-NLS-1$
+	    buffer.append("void g() {                                   \n"); //$NON-NLS-1$
+	    buffer.append("   f( 1 );                                   \n"); //$NON-NLS-1$
+	    buffer.append("}                                            \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(2).resolveBinding();
+		assertSame( T, T2 );
+		
+		ICPPFunctionTemplate f1 = (ICPPFunctionTemplate) col.getName(4).resolveBinding();
+		ICPPFunction f2 = (ICPPFunction) col.getName(8).resolveBinding();
+		
+		assertTrue( f2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)f2).getOriginalBinding(), f1 );
+		
+		IFunctionType ft = f2.getType();
+		assertTrue( ft.getReturnType() instanceof IBasicType );
+		assertEquals( ((IBasicType)ft.getReturnType()).getType(), IBasicType.t_int );
+	}
+	public void testBug76951_2() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("template <class T, class U = T > class A {   \n"); //$NON-NLS-1$
+	    buffer.append("   U u;                                      \n"); //$NON-NLS-1$
+	    buffer.append("};                                           \n"); //$NON-NLS-1$
+	    buffer.append("void f() {                                   \n"); //$NON-NLS-1$
+	    buffer.append("   A<int> a;                                 \n"); //$NON-NLS-1$
+	    buffer.append("   a.u;                                      \n"); //$NON-NLS-1$
+	    buffer.append("}                                            \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ICPPTemplateTypeParameter U = (ICPPTemplateTypeParameter) col.getName(1).resolveBinding();
+		assertSame( U.getDefault(), T );
+		
+		ICPPClassTemplate A = (ICPPClassTemplate) col.getName(3).resolveBinding();
+		ICPPField u1 = (ICPPField) col.getName(5).resolveBinding();
+		assertSame( u1.getType(), U );
+		
+		ICPPClassType A1 = (ICPPClassType) col.getName(7).resolveBinding();
+		assertTrue( A1 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)A1).getOriginalBinding(), A );
+		
+		ICPPField u2 = (ICPPField) col.getName(11).resolveBinding();
+		assertTrue( u2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)u2).getOriginalBinding(), u1 );
+		
+		IType type = u2.getType();
+		assertTrue( type instanceof IBasicType );
+		assertEquals( ((IBasicType)type).getType(), IBasicType.t_int );
+	}
 }

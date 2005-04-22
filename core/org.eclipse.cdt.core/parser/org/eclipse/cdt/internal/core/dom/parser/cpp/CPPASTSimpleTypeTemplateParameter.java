@@ -77,8 +77,9 @@ public class CPPASTSimpleTypeTemplateParameter extends CPPASTNode implements
 	        }
 		}
         
-        if( typeId != null ) if( !typeId.accept( action ) ) return false;
         if( name != null ) if( !name.accept( action ) ) return false;
+        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+        
         return true;
     }
 	

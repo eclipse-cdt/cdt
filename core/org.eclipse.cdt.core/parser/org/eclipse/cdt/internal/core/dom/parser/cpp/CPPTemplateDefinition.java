@@ -138,7 +138,7 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 		IType[] actualArgs = new IType[ numParams ];
 		
 		for( int i = 0; i < numParams; i++ ){
-			
+			arg = null;
 			param = parameters[i];
 			
 			if( i < numArgs ){
@@ -164,7 +164,9 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 						if( map.containsKey( defaultType ) ){
 							arg = (IType) map.get( defaultType );
 						}
-					} 
+					} else {
+					    arg = defaultType;
+					}
 				} else {
 					//TODO problem
 					return null;

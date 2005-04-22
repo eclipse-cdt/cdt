@@ -703,9 +703,31 @@ public class CPPTemplates {
 						instanceArgs = (IType[]) ArrayUtil.append( IType.class, instanceArgs, arg );
 					else
 						continue outer;
-				else if( arg == null && mapped == null )
-					continue outer;
-				else
+				else if( arg == null && mapped == null ) {
+				    IType def = null;
+				    try {
+					    if( templateParams[i] instanceof ICPPTemplateTypeParameter ){
+	                        def = ((ICPPTemplateTypeParameter)templateParams[i]).getDefault();
+					    } else if( templateParams[i] instanceof ICPPTemplateTemplateParameter ){
+					        def = ((ICPPTemplateTemplateParameter)templateParams[i]).getDefault();
+					    } else if( templateParams[i] instanceof ICPPTemplateNonTypeParameter ){
+					        def = CPPVisitor.getExpressionType( ((ICPPTemplateNonTypeParameter)templateParams[i]).getDefault() );
+					    }
+				    } catch ( DOMException e ) {
+				        continue outer;
+				    }
+				    if( def != null ){
+				        if( def instanceof ICPPTemplateParameter ){
+				            for ( int j = 0; j < i; j++ ) {
+                                if( templateParams[j] == def ) {
+                                    def = instanceArgs[j];
+                                }
+                            }
+				        }
+				        instanceArgs = (IType[]) ArrayUtil.append( IType.class, instanceArgs, def );
+				    } else 
+				        continue outer;
+				} else
 					instanceArgs = (IType[]) ArrayUtil.append( IType.class, instanceArgs, (arg != null) ? arg : mapped );
 			}
 			instanceArgs  = (IType[]) ArrayUtil.trim( IType.class, instanceArgs );

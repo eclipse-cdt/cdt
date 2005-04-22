@@ -662,23 +662,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 14.1-13):
-	template<class T, T* p, class U = T> class X {  };
-	template<class T> void f(T* p = new T);
-	 --End Example]
-	 */
-	public void test14_1s13()  { // TODO raised bug 60670
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T, T* p, class U = T> class X {  };\n"); //$NON-NLS-1$
-		buffer.append("template<class T> void f(T* p = new T);\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 14.3-2):
 	template<class T> void f();
 	template<int I> void f();
@@ -932,23 +915,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 14.6.1-3a):
-	template<class T, T* p, class U = T> class X {  };
-	template<class T> void f(T* p = new T);
-	 --End Example]
-	 */
-	public void test14_6_1s3a()  { // TODO already have bug on this one
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T, T* p, class U = T> class X {  };\n"); //$NON-NLS-1$
-		buffer.append("template<class T> void f(T* p = new T);\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 14.6.1-6):
 	namespace N {
 	class C { };
@@ -1004,43 +970,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		assertTrue(false);
 		} catch (Exception e) {
 		}
-	}
-
-	/**
-	 [--Start Example(CPP 14.7-3):
-	template<class T = int> struct A {
-	static int x;
-	};
-	template<class U> void g(U) { }
-	template<> struct A<double> { }; // specialize for T == double
-	template<> struct A<> { }; // specialize for T == int
-	template<> void g(char) { } // specialize for U == char
-	// U is deduced from the parameter type
-	template<> void g<int>(int) { } // specialize for U == int
-	template<> int A<char>::x = 0; // specialize for T == char
-	template<class T = int> struct B {
-	static int x;
-	};
-	template<> int B<>::x = 1; // specialize for T == int
-	 --End Example]
-	 */
-	public void test14_7s3() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T = int> struct A {\n"); //$NON-NLS-1$
-		buffer.append("static int x;\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("template<class U> void g(U) { }\n"); //$NON-NLS-1$
-		buffer.append("template<> struct A<double> { }; // specialize for T == double\n"); //$NON-NLS-1$
-		buffer.append("template<> struct A<> { }; // specialize for T == int\n"); //$NON-NLS-1$
-		buffer.append("template<> void g(char) { } // specialize for U == char\n"); //$NON-NLS-1$
-		buffer.append("// U is deduced from the parameter type\n"); //$NON-NLS-1$
-		buffer.append("template<> void g<int>(int) { } // specialize for U == int\n"); //$NON-NLS-1$
-		buffer.append("template<> int A<char>::x = 0; // specialize for T == char\n"); //$NON-NLS-1$
-		buffer.append("template<class T = int> struct B {\n"); //$NON-NLS-1$
-		buffer.append("static int x;\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("template<> int B<>::x = 1; // specialize for T == int\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 2);
 	}
 	
 	/**

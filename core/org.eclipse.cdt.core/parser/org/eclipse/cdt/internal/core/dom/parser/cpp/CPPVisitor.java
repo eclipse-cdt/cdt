@@ -638,6 +638,8 @@ public class CPPVisitor {
 		        return getContainingScope( (IASTStatement) node ); 
 			} else if( node instanceof IASTTypeId ){
 				node = node.getParent();
+				if( node instanceof ICPPASTTemplateParameter )
+				    return CPPTemplates.getContainingScope( node );
 			} else if( node instanceof IASTParameterDeclaration ){
 			    IASTNode parent = node.getParent();
 			    if( parent instanceof ICPPASTFunctionDeclarator ){
@@ -1366,6 +1368,8 @@ public class CPPVisitor {
 	}
 	
 	public static IType createType( IASTNode node ){
+	    if( node == null )
+	        return null;
 		if( node instanceof IASTExpression )
 			return getExpressionType( (IASTExpression) node );
 		if( node instanceof IASTTypeId )

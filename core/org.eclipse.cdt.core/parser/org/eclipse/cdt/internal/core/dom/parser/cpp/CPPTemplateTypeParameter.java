@@ -13,10 +13,12 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 
 /**
@@ -35,8 +37,15 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter#getDefault()
 	 */
-	public IType getDefault() throws DOMException {
-		// TODO Auto-generated method stub
+	public IType getDefault() {
+		IASTNode [] nds = getDeclarations();
+		if( nds == null || nds.length == 0 )
+		    return null;
+		IASTName name = (IASTName) nds[0];
+		ICPPASTSimpleTypeTemplateParameter simple = (ICPPASTSimpleTypeTemplateParameter) name.getParent();
+		IASTTypeId typeId = simple.getDefaultType();
+		if( typeId != null )
+		    return CPPVisitor.createType( typeId );
 		return null;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,20 @@ public class GPPPointerType extends CPPPointerType implements IGPPPointerType {
         super( type, isConst, isVolatile );
         this.isRestrict = isRestrict;
     }
+    
+    public IType stripQualifiers(){
+    	GPPPointerType result = (GPPPointerType) super.stripQualifiers();
+		
+		if( isRestrict ){
+			if( result == this ){
+				result = (GPPPointerType) clone();
+				result.isRestrict = false;
+			} else {
+				result.isRestrict = false;
+			}
+		} 
+		return result;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer#isRestrict()

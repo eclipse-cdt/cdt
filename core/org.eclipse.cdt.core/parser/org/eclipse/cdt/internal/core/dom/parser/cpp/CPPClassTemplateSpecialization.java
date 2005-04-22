@@ -13,10 +13,16 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
@@ -24,19 +30,22 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
 public class CPPClassTemplateSpecialization extends CPPClassTemplate implements
 		ICPPTemplateSpecialization {
 
-	private IASTNode [] arguments;
+	private IType [] arguments;
 	/**
 	 * @param name
 	 */
 	public CPPClassTemplateSpecialization(ICPPASTTemplateId name) {
 		super(name);
-		this.arguments = name.getTemplateArguments();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization#getArguments()
 	 */
-	public IASTNode[] getArguments() {
+	public IType[] getArguments() {
+		if( arguments == null ){
+			ICPPASTTemplateId id = (ICPPASTTemplateId) getTemplateName();
+			arguments = CPPTemplates.createTypeArray( id.getTemplateArguments() );
+		}
 		return arguments;
 	}
 
@@ -55,4 +64,45 @@ public class CPPClassTemplateSpecialization extends CPPClassTemplate implements
 		return (ICPPTemplateDefinition) id.getTemplateName().resolveBinding();
 	}
 
+	public IBinding instantiate( IType [] args ){
+		ICPPTemplateInstance instance = getInstance( args );
+		if( instance != null ){
+			return instance;
+		}
+		
+		IType [] specArgs = getArguments();
+		if( specArgs.length != arguments.length ){
+			return null;
+		}
+		
+		ObjectMap argMap = new ObjectMap( specArgs.length );
+		int numSpecArgs = specArgs.length;
+		for( int i = 0; i < numSpecArgs; i++ ){
+			IType spec = specArgs[i];
+			IType arg = args[i];
+			
+			//If the argument is a template parameter, we can't instantiate yet, defer for later
+			if( arg instanceof ICPPTemplateParameter ){
+				return deferredInstance( args );
+			}
+			try {
+				if( !CPPTemplates.deduceTemplateArgument( argMap,  spec, arg ) )
+					return null;
+			} catch (DOMException e) {
+				return null;
+			}
+		}
+		
+		ICPPTemplateParameter [] params = getTemplateParameters();
+		int numParams = params.length;
+		for( int i = 0; i < numParams; i++ ){
+			if( params[i] instanceof IType && !argMap.containsKey( params[i] ) )
+				return null;
+		}
+		
+		instance = (ICPPTemplateInstance) CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
+		addInstance( args, instance );
+		
+		return instance;
+	}
 }

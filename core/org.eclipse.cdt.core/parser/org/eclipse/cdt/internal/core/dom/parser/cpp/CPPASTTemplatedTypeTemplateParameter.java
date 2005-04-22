@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,11 +102,11 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
 	        }
 		}
         
-        if( name != null ) if( !name.accept( action ) ) return false;
         ICPPASTTemplateParameter [] ps = getTemplateParameters();
         for ( int i = 0; i < ps.length; i++ ) {
             if( !ps[i].accept( action ) ) return false;
         }
+        if( name != null ) if( !name.accept( action ) ) return false;
         if( defaultValue != null ) if( !defaultValue.accept( action ) ) return false;
         return true;
     }

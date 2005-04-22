@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 public class CPPQualifierType implements IQualifierType, ITypeContainer {
     private boolean isConst = false;
     private boolean isVolatile = false;
-    private boolean fromStringLiteral = false;
     private IType type = null;
     
     public CPPQualifierType( IType type, boolean isConst, boolean isVolatile ){
@@ -80,15 +79,4 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer {
         }
         return t;
     }
-
-	/**
-	 * @return
-	 */
-	public boolean fromStringLiteral() {
-		return fromStringLiteral;
-	}
-	
-	public void setFromStringLiteral( boolean fromString ){
-		fromStringLiteral = fromString;
-	}
 }

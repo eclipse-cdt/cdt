@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,14 @@ public interface IBasicType extends IType {
 	 * @return
 	 */
 	public int getType() throws DOMException;
+	
+	/**
+	 * Returns the IASTExpression for the value of this type.  May be null.
+	 * 
+	 * @return IASTExpression or null
+	 * @throws DOMException
+	 */
+	public IASTExpression getValue() throws DOMException;
 	
 	public static final int t_unspecified = IASTSimpleDeclSpecifier.t_unspecified;
 	public static final int t_void = IASTSimpleDeclSpecifier.t_void;

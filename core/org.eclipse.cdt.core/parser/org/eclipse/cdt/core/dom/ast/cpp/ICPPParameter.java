@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,23 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
+/*
+ * Created on Apr 20, 2005
+ */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 
 /**
- * @author Doug Schaefer
+ * @author aniefer
+ *
  */
-public interface ICPPTemplateParameter extends ICPPBinding {
-	public static final ICPPTemplateParameter[] EMPTY_TEMPLATE_PARAMETER_ARRAY = new ICPPTemplateParameter[0];
+public interface ICPPParameter extends IParameter, ICPPVariable {
+	
+	/**
+	 * the default value of this parameter or null if there is none.
+	 * @return
+	 */
+	public IASTInitializer getDefaultValue();
 }

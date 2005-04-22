@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -35,9 +36,10 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
 	 * @param scope
 	 * @param orig
 	 * @param argMap
+	 * @param args
 	 */
-	public CPPFunctionInstance(ICPPScope scope, IBinding orig, ObjectMap argMap) {
-		super(scope, orig, argMap);
+	public CPPFunctionInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType[] args) {
+		super(scope, orig, argMap, args);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -72,7 +74,7 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
 			IParameter [] params = ((ICPPFunction)getOriginalBinding()).getParameters();
 			parameters = new IParameter[ params.length ];
 			for (int i = 0; i < params.length; i++) {
-				parameters[i] = new CPPParameterInstance( null, params[i], getArgumentMap() );
+				parameters[i] = new CPPParameterInstance( null, params[i], getArgumentMap(), getArguments() );
 			}
 		}
 		

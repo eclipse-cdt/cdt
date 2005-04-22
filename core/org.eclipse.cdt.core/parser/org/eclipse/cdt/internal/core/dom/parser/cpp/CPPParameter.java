@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -25,14 +26,14 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author aniefer
  */
-public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariable {
-    public static class CPPParameterDelegate extends CPPDelegate implements IParameter, ICPPVariable {
+public class CPPParameter implements ICPPParameter, ICPPInternalBinding {
+    public static class CPPParameterDelegate extends CPPDelegate implements ICPPParameter {
         public CPPParameterDelegate( IASTName name, IParameter binding ) {
             super( name, binding );
         }
@@ -54,6 +55,9 @@ public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariab
         public boolean isMutable() {
             return false;
         }
+		public IASTInitializer getDefaultValue() {
+			return ((ICPPParameter)getBinding()).getDefaultValue();
+		}
     }
     
 	private IType type = null;
@@ -243,5 +247,19 @@ public class CPPParameter implements IParameter, ICPPInternalBinding, ICPPVariab
             }
         }
         return false;
+	}
+
+	public IASTInitializer getDefaultValue() {
+		if( declarations == null )
+			return null;
+		for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
+			IASTNode parent = declarations[i].getParent();
+			while( parent.getPropertyInParent() == IASTDeclarator.NESTED_DECLARATOR )
+				parent = parent.getParent();
+			IASTInitializer init = ((IASTDeclarator)parent).getInitializer();
+			if( init != null )
+				return init;
+		}
+		return null;
 	}
 }

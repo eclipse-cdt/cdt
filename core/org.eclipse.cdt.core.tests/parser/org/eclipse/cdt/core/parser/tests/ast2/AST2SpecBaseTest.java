@@ -56,26 +56,25 @@ public class AST2SpecBaseTest extends TestCase {
 	 * checkSemantics is used to specify whether the example should have semantics checked
 	 * since several spec examples have syntactically correct code ONLY this flag was added
 	 * so that future tests can ensure that examples are checked against syntax/semantics where necessary
-	 * 
 	 * @param code
-	 * @param checkSemantics
+	 * @param expectedProblemBindings the number of problem bindings you expect to encounter
 	 * @throws ParserException
 	 */
-	protected void parseCandCPP( String code, boolean checkSemantics, boolean checkBindings ) throws ParserException {
-		parse( code, ParserLanguage.C, false, true, checkSemantics, checkBindings);
-		parse( code, ParserLanguage.CPP, false, true, checkSemantics, checkBindings );
+	protected void parseCandCPP( String code, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
+		parse( code, ParserLanguage.C, false, true, checkBindings, expectedProblemBindings);
+		parse( code, ParserLanguage.CPP, false, true, checkBindings, expectedProblemBindings );
 	}
 		
-	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkSemantics, boolean checkBindings ) throws ParserException {
-    	return parse(code, lang, false, true, checkSemantics, checkBindings );
+	protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
+    	return parse(code, lang, false, true, checkBindings, expectedProblemBindings );
     }
     
-    private IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean checkSemantics, boolean checkBindings ) throws ParserException {
+    private IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings ) throws ParserException {
 		// TODO beef this up with tests... i.e. run once with \n, and then run again with \r\n replacing \n ... etc
 		// TODO another example might be to replace all characters with corresponding trigraph/digraph tests...
 		
 		CodeReader codeReader = new CodeReader(code.toCharArray());
-		return parse(codeReader, lang, useGNUExtensions, expectNoProblems, checkSemantics, checkBindings);
+		return parse(codeReader, lang, useGNUExtensions, expectNoProblems, checkBindings, expectedProblemBindings);
     }
 	
 //	private IASTTranslationUnit parse( IFile filename, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
@@ -91,7 +90,7 @@ public class AST2SpecBaseTest extends TestCase {
 //		return parse(codeReader, lang, useGNUExtensions, expectNoProblems);
 //    }
 	
-	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean checkSemantics, boolean checkBindings) throws ParserException {
+	private IASTTranslationUnit parse(CodeReader codeReader, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems, boolean checkBindings, int expectedProblemBindings) throws ParserException {
         ScannerInfo scannerInfo = new ScannerInfo();
         IScannerExtensionConfiguration configuration = null;
         if( lang == ParserLanguage.C )
@@ -132,13 +131,13 @@ public class AST2SpecBaseTest extends TestCase {
 			if ( lang == ParserLanguage.CPP ) {
 				CPPNameResolver res = new CPPNameResolver();
 		        tu.accept( res );
-				if (res.foundProblemBinding)
-					throw new ParserException("found IProblemBinding"); //$NON-NLS-1$
+				if (res.numProblemBindings != expectedProblemBindings )
+					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.numProblemBindings ); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (lang == ParserLanguage.C ) {
 				CNameResolver res = new CNameResolver();
 		        tu.accept( res );
-				if (res.foundProblemBinding)
-					throw new ParserException("found IProblemBinding"); //$NON-NLS-1$
+				if (res.numProblemBindings != expectedProblemBindings )
+					throw new ParserException("Expected " + expectedProblemBindings + " problems, encountered " + res.numProblemBindings ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -171,12 +170,13 @@ public class AST2SpecBaseTest extends TestCase {
 		{
 			shouldVisitNames = true;
 		}
-		public boolean foundProblemBinding=false;
+		public int numProblemBindings=0;
 		public List nameList = new ArrayList();
 		public int visit( IASTName name ){
+			nameList.add( name );
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding)
-				foundProblemBinding=true;
+				numProblemBindings++;
 			return PROCESS_CONTINUE;
 		}
 		public IASTName getName( int idx ){
@@ -191,12 +191,13 @@ public class AST2SpecBaseTest extends TestCase {
 		{
 			shouldVisitNames = true;
 		}
-		public boolean foundProblemBinding=false;
+		public int numProblemBindings=0;
 		public List nameList = new ArrayList();
 		public int visit( IASTName name ){
+			nameList.add( name );
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding)
-				foundProblemBinding=true;
+				numProblemBindings++;
 			return PROCESS_CONTINUE;
 		}
 		public IASTName getName( int idx ){

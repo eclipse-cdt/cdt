@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -29,9 +30,10 @@ public class CPPMethodInstance extends CPPFunctionInstance implements
 	 * @param scope
 	 * @param orig
 	 * @param argMap
+	 * @param args
 	 */
-	public CPPMethodInstance(ICPPScope scope, IBinding orig, ObjectMap argMap) {
-		super(scope, orig, argMap);
+	public CPPMethodInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType[] args) {
+		super(scope, orig, argMap, args);
 		// TODO Auto-generated constructor stub
 	}
 

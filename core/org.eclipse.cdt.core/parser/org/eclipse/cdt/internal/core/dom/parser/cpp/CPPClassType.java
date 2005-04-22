@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -634,10 +635,14 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
         ObjectSet resultSet = new ObjectSet(2);
         IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();
         for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof IASTSimpleDeclaration ){
-			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
+			IASTDeclaration decl = members[i];
+			while( decl instanceof ICPPASTTemplateDeclaration )
+				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
+			
+			if( decl instanceof IASTSimpleDeclaration ){
+			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
 			    if( declSpec.isFriend() ){
-			        IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+			        IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 			        if( declSpec instanceof ICPPASTElaboratedTypeSpecifier && dtors.length == 0 ){
 			        	resultSet.put( ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding() );
 			        } else {
@@ -647,10 +652,10 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 					    }    
 			        }
 			    }
-			} else if( members[i] instanceof IASTFunctionDefinition ){
-			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)members[i]).getDeclSpecifier();
+			} else if( decl instanceof IASTFunctionDefinition ){
+			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
 			    if( declSpec.isFriend() ){
-			        IASTDeclarator dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			        IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
 			        resultSet.put( dtor.getName().resolveBinding() );
 			    }
 			    

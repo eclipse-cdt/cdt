@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -75,11 +76,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -88,11 +91,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -136,7 +141,7 @@ public class CPPSemantics {
 		public boolean considerConstructors = false;
 		public Object foundItems = null;
 		public Object [] functionParameters;
-		public IASTNode [] templateParameters;
+		public IASTNode [] templateArguments;
 		public ProblemBinding problem;
         
 		
@@ -155,7 +160,8 @@ public class CPPSemantics {
 		    if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 		    if( ( astName != null && astName.getParent() instanceof IASTIdExpression ) || 
 		        item instanceof IASTNamespaceDefinition  ||
-	           (item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) )
+	           (item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) ||
+			    item instanceof ICPPASTTemplateDeclaration )
 		    {
 		        return true;
 		    }
@@ -463,6 +469,18 @@ public class CPPSemantics {
                 binding = e.getProblem();
             }
         }
+		if( binding instanceof ICPPClassTemplate ){
+			ASTNodeProperty prop = data.astName.getPropertyInParent();
+			if( prop != ICPPASTQualifiedName.SEGMENT_NAME && prop != ICPPASTTemplateId.TEMPLATE_NAME ){
+				try {
+					IScope scope = ((ICPPClassType)binding).getCompositeScope();
+					if( CPPVisitor.getContainingScope( data.astName ) == scope ){
+						binding = CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) binding );
+					}
+				} catch( DOMException e ) {
+				}
+			}
+		}
         if( binding instanceof ICPPClassType && data.considerConstructors ){
 		    ICPPClassType cls = (ICPPClassType) binding;
 		    try {
@@ -479,7 +497,12 @@ public class CPPSemantics {
 		}    
         if( binding != null ) {
 	        if( data.astName.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
-	            binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
+	        	IASTNode parent = data.astName.getParent().getParent();
+	        	if( parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ){
+	        		//don't do a problem here
+	        	} else {
+	        		binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
+	        	}
 	        }
         }
         
@@ -497,13 +520,14 @@ public class CPPSemantics {
 		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name );
 		IASTNode parent = name.getParent();
 		
-		if( parent instanceof ICPPASTTemplateId ){
-			data.templateParameters = ((ICPPASTTemplateId)parent).getTemplateArguments();
-			parent = parent.getParent();
+		if( name instanceof ICPPASTTemplateId ){
+			data.templateArguments = ((ICPPASTTemplateId)name).getTemplateArguments();
 		}
-		if( parent instanceof ICPPASTQualifiedName ){
+		
+		if( parent instanceof ICPPASTTemplateId )
 			parent = parent.getParent();
-		}
+		if( parent instanceof ICPPASTQualifiedName )
+			parent = parent.getParent();
 		
 		if( parent instanceof IASTDeclarator && parent.getPropertyInParent() == IASTSimpleDeclaration.DECLARATOR ){
 		    IASTSimpleDeclaration simple = (IASTSimpleDeclaration) parent.getParent();
@@ -583,7 +607,9 @@ public class CPPSemantics {
 		if( t instanceof ICPPClassType ){
 		    if( !classes.containsKey( t ) ){
 		        classes.put( t );
-		        namespaces.put( getContainingNamespaceScope( (IBinding) t ) );
+				IScope scope = getContainingNamespaceScope( (IBinding) t );
+				if( scope != null )
+					namespaces.put( scope );
 
 			    ICPPClassType cls = (ICPPClassType) t;
 			    ICPPBase[] bases = cls.getBases();
@@ -694,7 +720,7 @@ public class CPPSemantics {
 
         return resultMap;
 	}
-	static private void lookup( CPPSemantics.LookupData data, Object start ) throws DOMException{
+	static protected void lookup( CPPSemantics.LookupData data, Object start ) throws DOMException{
 		IASTNode node = data.astName;
 
 		ICPPScope scope = null;
@@ -780,7 +806,11 @@ public class CPPSemantics {
 	}
 
 	private static Object lookupInParents( CPPSemantics.LookupData data, ICPPClassScope lookIn ) throws DOMException{
-		ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) lookIn.getPhysicalNode();
+		IASTNode node = lookIn.getPhysicalNode();
+		if( node == null || !(node instanceof ICPPASTCompositeTypeSpecifier) )
+			return null;
+		
+		ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) node;
 		ICPPASTBaseSpecifier [] bases = compositeTypeSpec.getBaseSpecifiers();
 	
 		Object inherited = null;
@@ -854,13 +884,13 @@ public class CPPSemantics {
 						if( result instanceof Object [] ){
 							Object [] r = (Object[]) result;
 							for( int j = 0; j < r.length && r[j] != null; j++ ) {
-								if( checkForAmbiguity( r[j], inherited ) ){
+								if( checkForAmbiguity( data, r[j], inherited ) ){
 								    data.problem = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
 								    return null;
 								}
 							}
 						} else {
-							if( checkForAmbiguity( result, inherited ) ){
+							if( checkForAmbiguity( data, result, inherited ) ){
 							    data.problem = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name ); 
 							    return null;
 							}
@@ -908,14 +938,13 @@ public class CPPSemantics {
             }
         }
 	}
-	private static boolean checkForAmbiguity( Object n, Object names ) throws DOMException{
+	private static boolean checkForAmbiguity( LookupData data, Object n, Object names ) throws DOMException{
 		if( names instanceof Object[] ) {
 		    names = ArrayUtil.trim( Object.class, (Object[]) names );
 		    if( ((Object[])names).length == 0 )
 		        return false;
 		}
 
-	    //it is not ambiguous if they are the same thing and it is static or an enumerator
 	    IBinding binding =  ( n instanceof IBinding) ? (IBinding)n : ((IASTName)n).resolveBinding();
 	    Object [] objs = ( names instanceof Object[] ) ? (Object[])names : null;
 	    int idx = ( objs != null && objs.length > 0 ) ? 0 : -1;
@@ -925,13 +954,29 @@ public class CPPSemantics {
 	        
 	        if( binding != b )
 	            return true;
-	        if( !(binding instanceof IEnumerator) &&
-	        	!( (binding instanceof IFunction && ((IFunction)binding).isStatic()) ||
-		           (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) )
+			
+			boolean ok = false;
+			//3.4.5-4 if the id-expression  in a class member access is a qualified id... the result 
+			//is not required to be a unique base class...
+			if( binding instanceof ICPPClassType ){
+				IASTNode parent = data.astName.getParent();
+				if( parent instanceof ICPPASTQualifiedName && 
+					parent.getPropertyInParent() == IASTFieldReference.FIELD_NAME )
+				{
+					ok = true;
+				}
+			}
+		    //it is not ambiguous if they are the same thing and it is static or an enumerator
+	        if( binding instanceof IEnumerator ||
+	           (binding instanceof IFunction && ((IFunction)binding).isStatic()) ||
+		       (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) 
 	        {
-	        	return true;
+	        	ok = true;
 	        }
-	        
+	        if( !ok )
+				return true;
+			
+			next:
 	        if( idx > -1 && idx < objs.length )
 	        	o = objs[idx++];
 	        else
@@ -1028,6 +1073,12 @@ public class CPPSemantics {
 		} else if ( parent instanceof ICPPASTCompositeTypeSpecifier ){
 			ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) parent;
 			nodes = comp.getMembers();
+			
+			//9-2 a class name is also inserted into the scope of the class itself
+			IASTName n = comp.getName();
+			if( nameMatches( data, n ) ) {
+				found = (IASTName[]) ArrayUtil.append( IASTName.class, found, n );
+		    }
 		} else if ( parent instanceof ICPPASTNamespaceDefinition ){
 		    //need binding because namespaces can be split
 		    CPPNamespace namespace = (CPPNamespace) ((ICPPASTNamespaceDefinition)parent).getName().resolveBinding();
@@ -1123,6 +1174,8 @@ public class CPPSemantics {
 			    }
 			}
 		}
+		
+
 		scope.setFullyCached( true );
 		
 		return found;
@@ -1453,7 +1506,11 @@ public class CPPSemantics {
 		        	       (type instanceof ICPPDelegate && ((ICPPDelegate)type).getBinding() == temp) )
 	        	{
 	        	    //ok, delegates are synonyms
-	        	} else if( type != temp ) {
+	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPTemplateSpecialization &&
+						   ((ICPPTemplateSpecialization)temp).getPrimaryTemplateDefinition() == type )
+				{
+					//ok, stay with the template, the specialization, if applicable, will come out during instantiation
+				} else if( type != temp ) {
 	                return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	            }
 	        } else if( temp instanceof IFunction ){
@@ -1497,7 +1554,7 @@ public class CPPSemantics {
 	        
 	    int numTemplateFns = templateFns.size();
 		if( numTemplateFns > 0 ){
-			if( data.functionParameters != null && ( !data.forDefinition() || data.templateParameters != null ) ){
+			if( data.functionParameters != null && !data.forDefinition() ){
 				IFunction [] fs  = CPPTemplates.selectTemplateFunctions( templateFns, data.functionParameters, data.astName );
 				if( fs != null && fs.length > 0){
 				    if( fns == ObjectSet.EMPTY_SET )
@@ -1584,31 +1641,36 @@ public class CPPSemantics {
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
 			if( num == numParameters ){
-				if( data.forDefinition() && !functionHasParameters( fName, (IASTParameterDeclaration[]) data.functionParameters ) ){
+				if( data.forDefinition() && !isMatchingFunctionDeclaration( fName, data ) ){
 					functions[i] = null;
 				}
 				continue;
-			} else if( function == null ){
-			    functions[i] = null;
-			    continue;
 			}
 			//check for void
 			else if( numParameters == 0 && num == 1 ){
-				IASTParameterDeclaration param = function.getParameters()[0];
-				IASTDeclSpecifier declSpec = param.getDeclSpecifier();
-				if( declSpec instanceof IASTSimpleDeclSpecifier ){
-					if( ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_void &&
-						param.getDeclarator().getPointerOperators().length == 0 )
-					{
-						continue;
+				if( function != null ){
+					IASTParameterDeclaration param = function.getParameters()[0];
+					IASTDeclSpecifier declSpec = param.getDeclSpecifier();
+					if( declSpec instanceof IASTSimpleDeclSpecifier ){
+						if( ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_void &&
+							param.getDeclarator().getPointerOperators().length == 0 )
+						{
+							continue;
+						}
 					}
+				} else {
+					IParameter p = fName.getParameters()[0];
+					IType t = p.getType();
+					if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void )
+						continue;
+						
 				}
 			}
 			
 			//A candidate function having fewer than m parameters is viable only if it has an 
 			//ellipsis in its parameter list.
 			if( num < numParameters ){
-				if( function.takesVarArgs() ) {
+				if( (function != null && function.takesVarArgs()) || fName.takesVarArgs() ) {
 					continue;
 				} 
 				//not enough parameters, remove it
@@ -1617,18 +1679,43 @@ public class CPPSemantics {
 			//a candidate function having more than m parameters is viable only if the (m+1)-st
 			//parameter has a default argument
 			else {
-				IASTParameterDeclaration [] params = function.getParameters();
-				for( int j = num - 1; j >= numParameters; j-- ){
-					if( params[j].getDeclarator().getInitializer() == null ){
-					    functions[i] = null;
-						size--;
-						break;
+				if( function != null ) {
+					IASTParameterDeclaration [] params = function.getParameters();
+					for( int j = num - 1; j >= numParameters; j-- ){
+						if( params[j].getDeclarator().getInitializer() == null ){
+						    functions[i] = null;
+							size--;
+							break;
+						}
+					}
+				} else {
+					IParameter [] params = fName.getParameters();
+					for( int j = num - 1; j >= numParameters; j-- ){
+						if( ((ICPPParameter)params[j]).getDefaultValue() == null ){
+						    functions[i] = null;
+							size--;
+							break;
+						}
 					}
 				}
 			}
 		}
 	}
+	static private boolean isMatchingFunctionDeclaration( IFunction candidate, LookupData data ){
+		IASTName name = data.astName;
+		ICPPASTTemplateDeclaration decl = CPPTemplates.getTemplateDeclaration( name );
+		if( candidate instanceof ICPPTemplateDefinition && decl instanceof ICPPASTTemplateSpecialization ){
+			ICPPFunctionTemplate fn = CPPTemplates.resolveTemplateFunctions( new Object [] { candidate }, data.astName );
+			return ( fn != null && !(fn instanceof IProblemBinding ) );
+		} 
 
+		try {
+			return functionHasParameters( candidate, (IASTParameterDeclaration[]) data.functionParameters );
+		} catch (DOMException e) {
+		} 
+		return false;
+	}
+	
 	static private IType getSourceParameterType( Object [] params, int idx ){
 	    if( params instanceof IType[] ){
 	        IType [] types = (IType[]) params;
@@ -1815,6 +1902,34 @@ public class CPPSemantics {
 			ambiguous |= ( hasWorse && hasBetter ) || ( !hasWorse && !hasBetter );
 			
 			if( !hasWorse ){
+				//if they are both template functions, we can order them that way
+				boolean bestIsTemplate = (bestFn instanceof ICPPTemplateInstance && 
+										 ((ICPPTemplateInstance)bestFn).getOriginalBinding() instanceof ICPPFunctionTemplate);
+				boolean currIsTemplate = (currFn instanceof ICPPTemplateInstance && 
+						 				((ICPPTemplateInstance)currFn).getOriginalBinding() instanceof ICPPFunctionTemplate);
+				if( bestIsTemplate && currIsTemplate )
+				{
+						ICPPFunctionTemplate t1 = (ICPPFunctionTemplate) ((ICPPTemplateInstance)bestFn).getOriginalBinding();
+						ICPPFunctionTemplate t2 = (ICPPFunctionTemplate) ((ICPPTemplateInstance)currFn).getOriginalBinding();
+						int order = CPPTemplates.orderTemplateFunctions( t1, t2);
+						if ( order < 0 ){
+							hasBetter = true;	 				
+						} else if( order > 0 ){
+							ambiguous = false;
+						}
+				}
+				//we prefer normal functions over template functions, unless we specified template arguments
+				else if( bestIsTemplate && !currIsTemplate ){
+					if( data.templateArguments == null )
+						hasBetter = true;
+					else
+						ambiguous = false;
+				} else if( !bestIsTemplate && currIsTemplate ){
+					if( data.templateArguments == null )
+						ambiguous = false;
+					else
+						hasBetter = true;
+				} 
 				if( hasBetter ){
 					//the new best function.
 					ambiguous = false;
@@ -2049,7 +2164,7 @@ public class CPPSemantics {
         return result;
     }
     
-    static private Cost checkStandardConversionSequence( IType source, IType target ) throws DOMException {
+    static protected Cost checkStandardConversionSequence( IType source, IType target ) throws DOMException {
 		Cost cost = lvalue_to_rvalue( source, target );
 		
 		if( cost.source == null || cost.target == null ){
@@ -2288,8 +2403,18 @@ public class CPPSemantics {
 		    else {
 		    	//4.2-2 a string literal can be converted to pointer to char
 		    	if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_char &&
-		    		s instanceof CPPQualifierType && ((CPPQualifierType)s).fromStringLiteral() )
-		    		canConvert = true;
+		    		s instanceof IQualifierType )
+		    	{
+		    		IType qt = ((IQualifierType)s).getType();
+		    		if( qt instanceof IBasicType ){
+		    			IASTExpression val = ((IBasicType)qt).getValue();
+		    			canConvert = (val != null && 
+		    						  val instanceof IASTLiteralExpression && 
+									  ((IASTLiteralExpression)val).getKind() == IASTLiteralExpression.lk_string_literal );
+		    		} else {
+		    			canConvert = false;
+		    		}
+		    	}
 		    	else
 		    		canConvert = false;
 		    }

@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -26,13 +27,15 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  */
 public class CPPInstance implements ICPPTemplateInstance {
 	private IBinding binding;
+	private IType [] arguments;
 	private ObjectMap argMap;
 	private ICPPScope scope;
 
-	public CPPInstance( ICPPScope scope, IBinding orig, ObjectMap argMap ){
+	public CPPInstance( ICPPScope scope, IBinding orig, ObjectMap argMap, IType [] arguments ){
 		this.binding = orig;
 		this.argMap = argMap;
 		this.scope = scope;
+		this.arguments = arguments;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPInstance#getOriginalBinding()
@@ -90,5 +93,11 @@ public class CPPInstance implements ICPPTemplateInstance {
 	public void addDeclaration(IASTNode node) {
 		// TODO Auto-generated method stub
 		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getArguments()
+	 */
+	public IType[] getArguments() {
+		return arguments;
 	}
 }

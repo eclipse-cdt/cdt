@@ -13,28 +13,29 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author aniefer
  */
 public interface ICPPTemplateSpecialization extends ICPPTemplateDefinition {
-
+	public static final ICPPTemplateSpecialization[] EMPTY_TEMPLATE_SPECIALIZATION_ARRAY = new ICPPTemplateSpecialization[0];
 	/**
 	 * get the arguments to this specialization
 	 * @return
 	 */
-	public IASTNode [] getArguments();
+	public IType [] getArguments() throws DOMException;
 	
 	/**
 	 * is this a partial specialization? if not, this will be an explicit specialization
 	 * @return
 	 */
-	public boolean isPartialSpecialization();
+	public boolean isPartialSpecialization() throws DOMException;
 	
 	/**
 	 * get the ICPPTemplateDefinition which this is a specialization of
 	 * @return
 	 */
-	public ICPPTemplateDefinition getPrimaryTemplateDefinition();
+	public ICPPTemplateDefinition getPrimaryTemplateDefinition() throws DOMException;
 }

@@ -30,9 +30,10 @@ public class CPPFieldInstance extends CPPInstance implements ICPPField {
 	/**
 	 * @param orig
 	 * @param args
+	 * @param args
 	 */
-	public CPPFieldInstance(ICPPScope scope, IBinding orig, ObjectMap argMap ) {
-		super(scope, orig, argMap);
+	public CPPFieldInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType[] args ) {
+		super(scope, orig, argMap, args);
 	}
 
 	/* (non-Javadoc)

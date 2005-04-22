@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -33,6 +34,8 @@ public interface ICPPTemplateInstance extends IBinding {
 	 * @return
 	 */
 	public ObjectMap getArgumentMap();
+	
+	public IType [] getArguments();
 	
 	public ICPPTemplateDefinition getTemplate();
 

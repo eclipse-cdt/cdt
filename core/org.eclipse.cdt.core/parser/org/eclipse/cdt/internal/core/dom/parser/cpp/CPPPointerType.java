@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,16 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	    this.type = type;
 	}
 
+	public IType stripQualifiers(){
+		CPPPointerType result = this;
+		if( isConst || isVolatile ){
+			result = (CPPPointerType) clone();
+			result.isConst = false;
+			result.isVolatile = false;
+		}
+		return result;
+	}
+	
 	public boolean isSameType( IType o ){
 	    if( o == this )
             return true;

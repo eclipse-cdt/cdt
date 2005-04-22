@@ -56,7 +56,7 @@ public class AST2CSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("xglue(HIGH, LOW)\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		try {
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 		assertTrue(false);
 		} catch (Exception e) {}
 	}
@@ -104,7 +104,7 @@ public class AST2CSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("char c[2][6] = { str(hello), str() };\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		try {
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 		assertTrue(false);
 		} catch (Exception e) {}
 	}
@@ -122,7 +122,7 @@ public class AST2CSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),\n"); //$NON-NLS-1$
 		buffer.append("t(10,,), t(,11,), t(,,12), t(,,) };\n"); //$NON-NLS-1$
 		try {
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 		assertTrue(false);
 		} catch (Exception e) {}
 	}
@@ -154,7 +154,7 @@ public class AST2CSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("report(x>y, \"x is %d but y is %d\", x, y);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		try {
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 		assertTrue(false);
 		} catch (Exception e) {}
 	}

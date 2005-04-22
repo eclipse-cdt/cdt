@@ -23,25 +23,22 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements
 		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType {
-
+	
 	/**
 	 * @param decl
 	 */
@@ -49,24 +46,14 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplate#instantiate(org.eclipse.cdt.core.dom.ast.IASTNode[])
-	 */
-	public IBinding instantiate(ICPPASTTemplateId templateId ) {//IASTNode[] arguments) {
-		ICPPTemplateParameter [] params = getTemplateParameters();
-		IASTNode [] arguments = templateId.getTemplateArguments();
-		
-		ObjectMap map = new ObjectMap(params.length);
-		if( arguments.length == params.length ){
-			for( int i = 0; i < arguments.length; i++ ){
-				IType t = CPPVisitor.createType( arguments[i] );
-				map.put( params[i], t );
-			}
+	public ICPPTemplateInstance deferredInstance( IType [] arguments ){
+		ICPPTemplateInstance instance = getInstance( arguments );
+		if( instance == null ){
+			instance = new CPPDeferredClassInstance( this, arguments );
+			addInstance( arguments, instance );
 		}
-		
-		return CPPTemplates.createInstance( templateId, (ICPPScope) getScope(), this, map );
+		return instance;
 	}
-
 	private void checkForDefinition(){
 //		CPPClassType.FindDefinitionAction action = new FindDefinitionAction();
 //		IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();

@@ -14,21 +14,21 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
  */
-public class CPPParameterInstance extends CPPInstance implements IParameter,
-		ICPPVariable, ICPPInternalBinding {
+public class CPPParameterInstance extends CPPInstance implements ICPPParameter, ICPPInternalBinding {
 
 	private IType type = null;
 	
@@ -37,8 +37,8 @@ public class CPPParameterInstance extends CPPInstance implements IParameter,
 	 * @param orig
 	 * @param argMap
 	 */
-	public CPPParameterInstance(ICPPScope scope, IBinding orig, ObjectMap argMap) {
-		super(scope, orig, argMap);
+	public CPPParameterInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType [] args ) {
+		super(scope, orig, argMap, args);
 	}
 
 	/* (non-Javadoc)
@@ -130,5 +130,9 @@ public class CPPParameterInstance extends CPPInstance implements IParameter,
     public boolean isMutable() {
         return false;
     }
+
+	public IASTInitializer getDefaultValue() {
+		return ((ICPPParameter)getOriginalBinding()).getDefaultValue();
+	}
 
 }

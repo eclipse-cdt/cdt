@@ -94,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -110,6 +111,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -286,7 +288,17 @@ public class CPPVisitor {
 	    if( mustBeSimple && elabType.getName() instanceof ICPPASTQualifiedName )
 	    	return binding;
 	    
+		boolean template = false;
 		ICPPScope scope = (ICPPScope) getContainingScope( name );
+		if( scope instanceof ICPPTemplateScope ){
+			ICPPScope parentScope = null;
+			try {
+				template = true;
+				parentScope = (ICPPScope) scope.getParent();
+			} catch (DOMException e1) {
+			}
+			scope = parentScope;
+		}
 		
 		if( mustBeSimple ){
 			//3.3.1-5 ... the identifier is declared in the smallest non-class non-function-prototype scope that contains
@@ -309,11 +321,14 @@ public class CPPVisitor {
             binding = scope.getBinding( elabType.getName(), false );
             if( binding == null || !(binding instanceof ICPPClassType) ){
     			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum ){
-    				binding = new CPPClassType( elabType.getName() );
+					if( template )
+	            		binding = new CPPClassTemplate( name );
+	            	else
+						binding = new CPPClassType( name );
     				scope.addName( elabType.getName() );
     			}
-    		} else if( binding instanceof ICPPClassType ){
-    			((CPPClassType)binding).addDeclaration( elabType );
+    		} else if( binding instanceof ICPPInternalBinding ){
+    			((ICPPInternalBinding)binding).addDeclaration( elabType );
     		}
         } catch ( DOMException e ) {
             binding = e.getProblem();
@@ -343,13 +358,14 @@ public class CPPVisitor {
 			return CPPTemplates.createClassPartialSpecialization( compType );
 		} 
         try {
-            binding = scope.getBinding( name, false );
+            binding = (scope != null ) ? scope.getBinding( name, false ) : null;
             if( binding == null || !(binding instanceof ICPPClassType) ){
             	if( template )
             		binding = new CPPClassTemplate( name );
             	else
             		binding = new CPPClassType( name );
-    			scope.addName( compType.getName() );
+				if( scope != null )
+					scope.addName( compType.getName() );
     		} else {
     			if( binding instanceof ICPPInternalBinding ){
 					ICPPInternalBinding internal = (ICPPInternalBinding) binding;
@@ -409,10 +425,10 @@ public class CPPVisitor {
 	}
 	private static IBinding createBinding( IASTDeclarator declarator ){
 		IASTNode parent = declarator.getParent();
+		while( parent instanceof IASTDeclarator ){
+			parent = parent.getParent();
+		}
 		
-		if( parent instanceof IASTTypeId )
-		    return CPPSemantics.resolveBinding( declarator.getName() );
-		    
 		while( declarator.getNestedDeclarator() != null )
 			declarator = declarator.getNestedDeclarator();
 
@@ -422,8 +438,10 @@ public class CPPVisitor {
 			name = ns[ ns.length - 1 ];
 		}
 		
-		while( parent instanceof IASTDeclarator ){
-			parent = parent.getParent();
+		if( parent instanceof IASTTypeId )
+		    return CPPSemantics.resolveBinding( name );
+		else if( parent.getPropertyInParent() == ICPPASTTemplateSpecialization.OWNED_DECLARATION ){
+			return CPPTemplates.createFunctionSpecialization( name );
 		}
 		
 		boolean template = false;
@@ -629,7 +647,9 @@ public class CPPVisitor {
 					    return dtor.getFunctionScope();
 					else if( prop == IASTFunctionDefinition.DECLARATOR )
 					    return ((IASTCompoundStatement)((IASTFunctionDefinition)dtor.getParent()).getBody()).getScope();
-			    } //else if( node instanceof ICPPASTTemplateDeclaration )
+			    } else if( parent instanceof ICPPASTTemplateDeclaration ){
+			    	return CPPTemplates.getContainingScope( node );
+			    }
 			} else if( node instanceof IASTInitializerExpression ){
 			    IASTNode parent = node.getParent();
 			    while( !(parent instanceof IASTDeclarator) )
@@ -1350,6 +1370,8 @@ public class CPPVisitor {
 			return getExpressionType( (IASTExpression) node );
 		if( node instanceof IASTTypeId )
 			return createType( ((IASTTypeId) node).getAbstractDeclarator() );
+		if( node instanceof IASTParameterDeclaration )
+			return createType( ((IASTParameterDeclaration)node).getDeclarator() );
 		return null;
 	}
 	/**
@@ -1420,6 +1442,14 @@ public class CPPVisitor {
 			IBinding binding = name.resolveBinding();
 			if( binding instanceof IType )
 				type = (IType) binding;
+			else if( binding instanceof ICPPTemplateNonTypeParameter ){
+				//TODO workaround... is there anything better? 
+				try {
+					type = ((ICPPTemplateNonTypeParameter)binding).getType();
+				} catch (DOMException e) {
+					type = e.getProblem();
+				}
+			}
 		}
 		return type;
 	}
@@ -1442,6 +1472,8 @@ public class CPPVisitor {
 					return (IType) binding;
 				} else if( binding instanceof IFunction ){
 					return ((IFunction)binding).getType();
+				} else if( binding instanceof ICPPTemplateNonTypeParameter ){
+					return ((ICPPTemplateNonTypeParameter)binding).getType();
 				}
 			} catch ( DOMException e ){
 				return e.getProblem();
@@ -1490,17 +1522,16 @@ public class CPPVisitor {
 	    		}
 	    		case ICPPASTLiteralExpression.lk_true :
 	    		case ICPPASTLiteralExpression.lk_false:
-	    			return new CPPBasicType( ICPPBasicType.t_bool, 0 );
+	    			return new CPPBasicType( ICPPBasicType.t_bool, 0, expression );
 	    		case IASTLiteralExpression.lk_char_constant:
-	    			return new CPPBasicType( IBasicType.t_char, 0 );
+	    			return new CPPBasicType( IBasicType.t_char, 0, expression );
 	    		case IASTLiteralExpression.lk_float_constant:
-	    			return new CPPBasicType( IBasicType.t_float, 0 );
+	    			return new CPPBasicType( IBasicType.t_float, 0, expression );
 	    		case IASTLiteralExpression.lk_integer_constant:
-	    			return new CPPBasicType( IBasicType.t_int, 0 );
+	    			return new CPPBasicType( IBasicType.t_int, 0, expression );
 	    		case IASTLiteralExpression.lk_string_literal:
-	    			IType type = new CPPBasicType( IBasicType.t_char, 0 );
+	    			IType type = new CPPBasicType( IBasicType.t_char, 0, expression );
 	    			type = new CPPQualifierType( type, true, false );
-	    			((CPPQualifierType)type).setFromStringLiteral( true );
 	    			return new CPPPointerType( type );
 	    	}
 	    	
@@ -1526,6 +1557,20 @@ public class CPPVisitor {
 	        	} catch( DOMException e ){
 	        		return e.getProblem();
 	        	} 
+	        } else if( binding instanceof ITypedef ){
+	        	try {
+					IType type = ((ITypedef)binding).getType();
+					while( type instanceof ITypedef )
+						type = ((ITypedef)type).getType();
+					if( type instanceof IFunctionType ){
+						return ((IFunctionType)type).getReturnType();
+					}
+					return type;
+				} catch (DOMException e) {
+					return e.getProblem();
+				}
+	        } else if( binding instanceof IProblemBinding ){
+	        	return (IType) binding;
 	        }
 	    } else if( expression instanceof IASTBinaryExpression ){
 	        IASTBinaryExpression binary = (IASTBinaryExpression) expression;
@@ -1541,6 +1586,8 @@ public class CPPVisitor {
                     }
 	            }
 	            return new ProblemBinding( binary, IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0] );
+	        } else if( type instanceof CPPBasicType ){
+	        	((CPPBasicType)type).setValue( expression );
 	        }
 	        return type;
 	    }
@@ -1556,6 +1603,8 @@ public class CPPVisitor {
 				}
 			} else if( op == IASTUnaryExpression.op_amper ){
 			    return new CPPPointerType( type );
+			} else if ( type instanceof CPPBasicType ){
+				((CPPBasicType)type).setValue( expression );
 			}
 			return type;
 	    } else if( expression instanceof ICPPASTFieldReference ){

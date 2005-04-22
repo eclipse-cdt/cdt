@@ -29,7 +29,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("#ifdef _ _STDC_IEC_559_ _ /* FE_UPWARD defined */\n"); //$NON-NLS-1$
 		buffer.append("fesetround(FE_UPWARD);\n"); //$NON-NLS-1$
 		buffer.append("#endif\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("char i;\n"); //$NON-NLS-1$
 		buffer.append("int i;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("char c1, c2;\n"); //$NON-NLS-1$
 		buffer.append("c1 = c1 + c2;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("double d;\n"); //$NON-NLS-1$
 		buffer.append("f1 = f2 * d;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("d1 = f = 1;\n"); //$NON-NLS-1$
 		buffer.append("d2 = (float) 1;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$		
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -122,7 +122,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("z = x + x * y; // not equivalent toz = x * (1.0 + y);\n"); //$NON-NLS-1$
 		buffer.append("y = x / 5.0; // not equivalent toy = x * 0.2;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("a = ((a + 32765) + b);\n"); //$NON-NLS-1$
 		buffer.append("a = (a + (b + 32765));\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -168,7 +168,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("char *p;\n"); //$NON-NLS-1$
 		buffer.append("sum = sum * 10 - '0' + (*p++ = getchar());\n"); //$NON-NLS-1$
 		buffer.append("sum = (((sum * 10) - '0') + ((*(p++)) = (getchar())));\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -179,7 +179,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_2_5s28() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct tag (* a[5])(float);\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -194,7 +194,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int f(int (*)(), double (*)[3]);\n"); //$NON-NLS-1$
 		buffer.append("int f(int (*)(char *), double (*)[]);\n"); //$NON-NLS-1$
 		buffer.append("int f(int (*)(char *), double (*)[3]);\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -209,7 +209,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("char x='\\023';\n"); //$NON-NLS-1$
 		buffer.append("char y='\\0';\n"); //$NON-NLS-1$
 		buffer.append("char z='\\x13';\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -234,7 +234,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int foo() {\n"); //$NON-NLS-1$
 		buffer.append("int x=(*pf[f1()]) (f2(), f3() + f4());\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -267,7 +267,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("vs.i; // volatile int\n"); //$NON-NLS-1$
 		buffer.append("vs.ci; // volatile const int\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -318,7 +318,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("if (sin(u.nf.doublenode) == 0.0)\n"); //$NON-NLS-1$
 		buffer.append("return 0;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -359,7 +359,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("} u;\n"); //$NON-NLS-1$
 		buffer.append("return f(&u.s1, &u.s2);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -370,7 +370,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_5_2_5s9() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int *p = (int []){2, 4};\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -389,7 +389,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int *p;\n"); //$NON-NLS-1$
 		buffer.append("p = (int [2]){*p};\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -410,7 +410,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("drawline(&(struct point){.x=1, .y=1},\n"); //$NON-NLS-1$
 		buffer.append("&(struct point){.x=3, .y=4});\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, false, false);
+		parse(buffer.toString(), ParserLanguage.C, false, 0);
 	}
 	
 	/**
@@ -425,7 +425,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("(const float []){1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6};\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -444,7 +444,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("(char []){\"/tmp/fileXXXXXX\"};\n"); //$NON-NLS-1$
 		buffer.append("(const char []){\"/tmp/fileXXXXXX\"};\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -459,7 +459,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("(const char []){\"abc\"} == \"abc\";\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -478,7 +478,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("struct int_list endless_zeros = {0, &endless_zeros};\n"); //$NON-NLS-1$
 		buffer.append("eval(endless_zeros);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -507,7 +507,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("if (j < 2) goto again;\n"); //$NON-NLS-1$
 		buffer.append("return p == q && q->i == 1;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -520,7 +520,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("extern void *alloc(size_t);\n"); //$NON-NLS-1$
 		buffer.append("double *dp = alloc(sizeof *dp);\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -537,7 +537,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int array[5];\n"); //$NON-NLS-1$
 		buffer.append("int x = sizeof array / sizeof array[0];\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -562,7 +562,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("(*p)[2] = 99; // a[1][2] == 99\n"); //$NON-NLS-1$
 		buffer.append("n = p - a; // n == 1\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -587,7 +587,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int *ip;\n"); //$NON-NLS-1$
 		buffer.append("const char *c_cp;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -608,7 +608,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("long l;\n"); //$NON-NLS-1$
 		buffer.append("l = (c = i);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -633,7 +633,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("*cpp = &c; // valid\n"); //$NON-NLS-1$
 		buffer.append("*p = 0; // valid\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -656,7 +656,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("offsetof(struct s, d);\n"); //$NON-NLS-1$
 		buffer.append("offsetof(struct ss, d);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -677,7 +677,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("s1 = malloc(sizeof (struct s) + 64);\n"); //$NON-NLS-1$
 		buffer.append("s2 = malloc(sizeof (struct s) + 46);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -690,7 +690,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct { int n; double d[8]; } *s1;\n"); //$NON-NLS-1$
 		buffer.append("struct { int n; double d[5]; } *s2;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -715,7 +715,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("if (*cp != burgundy)\n"); //$NON-NLS-1$
 		buffer.append("return 0;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -734,7 +734,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("struct tnode *left, *right;\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("struct tnode s, *sp;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -755,7 +755,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("TNODE *left, *right;\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("TNODE s, *sp;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -770,7 +770,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("struct s2;\n"); //$NON-NLS-1$
 		buffer.append("struct s1 { struct s2 *s2p; }; // D1\n"); //$NON-NLS-1$
 		buffer.append("struct s2 { struct s1 *s1p; }; // D2\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -781,7 +781,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_3s10() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("extern const volatile int real_time_clock;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -818,7 +818,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("pci = &cs.mem; // valid\n"); //$NON-NLS-1$
 		buffer.append("pi = a[0]; // invalid: a[0] has type ‘‘const int *’’\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -833,7 +833,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int * restrict a;\n"); //$NON-NLS-1$
 		buffer.append("int * restrict b;\n"); //$NON-NLS-1$
 		buffer.append("extern int c[];\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -852,7 +852,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("while (n-- > 0)\n"); //$NON-NLS-1$
 		buffer.append("*p++ = *q++;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -883,7 +883,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("f(50, d + 50, d); // valid\n"); //$NON-NLS-1$
 		buffer.append("f(50, d + 1, d); // undefined behavior\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -904,7 +904,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("for (i = 0; i < n; i++)\n"); //$NON-NLS-1$
 		buffer.append("p[i] = q[i] + r[i];\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -937,7 +937,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("p2 = q2; // undefined behavior\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -962,7 +962,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("t.v = malloc(n * sizeof (float));\n"); //$NON-NLS-1$
 		buffer.append("return t;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, false, false);
+		parse(buffer.toString(), ParserLanguage.C, false, 0);
 	}
 	
 	/**
@@ -997,7 +997,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("return is_fahr ? cels(temp) : fahr(temp);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1014,7 +1014,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int *const constant_ptr1;\n"); //$NON-NLS-1$
 		buffer.append("typedef int *int_ptr;\n"); //$NON-NLS-1$
 		buffer.append("const int_ptr constant_ptr2;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1025,7 +1025,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_5_2s7() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("float fa[11], *afp[17];\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1038,7 +1038,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("extern int *x;\n"); //$NON-NLS-1$
 		buffer.append("extern int y[];\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1071,7 +1071,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("r = c; // compatible, but defined behavior only if\n"); //$NON-NLS-1$
 		buffer.append("// n == 6 andm == n+1\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, false, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1118,7 +1118,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("extern int (*r)[m]; // invalid: r has linkage and points to VLA\n"); //$NON-NLS-1$
 		buffer.append("static int (*q)[m] = &B; // valid: q is a static block pointer to VLA\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1129,7 +1129,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_5_3s16() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int f(void), *fip(), (*pfi)();\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1140,7 +1140,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_5_3s18() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int (*apfi[3])(int *x, int *y);\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1151,7 +1151,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_5_3s19() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int (*fpfi(int (*)(long), int))(int, ...);\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1192,7 +1192,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("// a is a pointer to a VLA with n*m+300 elements\n"); //$NON-NLS-1$
 		buffer.append("a[i][j] += x;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1217,7 +1217,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("void f2(double a[restrict][5]);\n"); //$NON-NLS-1$
 		buffer.append("void f3(double a[restrict 3][5]);\n"); //$NON-NLS-1$
 		buffer.append("void f4(double a[restrict static 3][5]);\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1238,7 +1238,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("extern KLICKSP *metricp;\n"); //$NON-NLS-1$
 		buffer.append("range x;\n"); //$NON-NLS-1$
 		buffer.append("range z, *zp;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1251,7 +1251,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("typedef struct s1 { int x; } t1, *tp1;\n"); //$NON-NLS-1$
 		buffer.append("typedef struct s2 { int x; } t2, *tp2;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1278,7 +1278,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("t f(t (t));\n"); //$NON-NLS-1$
 		buffer.append("long t;\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1295,7 +1295,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("void (*signal(int, void (*)(int)))(int);\n"); //$NON-NLS-1$
 		buffer.append("fv *signal(int, fv *);\n"); //$NON-NLS-1$
 		buffer.append("pfv signal(int, pfv);\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1322,7 +1322,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("for (int i = 1; i < n; i++)\n"); //$NON-NLS-1$
 		buffer.append("a[i-1] = b[i];\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1335,7 +1335,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int i = 3.5;\n"); //$NON-NLS-1$
 		buffer.append("complex c = 5 + 3 * I;\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -1346,7 +1346,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_8s25() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int x[] = { 1, 3, 5 };\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1365,7 +1365,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("{ 2, 4, 6 },\n"); //$NON-NLS-1$
 		buffer.append("{ 3, 5, 7 },\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1380,7 +1380,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int y[4][3] = {\n"); //$NON-NLS-1$
 		buffer.append("1, 3, 5, 2, 4, 6, 3, 5, 7\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1395,7 +1395,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int z[4][3] = {\n"); //$NON-NLS-1$
 		buffer.append("{ 1 }, { 2 }, { 3 }, { 4 }\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1406,7 +1406,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_8s28() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct { int a[3], b; } w[] = { { 1 }, 2 };\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1459,7 +1459,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("{ 6 },\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1474,7 +1474,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("typedef int A[]; // OK - declared with block scope\n"); //$NON-NLS-1$
 		buffer.append("A a1 = { 1, 2 }, b1 = { 3, 4, 5 };\n"); //$NON-NLS-1$
 		buffer.append("int a2[] = { 1, 2 }, b2[] = { 3, 4, 5 };\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1495,7 +1495,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("t2[] = { 'a', 'b', 'c' };\n"); //$NON-NLS-1$
 		buffer.append("char *p = \"abc\";\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1514,7 +1514,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("[member_two] = \"member two\",\n"); //$NON-NLS-1$
 		buffer.append("[member_one] = \"member one\",\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1525,7 +1525,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_8s34() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("div_t answer = { .quot = 2, .rem = -1 };\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1538,7 +1538,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("struct { int a[3], b; } w[] =\n"); //$NON-NLS-1$
 		buffer.append("{ [0].a = {1}, [1].a[0] = 2 };\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1555,7 +1555,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int a[MAX] = {\n"); //$NON-NLS-1$
 		buffer.append("1, 3, 5, 7, 9, [MAX-5] = 8, 6, 4, 2, 0\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1566,7 +1566,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_8s38() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("union { int any_member; } u = { .any_member = 42 };\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1583,7 +1583,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int f() {\n"); //$NON-NLS-1$
 		buffer.append("(void)p(0);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1602,7 +1602,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("while (*s++ != '\0')\n"); //$NON-NLS-1$
 		buffer.append(";\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1633,7 +1633,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("end_loop1: ;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1666,7 +1666,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("f(i+1);\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1701,7 +1701,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("// handle other operations\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1738,7 +1738,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("goto lab4; // invalid: going INTO scope of VLA.\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), false, false);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**
@@ -1783,7 +1783,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("int foo() {\n"); //$NON-NLS-1$
 		buffer.append("g.u2.f3 = f();\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, true);
+		parse(buffer.toString(), ParserLanguage.C, true, 0);
 	}
 	
 	/**
@@ -1800,7 +1800,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("return a > b ? a : b;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1819,7 +1819,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("(*funcp)();\n"); //$NON-NLS-1$
 		buffer.append("funcp();\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1858,7 +1858,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("extern int i3; // refers to pre vious, whose linkage is external\n"); //$NON-NLS-1$
 		buffer.append("extern int i4; // refers to pre vious, whose linkage is external\n"); //$NON-NLS-1$
 		buffer.append("extern int i5; // refers to pre vious, whose linkage is internal\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1883,7 +1883,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("if ('z' - 'a' == 25)\n"); //$NON-NLS-1$
 		buffer.append("g();\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1904,7 +1904,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("#define join(c, d) in_between(c hash_hash d)\n"); //$NON-NLS-1$
 		buffer.append("char p[] = join(x, y); // equivalent to\n"); //$NON-NLS-1$
 		buffer.append("// char p[] = \"x ## y\";\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1917,7 +1917,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#define TABSIZE 100\n"); //$NON-NLS-1$
 		buffer.append("int table[TABSIZE];\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1928,7 +1928,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_10_3_5s4() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#define max(a, b) ((a) > (b) ? (a) : (b))\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 	/**
@@ -1951,7 +1951,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("#define FUNC_LIKE2( a )(              \\n"); //$NON-NLS-1$
 	    buffer.append("                 a                    \\n"); //$NON-NLS-1$
 		buffer.append("                                      )\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, true);
+		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
 }

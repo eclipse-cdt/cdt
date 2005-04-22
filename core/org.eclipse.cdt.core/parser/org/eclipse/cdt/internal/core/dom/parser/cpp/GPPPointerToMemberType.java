@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,19 @@ public class GPPPointerToMemberType extends CPPPointerToMemberType implements
         this.isRestrict = operator.isRestrict();
     }
 
+    public IType stripQualifiers(){
+		GPPPointerToMemberType result = (GPPPointerToMemberType) super.stripQualifiers();
+		
+		if( isRestrict ){
+			if( result == this ){
+				result = (GPPPointerToMemberType) clone();
+				result.isRestrict = false;
+			} else {
+				result.isRestrict = false;
+			}
+		} 
+		return result;
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType#isRestrict()
      */

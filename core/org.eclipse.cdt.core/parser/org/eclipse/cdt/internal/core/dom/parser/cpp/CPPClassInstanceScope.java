@@ -83,7 +83,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	    			} else {
 		    			binding = forceResolve ? n.resolveBinding() : n.getBinding();
 		    			if( binding != null ){
-		    				binding = CPPTemplates.createInstance( n, this, binding, instance.getArgumentMap() );
+		    				binding = CPPTemplates.createInstance( this, binding, instance.getArgumentMap(), instance.getArguments() );
 		    				if( instanceMap == ObjectMap.EMPTY_MAP )
 		    					instanceMap = new ObjectMap(2);
 			        		instanceMap.put( n, binding );
@@ -93,7 +93,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	    			if( instanceMap.containsKey( obj ) ){
 	    				binding = (IBinding) instanceMap.get( obj );
 	    			} else {
-	    				binding = CPPTemplates.createInstance( null, this, (IBinding) obj, instance.getArgumentMap() );
+	    				binding = CPPTemplates.createInstance( this, (IBinding) obj, instance.getArgumentMap(), instance.getArguments() );
 	    				if( instanceMap == ObjectMap.EMPTY_MAP )
 	    					instanceMap = new ObjectMap(2);
 		        		instanceMap.put( obj, binding );
@@ -175,8 +175,16 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
 	 */
-	public IScope getParent() {
-		// TODO Auto-generated method stub
+	public IScope getParent() throws DOMException {
+		ICPPClassType cls = getOriginalClass();
+		ICPPClassScope scope = (ICPPClassScope)cls.getCompositeScope();
+		if( scope != null )
+			return scope.getParent();
+		if( cls instanceof ICPPInternalBinding ){
+			IASTNode [] nds = ((ICPPInternalBinding)cls).getDeclarations();
+			if( nds != null && nds.length > 0 )
+				return CPPVisitor.getContainingScope( nds[0] );
+		}
 		return null;
 	}
 
@@ -192,8 +200,17 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
 	 */
 	public IASTNode getPhysicalNode() throws DOMException {
-		ICPPClassScope scope = (ICPPClassScope) getOriginalClass().getCompositeScope();
-		return scope.getPhysicalNode();
+		ICPPClassType cls = getOriginalClass();
+		ICPPClassScope scope = (ICPPClassScope)cls.getCompositeScope();
+		if( scope != null )
+			return scope.getPhysicalNode();
+		
+		if( cls instanceof ICPPInternalBinding ){
+			IASTNode [] nds = ((ICPPInternalBinding)cls).getDeclarations();
+			if( nds != null && nds.length > 0 )
+				return nds[0];
+		}
+		return null;
 	}
 
     /* (non-Javadoc)

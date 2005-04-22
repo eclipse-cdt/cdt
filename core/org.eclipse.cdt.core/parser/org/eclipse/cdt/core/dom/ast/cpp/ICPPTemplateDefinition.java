@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+
 
 /**
  * @author Doug Schaefer
@@ -22,5 +24,7 @@ public interface ICPPTemplateDefinition extends ICPPBinding{
 	 * a partial specialization will have the specialized parameter list
 	 * @return array of ICPPTemplateParameter
 	 */
-	public ICPPTemplateParameter[] getTemplateParameters();
+	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException;
+	
+	public ICPPTemplateSpecialization[] getTemplateSpecializations() throws DOMException;
 }

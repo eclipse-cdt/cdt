@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
@@ -97,4 +98,12 @@ public class CBasicType implements ICBasicType {
         }
         return t;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#getValue()
+	 */
+	public IASTExpression getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

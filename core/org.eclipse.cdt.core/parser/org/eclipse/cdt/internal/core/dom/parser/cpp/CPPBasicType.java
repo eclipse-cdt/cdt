@@ -13,7 +13,9 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 
 /**
@@ -28,17 +30,30 @@ public class CPPBasicType implements ICPPBasicType {
 	
 	protected int qualifierBits = 0;
 	protected int type;
+	protected IASTExpression value = null;
 	
 	public CPPBasicType( int t, int bits ){
 		type = t;
 		qualifierBits = bits;
 	}
 
+	public CPPBasicType( int t, int bits, IASTExpression val ){
+		type = t;
+		qualifierBits = bits;
+		value = val;
+	}
+	
 	public boolean isSameType( IType object ) {
-	    if( object instanceof CPPTypedef )
+		if( object == this )
+			return true;
+		
+	    if( object instanceof ITypedef )
 	        return object.isSameType( this );
 	    
 		if( !(object instanceof CPPBasicType) )
+			return false;
+		
+		if( type == -1 ) 
 			return false;
 		
 		CPPBasicType t = (CPPBasicType) object;
@@ -88,4 +103,15 @@ public class CPPBasicType implements ICPPBasicType {
         }
         return t;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#getValue()
+	 */
+	public IASTExpression getValue() {
+		return value;
+	}
+	
+	public void setValue( IASTExpression val ){
+		value = val;
+	}
 }

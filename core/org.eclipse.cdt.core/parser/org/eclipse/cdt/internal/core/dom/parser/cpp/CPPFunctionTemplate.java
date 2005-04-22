@@ -31,18 +31,68 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
 public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFunctionTemplate, ICPPFunction {
-	IFunctionType type = null;
+	public static final class CPPFunctionTemplateProblem extends ProblemBinding	implements ICPPFunctionTemplate, ICPPFunction {
+		public CPPFunctionTemplateProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
+		}
+		public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
+			throw new DOMException( this );
+		}
+		public ICPPTemplateSpecialization[] getTemplateSpecializations() throws DOMException {
+			throw new DOMException( this );		
+		}
+		public String[] getQualifiedName() throws DOMException {
+			throw new DOMException( this );		
+		}
+		public char[][] getQualifiedNameCharArray() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean isGloballyQualified() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean isMutable() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean isInline() throws DOMException {
+			throw new DOMException( this );
+		}
+		public IParameter[] getParameters() throws DOMException {
+			throw new DOMException( this );
+		}
+		public IScope getFunctionScope() throws DOMException {
+			throw new DOMException( this );
+		}
+		public IFunctionType getType() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean isStatic() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean isExtern() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean isAuto() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean isRegister() throws DOMException {
+			throw new DOMException( this );
+		}
+		public boolean takesVarArgs() throws DOMException {
+			throw new DOMException( this );
+		}
+	}
+	protected IFunctionType type = null;
 	/**
 	 * @param decl
 	 */
@@ -83,24 +133,6 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     			temp.addDeclaration( name );
     		}
     	}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplate#instantiate(org.eclipse.cdt.core.dom.ast.IASTNode[])
-	 */
-	public IBinding instantiate(ICPPASTTemplateId templateId ) {//IASTNode[] arguments) {
-		ICPPTemplateParameter [] params = getTemplateParameters();
-		IASTNode [] arguments = templateId.getTemplateArguments();
-		
-		ObjectMap map = new ObjectMap(params.length);
-		if( arguments.length == params.length ){
-			for( int i = 0; i < arguments.length; i++ ){
-				IType t = CPPVisitor.createType( arguments[i] );
-				map.put( params[i], t );
-			}
-		}
-		
-		return CPPTemplates.createInstance( templateId, (ICPPScope) getScope(), this, map );
 	}
 
 	/**
@@ -232,6 +264,12 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     	return binding;	
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition#deferredInstance(org.eclipse.cdt.core.dom.ast.IType[])
+	 */
+	public ICPPTemplateInstance deferredInstance(IType[] arguments) {
+		return new CPPDeferredFunctionInstance( this, arguments );
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
 	 */

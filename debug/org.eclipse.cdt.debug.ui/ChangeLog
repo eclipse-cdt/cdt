@@ -1,3 +1,8 @@
+2005-04-22 Mikhail Khodjaiants
+	Initalize the particiapants of the source lookup director when converting 
+	from an old memento.
+	* DefaultSourceLocator.java
+
 2005-04-21 Mikhail Khodjaiants
 	Changed the labels of the "Source Lookup Path" preference page to "Common Source Lookup Path".
 	* PreferenceMessages.properties

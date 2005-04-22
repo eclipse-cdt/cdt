@@ -91,5 +91,6 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 			cons.add( 0, defaultContainer );
 		}
 		setSourceContainers( (ISourceContainer[])cons.toArray( new ISourceContainer[cons.size()] ) );
+		initializeParticipants();
 	}
 }

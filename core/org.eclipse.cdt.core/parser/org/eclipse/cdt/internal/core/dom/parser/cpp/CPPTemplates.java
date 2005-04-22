@@ -859,6 +859,7 @@ public class CPPTemplates {
 						if( !deduceTemplateArgument( map, pParams[i], aParams[i] ) ) 
 							return false;
 					}
+					return true;
 				} else if( p instanceof ICPPTemplateParameter ){
 					if( map.containsKey( p ) ){
 						IType current = (IType)map.get( p );

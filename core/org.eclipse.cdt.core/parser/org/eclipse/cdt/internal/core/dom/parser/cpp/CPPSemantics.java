@@ -2337,6 +2337,13 @@ public class CPPSemantics {
 			cost.targetHadReference = true;
 		}
 			
+		//4.3 function to pointer conversion
+		if( target instanceof IPointerType && ((IPointerType)target).getType() instanceof IFunctionType &&
+		    source instanceof IFunctionType )
+	    {
+		    source = new CPPPointerType( source );
+	    }
+		
 		cost.source = source;
 		cost.target = target;
 		

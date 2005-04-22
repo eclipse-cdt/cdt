@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -753,5 +754,28 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPClassType y2 = (ICPPClassType) col.getName(6).resolveBinding();
 		assertTrue( y2 instanceof ICPPTemplateInstance );
 		assertSame( ((ICPPTemplateInstance)y2).getOriginalBinding(), Y );
+	}
+	
+	public void testBug45129() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("template < class T, class U > void f ( T (*) ( T, U ) );   \n"); //$NON-NLS-1$
+	    buffer.append("int g ( int, char );                                       \n"); //$NON-NLS-1$
+	    buffer.append("void foo () {                                              \n"); //$NON-NLS-1$
+	    buffer.append("   f( g );                                                 \n"); //$NON-NLS-1$
+	    buffer.append("}                                                          \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+	    ICPPFunction f1 = (ICPPFunction) col.getName(2).resolveBinding();
+    	ICPPFunction g1 = (ICPPFunction) col.getName(9).resolveBinding();
+    	
+    	IBinding f2 = col.getName(13).resolveBinding();
+    	IBinding g2 = col.getName(14).resolveBinding();
+    	
+    	assertTrue( f2 instanceof ICPPTemplateInstance );
+    	assertSame( ((ICPPTemplateInstance)f2).getOriginalBinding(), f1 );
+    	assertSame( g1, g2 );
 	}
 }

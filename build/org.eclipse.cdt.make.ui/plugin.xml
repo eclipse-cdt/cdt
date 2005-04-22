@@ -258,6 +258,16 @@
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page>
+      <page
+            adaptable="true"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
+            id="org.eclipse.cdt.make.ui.scannerconfig.PerFileIncludesSymbolsPropertyPage"
+            name="%IncludeSymbolProperties.name"
+            objectClass="org.eclipse.cdt.core.model.ITranslationUnit">
+         <filter
+               name="projectNature"
+               value="org.eclipse.cdt.make.core.makeNature"/>
+      </page>
         
    </extension>
    <extension

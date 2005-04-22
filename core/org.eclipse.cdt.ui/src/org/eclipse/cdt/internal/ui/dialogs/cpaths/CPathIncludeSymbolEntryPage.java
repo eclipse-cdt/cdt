@@ -64,7 +64,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class CPathIncludeSymbolEntryPage extends CPathBasePage {
+public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage {
 
 	private TreeListDialogField fIncludeSymPathsList;
 	private SelectionButtonDialogField fShowInheritedPaths;

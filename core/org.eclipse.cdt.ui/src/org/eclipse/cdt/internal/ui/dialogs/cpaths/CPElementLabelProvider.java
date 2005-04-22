@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -37,11 +36,11 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	private String fNewLabel, fCreateLabel;
 	private ImageDescriptor fIncludeIcon, fMacroIcon, fLibWSrcIcon, fLibIcon;
+    private ImageDescriptor fQuoteIncludeIcon, fIncludeFileIcon, fMacrosFileIcon;
 	private ImageDescriptor fFolderImage, fOutputImage, fProjectImage, fContainerImage;
 	private boolean bShowExported;
 	private boolean bShowParentInfo;
 	private ImageDescriptorRegistry fRegistry;
-	private CElementImageProvider fCImages;
 
 	public CPElementLabelProvider() {
 		this(true, false);
@@ -51,12 +50,14 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		fNewLabel = CPathEntryMessages.getString("CPElementLabelProvider.new"); //$NON-NLS-1$
 		fCreateLabel = CPathEntryMessages.getString("CPElementLabelProvider.willbecreated"); //$NON-NLS-1$
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
-		fCImages = new CElementImageProvider();
 
 		fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
 		fLibWSrcIcon = CPluginImages.DESC_OBJS_ARCHIVE_WSRC;
 		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
+        fQuoteIncludeIcon = CPluginImages.DESC_OBJS_QUOTE_INCLUDES_FOLDER;
+        fIncludeFileIcon = CPluginImages.DESC_OBJS_TUNIT_HEADER;
 		fMacroIcon = CPluginImages.DESC_OBJS_MACRO;
+        fMacrosFileIcon = CPluginImages.DESC_OBJS_TUNIT_HEADER;
 		fFolderImage = CPluginImages.DESC_OBJS_SOURCE_ROOT;
 		fOutputImage = CPluginImages.DESC_OBJS_CONTAINER;
 		fContainerImage = CPluginImages.DESC_OBJS_LIBRARY;
@@ -85,8 +86,12 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		switch (group.getEntryKind()) {
 			case IPathEntry.CDT_INCLUDE :
 				return CPathEntryMessages.getString("CPElementLabelProvider.Includes"); //$NON-NLS-1$
+            case IPathEntry.CDT_INCLUDE_FILE :
+                return CPathEntryMessages.getString("CPElementLabelProvider.IncludeFiles"); //$NON-NLS-1$
 			case IPathEntry.CDT_MACRO :
 				return CPathEntryMessages.getString("CPElementLabelProvider.PreprocessorSymbols"); //$NON-NLS-1$
+            case IPathEntry.CDT_MACRO_FILE :
+                return CPathEntryMessages.getString("CPElementLabelProvider.MacrosFiles"); //$NON-NLS-1$
 			case IPathEntry.CDT_LIBRARY :
 				return CPathEntryMessages.getString("CPElementLabelProvider.Libraries"); //$NON-NLS-1$
 			case -1 :
@@ -161,6 +166,14 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				addParentInfo(cpentry, str);
 				return str.toString();
 			}
+            case IPathEntry.CDT_INCLUDE_FILE : {
+                IPath incFilePath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE_FILE));
+                StringBuffer str = new StringBuffer();
+                addBaseString(incFilePath, cpentry, str);
+                addExport(cpentry, str);
+                addParentInfo(cpentry, str);
+                return str.toString();
+            }
 			case IPathEntry.CDT_MACRO : {
 				StringBuffer str = new StringBuffer((String)cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
 						+ (String)cpentry.getAttribute(CPElement.MACRO_VALUE));
@@ -169,6 +182,14 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				addParentInfo(cpentry, str);
 				return str.toString();
 			}
+            case IPathEntry.CDT_MACRO_FILE : {
+                IPath macroFilePath = ((IPath)cpentry.getAttribute(CPElement.MACROS_FILE));
+                StringBuffer str = new StringBuffer();
+                addBaseString(macroFilePath, cpentry, str);
+                addExport(cpentry, str);
+                addParentInfo(cpentry, str);
+                return str.toString();
+            }
 			case IPathEntry.CDT_CONTAINER : {
 				StringBuffer str = new StringBuffer(path.toString());
 				try {
@@ -307,9 +328,15 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 			case IPathEntry.CDT_CONTAINER :
 				return fContainerImage;
 			case IPathEntry.CDT_INCLUDE :
-				return fIncludeIcon;
+                if (((Boolean)cpentry.getAttribute(CPElement.SYSTEM_INCLUDE)).booleanValue())
+				    return fIncludeIcon;
+                return fQuoteIncludeIcon;
+            case IPathEntry.CDT_INCLUDE_FILE :
+                return fIncludeFileIcon;
 			case IPathEntry.CDT_MACRO :
 				return fMacroIcon;
+            case IPathEntry.CDT_MACRO_FILE :
+                return fMacrosFileIcon;
 			default :
 				return null;
 		}
@@ -350,6 +377,9 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 					return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
 				case IPathEntry.CDT_MACRO :
 					return fRegistry.get(fMacroIcon);
+                case IPathEntry.CDT_INCLUDE_FILE :
+                case IPathEntry.CDT_MACRO_FILE :
+                    return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDE);
 				case IPathEntry.CDT_LIBRARY :
 					return CPluginImages.get(CPluginImages.IMG_OBJS_LIBRARY);
 				case -1 :

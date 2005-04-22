@@ -150,7 +150,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		for (int i = 0; i < cPathEntries.length; i++) {
 			IPathEntry curr = cPathEntries[i];
 			if (contains(types, curr.getEntryKind())) {
-				newCPath.add(CPElement.createFromExisting(curr, getCProject()));
+				newCPath.add(CPElement.createFromExisting(curr, getCElement()));
 			}
 		}
 		return newCPath;

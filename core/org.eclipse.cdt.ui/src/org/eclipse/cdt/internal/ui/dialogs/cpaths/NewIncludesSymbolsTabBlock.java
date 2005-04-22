@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
@@ -23,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
 
 public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implements IStatusChangeListener {
 
-	private CPathIncludeSymbolEntryPage fIncludeSymbols;
+	private CPathIncludeSymbolEntryBasePage fIncludeSymbols;
 
 	private List fCPaths;
 
@@ -31,7 +32,6 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 
 	public NewIncludesSymbolsTabBlock(IStatusChangeListener context, int pageToShow) {
 		super(context, pageToShow);
-		fIncludeSymbols = new CPathIncludeSymbolEntryPage(this);
 	}
 
 	protected void addTab(ICOptionPage tab) {
@@ -76,7 +76,13 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 	protected void initialize(ICElement element, List cPaths) {
 		fCPaths = cPaths;
 
-		if (fIncludeSymbols != null) {
+		if (element instanceof ICProject) {
+            fIncludeSymbols = new CPathIncludeSymbolEntryPage(this);
+        }
+        else {
+            fIncludeSymbols = new CPathIncludeSymbolEntryPerFilePage(this);
+        }
+        if (fIncludeSymbols != null) {
 			fIncludeSymbols.init(element, cPaths);
 		}
 		doStatusLineUpdate();
@@ -105,4 +111,5 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 		updateBuildPathStatus();
 		doStatusLineUpdate();
 	}
+
 }

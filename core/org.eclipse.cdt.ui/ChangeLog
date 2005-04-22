@@ -1,3 +1,18 @@
+2005-04-22 Vladimir Hirsl
+	Added per file C/C++ Includes & Symbols property page to display
+	per file scanner info (discovered and user specified).
+	
+	+ icons/obj16/hfolder_quote_obj.gif
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/AbstractPathOptionBlock.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.properties
+	+ src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeSymbolEntryBasePage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeSymbolEntryPage.java
+	+ src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeSymbolEntryPerFilePage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPElement.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CElementLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/NewIncludesSymbolsTabBlock.java
+
 2005-04-13 Alain Magloire
 	Fix PR 91239
 	* src/org/eclipse/cdt/internal/ui/CPerspectiveFactory.java

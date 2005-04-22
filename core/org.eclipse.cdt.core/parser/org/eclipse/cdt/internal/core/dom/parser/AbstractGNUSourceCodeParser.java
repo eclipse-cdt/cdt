@@ -488,9 +488,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTCompoundStatement compoundStatement()
             throws EndOfFileException, BacktrackException {
+        IASTCompoundStatement result = createCompoundStatement();
+		if (LT(1) == IToken.tEOC)
+			return result;
+		
         int startingOffset = consume(IToken.tLBRACE).getOffset();
 
-        IASTCompoundStatement result = createCompoundStatement();
         ((ASTNode) result).setOffset(startingOffset);
         result.setPropertyInParent(IASTFunctionDefinition.FUNCTION_BODY);
         while (LT(1) != IToken.tRBRACE && LT(1) != IToken.tEOC) {

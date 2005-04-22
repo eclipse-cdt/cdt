@@ -2808,6 +2808,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			constructorChain = new ArrayList(
 					DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE);
 			ctorInitializer(constructorChain);
+			hasFunctionBody = true;
 			break;
 		case IToken.tLBRACE:
 			break;
@@ -2954,19 +2955,35 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	protected void ctorInitializer(List collection) throws EndOfFileException,
 			BacktrackException {
 		consume(IToken.tCOLON);
-		for (;;) {
-			if (LT(1) == IToken.tLBRACE)
-				break;
+		ctorLoop: for (;;) {
 			ITokenDuple duple = name();
 			IASTName name = createName(duple);
 
-			consume(IToken.tLPAREN);
+			int end;
 			IASTExpression expressionList = null;
+			switch (LT(1)) {
+			case IToken.tLPAREN:
+				consume(IToken.tLPAREN);
 
-			if (LT(1) != IToken.tRPAREN)
-				expressionList = expression();
+				if (LT(1) != IToken.tRPAREN)
+					expressionList = expression();
 
-			int end = consume(IToken.tRPAREN).getEndOffset();
+				switch (LT(1)) {
+				case IToken.tRPAREN:
+				case IToken.tEOC:
+					end = consume().getEndOffset();
+					break;
+				default:
+					throw backtrack;
+				}
+				break;
+			case IToken.tEOC:
+				end = consume().getEndOffset();
+				break;
+			default:
+				throw backtrack;
+			}
+			
 			ICPPASTConstructorChainInitializer ctorInitializer = createConstructorChainInitializer();
 			((ASTNode) ctorInitializer).setOffsetAndLength(duple
 					.getStartOffset(), end - duple.getStartOffset());
@@ -2982,11 +2999,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						.setPropertyInParent(ICPPASTConstructorChainInitializer.INITIALIZER);
 			}
 			collection.add(ctorInitializer);
-			if (LT(1) == IToken.tLBRACE)
-				break;
-			consume(IToken.tCOMMA);
-		}
 
+			switch (LT(1)) {
+			case IToken.tCOMMA:
+				consume(IToken.tCOMMA);
+				break;
+			case IToken.tLBRACE:
+			case IToken.tEOC:
+				break ctorLoop;
+			}
+		}
 	}
 
 	/**

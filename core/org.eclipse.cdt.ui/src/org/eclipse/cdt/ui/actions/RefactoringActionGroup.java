@@ -21,6 +21,7 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.actions.RedoRefactoringAction;
 import org.eclipse.cdt.internal.ui.refactoring.actions.RenameRefactoringAction;
 import org.eclipse.cdt.internal.ui.refactoring.actions.UndoRefactoringAction;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -138,48 +139,55 @@ public class RefactoringActionGroup extends ActionGroup {
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
 	public RefactoringActionGroup(CEditor editor, String groupName) {
-		fSite= editor.getEditorSite();		
-		fEditor= editor;
-		if((groupName != null) && (groupName.length() > 0))
-			fGroupName= groupName;
-		
-		ISelectionProvider provider= editor.getSelectionProvider();
-		ISelection selection= provider.getSelection();
-		fEditorActions= new ArrayList(3);
-
-		fRenameAction= new RenameRefactoringAction(editor);
-		fRenameAction.update(selection);
-		editor.setAction("RenameElement", fRenameAction); //$NON-NLS-1$
-		fEditorActions.add(fRenameAction);
-
-		fUndoAction= new UndoRefactoringAction(editor);
-		fUndoAction.update(selection);
-		editor.setAction("UndoAction", fUndoAction); //$NON-NLS-1$
-		fEditorActions.add(fUndoAction);
-
-		fRedoAction= new RedoRefactoringAction(editor);
-		fRedoAction.update(selection);
-		editor.setAction("RedoAction", fRedoAction); //$NON-NLS-1$
-		fEditorActions.add(fRedoAction);
+        if (!isRefactoringPluginLoaded()) {
+            fSite= editor.getEditorSite();		
+            fEditor= editor;
+            if((groupName != null) && (groupName.length() > 0))
+                fGroupName= groupName;
+            
+            ISelectionProvider provider= editor.getSelectionProvider();
+            ISelection selection= provider.getSelection();
+            fEditorActions= new ArrayList(3);
+            
+            fRenameAction= new RenameRefactoringAction(editor);
+            fRenameAction.update(selection);
+            editor.setAction("RenameElement", fRenameAction); //$NON-NLS-1$
+            fEditorActions.add(fRenameAction);
+            
+            fUndoAction= new UndoRefactoringAction(editor);
+            fUndoAction.update(selection);
+            editor.setAction("UndoAction", fUndoAction); //$NON-NLS-1$
+            fEditorActions.add(fUndoAction);
+            
+            fRedoAction= new RedoRefactoringAction(editor);
+            fRedoAction.update(selection);
+            editor.setAction("RedoAction", fRedoAction); //$NON-NLS-1$
+            fEditorActions.add(fRedoAction);
+        }
 	}
 
-	public RefactoringActionGroup(IWorkbenchSite site, String groupName) {
-		fSite= site;
-		if((groupName != null) && (groupName.length() > 0))
-			fGroupName= groupName;
-		ISelectionProvider provider= fSite.getSelectionProvider();
-		ISelection selection= provider.getSelection();
-
-		fRenameAction= new RenameRefactoringAction(site);
-		initAction(fRenameAction, provider, selection);
-
-		fUndoAction= new UndoRefactoringAction(site);
-		initAction(fUndoAction, provider, selection);
-
-		fRedoAction= new RedoRefactoringAction(site);
-		initAction(fRedoAction, provider, selection);
-
+    public RefactoringActionGroup(IWorkbenchSite site, String groupName) {
+        if (!isRefactoringPluginLoaded()) {
+            fSite= site;
+            if((groupName != null) && (groupName.length() > 0))
+                fGroupName= groupName;
+            ISelectionProvider provider= fSite.getSelectionProvider();
+            ISelection selection= provider.getSelection();
+            
+            fRenameAction= new RenameRefactoringAction(site);
+            initAction(fRenameAction, provider, selection);
+            
+            fUndoAction= new UndoRefactoringAction(site);
+            initAction(fUndoAction, provider, selection);
+            
+            fRedoAction= new RedoRefactoringAction(site);
+            initAction(fRedoAction, provider, selection);
+        }
 	}
+
+    private boolean isRefactoringPluginLoaded() {
+        return Platform.getBundle("org.eclipse.cdt.refactoring") != null; //$NON-NLS-1$
+    }
 
 	private static void initAction(SelectionDispatchAction action, ISelectionProvider provider, ISelection selection){
 		action.update(selection);
@@ -191,9 +199,11 @@ public class RefactoringActionGroup extends ActionGroup {
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
-		actionBars.setGlobalActionHandler(REFACTOR_RENAME, fRenameAction);
-		actionBars.setGlobalActionHandler(REFACTOR_UNDO, fUndoAction);
-		actionBars.setGlobalActionHandler(REFACTOR_REDO, fRedoAction);
+        if (fSite != null) {
+            actionBars.setGlobalActionHandler(REFACTOR_RENAME, fRenameAction);
+            actionBars.setGlobalActionHandler(REFACTOR_UNDO, fUndoAction);
+            actionBars.setGlobalActionHandler(REFACTOR_REDO, fRedoAction);
+        }
 	}
 	
 	/* (non-Javadoc)
@@ -201,37 +211,40 @@ public class RefactoringActionGroup extends ActionGroup {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		addRefactorSubmenu(menu);
+        if (fSite != null) {
+            addRefactorSubmenu(menu);
+        }
 	}
 	
 	/*
 	 * @see ActionGroup#dispose()
 	 */
 	public void dispose() {
-		ISelectionProvider provider= fSite.getSelectionProvider();
-		
-		if (fRenameAction != null) {
-			disposeAction(fRenameAction, provider);
-			fRenameAction= null;
-		}
-		
-		if (fUndoAction != null) {
-			disposeAction(fUndoAction, provider);
-			fUndoAction.dispose();
-			fUndoAction= null;
-		}
-		
-		if (fRedoAction != null) {
-			disposeAction(fRedoAction, provider);
-			fRedoAction.dispose();
-			fRedoAction= null;
-		}
-		
-		if (fEditorActions != null) {
-			fEditorActions.clear();
-			fEditorActions= null;
-		}
-		
+        if (fSite != null) {
+            ISelectionProvider provider= fSite.getSelectionProvider();
+            
+            if (fRenameAction != null) {
+                disposeAction(fRenameAction, provider);
+                fRenameAction= null;
+            }
+            
+            if (fUndoAction != null) {
+                disposeAction(fUndoAction, provider);
+                fUndoAction.dispose();
+                fUndoAction= null;
+            }
+            
+            if (fRedoAction != null) {
+                disposeAction(fRedoAction, provider);
+                fRedoAction.dispose();
+                fRedoAction= null;
+            }
+            
+            if (fEditorActions != null) {
+                fEditorActions.clear();
+                fEditorActions= null;
+            }
+        }
 		super.dispose();
 	}
 	
@@ -240,22 +253,22 @@ public class RefactoringActionGroup extends ActionGroup {
 	}
 	
 	private void addRefactorSubmenu(IMenuManager menu) {
-		IMenuManager refactorSubmenu= new MenuManager(ActionMessages.getString("RefactorMenu.label"), MENU_ID);  //$NON-NLS-1$
-		if (fEditor != null) {
-			ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();								
-			for (Iterator iter= fEditorActions.iterator(); iter.hasNext(); ) {
-				SelectionDispatchAction action= (SelectionDispatchAction)iter.next();
-				action.update(textSelection);
-			}
-			refactorSubmenu.removeAll();
-			 if (fillRefactorMenu(refactorSubmenu) == 0)
-				refactorSubmenu.add(fNoActionAvailable);					
-			menu.appendToGroup(fGroupName, refactorSubmenu);
-		} else {
-			if (fillRefactorMenu(refactorSubmenu) > 0){
-				menu.appendToGroup(fGroupName, refactorSubmenu);
-			}
-		}
+        IMenuManager refactorSubmenu= new MenuManager(ActionMessages.getString("RefactorMenu.label"), MENU_ID);  //$NON-NLS-1$
+        if (fEditor != null) {
+            ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();								
+            for (Iterator iter= fEditorActions.iterator(); iter.hasNext(); ) {
+                SelectionDispatchAction action= (SelectionDispatchAction)iter.next();
+                action.update(textSelection);
+            }
+            refactorSubmenu.removeAll();
+            if (fillRefactorMenu(refactorSubmenu) == 0)
+                refactorSubmenu.add(fNoActionAvailable);					
+            menu.appendToGroup(fGroupName, refactorSubmenu);
+        } else {
+            if (fillRefactorMenu(refactorSubmenu) > 0){
+                menu.appendToGroup(fGroupName, refactorSubmenu);
+            }
+        }
 	}
 	
 	private int fillRefactorMenu(IMenuManager refactorSubmenu) {
@@ -274,5 +287,4 @@ public class RefactoringActionGroup extends ActionGroup {
 		}
 		return 0;
 	}
-			
 }

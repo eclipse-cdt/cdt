@@ -12,7 +12,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
@@ -115,7 +116,8 @@ public class LocationTests extends TestCase {
      */
     public void testIsEquals() throws CoreException, MIException, IOException, CDIException {
         ICDITarget cdiTarget;
-        ICDILocation location, location2;
+        ICDILineLocation lineLocation, lineLocation2;
+		ICDIFunctionLocation functionLocation, functionLocation2;
         ICDIBreakpoint[] breakpoints;
         ICDILocationBreakpoint curbreak;
         session=CDebugHelper.createSession("main",testProject);
@@ -129,15 +131,15 @@ public class LocationTests extends TestCase {
         /**********************************************************************
          *  Simple test.. this should work.
          **********************************************************************/
-        location=cdiTarget.createLocation("main.c", "func1", 0);
-        location2=cdiTarget.createLocation("main.c", "func1", 0);
-        assertTrue(location.equals(location2));
+        functionLocation=cdiTarget.createFunctionLocation("main.c", "func1");
+        functionLocation2=cdiTarget.createFunctionLocation("main.c", "func1");
+        assertTrue(functionLocation.equals(functionLocation2));
         /**********************************************************************
          *  Simple test.. this should work.
          **********************************************************************/
-        location=cdiTarget.createLocation("main.c", null, 10);
-        location2=cdiTarget.createLocation("main.c", null, 10);
-        assertTrue(location.equals(location2));
+        lineLocation=cdiTarget.createLineLocation("main.c", 10);
+        lineLocation2=cdiTarget.createLineLocation("main.c", 10);
+        assertTrue(lineLocation.equals(lineLocation2));
 
         /**********************************************************************
          * make sure that the location returned from getLocation on the 
@@ -145,9 +147,9 @@ public class LocationTests extends TestCase {
          * setLocationBreakpoint is the same as the breakpoint returned from
          * BreakpointManager.getBreakpoints.getLocation()
          **********************************************************************/
-        location=cdiTarget.createLocation("main.c", "func1", 0);
-        assertNotNull(location);
-        location2=cdiTarget.setLocationBreakpoint(0, location, null, false).getLocation();
+        functionLocation=cdiTarget.createFunctionLocation("main.c", "func1");
+        assertNotNull(functionLocation);
+        functionLocation2=cdiTarget.setFunctionBreakpoint(0, functionLocation, null, false).getLocator();
         
         breakpoints=cdiTarget.getBreakpoints();
         assertNotNull(breakpoints);
@@ -158,15 +160,15 @@ public class LocationTests extends TestCase {
             curbreak=null;
         assertNotNull(curbreak);
         
-        assertTrue(curbreak.getLocation().equals(location2));
+        assertTrue(curbreak.getLocator().equals(functionLocation2));
         cdiTarget.deleteAllBreakpoints();
         /* Create a break point on a generic function with a file name that 
          * gdb will change to the relitive path of the source file.  This
          * should work, but at the time of writing (Sept 25, 2002) does not.
          */
-        location=cdiTarget.createLocation("main.c", "func1", 0);
-        assertNotNull(location);
-        cdiTarget.setLocationBreakpoint(0, location, null, false);
+        functionLocation=cdiTarget.createFunctionLocation("main.c", "func1");
+        assertNotNull(functionLocation);
+        cdiTarget.setFunctionBreakpoint(0, functionLocation, null, false);
         
         breakpoints=cdiTarget.getBreakpoints();
         assertNotNull(breakpoints);
@@ -177,7 +179,7 @@ public class LocationTests extends TestCase {
             curbreak=null;
         assertNotNull(curbreak);
         
-        assertTrue("PR:23879",curbreak.getLocation().equals(location));
+        assertTrue("PR:23879",curbreak.getLocator().equals(functionLocation));
 
         
         /* clean up the session */

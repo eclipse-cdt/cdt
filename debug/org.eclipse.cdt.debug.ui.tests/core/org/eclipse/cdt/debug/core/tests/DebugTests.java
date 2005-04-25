@@ -12,6 +12,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -116,7 +117,7 @@ public class DebugTests extends TestCase {
      */
     public void testDebug() throws CoreException, MIException, IOException, CDIException {
         ICDITarget cdiTarget;
-        ICDILocation location;
+        ICDIFunctionLocation location;
 	
 		session=CDebugHelper.createSession("main",testProject);
         assertNotNull(session);
@@ -125,9 +126,9 @@ public class DebugTests extends TestCase {
 		assertTrue(targets.length > 0);
 		cdiTarget = targets[0];
 		assertNotNull(cdiTarget);
-		location=cdiTarget.createLocation(null, "func1", 0);
+		location=cdiTarget.createFunctionLocation(null, "func1");
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, false);
+		cdiTarget.setFunctionBreakpoint(0, location, null, false);
 		cdiTarget.resume();
 		session.terminate();
 		session=null;

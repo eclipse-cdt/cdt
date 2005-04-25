@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
@@ -42,22 +42,22 @@ public class OtherPatternTests extends BaseSearchTest {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
-		
+
 	public void testNamespaceIndexPrefix(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
 		assertTrue( pattern instanceof NamespaceDeclarationPattern );
 		
 		NamespaceDeclarationPattern nsPattern = (NamespaceDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "namespaceDecl/c/B/A".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION, "c/B/A"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
 		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "namespaceDecl/c/B/A/".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION, "c/B/A/"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
 				
 		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", NAMESPACE, REFERENCES, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "namespaceRef/c/RT".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.REFERENCE, "c/RT"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
 				
 		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, REFERENCES, false ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "namespaceRef/".toCharArray(), nsPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.REFERENCE, ""), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
 	}
 	
 	public void testVariableIndexPrefix(){
@@ -65,16 +65,16 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertTrue( pattern instanceof FieldDeclarationPattern );
 		
 		FieldDeclarationPattern variablePattern = (FieldDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "typeDecl/V/c".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals(  getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.DECLARATION, "c"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
 		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "rt*", VAR, DECLARATIONS, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "typeDecl/V/rt".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.DECLARATION, "rt"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 				
 		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "Ac", VAR, REFERENCES, false ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "typeRef/V/".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.REFERENCE, ""), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
 		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A?c", VAR, REFERENCES, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "typeRef/V/A".toCharArray(), variablePattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.REFERENCE, "A"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 	}
 	
 	public void testFieldIndexPrefix(){
@@ -82,16 +82,16 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertTrue( pattern instanceof FieldDeclarationPattern );
 		
 		FieldDeclarationPattern fieldPattern = (FieldDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "fieldDecl/c/B/A".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.FIELD, IIndex.ANY, IIndex.DECLARATION, "c/B/A"), fieldPattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
 		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", FIELD, DECLARATIONS, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "fieldDecl/c/B/A/".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.FIELD, IIndex.ANY, IIndex.DECLARATION, "c/B/A/"), fieldPattern.indexEntryPrefix() ); //$NON-NLS-1$
 				
 		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", FIELD, REFERENCES, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "fieldRef/c/RT".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.FIELD, IIndex.ANY, IIndex.REFERENCE, "c/RT"), fieldPattern.indexEntryPrefix() ); //$NON-NLS-1$
 				
 		fieldPattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", FIELD, REFERENCES, false ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "fieldRef/".toCharArray(), fieldPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.FIELD, IIndex.ANY, IIndex.REFERENCE, ""), fieldPattern.indexEntryPrefix() ); //$NON-NLS-1$
 	}
 	
 	public void testNamespaceDeclaration(){

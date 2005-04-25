@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.search.matching.MethodDeclarationPattern;
 
 /**
@@ -41,13 +42,13 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "c()", FUNCTION, DECLARATIONS, true ); //$NON-NLS-1$
 		
 		MethodDeclarationPattern functionPattern = (MethodDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "functionDecl/c".toCharArray(), functionPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.FUNCTION, IIndex.ANY, IIndex.DECLARATION, "c"), functionPattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
 		functionPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "rt*()", FUNCTION, DECLARATIONS, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "functionDecl/rt".toCharArray(), functionPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.FUNCTION, IIndex.ANY, IIndex.DECLARATION, "rt"), functionPattern.indexEntryPrefix()); //$NON-NLS-1$
 				
 		functionPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "Ac", FUNCTION, REFERENCES, false ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "functionRef/".toCharArray(), functionPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.FUNCTION, IIndex.ANY, IIndex.REFERENCE, ""), functionPattern.indexEntryPrefix()); //$NON-NLS-1$
 	}
 	
 	public void testMethodIndexPrefix(){
@@ -55,16 +56,16 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		assertTrue( pattern instanceof MethodDeclarationPattern );
 		
 		MethodDeclarationPattern methodPattern = (MethodDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "methodDecl/c/B/A".toCharArray(), methodPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.METHOD, IIndex.ANY, IIndex.DECLARATION, "c/B/A"), methodPattern.indexEntryPrefix()); //$NON-NLS-1$
 		
 		methodPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "methodDecl/c/B/A/".toCharArray(), methodPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.METHOD, IIndex.ANY, IIndex.DECLARATION, "c/B/A/"), methodPattern.indexEntryPrefix()); //$NON-NLS-1$
 				
 		methodPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", METHOD, REFERENCES, true ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "methodRef/c/RT".toCharArray(), methodPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.METHOD, IIndex.ANY, IIndex.REFERENCE, "c/RT"), methodPattern.indexEntryPrefix()); //$NON-NLS-1$
 				
 		methodPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "A::B::c", METHOD, REFERENCES, false ); //$NON-NLS-1$
-		assertEquals( CharOperation.compareWith( "methodRef/".toCharArray(), methodPattern.indexEntryPrefix() ), 0); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.METHOD, IIndex.ANY, IIndex.REFERENCE, ""), methodPattern.indexEntryPrefix()); //$NON-NLS-1$
 	}
 	
 	public void testMethodDeclaration() {

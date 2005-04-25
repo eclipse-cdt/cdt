@@ -762,12 +762,12 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 		StringBuffer buff = new StringBuffer();
 		buff.append(encodings[meta_kind]);
 		buff.append(encodingTypes[ref]);
-		if(kind != 0)
+		if(kind != 0) {
 			buff.append(typeConstants[kind]);
-		if (name.length() != 0) {
 			buff.append( SEPARATOR );
-			buff.append ( name ); 
 		}
+		buff.append ( name ); 
+
 		return buff.toString().toCharArray();
 	}
 	

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.search.matching.ClassDeclarationPattern;
 
 
@@ -157,16 +158,16 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
 		ClassDeclarationPattern clsPattern = (ClassDeclarationPattern)pattern;
-		assertEquals( CharOperation.compareWith( "typeDecl/S/c/".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
+		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_STRUCT, IIndex.DECLARATION, "c/"), clsPattern.indexEntryPrefix());
 		
 		clsPattern = (ClassDeclarationPattern) SearchEngine.createSearchPattern( "class ::*::A::B::c", TYPE, DECLARATIONS, true );
-		assertEquals( CharOperation.compareWith( "typeDecl/C/c/B/A/".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
+		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DECLARATION, "c/B/A/"), clsPattern.indexEntryPrefix());
 				
 		clsPattern = (ClassDeclarationPattern) SearchEngine.createSearchPattern( "enum ::RT*::c", TYPE, REFERENCES, true );
-		assertEquals( CharOperation.compareWith( "typeRef/E/c/RT".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
+		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_ENUM, IIndex.REFERENCE,"c/RT"), clsPattern.indexEntryPrefix());
 				
 		clsPattern = (ClassDeclarationPattern) SearchEngine.createSearchPattern( "union A::B::c", TYPE, REFERENCES, false );
-		assertEquals( CharOperation.compareWith( "typeRef/U/".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
+		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_UNION, IIndex.REFERENCE, ""), clsPattern.indexEntryPrefix());
 	}
 	
 	public void testGloballyQualifiedItem(){

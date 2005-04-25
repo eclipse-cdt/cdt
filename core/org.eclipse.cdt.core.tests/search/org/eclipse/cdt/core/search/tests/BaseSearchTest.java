@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -131,6 +132,14 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 			fileManager.addFile(file);
 		}
 	
+	}
+		
+	protected char[] getSearchPattern(int meta_kind, int kind, int ref, String name) {
+		return Index.encodeEntry(meta_kind, kind, ref, name);
+	}
+	
+	public void assertEquals(char [] first, char [] second) {
+		assertEquals( new String(first), new String(second));
 	}
 		
 	protected void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector) {

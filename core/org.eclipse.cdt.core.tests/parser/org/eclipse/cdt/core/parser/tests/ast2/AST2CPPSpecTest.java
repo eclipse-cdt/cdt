@@ -4728,6 +4728,32 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 9.5-2):
+	void f()
+	{
+	union { int a; char* p; };
+	a = 1;
+	// ...
+	p = "Jennifer";
+	// ...
+	}
+	 --End Example]
+	 */
+	public void test9_5s2() throws Exception { 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void f()\n"); //$NON-NLS-1$
+		buffer.append("{\n"); //$NON-NLS-1$
+		buffer.append("union { int a; char* p; };\n"); //$NON-NLS-1$
+		buffer.append("a = 1;\n"); //$NON-NLS-1$
+		buffer.append("// ...\n"); //$NON-NLS-1$
+		buffer.append("p = \"Jennifer\";\n"); //$NON-NLS-1$
+		buffer.append("// ...\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 9.5-4):
 	int foo() {
 	union { int aa; char* p; } obj, *ptr = &obj;

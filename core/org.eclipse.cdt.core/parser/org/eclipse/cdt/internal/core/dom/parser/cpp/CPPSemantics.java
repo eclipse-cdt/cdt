@@ -1044,7 +1044,7 @@ public class CPPSemantics {
 	 * @throws DOMException
 	 */
 	static protected IASTName[] lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem ) throws DOMException {
-		IASTName possible = null;
+		Object possible = null;
 		IASTNode [] nodes = null;
 		IASTNode parent = scope.getPhysicalNode();
 		
@@ -1121,18 +1121,33 @@ public class CPPSemantics {
 				if( scope instanceof ICPPNamespaceScope )
 					((ICPPNamespaceScope)scope).addUsingDirective( item );
 			} else {
+			    //possible is IASTName or IASTName[]
 				possible = collectResult( data, scope, item, (item == parent)  );
-				if( possible != null && 
-					(checkWholeClassScope || declaredBefore( possible, data.astName )) &&
-				    (item != blockItem || data.includeBlockItem( item )) )
+				if( possible != null ) {
+				    int jdx = -1;
+				    IASTName temp;
+				    if( possible instanceof IASTName )
+				        temp = (IASTName) possible;
+				    else
+				        temp = ((IASTName[])possible)[++jdx];
+				    while( temp != null ) {
 					
-				{
-					if( data.considerConstructors || 
-						!( possible.getParent() instanceof IASTDeclarator &&
-						   CPPVisitor.isConstructor( scope, (IASTDeclarator) possible.getParent() ) ) )
-					{
-						found = (IASTName[]) ArrayUtil.append( IASTName.class, found, possible );
-					}
+						if(	(checkWholeClassScope || declaredBefore( temp, data.astName )) &&
+						    (item != blockItem || data.includeBlockItem( item )) )
+							
+						{
+							if( data.considerConstructors || 
+								!( temp.getParent() instanceof IASTDeclarator &&
+								   CPPVisitor.isConstructor( scope, (IASTDeclarator) temp.getParent() ) ) )
+							{
+								found = (IASTName[]) ArrayUtil.append( IASTName.class, found, temp );
+							}
+						}
+						if( ++jdx > 0 && jdx < ((IASTName[])possible).length )
+						    temp = ((IASTName[])possible)[jdx];
+						else 
+						    temp = null;
+				    }
 				}
 			}
 		    
@@ -1232,7 +1247,10 @@ public class CPPSemantics {
 		return transitives;
 	}
 
-	static private IASTName collectResult( CPPSemantics.LookupData data, ICPPScope scope, IASTNode node, boolean checkAux ) throws DOMException{
+	static private Object collectResult( CPPSemantics.LookupData data, ICPPScope scope, IASTNode node, boolean checkAux ) throws DOMException{
+	    IASTName resultName = null;
+	    IASTName [] resultArray = null;
+	    
 	    IASTDeclaration declaration = null;
 	    if( node instanceof ICPPASTTemplateDeclaration )
 			declaration = ((ICPPASTTemplateDeclaration)node).getDeclaration();
@@ -1250,7 +1268,7 @@ public class CPPSemantics {
 			IASTName declName = dtor.getName();
 			scope.addName( declName );
 			if( !data.typesOnly && nameMatches( data, declName ) ) {
-		        return declName;
+			    return declName;
 		    }
 		} else if( node instanceof ICPPASTTemplateParameter ){
 			IASTName name = CPPTemplates.getTemplateParameterName( (ICPPASTTemplateParameter) node );
@@ -1273,42 +1291,86 @@ public class CPPSemantics {
 				scope.addName( declaratorName );
 				if( !data.typesOnly || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ) {
 					if( nameMatches( data, declaratorName ) ) {
-						return declaratorName;
+						if( resultName == null )
+						    resultName = declaratorName;
+						else if( resultArray == null )
+						    resultArray = new IASTName[] { resultName, declaratorName };
+						else
+						    resultArray = (IASTName[]) ArrayUtil.append( IASTName.class, resultArray, declaratorName );
 					}
 				}
 			}
 	
 			//decl spec 
 			IASTDeclSpecifier declSpec = simpleDeclaration.getDeclSpecifier();
+			IASTName specName = null;
 			if( declarators.length == 0 && declSpec instanceof IASTElaboratedTypeSpecifier ){
-				IASTName elabName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
-				scope.addName( elabName );
-				if( nameMatches( data, elabName ) ) {
-					return elabName;
-				}
+				specName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
 			} else if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
-				IASTName compName = ((IASTCompositeTypeSpecifier)declSpec).getName();
-				scope.addName( compName );
-				if( nameMatches( data, compName ) ) {
-					return compName;
+			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
+				specName = compSpec.getName();
+				
+				//anonymous union?
+				if( declarators.length == 0 && compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&
+				    specName.toCharArray().length == 0 )
+				{
+				    Object o = null;
+				    IASTDeclaration [] decls = compSpec.getMembers();
+				    for ( int i = 0; i < decls.length; i++ ) {
+                        o = collectResult( data, scope, decls[i], checkAux );
+                        if( o instanceof IASTName ){
+                            if( resultName == null )
+    						    resultName = (IASTName) o;
+    						else if( resultArray == null )
+    						    resultArray = new IASTName[] { resultName, (IASTName) o };
+    						else
+    						    resultArray = (IASTName[]) ArrayUtil.append( IASTName.class, resultArray, o );
+                        } else if( o instanceof IASTName [] ){
+                            IASTName [] oa = (IASTName[]) o;
+                            if( resultName == null ){
+    						    resultName = oa[0];
+    						    resultArray = oa;
+                            } else if( resultArray == null ){
+    						    resultArray = new IASTName[ 1 + oa.length ];
+    						    resultArray[0] = resultName;
+    						    resultArray = (IASTName[]) ArrayUtil.addAll( IASTName.class, resultArray, oa );
+                            } else {
+                                resultArray = (IASTName[]) ArrayUtil.addAll( IASTName.class, resultArray, oa );
+                            }
+                        }
+                    }
 				}
 			} else if( declSpec instanceof IASTEnumerationSpecifier ){
 			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
-			    IASTName eName = enumeration.getName();
-			    scope.addName( eName );
-			    if( nameMatches( data, eName ) ) {
-					return eName;
-				}
+			    specName = enumeration.getName();
+
 			    //check enumerators too
 			    IASTEnumerator [] list = enumeration.getEnumerators();
+			    IASTName tempName;
 			    for( int i = 0; i < list.length; i++ ) {
 			        IASTEnumerator enumerator = list[i];
 			        if( enumerator == null ) break;
-			        eName = enumerator.getName();
-			        scope.addName( eName );
-			        if( !data.typesOnly && nameMatches( data, eName ) ) {
-						return eName;
+			        tempName = enumerator.getName();
+			        scope.addName( tempName );
+			        if( !data.typesOnly && nameMatches( data, tempName ) ) {
+			            if( resultName == null )
+						    resultName = tempName;
+						else if( resultArray == null )
+						    resultArray = new IASTName[] { resultName, tempName };
+						else
+						    resultArray = (IASTName[]) ArrayUtil.append( IASTName.class, resultArray, tempName );
 					}
+			    }
+			}
+			if( specName != null ) {
+			    scope.addName( specName );
+			    if( nameMatches( data, specName ) ) {
+				    if( resultName == null )
+					    resultName = specName;
+					else if( resultArray == null )
+					    resultArray = new IASTName[] { resultName, specName };
+					else
+					    resultArray = (IASTName[]) ArrayUtil.append( IASTName.class, resultArray, specName );
 			    }
 			}
 		} else if( declaration instanceof ICPPASTUsingDeclaration ){
@@ -1332,9 +1394,7 @@ public class CPPSemantics {
 			scope.addName( alias );
 			if( nameMatches( data, alias ) )
 				return alias;
-		} else 
-		
-		if( declaration instanceof IASTFunctionDefinition ){
+		} else if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
 			IASTFunctionDeclarator declarator = functionDef.getDeclarator();
 			
@@ -1347,7 +1407,9 @@ public class CPPSemantics {
 			}
 		} 
 		
-		return null;
+		if( resultArray != null )
+		    return resultArray;
+		return resultName;
 	}
 
 	private static final boolean nameMatches( LookupData data, IASTName potential ){

@@ -3664,5 +3664,41 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertSame( f1, f2 );
     	assertSame( g1, g2 );
 	}
+	
+	public void testBug86639() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+		buffer.append("void f(){                              \n"); //$NON-NLS-1$
+		buffer.append("   union { int a; char* p; };          \n"); //$NON-NLS-1$
+		buffer.append("   a = 1;                              \n"); //$NON-NLS-1$
+		buffer.append("}                                      \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPField a = (ICPPField) col.getName(2).resolveBinding();
+    	ICPPField a2 = (ICPPField) col.getName(4).resolveBinding();
+    	assertSame( a, a2 );
+	}
+	
+	public void testBug80940() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append( "void f () {                     \n"); //$NON-NLS-1$
+	    buffer.append( "   int aa1, aa2;                \n"); //$NON-NLS-1$
+	    buffer.append( "   a;                           \n"); //$NON-NLS-1$
+	    buffer.append( "}                               \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	IVariable a1 = (IVariable) col.getName(1).resolveBinding();
+    	IVariable a2 = (IVariable) col.getName(2).resolveBinding();
+    	
+    	IBinding [] bs = col.getName(3).resolvePrefix();
+    	assertEquals( bs.length, 2 );
+    	assertSame( bs[0], a1 );
+    	assertSame( bs[1], a2 );
+	}
 }
 

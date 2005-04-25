@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * Created on Nov 8, 2004
@@ -118,14 +119,14 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 						if( scope != null )
 						    scope.addName( name );
 						if( binding != null )
-							fields[i] =  (IField) binding;
+							fields = (IField[]) ArrayUtil.append( IField.class, fields, binding );
 					}
 				}
 			}
 			if( scope != null )
 			    scope.setFullyCached( true );
 		}
-		return fields;
+		return (IField[]) ArrayUtil.trim( IField.class, fields );
 	}
 
 	/* (non-Javadoc)
@@ -146,10 +147,12 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 	            return (IField) binding;
 	    } else {
 	        ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) definition.getParent();
+	        ICASTCompositeTypeSpecifier [] specStack = null;
+	        int stackIdx = -1;
 	    	IASTDeclaration[] members = compSpec.getMembers();
-	    	int size = members.length;
-	    	if( size > 0 ){
-	    	    IField found = null;
+	    	IField found = null;
+	    	while( members != null ){
+		    	int size = members.length;
 	    		for( int i = 0; i < size; i++ ){
 	    			IASTNode node = members[i];
 	    			if( node instanceof IASTSimpleDeclaration ){
@@ -165,14 +168,28 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 	    							found = (IField) binding;
 	    					}
 	    				}
+	    				//anonymous structurs and unions
+	    				if( declarators.length == 0 && ((IASTSimpleDeclaration)node).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ){
+	    				    IASTCompositeTypeSpecifier declSpec = (IASTCompositeTypeSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
+	    				    IASTName n = declSpec.getName();
+	    				    if( n.toCharArray().length == 0 ){
+	    				        specStack = (ICASTCompositeTypeSpecifier[])ArrayUtil.append( ICASTCompositeTypeSpecifier.class, specStack, declSpec );
+	    				    }
+	    				}
 	    			}
 	    		}
-	    		if( scope != null )
-	    		    scope.setFullyCached( true );
-	    		if( found != null )
-	    		    return found;
+		    	if( specStack != null && ++stackIdx < specStack.length && specStack[stackIdx] != null ){
+		    	    members = specStack[stackIdx].getMembers();
+		    	} else {
+		    	    members = null;
+		    	}
 	    	}
+    		if( scope != null )
+    		    scope.setFullyCached( true );
+    		if( found != null )
+    		    return found;
 	    }
+	    
 		return null;
 	}
 

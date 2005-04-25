@@ -495,35 +495,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 9.5-2):
-	void f()
-	{
-	union { int a; char* p; };
-	a = 1;
-	// ...
-	p = "Jennifer";
-	// ...
-	}
-	 --End Example]
-	 */
-	public void test9_5s2()  { // TODO raised bug 90650
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("void f()\n"); //$NON-NLS-1$
-		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("union { int a; char* p; };\n"); //$NON-NLS-1$
-		buffer.append("a = 1;\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("p = \"Jennifer\";\n"); //$NON-NLS-1$
-		buffer.append("// ...\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 10.2-3b):
 	struct U { static int i; };
 	struct V : U { };

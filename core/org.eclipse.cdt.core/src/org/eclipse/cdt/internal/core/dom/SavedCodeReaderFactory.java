@@ -57,6 +57,8 @@ public class SavedCodeReaderFactory implements ICodeReaderFactory {
 					
 			if( !found && size == 0 )
 				cache = new CodeReaderCache(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);
+            else
+                cache = new CodeReaderCache(0);
 		}
 		else
 			cache = new CodeReaderCache(CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB);

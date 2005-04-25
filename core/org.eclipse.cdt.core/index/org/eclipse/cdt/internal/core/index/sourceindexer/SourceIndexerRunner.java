@@ -63,7 +63,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.core.resources.IFile;
@@ -273,7 +273,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
                         char[][] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedNameCharArrays();
                         int offset = baseClassSpec.getNameOffset();
                         int offsetLength = baseClassSpec.getNameEndOffset() - offset;
-                        output.addDerivedDecl(fileNumber, baseFullyQualifiedName, offset,offsetLength, ICIndexStorageConstants.OFFSET);
+                        output.addDerivedDecl(fileNumber, baseFullyQualifiedName, offset,offsetLength, IIndex.OFFSET);
                     }
                 } catch (ASTNotImplementedException e) {}
             }
@@ -287,14 +287,14 @@ public class SourceIndexerRunner extends AbstractIndexer {
                     char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
                     int offset = friendClassSpec.getNameOffset();
                     int offsetLength = friendClassSpec.getNameEndOffset() - offset;
-                    output.addFriendDecl(fileNumber, baseFullyQualifiedName,offset, offsetLength, ICIndexStorageConstants.OFFSET);
+                    output.addFriendDecl(fileNumber, baseFullyQualifiedName,offset, offsetLength, IIndex.OFFSET);
                 }
                 else if (decl instanceof IASTElaboratedTypeSpecifier){
                     IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
                     char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
                     int offset = friendClassSpec.getNameOffset();
                     int offsetLength = friendClassSpec.getNameEndOffset() - offset;
-                    output.addFriendDecl(fileNumber, baseFullyQualifiedName, offset, offsetLength, ICIndexStorageConstants.OFFSET);
+                    output.addFriendDecl(fileNumber, baseFullyQualifiedName, offset, offsetLength, IIndex.OFFSET);
                 }
                 else if (decl instanceof IASTFunction){
                     
@@ -307,7 +307,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
             
             int offset = classSpecification.getNameOffset();
             int offsetLength = classSpecification.getNameEndOffset() - offset;
-            output.addClassDecl(fileNumber, classSpecification.getFullyQualifiedNameCharArrays(), offset, offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addClassDecl(fileNumber, classSpecification.getFullyQualifiedNameCharArrays(), offset, offsetLength, IIndex.OFFSET);
         }       
         else if (classSpecification.getClassKind().equals(ASTClassKind.STRUCT))
         {
@@ -322,7 +322,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
                         char[][] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedNameCharArrays();
                         int offset = baseClassSpec.getNameOffset();
                         int offsetLength = baseClassSpec.getNameEndOffset() - offset;
-                        output.addDerivedDecl(fileNumber, baseFullyQualifiedName, offset, offsetLength, ICIndexStorageConstants.OFFSET);
+                        output.addDerivedDecl(fileNumber, baseFullyQualifiedName, offset, offsetLength, IIndex.OFFSET);
                     }
                 } catch (ASTNotImplementedException e) {}
             }
@@ -336,14 +336,14 @@ public class SourceIndexerRunner extends AbstractIndexer {
                     char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
                     int offset = friendClassSpec.getNameOffset();
                     int offsetLength = friendClassSpec.getNameEndOffset() - offset;
-                    output.addFriendDecl(fileNumber, baseFullyQualifiedName, offset,offsetLength, ICIndexStorageConstants.OFFSET);
+                    output.addFriendDecl(fileNumber, baseFullyQualifiedName, offset,offsetLength, IIndex.OFFSET);
                 }
                 else if (decl instanceof IASTElaboratedTypeSpecifier){
                     IASTElaboratedTypeSpecifier friendClassSpec = (IASTElaboratedTypeSpecifier) decl;
                     char[][] baseFullyQualifiedName = friendClassSpec.getFullyQualifiedNameCharArrays();
                     int offset = friendClassSpec.getNameOffset();
                     int offsetLength = friendClassSpec.getNameEndOffset() - offset;
-                    output.addFriendDecl(fileNumber, baseFullyQualifiedName, offset,offsetLength, ICIndexStorageConstants.OFFSET);
+                    output.addFriendDecl(fileNumber, baseFullyQualifiedName, offset,offsetLength, IIndex.OFFSET);
                 }
                 else if (decl instanceof IASTFunction){
                     
@@ -355,13 +355,13 @@ public class SourceIndexerRunner extends AbstractIndexer {
             
             int offset = classSpecification.getNameOffset();
             int offsetLength = classSpecification.getNameEndOffset() - offset;
-            output.addStructDecl(fileNumber, classSpecification.getFullyQualifiedNameCharArrays(), offset,offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addStructDecl(fileNumber, classSpecification.getFullyQualifiedNameCharArrays(), offset,offsetLength, IIndex.OFFSET);
         }
         else if (classSpecification.getClassKind().equals(ASTClassKind.UNION))
         {   
             int offset = classSpecification.getNameOffset();
             int offsetLength = classSpecification.getNameEndOffset() - offset;
-            output.addUnionDecl(fileNumber, classSpecification.getFullyQualifiedNameCharArrays(), offset,offsetLength, ICIndexStorageConstants.OFFSET);            
+            output.addUnionDecl(fileNumber, classSpecification.getFullyQualifiedNameCharArrays(), offset,offsetLength, IIndex.OFFSET);            
         }
     }
     
@@ -369,7 +369,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
         
         int offset = enumeration.getNameOffset();
         int offsetLength = enumeration.getNameEndOffset() - offset;
-        output.addEnumDecl(fileNumber, enumeration.getFullyQualifiedNameCharArrays(), offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addEnumDecl(fileNumber, enumeration.getFullyQualifiedNameCharArrays(), offset,offsetLength, IIndex.OFFSET);
         
         Iterator i = enumeration.getEnumerators();
         while (i.hasNext())
@@ -380,7 +380,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
             
             offset = en.getNameOffset();
             offsetLength = en.getNameEndOffset() - offset;
-            output.addEnumtorDecl(fileNumber,  enumeratorFullName, offset, offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addEnumtorDecl(fileNumber,  enumeratorFullName, offset, offsetLength, IIndex.OFFSET);
 
         }
     }
@@ -402,65 +402,65 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		IASTEnumerator enumerator = (IASTEnumerator)reference.getReferencedElement();
         int offset = reference.getOffset();
         int offsetLength = enumerator.getNameEndOffset() - enumerator.getNameOffset();
-        output.addEnumtorRef(fileNumber, createEnumeratorFullyQualifiedName(enumerator),offset,offsetLength, ICIndexStorageConstants.OFFSET); 
+        output.addEnumtorRef(fileNumber, createEnumeratorFullyQualifiedName(enumerator),offset,offsetLength, IIndex.OFFSET); 
     }
         
     public void addMacro(IASTMacro macro, int fileNumber) {
         char[][] macroName = new char[][] { macro.getNameCharArray() };
         int offset = macro.getNameOffset();
         int offsetLength = macro.getNameEndOffset() - offset;
-        output.addMacroDecl(fileNumber, macroName, offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addMacroDecl(fileNumber, macroName, offset,offsetLength, IIndex.OFFSET);
     }
         
     public void addEnumerationReference(IASTEnumerationReference reference, int fileNumber) {
 		IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) reference.getReferencedElement();
 		int offset = reference.getOffset();
         int offsetLength = enumeration.getNameEndOffset() - enumeration.getNameOffset();
-        output.addEnumRef(fileNumber, enumeration.getFullyQualifiedNameCharArrays(), offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addEnumRef(fileNumber, enumeration.getFullyQualifiedNameCharArrays(), offset,offsetLength, IIndex.OFFSET);
     }
     public void addVariable(IASTVariable variable, int fileNumber) {
         int offset = variable.getNameOffset();
         int offsetLength = variable.getNameEndOffset() - offset;
-        output.addVarDecl(fileNumber, variable.getFullyQualifiedNameCharArrays(), offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addVariableDecl(fileNumber, variable.getFullyQualifiedNameCharArrays(), offset,offsetLength, IIndex.OFFSET);
     }
     
     public void addVariableReference(IASTVariableReference reference, int fileNumber) {
 		IASTVariable variable = (IASTVariable)reference.getReferencedElement();
         int offset = reference.getOffset();
         int offsetLength = variable.getNameEndOffset() - variable.getNameOffset();
-        output.addVarRef(fileNumber, variable.getFullyQualifiedNameCharArrays(), offset, offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addVariableRef(fileNumber, variable.getFullyQualifiedNameCharArrays(), offset, offsetLength, IIndex.OFFSET);
     }   
     
     public void addParameterReference( IASTParameterReference reference, int fileNumber ){
 		IASTParameterDeclaration parameter = (IASTParameterDeclaration) reference.getReferencedElement();
 		int offset = reference.getOffset();
         int offsetLength = parameter.getNameEndOffset() - parameter.getNameOffset();
-        output.addVarRef(fileNumber, new char[][] { parameter.getNameCharArray() }, offset, offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addVariableRef(fileNumber, new char[][] { parameter.getNameCharArray() }, offset, offsetLength, IIndex.OFFSET);
     }
     
     public void addTypedefDeclaration(IASTTypedefDeclaration typedef, int fileNumber) {
         int offset = typedef.getNameOffset();
         int offsetLength = typedef.getNameEndOffset() - offset;
-        output.addTypedefDecl(fileNumber,typedef.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addTypedefDecl(fileNumber,typedef.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     }
     
     public void addFieldDeclaration(IASTField field, int fileNumber) {
         int offset = field.getNameOffset();
         int offsetLength = field.getNameEndOffset() - offset;
-        output.addFieldDecl(fileNumber, field.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addFieldDecl(fileNumber, field.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     }
     
     public void addFieldReference(IASTFieldReference reference, int fileNumber) {
 		IASTField field=(IASTField) reference.getReferencedElement();
         int offset = reference.getOffset();
         int offsetLength = field.getNameEndOffset() - field.getNameOffset();
-        output.addFieldRef(fileNumber, field.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addFieldRef(fileNumber, field.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     }
     
     public void addMethodDeclaration(IASTMethod method, int fileNumber) {
         int offset = method.getNameOffset();
         int offsetLength = method.getNameEndOffset() - offset;
-        output.addMethodDecl(fileNumber, method.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addMethodDecl(fileNumber, method.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     
         Iterator i=method.getParameters();
         while (i.hasNext()){
@@ -469,7 +469,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
                 IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
                 offset = parmDecl.getNameOffset();
                 offsetLength = parmDecl.getNameEndOffset() - offset;
-                output.addVarDecl(fileNumber, new char[][]{parmDecl.getNameCharArray()},offset,offsetLength, ICIndexStorageConstants.OFFSET);
+                output.addVariableDecl(fileNumber, new char[][]{parmDecl.getNameCharArray()},offset,offsetLength, IIndex.OFFSET);
             }
         }
     }
@@ -478,7 +478,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		IASTMethod method = (IASTMethod) reference.getReferencedElement();
         int offset = reference.getOffset();
         int offsetLength = method.getNameEndOffset() - method.getNameOffset();
-        output.addMethodRef(fileNumber, method.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addMethodRef(fileNumber, method.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     }
 
     public void addElaboratedForwardDeclaration(IASTElaboratedTypeSpecifier elaboratedType, int fileNumber) {
@@ -487,15 +487,15 @@ public class SourceIndexerRunner extends AbstractIndexer {
         
         if (elaboratedType.getClassKind().equals(ASTClassKind.CLASS))
         {
-            output.addFwd_ClassDecl(fileNumber,elaboratedType.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addFwd_ClassDecl(fileNumber,elaboratedType.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
         }       
         else if (elaboratedType.getClassKind().equals(ASTClassKind.STRUCT))
         {
-            output.addFwd_StructDecl(fileNumber,elaboratedType.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addFwd_StructDecl(fileNumber,elaboratedType.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
         }
         else if (elaboratedType.getClassKind().equals(ASTClassKind.UNION))
         {
-            output.addFwd_UnionDecl(fileNumber,elaboratedType.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);         
+            output.addFwd_UnionDecl(fileNumber,elaboratedType.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);         
         }
     }
     
@@ -517,7 +517,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
         int offset = function.getNameOffset();
         int offsetLength = function.getNameEndOffset() - offset;
         
-        output.addFunctionDecl(fileNumber, function.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addFunctionDecl(fileNumber, function.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
         
         Iterator i=function.getParameters();
         while (i.hasNext()){
@@ -526,7 +526,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
                 IASTParameterDeclaration parmDecl = (IASTParameterDeclaration) parm;
                 offset = parmDecl.getNameOffset();
                 offsetLength = parmDecl.getNameEndOffset() - offset;
-                output.addVarDecl(fileNumber, new char[][]{parmDecl.getNameCharArray()},offset,offsetLength, ICIndexStorageConstants.OFFSET);
+                output.addVariableDecl(fileNumber, new char[][]{parmDecl.getNameCharArray()},offset,offsetLength, IIndex.OFFSET);
             }
         }
     }
@@ -535,7 +535,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		IASTFunction function=(IASTFunction) reference.getReferencedElement();
 		int offset = reference.getOffset();
         int offsetLength = function.getNameEndOffset() - function.getNameOffset();
-        output.addFunctionRef(fileNumber, function.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addFunctionRef(fileNumber, function.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     }
     
     public void addNameReference(){
@@ -545,21 +545,21 @@ public class SourceIndexerRunner extends AbstractIndexer {
     public void addNamespaceDefinition(IASTNamespaceDefinition namespace, int fileNumber){
         int offset = namespace.getNameOffset();
         int offsetLength = namespace.getNameEndOffset() - offset;
-        output.addNamespaceDecl(fileNumber, namespace.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addNamespaceDecl(fileNumber, namespace.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     }
     
     public void addNamespaceReference(IASTNamespaceReference reference, int fileNumber) {
 		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition)reference.getReferencedElement();
         int offset = reference.getOffset();
         int offsetLength = namespace.getNameEndOffset() -  namespace.getNameOffset();
-        output.addNamespaceRef(fileNumber, namespace.getFullyQualifiedNameCharArrays(),offset,offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addNamespaceRef(fileNumber, namespace.getFullyQualifiedNameCharArrays(),offset,offsetLength, IIndex.OFFSET);
     }
     
     public void addTypedefReference( IASTTypedefReference reference, int fileNumber ){
 		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration) reference.getReferencedElement();
         int offset = reference.getOffset();
         int offsetLength = typedef.getNameEndOffset() - typedef.getNameOffset();
-        output.addTypedefRef(fileNumber, typedef.getFullyQualifiedNameCharArrays(), offset, offsetLength, ICIndexStorageConstants.OFFSET);
+        output.addTypedefRef(fileNumber, typedef.getFullyQualifiedNameCharArrays(), offset, offsetLength, IIndex.OFFSET);
     }
 
     private void addSuperTypeReference(int modifiers, char[] packageName, char[] typeName, char[][] enclosingTypeNames, char classOrInterface, char[] superTypeName, char superClassOrInterface){
@@ -593,15 +593,15 @@ public class SourceIndexerRunner extends AbstractIndexer {
     
         if (classKind.equals(ASTClassKind.CLASS))
         {  
-            output.addClassRef(fileNumber, fullyQualifiedName,offset,offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addClassRef(fileNumber, fullyQualifiedName,offset,offsetLength, IIndex.OFFSET);
         }       
         else if (classKind.equals(ASTClassKind.STRUCT))
         {
-            output.addStructRef(fileNumber, fullyQualifiedName,offset,offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addStructRef(fileNumber, fullyQualifiedName,offset,offsetLength, IIndex.OFFSET);
         }
         else if (classKind.equals(ASTClassKind.UNION))
         {
-            output.addUnionRef(fileNumber, fullyQualifiedName,offset,offsetLength, ICIndexStorageConstants.OFFSET);         
+            output.addUnionRef(fileNumber, fullyQualifiedName,offset,offsetLength, IIndex.OFFSET);         
         }
     }
     
@@ -624,15 +624,15 @@ public class SourceIndexerRunner extends AbstractIndexer {
         
         if (classKind.equals(ASTClassKind.CLASS))
         {  
-            output.addFwd_ClassRef(fileNumber, fullyQualifiedName, offset,offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addFwd_ClassRef(fileNumber, fullyQualifiedName, offset,offsetLength, IIndex.OFFSET);
         }       
         else if (classKind.equals(ASTClassKind.STRUCT))
         {
-            output.addFwd_StructRef(fileNumber, fullyQualifiedName, offset,offsetLength, ICIndexStorageConstants.OFFSET);
+            output.addFwd_StructRef(fileNumber, fullyQualifiedName, offset,offsetLength, IIndex.OFFSET);
         }
         else if (classKind.equals(ASTClassKind.UNION))
         {
-            output.addFwd_UnionRef(fileNumber, fullyQualifiedName, offset,offsetLength, ICIndexStorageConstants.OFFSET);         
+            output.addFwd_UnionRef(fileNumber, fullyQualifiedName, offset,offsetLength, IIndex.OFFSET);         
         }
     }
 
@@ -645,6 +645,6 @@ public class SourceIndexerRunner extends AbstractIndexer {
         incName[0] = inclusion.getFullFileName().toCharArray();
         //TODO: Kludge! Get rid of BOGUS entry - need to restructure Dep Tree to use reference indexes
         int BOGUS_ENTRY = 1;
-        this.output.addIncludeRef(fileNumber, incName,1,1, ICIndexStorageConstants.OFFSET);
+        this.output.addIncludeRef(fileNumber, incName,1,1, IIndex.OFFSET);
     }
 }

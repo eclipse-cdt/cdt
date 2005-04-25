@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
@@ -59,7 +60,7 @@ public class IndexerDependenciesJob extends IndexerJob {
 		if (progressMonitor.isCanceled())
 			throw new InterruptedException();
 
-		IEntryResult[] includeEntries = input.queryEntriesPrefixedBy(IndexerOutput.INCLUDE_REF);
+		IEntryResult[] includeEntries = input.queryEntriesPrefixedBy(Index.encodeEntry(IIndex.INCLUDE, IIndex.ANY, IIndex.REFERENCE));
 		if (includeEntries != null) {
 			//TODO subprogress monitor
 			for (int i = 0; i < includeEntries.length; ++i) {

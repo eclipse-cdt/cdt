@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
@@ -63,7 +64,7 @@ public class IndexerTypesJob extends IndexerJob {
 		if (monitor.isCanceled())
 			throw new InterruptedException();
 
-		IEntryResult[] namespaceEntries = input.queryEntriesPrefixedBy(IndexerOutput.NAMESPACE_DECL);
+		IEntryResult[] namespaceEntries = input.queryEntriesPrefixedBy(Index.encodeEntry(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION));
 		if (namespaceEntries != null) {
 			//TODO subprogress monitor
 			for (int i = 0; i < namespaceEntries.length; ++i) {
@@ -88,7 +89,7 @@ public class IndexerTypesJob extends IndexerJob {
 		if (monitor.isCanceled())
 			throw new InterruptedException();
 
-		IEntryResult[] typeEntries = input.queryEntriesPrefixedBy(IndexerOutput.TYPE_DECL);
+		IEntryResult[] typeEntries = input.queryEntriesPrefixedBy(Index.encodeEntry(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION));
 		if (typeEntries != null) {
 			//TODO subprogress monitor
 			for (int i = 0; i < typeEntries.length; ++i) {

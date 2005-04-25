@@ -13,11 +13,9 @@ package org.eclipse.cdt.ui.tests.IndexerView;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.index.ICDTIndexer;
-import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -127,17 +125,8 @@ public class IndexerView extends ViewPart {
                         
                         if (index==null) return Status.CANCEL_STATUS;
                         
-                        try {
-                            char[] prefix = BLANK_STRING.toCharArray();
-                            char optionalType = (char)0;
-                            char[] name = ALL_NAME_SEARCH.toCharArray();
-                            char [][] containingTypes = new char[0][];
-                            int matchMode = ICSearchConstants.PATTERN_MATCH;
-                            boolean isCaseSensitive = false;
-                            
-                            char[] queryString = IndexerOutput.bestPrefix( prefix, optionalType, name, containingTypes, matchMode, isCaseSensitive);
-                            
-                            IEntryResult[] results = index.queryEntries(queryString);
+                        try {                         
+                            IEntryResult[] results = index.getEntries(IIndex.ANY, IIndex.ANY, IIndex.ANY );
                             if (results == null) return Status.CANCEL_STATUS;
                             
                             int size = results.length; 

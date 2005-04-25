@@ -13,14 +13,12 @@
  */
 package org.eclipse.cdt.core.search.tests;
 
-import java.util.Iterator;
+
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.CharOperation;

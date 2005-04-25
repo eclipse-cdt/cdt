@@ -31,8 +31,8 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.core.resources.IFile;
@@ -116,15 +116,15 @@ public class FieldDeclarationPattern extends CSearchPattern {
 	
 	public char[] indexEntryPrefix() {
 		if( searchFor == FIELD ){
-			return IndexerOutput.bestFieldPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+			return Index.bestFieldPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
 		} else if( searchFor == VAR ) {
-			return IndexerOutput.bestVariablePrefix(
+			return Index.bestVariablePrefix(
 							_limitTo,
 							simpleName, qualifications,
 							_matchMode, _caseSensitive
 			);
 		} else if (searchFor == ENUMTOR) {
-			return IndexerOutput.bestEnumeratorPrefix(_limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+			return Index.bestEnumeratorPrefix(_limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
 		}
 		return null;		
 	}
@@ -141,15 +141,15 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		int slash = 0;
 		
 		if( searchFor == FIELD ){ 
-			firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
-			slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
+			firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
+			slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
 		} else if( searchFor == VAR ) {
-			int realStart = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
-			firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, realStart + 1);
-			slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
+			int realStart = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
+			firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, realStart + 1);
+			slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
 		} else if ( searchFor == ENUMTOR ){
-			firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
-			slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
+			firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
+			slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
 		}
 				
 		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, slash);
@@ -181,13 +181,13 @@ public class FieldDeclarationPattern extends CSearchPattern {
 				//Don't forget that offsets are encoded ICIndexStorageConstants
 				//Offsets can either be LINE or OFFSET 
 				int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
-				if (offsetType==ICIndexStorageConstants.LINE){
+				if (offsetType==Index.LINE){
 					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
-					match.offsetType = ICIndexStorageConstants.LINE;
-				}else if (offsetType==ICIndexStorageConstants.OFFSET){
+					match.offsetType = Index.LINE;
+				}else if (offsetType==Index.OFFSET){
 					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
 					match.endOffset= match.startOffset + offsetLengths[i][j];
-					match.offsetType=ICIndexStorageConstants.OFFSET;
+					match.offsetType=Index.OFFSET;
 				}
 				match.parentName = ""; //$NON-NLS-1$
 				if (searchFor ==  FIELD){

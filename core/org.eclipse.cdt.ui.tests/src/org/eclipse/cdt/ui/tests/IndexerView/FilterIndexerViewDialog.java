@@ -15,7 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoMessages;
 import org.eclipse.jface.dialogs.Dialog;
@@ -42,6 +43,9 @@ import org.eclipse.swt.widgets.Text;
  */
 public class FilterIndexerViewDialog extends Dialog {
 
+	private static String getStringDescription(int meta, int kind, int ref) {
+		return Index.getDescriptionOf(meta, kind, ref);
+	}
     private static final int DECL_BUTTON_ID = 4;
     private static final int REF_BUTTON_ID = 3;
     private static final int TYPE_BUTTON_ID = 2;
@@ -67,54 +71,54 @@ public class FilterIndexerViewDialog extends Dialog {
     private String message = "Filter Indexer Results (. = any character, .* = any string):"; //$NON-NLS-1$
 
     public static final int ENTRY_TYPE_REF = 2;
-    public static final String ENTRY_TYPE_REF_STRING = String.valueOf(IndexerOutput.TYPE_REF);
-    public static final String ENTRY_TYPE_DECL_STRING = String.valueOf(IndexerOutput.TYPE_DECL);
+    public static final String ENTRY_TYPE_REF_STRING = getStringDescription(IIndex.TYPE, IIndex.ANY, IIndex.REFERENCE);
+    public static final String ENTRY_TYPE_DECL_STRING = getStringDescription(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
     public static final int ENTRY_FUNCTION_REF = 4;
-    public static final String ENTRY_FUNCTION_REF_STRING = String.valueOf(IndexerOutput.FUNCTION_REF);
+    public static final String ENTRY_FUNCTION_REF_STRING = getStringDescription(IIndex.FUNCTION, IIndex.ANY, IIndex.REFERENCE);
     public static final int ENTRY_FUNCTION_DECL = 5;
-    public static final String ENTRY_FUNCTION_DECL_STRING = String.valueOf(IndexerOutput.FUNCTION_DECL);
+    public static final String ENTRY_FUNCTION_DECL_STRING = getStringDescription(IIndex.FUNCTION, IIndex.ANY, IIndex.DECLARATION);
     public static final int ENTRY_NAMESPACE_REF = 8;
-    public static final String ENTRY_NAMESPACE_REF_STRING = String.valueOf(IndexerOutput.NAMESPACE_REF);
+    public static final String ENTRY_NAMESPACE_REF_STRING = getStringDescription(IIndex.NAMESPACE, IIndex.ANY, IIndex.REFERENCE);
     public static final int ENTRY_NAMESPACE_DECL = 9;
-    public static final String ENTRY_NAMESPACE_DECL_STRING = String.valueOf(IndexerOutput.NAMESPACE_DECL);
+    public static final String ENTRY_NAMESPACE_DECL_STRING = getStringDescription(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION);
     public static final int ENTRY_FIELD_REF = 10;
-    public static final String ENTRY_FIELD_REF_STRING = String.valueOf(IndexerOutput.FIELD_REF);
+    public static final String ENTRY_FIELD_REF_STRING = getStringDescription(IIndex.FIELD, IIndex.ANY, IIndex.REFERENCE);
     public static final int ENTRY_FIELD_DECL = 11;
-    public static final String ENTRY_FIELD_DECL_STRING = String.valueOf(IndexerOutput.FIELD_DECL);
+    public static final String ENTRY_FIELD_DECL_STRING = getStringDescription(IIndex.FIELD, IIndex.ANY, IIndex.DECLARATION);
     public static final int ENTRY_ENUMTOR_REF = 12;
-    public static final String ENTRY_ENUMTOR_REF_STRING = String.valueOf(IndexerOutput.ENUMTOR_REF);
+    public static final String ENTRY_ENUMTOR_REF_STRING = getStringDescription(IIndex.ENUMTOR, IIndex.ANY, IIndex.REFERENCE);
     public static final int ENTRY_ENUMTOR_DECL = 13;
-    public static final String ENTRY_ENUMTOR_DECL_STRING = String.valueOf(IndexerOutput.ENUMTOR_DECL);
+    public static final String ENTRY_ENUMTOR_DECL_STRING = getStringDescription(IIndex.ENUMTOR, IIndex.ANY, IIndex.DECLARATION);
     public static final int ENTRY_METHOD_REF = 14;
-    public static final String ENTRY_METHOD_REF_STRING = String.valueOf(IndexerOutput.METHOD_REF);
+    public static final String ENTRY_METHOD_REF_STRING = getStringDescription(IIndex.METHOD, IIndex.ANY, IIndex.REFERENCE);
     public static final int ENTRY_METHOD_DECL = 15;
-    public static final String ENTRY_METHOD_DECL_STRING = String.valueOf(IndexerOutput.METHOD_DECL);
+    public static final String ENTRY_METHOD_DECL_STRING = getStringDescription(IIndex.METHOD, IIndex.ANY, IIndex.DECLARATION);
     public static final int ENTRY_MACRO_DECL = 16;
-    public static final String ENTRY_MACRO_DECL_STRING = String.valueOf(IndexerOutput.MACRO_DECL);
+    public static final String ENTRY_MACRO_DECL_STRING = getStringDescription(IIndex.MACRO, IIndex.ANY, IIndex.DECLARATION);
     public static final int ENTRY_INCLUDE_REF = 17;
-    public static final String ENTRY_INCLUDE_REF_STRING = String.valueOf(IndexerOutput.INCLUDE_REF);
+    public static final String ENTRY_INCLUDE_REF_STRING = getStringDescription(IIndex.INCLUDE, IIndex.ANY, IIndex.REFERENCE);
     public static final int ENTRY_TYPE_DECL_T = 19;
-    public static final String ENTRY_TYPE_DECL_T_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.TYPEDEF_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_T_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_TYPEDEF, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_C = 20;
-    public static final String ENTRY_TYPE_DECL_C_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.CLASS_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_C_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_V = 21;
-    public static final String ENTRY_TYPE_DECL_V_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.VAR_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_V_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_S = 22;
-    public static final String ENTRY_TYPE_DECL_S_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.STRUCT_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_S_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_STRUCT, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_E = 23;
-    public static final String ENTRY_TYPE_DECL_E_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.ENUM_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_E_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_ENUM, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_U = 24;
-    public static final String ENTRY_TYPE_DECL_U_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.UNION_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_U_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_UNION, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_D = 25;
-    public static final String ENTRY_TYPE_DECL_D_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.DERIVED_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_D_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_DERIVED, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_F = 26;
-    public static final String ENTRY_TYPE_DECL_F_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FRIEND_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_F_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_FRIEND, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_G = 27;
-    public static final String ENTRY_TYPE_DECL_G_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FWD_CLASS_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_G_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_FWD_CLASS, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_H = 28;
-    public static final String ENTRY_TYPE_DECL_H_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FWD_STRUCT_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_H_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_FWD_STRUCT, IIndex.DECLARATION);
     public static final int ENTRY_TYPE_DECL_I = 29;
-    public static final String ENTRY_TYPE_DECL_I_STRING = String.valueOf(IndexerOutput.TYPE_DECL) + String.valueOf(IndexerOutput.FWD_UNION_SUFFIX) + String.valueOf(IndexerOutput.SEPARATOR);
+    public static final String ENTRY_TYPE_DECL_I_STRING = getStringDescription(IIndex.TYPE, IIndex.TYPE_FWD_UNION, IIndex.DECLARATION);
 
     private String fDialogSection;
     

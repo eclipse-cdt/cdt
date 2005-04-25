@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 
 /**
@@ -46,7 +47,7 @@ public class DerivedTypesPattern extends ClassDeclarationPattern {
 	}
 	
 	public char[] indexEntryPrefix() {
-		return IndexerOutput.bestTypePrefix(
+		return Index.bestTypePrefix(
 				searchFor,
 				getLimitTo(),
 				simpleName,

@@ -28,11 +28,11 @@ public interface IIndexerOutput {
 	public void addFieldDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	public void addFieldRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	
-	public void addMethodDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
-	public void addMethodRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
+	public void addMethodDecl(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/ int offset, int offsetLength, int offsetType);
+	public void addMethodRef(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/ int offset, int offsetLength, int offsetType);
 	
-	public void addFunctionDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
-	public void addFunctionRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
+	public void addFunctionDecl(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType);
+	public void addFunctionRef(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType);
 	
 	public void addNamespaceDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	public void addNamespaceRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
@@ -63,9 +63,6 @@ public interface IIndexerOutput {
 	public void addFriendDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	public void addFriendRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 
-	public void addVarDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
-	public void addVarRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
-	
 	public void addFwd_ClassDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	public void addFwd_ClassRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	

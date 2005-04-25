@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
@@ -209,7 +209,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 					fileNumber,
 					1,
 					1,
-					ICIndexStorageConstants.OFFSET);
+					IIndex.OFFSET);
             
             /* See if this file has been encountered before */
             indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(include));
@@ -234,7 +234,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 					fileNumber,
 					loc.getNodeOffset(),
                     loc.getNodeLength(),
-                    ICIndexStorageConstants.OFFSET);
+                    IIndex.OFFSET);
         }
         
     }

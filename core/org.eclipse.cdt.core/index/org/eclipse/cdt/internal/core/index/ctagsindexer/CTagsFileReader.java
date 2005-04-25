@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -113,30 +112,30 @@ public class CTagsFileReader {
 			
 	        
 	    	if (kind.equals(CTagsConsoleParser.CLASS)){
-	    		output.addClassDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addClassDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.MACRO)){
-	    		output.addMacroDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addMacroDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.ENUMERATOR)){
-	    		output.addEnumtorDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addEnumtorDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.FUNCTION)){
-	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.ENUM)){
-	    		output.addEnumDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addEnumDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.MEMBER)){
-	    		output.addFieldDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addFieldDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.NAMESPACE)){
-	    		output.addNamespaceDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addNamespaceDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.PROTOTYPE)){
-	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	    //type = ICSearchConstants.DEFINITIONS;
 	    	} else if (kind.equals(CTagsConsoleParser.STRUCT)){
-	    		output.addStructDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addStructDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.TYPEDEF)){
-	    		output.addTypedefDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addTypedefDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.UNION)){
-	    		output.addUnionDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addUnionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.VARIABLE)){
-	    		output.addVariableDecl(fileNum, fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+	    		output.addVariableDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 	    	} else if (kind.equals(CTagsConsoleParser.EXTERNALVAR)){
 	    	
 	    	}

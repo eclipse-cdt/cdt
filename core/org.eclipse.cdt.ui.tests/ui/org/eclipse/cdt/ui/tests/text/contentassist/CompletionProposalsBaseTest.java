@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -31,7 +30,6 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;

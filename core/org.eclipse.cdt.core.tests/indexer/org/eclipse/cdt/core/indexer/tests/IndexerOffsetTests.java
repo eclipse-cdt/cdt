@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.WordEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.GammaCompressedIndexBlock;
@@ -47,36 +48,36 @@ public class IndexerOffsetTests extends TestCase {
 	public void testOffsetsResizing() throws Exception{
 	    WordEntry word = new WordEntry("typeDecl/C/Test".toCharArray());
 	    word.addRef(2);
-	    word.addOffset(235,5,2,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(512,3,2,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(512,3,2,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(512,3,2,ICIndexStorageConstants.OFFSET);
+	    word.addOffset(235,5,2,IIndex.OFFSET);
+	    word.addOffset(512,3,2,IIndex.OFFSET);
+	    word.addOffset(512,3,2,IIndex.OFFSET);
+	    word.addOffset(512,3,2,IIndex.OFFSET);
 	    word.addRef(5);
-	    word.addOffset(43,6,5,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(2,3,5,ICIndexStorageConstants.LINE);
-	    word.addOffset(89,8,5,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(63,2,5,ICIndexStorageConstants.LINE);
-	    word.addOffset(124,7,5,ICIndexStorageConstants.OFFSET);
+	    word.addOffset(43,6,5,IIndex.OFFSET);
+	    word.addOffset(2,3,5,IIndex.LINE);
+	    word.addOffset(89,8,5,IIndex.OFFSET);
+	    word.addOffset(63,2,5,IIndex.LINE);
+	    word.addOffset(124,7,5,IIndex.OFFSET);
 	    word.addRef(9);
-	    word.addOffset(433,5,9,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(234,3,9,ICIndexStorageConstants.OFFSET);
+	    word.addOffset(433,5,9,IIndex.OFFSET);
+	    word.addOffset(234,3,9,IIndex.OFFSET);
 	    word.addRef(11);
-	    word.addOffset(4233,2,11,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(2314,7,11,ICIndexStorageConstants.OFFSET);
+	    word.addOffset(4233,2,11,IIndex.OFFSET);
+	    word.addOffset(2314,7,11,IIndex.OFFSET);
 	    word.addRef(17);
-	    word.addOffset(2,7,17,ICIndexStorageConstants.OFFSET);
-	    word.addOffset(52,8,17,ICIndexStorageConstants.OFFSET);
+	    word.addOffset(2,7,17,IIndex.OFFSET);
+	    word.addOffset(52,8,17,IIndex.OFFSET);
 	    int[] test =word.getOffsets(1);
 	    
 	    WordEntry word2 = new WordEntry("typeDecl/C/Test".toCharArray());
 	    word2.addRef(4);
-	    word2.addOffset(13,4,4, ICIndexStorageConstants.OFFSET);
-	    word2.addOffset(17,3,4, ICIndexStorageConstants.OFFSET);
-	    word2.addOffset(20,6,4,ICIndexStorageConstants.OFFSET);
+	    word2.addOffset(13,4,4, IIndex.OFFSET);
+	    word2.addOffset(17,3,4, IIndex.OFFSET);
+	    word2.addOffset(20,6,4,IIndex.OFFSET);
 	    word2.addRef(7);
-	    word2.addOffset(21,2,7, ICIndexStorageConstants.OFFSET);
-	    word2.addOffset(24,3,7, ICIndexStorageConstants.OFFSET);
-	    word2.addOffset(28,7,7,ICIndexStorageConstants.OFFSET);
+	    word2.addOffset(21,2,7, IIndex.OFFSET);
+	    word2.addOffset(24,3,7, IIndex.OFFSET);
+	    word2.addOffset(28,7,7,IIndex.OFFSET);
 	    
 	    word.addWordInfo(word2.getRefs(), word2.getOffsets(), word2.getOffsetLengths(), word2.getOffsetCount());
 	    

@@ -22,7 +22,45 @@ import org.eclipse.core.runtime.IPath;
  */
 
 public interface IIndex {
-	/**
+	
+    //Used for offsets LINE = line based, while OFFSET = character offset
+    final static int LINE=1;
+    final static int OFFSET=2;
+    
+    // Constants used to refer to index items
+	final static int ANY = 0;
+	
+	// All index elements can be described as a triple (meta_kind, kind, type) 
+	
+	// meta_kind
+	final static int TYPE = 1;
+	final static int FUNCTION = 2;
+	final static int METHOD = 3;
+	final static int FIELD = 4;
+	final static int MACRO = 5;
+	final static int NAMESPACE = 6;
+	final static int ENUMTOR = 7;
+	final static int INCLUDE = 8;
+	
+	// kind
+	final static int TYPE_CLASS = 1;
+	final static int TYPE_STRUCT = 2;
+	final static int TYPE_UNION = 3;
+	final static int TYPE_ENUM = 4;
+	final static int TYPE_VAR = 5;
+	final static int TYPE_TYPEDEF = 6;
+	final static int TYPE_DERIVED = 7;
+	final static int TYPE_FRIEND = 8;
+	final static int TYPE_FWD_CLASS = 9;
+	final static int TYPE_FWD_STRUCT = 10;
+	final static int TYPE_FWD_UNION = 11;
+	
+	// type
+    final static int DECLARATION = 1;
+    final static int REFERENCE = 2;
+    final static int DEFINITION = 3;
+    
+	   /**
 		 * Adds the given file to the index.
 		 */
 		void add(IFile file, IIndexer indexer) throws IOException;
@@ -50,14 +88,14 @@ public interface IIndex {
 		 * Ansers true if has some changes to save.
 		 */
 		boolean hasChanged();
+
 		/**
-		 * Returns the paths of the documents containing the given word.
+		 * Returns all entries for a given pattern.
 		 */
-		IQueryResult[] query(String word) throws IOException;
-		/**
-		 * Returns all entries for a given word.
-		 */
-		IEntryResult[] queryEntries(char[] pattern) throws IOException;
+		
+		IEntryResult[] getEntries(int meta_kind, int kind, int ref, String name) throws IOException;
+		IEntryResult[] getEntries(int meta_kind, int kind, int ref) throws IOException;
+
 		/**
 		 * Returns the paths of the documents whose names contain the given word.
 		 */
@@ -65,11 +103,15 @@ public interface IIndex {
 		/**
 		 * Returns the paths of the documents containing the given word prefix.
 		 */
-		IQueryResult[] queryPrefix(char[] prefix) throws IOException;
+		
+		IQueryResult[] getPrefix(int meta_kind, int kind, int ref, String name) throws IOException;
+		IQueryResult[] getPrefix(int meta_kind, int kind, int ref) throws IOException;
+
 		/**
 		 * Removes the corresponding document from the index.
 		 */
 		void remove(String documentName) throws IOException;
+
 		/**
 		 * Saves the index on the disk.
 		 */

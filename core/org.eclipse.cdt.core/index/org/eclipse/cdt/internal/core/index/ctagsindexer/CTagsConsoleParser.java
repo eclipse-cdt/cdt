@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 
 /**
@@ -83,30 +83,30 @@ public class CTagsConsoleParser implements IConsoleParser {
     	int lineNumber = Integer.parseInt( (String)tempTag.tagExtensionField.get(LINE) );
     	
     	if (kind.equals(CLASS)){
-    		indexer.getOutput().addClassDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addClassDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(MACRO)){
-    		indexer.getOutput().addMacroDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addMacroDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(ENUMERATOR)){
-    		indexer.getOutput().addEnumtorDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addEnumtorDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(FUNCTION)){
-    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(ENUM)){
-    		indexer.getOutput().addEnumDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addEnumDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(MEMBER)){
-    		indexer.getOutput().addFieldDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addFieldDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(NAMESPACE)){
-    		indexer.getOutput().addNamespaceDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addNamespaceDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(PROTOTYPE)){
-    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	    //type = ICSearchConstants.DEFINITIONS;
     	} else if (kind.equals(STRUCT)){
-    		indexer.getOutput().addStructDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addStructDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(TYPEDEF)){
-    		indexer.getOutput().addTypedefDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addTypedefDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(UNION)){
-    		indexer.getOutput().addUnionDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addUnionDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(VARIABLE)){
-    		indexer.getOutput().addVariableDecl(getFileNumber(), fullName, lineNumber, 1, ICIndexStorageConstants.LINE);
+    		indexer.getOutput().addVariableDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(EXTERNALVAR)){
     	
     	}

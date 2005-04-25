@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.corext.Assert;
 import org.eclipse.cdt.internal.corext.refactoring.Checks;
 import org.eclipse.cdt.internal.corext.refactoring.CompositeChange;
@@ -187,8 +186,8 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				name.append(function.getSignature());
 			} else {
 				if (element instanceof IEnumerator) {
-					IEnumeration enum = (IEnumeration) element.getParent();
-					name.append(getElementQualifiedName(enum.getParent()));					
+					IEnumeration enum1 = (IEnumeration) element.getParent();
+					name.append(getElementQualifiedName(enum1.getParent()));					
 				}else {
 					name.append(getElementQualifiedName(element.getParent()));
 				}

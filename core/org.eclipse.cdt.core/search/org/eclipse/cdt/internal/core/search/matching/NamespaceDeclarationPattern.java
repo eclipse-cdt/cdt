@@ -23,7 +23,8 @@ import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
@@ -102,13 +103,13 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 				//Don't forget that offsets are encoded ICIndexStorageConstants
 				//Offsets can either be LINE or OFFSET 
 				int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
-				if (offsetType==ICIndexStorageConstants.LINE){
+				if (offsetType==IIndex.LINE){
 					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
-					match.offsetType = ICIndexStorageConstants.LINE;
-				}else if (offsetType==ICIndexStorageConstants.OFFSET){
+					match.offsetType = IIndex.LINE;
+				}else if (offsetType==IIndex.OFFSET){
 					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
 					match.endOffset= match.startOffset + offsetLengths[i][j];
-					match.offsetType=ICIndexStorageConstants.OFFSET;
+					match.offsetType=IIndex.OFFSET;
 				}
 				match.parentName = ""; //$NON-NLS-1$
 				match.type=ICElement.C_NAMESPACE;
@@ -158,7 +159,7 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#indexEntryPrefix()
 	 */
 	public char[] indexEntryPrefix() {
-		return IndexerOutput.bestNamespacePrefix(
+		return Index.bestNamespacePrefix(
 				_limitTo,
 				simpleName,
 				qualifications,

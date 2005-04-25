@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexerOutputWrapper.EntryType;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
@@ -179,7 +179,7 @@ public class CGenerateIndexVisitor extends CASTVisitor {
 						fileNumber, 
                         loc.getNodeOffset(),
                         loc.getNodeLength(),
-                        ICIndexStorageConstants.OFFSET);
+                        IIndex.OFFSET);
             }                   
             else if (name.isReference()) {
                 IndexerOutputWrapper.addNameRef(indexer.getOutput(),
@@ -188,7 +188,7 @@ public class CGenerateIndexVisitor extends CASTVisitor {
 						fileNumber, 
                         loc.getNodeOffset(),
                         loc.getNodeLength(),
-                        ICIndexStorageConstants.OFFSET);
+                        IIndex.OFFSET);
             }
         }
     }

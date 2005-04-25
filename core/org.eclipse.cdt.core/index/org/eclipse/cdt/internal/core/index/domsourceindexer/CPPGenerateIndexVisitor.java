@@ -40,7 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexerOutputWrapper.EntryType;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
@@ -241,7 +241,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
 	                    fileNumber, 
 	                    loc.getNodeOffset(),
 	                    loc.getNodeLength(),
-	                    ICIndexStorageConstants.OFFSET);
+	                    IIndex.OFFSET);
 			}
 			else if (limitTo == ICSearchConstants.REFERENCES) {
 	            IndexerOutputWrapper.addNameRef(indexer.getOutput(),
@@ -250,7 +250,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
 	                    fileNumber, 
 	                    loc.getNodeOffset(),
 	                    loc.getNodeLength(),
-	                    ICIndexStorageConstants.OFFSET);
+	                    IIndex.OFFSET);
 			}
         }
     }
@@ -273,7 +273,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
 	                    fileNumber, 
 	                    loc.getNodeOffset(),
 	                    loc.getNodeLength(),
-	                    ICIndexStorageConstants.OFFSET);
+	                    IIndex.OFFSET);
             }
         }
 	}

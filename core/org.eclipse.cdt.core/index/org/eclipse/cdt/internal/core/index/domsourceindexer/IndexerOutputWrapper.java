@@ -98,7 +98,7 @@ class IndexerOutputWrapper {
 				indexerOutput.addEnumDecl(fileNumber, name, offset, length, offsetType);
 				break;
 			case VAR_CONST:
-				indexerOutput.addVarDecl(fileNumber, name, offset, length, offsetType);
+				indexerOutput.addVariableDecl(fileNumber, name, offset, length, offsetType);
 				break;
 			case TYPEDEF_CONST:
 				indexerOutput.addTypedefDecl(fileNumber, name, offset, length, offsetType);
@@ -163,7 +163,7 @@ class IndexerOutputWrapper {
 				indexerOutput.addEnumRef(fileNumber, name, offset, length, offsetType);
 				break;
 			case VAR_CONST:
-				indexerOutput.addVarRef(fileNumber, name, offset, length, offsetType);
+				indexerOutput.addVariableRef(fileNumber, name, offset, length, offsetType);
 				break;
 			case TYPEDEF_CONST:
 				indexerOutput.addTypedefRef(fileNumber, name, offset, length, offsetType);

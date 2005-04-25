@@ -16,8 +16,8 @@ import java.io.IOException;
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.core.runtime.IAdaptable;
@@ -279,7 +279,7 @@ public class IndexerNodeLeaf implements IAdaptable {
     }
 
     public String toString() {
-        if (!parent.isDisplayFullName() && name.indexOf(IndexerOutput.SEPARATOR) > 0)
+        if (!parent.isDisplayFullName() && name.indexOf(ICIndexStorageConstants.SEPARATOR) > 0)
             return getShortName();
         
         return name;
@@ -298,8 +298,8 @@ public class IndexerNodeLeaf implements IAdaptable {
     }
 	
 	public String getShortName() {
-		if (name.indexOf(IndexerOutput.SEPARATOR) > 0)
-			return name.substring(0, name.indexOf(IndexerOutput.SEPARATOR));
+		if (name.indexOf(ICIndexStorageConstants.SEPARATOR) > 0)
+			return name.substring(0, name.indexOf(ICIndexStorageConstants.SEPARATOR));
 		
 		return name;
 	}

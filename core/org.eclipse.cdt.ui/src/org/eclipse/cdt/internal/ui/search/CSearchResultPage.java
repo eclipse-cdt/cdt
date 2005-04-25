@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.ExternalSearchFile;
@@ -195,10 +195,10 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		try {
 			IMarker marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap attributes= new HashMap(4);
-			if (offsetType==ICIndexStorageConstants.OFFSET){
+			if (offsetType==IIndex.OFFSET){
 				attributes.put(IMarker.CHAR_START, new Integer(offset));
 				attributes.put(IMarker.CHAR_END, new Integer(offset + length));
-			} else if (offsetType == ICIndexStorageConstants.LINE){
+			} else if (offsetType == IIndex.LINE){
 			   attributes.put(IMarker.LINE_NUMBER, new Integer(offset));	
 			}
 			marker.setAttributes(attributes);

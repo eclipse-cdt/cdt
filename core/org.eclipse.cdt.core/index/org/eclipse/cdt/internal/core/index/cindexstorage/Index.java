@@ -20,6 +20,8 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexDelta;
+import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
@@ -44,7 +46,7 @@ import org.eclipse.core.runtime.IPath;
  * The changes are only taken into account by the queries after a merge.
  */
 
-public class Index implements IIndex {
+public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants {
 	/**
 	 * Maximum size of the index in memory.
 	 */
@@ -282,18 +284,7 @@ public class Index implements IIndex {
 			}
 		}
 	}
-	/**
-	 * @see IIndex#query
-	 */
-	public IQueryResult[] query(String word) throws IOException {
-		//save();
-		IndexInput input= new BlocksIndexInput(indexFile);
-		try {
-			return input.query(word);
-		} finally {
-			input.close();
-		}
-	}
+
 	public IEntryResult[] queryEntries(char[] prefix) throws IOException {
 		//save();
 		IndexInput input= new BlocksIndexInput(indexFile);
@@ -437,16 +428,369 @@ public class Index implements IIndex {
 		return (addsIndex.getFootprint() >= MAX_FOOTPRINT);
 	}
 	public String toString() {
-	String str = this.toString;
-	if (str == null) str = super.toString();
-	str += "(length: "+ getIndexFile().length() +")"; //$NON-NLS-1$ //$NON-NLS-2$
-	return str;
-}
+		String str = this.toString;
+		if (str == null)
+			str = super.toString();
+		str += "(length: " + getIndexFile().length() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return str;
+	}
 	
 	public org.eclipse.cdt.core.index.ICDTIndexer  getIndexer(){
 		return (org.eclipse.cdt.core.index.ICDTIndexer) indexer;
 	}
+	public IEntryResult[] queryEntries(char[] prefix, char optionalType, char[] name, char[][] containingTypes, int matchMode, boolean isCaseSensitive)  throws IOException {
+		return queryEntries(Index.bestPrefix(prefix, optionalType, name, containingTypes, matchMode, isCaseSensitive));
+	}
+	
+ 	public static final char[] bestTypePrefix( SearchFor searchFor, LimitTo limitTo, char[] typeName, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == DECLARATIONS ){
+			prefix = encodeEntry(IIndex.TYPE, ANY, DECLARATION);
+		} else if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.TYPE, ANY, REFERENCE);
+		} else {
+			return encodeEntry(IIndex.TYPE, ANY, ANY);
+		}
+					
+		char classType = 0;
+		
+		if( searchFor == ICSearchConstants.CLASS ){
+			classType = CLASS_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.STRUCT ){
+			classType = STRUCT_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.UNION ){
+			classType = UNION_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.ENUM ){
+			classType = ENUM_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.TYPEDEF ){
+			classType = TYPEDEF_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.DERIVED){
+			classType = DERIVED_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FRIEND){
+			classType = FRIEND_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FWD_CLASS) {
+			classType = FWD_CLASS_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FWD_STRUCT) {
+			classType = FWD_STRUCT_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.FWD_UNION) {
+			classType = FWD_UNION_SUFFIX;
+		} else {
+			//could be TYPE or CLASS_STRUCT, best we can do for these is the prefix
+			return prefix;
+		}
+		
+		return bestPrefix( prefix, classType, typeName, containingTypes, matchMode, isCaseSensitive );
+	}
+	
+	public static final char[] bestNamespacePrefix(LimitTo limitTo, char[] namespaceName, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.NAMESPACE, ANY, REFERENCE);
+		} else if ( limitTo == DECLARATIONS ) {
+			prefix = encodeEntry(IIndex.NAMESPACE, ANY, DECLARATION);
+		} else {
+			return encodeEntry(IIndex.NAMESPACE, ANY, ANY);
+		}
+		
+		return bestPrefix( prefix, (char) 0, namespaceName, containingTypes, matchMode, isCaseSensitive );
+	}	
+		
+	public static final char[] bestVariablePrefix( LimitTo limitTo, char[] varName, char[][] containingTypes, int matchMode, boolean isCaseSenstive ){
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.TYPE, ANY, REFERENCE);
+		} else if( limitTo == DECLARATIONS ){
+			prefix = encodeEntry(IIndex.TYPE, ANY, DECLARATION);
+		} else {
+			return encodeEntry(IIndex.TYPE, ANY, ANY);
+		}
+		
+		return bestPrefix( prefix, VAR_SUFFIX, varName, containingTypes, matchMode, isCaseSenstive );	
+	}
 
+	public static final char[] bestFieldPrefix( LimitTo limitTo, char[] fieldName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.FIELD, ANY, REFERENCE);
+		} else if( limitTo == DECLARATIONS ){
+			prefix = encodeEntry(IIndex.FIELD, ANY, DECLARATION);
+		} else {
+			return encodeEntry(IIndex.FIELD, ANY, ANY);
+		}
+		
+		return bestPrefix( prefix, (char)0, fieldName, containingTypes, matchMode, isCaseSensitive );
+	}  
+	
+	public static final char[] bestEnumeratorPrefix( LimitTo limitTo, char[] enumeratorName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.ENUMTOR, ANY, REFERENCE);
+		} else if( limitTo == DECLARATIONS ){
+			prefix = encodeEntry(IIndex.ENUMTOR, ANY, DECLARATION);
+		} else if (limitTo == ALL_OCCURRENCES){
+			return encodeEntry(IIndex.ENUMTOR, ANY, ANY);
+		}
+		else {
+			//Definitions
+			return "noEnumtorDefs".toCharArray(); //$NON-NLS-1$
+		}
+		
+		return bestPrefix( prefix, (char)0, enumeratorName, containingTypes, matchMode, isCaseSensitive );
+	}  
 
+	public static final char[] bestMethodPrefix( LimitTo limitTo, char[] methodName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.METHOD, ANY, REFERENCE);
+		} else if( limitTo == DECLARATIONS ){
+			prefix = encodeEntry(IIndex.METHOD, ANY, DECLARATION);
+		} else if( limitTo == DEFINITIONS ){
+			//TODO prefix = METHOD_DEF;
+			return encodeEntry(IIndex.METHOD, ANY, ANY);	
+		} else {
+			return encodeEntry(IIndex.METHOD, ANY, ANY);
+		}
+		
+		return bestPrefix( prefix, (char)0, methodName, containingTypes, matchMode, isCaseSensitive );
+	}  
+	
+	public static final char[] bestFunctionPrefix( LimitTo limitTo, char[] functionName, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.FUNCTION, ANY, REFERENCE);
+		} else if( limitTo == DECLARATIONS ){
+			prefix = encodeEntry(IIndex.FUNCTION, ANY, DECLARATION);
+		} else if ( limitTo == DEFINITIONS ){
+			//TODO prefix = FUNCTION_DEF;
+			return encodeEntry(IIndex.FUNCTION, ANY, ANY);
+		} else {
+			return encodeEntry(IIndex.FUNCTION, ANY, ANY);
+		}
+		return bestPrefix( prefix, (char)0, functionName, null, matchMode, isCaseSensitive );
+	}  
+		
+	public static final char[] bestPrefix( char [] prefix, char optionalType, char[] name, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char[] 	result = null;
+		int 	pos    = 0;
+		
+		int wildPos, starPos = -1, questionPos;
+		
+		//length of prefix + separator
+		int length = prefix.length;
+		
+		//add length for optional type + another separator
+		if( optionalType != 0 )
+			length += 2;
+		
+		if (!isCaseSensitive){
+			//index is case sensitive, thus in case attempting case insensitive search, cannot consider
+			//type name.
+			name = null;
+		} else if( matchMode == PATTERN_MATCH && name != null ){
+			int start = 0;
+
+			char [] temp = new char [ name.length ];
+			boolean isEscaped = false;
+			int tmpIdx = 0;
+			for( int i = 0; i < name.length; i++ ){
+				if( name[i] == '\\' ){
+					if( !isEscaped ){
+						isEscaped = true;
+						continue;
+					} 
+					isEscaped = false;		
+				} else if( name[i] == '*' && !isEscaped ){
+					starPos = i;
+					break;
+				} 
+				temp[ tmpIdx++ ] = name[i];
+			}
+			
+			name = new char [ tmpIdx ];
+			System.arraycopy( temp, 0, name, 0, tmpIdx );				
+		
+			//starPos = CharOperation.indexOf( '*', name );
+			questionPos = CharOperation.indexOf( '?', name );
+
+			if( starPos >= 0 ){
+				if( questionPos >= 0 )
+					wildPos = ( starPos < questionPos ) ? starPos : questionPos;
+				else 
+					wildPos = starPos;
+			} else {
+				wildPos = questionPos;
+			}
+			 
+			switch( wildPos ){
+				case -1 : break;
+				case 0  : name = null;	break;
+				default : name = CharOperation.subarray( name, 0, wildPos ); break;
+			}
+		}
+		//add length for name
+		if( name != null ){
+			length += name.length;
+		} else {
+			//name is null, don't even consider qualifications.
+			result = new char [ length ];
+			System.arraycopy( prefix, 0, result, 0, pos = prefix.length );
+			if( optionalType != 0){
+				result[ pos++ ] = optionalType;
+				result[ pos++ ] = SEPARATOR; 
+			}
+			return result;
+		}
+		 		
+		//add the total length of the qualifiers
+		//we don't want to mess with the contents of this array (treat it as constant)
+		//so check for wild cards later.
+		if( containingTypes != null ){
+			for( int i = 0; i < containingTypes.length; i++ ){
+				if( containingTypes[i].length > 0 ){
+					length += containingTypes[ i ].length;
+					length++; //separator
+				}
+			}
+		}
+		
+		//because we haven't checked qualifier wild cards yet, this array might turn out
+		//to be too long. So fill a temp array, then check the length after
+		char [] temp = new char [ length ];
+		
+		System.arraycopy( prefix, 0, temp, 0, pos = prefix.length );
+		
+		if( optionalType != 0 ){
+			temp[ pos++ ] = optionalType;
+			temp[ pos++ ] = SEPARATOR;
+		}
+		
+		System.arraycopy( name, 0, temp, pos, name.length );
+		pos += name.length;
+		
+		if( containingTypes != null ){
+			for( int i = containingTypes.length - 1; i >= 0; i-- ){
+				if( matchMode == PATTERN_MATCH ){
+					starPos     = CharOperation.indexOf( '*', containingTypes[i] );
+					questionPos = CharOperation.indexOf( '?', containingTypes[i] );
+
+					if( starPos >= 0 ){
+						if( questionPos >= 0 )
+							wildPos = ( starPos < questionPos ) ? starPos : questionPos;
+						else 
+							wildPos = starPos;
+					} else {
+						wildPos = questionPos;
+					}
+					
+					if( wildPos >= 0 ){
+						temp[ pos++ ] = SEPARATOR;
+						System.arraycopy( containingTypes[i], 0, temp, pos, wildPos );
+						pos += starPos;
+						break;
+					}
+				}
+				
+				if( containingTypes[i].length > 0 ){
+					temp[ pos++ ] = SEPARATOR;
+					System.arraycopy( containingTypes[i], 0, temp, pos, containingTypes[i].length );
+					pos += containingTypes[i].length;
+				}
+			}
+		}
+	
+		if( pos < length ){
+			result = new char[ pos ];
+			System.arraycopy( temp, 0, result, 0, pos );	
+		} else {
+			result = temp;
+		}
+		
+		return result;
+	}
+
+	/**
+	 * @param _limitTo
+	 * @param simpleName
+	 * @param _matchMode
+	 * @param _caseSensitive
+	 * @return
+	 */
+	public static final char[] bestMacroPrefix( LimitTo limitTo, char[] macroName, int matchMode, boolean isCaseSenstive ){
+		//since we only index macro declarations we already know the prefix
+		char [] prefix = null;
+		if( limitTo == DECLARATIONS ){
+			prefix = Index.encodeEntry(IIndex.MACRO, IIndex.ANY, IIndex.DECLARATION);
+		} else {
+			return null;
+		}
+		
+		return bestPrefix( prefix,  (char)0, macroName, null, matchMode, isCaseSenstive );	
+	}
+	
+	/**
+	 * @param _limitTo
+	 * @param simpleName
+	 * @param _matchMode
+	 * @param _caseSensitive
+	 * @return
+	 */
+	public static final char[] bestIncludePrefix( LimitTo limitTo, char[] incName, int matchMode, boolean isCaseSenstive ){
+		//since we only index macro declarations we already know the prefix
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = encodeEntry(IIndex.INCLUDE, IIndex.ANY, IIndex.REFERENCE);
+		} else {
+			return null;
+		}
+		
+		return bestPrefix( prefix,  (char)0, incName, null, matchMode, isCaseSenstive );	
+	}
+
+	public static String getDescriptionOf (int meta_kind, int kind, int ref) {
+		StringBuffer buff = new StringBuffer();
+		buff.append(encodings[meta_kind]);
+		buff.append(encodingTypes[ref]);
+		if(kind != 0) {
+			buff.append(typeConstants[kind]);
+			buff.append(SEPARATOR);
+		}
+		return buff.toString();
+	}
+	public static char [] encodeEntry (int meta_kind, int kind, int ref, String name) {
+//		if( kind == ANY && ref == ANY )
+//			return encodings[meta_kind];
+		StringBuffer buff = new StringBuffer();
+		buff.append(encodings[meta_kind]);
+		buff.append(encodingTypes[ref]);
+		if(kind != 0)
+			buff.append(typeConstants[kind]);
+		if (name.length() != 0) {
+			buff.append( SEPARATOR );
+			buff.append ( name ); 
+		}
+		return buff.toString().toCharArray();
+	}
+	
+	public static char [] encodeEntry (int meta_kind, int kind, int ref) {
+		StringBuffer buff = new StringBuffer();
+		buff.append(encodings[meta_kind]);
+		buff.append(encodingTypes[ref]);
+		if(kind != 0)
+			buff.append(typeConstants[kind]);
+		return buff.toString().toCharArray();
+	}
+	public IEntryResult[] getEntries(int meta_kind, int kind, int ref, String name) throws IOException {	
+		return queryEntries(encodeEntry(meta_kind, kind, ref, name));
+	}
+	public IEntryResult[] getEntries(int meta_kind, int kind, int ref) throws IOException {
+		return queryEntries(encodeEntry(meta_kind, kind, ref));
+	}
+	
+	public IQueryResult[] getPrefix(int meta_kind, int kind, int ref, String name) throws IOException {
+		return queryPrefix(encodeEntry(meta_kind, kind, ref, name));
+	}
+	public IQueryResult[] getPrefix(int meta_kind, int kind, int ref) throws IOException {
+		return queryPrefix(encodeEntry(meta_kind, kind, ref));
+	}
 	
 }

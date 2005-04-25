@@ -22,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
@@ -31,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -181,7 +181,7 @@ public class SourceUtils {
 					containers.add( mapping );
 					
 				}
-				containers.add( new DirectorySourceContainer( d.getDirectory(), d.searchSubfolders() ) );
+				containers.add( new CDirectorySourceContainer( d.getDirectory(), d.searchSubfolders() ) );
 			}
 		}
 		return (ISourceContainer[])containers.toArray( new ISourceContainer[containers.size()] );

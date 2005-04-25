@@ -1,3 +1,14 @@
+2005-04-25 Mikhail Khodjaiants
+	Added the new source container type (CDirectorySourceContainer) to provide 
+	the UI support for the subfolders search.
+	+ CDirectorySourceContainer.java
+	+ CDirectorySourceContainerType.java
+	* CSourceLookupDirector.java
+	* SourceUtils.java
+	* InternalSourceLookupMessages.properties
+	* plugin.properties
+	* plugin.xml
+
 2005-04-25 Alain Magloire
 	Changes to the CDI interface.
 	+ cdi/org/eclipse/cdt/debug/core/cdi/ICDIAddressLocation.java

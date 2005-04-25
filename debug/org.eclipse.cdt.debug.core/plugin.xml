@@ -171,6 +171,11 @@
             description="%containerDescription.mapEntry"
             id="org.eclipse.cdt.debug.core.containerType.mapEntry"
             name="%containerName.mapEntry"/>
+      <sourceContainerType
+            class="org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceContainerType"
+            description="%containerDescription.directory"
+            id="org.eclipse.cdt.debug.core.containerType.directory"
+            name="%containerName.directory"/>
    </extension>
 
 </plugin>

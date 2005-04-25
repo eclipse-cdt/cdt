@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -20,7 +21,6 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
-import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
@@ -30,15 +30,15 @@ import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
  */
 public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 
-	private static Set fFilteredTypes;
+	private static Set fSupportedTypes;
 
 	static {
-		fFilteredTypes = new HashSet();
-		fFilteredTypes.add( WorkspaceSourceContainer.TYPE_ID );
-		fFilteredTypes.add( ProjectSourceContainer.TYPE_ID );
-		fFilteredTypes.add( FolderSourceContainer.TYPE_ID );
-		fFilteredTypes.add( DirectorySourceContainer.TYPE_ID );
-		fFilteredTypes.add( MappingSourceContainer.TYPE_ID );
+		fSupportedTypes = new HashSet();
+		fSupportedTypes.add( WorkspaceSourceContainer.TYPE_ID );
+		fSupportedTypes.add( ProjectSourceContainer.TYPE_ID );
+		fSupportedTypes.add( FolderSourceContainer.TYPE_ID );
+		fSupportedTypes.add( CDirectorySourceContainer.TYPE_ID );
+		fSupportedTypes.add( MappingSourceContainer.TYPE_ID );
 	}
 
 	/* (non-Javadoc)
@@ -51,7 +51,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.core.sourcelookup.ISourceContainerType)
 	 */
 	public boolean supportsSourceContainerType( ISourceContainerType type ) {
-		return fFilteredTypes.contains( type.getId() );
+		return fSupportedTypes.contains( type.getId() );
 	}
 
 	public boolean contains( IProject project ) {

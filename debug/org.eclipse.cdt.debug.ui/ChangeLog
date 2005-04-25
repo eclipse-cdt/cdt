@@ -1,3 +1,13 @@
+2005-04-25 Mikhail Khodjaiants
+	Added the new source container type (CDirectorySourceContainer) to provide 
+	the UI support for the subfolders search.
+	* ICDebugHelpContextIds.java
+	+ CDirectorySourceContainerBrowser.java
+	+ CDirectorySourceContainerDialog.java
+	* SourceContainerWorkbenchAdapter.java
+	* SourceLookupUIMessages.properties
+	* plugin.xml
+
 2005-04-22 Mikhail Khodjaiants
 	Initalize the particiapants of the source lookup director when converting 
 	from an old memento.

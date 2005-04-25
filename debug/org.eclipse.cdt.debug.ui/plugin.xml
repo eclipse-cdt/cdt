@@ -1145,6 +1145,11 @@
             adaptableType="org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer"
+            class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>   </extension>
    <extension
          point="org.eclipse.ui.themes">
@@ -1199,6 +1204,11 @@
             containerTypeID="org.eclipse.cdt.debug.core.containerType.mapEntry"
             icon="icons/obj16/mapentry_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapEntry"/>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.CDirectorySourceContainerBrowser"
+            containerTypeID="org.eclipse.cdt.debug.core.containerType.directory"
+            icon="icons/obj16/folder_obj.gif"
+            id="org.eclipse.cdt.debug.ui.containerPresentation.directory"/>
    </extension>
 
 </plugin>

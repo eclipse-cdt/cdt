@@ -1365,6 +1365,10 @@
             class="org.eclipse.cdt.internal.ui.text.contentassist.SearchCompletionContributor"
             id="Search"
             priority="3"/>
+      <contributor
+            class="org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionContributor"
+            id="Help"
+            priority="99"/>
    	</extension>
 
 </plugin>

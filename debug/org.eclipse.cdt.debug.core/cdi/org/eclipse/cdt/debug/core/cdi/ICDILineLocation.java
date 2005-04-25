@@ -9,20 +9,20 @@
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.debug.core.cdi.model;
-
-import org.eclipse.cdt.debug.core.cdi.ICDILocator;
+package org.eclipse.cdt.debug.core.cdi;
 
 /**
  * 
- * Abstract class returning location of breakpoint: file, line, function, address.
+ * Represents a file:line location in the debuggable program.
  * 
  */
-public interface ICDILocationBreakpoint extends ICDIBreakpoint {
+public interface ICDILineLocation extends ICDIFileLocation {
 
 	/**
-	 * Returns the location of the breakpoint.
-	 * @return ICDILocator
+	 * Returns the line number of this location or <code>0</code>
+	 * if the line number is unknown.
+	 *  
+	 * @return the line number of this location
 	 */
-	ICDILocator getLocator();
+	int getLineNumber();
 }

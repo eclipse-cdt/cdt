@@ -11,18 +11,10 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.ICDILocator;
-
 /**
  * 
- * Abstract class returning location of breakpoint: file, line, function, address.
+ * Represents a line breakpoint.
  * 
  */
-public interface ICDILocationBreakpoint extends ICDIBreakpoint {
-
-	/**
-	 * Returns the location of the breakpoint.
-	 * @return ICDILocator
-	 */
-	ICDILocator getLocator();
+public interface ICDILineBreakpoint extends ICDILocationBreakpoint {
 }

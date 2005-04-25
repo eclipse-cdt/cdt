@@ -20,7 +20,7 @@ import java.util.List;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
@@ -182,8 +182,8 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			ISourceLocator locator = ((CDebugTarget)getDebugTarget()).getSourceLocator();
 			if ( locator != null && locator instanceof IAdaptable && ((IAdaptable)locator).getAdapter( ICSourceLocator.class ) != null )
 				return ((ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class )).getLineNumber( this );
-			if ( getCDIStackFrame() != null && getCDIStackFrame().getLocation() != null )
-				return getCDIStackFrame().getLocation().getLineNumber();
+			if ( getCDIStackFrame() != null && getCDIStackFrame().getLocator() != null )
+				return getCDIStackFrame().getLocator().getLineNumber();
 		}
 		return -1;
 	}
@@ -206,16 +206,16 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
 	 */
 	public String getName() throws DebugException {
-		ICDILocation location = getCDIStackFrame().getLocation();
+		ICDILocator locator = getCDIStackFrame().getLocator();
 		String func = ""; //$NON-NLS-1$
 		String file = ""; //$NON-NLS-1$
 		String line = ""; //$NON-NLS-1$
-		if ( location.getFunction() != null && location.getFunction().trim().length() > 0 )
-			func += location.getFunction() + "() "; //$NON-NLS-1$
-		if ( location.getFile() != null && location.getFile().trim().length() > 0 ) {
-			file = location.getFile();
-			if ( location.getLineNumber() != 0 ) {
-				line = NumberFormat.getInstance().format( new Integer( location.getLineNumber() ) );
+		if ( locator.getFunction() != null && locator.getFunction().trim().length() > 0 )
+			func += locator.getFunction() + "() "; //$NON-NLS-1$
+		if ( locator.getFile() != null && locator.getFile().trim().length() > 0 ) {
+			file = locator.getFile();
+			if ( locator.getLineNumber() != 0 ) {
+				line = NumberFormat.getInstance().format( new Integer( locator.getLineNumber() ) );
 			}
 		}
 		else {
@@ -432,8 +432,8 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	protected static boolean equalFrame( ICDIStackFrame frameOne, ICDIStackFrame frameTwo ) {
 		if ( frameOne == null || frameTwo == null )
 			return false;
-		ICDILocation loc1 = frameOne.getLocation();
-		ICDILocation loc2 = frameTwo.getLocation();
+		ICDILocator loc1 = frameOne.getLocator();
+		ICDILocator loc2 = frameTwo.getLocator();
 		if ( loc1 == null || loc2 == null )
 			return false;
 		if ( loc1.getFile() != null && loc1.getFile().length() > 0 && loc2.getFile() != null && loc2.getFile().length() > 0 && loc1.getFile().equals( loc2.getFile() ) ) {
@@ -565,21 +565,21 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public IAddress getAddress() {
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
-		return factory.createAddress( getCDIStackFrame().getLocation().getAddress() );
+		return factory.createAddress( getCDIStackFrame().getLocator().getAddress() );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFile()
 	 */
 	public String getFile() {
-		return getCDIStackFrame().getLocation().getFile();
+		return getCDIStackFrame().getLocator().getFile();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFunction()
 	 */
 	public String getFunction() {
-		return getCDIStackFrame().getLocation().getFunction();
+		return getCDIStackFrame().getLocator().getFunction();
 	}
 
 	/* (non-Javadoc)
@@ -593,7 +593,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFrameLineNumber()
 	 */
 	public int getFrameLineNumber() {
-		return getCDIStackFrame().getLocation().getLineNumber();
+		return getCDIStackFrame().getLocator().getLineNumber();
 	}
 
 	protected synchronized void preserve() {

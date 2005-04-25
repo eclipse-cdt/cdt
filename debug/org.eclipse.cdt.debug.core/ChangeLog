@@ -1,3 +1,25 @@
+2005-04-25 Alain Magloire
+	Changes to the CDI interface.
+	+ cdi/org/eclipse/cdt/debug/core/cdi/ICDIAddressLocation.java
+	+ cdi/org/eclipse/cdt/debug/core/cdi/ICDIFileLocation.java
+	+ cdi/org/eclipse/cdt/debug/core/cdi/ICDIFunctionLocation.java
+	+ cdi/org/eclipse/cdt/debug/core/cdi/ICDILineLocation.java
+	+ cdi/org/eclipse/cdt/debug/core/cdi/ICDLocator.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDLocation.java
+	+ cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIAddressBreakpoint.java
+	+ cdi/org/eclipse/cdt/debug/core/cdi/model/ICDILineBreakpoint.java
+	+ cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIFunctionBreakpoint.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIBreapoint.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDBreakpointManagement.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDILocationBreakpoint.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIStackFrame.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+
+	* src/org/eclipse/cdt/debug/core/CDIDebugModel.java
+	* src/org/eclipse/cdt/debug/internal/core/CBreakpointManager.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CDebugTarget.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CStackFrame.java
+
 2005-04-21 Mikhail Khodjaiants
 	Restoring the session manager.
 	* CDebugCorePlugin.java

@@ -12,7 +12,7 @@
 package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 
 /**
  * 
@@ -30,7 +30,7 @@ public interface ICDIStackFrame extends ICDIExecuteStepReturn, ICDIObject {
 	 *  
 	 * @return the location of the instruction pointer
 	 */
-	ICDILocation getLocation();
+	ICDILocator getLocator();
 	
 	/**
 	 * Returns the visible variables in this stack frame. An empty 

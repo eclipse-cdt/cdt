@@ -9,20 +9,22 @@
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.debug.core.cdi.model;
+package org.eclipse.cdt.debug.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.ICDILocator;
+import java.math.BigInteger;
 
 /**
  * 
- * Abstract class returning location of breakpoint: file, line, function, address.
+ * Represents a line location in the debuggable program.
  * 
  */
-public interface ICDILocationBreakpoint extends ICDIBreakpoint {
+public interface ICDIAddressLocation extends ICDILocation {
 
 	/**
-	 * Returns the location of the breakpoint.
-	 * @return ICDILocator
+	 * Returns the address of this location.
+	 * 
+	 * @return BigInteger - the address of this location
 	 */
-	ICDILocator getLocator();
+	BigInteger getAddress();
+
 }

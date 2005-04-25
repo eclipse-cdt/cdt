@@ -21,7 +21,9 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
  * basic functionality for the location breakpoints, watchpoints,
  * and catchpoints.
  * 
- * @see ICDILocationBreakpoint
+ * @see ICDILineBreakpoint
+ * @see ICDIFunctionBreakpoint
+ * @see ICDIAddressBreakpoint
  * @see ICDIWatchpoint
  * @see ICDICatchpoint
  * 
@@ -62,7 +64,7 @@ public interface ICDIBreakpoint extends ICDIObject {
 	 * @param enabled - whether this breakpoint should be enabled 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	void setEnabled( boolean enabled ) throws CDIException;
+	void setEnabled(boolean enabled) throws CDIException;
 	
 	/**
 	 * Returns the condition of this breakpoint or <code>null</code>
@@ -79,6 +81,6 @@ public interface ICDIBreakpoint extends ICDIObject {
 	 * @param the condition to set
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	void setCondition( ICDICondition condition ) throws CDIException;
+	void setCondition(ICDICondition condition) throws CDIException;
 	
 }

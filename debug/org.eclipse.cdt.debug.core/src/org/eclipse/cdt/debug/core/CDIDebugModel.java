@@ -434,7 +434,7 @@ public class CDIDebugModel {
 	}
 
 	protected static void stopInMain( CDebugTarget target ) throws DebugException {
-		ICDILocation location = target.getCDITarget().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
+		ICDILocation location = target.getCDITarget().createFunctionLocation( "", "main" ); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			target.setInternalTemporaryBreakpoint( location );
 		}

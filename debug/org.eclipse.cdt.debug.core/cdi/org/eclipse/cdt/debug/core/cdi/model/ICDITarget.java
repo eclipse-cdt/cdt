@@ -14,7 +14,10 @@ package org.eclipse.cdt.debug.core.cdi.model;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
+import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 
@@ -221,13 +224,18 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	ICDICondition createCondition(int ignoreCount, String expression, String[] threadIds);
 
 	/**
-	 * Returns a ICDILocation
+	 * Returns a ICDILineLocation
 	 */
-	ICDILocation createLocation(String file, String function, int line);
+	ICDILineLocation createLineLocation(String file, int line);
 
 	/**
-	 * Returns a ICDILocation
+	 * Returns a ICDIFunctionLocation
 	 */
-	ICDILocation createLocation(BigInteger address);
+	ICDIFunctionLocation createFunctionLocation(String file, String function);
+
+	/**
+	 * Returns a ICDIAddressLocation
+	 */
+	ICDIAddressLocation createAddressLocation(BigInteger address);
 
 }

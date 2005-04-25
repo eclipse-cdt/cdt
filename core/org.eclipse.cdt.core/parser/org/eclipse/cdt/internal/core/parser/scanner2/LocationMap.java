@@ -2316,13 +2316,19 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             if (globalOffset == context.context_directive_start
                     && length == context.context_directive_end
                             - context.context_directive_start) {
-                result = createPreprocessorStatement(context);
+                    result = createPreprocessorStatement(context);
+            }
+            else if( context instanceof _MacroExpansion  &&  globalOffset == context.context_directive_start )
+            {
+                _MacroExpansion expansion = (_MacroExpansion)context;
+                if( expansion.definition.getName().length == length )
+                    result = expansion.getName();
             }
 
             // check if a sub node of the macro is the selection // TODO
             // determine how this can be kept in sync with logic in
             // getAllPreprocessorStatements (i.e. 1:1 mapping)
-            if (context instanceof _MacroDefinition) {
+            if (context.contains( globalOffset ) && context instanceof _MacroDefinition) {
                 if (globalOffset == ((_MacroDefinition) context).nameOffset
                         && length == ((_MacroDefinition) context).name.length)
                     result = createASTMacroDefinition(

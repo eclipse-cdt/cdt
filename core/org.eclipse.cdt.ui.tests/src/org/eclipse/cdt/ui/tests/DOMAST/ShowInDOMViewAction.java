@@ -123,7 +123,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 	}
 
 	private class FindDisplayNode implements Runnable {
-		private static final String IAST_NODE_NOT_FOUND = "IASTNode not found for the selection.  Try refreshing the AST View if changes were made to the source."; //$NON-NLS-1$
+		private static final String IAST_NODE_NOT_FOUND = "IASTNode not found for the selection. "; //$NON-NLS-1$
 		private static final String IASTNode_NOT_FOUND = IAST_NODE_NOT_FOUND;
 		int offset = 0;
 		int length = 0;
@@ -155,7 +155,9 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 			if (tu != null && file != null && view instanceof DOMAST) {
 				IASTNode node = tu.selectNodeForLocation(file, offset, length);
 				if (node != null && ((DOMAST)view).getContentProvider() instanceof DOMAST.ViewContentProvider) {
-					((DOMAST.ViewContentProvider)((DOMAST)view).getContentProvider()).findAndSelect(node, true); // use offsets when searching for node equality
+					boolean success = ((DOMAST.ViewContentProvider)((DOMAST)view).getContentProvider()).findAndSelect(node, true); // use offsets when searching for node equality
+                    if( ! success )
+                        showMessage(IASTNode_NOT_FOUND);
 				} else {
 					showMessage(IASTNode_NOT_FOUND);
 				}

@@ -22,9 +22,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
@@ -73,8 +73,8 @@ public class IndexerTypesJob extends IndexerJob {
 				
 				IEntryResult entry = namespaceEntries[i];
 				char[] word = entry.getWord();
-				int firstSlash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, 0);
-				int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
+				int firstSlash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, 0);
+				int slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
 				String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
 				if (name.length() != 0) {
 					String[] enclosingNames = getEnclosingNames(word, slash);
@@ -98,20 +98,20 @@ public class IndexerTypesJob extends IndexerJob {
 				
 				IEntryResult entry = typeEntries[i];
 				char[] word = entry.getWord();
-				int firstSlash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, 0);
+				int firstSlash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, 0);
 				char decodedType = word[firstSlash + 1];
 				int type = getElementType(decodedType);
 				if (type != 0) {
 					firstSlash += 2;
-					int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
+					int slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
 					String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
 					if (name.length() != 0) {  // skip anonymous structs
 						String[] enclosingNames = getEnclosingNames(word, slash);
 						addType(input, project, entry, type, name, enclosingNames, monitor);
 					}
-				} else if (decodedType == IndexerOutput.DERIVED_SUFFIX) {
+				} else if (decodedType == ICIndexStorageConstants.DERIVED_SUFFIX) {
 					firstSlash += 2;
-					int slash = CharOperation.indexOf(IndexerOutput.SEPARATOR, word, firstSlash + 1);
+					int slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
 					String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
 					if (name.length() != 0) {  // skip anonymous structs
 						String[] enclosingNames = getEnclosingNames(word, slash);
@@ -124,15 +124,15 @@ public class IndexerTypesJob extends IndexerJob {
 
 	private int getElementType(char decodedType) {
 		switch (decodedType) {
-			case IndexerOutput.CLASS_SUFFIX :
+			case ICIndexStorageConstants.CLASS_SUFFIX :
 				return ICElement.C_CLASS;
-			case IndexerOutput.STRUCT_SUFFIX :
+			case ICIndexStorageConstants.STRUCT_SUFFIX :
 				return ICElement.C_STRUCT;
-			case IndexerOutput.TYPEDEF_SUFFIX :
+			case ICIndexStorageConstants.TYPEDEF_SUFFIX :
 				return ICElement.C_TYPEDEF;
-			case IndexerOutput.ENUM_SUFFIX :
+			case ICIndexStorageConstants.ENUM_SUFFIX :
 				return ICElement.C_ENUMERATION;
-			case IndexerOutput.UNION_SUFFIX :
+			case ICIndexStorageConstants.UNION_SUFFIX :
 				return ICElement.C_UNION;
 		}
 		return 0;

@@ -18,9 +18,9 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 
@@ -44,7 +44,7 @@ public class IncludePattern extends CSearchPattern {
 	protected void decodeIndexEntry(IEntryResult entryResult) {
 		char[] word = entryResult.getWord();
 	 
-		int firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
+		int firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
 
 		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, -1);
 	}

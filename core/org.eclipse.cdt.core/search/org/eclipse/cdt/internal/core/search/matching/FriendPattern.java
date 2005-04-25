@@ -22,8 +22,8 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 
 /**
  * @author bgheorgh
@@ -57,7 +57,7 @@ public class FriendPattern extends ClassDeclarationPattern {
 	}
 	
 	protected boolean matchIndexEntry() {
-	    if( decodedType != IndexerOutput.FRIEND_SUFFIX ){
+	    if( decodedType != ICIndexStorageConstants.FRIEND_SUFFIX ){
 			return false;
 		}
 	    

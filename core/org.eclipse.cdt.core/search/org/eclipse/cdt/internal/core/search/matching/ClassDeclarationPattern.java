@@ -30,9 +30,9 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.core.resources.IFile;
@@ -164,7 +164,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 
 	
 	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] fileRefs, int[][] offsets, int[][] offsetLengths,IndexInput input, ICSearchScope scope) throws IOException {
-		boolean isClass = decodedType == IndexerOutput.CLASS_SUFFIX;
+		boolean isClass = decodedType == ICIndexStorageConstants.CLASS_SUFFIX;
 		
 		for (int i = 0, max = fileRefs.length; i < max; i++) {
 			IndexedFileEntry file = input.getIndexedFile(fileRefs[i]);
@@ -194,15 +194,15 @@ public class ClassDeclarationPattern extends CSearchPattern {
 					
 					match.parentName = ""; //$NON-NLS-1$
 					
-					if (decodedType == IndexerOutput.CLASS_SUFFIX){
+					if (decodedType == ICIndexStorageConstants.CLASS_SUFFIX){
 						match.type=ICElement.C_CLASS;
-					} else if (decodedType == IndexerOutput.STRUCT_SUFFIX){
+					} else if (decodedType == ICIndexStorageConstants.STRUCT_SUFFIX){
 						match.type=ICElement.C_STRUCT;
-					} else if (decodedType == IndexerOutput.UNION_SUFFIX){
+					} else if (decodedType == ICIndexStorageConstants.UNION_SUFFIX){
 						match.type=ICElement.C_UNION;
-					} else if (decodedType == IndexerOutput.ENUM_SUFFIX) {
+					} else if (decodedType == ICIndexStorageConstants.ENUM_SUFFIX) {
 					    match.type=ICElement.C_ENUMERATION;
-					} else if (decodedType == IndexerOutput.TYPEDEF_SUFFIX){
+					} else if (decodedType == ICIndexStorageConstants.TYPEDEF_SUFFIX){
 						match.type=ICElement.C_TYPEDEF;
 					}
 					                                 
@@ -230,12 +230,12 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		char[] word = entryResult.getWord();
 		int size = word.length;
 		
-		int firstSlash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, 0 );
+		int firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
 		
 		this.decodedType = word[ firstSlash + 1 ];
 		firstSlash += 2;
 		
-		int slash = CharOperation.indexOf( IndexerOutput.SEPARATOR, word, firstSlash + 1 );
+		int slash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1 );
 		
 		this.decodedSimpleName = CharOperation.subarray( word, firstSlash + 1, slash );
 	
@@ -262,30 +262,30 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected boolean matchIndexEntry() {
 		//check type matches
 		if( classKind == null ){
-			if( searchFor == TYPEDEF && decodedType != IndexerOutput.TYPEDEF_SUFFIX ){
+			if( searchFor == TYPEDEF && decodedType != ICIndexStorageConstants.TYPEDEF_SUFFIX ){
 				return false;
 			}
 			//don't match variable entries
-			if( decodedType == IndexerOutput.VAR_SUFFIX ){
+			if( decodedType == ICIndexStorageConstants.VAR_SUFFIX ){
 				return false;
 			}
 		} else if( classKind == ASTClassKind.CLASS ) {
-			if( decodedType != IndexerOutput.CLASS_SUFFIX &&
-				decodedType != IndexerOutput.FWD_CLASS_SUFFIX){
+			if( decodedType != ICIndexStorageConstants.CLASS_SUFFIX &&
+				decodedType != ICIndexStorageConstants.FWD_CLASS_SUFFIX){
 				return false;
 			} 
 		} else if ( classKind == ASTClassKind.STRUCT ) {
-			if( decodedType != IndexerOutput.STRUCT_SUFFIX &&
-				decodedType != IndexerOutput.FWD_STRUCT_SUFFIX){
+			if( decodedType != ICIndexStorageConstants.STRUCT_SUFFIX &&
+				decodedType != ICIndexStorageConstants.FWD_STRUCT_SUFFIX){
 				return false;
 			}
 		} else if ( classKind == ASTClassKind.UNION ) {
-			if( decodedType != IndexerOutput.UNION_SUFFIX &&
-				decodedType != IndexerOutput.FWD_UNION_SUFFIX){
+			if( decodedType != ICIndexStorageConstants.UNION_SUFFIX &&
+				decodedType != ICIndexStorageConstants.FWD_UNION_SUFFIX){
 				return false;
 			}
 		} else if ( classKind == ASTClassKind.ENUM ) {
-			if( decodedType != IndexerOutput.ENUM_SUFFIX ) {
+			if( decodedType != ICIndexStorageConstants.ENUM_SUFFIX ) {
 				return false;
 			}
 		}

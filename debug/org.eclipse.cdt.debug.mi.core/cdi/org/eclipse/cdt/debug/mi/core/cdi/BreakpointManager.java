@@ -19,20 +19,31 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocator;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.AddressBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Exceptionpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.FunctionBreakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.LineBreakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.LocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakAfter;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakCondition;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDisable;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakEnable;
@@ -298,12 +309,22 @@ public class BreakpointManager extends Manager {
 		boolean success = false;
 		try {
 			bpt.setCondition0(newCondition);
-			setLocationBreakpoint(bpt);
+			if (breakpoint instanceof LocationBreakpoint) {
+				setLocationBreakpoint((LocationBreakpoint)bpt);
+			} else if (breakpoint instanceof Watchpoint) {
+				setWatchpoint((Watchpoint)breakpoint);
+			} else {
+				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
+			}
 			success = true;
 		} finally {
 			if (!success) {
 				bpt.setCondition0(oldCondition);
-				setLocationBreakpoint(bpt);
+				if (breakpoint instanceof LocationBreakpoint) {
+					setLocationBreakpoint((LocationBreakpoint)bpt);
+				} else if (breakpoint instanceof Watchpoint) {
+					setWatchpoint((Watchpoint)breakpoint);
+				}
 			}
 		}
 
@@ -375,8 +396,8 @@ public class BreakpointManager extends Manager {
 							allMIBreakpoints[i].getFunction(),
 							allMIBreakpoints[i].getLine(),
 							MIFormat.getBigInteger(allMIBreakpoints[i].getAddress()));
-					
-					Breakpoint newBreakpoint = new Breakpoint(target, type, location, condition);
+					// By default new breakpoint are LineBreakpoint
+					Breakpoint newBreakpoint = new LineBreakpoint(target, type, location, condition);
 					newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 					bList.add(newBreakpoint);
 				}
@@ -520,16 +541,44 @@ public class BreakpointManager extends Manager {
 		return EMPTY_BREAKPOINTS;
 	}
 
-	public ICDILocationBreakpoint setLocationBreakpoint(Target target, int type, ICDILocation location,
-				ICDICondition condition, boolean deferred) throws CDIException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setLineBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDILineLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDILineBreakpoint setLineBreakpoint(Target target, int type, ICDILineLocation location,
+			ICDICondition condition, boolean deferred) throws CDIException {		
+		LineBreakpoint bkpt = new LineBreakpoint(target, type, location, condition);
+		setNewLocationBreakpoint(bkpt, deferred);
+		return bkpt;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setFunctionBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDIFunctionBreakpoint setFunctionBreakpoint(Target target, int type, ICDIFunctionLocation location,
+			ICDICondition condition, boolean deferred) throws CDIException {		
+		FunctionBreakpoint bkpt = new FunctionBreakpoint(target, type, location, condition);
+		setNewLocationBreakpoint(bkpt, deferred);
+		return bkpt;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setAddressBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDIAddressBreakpoint setAddressBreakpoint(Target target, int type, ICDIAddressLocation location,
+			ICDICondition condition, boolean deferred) throws CDIException {		
+		AddressBreakpoint bkpt = new AddressBreakpoint(target, type, location, condition);
+		setNewLocationBreakpoint(bkpt, deferred);
+		return bkpt;
+	}
+
+
+	protected void setNewLocationBreakpoint(LocationBreakpoint bkpt, boolean deferred) throws CDIException {
+		Target target = (Target)bkpt.getTarget();
 		MISession miSession = target.getMISession();
-		Breakpoint bkpt = new Breakpoint(target, type, location, condition);
 		try {
 			setLocationBreakpoint(bkpt);
 			List blist = getBreakpointsList(target);
 			blist.add(bkpt);
-			// Force the reset of the location.
-			bkpt.setLocation(null);
 
 			// Fire a created Event.
 			MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
@@ -553,87 +602,34 @@ public class BreakpointManager extends Manager {
 				throw e;
 			}
 		}
+	}
+
+	public ICDIWatchpoint setWatchpoint(Target target, int type, int watchType, String expression,
+			ICDICondition condition) throws CDIException {
+
+		// HACK: for the IDE,
+		try {
+			// Check if this an address watchpoint, and add a '*'
+			Integer.decode(expression);
+			expression = '*' + expression;
+		} catch (NumberFormatException e) {
+			//
+		}
+		Watchpoint bkpt = new Watchpoint(target, expression, type, watchType, condition);
+
+		setWatchpoint(bkpt);
+		List bList = getBreakpointsList(target);
+		bList.add(bkpt);
+
+		// Fire a created Event.
+		MISession miSession = target.getMISession();
+		MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
+		if (miBreakpoints != null && miBreakpoints.length > 0)
+		miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
 		return bkpt;
 	}
 
-	MIBreakInsert[] createMIBreakInsert(Breakpoint bkpt) throws CDIException {
-		boolean hardware = bkpt.isHardware();
-		boolean temporary = bkpt.isTemporary();
-		String exprCond = null;
-		int ignoreCount = 0;
-		String[] threadIds = null;
-		StringBuffer line = new StringBuffer();
-
-		if (bkpt.getCondition() != null) {
-			ICDICondition condition = bkpt.getCondition();
-			exprCond = condition.getExpression();
-			ignoreCount = condition.getIgnoreCount();
-			threadIds = condition.getThreadIds();
-		}
-
-		if (bkpt.getLocation() != null) {
-			ICDILocation location = bkpt.getLocation();
-			String file = location.getFile();
-			String function = location.getFunction();
-			if (file != null && file.length() > 0) {
-				line.append(file).append(':');
-				if (function != null && function.length() > 0) {
-					// GDB does not seem to accept function arguments when
-					// we use file name:
-					// (gdb) break file.c:Test(int)
-					// Will fail, altought it can accept this
-					// (gdb) break file.c:main
-					// so fall back to the line number or
-					// just the name of the function if lineno is invalid.
-					int paren = function.indexOf('(');
-					if (paren != -1) {
-						int no = location.getLineNumber();
-						if (no <= 0) {
-							String func = function.substring(0, paren);
-							line.append(func);
-						} else {
-							line.append(no);
-						}
-					} else {
-						line.append(function);
-					}
-				} else {
-					line.append(location.getLineNumber());
-				}
-			} else if (function != null && function.length() > 0) {
-				line.append(function);
-			} else if (location.getLineNumber() != 0) {
-				line.append(location.getLineNumber());
-			} else {
-				line.append('*').append(location.getAddress());
-			}
-		}
-
-		MIBreakInsert[] miBreakInserts;
-		MISession miSession = ((Target)bkpt.getTarget()).getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		if (threadIds == null || threadIds.length == 0) {
-			MIBreakInsert bi = factory.createMIBreakInsert(temporary, hardware, exprCond, ignoreCount, line.toString(), 0);
-			miBreakInserts = new MIBreakInsert[] { bi } ;
-		} else {
-			List list = new ArrayList(threadIds.length);
-			for (int i = 0; i < threadIds.length; i++) {
-				String threadId = threadIds[i];
-				int tid = 0;
-				if (threadId != null && threadId.length() > 0) {
-					try {
-						tid = Integer.parseInt(threadId);
-						list.add(factory.createMIBreakInsert(temporary, hardware, exprCond, ignoreCount, line.toString(), tid));
-					} catch (NumberFormatException e) {
-					}
-				}
-			}
-			miBreakInserts = (MIBreakInsert[]) list.toArray(new MIBreakInsert[list.size()]);
-		}
-		return miBreakInserts;
-	}
-
-	public void setLocationBreakpoint (Breakpoint bkpt) throws CDIException {
+	public void setLocationBreakpoint (LocationBreakpoint bkpt) throws CDIException {
 		Target target = (Target)bkpt.getTarget();
 		MISession miSession = target.getMISession();
 		boolean state = suspendInferior(target);
@@ -690,21 +686,11 @@ public class BreakpointManager extends Manager {
 		bkpt.setMIBreakpoints(allPoints);
 	}
 
-	public ICDIWatchpoint setWatchpoint(Target target, int type, int watchType, String expression,
-			ICDICondition condition) throws CDIException {
-
-		boolean access = ( (watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE && 
-						   (watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ );
-		boolean read = ( !((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE) && 
-						  (watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ );
-
-		try {
-			// Check if this an address watchpoint, and add a '*'
-			Integer.decode(expression);
-			expression = '*' + expression;
-		} catch (NumberFormatException e) {
-			//
-		}
+	public void setWatchpoint(Watchpoint watchpoint) throws CDIException {
+		Target target = (Target)watchpoint.getTarget();
+		boolean access = watchpoint.isReadType() && watchpoint.isWriteType();
+		boolean read = ! watchpoint.isWriteType() && watchpoint.isReadType();
+		String expression = watchpoint.getWatchExpression();
 
 		MISession miSession = target.getMISession();
 		boolean state = suspendInferior(target);
@@ -714,29 +700,52 @@ public class BreakpointManager extends Manager {
 		MIBreakpoint[] points = null;
 		try {
 			miSession.postCommand(breakWatch);
-			MIBreakWatchInfo info = breakWatch.getMIBreakWatchInfo();
-			points = info.getMIBreakpoints();
-			if (info == null) {
+			MIBreakWatchInfo winfo = breakWatch.getMIBreakWatchInfo();
+			if (winfo == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
+			points = winfo.getMIBreakpoints();
 			if (points == null || points.length == 0) {
 				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Parsing_Error")); //$NON-NLS-1$
 			}
+
+			int no = points[0].getNumber();
+
+			// Put the condition now.
+			String exprCond = null;
+			int ignoreCount = 0;
+			String[] threadIds = null;
+			StringBuffer line = new StringBuffer();
+
+			ICDICondition condition = watchpoint.getCondition();
+			if (condition != null) {
+				exprCond = condition.getExpression();
+				ignoreCount = condition.getIgnoreCount();
+				threadIds = condition.getThreadIds();
+			}
+			if (exprCond != null && exprCond.length() > 0) {
+				MIBreakCondition breakCondition = factory.createMIBreakCondition(no, exprCond);				
+				miSession.postCommand(breakCondition);
+				MIInfo info = breakCondition.getMIInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+			}
+			if (ignoreCount > 0) {
+				MIBreakAfter breakAfter = factory.createMIBreakAfter(no, ignoreCount);
+				miSession.postCommand(breakAfter);
+				MIInfo info = breakAfter.getMIInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}				
+			}
+			// how to deal with threads ???
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
 			resumeInferior(target, state);
 		}
-		Watchpoint bkpt = new Watchpoint(target, expression, type, watchType, condition);
-		bkpt.setMIBreakpoints(points);
-		List bList = getBreakpointsList(target);
-		bList.add(bkpt);
-
-		// Fire a created Event.
-		MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
-		if (miBreakpoints != null && miBreakpoints.length > 0)
-		miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
-		return bkpt;
+		watchpoint.setMIBreakpoints(points);
 	}
 
 	Breakpoint[] exceptionBps = new Breakpoint[2];
@@ -758,8 +767,8 @@ public class BreakpointManager extends Manager {
 			synchronized(exceptionBps) {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[EXCEPTION_THROW_IDX] == null) {
-					Location location = new Location(null, EXCEPTION_FUNCS[id], 0);
-					Breakpoint bp = new Breakpoint(target, ICDIBreakpoint.REGULAR, location, null);
+					Location location = new Location(null, EXCEPTION_FUNCS[id]);
+					LineBreakpoint bp = new LineBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					miBreakpoints = bp.getMIBreakpoints();
@@ -770,8 +779,8 @@ public class BreakpointManager extends Manager {
 			synchronized(exceptionBps) {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[id] == null) {
-					Location location = new Location(null, EXCEPTION_FUNCS[id], 0);
-					Breakpoint bp = new Breakpoint(target, ICDIBreakpoint.REGULAR, location, null);
+					Location location = new Location(null, EXCEPTION_FUNCS[id]);
+					LineBreakpoint bp = new LineBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					if (miBreakpoints != null) {
@@ -786,7 +795,7 @@ public class BreakpointManager extends Manager {
 			}
 		}
 
-		Exceptionpoint excp = new Exceptionpoint(target, clazz, stopOnThrow, stopOnCatch);
+		Exceptionpoint excp = new Exceptionpoint(target, clazz, stopOnThrow, stopOnCatch, null);
 		if (miBreakpoints != null && miBreakpoints.length > 0) {
 			excp.setMIBreakpoints(miBreakpoints);
 			List blist = getBreakpointsList(target);
@@ -803,12 +812,102 @@ public class BreakpointManager extends Manager {
 		return new Condition(ignoreCount, expression, tids);
 	}
 
-	public Location createLocation(String file, String function, int line) {
-		return new Location(file, function, line);
+	public Location createLineLocation(String file, int line) {
+		return new Location(file, line);
 	}
 	
-	public Location createLocation(BigInteger address) {
+	public Location createFunctionLocation(String file, String function) {
+		return new Location(file, function);
+	}
+
+	public Location createAddressLocation(BigInteger address) {
 		return new Location(address);
 	}
 
+	MIBreakInsert[] createMIBreakInsert(LocationBreakpoint bkpt) throws CDIException {
+		boolean hardware = bkpt.isHardware();
+		boolean temporary = bkpt.isTemporary();
+		String exprCond = null;
+		int ignoreCount = 0;
+		String[] threadIds = null;
+		StringBuffer line = new StringBuffer();
+
+		if (bkpt.getCondition() != null) {
+			ICDICondition condition = bkpt.getCondition();
+			exprCond = condition.getExpression();
+			ignoreCount = condition.getIgnoreCount();
+			threadIds = condition.getThreadIds();
+		}
+
+		if (bkpt.getLocator() != null) {
+			ICDILocator locator = bkpt.getLocator();
+			String file = locator.getFile();
+			String function = locator.getFunction();
+			int no = locator.getLineNumber();
+			if (bkpt instanceof LineBreakpoint) {
+				if (file != null && file.length() > 0) {
+					line.append(file).append(':');
+				}
+				line.append(no);				
+			} else if (bkpt instanceof FunctionBreakpoint) {
+				if (file != null && file.length() > 0) {
+					line.append(file).append(':');
+				}
+				if (function != null && function.length() > 0) {
+					// GDB does not seem to accept function arguments when
+					// we use file name:
+					// (gdb) break file.c:Test(int)
+					// Will fail, altought it can accept this
+					// (gdb) break file.c:main
+					// so fall back to the line number or
+					// just the name of the function if lineno is invalid.
+					int paren = function.indexOf('(');
+					if (paren != -1) {
+						if (no <= 0) {
+							String func = function.substring(0, paren);
+							line.append(func);
+						} else {
+							line.append(no);
+						}
+					} else {
+						line.append(function);
+					}
+				} else {
+					// ???
+					line.append(no);
+				}
+			} else if (bkpt instanceof AddressBreakpoint) {
+				line.append('*').append(locator.getAddress());				
+			} else {
+				// ???
+				if (file != null && file.length() > 0) {
+					line.append(file).append(':');
+				}
+				line.append(no);
+			}
+		}
+
+		MIBreakInsert[] miBreakInserts;
+		MISession miSession = ((Target)bkpt.getTarget()).getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		if (threadIds == null || threadIds.length == 0) {
+			MIBreakInsert bi = factory.createMIBreakInsert(temporary, hardware, exprCond, ignoreCount, line.toString(), 0);
+			miBreakInserts = new MIBreakInsert[] { bi } ;
+		} else {
+			List list = new ArrayList(threadIds.length);
+			for (int i = 0; i < threadIds.length; i++) {
+				String threadId = threadIds[i];
+				int tid = 0;
+				if (threadId != null && threadId.length() > 0) {
+					try {
+						tid = Integer.parseInt(threadId);
+						list.add(factory.createMIBreakInsert(temporary, hardware, exprCond, ignoreCount, line.toString(), tid));
+					} catch (NumberFormatException e) {
+					}
+				}
+			}
+			miBreakInserts = (MIBreakInsert[]) list.toArray(new MIBreakInsert[list.size()]);
+		}
+		return miBreakInserts;
+	}
 }

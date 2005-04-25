@@ -23,7 +23,7 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint {
 	String what;
 
 	public Watchpoint(Target target, String expression, int type, int wType, ICDICondition cond) {
-		super(target, type, null, cond); //$NON-NLS-1$
+		super(target, type, cond);
 		watchType = wType;
 		what = expression;
 	}

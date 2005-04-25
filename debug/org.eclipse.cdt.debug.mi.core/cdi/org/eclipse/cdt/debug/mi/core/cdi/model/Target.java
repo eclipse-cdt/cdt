@@ -15,13 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
+import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
-import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
@@ -490,13 +495,31 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public void stepUntil(ICDILocation location) throws CDIException {
 		CommandFactory factory = miSession.getCommandFactory();
-		String loc = ""; //$NON-NLS-1$
-		if (location.getFile() != null && location.getFile().length() > 0) {
-			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
-		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
-			loc = location.getFunction();
-		} else if ( ! location.getAddress().equals(BigInteger.ZERO) ) {
-			loc = "*" + location.getAddress().toString(); //$NON-NLS-1$
+		String loc = null;
+		if (location instanceof ICDILineLocation) {
+			ICDILineLocation lineLocation = (ICDILineLocation)location;
+			if (lineLocation.getFile() != null && lineLocation.getFile().length() > 0) {
+				loc = lineLocation.getFile() + ":" + lineLocation.getLineNumber(); //$NON-NLS-1$
+			}
+		} else if (location instanceof ICDIFunctionLocation) {
+			ICDIFunctionLocation funcLocation = (ICDIFunctionLocation)location;
+			if (funcLocation.getFunction() != null && funcLocation.getFunction().length() > 0) {
+				loc = funcLocation.getFunction();
+			}
+			if (funcLocation.getFile() != null && funcLocation.getFile().length() > 0) {
+				if (loc != null) {
+					loc = funcLocation.getFile() + ":" + loc; //$NON-NLS-1$
+				}
+			}
+		} else if (location instanceof ICDIAddressLocation) {
+			ICDIAddressLocation addrLocation = (ICDIAddressLocation) location;
+			if (! addrLocation.getAddress().equals(BigInteger.ZERO)) {
+				loc = "*0x" + addrLocation.getAddress().toString(16); //$NON-NLS-1$
+			}
+		}
+		// Throw an exception we do know where to go
+		if (loc == null) {
+			throw new CDIException (CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
 		}
 		MIExecUntil until = factory.createMIExecUntil(loc);
 		try {
@@ -601,14 +624,33 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public void jump(ICDILocation location) throws CDIException {
 		CommandFactory factory = miSession.getCommandFactory();
-		String loc = ""; //$NON-NLS-1$
-		if (location.getFile() != null && location.getFile().length() > 0) {
-			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
-		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
-			loc = location.getFunction();
-		} else if (! location.getAddress().equals(BigInteger.ZERO)) {
-			loc = "*" + location.getAddress().toString(); //$NON-NLS-1$
+		String loc = null;
+		if (location instanceof ICDILineLocation) {
+			ICDILineLocation lineLocation = (ICDILineLocation)location;
+			if (lineLocation.getFile() != null && lineLocation.getFile().length() > 0) {
+				loc = lineLocation.getFile() + ":" + lineLocation.getLineNumber(); //$NON-NLS-1$
+			}
+		} else if (location instanceof ICDIFunctionLocation) {
+			ICDIFunctionLocation funcLocation = (ICDIFunctionLocation)location;
+			if (funcLocation.getFunction() != null && funcLocation.getFunction().length() > 0) {
+				loc = funcLocation.getFunction();
+			}
+			if (funcLocation.getFile() != null && funcLocation.getFile().length() > 0) {
+				if (loc != null) {
+					loc = funcLocation.getFile() + ":" + loc; //$NON-NLS-1$
+				}
+			}
+		} else if (location instanceof ICDIAddressLocation) {
+			ICDIAddressLocation addrLocation = (ICDIAddressLocation) location;
+			if (! addrLocation.getAddress().equals(BigInteger.ZERO)) {
+				loc = "*0x" + addrLocation.getAddress().toString(16); //$NON-NLS-1$
+			}
 		}
+		// Throw an exception we do know where to go
+		if (loc == null) {
+			throw new CDIException (CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
+		}
+
 		MIJump jump = factory.createMIJump(loc);
 		try {
 			miSession.postCommand(jump);
@@ -729,41 +771,77 @@ public class Target extends SessionObject implements ICDITarget {
 	// Implementaton of ICDIBreapointManagement.
 
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setLineBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDILineLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDILineBreakpoint setLineBreakpoint(int type, ICDILineLocation location,
+			ICDICondition condition, boolean deferred) throws CDIException {		
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setLineBreakpoint(this, type, location, condition, deferred);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setFunctionBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDIFunctionBreakpoint setFunctionBreakpoint(int type, ICDIFunctionLocation location,
+			ICDICondition condition, boolean deferred) throws CDIException {		
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setFunctionBreakpoint(this, type, location, condition, deferred);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setAddressBreakpoint(int, org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDIAddressBreakpoint setAddressBreakpoint(int type, ICDIAddressLocation location,
+			ICDICondition condition, boolean deferred) throws CDIException {		
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setAddressBreakpoint(this, type, location, condition, deferred);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setWatchpoint(int, int, java.lang.String, org.eclipse.cdt.debug.core.cdi.ICDICondition)
+	 */
+	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
+		ICDICondition condition) throws CDIException {
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.setWatchpoint(this, type, watchType, expression, condition);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setExceptionBreakpoint(java.lang.String, boolean, boolean)
+	 */
+	public ICDIExceptionpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch)
+		throws CDIException {
+		throw new CDIException(CdiResources.getString("cdi.Common.Not_implemented")); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#getBreakpoints()
+	 */
 	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.getBreakpoints(this);
 	}
 
-	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
-			ICDICondition condition, boolean deferred) throws CDIException {		
-		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setLocationBreakpoint(this, type, location, condition, deferred);
-	}
-
-	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
-			ICDICondition condition) throws CDIException {
-		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setWatchpoint(this, type, watchType, expression, condition);
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#deleteBreakpoints(org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint[])
+	 */
 	public void deleteBreakpoints(ICDIBreakpoint[] breakpoints) throws CDIException {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		bMgr.deleteBreakpoints(this, breakpoints);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#deleteAllBreakpoints()
+	 */
 	public void deleteAllBreakpoints() throws CDIException {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		bMgr.deleteAllBreakpoints(this);		
 	}
 
-	public ICDIExceptionpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch)
-	throws CDIException {
-		throw new CDIException(CdiResources.getString("cdi.Common.Not_implemented")); //$NON-NLS-1$
-	}
-
-	 /* 
-	  * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String, String)
-	  */
+	/* 
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String, String)
+	 */
 	public ICDICondition createCondition(int ignoreCount, String expression) {
 		return createCondition(ignoreCount, expression, null);
 	}
@@ -777,19 +855,27 @@ public class Target extends SessionObject implements ICDITarget {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLocation(java.lang.String, java.lang.String, int)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLineLocation(java.lang.String, int)
 	 */
-	public ICDILocation createLocation(String file, String function, int line) {
+	public ICDILineLocation createLineLocation(String file, int line) {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.createLocation(file, function, line);
+		return bMgr.createLineLocation(file, line);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createFunctionLocation(java.lang.String, java.lang.String)
+	 */
+	public ICDIFunctionLocation createFunctionLocation(String file, String function) {
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		return bMgr.createFunctionLocation(file, function);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLocation(long)
 	 */
-	public ICDILocation createLocation(BigInteger address) {
+	public ICDIAddressLocation createAddressLocation(BigInteger address) {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.createLocation(address);
+		return bMgr.createAddressLocation(address);
 	}
 
 	/* (non-Javadoc)

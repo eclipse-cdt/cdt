@@ -12,89 +12,144 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.math.BigInteger;
 
+import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIFileLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 
 /**
  */
-public class Location implements ICDILocation {
+public class Location implements ICDIFileLocation, ICDILineLocation, ICDIFunctionLocation, ICDIAddressLocation {
 
-	BigInteger addr;
-	String file = ""; //$NON-NLS-1$
-	String function = ""; //$NON-NLS-1$
-	int line;
+	BigInteger fAddress = null;
+	String fFile = null;
+	String fFunction = null;
+	int fLine;
 
-	public Location(String f, String fnct, int l) {
-		this(f, fnct, l, null);
+	/**
+	 * File location
+	 * @param file
+	 */
+	public Location(String file) {
+		this(file, null, 0, null);
 	}
 
-	public Location(String f, String fnct, int l, BigInteger a) {
-		if (f != null)
-			file = f;
-		if (fnct != null)
-			function = fnct;
-		line = l;
-		addr = a;  
+	/**
+	 * File:function location
+	 * @param file
+	 * @param function
+	 */
+	public Location(String file, String function) {
+		this(file, function, 0, null);
 	}
 
+	/**
+	 * File:line location
+	 * @param file
+	 * @param line
+	 */
+	public Location(String file, int line) {
+		this (file, null, line, null);
+	}
+
+	/**
+	 * Address location
+	 * @param address
+	 */
 	public Location(BigInteger address) {
-		addr = address;
+		this (null, null, 0, address);
+	}
+
+	protected Location(String file, String function, int line, BigInteger address) {
+		fFile = file;
+		fFunction = function;
+		fLine = line;
+		fAddress = address;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getAddress()
 	 */
 	public BigInteger getAddress() {
-		return addr;
+		return fAddress;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getFile()
 	 */
 	public String getFile() {
-		return file;
+		return fFile;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getFunction()
 	 */
 	public String getFunction() {
-		return function;
+		return fFunction;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getLineNumber()
 	 */
 	public int getLineNumber() {
-		return line;
+		return fLine;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#equals(ICDILocation)
 	 */
 	public boolean equals(ICDILocation location) {
-		String ofile = location.getFile();
-		if (file.length() > 0 && ofile.length() > 0) {
-			if (file.equals(ofile)) {
-				int oline = location.getLineNumber();
-				if (line != 0 && oline != 0) {
-					if (line == oline) {
-						return true;
-					}
+		if (location == this) {
+			return true;
+		}
+		if (location instanceof ICDILineLocation) {
+			ICDILineLocation lineLocation = (ICDILineLocation)location;
+			String oFile = lineLocation.getFile();
+			if (oFile != null && oFile.length() > 0 && fFile != null && fFile.length() > 0 && oFile.equals(fFile)) {
+				if (lineLocation.getLineNumber() == fLine) {
+					return true;
 				}
-				String ofunction = location.getFunction();
-				if (function.length() > 0 && ofunction.length() > 0) {
-					if (function.equals(ofunction)) {
-						return true;
-					}
+			} else if ((fFile == null || fFile.length() == 0) && (oFile == null || oFile.length() == 0)) {
+				if (lineLocation.getLineNumber() == fLine) {
+					return true;
 				}
 			}
-		}
-		BigInteger oaddr = location.getAddress();
-		if (addr != null && oaddr != null) { //IPF_TODO: check ZERO addresses
-			if (addr.equals(oaddr)) {
+		} else if (location instanceof ICDIFunctionLocation) {
+			ICDIFunctionLocation funcLocation = (ICDIFunctionLocation)location;
+			String oFile = funcLocation.getFile();
+			String oFunction = funcLocation.getFunction();
+			if (oFile != null && oFile.length() > 0 && fFile != null && fFile.length() > 0 && oFile.equals(fFile)) {
+				if (oFunction != null && oFunction.length() > 0 && fFunction != null && fFunction.length() > 0 && oFunction.equals(fFunction)) {
+					return true;
+				} else if ((oFunction == null || oFunction.length() == 0) && (fFunction == null || fFunction.length() == 0)) {
+					return true;
+				}
+			} else if ((fFile == null || fFile.length() == 0) && (oFile == null || oFile.length() == 0)) {
+				if (oFunction != null && oFunction.length() > 0 && fFunction != null && fFunction.length() > 0 && oFunction.equals(fFunction)) {
+					return true;
+				} else if ((oFunction == null || oFunction.length() == 0) && (fFunction == null || fFunction.length() == 0)) {
+					return true;
+				}
+			}
+		} else if (location instanceof ICDIAddressLocation) {
+			ICDIAddressLocation addrLocation = (ICDIAddressLocation)location;
+			BigInteger oAddr = addrLocation.getAddress();
+			if (oAddr != null && oAddr.equals(fAddress)) {
+				return true;
+			} else if (oAddr == null && fAddress == null) {
 				return true;
 			}
+		} else if (location instanceof ICDIFileLocation) {
+			ICDIFileLocation fileLocation = (ICDIFileLocation)location;
+			String oFile = fileLocation.getFile();
+			if (oFile != null && oFile.length() > 0 && fFile != null && fFile.length() > 0 && oFile.equals(fFile)) {
+				return true;
+			} else if ((fFile == null || fFile.length() == 0) && (oFile == null || oFile.length() == 0)) {
+				return true;
+			}			
 		}
-		return super.equals(location);
+		return false;
 	}
 
 }

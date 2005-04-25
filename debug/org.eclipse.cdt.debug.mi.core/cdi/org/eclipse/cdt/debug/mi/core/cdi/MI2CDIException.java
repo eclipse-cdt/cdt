@@ -18,6 +18,11 @@ import org.eclipse.cdt.debug.mi.core.MIException;
  */
 public class MI2CDIException extends CDIException {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public MI2CDIException(MIException e) {
 		super(e.getMessage(), e.getLogMessage());
 	}

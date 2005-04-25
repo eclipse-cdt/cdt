@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 
@@ -25,8 +26,8 @@ public class Exceptionpoint extends Breakpoint implements ICDIExceptionpoint {
 
 	/**
 	 */
-	public Exceptionpoint(Target target, String clazz, boolean stopOnThrow, boolean stopOnCatch) {
-		super(target, ICDIBreakpoint.REGULAR, null, null);
+	public Exceptionpoint(Target target, String clazz, boolean stopOnThrow, boolean stopOnCatch, ICDICondition cond) {
+		super(target, ICDIBreakpoint.REGULAR, cond);
 		fClazz = clazz;
 		fStopOnThrow = stopOnThrow;
 		fStopOnCatch = stopOnCatch;
@@ -35,14 +36,6 @@ public class Exceptionpoint extends Breakpoint implements ICDIExceptionpoint {
 	public String getExceptionName() {
 		return fClazz;
 	}
-
-	/**
-	 * @param target
-	 * @param miBreak
-	 */
-//	public Exceptionpoint(Target target, MIBreakpoint miBreak) {
-//		super(target, miBreak);
-//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint#isStopOnThrow()

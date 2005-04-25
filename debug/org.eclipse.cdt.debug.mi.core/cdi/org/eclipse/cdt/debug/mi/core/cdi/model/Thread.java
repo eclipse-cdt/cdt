@@ -17,14 +17,12 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorageDescriptor;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
@@ -490,28 +488,6 @@ public class Thread extends CObject implements ICDIThread {
 			}
 		}
 		return (ICDIBreakpoint[]) list.toArray(new ICDIBreakpoint[list.size()]);
-	}
-
-	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
-			ICDICondition condition, boolean deferred) throws CDIException {
-		Target target = (Target)getTarget();
-		String[] threadIds = new String[] { Integer.toString(getId()) };
-		int icount = 0;
-		String exp = new String();
-		if (condition != null) {
-			icount = condition.getIgnoreCount();
-			exp = condition.getExpression();
-			String[] tids = condition.getThreadIds();
-			if (tids != null && tids.length > 0) {
-				String[] temp = new String[threadIds.length + tids.length];
-				System.arraycopy(threadIds, 0, temp, 0, threadIds.length);
-				System.arraycopy(tids, 0, temp, threadIds.length, tids.length);
-				threadIds = temp;
-			}
-		}
-		BreakpointManager bMgr = ((Session)target.getSession()).getBreakpointManager();
-		ICDICondition newCondition = bMgr.createCondition(icount, exp, threadIds);
-		return target.setLocationBreakpoint(type, location, newCondition, deferred);
 	}
 
 	/* (non-Javadoc)

@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
@@ -23,9 +23,9 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
+import org.eclipse.cdt.debug.mi.core.cdi.Locator;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
-import org.eclipse.cdt.debug.mi.core.cdi.Location;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
@@ -42,7 +42,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	int level;
 	ICDIArgumentDescriptor[] argDescs;
 	ICDILocalVariableDescriptor[] localDescs;
-	Location fLocation;
+	Locator fLocator;
 
 	/*
  	 * 
@@ -112,22 +112,22 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocation()
 	 */
-	public ICDILocation getLocation() {
+	public ICDILocator getLocator() {
 		BigInteger addr = BigInteger.ZERO;
 		if (frame != null) {
-			if (fLocation == null) {
+			if (fLocator == null) {
 				String a = frame.getAddress();
 				if (a != null) {
 					addr = MIFormat.getBigInteger(a);
 				}
-				fLocation = new Location(frame.getFile(), 
+				fLocator = new Locator(frame.getFile(), 
 					            frame.getFunction(),
 					            frame.getLine(),  
 								addr);
 			}
-			return fLocation;
+			return fLocator;
 		}
-		return new Location("", "", 0, addr); //$NON-NLS-1$ //$NON-NLS-2$
+		return new Locator("", "", 0, addr); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			return  cthread != null &&
 				cthread.equals(stack.getThread()) &&
 				getLevel() == stack.getLevel() &&
-				getLocation().equals(stack.getLocation());
+				getLocator().equals(stack.getLocator());
 		}
 		return super.equals(stackframe);
 	}

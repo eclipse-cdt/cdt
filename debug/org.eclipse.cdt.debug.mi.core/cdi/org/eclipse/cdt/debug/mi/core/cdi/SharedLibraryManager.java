@@ -27,8 +27,10 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.LocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
@@ -108,7 +110,13 @@ public class SharedLibraryManager extends Manager {
 					Breakpoint bkpt = (Breakpoint)bpoints[i];
 					try {
 						boolean enable = bkpt.isEnabled();
-						bpMgr.setLocationBreakpoint(bkpt);
+						if (bkpt instanceof LocationBreakpoint) {
+							bpMgr.setLocationBreakpoint((LocationBreakpoint)bkpt);
+						} else if (bkpt instanceof Watchpoint) {
+							bpMgr.setWatchpoint((Watchpoint)bkpt);
+						} else {
+							throw new CDIException();
+						}
 						bpMgr.deleteFromDeferredList(bkpt);
 						bpMgr.addToBreakpointList(bkpt);
 						// If the breakpoint was disable in the IDE

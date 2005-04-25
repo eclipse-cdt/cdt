@@ -1,3 +1,22 @@
+2005-04-25 Alain Magloire
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManger.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/CdiResources.properties
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Location.java
+	+ cdi/org/eclipse/cdt/debug/mi/core/cdi/Locator.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/MI2CDIException.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java
+
+	+ cdi/org/eclipse/cdt/debug/mi/core/cdi/model/AddressBreakpoint.java
+	+ cdi/org/eclipse/cdt/debug/mi/core/cdi/model/FunctionBreakpoint.java
+	+ cdi/org/eclipse/cdt/debug/mi/core/cdi/model/LineBreakpoint.java
+	+ cdi/org/eclipse/cdt/debug/mi/core/cdi/model/LocationBreakpoint.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Exceptionpoint.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/StackFrame.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Threa.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Watchpoint.java
+
 2005-04-05 Alain Magloire
 	PR 90090
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java

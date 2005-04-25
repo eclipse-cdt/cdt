@@ -1361,6 +1361,10 @@
             class="org.eclipse.cdt.internal.ui.text.template.TemplateEngine"
             id="CodeTemplates"
             priority="2"/>
+      <contributor
+            class="org.eclipse.cdt.internal.ui.text.contentassist.SearchCompletionContributor"
+            id="Search"
+            priority="3"/>
    	</extension>
 
 </plugin>

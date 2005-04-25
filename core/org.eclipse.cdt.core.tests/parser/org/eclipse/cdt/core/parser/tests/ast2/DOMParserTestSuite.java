@@ -30,7 +30,6 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( AST2TemplateTests.class );
 		suite.addTestSuite( QuickParser2Tests.class );
 		suite.addTestSuite( CompleteParser2Tests.class );
-//		suite.addTestSuite( DOMScannerTests.class );
 		suite.addTestSuite( DOMLocationTests.class );
         suite.addTestSuite( DOMLocationMacroTests.class );
 		suite.addTest( DOMLocationInclusionTests.suite() );

@@ -248,10 +248,11 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertEquals( flat.getNodeOffset() , code.indexOf( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));")); //$NON-NLS-1$
             assertEquals( flat.getNodeLength(), "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));".length() ); //$NON-NLS-1$
             
-            IASTNodeLocation [] fullyMonty = tu.getNodeLocations();
-            IASTFileLocation flatMonty = tu.flattenLocationsToFile( fullyMonty );
-            assertEquals( flatMonty.getNodeOffset(), 0 );
-//            assertEquals( flatMonty.getNodeLength(), code.length() );
+            IASTDeclarator d = memchr.getDeclarators()[0];
+            final IASTNodeLocation[] declaratorLocations = d.getNodeLocations();
+            IASTFileLocation f = tu.flattenLocationsToFile( declaratorLocations );
+            assertEquals( code.indexOf( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t))"), f.getNodeOffset() ); //$NON-NLS-1$
+            assertEquals( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t))".length(), f.getNodeLength() ); //$NON-NLS-1$
         }        
     }
     
@@ -299,4 +300,26 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         }
     }
     
+    
+    public void testBug90978() throws Exception {
+        StringBuffer buffer = new StringBuffer( "#define MACRO mm\n"); //$NON-NLS-1$
+        buffer.append( "int MACRO;\n"); //$NON-NLS-1$
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p);
+            IASTPreprocessorObjectStyleMacroDefinition MACRO = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
+            IASTName macro_name = MACRO.getName();
+            IMacroBinding binding = (IMacroBinding) macro_name.resolveBinding();
+            IASTName [] references = tu.getReferences( binding );
+            assertEquals( references.length, 1 );
+            IASTName reference = references[0];
+            IASTNodeLocation [] nodeLocations = reference.getNodeLocations();
+            assertEquals( nodeLocations.length, 1 );
+            assertTrue( nodeLocations[0] instanceof IASTFileLocation );
+            IASTFileLocation loc = (IASTFileLocation) nodeLocations[0];
+            assertEquals( code.indexOf( "int MACRO") + "int ".length(), loc.getNodeOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
+            assertEquals( "MACRO".length(), loc.getNodeLength() ); //$NON-NLS-1$
+        }
+    }
 }

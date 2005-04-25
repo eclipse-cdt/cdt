@@ -979,8 +979,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
         public boolean containsInDirective(int offset, int length) {
+            if( length > 0 && offset == context_directive_end )
+                return false;
             if (offset >= context_directive_start
-                    && offset + length - 1<= context_directive_end)
+                    && offset + length - 1 <= context_directive_end )
                 return true;
             return false;
         }
@@ -1222,7 +1224,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public IASTPreprocessorMacroDefinition astNode;
 
         private IMacroBinding bind;
-
+        
         public char[] getName() {
             return name;
         }
@@ -1316,7 +1318,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 expansionName = new ASTMacroName( definition.getName() );
                 ((ScannerASTNode)expansionName).setParent( rootNode );
                 ((ScannerASTNode)expansionName).setPropertyInParent( IASTTranslationUnit.EXPANSION_NAME );
-                ((ScannerASTNode)expansionName).setOffsetAndLength( context_directive_start, context_directive_end - context_directive_start);
+                ((ScannerASTNode)expansionName).setOffsetAndLength( context_directive_start, context_directive_end - context_directive_start + 1);
             }
             return expansionName;
         }
@@ -1732,6 +1734,18 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
         if (c instanceof _MacroExpansion) {
             _MacroExpansion expansion = (_MacroExpansion) c;
+            //first check to see if we are in the directive rather than the expansion
+            if( c.containsInDirective( offset, length ) )
+            {
+                _CompositeContext parent = c.parent;
+                while (!(parent instanceof _CompositeFileContext))
+                    parent = c.parent;
+                _CompositeFileContext fc = (_CompositeFileContext) parent;
+                return new FileLocation(fc.reader.filename, reconcileOffset(fc,
+                        c, offset), length);                
+            }
+            
+            
             IASTNodeLocation[] locations = createSoleLocationArray(c.parent,
                     c.context_directive_start, c.context_directive_end
                             - c.context_directive_start + 1);

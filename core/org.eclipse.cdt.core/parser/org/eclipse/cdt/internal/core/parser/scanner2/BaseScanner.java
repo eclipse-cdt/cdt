@@ -2064,8 +2064,8 @@ abstract class BaseScanner implements IScanner {
                 char[] expText = expMacro.expansion;
                 if (expText.length > 0)
                     pushContext(expText, new MacroData(
-                            bufferPos[bufferStackPos] - expMacro.name.length
-                                    + 1, bufferPos[bufferStackPos], expMacro));
+                            bufferPos[bufferStackPos] - expMacro.name.length + 1, 
+                            bufferPos[bufferStackPos], expMacro));
             } else if (expObject instanceof DynamicStyleMacro) {
                 DynamicStyleMacro expMacro = (DynamicStyleMacro) expObject;
                 char[] expText = expMacro.execute();

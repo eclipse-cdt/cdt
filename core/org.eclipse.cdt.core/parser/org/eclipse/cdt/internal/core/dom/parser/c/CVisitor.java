@@ -815,14 +815,22 @@ public class CVisitor {
 		} else if( node instanceof IASTIdExpression ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-                return (IBinding) findBinding( blockItem, ((IASTIdExpression)node).getName(), bits );
+				IBinding binding = (IBinding) findBinding( blockItem, ((IASTIdExpression)node).getName(), bits );
+				if( binding instanceof IType ){
+					return new ProblemBinding( node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray() );
+				}
+                return binding; 
             } catch ( DOMException e ) {
                 return null;
             }
 		} else if( node instanceof ICASTTypedefNameSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-                return (IBinding) findBinding( blockItem, ((ICASTTypedefNameSpecifier)node).getName(), bits );
+				IBinding binding = (IBinding) findBinding( blockItem, ((ICASTTypedefNameSpecifier)node).getName(), bits );
+                if( binding instanceof IType )
+					return binding;
+                else if( binding != null )
+					return new ProblemBinding( node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray() );
             } catch ( DOMException e ) {
                 return null;
             }
@@ -848,9 +856,16 @@ public class CVisitor {
 				name = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
 			} else if( declSpec instanceof ICASTCompositeTypeSpecifier ){
 				name = ((ICASTCompositeTypeSpecifier)declSpec).getName();
+			} else if( declSpec instanceof ICASTTypedefNameSpecifier ){
+				name = ((ICASTTypedefNameSpecifier)declSpec).getName();
 			}
 			if( name != null ){
-				return name.resolveBinding();
+				IBinding binding = name.resolveBinding();
+				if( binding instanceof IType )
+					return binding;
+                else if( binding != null )
+					return new ProblemBinding( node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray() );
+				return null;
 			}
 		} else if( node instanceof ICASTFieldDesignator ) {
 			IASTNode blockItem = getContainingBlockItem( node );

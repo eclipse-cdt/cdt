@@ -3067,4 +3067,18 @@ public class AST2Tests extends AST2BaseTest {
         assertSame( bs[1], S1 );
         assertSame( bs[2], S4 );
     }
+	
+	public void test92791() throws Exception {
+		IASTTranslationUnit tu = parse( "int x, y; x * y;", ParserLanguage.C );  //$NON-NLS-1$
+        CNameCollector col = new CNameCollector();
+        tu.accept( col );
+		
+		assertTrue( col.getName(2).resolveBinding() instanceof IProblemBinding );
+		
+		tu = parse( "void f() { typedef int x; int y; x * y; }", ParserLanguage.C );  //$NON-NLS-1$
+        col = new CNameCollector();
+        tu.accept( col );
+		
+		assertTrue( col.getName(3).resolveBinding() instanceof IProblemBinding );
+	}
 }

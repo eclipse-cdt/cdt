@@ -13,7 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -169,13 +168,15 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	private IASTName [] declarations;
 	
 	public CPPClassType( IASTName name ){
-	    ASTNodeProperty prop = name.getPropertyInParent();
 	    if( name instanceof ICPPASTQualifiedName ){
 	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 	        name = ns[ ns.length - 1 ];
 	    }
+	    IASTNode parent = name.getParent();
+	    while( parent instanceof IASTName )
+	        parent = parent.getParent();
 	    
-	    if( prop == IASTCompositeTypeSpecifier.TYPE_NAME )
+	    if( parent instanceof IASTCompositeTypeSpecifier )
 			definition = name;
 		else 
 			declarations = new IASTName[] { name };

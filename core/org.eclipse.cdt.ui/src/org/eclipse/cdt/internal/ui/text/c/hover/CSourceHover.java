@@ -79,15 +79,15 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				if (expression.length() == 0)
 					return null;
 
+				String source = null;
+
 				ICElement curr = copy.getElement(expression);
 				if (curr == null) {
 					// Try with the indexer
-					curr = findMatches(expression);
-					if (curr == null) {
-						return null;
-					}
+					source = findMatches(expression);
+				} else {
+					source= ((ISourceReference) curr).getSource();
 				}
-				String source= ((ISourceReference) curr).getSource();
 				if (source == null || source.trim().length() == 0)
 					return null;
 
@@ -152,7 +152,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		return source.substring(i);
 	}
 
-	private ICElement findMatches(String name) {
+	private String findMatches(String name) {
 		IEditorPart editor = getEditor();
 		if (editor != null) {
 			IEditorInput input= editor.getEditorInput();
@@ -189,8 +189,11 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 						IResource resource = matches[0].getResource();
 						if (resource != null) {
 							ICElement celement = CoreModel.getDefault().create(resource);
-							if (celement instanceof ITranslationUnit) {							
-								return ((ITranslationUnit)celement).getElement(name);
+							if (celement instanceof ITranslationUnit) {	
+								ITranslationUnit unit = (ITranslationUnit)celement;
+								int startOffset = matches[0].getStartOffset();
+								int length = matches[0].getEndOffset() - startOffset;
+								return unit.getBuffer().getText(startOffset, length);
 							}
 						}
 					}

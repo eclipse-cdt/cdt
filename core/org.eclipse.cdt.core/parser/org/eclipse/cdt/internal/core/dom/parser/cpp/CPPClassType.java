@@ -247,13 +247,22 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	
 	private ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(){
 	    if( definition != null ){
-	        return (ICPPASTCompositeTypeSpecifier) definition.getParent();
+	        IASTNode node = definition;
+	        while( node instanceof IASTName )
+	            node = node.getParent();
+	        if( node instanceof ICPPASTCompositeTypeSpecifier )
+	            return (ICPPASTCompositeTypeSpecifier)node;
 	    }
 	    return null;
 	}
 	private ICPPASTElaboratedTypeSpecifier getElaboratedTypeSpecifier() {
-	    if( declarations != null )
-	        return (ICPPASTElaboratedTypeSpecifier) declarations[0].getParent();
+	    if( declarations != null ){
+	        IASTNode node = declarations[0];
+	        while( node instanceof IASTName )
+	            node = node.getParent();
+	        if( node instanceof ICPPASTElaboratedTypeSpecifier )
+	            return (ICPPASTElaboratedTypeSpecifier)node;
+	    }
 	    return null;
 	}
 	/* (non-Javadoc)

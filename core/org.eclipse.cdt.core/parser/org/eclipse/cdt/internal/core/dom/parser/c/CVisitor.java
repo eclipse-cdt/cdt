@@ -1505,22 +1505,21 @@ public class CVisitor {
 		    return new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
 		} 
 		IBinding binding = null;
+		IASTName name = null;
 		if( declSpec instanceof ICASTTypedefNameSpecifier ){
-			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
-			binding = nameSpec.getName().resolveBinding(); 
+			name = ((ICASTTypedefNameSpecifier) declSpec).getName();
 		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
-			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
-			binding = elabTypeSpec.getName().resolveBinding();
+			name = ((IASTElaboratedTypeSpecifier) declSpec).getName();
 		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
-			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
-			binding = compTypeSpec.getName().resolveBinding();
-		}
+			name = ((IASTCompositeTypeSpecifier) declSpec).getName();		}
 		
+		binding = name.resolveBinding();
 		if( binding instanceof IType )
 		    return (IType) binding;
-
-		//TODO IProblem
-		return null;
+		
+		if( binding != null )
+			return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray() );
+		return new ProblemBinding( name, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray() );
 	}
 
 	public static IType createType( IASTDeclSpecifier declSpec ) {

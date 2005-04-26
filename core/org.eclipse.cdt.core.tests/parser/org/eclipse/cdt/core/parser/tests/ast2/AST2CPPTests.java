@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -3699,6 +3700,41 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertEquals( bs.length, 2 );
     	assertSame( bs[0], a1 );
     	assertSame( bs[1], a2 );
+	}
+	
+	public void testBug77024() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("struct Ex {                            \n"); //$NON-NLS-1$
+	    buffer.append("   int d();                            \n"); //$NON-NLS-1$
+	    buffer.append("   int d() const;                      \n"); //$NON-NLS-1$
+	    buffer.append("};                                     \n"); //$NON-NLS-1$
+	    buffer.append("int Ex::d() {}                         \n"); //$NON-NLS-1$
+	    buffer.append("int Ex::d() const {}                   \n"); //$NON-NLS-1$
+	    buffer.append("void f() {                             \n"); //$NON-NLS-1$
+	    buffer.append("   const Ex * e;                       \n"); //$NON-NLS-1$
+	    buffer.append("   e->d();                             \n"); //$NON-NLS-1$
+	    buffer.append("}                                      \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPFunction d1 = (ICPPFunction) col.getName(1).resolveBinding();
+    	ICPPFunction d2 = (ICPPFunction) col.getName(2).resolveBinding();
+    	
+    	assertNotSame( d1, d2 );
+    	
+    	assertFalse( ((ICPPFunctionType)d1.getType()).isConst() );
+    	assertTrue( ((ICPPFunctionType)d2.getType()).isConst() );
+    	
+    	ICPPFunction dr1 = (ICPPFunction) col.getName(5).resolveBinding();
+    	ICPPFunction dr2 = (ICPPFunction) col.getName(8).resolveBinding();
+    	
+    	assertSame( d1, dr1 );
+    	assertSame( d2, dr2 );
+    	
+    	IBinding r = col.getName(13).resolveBinding();
+    	assertSame( d2, r );
 	}
 }
 

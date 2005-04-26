@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -178,10 +179,13 @@ public class CPPImplicitMethod extends CPPMethod {
 			IASTDeclarator [] ds = null;
 			int di = -1;
 			
-			if( members[i] instanceof IASTSimpleDeclaration ){
-				ds = ((IASTSimpleDeclaration)members[i]).getDeclarators();
-			} else if( members[i] instanceof IASTFunctionDefinition ){
-				dtor = ((IASTFunctionDefinition) members[i]).getDeclarator();
+			IASTDeclaration member = members[i];
+			if( member instanceof ICPPASTTemplateDeclaration )
+			    member = ((ICPPASTTemplateDeclaration) member).getDeclaration();
+			if( member instanceof IASTSimpleDeclaration ){
+				ds = ((IASTSimpleDeclaration)member).getDeclarators();
+			} else if( member instanceof IASTFunctionDefinition ){
+				dtor = ((IASTFunctionDefinition) member).getDeclarator();
 			}
 			if( ds != null && ds.length > 0 ){
 				di = 0;
@@ -203,7 +207,10 @@ public class CPPImplicitMethod extends CPPMethod {
 						}
 						if( idx == ps.length ){
 							name.setBinding( this );
-							addDeclaration( dtor );
+							if( member instanceof IASTSimpleDeclaration )
+							    addDeclaration( dtor );
+							else if( member instanceof IASTFunctionDefinition )
+							    addDefinition( dtor );
 							return members[i];
 						}
 							

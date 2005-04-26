@@ -84,7 +84,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 
 /**
  * Created on Nov 5, 2004
@@ -1467,7 +1466,7 @@ public class CVisitor {
 	    IType [] pTypes = getParmTypes( declarator );
 	    returnType = setupPointerChain( declarator.getPointerOperators(), returnType );
 	    
-	    IType type = new CPPFunctionType( returnType, pTypes );
+	    IType type = new CFunctionType( returnType, pTypes );
 	    
 	    IASTDeclarator nested = declarator.getNestedDeclarator();
 	    if( nested != null ) {

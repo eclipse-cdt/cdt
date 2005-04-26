@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 /**
  * @author aniefer
  */
-public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, ICPPInternalBinding {
+public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, ICPPInternalFunction {
 	private IFunctionType type = null;
 	private IParameter [] parameters = null;
 	/**
@@ -170,5 +170,12 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
      */
     public boolean takesVarArgs() throws DOMException {
         return ((ICPPFunction)getOriginalBinding()).takesVarArgs();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
+     */
+    public boolean isStatic( boolean resolveAll ) {
+        return ((ICPPInternalFunction)getOriginalBinding()).isStatic( resolveAll );
     }
 }

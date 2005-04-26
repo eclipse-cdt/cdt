@@ -2367,7 +2367,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("A::X::f(x); //error: f is not a member of A::X\n"); //$NON-NLS-1$
 		buffer.append("A::X::Y::g(); // error: g is not a member of A::X::Y\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+		parse(buffer.toString(), ParserLanguage.CPP, true, 4);
 	}
 	
 	/**
@@ -8520,30 +8520,6 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("// OK: < starts explicit qualification\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
-	}
-	
-	/**
-	 [--Start Example(CPP 14.3-5):
-	template<class T> struct A {
-	~A();
-	};
-	void f(A<int>* p, A<int>* q) {
-	p->A<int>::~A(); // OK: destructor call
-	q->A<int>::~A<int>(); // OK: destructor call
-	}
-	 --End Example]
-	 */
-	public void test14_3s5() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
-		buffer.append("~A();\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("void f(A<int>* p, A<int>* q) {\n"); //$NON-NLS-1$
-		buffer.append("p->A<int>::~A(); // OK: destructor call\n"); //$NON-NLS-1$
-		buffer.append("q->A<int>::~A<int>(); // OK: destructor call\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-	
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
 	/**

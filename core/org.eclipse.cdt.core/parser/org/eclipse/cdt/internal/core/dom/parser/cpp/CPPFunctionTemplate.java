@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 /**
  * @author aniefer
  */
-public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFunctionTemplate, ICPPFunction {
+public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFunctionTemplate, ICPPFunction, ICPPInternalFunction {
 	public static final class CPPFunctionTemplateProblem extends ProblemBinding	implements ICPPFunctionTemplate, ICPPFunction {
 		public CPPFunctionTemplateProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
@@ -349,6 +349,13 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
             return dtor.takesVarArgs();
         }
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
+     */
+    public boolean isStatic( boolean resolveAll ) {
+    	return hasStorageClass( IASTDeclSpecifier.sc_static );
     }
 
 }

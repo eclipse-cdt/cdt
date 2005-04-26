@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
@@ -196,7 +197,7 @@ public class CPPTemplates {
 
 		if( parent instanceof ICPPASTCompositeTypeSpecifier && segment == 1 ){
 			return createClassPartialSpecialization( (ICPPASTCompositeTypeSpecifier) parent );
-		} else if( parent instanceof ICPPASTFunctionDeclarator && segment == 1 ){
+		} else if( parent instanceof ICPPASTFunctionDeclarator && segment != 0 ){
 			return createFunctionSpecialization( id );
 		}
 		
@@ -270,7 +271,7 @@ public class CPPTemplates {
 		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name );
 		data.forceQualified = true;
 		IScope scope = CPPVisitor.getContainingScope( name );
-		if( name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME ){
+		if( scope instanceof ICPPTemplateScope && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME ){
 			try {
 				scope = scope.getParent();
 			} catch (DOMException e) {
@@ -476,7 +477,7 @@ public class CPPTemplates {
 				}
 			} catch (DOMException e) {
 			}
-			newType = new CPPFunctionType( ret, params );
+			newType = new CPPFunctionType( ret, params, ((ICPPFunctionType)type).isConst(), ((ICPPFunctionType)type).isVolatile() );
 		} else if( type instanceof ITypeContainer ){
 			try {
 				temp = ((ITypeContainer) type).getType();

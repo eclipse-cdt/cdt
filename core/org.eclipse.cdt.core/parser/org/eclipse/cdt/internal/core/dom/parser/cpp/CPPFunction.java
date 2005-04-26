@@ -43,9 +43,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 /**
  * @author aniefer
  */
-public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
+public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
     
-    public static class CPPFunctionDelegate extends CPPDelegate implements ICPPFunction {
+    public static class CPPFunctionDelegate extends CPPDelegate implements ICPPFunction, ICPPInternalFunction {
         public CPPFunctionDelegate( IASTName name, ICPPFunction binding ) {
             super( name, binding );
         }
@@ -79,6 +79,9 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         }
         public boolean takesVarArgs() throws DOMException {
             return ((ICPPFunction)getBinding()).takesVarArgs();
+        }
+        public boolean isStatic( boolean resolveAll ) {
+            return ((ICPPInternalFunction)getBinding()).isStatic( resolveAll );
         }
     }
     public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
@@ -386,8 +389,14 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
      */
-    public boolean isStatic() {
-        if( (bits & FULLY_RESOLVED) == 0 ){
+    public boolean isStatic( ) {
+        return isStatic( true );
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
+     */
+    public boolean isStatic( boolean resolveAll ) {
+        if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
 
@@ -407,13 +416,15 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         }
         
         IASTFunctionDeclarator[] dtors = (IASTFunctionDeclarator[]) getDeclarations();
-        for( int i = 0; i < dtors.length; i++ ){
-            IASTNode parent = dtors[i].getParent();
-            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-            if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
-                bits |= 3 << 2;
-                return true;
-            }
+        if( dtors != null ) {
+	        for( int i = 0; i < dtors.length; i++ ){
+	            IASTNode parent = dtors[i].getParent();
+	            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+	            if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+	                bits |= 3 << 2;
+	                return true;
+	            }
+	        }
         }
         bits |= 2 << 2;
         return false;
@@ -551,5 +562,4 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         }
         return false;
     }
-
 }

@@ -111,8 +111,7 @@ public class CPPDeferredClassInstance /*extends CPPInstance*/ implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
+		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
 	/* (non-Javadoc)

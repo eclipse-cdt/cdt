@@ -733,6 +733,30 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
+	 [--Start Example(CPP 14.3-5):
+	template<class T> struct A {
+	~A();
+	};
+	void f(A<int>* p, A<int>* q) {
+	p->A<int>::~A(); // OK: destructor call
+	q->A<int>::~A<int>(); // OK: destructor call
+	}
+	 --End Example]
+	 */
+	public void test14_3s5() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
+		buffer.append("~A();\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("void f(A<int>* p, A<int>* q) {\n"); //$NON-NLS-1$
+		buffer.append("p->A<int>::~A(); // OK: destructor call\n"); //$NON-NLS-1$
+		buffer.append("q->A<int>::~A<int>(); // OK: destructor call\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+	
+		parse(buffer.toString(), ParserLanguage.CPP, true, 5);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.3.2-5):
 	template<const int* pci> struct X {  };
 	int ai[10];
@@ -805,7 +829,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("ac.f('c'); //template\n"); //$NON-NLS-1$
 		buffer.append("ac.f<>(1); //template\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 2);  //should be 0
+		parse(buffer.toString(), ParserLanguage.CPP, true, 3);  //should be 0
 	}
 	
 	/**
@@ -1075,7 +1099,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("template<class T> void f(T&) { }\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("template void N::f<int>(int&);\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 2);
+		parse(buffer.toString(), ParserLanguage.CPP, true, 3);
 	}
 	
 	/**

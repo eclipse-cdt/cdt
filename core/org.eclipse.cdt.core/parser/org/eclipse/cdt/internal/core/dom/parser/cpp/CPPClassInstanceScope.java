@@ -123,8 +123,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getClassType()
 	 */
 	public ICPPClassType getClassType() {
-		// TODO Auto-generated method stub
-		return null;
+		return (ICPPClassType) instance;
 	}
 
 	/* (non-Javadoc)

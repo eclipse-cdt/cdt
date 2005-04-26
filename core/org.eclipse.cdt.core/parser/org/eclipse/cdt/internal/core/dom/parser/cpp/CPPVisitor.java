@@ -95,6 +95,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -524,8 +525,14 @@ public class CPPVisitor {
 			        else {
 			            if( internal.getDefinition() == null )
 			                ((ICPPInternalBinding)function).addDefinition( name );
-			            else 
-			                return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray() );
+			            else {
+			                IASTNode def = internal.getDefinition();
+			                if( def instanceof IASTDeclarator )
+			                    def = ((IASTDeclarator)def).getName();
+			                if( def != name  )
+			                    return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION, name.toCharArray() );
+			            }
+			                
 			        }
 			        
 			        return function;
@@ -1317,7 +1324,7 @@ public class CPPVisitor {
 	    	returnType = getPointerTypes( returnType, fnDtor );
 	    }
 	    
-	    IType type = new CPPFunctionType( returnType, pTypes );
+	    IType type = new CPPFunctionType( returnType, pTypes, fnDtor.isConst(), fnDtor.isVolatile() );
 	    IASTDeclarator nested = fnDtor.getNestedDeclarator();
 	    if( nested != null ) {
 	    	return createType( type, nested );
@@ -1460,6 +1467,42 @@ public class CPPVisitor {
 		return type;
 	}
 
+	public static IType getThisType( IScope scope ){
+	    try {
+			IASTNode node = null;
+			while( scope != null ){
+				if( scope instanceof ICPPBlockScope ){
+					node = ((ICPPBlockScope)scope).getPhysicalNode();
+					if( node.getParent() instanceof IASTFunctionDefinition )
+						break;
+				}
+				scope = scope.getParent();
+			}
+			if( node != null && node.getParent() instanceof IASTFunctionDefinition ){
+				IASTFunctionDefinition def = (IASTFunctionDefinition) node.getParent();
+				IASTName fName = def.getDeclarator().getName();
+				IBinding binding = fName.resolveBinding();
+				if( binding != null && binding instanceof ICPPMethod ){
+					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def.getDeclarator();
+					IScope s = binding.getScope();
+					if( s instanceof ICPPTemplateScope )
+						s = s.getParent();
+					if( s instanceof ICPPClassScope ){
+						ICPPClassScope cScope = (ICPPClassScope) s;
+						IType type = cScope.getClassType();
+						if( dtor.isConst() || dtor.isVolatile() )
+							type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile() );
+						type = new CPPPointerType( type );
+						return type;
+					}
+				}
+			}
+		} catch (DOMException e) {
+		    return e.getProblem();
+		}
+		return null;
+	}
+	
 	/**
 	 * @param expression
 	 * @return
@@ -1493,38 +1536,7 @@ public class CPPVisitor {
 	    	switch( ((ICPPASTLiteralExpression) expression).getKind() ){
 	    		case ICPPASTLiteralExpression.lk_this : {
 	    			IScope scope = getContainingScope( expression );
-	    			try {
-	    				IASTNode node = null;
-	    				while( scope != null ){
-	    					if( scope instanceof ICPPBlockScope ){
-	    						node = ((ICPPBlockScope)scope).getPhysicalNode();
-	    						if( node.getParent() instanceof IASTFunctionDefinition )
-	    							break;
-	    					}
-	    					scope = scope.getParent();
-	    				}
-	    				if( node != null && node.getParent() instanceof IASTFunctionDefinition ){
-	    					IASTFunctionDefinition def = (IASTFunctionDefinition) node.getParent();
-							IASTName fName = def.getDeclarator().getName();
-							IBinding binding = fName.resolveBinding();
-							if( binding != null && binding instanceof ICPPMethod ){
-								ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def.getDeclarator();
-								IScope s = binding.getScope();
-								if( s instanceof ICPPTemplateScope )
-									s = s.getParent();
-								if( s instanceof ICPPClassScope ){
-									ICPPClassScope cScope = (ICPPClassScope) s;
-									IType type = cScope.getClassType();
-									if( dtor.isConst() || dtor.isVolatile() )
-										type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile() );
-									type = new CPPPointerType( type );
-									return type;
-								}
-							}
-	    				}
-	    			} catch (DOMException e) {
-					}
-	    			break;
+	    			return getThisType( scope );
 	    		}
 	    		case ICPPASTLiteralExpression.lk_true :
 	    		case ICPPASTLiteralExpression.lk_false:
@@ -1629,6 +1641,9 @@ public class CPPVisitor {
 		} else if( expression instanceof IASTExpressionList ){
 			IASTExpression [] exps = ((IASTExpressionList)expression).getExpressions();
 			return getExpressionType( exps[ exps.length - 1 ] );
+		} else if( expression instanceof ICPPASTTypeIdExpression ){
+		    ICPPASTTypeIdExpression typeidExp = (ICPPASTTypeIdExpression) expression;
+		    return createType( typeidExp.getTypeId() );
 		}
 	    return null;
 	}

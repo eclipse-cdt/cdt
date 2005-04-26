@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  * @author aniefer
  */
 public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
-		ICPPFunction, ICPPTemplateInstance, ICPPInternalBinding {
+		ICPPFunction, ICPPTemplateInstance, ICPPInternalFunction {
 
 	private IType[] arguments;
 	private ICPPFunctionTemplate functionTemplate;
@@ -244,4 +244,12 @@ public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
 		// TODO Auto-generated method stub
 		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
+     */
+    public boolean isStatic( boolean resolveAll ) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

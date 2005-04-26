@@ -15,16 +15,18 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 
 /**
  * @author aniefer
  */
-public class CPPFunctionType implements IFunctionType {
-    IType[] parameters = null;
-    IType returnType = null;
+public class CPPFunctionType implements ICPPFunctionType {
+    private IType[] parameters = null;
+    private IType returnType = null;
+	private boolean isConst = false;
+	private boolean isVolatile = false;
     
     /**
      * @param returnType
@@ -34,12 +36,18 @@ public class CPPFunctionType implements IFunctionType {
         this.returnType = returnType;
         this.parameters = types;
     }
+	public CPPFunctionType( IType returnType, IType [] types, boolean isConst, boolean isVolatile ) {
+        this.returnType = returnType;
+        this.parameters = types;
+		this.isConst = isConst;
+		this.isVolatile = isVolatile;
+    }
 
     public boolean isSameType( IType o ){
         if( o instanceof ITypedef )
             return o.isSameType( this );
-        if( o instanceof IFunctionType ){
-            IFunctionType ft = (IFunctionType) o;
+        if( o instanceof ICPPFunctionType ){
+            ICPPFunctionType ft = (ICPPFunctionType) o;
             IType [] fps;
             try {
                 fps = ft.getParameterTypes();
@@ -58,9 +66,13 @@ public class CPPFunctionType implements IFunctionType {
             } catch ( DOMException e1 ) {
                 return false;
             }
-            for( int i = 0; i < parameters.length; i++ )
+            for( int i = 0; i < parameters.length; i++ ){
                 if( ! parameters[i].isSameType( fps[i] ) )
                     return false;
+            }
+            if( isConst != ft.isConst() || isVolatile != ft.isVolatile() )
+                return false;
+                
             return true;
         }
         return false;
@@ -88,4 +100,12 @@ public class CPPFunctionType implements IFunctionType {
         }
         return t;
     }
+
+	public boolean isConst() {
+		return isConst;
+	}
+
+	public boolean isVolatile() {
+		return isVolatile;
+	}
 }

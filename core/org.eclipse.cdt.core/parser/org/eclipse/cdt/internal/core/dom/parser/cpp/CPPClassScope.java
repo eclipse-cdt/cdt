@@ -263,4 +263,14 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        super.removeBinding( binding );
 	    }
 	}
+	
+	public void flushCache() {
+		constructorNames.clear();
+		for( int i = constructorBindings.size() - 1; i >= 0; i-- ){
+			IBinding binding = (IBinding) constructorBindings.keyAt(i);
+			if( !(binding instanceof CPPImplicitConstructor) )
+				constructorBindings.remove( binding );
+		}
+		super.flushCache();
+	}
 }

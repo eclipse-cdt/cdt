@@ -233,4 +233,10 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	
 		isFullyCached = false;
 	}
+
+	public void flushCache() {
+		if( bindings != null )
+			bindings.clear();
+		isFullyCached = false;
+	}
 }

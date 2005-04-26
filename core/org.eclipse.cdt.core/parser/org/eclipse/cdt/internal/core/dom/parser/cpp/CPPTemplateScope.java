@@ -13,7 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -35,7 +34,7 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope#getTemplateDefinition()
 	 */
-	public ICPPTemplateDefinition getTemplateDefinition() throws DOMException {
+	public ICPPTemplateDefinition getTemplateDefinition() {
 //		if( primaryDefinition == null ){
 //			//primaryDefinition = CPPTemplates.getTemplateDefinition( this );
 //			ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) getPhysicalNode();

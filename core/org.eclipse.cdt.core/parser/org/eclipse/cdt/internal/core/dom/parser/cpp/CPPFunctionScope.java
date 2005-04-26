@@ -123,4 +123,9 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
         }
         return null;
     }
+	
+	public void flushCache() {
+		labels.clear();
+		super.flushCache();
+	}
 }

@@ -187,4 +187,7 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
     public boolean isSameType( IType type ) {
         return type == this;
     }
+
+	public void flushCache() {
+	}
 }

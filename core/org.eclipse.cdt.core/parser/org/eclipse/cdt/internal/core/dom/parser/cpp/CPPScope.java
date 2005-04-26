@@ -173,4 +173,10 @@ abstract public class CPPScope implements ICPPScope{
 	public IBinding[] find(String name) throws DOMException {
 	    return CPPSemantics.findBindings( this, name, false );
 	}
+	
+	public void flushCache() {
+		isfull = false;
+		if( bindings != null )
+			bindings.clear();
+	}
 }

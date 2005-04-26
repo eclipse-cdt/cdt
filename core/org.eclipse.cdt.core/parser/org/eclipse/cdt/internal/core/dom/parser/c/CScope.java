@@ -198,4 +198,10 @@ public class CScope implements ICScope {
 		}
 		return null;
 	}
+
+	public void flushCache() {
+		bindings[0].clear();
+		bindings[1].clear();
+		isFullyCached = false;
+	}
 }

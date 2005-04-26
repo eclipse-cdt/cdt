@@ -100,4 +100,10 @@ public interface IScope {
 	 * @return
 	 */
 	public boolean isFullyCached() throws DOMException;
+	
+	/** 
+	 * clear the name cache in this scope
+	 * @throws DOMException
+	 */
+	public void flushCache() throws DOMException;
 }

@@ -1373,12 +1373,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         collectContexts(V_MACRODEFS, tu, contexts, 0);
 
         IASTPreprocessorMacroDefinition[] result = new IASTPreprocessorMacroDefinition[contexts.length];
-        for (int i = 0; i < contexts.length; ++i) {
+        for (int i = 0; i < contexts.length; ++i) 
             result[i] = createASTMacroDefinition((_MacroDefinition) contexts[i]);
-            result[i].setParent(rootNode);
-            result[i]
-                    .setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
-        }
+        
 
         return result;
     }
@@ -1434,6 +1431,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         ((ScannerASTNode) r).setOffsetAndLength(d.context_directive_start,
                 d.context_directive_end - d.context_directive_start);
         d.astNode = r;
+		((ScannerASTNode) r).setParent(rootNode);
+		((ScannerASTNode) r).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+
         return r;
     }
 
@@ -1449,12 +1449,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         _Context[] contexts = new _Context[size];
         collectContexts(V_INCLUSIONS, tu, contexts, 0);
         IASTPreprocessorIncludeStatement[] result = new IASTPreprocessorIncludeStatement[size];
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) 
             result[i] = createASTInclusion(((_Inclusion) contexts[i]));
-            result[i].setParent(rootNode);
-            result[i]
-                    .setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
-        }
 
         return result;
     }
@@ -1471,6 +1467,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                         - inc.context_directive_start);
         ((ASTInclusionStatement) result).startOffset = inc.context_directive_end;
         ((ASTInclusionStatement) result).endOffset = inc.context_ends;
+		((ASTInclusionStatement) result).setParent(rootNode);
+		((ASTInclusionStatement) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1486,12 +1486,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         _Context[] contexts = new _Context[size];
         collectContexts(V_PREPROCESSOR, tu, contexts, 0);
         IASTPreprocessorStatement[] result = new IASTPreprocessorStatement[size];
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) 
             result[i] = createPreprocessorStatement(contexts[i]);
-            result[i].setParent(rootNode);
-            result[i]
-                    .setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
-        }
 
         return result;
     }
@@ -1533,6 +1529,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorEndifStatement result = new ASTEndif();
         ((ASTNode) result).setOffsetAndLength(endif.context_directive_start,
                 endif.context_directive_end - endif.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1544,6 +1542,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorElifStatement result = new ASTElif(elif.taken);
         ((ASTNode) result).setOffsetAndLength(elif.context_directive_start,
                 elif.context_directive_end - elif.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1555,6 +1555,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorElseStatement result = new ASTElse(e.taken);
         ((ASTNode) result).setOffsetAndLength(e.context_directive_start,
                 e.context_directive_end - e.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1566,6 +1568,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorIfndefStatement result = new ASTIfndef(ifndef.taken);
         ((ASTNode) result).setOffsetAndLength(ifndef.context_directive_start,
                 ifndef.context_directive_end - ifndef.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1577,6 +1581,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorIfdefStatement result = new ASTIfdef(ifdef.taken);
         ((ASTNode) result).setOffsetAndLength(ifdef.context_directive_start,
                 ifdef.context_directive_end - ifdef.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1588,6 +1594,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorIfStatement result = new ASTIf(i.taken);
         ((ASTNode) result).setOffsetAndLength(i.context_directive_start,
                 i.context_directive_end - -i.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1599,6 +1607,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorErrorStatement result = new ASTError();
         ((ASTNode) result).setOffsetAndLength(error.context_directive_start,
                 error.context_directive_end - error.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1608,6 +1618,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTPragma(_Pragma pragma) {
         IASTPreprocessorPragmaStatement result = new ASTPragma();
+        ((ASTNode) result).setOffsetAndLength(pragma.context_directive_start,
+                pragma.context_directive_end - pragma.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1619,6 +1633,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorUndefStatement result = new ASTUndef(undef.getName());
         ((ASTNode) result).setOffsetAndLength(undef.context_directive_start,
                 undef.context_directive_end - undef.context_directive_start);
+		((ScannerASTNode) result).setParent(rootNode);
+		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 

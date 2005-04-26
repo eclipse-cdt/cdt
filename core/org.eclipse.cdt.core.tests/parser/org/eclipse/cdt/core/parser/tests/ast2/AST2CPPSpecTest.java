@@ -8599,6 +8599,30 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 14.3-5):
+	template<class T> struct A {
+	~A();
+	};
+	void f(A<int>* p, A<int>* q) {
+	p->A<int>::~A(); // OK: destructor call
+	q->A<int>::~A<int>(); // OK: destructor call
+	}
+	 --End Example]
+	 */
+	public void test14_3s5() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
+		buffer.append("~A();\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("void f(A<int>* p, A<int>* q) {\n"); //$NON-NLS-1$
+		buffer.append("p->A<int>::~A(); // OK: destructor call\n"); //$NON-NLS-1$
+		buffer.append("q->A<int>::~A<int>(); // OK: destructor call\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+	
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.3.1-2):
 	template <class T> class X {  };
 	void f()
@@ -9959,6 +9983,36 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("template<> int B<>::x = 1; // specialize for T == int\n"); //$NON-NLS-1$
 		
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
+	 [--Start Example(CPP 14.7.1-5):
+	template <class T> struct S {
+	operator int();
+	};
+	void f(int);
+	void f(S<int>&);
+	void f(S<float>);
+	void g(S<int>& sr) {
+	f(sr); //instantiation of S<int> allowed but not required
+	// instantiation of S<float> allowed but not required
+	};
+	 --End Example]
+	 */
+	public void test14_7_1s5() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class T> struct S {\n"); //$NON-NLS-1$
+		buffer.append("operator int();\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("void f(int);\n"); //$NON-NLS-1$
+		buffer.append("void f(S<int>&);\n"); //$NON-NLS-1$
+		buffer.append("void f(S<float>);\n"); //$NON-NLS-1$
+		buffer.append("void g(S<int>& sr) {\n"); //$NON-NLS-1$
+		buffer.append("f(sr); //instantiation of S<int> allowed but not required\n"); //$NON-NLS-1$
+		buffer.append("// instantiation of S<float> allowed but not required\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	

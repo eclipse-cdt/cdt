@@ -838,4 +838,24 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( type instanceof IBasicType );
 		assertEquals( ((IBasicType)type).getType(), IBasicType.t_int );
 	}
+	
+	public void testInstances() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("template < class T > class A {               \n"); //$NON-NLS-1$
+	    buffer.append("   A< int > a;                               \n"); //$NON-NLS-1$
+	    buffer.append("};                                           \n"); //$NON-NLS-1$
+	    buffer.append("void f( A<int> p ) { }                       \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPClassTemplate A = (ICPPClassTemplate) col.getName(1).resolveBinding();
+		ICPPClassType A1 = (ICPPClassType) col.getName(2).resolveBinding();
+		ICPPClassType A2 = (ICPPClassType) col.getName(6).resolveBinding();
+		
+		assertSame( A1, A2 );
+		assertTrue( A1 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)A1).getOriginalBinding(), A );
+	}
 }

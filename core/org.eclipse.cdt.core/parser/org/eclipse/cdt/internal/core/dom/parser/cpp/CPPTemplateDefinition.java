@@ -210,7 +210,7 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 			if( args.length == arguments.length ){
 				int j = 0;
 				for(; j < args.length; j++) {
-					if( !( args[j].equals( arguments[j] ) ) )
+					if( !( args[j].isSameType( arguments[j] ) ) )
 						break;
 				}
 				if( j == args.length ){

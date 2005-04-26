@@ -3736,5 +3736,21 @@ public class AST2CPPTests extends AST2BaseTest {
     	IBinding r = col.getName(13).resolveBinding();
     	assertSame( d2, r );
 	}
+	
+	public void testBug91773() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("class P {                    \n"); //$NON-NLS-1$
+	    buffer.append("   Point() : xCoord(0) {}    \n"); //$NON-NLS-1$
+	    buffer.append("   int xCoord;               \n"); //$NON-NLS-1$
+	    buffer.append("};                           \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPField x = (ICPPField) col.getName(2).resolveBinding();
+    	ICPPField x2 = (ICPPField) col.getName(3).resolveBinding();
+    	assertSame( x, x2 );
+	}
 }
 

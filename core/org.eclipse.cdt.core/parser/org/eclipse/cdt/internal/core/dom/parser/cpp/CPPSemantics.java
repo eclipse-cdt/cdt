@@ -273,7 +273,8 @@ public class CPPSemantics {
     				prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
     				prop == ICPPASTUsingDeclaration.NAME ||
     				prop == IASTFunctionCallExpression.FUNCTION_NAME ||
-    				prop == IASTNamedTypeSpecifier.NAME )
+    				prop == IASTNamedTypeSpecifier.NAME ||
+    				prop == ICPPASTConstructorChainInitializer.MEMBER_ID )
                 {
                     return true;
                 }

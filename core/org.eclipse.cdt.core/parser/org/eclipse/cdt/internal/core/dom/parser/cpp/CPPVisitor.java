@@ -176,6 +176,8 @@ public class CPPVisitor {
 			return CPPTemplates.createBinding( (ICPPASTTemplateParameter) parent );
 		}
 		
+		if( name.toCharArray().length > 0 )
+			return binding;
 		return null;
 	}
 	

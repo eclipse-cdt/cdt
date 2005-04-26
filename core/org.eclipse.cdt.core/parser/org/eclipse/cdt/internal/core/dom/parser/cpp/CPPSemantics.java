@@ -496,8 +496,16 @@ public class CPPSemantics {
 		    
 		}    
         if( binding != null ) {
-	        if( data.astName.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
-	        	IASTNode parent = data.astName.getParent().getParent();
+			IASTName name = data.astName;
+			if( name.getParent() instanceof ICPPASTTemplateId )
+				name = (IASTName) name.getParent();
+			if( name.getParent() instanceof ICPPASTQualifiedName ){
+				IASTName [] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
+				if( name == ns [ ns.length - 1] )
+					name = (IASTName) name.getParent();
+			}
+	        if( name.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
+	        	IASTNode parent = name.getParent().getParent();
 	        	if( parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ){
 	        		//don't do a problem here
 	        	} else {

@@ -66,9 +66,12 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
 	    IASTName [] declarations = (IASTName[]) getDeclarations();
 		if( declarations != null ){
 			for( int i = 0; i < declarations.length; i++ ){
-				IASTDeclaration decl = (IASTDeclaration) declarations[i].getParent();
-				if( decl.getParent() instanceof ICPPASTCompositeTypeSpecifier )
-					return decl;
+				IASTNode node = declarations[i].getParent();
+				while( !(node instanceof IASTDeclaration ) )
+					node = node.getParent();
+				
+				if( node.getParent() instanceof ICPPASTCompositeTypeSpecifier )
+					return (IASTDeclaration) node;
 			}
 		}
 		

@@ -213,5 +213,42 @@ public class ArrayUtil {
 		
 		return array;
 	}
+
+	/**
+	 * Insert the obj at the beginning of the array, shifting the whole thing one index
+	 * @param c
+	 * @param array
+	 * @param idx
+	 * @param obj
+	 * @return
+	 */
+	public static Object[] prepend(Class c, Object[] array, Object obj) {
+		if( obj == null )
+    		return array;
+        if( array == null || array.length == 0){
+            array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
+            array[0] = obj;
+            return array;
+        }
+        
+        int i = 0;
+        for( ; i < array.length; i++ ){
+            if( array[i] == null ){
+                array[i] = obj;
+                return array;
+            }
+        }
+		if( i < array.length ){
+			System.arraycopy( array, 0, array, 1, array.length - i );
+			array[0] = obj;
+		} else {
+			Object [] temp = (Object[]) Array.newInstance( c, array.length * 2 );
+	        System.arraycopy( array, 0, temp, 1, array.length );
+	        temp[0] = obj;
+	        array = temp;	
+		}
+        
+        return array;
+	}
 	
 }

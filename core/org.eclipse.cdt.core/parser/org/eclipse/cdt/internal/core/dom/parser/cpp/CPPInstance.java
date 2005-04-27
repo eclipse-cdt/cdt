@@ -94,6 +94,10 @@ public class CPPInstance implements ICPPTemplateInstance {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void removeDeclaration(IASTNode node) {
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getArguments()
 	 */

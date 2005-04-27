@@ -858,4 +858,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( A1 instanceof ICPPTemplateInstance );
 		assertSame( ((ICPPTemplateInstance)A1).getOriginalBinding(), A );
 	}
+	
+	public void testTemplateParameterDeclarations() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "template <class T> void f( T );      \n"); //$NON-NLS-1$
+		buffer.append( "template <class T> void f( T ) {}    \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T1 = (ICPPTemplateParameter) col.getName(4).resolveBinding();
+		ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(2).resolveBinding();
+			
+		assertSame( T1, T2 );
+		
+		assertInstances( col, T1, 4 );
+	}
 }

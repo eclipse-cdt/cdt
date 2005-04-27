@@ -225,12 +225,31 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
 		
 		//keep the lowest offset declaration in [0]
 		if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-		    ICPPASTFunctionDeclarator temp = declarations[0];
-		    declarations[0] = dtor;
-		    dtor = temp;
+		    declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.prepend( ICPPASTFunctionDeclarator.class, declarations, dtor );
+		} else {
+			declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.append( ICPPASTFunctionDeclarator.class, declarations, dtor );
 		}
-		
-		declarations = (ICPPASTFunctionDeclarator[]) ArrayUtil.append( ICPPASTFunctionDeclarator.class, declarations, dtor );
+	}
+	
+	public void removeDeclaration(IASTNode node) {
+		while( node instanceof IASTName ){
+			node = node.getParent();
+		}
+		if( definition == node ){
+			definition = null;
+			return;
+		}
+		if( declarations != null ) {
+			for (int i = 0; i < declarations.length; i++) {
+				if( node == declarations[i] ) {
+					if( i == declarations.length - 1 )
+						declarations[i] = null;
+					else
+						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
+					return;
+				}
+			}
+		}
 	}
 	
 	/* (non-Javadoc)

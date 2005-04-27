@@ -134,6 +134,14 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 
 	public IScope getScope() {
 	    IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : definition;
+		if( node instanceof IASTDeclarator ){
+			IASTName name = ((IASTDeclarator)node).getName();
+			if( name instanceof ICPPASTQualifiedName ){
+				IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+				name = ns[ ns.length - 1 ];
+			}
+			return CPPVisitor.getContainingScope( name );
+		}
 		return CPPVisitor.getContainingScope( node );
 	}
 	
@@ -174,8 +182,22 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */
-    public boolean isVirtual() throws DOMException {
-        // TODO Auto-generated method stub
+    public boolean isVirtual() {
+		if( definition != null ){
+			IASTNode node = definition.getParent();
+			while( node instanceof IASTDeclarator )
+				node = node.getParent();
+			
+			ICPPASTDeclSpecifier declSpec = null;
+			if( node instanceof IASTSimpleDeclaration )
+				declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
+			else if( node instanceof IASTFunctionDefinition )
+				declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)node).getDeclSpecifier();
+			
+			if( declSpec != null ){
+				return declSpec.isVirtual();
+			}
+		}
         return false;
     }
 

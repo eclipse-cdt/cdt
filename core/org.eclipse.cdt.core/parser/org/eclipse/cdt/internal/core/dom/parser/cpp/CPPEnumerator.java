@@ -62,7 +62,8 @@ public class CPPEnumerator implements IEnumerator, ICPPInternalBinding, ICPPBind
     public IASTNode getDefinition() {
         return enumName;
     }
-    
+	public void removeDeclaration(IASTNode node) {
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */

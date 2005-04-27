@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author aniefer
@@ -90,14 +91,30 @@ public class CPPParameter implements ICPPParameter, ICPPInternalBinding {
 		if( !(node instanceof IASTName ) )
 			return;
 		IASTName name = (IASTName) node;
-		if( declarations == null ){
-		    declarations = new IASTName [] { name };
-			return;
-		}
-		
-		declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+		if( declarations == null )
+	        declarations = new IASTName[] { name };
+	    else {
+	        //keep the lowest offset declaration in [0]
+			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
+				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+			} else {
+				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+			}
+	    }
 	}
 	
+	public void removeDeclaration(IASTNode node) {
+		if( declarations != null ) {
+			for (int i = 0; i < declarations.length; i++) {
+				if( node == declarations[i] ) {
+					if( i == declarations.length - 1 )
+						declarations[i] = null;
+					else
+						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
+				}
+			}
+		}
+	}
 	private IASTName getPrimaryDeclaration(){
 	    if( declarations != null ){
 	        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){

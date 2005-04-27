@@ -17,9 +17,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author aniefer
@@ -66,20 +67,6 @@ public class CPPTemplateParameter implements ICPPTemplateParameter, ICPPInternal
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isTemplateInstance()
-	 */
-	public boolean isTemplateInstance() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getTemplatedBinding()
-	 */
-	public ICPPBinding getTemplatedBinding() {
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
 	 */
 	public String[] getQualifiedName() {
@@ -114,6 +101,8 @@ public class CPPTemplateParameter implements ICPPTemplateParameter, ICPPInternal
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
 	 */
 	public IASTNode getDefinition() {
+		if( declarations != null && declarations.length > 0 )
+			return declarations[0];
 		return null;
 	}
 
@@ -129,15 +118,39 @@ public class CPPTemplateParameter implements ICPPTemplateParameter, ICPPInternal
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
+		addDeclaration( node );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
+		if( !(node instanceof IASTName) )
+			return;
+		IASTName name = (IASTName) node;
+	   if( declarations == null )
+	        declarations = new IASTName[] { name };
+	    else {
+	        //keep the lowest offset declaration in [0]
+			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
+			    IASTName temp = declarations[0];
+			    declarations[0] = name;
+			    name = temp;
+			}
+	        declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+	    }
+	}
+	public void removeDeclaration(IASTNode node) {
+		if( declarations != null ) {
+			for (int i = 0; i < declarations.length; i++) {
+				if( node == declarations[i] ) {
+					if( i == declarations.length - 1 )
+						declarations[i] = null;
+					else
+						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
+					return;
+				}
+			}
+		}
 	}
 }

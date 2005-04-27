@@ -150,13 +150,30 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
 	    else {
 	        //keep the lowest offset declaration in [0]
 			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-			    IASTName temp = declarations[0];
-			    declarations[0] = name;
-			    name = temp;
+				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+			} else {
+				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
 			}
-	        declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
 	    }
 	}
+	
+	public void removeDeclaration(IASTNode node) {
+		if( node == definition ){
+			definition = null;
+			return;
+		}
+		if( declarations != null ) {
+			for (int i = 0; i < declarations.length; i++) {
+				if( node == declarations[i] ) {
+					if( i == declarations.length - 1 )
+						declarations[i] = null;
+					else
+						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
+				}
+			}
+		}
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
      */
@@ -339,5 +356,4 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
     public boolean isRegister() {
         return hasStorageClass( IASTDeclSpecifier.sc_register );
     }
-
 }

@@ -139,6 +139,9 @@ public class CPPLabel implements ILabel, ICPPInternalBinding, ICPPBinding {
 		// TODO Auto-generated method stub
 		
 	}
+	public void removeDeclaration(IASTNode node) {
+		
+	}
 
 
 }

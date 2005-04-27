@@ -143,4 +143,7 @@ public class CPPNamespaceAlias implements ICPPNamespaceAlias, ICPPInternalBindin
 	 */
 	public void addDeclaration(IASTNode node) {
 	}
+	public void removeDeclaration(IASTNode node) {
+		
+	}
 }

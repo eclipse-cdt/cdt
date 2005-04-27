@@ -557,8 +557,12 @@ public class CPPTemplates {
 			this.bindings = bindings;
 		}
 		public int visit(IASTName name) {
-			if( name.getBinding() != null && bindings.containsKey( name.getBinding() ) )
+			if( name.getBinding() != null && bindings.containsKey( name.getBinding() ) ){
+				IBinding binding = name.getBinding();
+				if( binding instanceof ICPPInternalBinding )
+					((ICPPInternalBinding)binding).removeDeclaration( name );
 				name.setBinding( null );
+			}
 			return PROCESS_CONTINUE;
 		}
 		public int visit(IASTStatement statement) {
@@ -590,6 +594,7 @@ public class CPPTemplates {
 			if( bindingsToClear == null )
 				bindingsToClear = new ObjectSet( templateParams.length );
 			tn.setBinding( defParams[i] );
+			((ICPPInternalBinding)defParams[i]).addDeclaration( tn );
 			bindingsToClear.put( defParams[i] );
 		}
 		
@@ -641,7 +646,7 @@ public class CPPTemplates {
 			}
 		}
 		
-		if( bindingsToClear != null ){
+		if( bindingsToClear != null && !result ){
 			ClearBindingAction action = new ClearBindingAction( bindingsToClear );
 			templateDecl.accept( action );
 		}

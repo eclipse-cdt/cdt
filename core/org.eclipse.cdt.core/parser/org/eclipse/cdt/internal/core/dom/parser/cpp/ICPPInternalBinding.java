@@ -36,4 +36,5 @@ public interface ICPPInternalBinding extends IBinding {
 	 */
 	void addDefinition( IASTNode node );
 	void addDeclaration( IASTNode node );
+	void removeDeclaration(IASTNode node);
 }

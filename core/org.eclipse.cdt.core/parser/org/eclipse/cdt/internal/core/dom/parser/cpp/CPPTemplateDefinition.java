@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -365,13 +366,35 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 			return;
 		IASTName declName = (IASTName) node;
 		updateTemplateParameterBindings( declName );
-		if( declarations == null ){
-			declarations = new IASTName [] { declName };
-			return;
-		}
-		declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, declName );
+		if( declarations == null )
+	        declarations = new IASTName[] { declName };
+	    else {
+	        //keep the lowest offset declaration in [0]
+			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
+				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, declName );
+			} else {
+				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, declName );
+			}
+	    }
 	}	
 	
+	public void removeDeclaration(IASTNode node) {
+		if( definition == node ){
+			definition = null;
+			return;
+		}
+		if( declarations != null ) {
+			for (int i = 0; i < declarations.length; i++) {
+				if( node == declarations[i] ) {
+					if( i == declarations.length - 1 )
+						declarations[i] = null;
+					else
+						System.arraycopy( declarations, i + 1, declarations, i, declarations.length - 1 - i );
+					return;
+				}
+			}
+		}
+	}
 	protected void updateTemplateParameterBindings( IASTName name ){
     	IASTName orig = definition != null ? definition : declarations[0];
     	ICPPASTTemplateDeclaration origTemplate = CPPTemplates.getTemplateDeclaration( orig );

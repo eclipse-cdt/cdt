@@ -149,5 +149,9 @@ public class CPPDelegate implements ICPPDelegate, ICPPInternalBinding {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void removeDeclaration(IASTNode node) {
+		
+	}
     
 }

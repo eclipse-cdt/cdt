@@ -232,12 +232,10 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 		}
 		
 		if( namespaceDefinitions.length > 0 && ((ASTNode)name).getOffset() < ((ASTNode)namespaceDefinitions[0]).getOffset() ){
-		    IASTName temp = namespaceDefinitions[0];
-		    namespaceDefinitions[0] = name;
-		    name = temp;
+			namespaceDefinitions = (IASTName[]) ArrayUtil.prepend( IASTName.class, namespaceDefinitions, name );
+		} else {
+			namespaceDefinitions = (IASTName[]) ArrayUtil.append( IASTName.class, namespaceDefinitions, name );
 		}
-		
-		namespaceDefinitions = (IASTName[]) ArrayUtil.append( IASTName.class, namespaceDefinitions, name );
 	}
 
 	/* (non-Javadoc)
@@ -245,6 +243,19 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 	 */
 	public void addDeclaration(IASTNode node) {
 		addDefinition( node );
+	}
+	public void removeDeclaration(IASTNode node) {
+		if( namespaceDefinitions != null ) {
+			for (int i = 0; i < namespaceDefinitions.length; i++) {
+				if( node == namespaceDefinitions[i] ) {
+					if( i == namespaceDefinitions.length - 1 )
+						namespaceDefinitions[i] = null;
+					else
+						System.arraycopy( namespaceDefinitions, i + 1, namespaceDefinitions, i, namespaceDefinitions.length - 1 - i );
+					return;
+				}
+			}
+		}
 	}
 
 }

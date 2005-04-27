@@ -244,6 +244,10 @@ public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void removeDeclaration(IASTNode node) {
+		
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)

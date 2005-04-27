@@ -232,6 +232,9 @@ public class CPPDeferredClassInstance /*extends CPPInstance*/ implements
 		
 	}
 
+	public void removeDeclaration(IASTNode node) {
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getOriginalBinding()
 	 */

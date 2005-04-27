@@ -17,6 +17,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchScopeFactory;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 
@@ -71,7 +72,7 @@ public class FindDeclarationsInWorkingSetAction extends FindAction {
 		return scopeDescription;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope()
+	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope(org.eclipse.core.resources.IProject)
 	 */
 	protected ICSearchScope getScope() {
 		IWorkingSet[] workingSets= null;

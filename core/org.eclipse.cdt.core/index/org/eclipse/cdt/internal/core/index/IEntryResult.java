@@ -34,5 +34,13 @@ public interface IEntryResult {
 	 * offset array
 	 */
 	public int[][] getOffsetLengths();
+	
+	/**
+	 * Returns the simple name for this IEntryResult.
+	 * 
+	 *  ex:
+	 *  typeDecl/V/foo/namespace returns "foo"
+	 */
+	public String extractSimpleName();
 }
 

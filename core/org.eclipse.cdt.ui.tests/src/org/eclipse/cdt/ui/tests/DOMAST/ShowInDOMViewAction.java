@@ -68,7 +68,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 		}
 	}
 
-	private void showMessage(String message) {
+	protected void showMessage(String message) {
 		MessageDialog.openInformation(CTestPlugin.getStandardDisplay().getActiveShell(), DOMAST.VIEW_NAME, message);
 	}
 	

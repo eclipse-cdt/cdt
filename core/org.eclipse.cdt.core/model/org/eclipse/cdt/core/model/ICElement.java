@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * Copyright (c) 2000, 2005 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,6 +193,12 @@ public interface ICElement extends IAdaptable {
 	 * struct C;
 	 */
 	static final int C_UNION_DECLARATION = 87;
+	
+	/**
+	 * An unknown ICElement.  Mainly used to determine what elements are not yet implemented.
+	 * i.e. the new DOM Parser supports open declaration on labels, while the old parser did not
+	 */
+	static final int C_UNKNOWN_DECLARATION = 88;
 
 	/**
 	 * Modifier indicating a class constructor

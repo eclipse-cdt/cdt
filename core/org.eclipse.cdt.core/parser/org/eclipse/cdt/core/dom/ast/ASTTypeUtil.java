@@ -374,4 +374,63 @@ public class ASTTypeUtil {
 		return getType(type);
 	}
 	
+	/**
+	 * This can be used to invoke the IType's isConst() if it has an isConst() method.
+     * This returns the result of that invoked isConst() method.
+     * It is a convenience function so that the structure of IType does not need
+	 * to be known to determine if the IType is const or not.
+     *
+     * Note:  false is returned if no isConst() method is found
+     * 
+	 * @param type
+	 * @return
+	 */
+	public static boolean isConst(IType type) {
+		if (type instanceof IQualifierType) {
+			try {
+				return ((IQualifierType)type).isConst();
+			} catch (DOMException e) {
+				return false;
+			}
+		} else if (type instanceof ITypeContainer) {
+			try {
+				return isConst(((ITypeContainer)type).getType());
+			} catch (DOMException e) {
+				return false;
+			}
+		} else if (type instanceof IArrayType) {
+			try {
+				return isConst(((IArrayType)type).getType());
+			} catch (DOMException e) {
+				return false;
+			}
+		} else if (type instanceof ICPPReferenceType) {
+			try {
+				return isConst(((ICPPReferenceType)type).getType());
+			} catch (DOMException e) {
+				return false;
+			}
+		} else if (type instanceof IFunctionType) {
+			try {
+				return isConst(((IFunctionType)type).getReturnType());
+			} catch (DOMException e) {
+				return false;
+			}
+		} else if (type instanceof IPointerType) {
+			try {
+				return isConst(((IPointerType)type).getType());
+			} catch (DOMException e) {
+				return false;
+			}
+		} else if (type instanceof ITypedef) {
+			try {
+				return isConst(((ITypedef)type).getType());
+			} catch (DOMException e) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -49,7 +49,10 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * Created on Jun 2, 2004
  */
 public class SelectionParseAction extends Action {
-
+	protected static final String CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE = "CSearchOperation.tooManyNames.message"; //$NON-NLS-1$
+	protected static final String CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE = "CSearchOperation.noNamesSelected.message"; //$NON-NLS-1$
+	protected static final String CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE = "CSearchOperation.operationUnavailable.message"; //$NON-NLS-1$
+	
 	protected IWorkbenchSite fSite;
 	protected CEditor fEditor;
 
@@ -122,27 +125,45 @@ public class SelectionParseAction extends Action {
 	   return parser;
 	 }
 
-	protected void operationNotAvailable() {
-		IStatusLineManager statusManager = null;
-		 if (fSite instanceof IViewSite){
-		 	statusManager = ((IViewSite) fSite).getActionBars().getStatusLineManager();
-		 }
-		 else if (fSite instanceof IEditorSite){
-		 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
-		 }	
-		 if( statusManager != null )
-		 	statusManager.setErrorMessage(CSearchMessages.getString("CSearchOperation.operationUnavailable.message"));//$NON-NLS-1$
+	protected void operationNotAvailable(final String message) {
+		// run the code to update the status line on the Display thread
+		// this way any other thread can invoke operationNotAvailable(String)
+		CUIPlugin.getStandardDisplay().asyncExec(new Runnable(){
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				IStatusLineManager statusManager = null;
+				 if (fSite instanceof IViewSite){
+				 	statusManager = ((IViewSite) fSite).getActionBars().getStatusLineManager();
+				 }
+				 else if (fSite instanceof IEditorSite){
+				 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
+				 }	
+				 if( statusManager != null )
+				 	statusManager.setErrorMessage(CSearchMessages.getString(message));//$NON-NLS-1$
+			}
+		});
 	}
 	protected void clearStatusLine() {
-		IStatusLineManager statusManager = null;
-		 if (fSite instanceof IViewSite){
-		 	statusManager = ((IViewSite) fSite).getActionBars().getStatusLineManager();
-		 }
-		 else if (fSite instanceof IEditorSite){
-		 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
-		 }	
-		 if( statusManager != null )
-		 	statusManager.setErrorMessage( "" ); //$NON-NLS-1$
+		// run the code to update the status line on the Display thread
+		// this way any other thread can invoke clearStatusLine()
+		CUIPlugin.getStandardDisplay().asyncExec(new Runnable(){
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				IStatusLineManager statusManager = null;
+				 if (fSite instanceof IViewSite){
+				 	statusManager = ((IViewSite) fSite).getActionBars().getStatusLineManager();
+				 }
+				 else if (fSite instanceof IEditorSite){
+				 	statusManager = ((IEditorSite) fSite).getActionBars().getStatusLineManager();
+				 }	
+				 if( statusManager != null )
+				 	statusManager.setErrorMessage( "" ); //$NON-NLS-1$
+			}
+		});
 	}
 
 	//TODO: Change this to work with qualified identifiers
@@ -161,8 +182,12 @@ public class SelectionParseAction extends Action {
 		try{
 			while (pos >= 0) {
 				c= doc.getChar(pos);
+
+                // TODO this logic needs to be improved
+                // ex: ~destr[cursor]uctors, p2->ope[cursor]rator=(zero), etc
 				if (!Character.isJavaIdentifierPart(c))
-					break;
+                    break;
+
 				--pos;
 			}
 			fStartPos= pos + 1;
@@ -188,7 +213,7 @@ public class SelectionParseAction extends Action {
 	
 		return sel;		
 	}
-		
+    
 	/**
 	  * Return the selected string from the editor
 	  * @return The string currently selected, or null if there is no valid selection

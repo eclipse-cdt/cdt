@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2005 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
+import org.eclipse.cdt.core.parser.tests.ast2.DOMGCCParserExtensionTestSuite;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMParserTestSuite;
 import org.eclipse.cdt.core.parser.tests.scanner2.IncludeTest;
 import org.eclipse.cdt.core.parser.tests.scanner2.ObjectMapTest;
@@ -55,6 +56,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTest( ScannerParserLoopTest.suite() );
 		suite.addTest( GCCParserExtensionTestSuite.suite() );
 		suite.addTest( DOMParserTestSuite.suite() );
+		suite.addTest( DOMGCCParserExtensionTestSuite.suite() );
 		return suite;
 	}	
 }

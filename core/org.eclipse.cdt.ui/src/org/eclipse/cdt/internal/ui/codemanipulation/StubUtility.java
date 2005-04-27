@@ -42,6 +42,8 @@ public class StubUtility {
 	 * Examines a string and returns the first line delimiter found.
 	 */
 	public static String getLineDelimiterUsed(ICElement elem) throws CModelException {
+        if (elem == null) return ""; //$NON-NLS-1$
+        
 		ITranslationUnit cu= (ITranslationUnit) elem.getAncestor(ICElement.C_UNIT);
 		if (cu != null && cu.exists()) {
 			IBuffer buf= cu.getBuffer();

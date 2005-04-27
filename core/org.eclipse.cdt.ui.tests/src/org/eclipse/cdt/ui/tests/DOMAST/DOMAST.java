@@ -216,6 +216,10 @@ public class DOMAST extends ViewPart {
       	
       	return tu;
       }
+	  
+	  public ParserLanguage getTULanguage() {
+		  return lang;
+	  }
 
       public void dispose() {
       }
@@ -1084,7 +1088,7 @@ public class DOMAST extends ViewPart {
    
    private class DisplaySearchResultAction extends Action {
 	   	protected void displayNames(IASTName[] names, String queryLabel, String pattern) {
-	        DOMQuery job = new DOMQuery(names, queryLabel, pattern);
+	        DOMDisplaySearchNames job = new DOMDisplaySearchNames(names, queryLabel, pattern);
 	        NewSearchUI.activateSearchResultView();
 	        NewSearchUI.runQueryInBackground(job);
 	     }
@@ -1094,7 +1098,7 @@ public class DOMAST extends ViewPart {
 	   	private static final String IASTPROBLEM = "IASTProblem"; //$NON-NLS-1$
 		private static final String PROBLEMS_FOUND = "Problems Found"; //$NON-NLS-1$
 		protected void displayProblems(IASTProblem[] problems, String queryLabel, String pattern) {
-	        DOMQuery job = new DOMQuery(problems, queryLabel, pattern);
+	        DOMDisplaySearchNames job = new DOMDisplaySearchNames(problems, queryLabel, pattern);
 	        NewSearchUI.activateSearchResultView();
 	        NewSearchUI.runQueryInBackground(job);
 	     }

@@ -9,6 +9,7 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -43,7 +44,7 @@ public class WorkingSetFindAction extends FindAction {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.search.actions.FindAction#getScope()
+	 * @see org.eclipse.cdt.internal.ui.search.actions.FindAction#getScope(org.eclipse.core.resources.IProject)
 	 */
 	protected ICSearchScope getScope() {
 		// TODO Auto-generated method stub

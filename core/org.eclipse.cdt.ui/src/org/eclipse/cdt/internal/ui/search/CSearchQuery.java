@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -10,16 +10,15 @@
  ******************************************************************************/
 /*
  * Created on Mar 26, 2004
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
@@ -35,37 +34,34 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 /**
  * @author bog 
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	
-	private CSearchResultCollector 	_collector;
-	private IWorkspace 				_workspace;	
-	private ICSearchScope			_scope;
-	private String					_stringPattern;
-	private String					_scopeDescription;
-	private boolean					_caseSensitive;
-	private LimitTo					_limitTo;
-	private List					_searchFor;
-	private CSearchResult  			_result;
+	private ICSearchResultCollector 	_collector;
+	private IWorkspace 					_workspace;	
+	private ICSearchScope				_scope;
+	private String						_stringPattern;
+	private String						_scopeDescription;
+	private boolean						_caseSensitive;
+	private LimitTo						_limitTo;
+	private List						_searchFor;
+	private CSearchResult  				_result;
 	 
-	public CSearchQuery(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
+	public CSearchQuery(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, ICSearchResultCollector collector) {
 		this( workspace, limitTo, scope, scopeDescription, collector );
 		_stringPattern = pattern;
 		_caseSensitive = caseSensitive;
 		_searchFor = searchFor;
 	}
 
-	public CSearchQuery(IWorkspace workspace, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector ){
+	public CSearchQuery(IWorkspace workspace, LimitTo limitTo, ICSearchScope scope, String scopeDescription, ICSearchResultCollector collector ){
 		_workspace = workspace;
 		_limitTo = limitTo;
 		_scope = scope;
 		_scopeDescription = scopeDescription;
 		_collector = collector;
-		if (_collector != null)
-			_collector.setOperation( this );
+		if (_collector instanceof CSearchResultCollector)
+			((CSearchResultCollector)_collector).setOperation( this );
 	}
 
 	/**
@@ -133,8 +129,6 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 		textResult.removeAll();
 		
 		SearchEngine engine = new SearchEngine( CUIPlugin.getSharedWorkingCopies() );
-		int matchCount= 0;
-		
 
 		int totalTicks= 1000;
 
@@ -165,7 +159,6 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 			}
 		}
 		monitor.done();
-		matchCount = finalCollector.getMatchCount();
 		
 		return new Status(IStatus.OK, CUIPlugin.getPluginId(), 0,"", null); //$NON-NLS-1$	
 	}
@@ -214,6 +207,5 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 			_result= new CSearchResult(this);
 		return _result;
 	}
-	
-	
+		
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.IIndex;
 
 
 public class EntryResult implements IEntryResult {
@@ -86,8 +87,44 @@ public String toString(){
 public int[][] getOffsets() {
     return offsets;
 }
+/* (non-Javadoc)
+ * @see org.eclipse.cdt.internal.core.index.IEntryResult#getOffsetLengths()
+ */
 public int[][] getOffsetLengths() {
 	return offsetLengths;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.cdt.internal.core.index.IEntryResult#extractSimpleName()
+ */
+public String extractSimpleName() {
+	return EntryResult.extractSimpleName(getWord());
+}
+/* (non-Javadoc)
+ * @see org.eclipse.cdt.internal.core.index.IEntryResult#extractSimpleName(char[])
+ */
+public static String extractSimpleName(char[] word) {
+	String aWord = new String(word);
+	String longName=null;
+	
+	String typeDecl = Index.getDescriptionOf(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
+	String typeDef = Index.getDescriptionOf(IIndex.TYPE, IIndex.ANY, IIndex.DEFINITION);
+	String typeRef = Index.getDescriptionOf(IIndex.TYPE, IIndex.ANY, IIndex.REFERENCE);
+	
+	if (aWord.indexOf(typeDecl) == 0) {
+		longName = aWord.substring(aWord.indexOf(IndexerOutput.SEPARATOR, typeDecl.length())+1);
+	} else if (aWord.indexOf(typeRef) == 0) {
+		longName = aWord.substring(aWord.indexOf(IndexerOutput.SEPARATOR, typeRef.length())+1); 
+	} else if (aWord.indexOf(typeDef) == 0) {
+		longName = aWord.substring(aWord.indexOf(IndexerOutput.SEPARATOR, typeDef.length())+1); 
+	} else {
+		longName = aWord.substring(aWord.indexOf(IndexerOutput.SEPARATOR)+1); 
+	}
+
+	int sepPos=longName.indexOf(IndexerOutput.SEPARATOR);
+	if (sepPos>=0)
+		return aWord.substring(0, longName.indexOf(IndexerOutput.SEPARATOR));
+	else
+		return longName;
 }
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,33 +11,28 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.ICLogConstants;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
-import org.eclipse.cdt.core.parser.ast.IASTField;
-import org.eclipse.cdt.core.parser.ast.IASTFunction;
-import org.eclipse.cdt.core.parser.ast.IASTMethod;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
-import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
+import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -53,12 +48,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
-
 public class OpenDeclarationsAction extends SelectionParseAction implements IUpdate {
-		
-	//private String fDialogTitle;
+	public static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
+    //private String fDialogTitle;
 	//private String fDialogMessage;
 	SearchEngine searchEngine = null;
 
@@ -94,44 +89,38 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 	String projectName = "";  //$NON-NLS-1$
 	 private static class Storage
 	{
-		private IASTOffsetableNamedElement element;
 		private IResource resource;
 		private String fileName;
+		private int offset=0;
+		private int length=0;
 
-		public IASTOffsetableNamedElement getNamedElement()
-		{
-			return element;
-		}
-		/**
-		 * @return Returns the fileName.
-		 */
 		public final String getFileName() {
 			return fileName;
 		}
-		/**
-		 * @param fileName The fileName to set.
-		 */
-		public final void setFileName(String fileName) {
-			this.fileName = fileName;
+		public Storage() {
 		}
-		/**
-		 * @return Returns the resource.
-		 */
 		public final IResource getResource() {
 			return resource;
 		}
-		/**
-		 * @param resource The resource to set.
-		 */
-		public final void setResource(IResource resource) {
+		public int getLength() {
+			return length;
+		}
+		public int getOffset() {
+			return offset;
+		}
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
+		public void setLength(int length) {
+			this.length = length;
+		}
+		public void setOffset(int offset) {
+			this.offset = offset;
+		}
+		public void setResource(IResource resource) {
 			this.resource = resource;
 		}
-		/**
-		 * @param element The element to set.
-		 */
-		public final void setElement(IASTOffsetableNamedElement element) {
-			this.element = element;
-		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -145,94 +134,130 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 		}
 		
 		final Storage storage = new Storage();
-		
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() 
 		{
+			// steps:
+			// 1- parse and get the best selected name based on the offset/length into that TU
+			// 2- based on the IASTName selected, find the best declaration of it in the TU
+			// 3- if no IASTName is found for a declaration, then search the Index
 			public void run(IProgressMonitor monitor) {
-				IFile resourceFile = fEditor.getInputFile();
-				projectName = findProjectName(resourceFile);
-				
-				IParser parser = setupParser(resourceFile);
- 		 		int selectionStart = selNode.selStart;
- 		 		int selectionEnd = selNode.selEnd;
+				int selectionStart = selNode.selStart;
+				int selectionLength = selNode.selEnd - selNode.selStart;
+                
+                IFile resourceFile = null;
+                
+                IASTName[] selectedNames = BLANK_NAME_ARRAY;
+                if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
+                    if( fEditor.getEditorInput() instanceof ITranslationUnitEditorInput )
+                    {
+                        ITranslationUnitEditorInput ip = (ITranslationUnitEditorInput) fEditor.getEditorInput();
+                        IResource r = ip.getTranslationUnit().getUnderlyingResource();
+                        if( r.getType() == IResource.FILE )
+                            resourceFile = (IFile) r;
+                        else
+                        {
+                            operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+                            return;
 
-				IParser.ISelectionParseResult result = null;
-				IASTOffsetableNamedElement node = null;
-				try{
-					result = parser.parse(selectionStart,selectionEnd);
-					if( result != null )
-						node = result.getOffsetableNamedElement();
-				} 
-				catch (ParseError er){}
-				catch ( VirtualMachineError vmErr){
-					if (vmErr instanceof OutOfMemoryError){
-						org.eclipse.cdt.internal.core.model.Util.log(null, "Open Declarations Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				}
-				catch (Exception ex){}
-				
-				finally{
-					if (node == null){
-						return;
-					}
-				}
+                        }
+                    }
+                }
+                else
+                    resourceFile = fEditor.getInputFile();
+                
 
-				storage.setFileName( result.getFilename() );
-				storage.setElement( node );
-				storage.setResource( ParserUtil.getResourceForFilename( result.getFilename() ) );
+                if (resourceFile != null) 
+                    projectName = findProjectName(resourceFile);
+                
+                // step 1 starts here
+                if (resourceFile != null)
+                    selectedNames = DOMSearchUtil.getSelectedNamesFrom(resourceFile, selectionStart, selectionLength);
+                				
+				if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
+					IASTName searchName = selectedNames[0];
+					// step 2 starts here
+					IASTName[] domNames = DOMSearchUtil.getNamesFromDOM(searchName, ICSearchConstants.DECLARATIONS);
+					if (domNames != null && domNames.length > 0 && domNames[0] != null) {
+                        String fileName=null;
+                        int start=0;
+                        int end=0;
+                        
+                        if ( domNames[0].getTranslationUnit() != null ) {
+                            IASTFileLocation location = domNames[0].getTranslationUnit().flattenLocationsToFile( domNames[0].getNodeLocations() );
+                            fileName = location.getFileName();
+                            start = location.getNodeOffset();
+                            end = location.getNodeOffset() + location.getNodeLength();
+                        }
+                        
+                        if (fileName != null) {
+                            storage.setFileName(fileName);
+                            storage.setLength(end - start);
+                            storage.setOffset(start);
+                            storage.setResource(ParserUtil.getResourceForFilename( fileName ));
+                        }
+					} else {
+						// step 3 starts here
+						ICElement[] scope = new ICElement[1];
+						scope[0] = new CProject(null, fEditor.getInputFile().getProject());
+						Set matches = DOMSearchUtil.getMatchesFromSearchEngine(SearchEngine.createCSearchScope(scope), searchName, ICSearchConstants.DECLARATIONS);
+
+						if (matches != null) {
+							Iterator itr = matches.iterator();
+							while(itr.hasNext()) {
+								Object match = itr.next();
+								if (match instanceof IMatch) {
+									IMatch theMatch = (IMatch)match;
+									storage.setFileName(theMatch.getLocation().toOSString());
+									storage.setLength(theMatch.getEndOffset() - theMatch.getStartOffset());
+									storage.setOffset(theMatch.getStartOffset());
+                                    storage.setResource(ParserUtil.getResourceForFilename(theMatch.getLocation().toOSString()));
+									break;
+								}
+							}
+						}
+					}
+				} else if (selectedNames.length == 0){
+					operationNotAvailable(CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE);
+					return;
+				} else {
+					operationNotAvailable(CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE);
+					return;
+				}
+				
 				return;
 			}
-
-			private String findProjectName(IFile resourceFile) {
-				if( resourceFile == null ) return ""; //$NON-NLS-1$
-				IProject [] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-				for( int i = 0; i < projects.length; ++i )
-				{
-					if( projects[i].contains(resourceFile) )
-						return projects[i].getName();
-				}
-				return ""; //$NON-NLS-1$
-			}
+            
+            private String findProjectName(IFile resourceFile) {
+                if( resourceFile == null ) return ""; //$NON-NLS-1$
+                IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+                for( int i = 0; i < projects.length; ++i )
+                {
+                    if( projects[i].contains(resourceFile) )
+                        return projects[i].getName();
+                }
+                return ""; //$NON-NLS-1$
+            }
  		};
 
 		try {
 	 		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
 	 		progressMonitor.run(true, true, runnable);
 	 		
-	 		IASTOffsetableNamedElement namedElement = storage.getNamedElement();
-	 		if( namedElement == null ){
-	 			operationNotAvailable();
-	 			return;
-	 		} else {
-	 			clearStatusLine();
-	 		}
-	 		
+			int nameOffset = storage.getOffset();
+			int nameLength = storage.getLength();
 			if( storage.getResource() != null )
 	 		{
-				int nameOffset = 0;
-				int nameEndOffset = 0;
-				
-				nameOffset = namedElement.getNameOffset();
-				nameEndOffset = namedElement.getNameEndOffset();
-				
-				open( storage.getResource(), nameOffset,  nameEndOffset - nameOffset );
+                clearStatusLine();
+				open( storage.getResource(), nameOffset,  nameLength );
 	 			return;
 	 		}
-	 		else
-	 		{
-	 			String fileName = null;
-	 			int nameOffset = 0;
-				int nameEndOffset = 0;
-				
-				fileName = storage.getFileName();
-				nameOffset = namedElement.getNameOffset();
-				nameEndOffset = namedElement.getNameEndOffset();
-				
-	 			if (fileName != null){
-		 			 open( fileName,nameOffset,  nameEndOffset - nameOffset);
-	 			}
-	 		}
+			String fileName = storage.getFileName();
+			
+ 			if (fileName != null){
+                clearStatusLine();
+	 			open( fileName, nameOffset, nameLength);
+ 			}
 
 		} catch(Exception x) {
 		 		 CUIPlugin.getDefault().log(x);
@@ -252,15 +277,13 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 			return true;
 		}
 
-		ICProject cproject = CoreModel.getDefault().getCModel().getCProject( projectName );
+        ICProject cproject = CoreModel.getDefault().getCModel().getCProject( projectName );
 		ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
 		if (unit != null) {
 			setSelectionAtOffset( EditorUtility.openInEditor(unit), offset, length );
 			return true;
 		}
-
-		
-		
+        
 		FileStorage storage = new FileStorage(null, path);
 		IEditorPart part = EditorUtility.openInEditor(storage);
 		setSelectionAtOffset(part, offset, length);
@@ -291,19 +314,12 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 	 * @param length TODO
 	 */
 	private void setSelectionAtOffset(IEditorPart part, int offset, int length) {
-		//int line = element.getStartOffset();
-		//if(line > 0) line--;
-		if(part instanceof CEditor) {
-			CEditor ed = (CEditor)part;
-			
-			try {					
-				//IDocument document= ed.getDocumentProvider().getDocument(ed.getEditorInput());
-				//if(line > 3) {
-				//	ed.selectAndReveal(document.getLineOffset(line - 3), 0);
-				//}
-				ed.selectAndReveal(offset, length);
+		if( part instanceof AbstractTextEditor )
+        {
+			try {
+            ((AbstractTextEditor) part).selectAndReveal(offset, length);
 			} catch (Exception e) {}
-		}
+        }
 	}
 //	/**
 //	 * Shows a dialog for resolving an ambigous C element.
@@ -346,48 +362,6 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 	 public void update() {
 	 		 setEnabled(getSelectedStringFromEditor() != null);
 	 }
-	 
-	 private SearchFor getSearchForFromNode(IASTNode node){
-		SearchFor searchFor = null;
-		
-		if (node instanceof IASTClassSpecifier){
-		//Find out if class, struct, union
-		   IASTClassSpecifier tempNode = (IASTClassSpecifier) node;
-		   if(tempNode.getClassKind().equals(ASTClassKind.CLASS)){
-		   	searchFor = ICSearchConstants.CLASS;
-		   }
-		   else if (tempNode.getClassKind().equals(ASTClassKind.STRUCT)){
-		   	searchFor = ICSearchConstants.STRUCT;
-		   }
-		   else if (tempNode.getClassKind().equals(ASTClassKind.UNION)){
-		   	searchFor = ICSearchConstants.UNION;
-		   }
-		}
-		else if (node instanceof IASTMethod){
-			searchFor = ICSearchConstants.METHOD;
-		}
-		else if (node instanceof IASTFunction){
-			searchFor = ICSearchConstants.FUNCTION;
-		}
-		else if (node instanceof IASTField){
-			searchFor = ICSearchConstants.FIELD;
-		}
-		else if (node instanceof IASTVariable){
-			searchFor = ICSearchConstants.VAR;
-		}
-		else if (node instanceof IASTEnumerationSpecifier){
-			searchFor = ICSearchConstants.ENUM;
-		}
-		else if (node instanceof IASTEnumerator){
-			searchFor = ICSearchConstants.FIELD;
-		}
-		else if (node instanceof IASTNamespaceDefinition){
-			searchFor = ICSearchConstants.NAMESPACE;
-		}
-		
-		return searchFor;
-	}
-
 
 }
 

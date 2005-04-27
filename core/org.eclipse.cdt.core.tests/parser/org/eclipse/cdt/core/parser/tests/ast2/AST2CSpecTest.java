@@ -1118,7 +1118,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("extern int (*r)[m]; // invalid: r has linkage and points to VLA\n"); //$NON-NLS-1$
 		buffer.append("static int (*q)[m] = &B; // valid: q is a static block pointer to VLA\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, 0);
+		parseCandCPP(buffer.toString(), false, 0);
 	}
 	
 	/**

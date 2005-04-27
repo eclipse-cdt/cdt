@@ -14,15 +14,17 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTFunctionDefinition extends CPPASTNode implements
-        IASTFunctionDefinition {
+        IASTFunctionDefinition, IASTAmbiguityParent {
 
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
@@ -92,4 +94,13 @@ public class CPPASTFunctionDefinition extends CPPASTNode implements
         return true;
     }
 
+    public void replace(IASTNode child, IASTNode other) {
+        if( bodyStatement == child ) 
+        {
+            other.setPropertyInParent( bodyStatement.getPropertyInParent() );
+            other.setParent( bodyStatement.getParent() );
+            bodyStatement = (IASTStatement) other;
+        }
+    }
+    
 }

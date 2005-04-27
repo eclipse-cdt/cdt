@@ -10,22 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
-/**
- * @author jcamelon
- */
-public interface IASTDeclarationAmbiguity extends IASTDeclaration
-{
+public interface IASTAmbiguousStatement extends IASTStatement {
 
-    /**
-     * @param decl
-     */
-    public void addDeclaration( IASTDeclaration decl );
-    
-    /**
-     * @return
-     */
-    public IASTDeclaration [] getDeclarations();
+    public static final ASTNodeProperty STATEMENT = new ASTNodeProperty( "IASTAmbiguousStatement.STATEMENT - Ambiguous statement." ); //$NON-NLS-1$
+    public void addStatement( IASTStatement s );
+    public IASTStatement [] getStatements();
     
 }

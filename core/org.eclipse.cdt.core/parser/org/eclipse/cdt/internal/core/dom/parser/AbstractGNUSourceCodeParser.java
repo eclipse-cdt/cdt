@@ -10,6 +10,7 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -405,7 +406,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return result;
     }
 
-    protected abstract void resolveAmbiguities();
+    protected void resolveAmbiguities()
+    {
+        getTranslationUnit().accept( createVisitor() );
+    }
+
+    protected abstract ASTVisitor createVisitor();
 
     /**
      * 
@@ -1500,18 +1506,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
         }
 
-        // A*B
-        if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
-            IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement
-                    .getExpression();
-            if (exp.getOperator() == IASTBinaryExpression.op_multiply) {
-                IASTExpression lhs = exp.getOperand1();
-                if (lhs instanceof IASTIdExpression)
-                    if (queryIsTypeName(((IASTIdExpression) lhs).getName()))
-                        return ds;
-            }
-        }
-
         // x = y; // default to int
         // valid @ Translation Unit scope
         // but not valid as a statement in a function body
@@ -1528,31 +1522,40 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
             return expressionStatement;
         }
-
-        if (resolveOtherAmbiguitiesAsDeclaration(ds, expressionStatement))
-            return ds;
-
-        backup(mark);
-        while (true) {
-            if (consume() == lastTokenOfExpression)
-                break;
+        
+        if (ds.getDeclaration() instanceof IASTSimpleDeclaration
+                && ((IASTSimpleDeclaration) ds.getDeclaration())
+                        .getDeclSpecifier() instanceof IASTNamedTypeSpecifier )
+                
+        {
+            final IASTDeclarator[] declarators = ((IASTSimpleDeclaration) ds.getDeclaration()).getDeclarators();
+            if( declarators.length == 0 || 
+                ( declarators.length == 1 && 
+                        ( declarators[0].getName().toString() == null && declarators[0].getNestedDeclarator() == null ) ) )  
+            {
+                backup(mark);
+                while (true) {
+                    if (consume() == lastTokenOfExpression)
+                        break;
+                }
+    
+                return expressionStatement;
+            }
         }
 
-        return expressionStatement;
+        
+        IASTAmbiguousStatement statement = createAmbiguousStatement();
+        statement.addStatement( ds );
+        ds.setParent( statement );
+        ds.setPropertyInParent( IASTAmbiguousStatement.STATEMENT );
+        statement.addStatement( expressionStatement );
+        expressionStatement.setParent( statement );
+        expressionStatement.setPropertyInParent( IASTAmbiguousStatement.STATEMENT );
+        ((ASTNode)statement).setOffsetAndLength( (ASTNode) ds );
+        return statement;        
     }
 
-    protected abstract boolean queryIsTypeName(IASTName name);
-
-    /**
-     * @param ds
-     * @param expressionStatement
-     * @return
-     */
-    protected boolean resolveOtherAmbiguitiesAsDeclaration(
-            IASTDeclarationStatement ds,
-            IASTExpressionStatement expressionStatement) {
-        return false;
-    }
+    protected abstract IASTAmbiguousStatement createAmbiguousStatement();
 
     /**
      * @return

@@ -14,12 +14,14 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
-        IASTFieldDeclarator {
+        IASTFieldDeclarator, IASTAmbiguityParent {
 
     private IASTExpression bitField;
 
@@ -43,6 +45,16 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
         IASTInitializer initializer = getInitializer();
         if( initializer != null ) if( !initializer.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == bitField )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            bitField  = (IASTExpression) other;
+        }
+        
     }
 
 }

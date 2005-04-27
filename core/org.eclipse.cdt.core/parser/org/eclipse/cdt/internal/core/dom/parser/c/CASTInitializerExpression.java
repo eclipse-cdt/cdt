@@ -12,12 +12,14 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CASTInitializerExpression extends CASTNode implements
-        IASTInitializerExpression {
+        IASTInitializerExpression, IASTAmbiguityParent {
 
     private IASTExpression expression;
 
@@ -45,6 +47,15 @@ public class CASTInitializerExpression extends CASTNode implements
 		}
         if( expression != null ) if( !expression.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == expression )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            expression  = (IASTExpression) other;
+        }
     }
 
 }

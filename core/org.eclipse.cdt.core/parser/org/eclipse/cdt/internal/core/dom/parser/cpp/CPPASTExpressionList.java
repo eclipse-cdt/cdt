@@ -13,12 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTExpressionList extends CPPASTNode implements
-        IASTExpressionList {
+        IASTExpressionList, IASTAmbiguityParent {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTExpressionList#getExpressions()
      */
@@ -82,5 +84,16 @@ public class CPPASTExpressionList extends CPPASTNode implements
             if( !exps[i].accept( action ) ) return false;
 
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        IASTExpression[] ez = getExpressions();
+        for (int i = 0; i < ez.length; ++i) {
+            if (child == ez[i]) {
+                other.setPropertyInParent(child.getPropertyInParent());
+                other.setParent(child.getParent());
+                ez[i] = (IASTExpression) other;
+            }
+        }
     }
 }

@@ -11,14 +11,16 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CASTArrayDesignator extends CASTNode implements
-        ICASTArrayDesignator {
+        ICASTArrayDesignator, IASTAmbiguityParent {
 
     private IASTExpression exp;
 
@@ -46,5 +48,14 @@ public class CASTArrayDesignator extends CASTNode implements
 		}
         if( exp != null ) if( !exp.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == exp )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            exp = (IASTExpression) other;
+        }
     }
 }

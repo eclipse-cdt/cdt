@@ -12,12 +12,14 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTEnumerator extends CASTNode implements IASTEnumerator {
+public class CASTEnumerator extends CASTNode implements IASTEnumerator, IASTAmbiguityParent {
 
     private IASTName name;
     private IASTExpression value;
@@ -70,5 +72,14 @@ public class CASTEnumerator extends CASTNode implements IASTEnumerator {
 		if( n == name )return r_declaration;
 		return r_unclear;
 	}
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == value)
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            value  = (IASTExpression) other;
+        }
+    }
 
 }

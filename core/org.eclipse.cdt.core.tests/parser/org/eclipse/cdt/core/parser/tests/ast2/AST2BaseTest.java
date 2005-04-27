@@ -138,6 +138,9 @@ public class AST2BaseTest extends TestCase {
         	assertEquals( CPPVisitor.getProblems(tu).length, 0 );
         	assertEquals( tu.getPreprocessorProblems().length, 0 );
         }
+        if( expectNoProblems )
+            assertEquals( 0, tu.getPreprocessorProblems().length );
+        
         
         return tu;
     }

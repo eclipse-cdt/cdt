@@ -13,15 +13,17 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
-        ICPPASTTemplatedTypeTemplateParameter {
+        ICPPASTTemplatedTypeTemplateParameter, IASTAmbiguityParent {
 
     public ICPPASTTemplateParameter[] getTemplateParameters() {
         if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
@@ -119,4 +121,13 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
 			return r_declaration;
 		return r_unclear;
 	}
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == defaultValue )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            defaultValue  = (IASTExpression) other;
+        }
+    }
 }

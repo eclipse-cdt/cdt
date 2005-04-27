@@ -453,46 +453,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		}
 	}
 
-	/**
-	 [--Start Example(CPP 8.5.3-1):
-	int g(int);
-	void f()
-	{
-	int i;
-	int& r = i; // r refers to i
-	r = 1; // the value of i becomes 1
-	int* p = &r; // p points to i
-	int& rr = r; // rr refers to what r refers to, that is, to i
-	int (&rg)(int) = g; // rg refers to the function g
-	rg(i); //calls function g
-	int a[3];
-	int (&ra)[3] = a; // ra refers to the array a
-	ra[1] = i; // modifies a[1]
-	}
-	 --End Example]
-	 */
-	public void test8_5_3s1()  { // TODO raised bug 90648
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("int g(int);\n"); //$NON-NLS-1$
-		buffer.append("void f()\n"); //$NON-NLS-1$
-		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("int i;\n"); //$NON-NLS-1$
-		buffer.append("int& r = i; // r refers to i\n"); //$NON-NLS-1$
-		buffer.append("r = 1; // the value of i becomes 1\n"); //$NON-NLS-1$
-		buffer.append("int* p = &r; // p points to i\n"); //$NON-NLS-1$
-		buffer.append("int& rr = r; // rr refers to what r refers to, that is, to i\n"); //$NON-NLS-1$
-		buffer.append("int (&rg)(int) = g; // rg refers to the function g\n"); //$NON-NLS-1$
-		buffer.append("rg(i); //calls function g\n"); //$NON-NLS-1$
-		buffer.append("int a[3];\n"); //$NON-NLS-1$
-		buffer.append("int (&ra)[3] = a; // ra refers to the array a\n"); //$NON-NLS-1$
-		buffer.append("ra[1] = i; // modifies a[1]\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
 
 	/**
 	 [--Start Example(CPP 10.2-3b):

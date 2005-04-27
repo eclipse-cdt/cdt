@@ -11,15 +11,17 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTTryBlockStatement extends CPPASTNode implements
-        ICPPASTTryBlockStatement {
+        ICPPASTTryBlockStatement, IASTAmbiguityParent {
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#addCatchHandler(org.eclipse.cdt.core.dom.ast.IASTStatement)
@@ -97,4 +99,12 @@ public class CPPASTTryBlockStatement extends CPPASTNode implements
         return true;
     }
 
+    public void replace(IASTNode child, IASTNode other) {
+        if( tryBody == child )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            tryBody = (IASTStatement) other;
+        }
+    }
 }

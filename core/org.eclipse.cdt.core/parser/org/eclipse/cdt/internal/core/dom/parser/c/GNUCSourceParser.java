@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -100,11 +101,20 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 /**
  * @author jcamelon
  */
 public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
+
+    private static class EmptyVisitor extends CASTVisitor {
+        {
+            shouldVisitStatements = true;
+        }
+    }
+    
+    private static final EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
 
     private final boolean supportGCCStyleDesignators;
 
@@ -2600,54 +2610,58 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return pd;
     }
 
-    static class HeuristicTypeDetector extends CASTVisitor
-    {
-        private final char[] lookingForName;
-        boolean result = false;
-        
-        {
-            shouldVisitDeclarations = true;
-        }
-
-        public HeuristicTypeDetector( char [] name )
-        {
-            this.lookingForName = name;
-        }
-
-        public int visit(IASTDeclaration declaration) {
-            if( declaration instanceof IASTSimpleDeclaration )
-            {
-                IASTSimpleDeclaration sd = (IASTSimpleDeclaration) declaration;
-                if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef )
-                {
-                    IASTDeclarator [] declarators = sd.getDeclarators();
-                    for( int i = 0; i < declarators.length; ++i )
-                        if( CharArrayUtils.equals( declarators[i].getName().toCharArray(), lookingForName ) )
-                        {
-                            result = true;
-                            return PROCESS_ABORT;
-                        }
-                }
-            }
-            return PROCESS_CONTINUE;
-        }
-        
-        public boolean getAnswer()
-        {
-            return result;
-        }
-        
-    }
-    
-    protected boolean queryIsTypeName(IASTName name) {
-        HeuristicTypeDetector nc = new HeuristicTypeDetector( name.toCharArray() );
-        translationUnit.accept(nc);
-        return nc.result;
+    protected ASTVisitor createVisitor() {
+        return EMPTY_VISITOR;
     }
 
-    protected void resolveAmbiguities() {
-        // TODO Auto-generated method stub
-        
+    protected IASTAmbiguousStatement createAmbiguousStatement() {
+        return new CASTAmbiguousStatement();
     }
+
+//    static class HeuristicTypeDetector extends CASTVisitor
+//    {
+//        private final char[] lookingForName;
+//        boolean result = false;
+//        
+//        {
+//            shouldVisitDeclarations = true;
+//        }
+//
+//        public HeuristicTypeDetector( char [] name )
+//        {
+//            this.lookingForName = name;
+//        }
+//
+//        public int visit(IASTDeclaration declaration) {
+//            if( declaration instanceof IASTSimpleDeclaration )
+//            {
+//                IASTSimpleDeclaration sd = (IASTSimpleDeclaration) declaration;
+//                if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef )
+//                {
+//                    IASTDeclarator [] declarators = sd.getDeclarators();
+//                    for( int i = 0; i < declarators.length; ++i )
+//                        if( CharArrayUtils.equals( declarators[i].getName().toCharArray(), lookingForName ) )
+//                        {
+//                            result = true;
+//                            return PROCESS_ABORT;
+//                        }
+//                }
+//            }
+//            return PROCESS_CONTINUE;
+//        }
+//        
+//        public boolean getAnswer()
+//        {
+//            return result;
+//        }
+//        
+//    }
+//    
+//    protected boolean queryIsTypeName(IASTName name) {
+//        HeuristicTypeDetector nc = new HeuristicTypeDetector( name.toCharArray() );
+//        translationUnit.accept(nc);
+//        return nc.result;
+//    }
+
 
 }

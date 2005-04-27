@@ -13,12 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTIfStatement extends CPPASTNode implements IASTIfStatement {
+public class CPPASTIfStatement extends CPPASTNode implements IASTIfStatement, IASTAmbiguityParent {
     private IASTExpression condition;
     private IASTStatement thenClause;
     private IASTStatement elseClause;
@@ -77,5 +79,20 @@ public class CPPASTIfStatement extends CPPASTNode implements IASTIfStatement {
         if( thenClause != null ) if( !thenClause.accept( action ) ) return false;
         if( elseClause != null ) if( !elseClause.accept( action ) ) return false;
         return true;
+    }
+    
+    public void replace(IASTNode child, IASTNode other) {
+        if( thenClause == child )
+        {
+            other.setParent( child.getParent() );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            thenClause = (IASTStatement) other;
+        }
+        else if( elseClause == child )
+        {
+            other.setParent( child.getParent() );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            elseClause = (IASTStatement) other;            
+        }
     }
 }

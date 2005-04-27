@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
@@ -2000,6 +2001,9 @@ abstract class BaseScanner implements IScanner {
                 }
 
             // skip over anything we don't handle
+                char [] x = new char [1];
+                x[0] = buffer[pos];
+                handleProblem( IASTProblem.SCANNER_BAD_CHARACTER, pos, x );
             }
         }
 

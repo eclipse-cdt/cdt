@@ -10,8 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
-public interface IASTAmbiguity extends IASTNode {
+public interface IASTAmbiguousExpression extends IASTExpression {
 
+    public static final ASTNodeProperty SUBEXPRESSION = new ASTNodeProperty( "IASTAmbiguousExpression.SUBEXPRESSION"); //$NON-NLS-1$
+    public void addExpression( IASTExpression e );
+    public IASTExpression [] getExpressions();
 }

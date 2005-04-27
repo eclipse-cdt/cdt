@@ -13,13 +13,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTFieldReference extends CPPASTNode implements
-        ICPPASTFieldReference {
+        ICPPASTFieldReference, IASTAmbiguityParent {
 
     private boolean isTemplate;
     private IASTExpression owner;
@@ -104,6 +106,15 @@ public class CPPASTFieldReference extends CPPASTNode implements
 			return r_reference;
 		return r_unclear;
 	}
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == owner )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            owner  = (IASTExpression) other;
+        }
+    }
 
 
 }

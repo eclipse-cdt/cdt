@@ -12,14 +12,16 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTSwitchStatement extends CPPASTNode implements
-        IASTSwitchStatement {
+        IASTSwitchStatement, IASTAmbiguityParent {
 
     private IASTExpression controller;
     private IASTStatement body;
@@ -64,4 +66,21 @@ public class CPPASTSwitchStatement extends CPPASTNode implements
         if( body != null ) if( !body.accept( action ) ) return false;
         return true;
     }
+    
+    public void replace(IASTNode child, IASTNode other) {
+        if( body == child )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            body = (IASTStatement) other;
+        }
+        if( child == controller )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            controller  = (IASTExpression) other;
+        }
+            
+    }
+
 }

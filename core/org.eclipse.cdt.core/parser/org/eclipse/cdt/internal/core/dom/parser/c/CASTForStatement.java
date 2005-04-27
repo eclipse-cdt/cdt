@@ -13,13 +13,15 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTForStatement extends CASTNode implements IASTForStatement {
+public class CASTForStatement extends CASTNode implements IASTForStatement, IASTAmbiguityParent {
     private IScope scope = null;
     
     private IASTExpression initialExpression;
@@ -122,6 +124,34 @@ public class CASTForStatement extends CASTNode implements IASTForStatement {
         if( iterationExpression != null ) if( !iterationExpression.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( body == child )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            body = (IASTStatement) other;
+        }
+        if( child == initialExpression )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            initialExpression  = (IASTExpression) other;
+        }
+        if( child == iterationExpression)
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            iterationExpression = (IASTExpression) other;
+        }
+        if( child == condition)
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            condition = (IASTExpression) other;
+        }
+        
     }
 
 }

@@ -11,14 +11,16 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CASTCompoundStatement extends CASTNode implements
-        IASTCompoundStatement {
+        IASTCompoundStatement, IASTAmbiguityParent {
 
     private int currentIndex = 0;
     private void removeNullStatements() {
@@ -91,6 +93,20 @@ public class CASTCompoundStatement extends CASTNode implements
             if( !s[i].accept( action ) ) return false;
         }
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        IASTStatement [] s = getStatements();
+        for( int i = 0; i < s.length; ++i )
+        {
+            if( s[i] == child )
+            {
+                other.setParent( s[i].getParent() );
+                other.setPropertyInParent( s[i].getPropertyInParent() );
+                s[i] = (IASTStatement) other;
+                break;
+            }
+        }
     }
 
 }

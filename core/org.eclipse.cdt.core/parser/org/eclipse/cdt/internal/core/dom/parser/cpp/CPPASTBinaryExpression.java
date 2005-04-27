@@ -12,13 +12,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTBinaryExpression extends CPPASTNode implements
-        ICPPASTBinaryExpression {
+        ICPPASTBinaryExpression, IASTAmbiguityParent {
 
     private int op;
     private IASTExpression operand1;
@@ -78,6 +80,21 @@ public class CPPASTBinaryExpression extends CPPASTNode implements
         if( operand1 != null ) if( !operand1.accept( action ) ) return false;
         if( operand2 != null ) if( !operand2.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == operand1 )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            operand1  = (IASTExpression) other;
+        }
+        if( child == operand2 )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            operand2  = (IASTExpression) other;
+        }
     }
 
 }

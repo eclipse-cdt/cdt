@@ -11,14 +11,16 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CASTArrayRangeDesignator extends CASTNode implements
-        IGCCASTArrayRangeDesignator {
+        IGCCASTArrayRangeDesignator, IASTAmbiguityParent {
 
     private IASTExpression floor, ceiling;
 
@@ -62,4 +64,20 @@ public class CASTArrayRangeDesignator extends CASTNode implements
         if( ceiling != null ) if( !ceiling.accept( action ) ) return false;
         return true;
     }
+    
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == floor )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            floor = (IASTExpression) other;
+        }
+        if( child == ceiling)
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            ceiling = (IASTExpression) other;
+        }
+    }
+
 }

@@ -12,12 +12,14 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CASTArraySubscriptExpression extends CASTNode implements
-        IASTArraySubscriptExpression {
+        IASTArraySubscriptExpression, IASTAmbiguityParent {
 
     private IASTExpression array;
     private IASTExpression subscript;
@@ -62,5 +64,20 @@ public class CASTArraySubscriptExpression extends CASTNode implements
         if( array != null ) if( !array.accept( action ) ) return false;
         if( subscript != null ) if( !subscript.accept( action ) ) return false;
         return true;
+    }
+    
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == array )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            array = (IASTExpression) other;
+        }
+        if( child == subscript)
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            subscript = (IASTExpression) other;
+        }
     }
 }

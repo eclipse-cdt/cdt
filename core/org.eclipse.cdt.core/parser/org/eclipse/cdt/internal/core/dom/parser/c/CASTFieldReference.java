@@ -13,11 +13,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CASTFieldReference extends CASTNode implements IASTFieldReference {
+public class CASTFieldReference extends CASTNode implements IASTFieldReference, IASTAmbiguityParent {
 
     private IASTExpression owner;
     private IASTName name;
@@ -87,4 +89,15 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference {
 			return r_reference;
 		return r_unclear;
 	}
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == owner)
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            owner = (IASTExpression) other;
+        }
+    }
+    
+    
 }

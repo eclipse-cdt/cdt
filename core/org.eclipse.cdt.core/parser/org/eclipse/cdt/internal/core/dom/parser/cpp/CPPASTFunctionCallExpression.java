@@ -13,12 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTFunctionCallExpression extends CPPASTNode implements
-        IASTFunctionCallExpression {
+        IASTFunctionCallExpression, IASTAmbiguityParent {
     private IASTExpression functionName;
     private IASTExpression parameter;
 
@@ -62,5 +64,21 @@ public class CPPASTFunctionCallExpression extends CPPASTNode implements
         if( functionName != null ) if( !functionName.accept( action ) ) return false;
         if( parameter != null )  if( !parameter.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == functionName )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            functionName  = (IASTExpression) other;
+        }    
+        if( child == parameter )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            parameter  = (IASTExpression) other;
+        }    
+    
     }
 }

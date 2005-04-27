@@ -17,13 +17,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
-//    private static final char[] EMPTY_CHAR_ARRAY = { };
-//    private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, IASTAmbiguityParent {
     private IASTName templateName;
 
     /* (non-Javadoc)
@@ -184,4 +183,15 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
 	public void setBinding(IBinding binding) {
 		this.binding = binding;
 	}
+
+    public void replace(IASTNode child, IASTNode other) {
+        IASTNode[] ez = getTemplateArguments();
+        for (int i = 0; i < ez.length; ++i) {
+            if (child == ez[i]) {
+                other.setPropertyInParent(child.getPropertyInParent());
+                other.setParent(child.getParent());
+                ez[i] = other;
+            }
+        }
+    }
 }

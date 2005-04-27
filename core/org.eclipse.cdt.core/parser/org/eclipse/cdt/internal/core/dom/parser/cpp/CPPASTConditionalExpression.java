@@ -13,12 +13,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTConditionalExpression extends CPPASTNode implements
-        IASTConditionalExpression {
+        IASTConditionalExpression, IASTAmbiguityParent {
     private IASTExpression condition;
     private IASTExpression negative;
     private IASTExpression postive;
@@ -78,5 +80,26 @@ public class CPPASTConditionalExpression extends CPPASTNode implements
         if( postive != null ) if( !postive.accept( action ) ) return false;
         if( negative != null ) if( !negative.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == condition )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            condition  = (IASTExpression) other;
+        }
+        if( child == postive )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            postive  = (IASTExpression) other;
+        }
+        if( child == negative )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            negative  = (IASTExpression) other;
+        }
     }
 }

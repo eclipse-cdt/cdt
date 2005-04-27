@@ -1584,10 +1584,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int foo() {\n"); //$NON-NLS-1$
 		buffer.append("int x=5;\n"); //$NON-NLS-1$
-		buffer.append("while (-­x >= 0)\n"); //$NON-NLS-1$
+		buffer.append("while (--x >= 0)\n"); //$NON-NLS-1$
 		buffer.append("int i;\n"); //$NON-NLS-1$
 		buffer.append("//can be equivalently rewritten as\n"); //$NON-NLS-1$
-		buffer.append("while (-­x >= 0) {\n"); //$NON-NLS-1$
+		buffer.append("while (--x >= 0) {\n"); //$NON-NLS-1$
 		buffer.append("int i;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
@@ -1711,7 +1711,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	public void test6_8s1() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int foo() {\n"); //$NON-NLS-1$
-		buffer.append("T(a)­>m = 7; // expressionstatement\n"); //$NON-NLS-1$
+		buffer.append("T(a)->m = 7; // expressionstatement\n"); //$NON-NLS-1$
 		buffer.append("T(a)++; //expressionstatement\n"); //$NON-NLS-1$
 		buffer.append("T(a,5)<<c; //expressionstatement\n"); //$NON-NLS-1$
 		buffer.append("T(*d)(int); //declaration\n"); //$NON-NLS-1$
@@ -8011,7 +8011,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("Fcn(&i, 1L); // calls Fcn(int*, int), because\n"); //$NON-NLS-1$
 		buffer.append("// &i ® int* is better than &i ® const int*\n"); //$NON-NLS-1$
 		buffer.append("// and 1L ® short and 1L ® int are indistinguishable\n"); //$NON-NLS-1$
-		buffer.append("Fcn(&i,’c’); //callsFcn(int*, int), because\n"); //$NON-NLS-1$
+		buffer.append("Fcn(&i,'c'); //callsFcn(int*, int), because\n"); //$NON-NLS-1$
 		buffer.append("// &i ® int* is better than &i ® const int*\n"); //$NON-NLS-1$
 		buffer.append("// and c ® int is better than c ® short\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
@@ -11816,4 +11816,40 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
+    /**
+     [--Start Example(CPP 8.5.3-1):
+    int g(int);
+    void f()
+    {
+    int i;
+    int& r = i; // r refers to i
+    r = 1; // the value of i becomes 1
+    int* p = &r; // p points to i
+    int& rr = r; // rr refers to what r refers to, that is, to i
+    int (&rg)(int) = g; // rg refers to the function g
+    rg(i); //calls function g
+    int a[3];
+    int (&ra)[3] = a; // ra refers to the array a
+    ra[1] = i; // modifies a[1]
+    }
+     --End Example]
+     */
+    public void test8_5_3s1()  throws Exception { // TODO raised bug 90648
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int g(int);\n"); //$NON-NLS-1$
+        buffer.append("void f()\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("int i;\n"); //$NON-NLS-1$
+        buffer.append("int& r = i; // r refers to i\n"); //$NON-NLS-1$
+        buffer.append("r = 1; // the value of i becomes 1\n"); //$NON-NLS-1$
+        buffer.append("int* p = &r; // p points to i\n"); //$NON-NLS-1$
+        buffer.append("int& rr = r; // rr refers to what r refers to, that is, to i\n"); //$NON-NLS-1$
+        buffer.append("int (&rg)(int) = g; // rg refers to the function g\n"); //$NON-NLS-1$
+        buffer.append("rg(i); //calls function g\n"); //$NON-NLS-1$
+        buffer.append("int a[3];\n"); //$NON-NLS-1$
+        buffer.append("int (&ra)[3] = a; // ra refers to the array a\n"); //$NON-NLS-1$
+        buffer.append("ra[1] = i; // modifies a[1]\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+    }
 }

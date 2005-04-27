@@ -10,22 +10,11 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 
-/**
- * @author jcamelon
- */
-public interface IASTDeclarationAmbiguity extends IASTDeclaration
-{
 
-    /**
-     * @param decl
-     */
-    public void addDeclaration( IASTDeclaration decl );
-    
-    /**
-     * @return
-     */
-    public IASTDeclaration [] getDeclarations();
+public interface IASTAmbiguityParent {
+
+    public void replace( IASTNode child, IASTNode other );
     
 }

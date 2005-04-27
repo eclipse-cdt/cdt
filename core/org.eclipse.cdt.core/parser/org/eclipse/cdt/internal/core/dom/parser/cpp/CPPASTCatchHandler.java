@@ -12,14 +12,16 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTCatchHandler extends CPPASTNode implements
-        ICPPASTCatchHandler {
+        ICPPASTCatchHandler, IASTAmbiguityParent {
 
     private boolean isCatchAll;
     private IASTStatement body;
@@ -78,5 +80,14 @@ public class CPPASTCatchHandler extends CPPASTNode implements
         if( declaration != null ) if( !declaration.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
         return true;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( body == child )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            body = (IASTStatement) other;
+        }
     }
 }

@@ -165,9 +165,9 @@ public class AST2UtilOldTests extends AST2BaseTest {
 	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
 
 	public void testPostfixTypeIdTypeId2() throws Exception{
-		IASTTranslationUnit tu = parse("int x = foo( typeid(const A) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse("class A { }; int foo( int ); int x = foo( typeid(const A) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
-		isExpressionStringEqual( ((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getExpression(), "foo(typeid (const A))" ); //$NON-NLS-1$
+		isExpressionStringEqual( ((IASTInitializerExpression)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getInitializer()).getExpression(), "foo(typeid (const A))" ); //$NON-NLS-1$
 	}	
 	// Kind UNARY_INCREMENT : LHS             
 	public void testUnaryIncrement() throws Exception

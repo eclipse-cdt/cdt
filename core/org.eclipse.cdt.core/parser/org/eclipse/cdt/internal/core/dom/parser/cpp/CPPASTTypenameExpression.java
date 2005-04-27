@@ -13,13 +13,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTTypenameExpression extends CPPASTNode implements
-        ICPPASTTypenameExpression {
+        ICPPASTTypenameExpression, IASTAmbiguityParent {
 
     private boolean isTemplate;
     private IASTName name;
@@ -89,4 +91,14 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
 			return r_reference;
 		return r_unclear;
 	}
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == init )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            init  = (IASTExpression) other;
+        }
+        
+    }
 }

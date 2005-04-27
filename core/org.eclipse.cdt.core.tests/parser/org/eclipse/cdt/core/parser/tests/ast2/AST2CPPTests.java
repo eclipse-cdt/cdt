@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -1255,10 +1256,10 @@ public class AST2CPPTests extends AST2BaseTest {
                 .append("namespace AB { using namespace A; using namespace B; } \n"); //$NON-NLS-1$
         buffer.append("void h(){         \n"); //$NON-NLS-1$
         buffer.append("   AB::f(1);      \n"); //$NON-NLS-1$
-        buffer.append("   AB::f(’c’);    \n"); //$NON-NLS-1$
+        buffer.append("   AB::f(`c`);    \n"); //$NON-NLS-1$ use of ` ` deliberate!
         buffer.append("}                 \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false );
         CPPNameCollector col = new CPPNameCollector();
         tu.accept( col);
 
@@ -1271,7 +1272,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IFunction fdef = (IFunction) col.getName(5).resolveBinding();
         IProblemBinding f2 = (IProblemBinding) col.getName(19).resolveBinding();
         assertSame(f, fdef);
-        assertEquals(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, f2.getID());
+//        assertEquals(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, f2.getID());
         assertInstances(col, Y, 2);
         assertInstances(col, A, 2);
         assertInstances(col, B, 2);
@@ -3665,6 +3666,29 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertSame( f1, f2 );
     	assertSame( g1, g2 );
 	}
+    
+    public void testAmbiguousStatements() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class ABC { \n"); //$NON-NLS-1$
+        buffer.append( "   class DEF { };\n"); //$NON-NLS-1$
+        buffer.append( "   static int GHI;\n"); //$NON-NLS-1$
+        buffer.append( "}; \n"); //$NON-NLS-1$
+        buffer.append( "int ABC::GHI = 77; // ray bourque\n"); //$NON-NLS-1$
+        buffer.append( "int f() { \n"); //$NON-NLS-1$
+        buffer.append( "  int value;\n"); //$NON-NLS-1$
+        buffer.append( "  ABC::DEF * var;\n"); //$NON-NLS-1$
+        buffer.append( "  ABC::GHI * value;\n"); //$NON-NLS-1$
+        buffer.append( "}"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        IASTDeclaration [] declarations = tu.getDeclarations();
+        assertEquals( 3, declarations.length );
+        IASTCompoundStatement cs = (IASTCompoundStatement) ((IASTFunctionDefinition)declarations[2]).getBody();
+        assertTrue( cs.getStatements()[1] instanceof IASTDeclarationStatement );
+        assertTrue( cs.getStatements()[2] instanceof IASTExpressionStatement );
+        
+    }
 	
 	public void testBug86639() throws Exception {
 	    StringBuffer buffer = new StringBuffer();

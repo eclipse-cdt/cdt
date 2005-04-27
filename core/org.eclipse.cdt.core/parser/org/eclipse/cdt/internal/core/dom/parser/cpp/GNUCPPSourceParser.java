@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -134,10 +135,11 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
 import org.eclipse.cdt.internal.core.parser.TemplateParameterManager;
 import org.eclipse.cdt.internal.core.parser.token.OperatorTokenDuple;
@@ -167,6 +169,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private ScopeStack templateIdScopes = new ScopeStack();
 
 	protected CPPASTTranslationUnit translationUnit;
+
+    private static final IASTNode[] EMPTY_NODE_ARRAY = new IASTNode[0];
 
 	private static class ScopeStack {
 		private int[] stack;
@@ -1460,41 +1464,49 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			if (templateIdScopes.size() > 0) {
 				templateIdScopes.push(IToken.tLPAREN);
 			}
-			boolean isTypeId = true;
-			IASTExpression lhs = null;
-			IASTTypeId typeId = null;
-			IToken m = mark();
-			try {
-				boolean amb = false;
-				if (LT(1) == IToken.tIDENTIFIER)
-					amb = true;
-				typeId = typeId(false, false);
-				if (amb
-						&& typeId.getDeclSpecifier() instanceof IASTNamedTypeSpecifier) {
-					if (!queryIsTypeName(((IASTNamedTypeSpecifier) typeId
-							.getDeclSpecifier()).getName())) {
-						backup(m);
-						throwBacktrack(((CPPASTNode) typeId).getOffset(),
-								((CPPASTNode) typeId).getLength());
-					}
-				}
-			} catch (BacktrackException b) {
-				typeId = null;
-				isTypeId = false;
-				lhs = expression();
-			}
-			lastOffset = consume(IToken.tRPAREN).getEndOffset();
-			if (templateIdScopes.size() > 0) {
-				templateIdScopes.pop();
-			}
-			if (isTypeId && typeId != null)
-				firstExpression = buildTypeIdExpression(
-						ICPPASTTypeIdExpression.op_typeid, typeId, so,
-						lastOffset);
-			else
-				firstExpression = buildUnaryExpression(
-						ICPPASTUnaryExpression.op_typeid, lhs, so, lastOffset);
-			break;
+            IASTNode [] n = parseTypeIdOrUnaryExpression();
+            lastOffset = consume(IToken.tRPAREN).getEndOffset();
+            if (templateIdScopes.size() > 0) {
+                templateIdScopes.pop();
+            }
+            
+            switch( n.length )
+            {
+            case 0:
+                throwBacktrack( LA(1) );
+                break;
+            case 1:
+                if( n[0] instanceof IASTTypeId )
+                {
+                    firstExpression = buildTypeIdExpression(
+                            ICPPASTTypeIdExpression.op_typeid, (IASTTypeId) n[0], so,
+                            lastOffset);
+                }
+                else if( n[0] instanceof IASTExpression )
+                {
+                    firstExpression = buildUnaryExpression(
+                            ICPPASTUnaryExpression.op_typeid, (IASTExpression) n[0], so, lastOffset);
+                }
+                break;
+            case 2: 
+                IASTAmbiguousExpression ambExpr = createAmbiguousExpression();
+                IASTExpression e1 = buildTypeIdExpression(
+                        ICPPASTTypeIdExpression.op_typeid, (IASTTypeId) n[0], so,
+                        lastOffset);
+                IASTExpression e2 = buildUnaryExpression(
+                        ICPPASTUnaryExpression.op_typeid, (IASTExpression) n[1], so, lastOffset);
+                ambExpr.addExpression( e1 );
+                e1.setParent( ambExpr );
+                e1.setPropertyInParent( IASTAmbiguousExpression.SUBEXPRESSION );
+                ambExpr.addExpression( e2 );
+                e2.setParent( ambExpr );
+                e2.setPropertyInParent( IASTAmbiguousExpression.SUBEXPRESSION );
+                ((ASTNode)ambExpr).setOffsetAndLength( (ASTNode) e2 );
+                firstExpression = ambExpr;
+                break;
+            }
+            
+            break;    
 		default:
 			firstExpression = primaryExpression();
 		}
@@ -1648,7 +1660,61 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 	}
 
-	/**
+	protected IASTAmbiguousExpression createAmbiguousExpression() {
+        return new CPPASTAmbiguousExpression();
+    }
+
+    protected IASTNode[] parseTypeIdOrUnaryExpression() throws EndOfFileException {
+        IASTTypeId typeId = null; 
+        IASTExpression unaryExpression = null;
+        IToken typeIdLA = null, unaryExpressionLA = null;
+        IToken mark = mark();
+        try
+        {
+            typeId = typeId( false, false );
+            typeIdLA = LA(1);
+        }
+        catch( BacktrackException bte )
+        {
+            typeId = null;
+        }
+        backup( mark );
+        try
+        {
+            unaryExpression = unaryExpression();
+            unaryExpressionLA = LA(1);
+        }
+        catch( BacktrackException bte )
+        {
+            unaryExpression = null;
+        }
+        IASTNode [] result;
+        if( unaryExpression == null && typeId != null )
+        {
+            backup( typeIdLA );
+            result = new IASTNode[1];
+            result[0] = typeId; 
+            return result;
+        }
+        if( unaryExpression != null && typeId == null )
+        {
+            backup( unaryExpressionLA );
+            result = new IASTNode[1];
+            result[0] = unaryExpression; 
+            return result;
+        }
+        if( unaryExpression != null && typeId != null && typeIdLA == unaryExpressionLA )
+        {
+            result = new IASTNode[2];
+            result[0] = typeId;
+            result[1] = unaryExpression;
+            return result;
+        }
+        return EMPTY_NODE_ARRAY;
+        
+    }
+
+    /**
 	 * @return
 	 */
 	protected IASTArraySubscriptExpression createArraySubscriptExpression() {
@@ -5010,40 +5076,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#resolveOtherAmbiguitiesAsDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement,
-	 *      org.eclipse.cdt.core.dom.ast.IASTExpressionStatement)
-	 */
-	protected boolean resolveOtherAmbiguitiesAsDeclaration(
-			IASTDeclarationStatement ds,
-			IASTExpressionStatement expressionStatement) {
-		if (expressionStatement.getExpression() instanceof IASTArraySubscriptExpression) {
-			IASTArraySubscriptExpression arraySub = (IASTArraySubscriptExpression) expressionStatement
-					.getExpression();
-			if (!(arraySub.getArrayExpression() instanceof IASTIdExpression
-					|| arraySub.getArrayExpression() instanceof IASTArraySubscriptExpression || arraySub
-					.getArrayExpression() instanceof IASTFieldReference))
-				return true;
-		}
-		// A & B = C;
-		if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
-			IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement
-					.getExpression();
-			if (exp.getOperator() == IASTBinaryExpression.op_assign) {
-				IASTExpression lhs = exp.getOperand1();
-				if (lhs instanceof IASTBinaryExpression
-						&& ((IASTBinaryExpression) lhs).getOperator() == IASTBinaryExpression.op_binaryAnd) {
-
-					return true;
-				}
-			}
-		}
-
-		return super.resolveOtherAmbiguitiesAsDeclaration(ds,
-				expressionStatement);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -5104,52 +5136,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 	}
 
-	static class HeuristicTypeDetector extends CPPASTVisitor {
-		IASTName searchName;
+    
+    private static class EmptyVisitor extends CPPASTVisitor {
+        {
+            shouldVisitStatements = true;
+        }
+    }
+    
+    private static final EmptyVisitor EMPTY_VISITOR = new EmptyVisitor();
 
-		boolean found = false;
-		{
-			shouldVisitDeclarations = true;
-		}
+    protected ASTVisitor createVisitor() {
+        return EMPTY_VISITOR;
+    }
 
-		public HeuristicTypeDetector(IASTName name) {
-			this.searchName = name;
-		}
-
-		public int visit(IASTDeclaration declaration) {
-			if (declaration instanceof IASTSimpleDeclaration) {
-				IASTSimpleDeclaration sd = (IASTSimpleDeclaration) declaration;
-				if (sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-					IASTDeclarator[] declarators = sd.getDeclarators();
-					for (int i = 0; i < declarators.length; ++i)
-						if (CharArrayUtils.equals(declarators[i].getName()
-								.toCharArray(), searchName.toCharArray())) {
-							found = true;
-							return PROCESS_ABORT;
-						}
-				} else if (sd.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
-					IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) sd
-							.getDeclSpecifier();
-					if (CharArrayUtils.equals(comp.getName().toCharArray(),
-							searchName.toCharArray())) {
-						found = true;
-						return PROCESS_ABORT;
-					}
-				}
-			}
-			return PROCESS_CONTINUE;
-		}
-	}
-
-	protected boolean queryIsTypeName(IASTName name) {
-		HeuristicTypeDetector visitor = new HeuristicTypeDetector(name);
-		translationUnit.accept(visitor);
-		return visitor.found;
-	}
-
-	protected void resolveAmbiguities() {
-		// TODO Auto-generated method stub
-
-	}
+    protected IASTAmbiguousStatement createAmbiguousStatement() {
+        return new CPPASTAmbiguousStatement();
+    }
 
 }

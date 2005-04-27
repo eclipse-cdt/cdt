@@ -3812,5 +3812,23 @@ public class AST2CPPTests extends AST2BaseTest {
     	ICPPField d2 = (ICPPField) col.getName(7).resolveBinding();
     	assertSame( d1, d2 );
 	}
+	
+	public void testBug86547() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("void f( int, int );                    \n"); //$NON-NLS-1$
+	    buffer.append("void f( int, int = 3);                 \n"); //$NON-NLS-1$
+	    buffer.append("void f( int = 2, int );                \n"); //$NON-NLS-1$
+	    buffer.append("void g() {                             \n"); //$NON-NLS-1$
+	    buffer.append("   f( 3 );                             \n"); //$NON-NLS-1$
+	    buffer.append("   f( );                               \n"); //$NON-NLS-1$
+	    buffer.append("}                                      \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+    	assertInstances( col, f1, 5 );
+	}
 }
 

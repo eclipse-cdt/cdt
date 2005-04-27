@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -1739,98 +1738,45 @@ public class CPPSemantics {
 		int num;	
 			
 		//Trim the list down to the set of viable functions
-		IFunction fName;
-		ICPPASTFunctionDeclarator function = null;
+		IFunction function = null;
 		int size = functions.length;
 		for( int i = 0; i < size && functions[i] != null; i++ ){
-			fName = (IFunction) functions[i];
-			IASTNode def = ((ICPPInternalBinding)fName).getDefinition();
-			if( def instanceof ICPPASTFunctionDeclarator )
-				function = (ICPPASTFunctionDeclarator) def;
-			else if( def != null ){
-				IASTNode p = def.getParent();
-				if( p instanceof ICPPASTQualifiedName )
-					p = p.getParent();
-				function = (ICPPASTFunctionDeclarator) p;
-			} else {
-				 function = null;
-			}
-			
-			if( function == null ) {
-			    IASTNode [] nodes = ((ICPPInternalBinding) fName).getDeclarations();
-			    if( nodes != null && nodes.length > 0 ){
-			    	IASTNode node = nodes[0];
-			    	while( node instanceof IASTName )
-			    		node = node.getParent();
-			    	function = (ICPPASTFunctionDeclarator) node;
-			    }
-			}
-
-			if( function == null ){
-			    //implicit member function, for now, not supporting default values or var args
-			    num = fName.getParameters().length;
-			} else { 
-			    num = function.getParameters().length;
-			}
+			function = (IFunction) functions[i];
+			num = function.getParameters().length;
 		
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
 			if( num == numParameters ){
-				if( data.forDefinition() && !isMatchingFunctionDeclaration( fName, data ) ){
+				if( data.forDefinition() && !isMatchingFunctionDeclaration( function, data ) ){
 					functions[i] = null;
 				}
 				continue;
 			}
 			//check for void
 			else if( numParameters == 0 && num == 1 ){
-				if( function != null ){
-					IASTParameterDeclaration param = function.getParameters()[0];
-					IASTDeclSpecifier declSpec = param.getDeclSpecifier();
-					if( declSpec instanceof IASTSimpleDeclSpecifier ){
-						if( ((IASTSimpleDeclSpecifier)declSpec).getType() == IASTSimpleDeclSpecifier.t_void &&
-							param.getDeclarator().getPointerOperators().length == 0 )
-						{
-							continue;
-						}
-					}
-				} else {
-					IParameter p = fName.getParameters()[0];
-					IType t = p.getType();
-					if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void )
-						continue;
-						
-				}
+			    IParameter param = function.getParameters()[0];
+			    IType t = param.getType();
+			    if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void )
+			        continue;
 			}
 			
 			//A candidate function having fewer than m parameters is viable only if it has an 
 			//ellipsis in its parameter list.
 			if( num < numParameters ){
-				if( (function != null && function.takesVarArgs()) || fName.takesVarArgs() ) {
-					continue;
-				} 
+			    if( function.takesVarArgs() )
+			        continue;
 				//not enough parameters, remove it
 				functions[i] = null;
 			} 
 			//a candidate function having more than m parameters is viable only if the (m+1)-st
 			//parameter has a default argument
 			else {
-				if( function != null ) {
-					IASTParameterDeclaration [] params = function.getParameters();
-					for( int j = num - 1; j >= numParameters; j-- ){
-						if( params[j].getDeclarator().getInitializer() == null ){
-						    functions[i] = null;
-							size--;
-							break;
-						}
-					}
-				} else {
-					IParameter [] params = fName.getParameters();
-					for( int j = num - 1; j >= numParameters; j-- ){
-						if( ((ICPPParameter)params[j]).getDefaultValue() == null ){
-						    functions[i] = null;
-							size--;
-							break;
-						}
+			    IParameter [] params = function.getParameters();
+			    for( int j = num - 1; j >= numParameters; j-- ){
+					if( ((ICPPParameter)params[j]).getDefaultValue() == null ){
+					    functions[i] = null;
+						size--;
+						break;
 					}
 				}
 			}

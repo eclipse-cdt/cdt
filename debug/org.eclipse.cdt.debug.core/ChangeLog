@@ -1,3 +1,7 @@
+2005-04-27 Alain Magloire
+	Change in the CDI interface
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDISourceManagent.java
+
 2005-04-25 Mikhail Khodjaiants
 	Added the new source container type (CDirectorySourceContainer) to provide 
 	the UI support for the subfolders search.

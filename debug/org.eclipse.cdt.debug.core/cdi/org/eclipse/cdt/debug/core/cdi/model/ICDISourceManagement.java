@@ -26,7 +26,7 @@ public interface ICDISourceManagement {
 	 * Set the source search paths for the debug session.
 	 * @param String array of search paths
 	 */
-	void addSourcePaths(String[] srcPaths) throws CDIException;
+	void setSourcePaths(String[] srcPaths) throws CDIException;
 
 	/**
 	 * Return the array of source paths
@@ -89,6 +89,5 @@ public interface ICDISourceManagement {
 		int linenum,
 		int lines)
 		throws CDIException;
-
 
 }

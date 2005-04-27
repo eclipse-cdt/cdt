@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -87,6 +88,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
  * @author aniefer
@@ -1270,7 +1272,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IFunction f = (IFunction) col.getName(16).resolveBinding();
         IFunction fdef = (IFunction) col.getName(5).resolveBinding();
-        IProblemBinding f2 = (IProblemBinding) col.getName(19).resolveBinding();
+        assertTrue( col.getName(19).resolveBinding() instanceof IProblemBinding );
         assertSame(f, fdef);
 //        assertEquals(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, f2.getID());
         assertInstances(col, Y, 2);
@@ -3776,5 +3778,19 @@ public class AST2CPPTests extends AST2BaseTest {
     	ICPPField x2 = (ICPPField) col.getName(3).resolveBinding();
     	assertSame( x, x2 );
 	}
+    
+    public void testBug90648() throws ParserException
+    {
+        IASTTranslationUnit tu = parse( "int f() { int (&ra)[3] = a; }", ParserLanguage.CPP ); //$NON-NLS-1$
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
+        final IASTDeclarationStatement statement = (IASTDeclarationStatement) body.getStatements()[0];
+        IASTSimpleDeclaration d = (IASTSimpleDeclaration) statement.getDeclaration();
+        IASTSimpleDeclSpecifier declSpec = (IASTSimpleDeclSpecifier) d.getDeclSpecifier();
+        assertEquals( IASTSimpleDeclSpecifier.t_int, declSpec.getType() );
+        final IASTDeclarator[] declarators = d.getDeclarators();
+        assertEquals( declarators.length, 1 );
+        assertTrue( declarators[0] instanceof IASTArrayDeclarator );
+    }
 }
 

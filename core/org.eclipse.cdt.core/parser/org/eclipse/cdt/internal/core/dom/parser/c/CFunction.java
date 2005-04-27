@@ -259,7 +259,8 @@ public class CFunction implements IFunction, ICInternalBinding {
             IASTStandardFunctionDeclarator orig = (IASTStandardFunctionDeclarator) getPhysicalNode();
         	IASTParameterDeclaration [] ops = orig.getParameters();
         	IASTParameterDeclaration [] nps = ((IASTStandardFunctionDeclarator)fdtor).getParameters();
-
+        	if(ops.length < nps.length )
+        	    return; 
         	for( int i = 0; i < nps.length; i++ ){
         	    IASTName origname = ops[i].getDeclarator().getName();
         	    if( origname.getBinding() != null ){

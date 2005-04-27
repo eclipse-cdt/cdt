@@ -204,10 +204,16 @@ public class CPPSemantics {
 			if( astName == null ) return false;
 			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 			
-			IASTNode p1 = astName.getParent();
-			while( p1 instanceof IASTName )
+			IASTName n = astName;
+			if( n.getParent() instanceof ICPPASTTemplateId )
+			    n = (IASTName) n.getParent();
+			IASTNode p1 = n.getParent();
+			if( p1 instanceof ICPPASTQualifiedName ){
+			    IASTName [] ns = ((ICPPASTQualifiedName)p1).getNames();
+			    if( ns[ns.length - 1] != n )
+			        return false;
 			    p1 = p1.getParent();
-			
+			}			
 			IASTNode p2 = p1.getParent();
 			
 			return ( ( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration) ||
@@ -543,16 +549,17 @@ public class CPPSemantics {
                 binding = e.getProblem();
             }
 		    
-		}    
-        if( binding != null ) {
-			IASTName name = data.astName;
-			if( name.getParent() instanceof ICPPASTTemplateId )
+		}
+		IASTName name = data.astName;
+		if( name.getParent() instanceof ICPPASTTemplateId )
+			name = (IASTName) name.getParent();
+		if( name.getParent() instanceof ICPPASTQualifiedName ){
+			IASTName [] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
+			if( name == ns [ ns.length - 1] )
 				name = (IASTName) name.getParent();
-			if( name.getParent() instanceof ICPPASTQualifiedName ){
-				IASTName [] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
-				if( name == ns [ ns.length - 1] )
-					name = (IASTName) name.getParent();
-			}
+		}
+		
+        if( binding != null ) {
 	        if( name.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
 	        	IASTNode parent = name.getParent().getParent();
 	        	if( parent instanceof IASTTypeId && parent.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ){
@@ -568,8 +575,12 @@ public class CPPSemantics {
 		        addDefinition( binding, data.astName );
 		    } 
 		}
-		if( binding == null )
-			binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name );
+		if( binding == null ){
+		    if( name instanceof ICPPASTQualifiedName && data.forDefinition() )
+		        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND, data.name );
+		    else
+		        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name );
+		}
         return binding;
     }
 

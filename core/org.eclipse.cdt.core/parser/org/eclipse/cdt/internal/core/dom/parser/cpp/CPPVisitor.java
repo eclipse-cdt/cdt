@@ -143,7 +143,9 @@ public class CPPVisitor {
 			parent instanceof ICPPASTTemplateId ) 
 		{
 			binding = CPPSemantics.resolveBinding( name ); 
-			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName ){
+			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName && 
+			    ((IProblemBinding)binding).getID() != IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND )
+			{
 			    IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
 			    if( ns[ ns.length - 1 ] == name )
 					parent = parent.getParent();
@@ -497,6 +499,9 @@ public class CPPVisitor {
 					binding = function.resolveParameter( param );
 				} else if( temp instanceof CPPFunctionTemplate ) {
 					binding = ((CPPFunctionTemplate)temp).resolveFunctionParameter( param );
+				} else if( temp instanceof IProblemBinding ){
+				    //problems with the function, still create binding for the parameter
+				    binding = new CPPParameter( name );
 				}
 			} else if( parent instanceof ICPPASTTemplateDeclaration ) {
 				return CPPTemplates.createBinding( param );
@@ -798,7 +803,6 @@ public class CPPVisitor {
 			if( node instanceof IASTIdExpression ){
 				name = ((IASTIdExpression) node).getName();
 				break;
-				//return CPPSemantics.resolveBinding( ((IASTIdExpression)node).getName() );
 			} else if( node instanceof ICPPASTFieldReference ){
 				name = ((ICPPASTFieldReference)node).getFieldName();
 				break;
@@ -1484,20 +1488,21 @@ public class CPPVisitor {
 			if( node != null && node.getParent() instanceof IASTFunctionDefinition ){
 				IASTFunctionDefinition def = (IASTFunctionDefinition) node.getParent();
 				IASTName fName = def.getDeclarator().getName();
-				IBinding binding = fName.resolveBinding();
-				if( binding != null && binding instanceof ICPPMethod ){
-					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def.getDeclarator();
-					IScope s = binding.getScope();
-					if( s instanceof ICPPTemplateScope )
-						s = s.getParent();
-					if( s instanceof ICPPClassScope ){
-						ICPPClassScope cScope = (ICPPClassScope) s;
-						IType type = cScope.getClassType();
-						if( dtor.isConst() || dtor.isVolatile() )
-							type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile() );
-						type = new CPPPointerType( type );
-						return type;
-					}
+				if( fName instanceof ICPPASTQualifiedName ){
+				    IASTName [] ns = ((ICPPASTQualifiedName)fName).getNames();
+				    fName = ns[ ns.length - 1];
+				}
+				IScope s = getContainingScope( fName );
+				ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def.getDeclarator();
+				if( s instanceof ICPPTemplateScope )
+					s = s.getParent();
+				if( s instanceof ICPPClassScope ){
+					ICPPClassScope cScope = (ICPPClassScope) s;
+					IType type = cScope.getClassType();
+					if( dtor.isConst() || dtor.isVolatile() )
+						type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile() );
+					type = new CPPPointerType( type );
+					return type;
 				}
 			}
 		} catch (DOMException e) {

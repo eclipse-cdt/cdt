@@ -3778,8 +3778,8 @@ public class AST2CPPTests extends AST2BaseTest {
     	ICPPField x2 = (ICPPField) col.getName(3).resolveBinding();
     	assertSame( x, x2 );
 	}
-    
-    public void testBug90648() throws ParserException
+	
+	public void testBug90648() throws ParserException
     {
         IASTTranslationUnit tu = parse( "int f() { int (&ra)[3] = a; }", ParserLanguage.CPP ); //$NON-NLS-1$
         IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
@@ -3797,5 +3797,20 @@ public class AST2CPPTests extends AST2BaseTest {
         String code = "struct A { A(); A(const A&) throw(1); ~A() throw(X); };"; //$NON-NLS-1$
         parse( code, ParserLanguage.CPP, true, false );
     }
+	
+	public void testBug92882() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("class Dummy { int v(); int d; };                \n"); //$NON-NLS-1$
+	    buffer.append("void Dummy::v( int ){ d++; }                    \n"); //$NON-NLS-1$
+	   
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	assertTrue( col.getName(5).resolveBinding() instanceof IProblemBinding );
+    	ICPPField d1 = (ICPPField) col.getName(2).resolveBinding();
+    	ICPPField d2 = (ICPPField) col.getName(7).resolveBinding();
+    	assertSame( d1, d2 );
+	}
 }
 

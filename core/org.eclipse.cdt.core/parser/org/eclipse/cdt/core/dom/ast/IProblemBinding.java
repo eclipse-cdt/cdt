@@ -113,5 +113,7 @@ public interface IProblemBinding extends IBinding, IScope, IType {
      */
     public static final int SEMANTIC_INVALID_REDECLARATION = 0x00C;
     
-    public static final int LAST_PROBLEM = SEMANTIC_INVALID_REDECLARATION;
+    public static final int SEMANTIC_MEMBER_DECLARATION_NOT_FOUND = 0x00D;
+    
+    public static final int LAST_PROBLEM = SEMANTIC_MEMBER_DECLARATION_NOT_FOUND;
 }

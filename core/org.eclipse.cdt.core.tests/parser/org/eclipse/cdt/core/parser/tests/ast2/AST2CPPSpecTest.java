@@ -2308,7 +2308,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("namespace R {\n"); //$NON-NLS-1$
 		buffer.append("void Q::V::g() {  } // error: R doesn’t enclose Q\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+		parse(buffer.toString(), ParserLanguage.CPP, true, 2);
 	}
 	
 	/**
@@ -10181,7 +10181,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	// explicit specialization syntax not used for a member of
 	// explicitly specialized class template specialization
-	void A<int>::f() {  }
+	void A<int>::f(int) {  }
 	 --End Example]
 	 */
 	public void test14_7_3s5() throws Exception {
@@ -10199,7 +10199,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("// explicit specialization syntax not used for a member of\n"); //$NON-NLS-1$
 		buffer.append("// explicitly specialized class template specialization\n"); //$NON-NLS-1$
-		buffer.append("void A<int>::f() {  }\n"); //$NON-NLS-1$
+		buffer.append("void A<int>::f(int) {  }\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	

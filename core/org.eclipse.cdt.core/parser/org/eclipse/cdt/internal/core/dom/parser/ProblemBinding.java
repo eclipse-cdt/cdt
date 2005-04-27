@@ -63,6 +63,7 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
         errorMessages[SEMANTIC_INVALID_REDEFINITION - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.invalidRedefinition"); //$NON-NLS-1$
         errorMessages[SEMANTIC_INVALID_REDECLARATION - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.invalidRedeclaration"); //$NON-NLS-1$
         errorMessages[SEMANTIC_BAD_SCOPE - 1]					= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.badScope"); //$NON-NLS-1$
+        errorMessages[SEMANTIC_MEMBER_DECLARATION_NOT_FOUND - 1]= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.memberDeclNotFound"); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)

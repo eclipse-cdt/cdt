@@ -1,3 +1,14 @@
+2005-04-27 Alain Magloire
+	Changes in the CDI interface
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/BreakpointManager.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/Session.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/SourceManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/MIEnvrionmentDirectory.java
+	* src/org/eclipse/cdt/debug/mi/core/CygwinCommandfactory.java
+	* src/org/eclipse/cdt/debug/mi/core/CygwinMIEnvironmentDirectory.java
+
 2005-04-25 Alain Magloire
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManger.java
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/CdiResources.properties

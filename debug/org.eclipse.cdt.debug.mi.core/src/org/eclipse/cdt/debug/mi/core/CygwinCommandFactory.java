@@ -16,8 +16,8 @@ import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
  */
 public class CygwinCommandFactory extends CommandFactory {
 
-	public MIEnvironmentDirectory createMIEnvironmentDirectory(String[] pathdirs) {
-		return new CygwinMIEnvironmentDirectory(pathdirs);
+	public MIEnvironmentDirectory createMIEnvironmentDirectory(boolean reset, String[] pathdirs) {
+		return new CygwinMIEnvironmentDirectory(reset, pathdirs);
 	}
 
 	/* (non-Javadoc)

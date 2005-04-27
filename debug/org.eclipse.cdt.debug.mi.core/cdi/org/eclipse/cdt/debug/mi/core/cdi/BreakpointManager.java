@@ -622,10 +622,11 @@ public class BreakpointManager extends Manager {
 		bList.add(bkpt);
 
 		// Fire a created Event.
-		MISession miSession = target.getMISession();
 		MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
-		if (miBreakpoints != null && miBreakpoints.length > 0)
-		miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
+		if (miBreakpoints != null && miBreakpoints.length > 0) {
+			MISession miSession = target.getMISession();
+			miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
+		}
 		return bkpt;
 	}
 

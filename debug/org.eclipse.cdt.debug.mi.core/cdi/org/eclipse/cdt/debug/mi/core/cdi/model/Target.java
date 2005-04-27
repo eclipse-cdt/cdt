@@ -929,11 +929,11 @@ public class Target extends SessionObject implements ICDITarget {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#addSourcePaths(java.lang.String[])
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#setSourcePaths(java.lang.String[])
 	 */
-	public void addSourcePaths(String[] srcPaths) throws CDIException {
+	public void setSourcePaths(String[] srcPaths) throws CDIException {
 		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
-		srcMgr.addSourcePaths(this, srcPaths);
+		srcMgr.setSourcePaths(this, srcPaths);
 	}
 
 	/* (non-Javadoc)

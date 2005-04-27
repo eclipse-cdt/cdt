@@ -20,12 +20,9 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.event.DestroyedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
-import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICDISession
@@ -207,18 +204,6 @@ public class Session implements ICDISession, ICDISessionObject {
 		EventManager eMgr = (EventManager)getEventManager();
 		eMgr.fireEvents(new ICDIEvent[] { new DestroyedEvent(this) });
 		eMgr.removeEventListeners();
-	}
-
-	public void addSearchPaths(Target target, String[] dirs) throws CDIException {
-		MISession miSession = target.getMISession();
-		CommandFactory factory = miSession.getCommandFactory();
-		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
-		try {
-			miSession.postCommand(dir);
-		 	dir.getMIInfo();
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
 	}
 
 	/**

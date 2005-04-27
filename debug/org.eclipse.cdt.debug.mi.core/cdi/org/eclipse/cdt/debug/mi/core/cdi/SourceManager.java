@@ -69,10 +69,10 @@ public class SourceManager extends Manager {
 		gdbTypeParser = new GDBTypeParser();
 	}
 
-	public void addSourcePaths(Target target, String[] dirs) throws CDIException {
+	public void setSourcePaths(Target target, String[] dirs) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
+		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(true, dirs);
 		try {
 			mi.postCommand(dir);
 			dir.getMIInfo();

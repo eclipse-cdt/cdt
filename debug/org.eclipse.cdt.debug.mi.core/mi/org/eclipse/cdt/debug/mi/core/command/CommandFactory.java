@@ -102,8 +102,8 @@ public class CommandFactory {
 		return new MIEnvironmentCD(pathdir);
 	}
 
-	public MIEnvironmentDirectory createMIEnvironmentDirectory(String[] pathdirs) {
-		return new MIEnvironmentDirectory(pathdirs);
+	public MIEnvironmentDirectory createMIEnvironmentDirectory(boolean reset, String[] pathdirs) {
+		return new MIEnvironmentDirectory(reset, pathdirs);
 	}
 
 	public MIEnvironmentPath createMIEnvironmentPath(String[] paths) {

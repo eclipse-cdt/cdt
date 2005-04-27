@@ -30,9 +30,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -73,6 +73,8 @@ public class IndexerBlock extends AbstractCOptionPage {
     private ICOptionPage 		 	currentPage;
     
 	String initialSelected;
+	
+	private IPreferenceStore prefStore=CUIPlugin.getDefault().getPreferenceStore();
 	
     public IndexerBlock(){
 		super(INDEXER_LABEL);
@@ -145,7 +147,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	 * 
 	 */
 	private void setPage() {
-
+	
         String profileId = getCurrentIndexPageId();
         
         //If no indexer has been selected, return
@@ -166,7 +168,12 @@ public class IndexerBlock extends AbstractCOptionPage {
             
             page.setVisible(true);
         }
+		
 		setCurrentPage(page);
+		
+		if (page instanceof AbstractIndexerPage){
+			((AbstractIndexerPage) page).loadPreferences();
+		}
 	}
 
 	/**
@@ -220,14 +227,26 @@ public class IndexerBlock extends AbstractCOptionPage {
             }
         }
 
+		//See what the preferred indexer is
+		String indexerId=prefStore.getString(CCorePlugin.PREF_INDEXER);
+		String preferredIndexer=null;
+		if (indexerId.equals("")) { //$NON-NLS-1$
+			preferredIndexer=getIndexerPageName("org.eclipse.cdt.core.nullindexer"); //$NON-NLS-1$
+		} else {
+			preferredIndexer=getIndexerPageName(indexerId);
+		}
+	
         String[] indexerList = indexersComboBox.getItems();
         int selectedIndex = 0;
         for (int i=0; i<indexerList.length; i++){
-        	if (indexerList[i].equals("No Indexer")) //$NON-NLS-1$
+        	if (indexerList[i].equals(preferredIndexer)) //$NON-NLS-1$
         		selectedIndex = i;
         }
         
         indexersComboBox.select(selectedIndex);
+		
+		String indexerPageID = getIndexerPageId(preferredIndexer);
+		initialSelected = getIndexerIdName(indexerPageID);
         
         return true;
     }
@@ -359,19 +378,25 @@ public class IndexerBlock extends AbstractCOptionPage {
 						if (page != null && page.getControl() != null) {
 							page.performApply(new SubProgressMonitor(monitor, 1));
 						}
-					
 					}
 				};
  				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, monitor);
- 				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
+				//Only send out an index changed notification if the indexer has actually changed
+				if (initialSelected == null || !selected.equals(initialSelected)) {
+					CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
+				}
 			} else {
 				if (initialSelected == null || !selected.equals(initialSelected)) {
-					if (container != null){
-						Preferences store = container.getPreferences();
-						if (store != null) {
-							store.setValue(CCorePlugin.PREF_INDEXER, indexerID);
+					
+						if (prefStore != null) {
+							//First clean out the old indexer settings
+							String indexerId=prefStore.getString(CCorePlugin.PREF_INDEXER);
+							ICOptionPage tempPage = getIndexerPage(indexerId);
+							if (tempPage instanceof AbstractIndexerPage)
+								((AbstractIndexerPage) tempPage).removePreferences();
+							
+							prefStore.setValue(CCorePlugin.PREF_INDEXER, indexerID);
 						}
-					}
 				}
 				monitor.worked(1);
 				// Give a chance to the contributions to save.
@@ -395,15 +420,22 @@ public class IndexerBlock extends AbstractCOptionPage {
     	if (currentPage instanceof AbstractIndexerPage)
     		((AbstractIndexerPage)currentPage).setCurrentProject(project);
     	
-    	this.performApply(monitor);
-		/*//Give the chosen indexer a chance to persist its values
-		if (currentPage != null){
-			currentPage.performApply(monitor);*/
-		
+    	this.performApply(monitor);		
     }
+	
+	public void resetIndexerPageSettings(IProject project){
+		if (currentPage instanceof AbstractIndexerPage)
+    		((AbstractIndexerPage)currentPage).setCurrentProject(project);
+		
+		this.performDefaults();
+	}
 
     public void performDefaults() {
-        // TODO Auto-generated method stub     
+		//Give a chance to the contributions to perform defaults.
+		ICOptionPage page = currentPage;
+		if (page != null && page.getControl() != null) {
+			page.performDefaults();
+		}
     }
 
 	/**
@@ -418,9 +450,11 @@ public class IndexerBlock extends AbstractCOptionPage {
 	 * @param oldIndexerID
 	 * @param project
 	 */
-	public void setIndexerID(String oldIndexerID, IProject project) {
+	public void setIndexerID(String indexerID, IProject project) {
 		//Get the corresponding text for the given indexer id
-		selectedIndexerId = getIndexerPageName(oldIndexerID);
+		selectedIndexerId = getIndexerPageName(indexerID);
+		//Store the currently selected indexer id
+		initialSelected = indexerID;
 		
 		if (selectedIndexerId == null){
 			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
@@ -449,4 +483,5 @@ public class IndexerBlock extends AbstractCOptionPage {
 		
 		return indexerID;
 	}
+	
 }

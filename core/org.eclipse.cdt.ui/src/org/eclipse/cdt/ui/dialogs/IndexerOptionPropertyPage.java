@@ -59,8 +59,8 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	
 
 	protected void performDefaults() {
-		initialize();
-		super.performDefaults();
+		IProject tempProject = getProject();
+		optionPage.resetIndexerPageSettings(tempProject);
 	}
 	
 	private void initialize(){
@@ -80,24 +80,6 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-
-	/*	String newIndexerID = optionPage.getSelectedIndexerID();
-
-		boolean indexerIDChanged = false;
-		
-		if (newIndexerID != null){
-			 indexerIDChanged = !(oldIndexerID.equals(newIndexerID));
-		}
-		else if (oldIndexerID != null){
-			//newIndexerID is null, oldIndexerID wasn't null
-			indexerIDChanged = true;
-		}
-	
-		if ( indexerIDChanged ){
-		//persist new values
-		IProject tempProject = getProject();
-		optionPage.persistIndexerValues(tempProject);
-		}*/
 		
 		IProject tempProject = getProject();
 		try {

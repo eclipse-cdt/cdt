@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -33,22 +32,18 @@ import org.eclipse.swt.widgets.Group;
 
 public class SourceIndexerBlock extends AbstractIndexerPage {
 	
-	public final static String PREF_INDEX_ENABLED = CUIPlugin.PLUGIN_ID + ".indexenabled"; //$NON-NLS-1$
 	public final static String PREF_INDEX_MARKERS = CUIPlugin.PLUGIN_ID + ".indexmarkers"; //$NON-NLS-1$
 	
 	private static final String ENABLE_PREPROCESSOR_PROBLEMS = CUIMessages.getString( "IndexerOptions.enablePreprocessor" ); //$NON-NLS-1$
 	private static final String ENABLE_SEMANTIC_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableSemantic" ); //$NON-NLS-1$
 	private static final String ENABLE_SYNTACTIC_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableSyntactic" ); //$NON-NLS-1$
-	private static final String ENABLE_INDEXING = CUIMessages.getString( "IndexerOptions.enableIndexing" ); //$NON-NLS-1$
-	private static final String INDEXER = CUIMessages.getString("IndexerOptions.indexer" ); //$NON-NLS-1$ 
+
 	private static final String INDEXER_PROBLEMS = CUIMessages.getString("IndexerOptions.problemReporting" ); //$NON-NLS-1$
 	
-	private Button indexerEnabled;
 	private Button preprocessorProblemsEnabled;
 	private Button syntacticProblemsEnabled;
 	private Button semanticProblemsEnabled;
 	
-	private boolean oldIndexerValue = false;
 	private int oldIndexerProblemsValue = 0;
 	
 	/* (non-Javadoc)
@@ -63,7 +58,6 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		monitor.beginTask(CUIMessages.getString("IndexerOptiosn.task.savingAttributes "), 1);  //$NON-NLS-1$
 		ICOptionContainer container = getContainer();
 		IProject proj = null;
-        String indexEnabled = getIndexerEnabledString();
         String indexMarkers = getIndexerProblemsValuesString();
 		
 		if (container != null){
@@ -77,31 +71,19 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
 			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
 			if (cext.length > 0) {
-				//initializeIndexerId();
 				for (int i = 0; i < cext.length; i++) {
 					String id = cext[i].getID();
-					//if (cext[i].getID().equals(parserID)) {
-						String orig = cext[i].getExtensionData("indexenabled"); //$NON-NLS-1$
-						if (orig == null || !orig.equals(indexEnabled)) {
-							cext[i].setExtensionData("indexenabled", indexEnabled); //$NON-NLS-1$
-						}
-						orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
-						String indexProblems = getIndexerProblemsValuesString();
-						if (orig == null || !orig.equals(indexProblems)) {
-							cext[i].setExtensionData("indexmarkers", indexProblems); //$NON-NLS-1$
-						}
-					//}
+					String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
+					String indexProblems = getIndexerProblemsValuesString();
+					if (orig == null || !orig.equals(indexProblems)) {
+						cext[i].setExtensionData("indexmarkers", indexProblems); //$NON-NLS-1$
+					}
+				
 				}
 			}
 		} else {
-			Preferences store = null;
-			if (container != null){
-				store = container.getPreferences();
-			}
-			
-			if (store != null) {
-				store.setValue(PREF_INDEX_ENABLED, indexEnabled);
-				store.setValue(PREF_INDEX_MARKERS, indexMarkers);
+			if (prefStore != null) {
+				prefStore.setValue(PREF_INDEX_MARKERS, indexMarkers);
 			}
 		}
 
@@ -117,14 +99,6 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
             if (indexer instanceof SourceIndexer)
                 ((SourceIndexer) indexer).removeIndexerProblems(currentProject);
 		
-		boolean indexProject = getIndexerValue();
-		
-		if ((indexProject != oldIndexerValue)
-			&& (currentProject != null)
-			&& indexProject) {
-			if (indexer instanceof SourceIndexer)
-			 ((SourceIndexer) indexer).indexAll(currentProject);
-		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
@@ -138,17 +112,7 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 	public void createControl(Composite parent) {
 		
 		Composite page = ControlFactory.createComposite(parent, 1);
-		
-		Group group = ControlFactory.createGroup(page,INDEXER,1);
-        
-        GridData gd = (GridData) group.getLayoutData();
-        gd.grabExcessHorizontalSpace = true;
-        gd.horizontalAlignment = GridData.FILL;
-
-
-		indexerEnabled = ControlFactory.createCheckBox(group, ENABLE_INDEXING );
-		
-		
+		        
 		Group problemsGroup = ControlFactory.createGroup(page,INDEXER_PROBLEMS,1);
         
         GridData gd2 = (GridData) problemsGroup.getLayoutData();
@@ -158,14 +122,10 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		
 		preprocessorProblemsEnabled = ControlFactory.createCheckBox( problemsGroup, ENABLE_PREPROCESSOR_PROBLEMS );
 		semanticProblemsEnabled = ControlFactory.createCheckBox( problemsGroup, ENABLE_SEMANTIC_PROBLEMS );
-		//uncomment when we want to report syntax problems
 		syntacticProblemsEnabled = ControlFactory.createCheckBox( problemsGroup, ENABLE_SYNTACTIC_PROBLEMS );
+		
 		setControl(page);
 		
-	}
-	
-	public boolean getIndexerValue(){
-		return indexerEnabled.getSelection();
 	}
 	
 	public String getIndexerProblemsValuesString(){
@@ -178,13 +138,6 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		
 		return tempInt.toString();
 	}
-	
-	private String getIndexerEnabledString(){
-		if (indexerEnabled.getSelection())
-			return "true"; //$NON-NLS-1$
-		
-		return "false"; //$NON-NLS-1$
-	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.index2.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
@@ -194,45 +147,28 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		try {
 			loadPersistedValues(project);
 			this.currentProject = project;
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		
-		//Set the index enabled checkbox
-		setIndexerValue(oldIndexerValue);
-		
+		} catch (CoreException e) {}
+	
 		//Set the IProblem checkboxes
 		setIndexerProblemValues(oldIndexerProblemsValue);
 	}
-	
+
 	public void loadPersistedValues(IProject project) throws CoreException {
 		
 		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
 		ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
 		if (cext.length > 0) {
-			//initializeIndexerId();
 			for (int i = 0; i < cext.length; i++) {
 				String id = cext[i].getID();
-				//if (cext[i].getID().equals(parserID)) {
-					String orig = cext[i].getExtensionData("indexenabled"); //$NON-NLS-1$
-					if (orig != null){
-						Boolean tempBool = new Boolean(orig);
-						oldIndexerValue = tempBool.booleanValue();
-					}
-	
-					orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
-					if (orig != null){
-						Integer tempInt = new Integer(orig);
-						oldIndexerProblemsValue = tempInt.intValue();
-					}
-				//}
+				
+				String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
+				if (orig != null){
+					Integer tempInt = new Integer(orig);
+					oldIndexerProblemsValue = tempInt.intValue();
+				}
 			}
 		}
 	
-	}
-	
-	public void setIndexerValue(boolean value){
-		indexerEnabled.setSelection(value);
 	}
 	
 	public void setIndexerProblemValues( int value ){
@@ -240,6 +176,18 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		if( syntacticProblemsEnabled != null ) 
 			syntacticProblemsEnabled.setSelection( (value & SourceIndexer.SYNTACTIC_PROBLEMS_BIT) != 0 );
 		semanticProblemsEnabled.setSelection( (value & SourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0 );
+	}
+	
+	public void loadPreferences() {
+		String indexerId=prefStore.getString(PREF_INDEX_MARKERS);
+		if (!indexerId.equals("")) { //$NON-NLS-1$
+		   oldIndexerProblemsValue = (new Integer(indexerId)).intValue();
+		   setIndexerProblemValues(oldIndexerProblemsValue);
+		}
+	}
+	
+	public void removePreferences() {
+		prefStore.setToDefault(PREF_INDEX_MARKERS);
 	}
 	
 }

@@ -24,6 +24,8 @@ import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class CTagsFileReader {
 	
@@ -78,15 +80,28 @@ public class CTagsFileReader {
 			      (!currentFileName.equals(fileName))){
 			      currentFileName = fileName; 
 			      currentFile = (IFile) project.findMember(fileName);
-			      indexer = new MiniIndexer(currentFile);
-			      index.add(currentFile,indexer);
+				  
+				  if (currentFile == null){
+					//Didn't find file in project
+					IPath tempPath = new Path(filename);
+					tempPath = tempPath.removeLastSegments(1);
+					tempPath = tempPath.append(fileName);
+					currentFile = (IFile) project.findMember(tempPath);
+					
+				  }
+				  
+				  if (currentFile != null){
+				      indexer = new MiniIndexer(currentFile);
+				      index.add(currentFile,indexer);
+					  //encode new tag in current file
+					  char[][] fullName = parser.getQualifiedName(tagEntry);
+					  //encode name
+					  String lineNumber = (String) tagEntry.tagExtensionField.get(CTagsConsoleParser.LINE);
+					  indexer.addToOutput(fullName,(String)tagEntry.tagExtensionField.get(CTagsConsoleParser.KIND), Integer.parseInt(lineNumber));
+				  }
 			   }
 			  
-			   //encode new tag in current file
-			   char[][] fullName = parser.getQualifiedName(tagEntry);
-			   //encode name
-			   String lineNumber = (String) tagEntry.tagExtensionField.get(CTagsConsoleParser.LINE);
-			   indexer.addToOutput(fullName,(String)tagEntry.tagExtensionField.get(CTagsConsoleParser.KIND), Integer.parseInt(lineNumber));
+			  
 			}
 		} catch (IOException e){}
 	}

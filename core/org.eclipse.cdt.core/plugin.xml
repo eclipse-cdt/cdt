@@ -529,7 +529,7 @@
       <initializer class="org.eclipse.cdt.internal.core.CCorePreferenceInitializer"/>
    </extension>
   <extension
-   		 name="Original C/C++ Indexer"
+   		 name="%CDTIndexer.originalsourceindexer"
          id="originalsourceindexer"
          point="org.eclipse.cdt.core.CIndexer">
       <cextension>
@@ -539,7 +539,7 @@
       </cextension>
    </extension>
    <extension
-         name="DOM AST C/C++ Indexer"
+         name="%CDTIndexer.domsourceindexer"
          id="domsourceindexer"
          point="org.eclipse.cdt.core.CIndexer">
       <cextension>
@@ -562,11 +562,21 @@
    </extension>
    <extension
          id="ctagsindexer"
-         name="CTags Indexer"
+         name="%CDTIndexer.ctagsindexer"
          point="org.eclipse.cdt.core.CIndexer">
       <cextension>
          <run 
-               class="org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer">
+          class="org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+   		 id="nullindexer"
+         name="%CDTIndexer.nullindexer"
+         point="org.eclipse.cdt.core.CIndexer">
+      <cextension>
+         <run 
+            class="org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer">
          </run>
       </cextension>
    </extension>

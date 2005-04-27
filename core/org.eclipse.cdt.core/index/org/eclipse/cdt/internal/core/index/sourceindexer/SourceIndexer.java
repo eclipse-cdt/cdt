@@ -218,7 +218,8 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 		if( project == null || !project.exists() || !project.isOpen() )
 			return false;
 		
-		Boolean indexValue = null;
+		return true;
+		/*Boolean indexValue = null;
 		
 		try {
 			indexValue = (Boolean) project.getSessionProperty(activationKey);
@@ -248,7 +249,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 			
 		} catch (CoreException e) {}
 		
-		return indexEnabled;
+		return indexEnabled;*/
 	}
 	
 

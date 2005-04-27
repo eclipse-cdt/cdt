@@ -38,6 +38,10 @@ import org.eclipse.core.runtime.IPath;
  */
 public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 
+	public final static String CTAGS_INTERNAL = "ctags_internal"; //$NON-NLS-1$
+	public final static String CTAGS_EXTERNAL = "ctags_external"; //$NON-NLS-1$
+	public final static String CTAGS_LOCATION = "ctags_location"; //$NON-NLS-1$
+	
 	private CIndexStorage		indexStorage = null;
 	public 	ReadWriteMonitor	storageMonitor = null;
 	private IndexManager  		indexManager = null; 

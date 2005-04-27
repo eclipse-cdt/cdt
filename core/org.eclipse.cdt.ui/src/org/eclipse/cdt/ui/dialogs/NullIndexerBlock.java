@@ -34,4 +34,8 @@ public class NullIndexerBlock extends AbstractIndexerPage {
         setControl(comp);
 	}
 
+	public void loadPreferences() {}
+
+	public void removePreferences() {}
+
 }

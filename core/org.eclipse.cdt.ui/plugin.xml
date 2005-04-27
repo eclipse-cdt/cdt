@@ -637,6 +637,11 @@
             class="org.eclipse.cdt.internal.ui.preferences.PathEntryVariablePreferencePage"
             id="org.eclipse.cdt.ui.preferences.PathEntryVariablePreferencePage">
       </page>
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.IndexerPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.IndexerPreferencePage"
+            name="%indexerPrefName"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -1333,22 +1338,22 @@
       <indexerUI
             class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
             indexerID="org.eclipse.cdt.core.originalsourceindexer"
-            name="Original C/C++ Indexer"
+            name="%CDTIndexer.originalsourceindexer"
             id="org.eclipse.cdt.ui.originalSourceIndexerUI"/>
       <indexerUI
             class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
             indexerID="org.eclipse.cdt.core.nullindexer"
-            name="No Indexer"
+            name="%CDTIndexer.nullindexer"
             id="org.eclipse.cdt.ui.nullindexerUI"/>
  	  <indexerUI
             class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
             indexerID="org.eclipse.cdt.core.domsourceindexer"
-            name="DOM AST C/C++ Indexer"/>
+            name="%CDTIndexer.domsourceindexer"/>
       <indexerUI
             class="org.eclipse.cdt.ui.dialogs.CTagsIndexerBlock"
             indexerID="org.eclipse.cdt.core.ctagsindexer"
-            name="CTags Indexer"
+            name="%CDTIndexer.ctagsindexer"
             id="org.eclipse.cdt.ui.ctagsIndexerUI"/>
    </extension>
 	<extension

@@ -15,6 +15,8 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
@@ -35,6 +37,7 @@ import org.eclipse.core.runtime.Path;
 class CTagsIndexAll extends CTagsIndexRequest {
 	IProject project;
 	static String ctagsFile = CCorePlugin.getDefault().getStateLocation().append("tempctags").toOSString(); //$NON-NLS-1$
+	private String ctagsFileToUse;
 	
 	public CTagsIndexAll(IProject project, CTagsIndexer indexer) {
 		super(project.getFullPath(), indexer);
@@ -75,21 +78,30 @@ class CTagsIndexAll extends CTagsIndexRequest {
 				project.deleteMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
 			} catch (CoreException e) {}
 			
-			if (AbstractIndexer.TIMING)
-			  startTime = System.currentTimeMillis();
 			
-			//run CTags over project
-			boolean success = runCTags();
+			boolean success=false;
 			
-			if (AbstractIndexer.TIMING){
-			    cTagsEndTime = System.currentTimeMillis();
-			    System.out.println("CTags Run: " + (cTagsEndTime - startTime)); //$NON-NLS-1$
-			    System.out.flush();
-			}
+			if (useInternalCTagsFile()){
+				if (AbstractIndexer.TIMING)
+				  startTime = System.currentTimeMillis();
+				
+				
+				//run CTags over project
+				success = runCTags();
+				ctagsFileToUse=ctagsFile;
+				
+				if (AbstractIndexer.TIMING){
+				    cTagsEndTime = System.currentTimeMillis();
+				    System.out.println("CTags Run: " + (cTagsEndTime - startTime)); //$NON-NLS-1$
+				    System.out.flush();
+				}
+			 } else {
+				 success=getCTagsFileLocation();
+			 }
 			
 			 if (success) {
 			     //Parse the CTag File
-			     CTagsFileReader reader = new CTagsFileReader(project,ctagsFile,indexer);
+			     CTagsFileReader reader = new CTagsFileReader(project,ctagsFileToUse,indexer);
 			     reader.setIndex(index);
 			     reader.parse();
 			     
@@ -168,6 +180,52 @@ class CTagsIndexAll extends CTagsIndexRequest {
 	
 	public String toString() {
 		return "indexing project " + this.project.getFullPath(); //$NON-NLS-1$
+	}
+	
+	private boolean useInternalCTagsFile(){
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if (cdesc == null)
+				return true;
+			
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				for (int i = 0; i < cext.length; i++) {
+					String id = cext[i].getID();
+						String orig = cext[i].getExtensionData("ctagfiletype"); //$NON-NLS-1$
+						if (orig != null){
+							if (orig.equals(CTagsIndexer.CTAGS_INTERNAL))
+								return true;
+							else if (orig.equals(CTagsIndexer.CTAGS_EXTERNAL))
+								return false;
+						}
+				}
+			}
+		} catch (CoreException e) {}
+		
+		return false;
+	}
+	
+	private boolean getCTagsFileLocation() {
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if (cdesc == null)
+				return false;
+			
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				for (int i = 0; i < cext.length; i++) {
+					String id = cext[i].getID();
+						String orig = cext[i].getExtensionData("ctagfilelocation"); //$NON-NLS-1$
+						if (orig != null){
+							ctagsFileToUse=orig;
+							return true;
+						}
+				}
+			}
+		} catch (CoreException e) {}
+		
+		return false;
 	}
 	
 }

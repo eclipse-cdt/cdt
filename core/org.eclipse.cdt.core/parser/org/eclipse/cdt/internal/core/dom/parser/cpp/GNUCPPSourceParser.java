@@ -3943,6 +3943,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 								consume();
 								break;
 							default:
+                                IToken before = LA(1);
 								try {
 									exceptionSpecIds.add(typeId(false, false));
 								} catch (BacktrackException e) {
@@ -3955,6 +3956,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 									p
 											.setPropertyInParent(IASTProblemHolder.PROBLEM);
 									exceptionSpecIds.add(typeIdProblem);
+                                    if( before == LA(1) )
+                                        done = true;
 								}
 								break;
 							}

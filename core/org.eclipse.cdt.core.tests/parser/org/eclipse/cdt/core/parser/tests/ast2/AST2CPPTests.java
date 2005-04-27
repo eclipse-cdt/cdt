@@ -3792,5 +3792,10 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( declarators.length, 1 );
         assertTrue( declarators[0] instanceof IASTArrayDeclarator );
     }
+    
+    public void testBug92980() throws Exception {
+        String code = "struct A { A(); A(const A&) throw(1); ~A() throw(X); };"; //$NON-NLS-1$
+        parse( code, ParserLanguage.CPP, true, false );
+    }
 }
 

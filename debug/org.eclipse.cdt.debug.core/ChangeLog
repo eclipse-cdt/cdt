@@ -1,3 +1,10 @@
+2005-04-25 Mikhail Khodjaiants
+	Update the source search path of the underlyuing debugger when the source 
+	containers are changed.
+	+ ISourceLookupChangeListener.java
+	* CDebugTarget.java
+	* CSourceLookupParticipant.java
+
 2005-04-27 Alain Magloire
 	Change in the CDI interface
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDISourceManagent.java

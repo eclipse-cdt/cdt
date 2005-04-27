@@ -12,12 +12,15 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
+import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
  
 /**
@@ -29,6 +32,16 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	}
 
 	private static final NoSourceElement gfNoSource = new NoSourceElement();
+
+	private ListenerList fListeners;
+
+	/** 
+	 * Constructor for CSourceLookupParticipant. 
+	 */
+	public CSourceLookupParticipant() {
+		super();
+		fListeners = new ListenerList( 1 );
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
@@ -79,5 +92,31 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		if ( wfiles.length > 0 )
 			return wfiles;
 		return new LocalFileStorage[] { new LocalFileStorage( file ) };
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant#dispose()
+	 */
+	public void dispose() {
+		fListeners.removeAll();
+		super.dispose();
+	}
+
+	public void addSourceLookupChangeListener( ISourceLookupChangeListener listener ) {
+		fListeners.add( listener );
+	}
+
+	public void removeSourceLookupChangeListener( ISourceLookupChangeListener listener ) {
+		fListeners.remove( listener );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
+	 */
+	public void sourceContainersChanged( ISourceLookupDirector director ) {
+		Object[] listeners = fListeners.getListeners();
+		for ( int i = 0; i < listeners.length; ++i )
+			((ISourceLookupChangeListener)listeners[i]).sourceContainersChanged( director );
+		super.sourceContainersChanged( director );
 	}
 }

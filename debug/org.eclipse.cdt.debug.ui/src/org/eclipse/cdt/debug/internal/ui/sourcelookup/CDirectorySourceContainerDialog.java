@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -71,8 +72,7 @@ public class CDirectorySourceContainerDialog extends TitleAreaDialog {
 				new IDialogFieldListener() {
 
 					public void dialogFieldChanged( DialogField field ) {
-						// TODO Auto-generated method stub
-						
+						update();
 					}
 				} );
 
@@ -154,5 +154,35 @@ public class CDirectorySourceContainerDialog extends TitleAreaDialog {
 	private void initialize() {
 		fDirectoryField.setText( getDirectory().getPath() );
 		fSubfoldersField.setSelection( isSearchSubfolders() );
+	}
+
+	protected void update() {
+		boolean isOk = updateErrorMessage();
+		Button ok = getButton( IDialogConstants.OK_ID );
+		if ( ok != null )
+			ok.setEnabled( isOk );
+	}
+
+	private boolean updateErrorMessage() {
+		setErrorMessage( null );
+		String text = fDirectoryField.getText().trim();
+		if ( text.length() == 0 ) {
+			setErrorMessage( SourceLookupUIMessages.getString ( "CDirectorySourceContainerDialog.5" ) ); //$NON-NLS-1$
+			return false;
+		}
+		File file = new File( text );
+		if ( !file.exists() ) {
+			setErrorMessage( SourceLookupUIMessages.getString ( "CDirectorySourceContainerDialog.6" ) ); //$NON-NLS-1$
+			return false;
+		}
+		if ( !file.isDirectory() ) {
+			setErrorMessage( SourceLookupUIMessages.getString ( "CDirectorySourceContainerDialog.7" ) ); //$NON-NLS-1$
+			return false;
+		}
+		if ( !file.isAbsolute() ) {
+			setErrorMessage( SourceLookupUIMessages.getString ( "CDirectorySourceContainerDialog.8" ) ); //$NON-NLS-1$
+			return false;
+		}
+		return true;
 	}
 }

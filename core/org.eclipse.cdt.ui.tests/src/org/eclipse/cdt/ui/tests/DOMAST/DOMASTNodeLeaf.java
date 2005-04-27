@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -318,7 +319,9 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	}
 	
 	private static class ASTPropertySource implements IPropertySource {
-		private static final IPropertyDescriptor[] BLANK_DESCRIPTORS = new IPropertyDescriptor[0];
+		private static final String DOMEXCEPTION_THIS_METHOD_ISN_T_SUPPORTED_BY_THIS_OBJECT = "DOMException - this method isn't supported by this Object"; //$NON-NLS-1$
+        private static final String FLUSH_CACHE_METHOD_NAME = "flushCache"; //$NON-NLS-1$
+        private static final IPropertyDescriptor[] BLANK_DESCRIPTORS = new IPropertyDescriptor[0];
 		private static final String OPEN_PAREN = " ("; //$NON-NLS-1$
 		private static final String CLOSE_PAREN = ")"; //$NON-NLS-1$
 		private static final String L_BRACKET_STRING = "["; //$NON-NLS-1$
@@ -457,12 +460,15 @@ public class DOMASTNodeLeaf implements IAdaptable {
 					value = getValueString(result);
 				}
 			} catch (Exception e) {
-				e.printStackTrace(); // display all exceptions to developers
-				
-				if (e instanceof InvocationTargetException)
-					return trimObjectToString(((InvocationTargetException)e).getTargetException().toString()) + EXCEPTION_ON + ((InvocationTargetException)e).getTargetException().getStackTrace()[0].toString();
-				
-				return e.toString();
+                if (e instanceof InvocationTargetException) {
+                    if (((InvocationTargetException)e).getTargetException() instanceof DOMException)
+                        return DOMEXCEPTION_THIS_METHOD_ISN_T_SUPPORTED_BY_THIS_OBJECT;
+                
+                    e.printStackTrace(); // display all exceptions to developers
+                    return trimObjectToString(((InvocationTargetException)e).getTargetException().toString()) + EXCEPTION_ON + ((InvocationTargetException)e).getTargetException().getStackTrace()[0].toString();
+                }
+                
+                return e.toString();
 			}
 			
 			return value;
@@ -543,10 +549,13 @@ public class DOMASTNodeLeaf implements IAdaptable {
 						return ASTTypeUtil.getType((IType)result);
 					}
 				} catch (Exception e) {
-					e.printStackTrace(); // display all exceptions to developers
-					
-					if (e instanceof InvocationTargetException)
+					if (e instanceof InvocationTargetException) {
+                        if (((InvocationTargetException)e).getTargetException() instanceof DOMException)
+                            return DOMEXCEPTION_THIS_METHOD_ISN_T_SUPPORTED_BY_THIS_OBJECT;
+                    
+                        e.printStackTrace(); // display all exceptions to developers
 						return trimObjectToString(((InvocationTargetException)e).getTargetException().toString()) + EXCEPTION_ON + ((InvocationTargetException)e).getTargetException().getStackTrace()[0].toString();
+                    }
 					
 					return e.toString();
 				}
@@ -573,6 +582,8 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		private boolean shouldInvokeMethod(String method) {
 			if (method.equals(CLONE_METHOD_NAME)) 
 				return false;
+            if (method.equals(FLUSH_CACHE_METHOD_NAME)) 
+                return false;
 			
 			return true;
 		}

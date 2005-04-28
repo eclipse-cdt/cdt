@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -689,7 +690,7 @@ public class CCorePlugin extends Plugin {
 					}
 					
 					// Open first.
-					projectHandle.open(new SubProgressMonitor(monitor, 1));
+					projectHandle.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1));
 
 					mapCProjectOwner(projectHandle, projectID, false);
 

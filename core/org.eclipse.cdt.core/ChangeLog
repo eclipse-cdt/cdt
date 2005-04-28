@@ -1,3 +1,8 @@
+2005-04-28 Alain Magloire
+	Patch from Devlin Steffler
+	FIXED 84606- CDT needs to take advantage of background refresh of projects
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+
 2005-04-21 Vladimir Hirsl
 	Fix for PR 91964: Dom Indexer misses give a friend declaration for forward decls
 	    Fixed detection of friend class/struct declaration.

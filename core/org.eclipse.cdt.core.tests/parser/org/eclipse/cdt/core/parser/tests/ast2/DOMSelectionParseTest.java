@@ -1562,7 +1562,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertEquals( ((ASTNode)refs[0]).getLength(), 8);
     }   
 
-    public void testBug86698() throws Exception {
+    public void testBug86698A() throws Exception {
         Writer writer = new StringWriter();
         writer.write("struct C;\n"); //$NON-NLS-1$
         writer.write("void no_opt(C*);\n"); //$NON-NLS-1$
@@ -1585,7 +1585,95 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
         assertEquals( ((ASTNode)decls[0]).getOffset(), 42);
         assertEquals( ((ASTNode)decls[0]).getLength(), 1);
     }   
+	
+    public void testBug86698B() throws Exception {
+        Writer writer = new StringWriter();
+        writer.write("void foo() {\n"); //$NON-NLS-1$
+		writer.write("int f(int);\n"); //$NON-NLS-1$
+		writer.write("class C {\n"); //$NON-NLS-1$
+		writer.write("int i;\n"); //$NON-NLS-1$
+		writer.write("double d;\n"); //$NON-NLS-1$
+		writer.write("public:\n"); //$NON-NLS-1$
+		writer.write("C(int, double);\n"); //$NON-NLS-1$
+		writer.write("};\n"); //$NON-NLS-1$
+		writer.write("C::C(int ii, double id)\n"); //$NON-NLS-1$
+		writer.write("try\n"); //$NON-NLS-1$
+		writer.write(": i(f(ii)), d(id)\n"); //$NON-NLS-1$
+		writer.write("{\n"); //$NON-NLS-1$
+		writer.write("//		 constructor function body\n"); //$NON-NLS-1$
+		writer.write("}\n"); //$NON-NLS-1$
+		writer.write("catch (...)\n"); //$NON-NLS-1$
+		writer.write("{\n"); //$NON-NLS-1$
+		writer.write("//		 handles exceptions thrown from the ctorinitializer\n"); //$NON-NLS-1$
+		writer.write("//		 and from the constructor function body\n"); //$NON-NLS-1$
+		writer.write("}\n"); //$NON-NLS-1$
+		writer.write("}\n"); //$NON-NLS-1$
+		
+		String code = writer.toString();
+            
+        int index = code.indexOf("i(f(ii)), d(id)"); //$NON-NLS-1$
+        IASTNode node = parse( code, index, index + 1, true );
+        assertTrue( node instanceof IASTName );
+        assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPField );
+        assertEquals( ((IASTName)node).toString(), "i" ); //$NON-NLS-1$
+        
+        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        assertEquals(decls.length, 1);
+        assertEquals( decls[0].toString(), "i" ); //$NON-NLS-1$
+        assertEquals( ((ASTNode)decls[0]).getOffset(), 39);
+        assertEquals( ((ASTNode)decls[0]).getLength(), 1);
+    }   
 
-    
+	public void testBug64181() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace Foo { // ** (A) **\n"); //$NON-NLS-1$
+		buffer.append("int bar;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("namespace Foo { // ** (B) **\n"); //$NON-NLS-1$
+		buffer.append("long fooboo;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("int \n"); //$NON-NLS-1$
+		buffer.append("main(int argc, char **argv) {\n"); //$NON-NLS-1$
+		buffer.append("Foo::bar; // ** (C) **\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		
+		String code = buffer.toString();
+		int index = code.indexOf("Foo::bar;"); //$NON-NLS-1$
+        IASTNode node = parse( code, index, index + 3, true );
+		assertNotNull( node );
+		assertTrue( node instanceof IASTName );
+		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPNamespace );
+		assertEquals( ((IASTName)node).toString(), "Foo" ); //$NON-NLS-1$
+		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		assertEquals(decls.length, 2);
+		assertEquals( decls[0].toString(), "Foo" ); //$NON-NLS-1$
+		assertEquals( ((ASTNode)decls[0]).getOffset(), 10);
+		assertEquals( ((ASTNode)decls[0]).getLength(), 3);
+		assertEquals( ((ASTNode)decls[1]).getOffset(), 50);
+		assertEquals( ((ASTNode)decls[1]).getLength(), 3);
+	}
+	
+	public void testBug80823() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class MyEggImpl {}; // line A\n"); //$NON-NLS-1$
+		buffer.append("#define MyChicken MyEggImpl\n"); //$NON-NLS-1$
+		buffer.append("MyChicken c; // line C\n"); //$NON-NLS-1$
+
+		String code = buffer.toString();
+		int index = code.indexOf("MyChicken c;"); //$NON-NLS-1$
+        IASTNode node = parse( code, index, index + 9, true );
+		assertNotNull( node );
+		assertTrue( node instanceof IASTName );
+		assertTrue( ((IASTName)node).resolveBinding() instanceof IMacroBinding );
+		assertEquals( ((IASTName)node).toString(), "MyChicken" ); //$NON-NLS-1$
+		IASTName[] decls = getDeclarationOffTU((IASTName)node);
+		assertEquals(decls.length, 1);
+		assertEquals( decls[0].toString(), "MyChicken" ); //$NON-NLS-1$
+		assertEquals( ((ASTNode)decls[0]).getOffset(), 38);
+		assertEquals( ((ASTNode)decls[0]).getLength(), 9);
+	}
+	
 }
 

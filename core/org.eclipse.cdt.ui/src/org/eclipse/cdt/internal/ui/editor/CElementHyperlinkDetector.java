@@ -98,7 +98,9 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector{
 			String slas = document.get(start,1);
 			if (slas.equals("\n") || //$NON-NLS-1$
 					slas.equals("\t") || //$NON-NLS-1$
-					slas.equals(" "))	 //$NON-NLS-1$
+					slas.equals(" ") || //$NON-NLS-1$
+					slas.equals(">") || //$NON-NLS-1$
+					slas.equals("."))	 //$NON-NLS-1$
 			{
 				
 				selWord =document.get(start+1, end - start - 1);

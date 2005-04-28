@@ -208,7 +208,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         IASTDeclaration decl = getPrimaryDeclaration();
         if( decl instanceof IASTFunctionDefinition )
             return true;
-
+		if( decl == null )
+			return false;
+		
         IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)decl).getDeclSpecifier();
         return declSpec.isInline();
     }

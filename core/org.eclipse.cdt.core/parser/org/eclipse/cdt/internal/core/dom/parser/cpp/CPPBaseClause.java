@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -67,7 +68,17 @@ public class CPPBaseClause implements ICPPBase {
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getVisibility()
      */
     public int getVisibility() {
-        return base.getVisibility();
+		int vis = base.getVisibility();
+		
+		if( vis == 0 ){
+			ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) base.getParent();
+			int key = compSpec.getKey();
+			if( key == ICPPClassType.k_class )
+				vis = ICPPBase.v_private;
+			else
+				vis = ICPPBase.v_public;
+		}
+        return vis;
     }
 
     /* (non-Javadoc)

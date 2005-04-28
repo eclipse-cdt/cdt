@@ -15,7 +15,7 @@
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
 		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build_3.1.0/scripts"/>
-		<property name="eclipseZip" value="eclipse-SDK.zip"/>
+		<property name="eclipseDist" value="eclipseDist undefined"/>
 		<property name="collectingFolder" value="eclipse"/>
 		<property name="archivePrefix" value="eclipse"/>
 		<property name="buildType" value="I" />
@@ -54,13 +54,15 @@
 	</target>
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
-		<untar src="${eclipseZip}" dest="${buildDirectory}" compression="gzip"/>
+		<antcall name="unpack">
+			<param name="srcPrefix" value="${eclipseDist}"/>
+			<param name="dest" value="${buildDirectory}"/>
+		</antcall>
 	</target>
 	
 	<target name="zips" depends="init,unzip">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
-
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/sdk" />
@@ -79,21 +81,28 @@
 		</replace>
 	</target>
 
-	<target name="tunzip" if="onWindows">
-		<unzip src="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}.zip" dest="${buildDirectory}"/>
+	<target name="unpackzip" if="onWindows">
+		<unzip src="${srcPrefix}.zip" dest="${dest}"/>
 	</target>
 
-	<target name="tuntar" unless="onWindows">
-		<untar src="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}.tar.gz" dest="${buildDirectory}"
+	<target name="unpacktar" unless="onWindows">
+		<untar src="${srcPrefix}.tar.gz" dest="${dest}"
 			compression="gzip"/>
 	</target>
 
+	<target name="unpack">
+		<antcall target="unpackzip"/>
+		<antcall target="unpacktar"/>
+	</target>
+	
 	<target name="test" depends="init" unless="hasErrors">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/testing" />
 		</ant>
-		<antcall target="tunzip"/>
-		<antcall target="tuntar"/>
+		<antcall target="unpack">
+			<param name="srcPrefix" value="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}"/>
+			<param name="dest" value="${buildDirectory}"/>
+		</antcall>
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip" dest="${buildDirectory}"/>
 		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>

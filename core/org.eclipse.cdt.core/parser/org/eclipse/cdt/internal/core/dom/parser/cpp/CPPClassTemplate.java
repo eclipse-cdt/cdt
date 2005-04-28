@@ -14,15 +14,24 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -32,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author aniefer
@@ -39,6 +49,52 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 public class CPPClassTemplate extends CPPTemplateDefinition implements
 		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType {
 	
+	private class FindDefinitionAction extends CPPASTVisitor {
+	    private char [] nameArray = CPPClassTemplate.this.getNameCharArray();
+	    public IASTName result = null;
+	    
+	    {
+	        shouldVisitNames          = true;
+			shouldVisitDeclarations   = true;
+			shouldVisitDeclSpecifiers = true;
+			shouldVisitDeclarators    = true;
+	    }
+	    
+	    public int visit( IASTName name ){
+			if( name instanceof ICPPASTTemplateId || name instanceof ICPPASTQualifiedName )
+				return PROCESS_CONTINUE;
+			char [] c = name.toCharArray();
+			if( name.getParent() instanceof ICPPASTTemplateId )
+				name = (IASTName) name.getParent();
+			if( name.getParent() instanceof ICPPASTQualifiedName ){
+				IASTName [] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
+				if( ns[ ns.length - 1 ] != name )
+					return PROCESS_CONTINUE;
+				name = (IASTName) name.getParent();
+			}
+			
+	        if( name.getParent() instanceof ICPPASTCompositeTypeSpecifier &&
+	            CharArrayUtils.equals( c, nameArray ) ) 
+	        {
+	            IBinding binding = name.resolveBinding();
+	            if( binding == CPPClassTemplate.this ){
+	                result = name;
+	                return PROCESS_ABORT;
+	            }
+	        }
+	        return PROCESS_CONTINUE; 
+	    }
+	    
+		public int visit( IASTDeclaration declaration ){ 
+		    if(declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration )
+				return PROCESS_CONTINUE;
+			return PROCESS_SKIP; 
+		}
+		public int visit( IASTDeclSpecifier declSpec ){
+		    return (declSpec instanceof ICPPASTCompositeTypeSpecifier ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
+		}
+		public int visit( IASTDeclarator declarator ) 			{ return PROCESS_SKIP; }
+	}
 	/**
 	 * @param decl
 	 */
@@ -55,17 +111,18 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		return instance;
 	}
 	private void checkForDefinition(){
-//		CPPClassType.FindDefinitionAction action = new FindDefinitionAction();
-//		IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
-//
-//		node.accept( action );
-//	    definition = action.result;
-//		
-//		if( definition == null ){
-//			node.getTranslationUnit().accept( action );
-//		    definition = action.result;
-//		}
-//		
+		FindDefinitionAction action = new FindDefinitionAction();
+		IASTNode node = CPPVisitor.getContainingBlockItem( declarations[0] ).getParent();
+		while( node instanceof ICPPASTTemplateDeclaration )
+			node = node.getParent();
+		node.accept( action );
+	    definition = action.result;
+		
+		if( definition == null ){
+			node.getTranslationUnit().accept( action );
+		    definition = action.result;
+		}
+		
 		return;
 	}
 	private ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(){
@@ -191,8 +248,17 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() {
-		// TODO Auto-generated method stub
-		return 0;
+	    if( definition != null )
+	        return getCompositeTypeSpecifier().getKey();
+	    
+	    if( declarations != null && declarations.length > 0 ){
+	        IASTNode n = declarations[0].getParent();
+	        if( n instanceof ICPPASTElaboratedTypeSpecifier ){
+	            return ((ICPPASTElaboratedTypeSpecifier)n).getKind();
+	        }
+	    }
+	     
+		return ICPPASTElaboratedTypeSpecifier.k_class;
 	}
 
 	/* (non-Javadoc)

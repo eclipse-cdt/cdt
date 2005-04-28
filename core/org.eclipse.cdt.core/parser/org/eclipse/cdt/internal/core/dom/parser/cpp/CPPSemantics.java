@@ -527,9 +527,19 @@ public class CPPSemantics {
 			ASTNodeProperty prop = data.astName.getPropertyInParent();
 			if( prop != ICPPASTQualifiedName.SEGMENT_NAME && prop != ICPPASTTemplateId.TEMPLATE_NAME ){
 				try {
-					IScope scope = ((ICPPClassType)binding).getCompositeScope();
-					if( CPPVisitor.getContainingScope( data.astName ) == scope ){
-						binding = CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) binding );
+					IASTNode def = ((ICPPInternalBinding)binding).getDefinition();
+					if( def != null ){
+						def = def.getParent();
+						IASTNode parent = data.astName.getParent();
+						while( parent != null ){
+							if( parent == def ){
+								binding = CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) binding );
+								break;
+							}
+							if( parent instanceof ICPPASTNamespaceDefinition )
+								break;
+							parent = parent.getParent();
+						}
 					}
 				} catch( DOMException e ) {
 				}

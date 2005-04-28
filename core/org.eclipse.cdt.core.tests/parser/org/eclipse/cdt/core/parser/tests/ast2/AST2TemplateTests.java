@@ -875,4 +875,49 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		assertInstances( col, T1, 4 );
 	}
+	
+	public void testDeferredInstantiation() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template < class T > class A {                                \n"); //$NON-NLS-1$
+		buffer.append("   int f( A * );                                              \n"); //$NON-NLS-1$
+		buffer.append("   A < T > *pA;                                               \n"); //$NON-NLS-1$
+		buffer.append("};                                                            \n"); //$NON-NLS-1$
+		buffer.append("void f () {                                                   \n"); //$NON-NLS-1$
+		buffer.append("   A< int > *a;                                               \n"); //$NON-NLS-1$
+		buffer.append("   a->f( a );                                                 \n"); //$NON-NLS-1$
+		buffer.append("   a->pA;                                                     \n"); //$NON-NLS-1$
+		buffer.append("};                                                            \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPClassTemplate A = (ICPPClassTemplate) col.getName(1).resolveBinding();
+		ICPPMethod f = (ICPPMethod) col.getName(2).resolveBinding();
+		ICPPClassType A1 = (ICPPClassType) col.getName(3).resolveBinding();
+		ICPPClassType A2 = (ICPPClassType) col.getName(5).resolveBinding();
+		ICPPField pA = (ICPPField) col.getName(8).resolveBinding();
+		
+		assertSame( A1, A2 );
+		assertTrue( A1 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)A1).getOriginalBinding(), A );
+		
+		ICPPClassType AI = (ICPPClassType) col.getName(10).resolveBinding();
+		ICPPMethod f2 = (ICPPMethod) col.getName(14).resolveBinding();
+		ICPPField pA2 = (ICPPField) col.getName(17).resolveBinding();
+		
+		assertTrue( f2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)f2).getOriginalBinding(), f );
+		assertTrue( pA2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)pA2).getOriginalBinding(), pA );
+		
+		IType paT = pA2.getType();
+		assertTrue( paT instanceof IPointerType );
+		assertSame( ((IPointerType)paT).getType(), AI );
+		
+		IParameter p = f2.getParameters()[0];
+		IType pT = p.getType();
+		assertTrue( pT instanceof IPointerType );
+		assertSame( ((IPointerType)pT).getType(), AI );
+	}
 }

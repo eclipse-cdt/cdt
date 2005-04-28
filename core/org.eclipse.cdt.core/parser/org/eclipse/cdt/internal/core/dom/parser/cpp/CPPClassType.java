@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -206,12 +207,24 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 			shouldVisitDeclarations   = true;
 			shouldVisitDeclSpecifiers = true;
 			shouldVisitDeclarators    = true;
-			shouldVisitNamespaces     = true;
 	    }
 	    
 	    public int visit( IASTName name ){
+			if( name instanceof ICPPASTTemplateId )
+				return PROCESS_SKIP;
+			if( name instanceof ICPPASTQualifiedName )
+				return PROCESS_CONTINUE;
+			char [] c = name.toCharArray();
+
+			if( name.getParent() instanceof ICPPASTQualifiedName ){
+				IASTName [] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
+				if( ns[ ns.length - 1 ] != name )
+					return PROCESS_CONTINUE;
+				name = (IASTName) name.getParent();
+			}
+			
 	        if( name.getParent() instanceof ICPPASTCompositeTypeSpecifier &&
-	            CharArrayUtils.equals( name.toCharArray(), nameArray ) ) 
+	            CharArrayUtils.equals( c, nameArray ) ) 
 	        {
 	            IBinding binding = name.resolveBinding();
 	            if( binding == CPPClassType.this ){
@@ -228,7 +241,7 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 		public int visit( IASTDeclSpecifier declSpec ){
 		    return (declSpec instanceof ICPPASTCompositeTypeSpecifier ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
 		}
-		public int processDeclarators( IASTDeclarator declarator ) 			{ return PROCESS_SKIP; }
+		public int visit( IASTDeclarator declarator ) 			{ return PROCESS_SKIP; }
 	}
 	
 	private void checkForDefinition(){

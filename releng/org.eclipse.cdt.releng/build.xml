@@ -54,7 +54,7 @@
 	</target>
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
-		<antcall name="unpack">
+		<antcall target="unpack">
 			<param name="srcPrefix" value="${eclipseDist}"/>
 			<param name="dest" value="${buildDirectory}"/>
 		</antcall>

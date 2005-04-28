@@ -688,4 +688,11 @@ public interface ITool extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isExtensionElement();
+	
+	/**
+	 * Returns an array of the Environment Build Path variable descriptors
+	 * 
+	 * @return IEnvVarBuildPath[]
+	 */
+	public IEnvVarBuildPath[] getEnvVarBuildPaths();
 }

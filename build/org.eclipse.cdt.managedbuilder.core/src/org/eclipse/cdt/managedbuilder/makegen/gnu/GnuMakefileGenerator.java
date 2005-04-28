@@ -311,6 +311,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		for (int i=0; i<buildTools.length; i++) buildToolsUsed[i] = false;
 		// Initialize the tool info array
 		gnuToolInfos = new ManagedBuildGnuToolInfo[buildTools.length];
+		//set the top build dir path
+		topBuildDir = project.getFolder(info.getConfigurationName()).getFullPath();
 	}
 
 	/* (non-Javadoc)

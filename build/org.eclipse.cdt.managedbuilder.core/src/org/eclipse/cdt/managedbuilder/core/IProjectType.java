@@ -10,6 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 /**
  * This class represents project-types in the managed build system.
  * A project-type is a tool-integrator defined class of project which 
@@ -44,6 +47,7 @@ public interface IProjectType extends IBuildObject {
 	public static final String IS_ABSTRACT = "isAbstract";					//$NON-NLS-1$
 	public static final String UNUSED_CHILDREN = "unusedChildren";			//$NON-NLS-1$
 	public static final String IS_TEST = "isTest";							//$NON-NLS-1$
+	public static final String PROJECT_ENVIRONMENT_SUPPLIER = "projectEnvironmentSupplier";			//$NON-NLS-1$
 	
 	/**
 	 * Creates a configuration for this project-type populated with the tools
@@ -135,4 +139,12 @@ public interface IProjectType extends IBuildObject {
 	 * @return boolean 
 	 */	
 	public boolean isSupported();
+	
+	/**
+	 * Returns the tool-integrator provided implementation of the project environment variable supplier
+	 * or <code>null</code> if none. 
+	 *  
+	 * @return IProjectEnvironmentVariableSupplier
+	 */
+	public IProjectEnvironmentVariableSupplier getEnvironmentVariableSupplier();
 }

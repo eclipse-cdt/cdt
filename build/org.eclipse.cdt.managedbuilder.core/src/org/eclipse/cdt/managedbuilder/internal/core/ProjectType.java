@@ -20,6 +20,9 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class ProjectType extends BuildObject implements IProjectType {
 	
@@ -36,6 +39,9 @@ public class ProjectType extends BuildObject implements IProjectType {
 	private Boolean isAbstract;
 	private Boolean isTest;
 	private String unusedChildren;
+	private IConfigurationElement environmentVariableSupplierElement = null;
+	private IProjectEnvironmentVariableSupplier environmentVariableSupplier = null;
+
 	//  Miscellaneous
 	private boolean resolved = true;
 
@@ -122,6 +128,13 @@ public class ProjectType extends BuildObject implements IProjectType {
         if (isTestStr != null){
     		isTest = new Boolean("true".equals(isTestStr)); //$NON-NLS-1$
         }
+		
+		// Get the environmentVariableSupplier configuration element
+		String environmentVariableSupplier = element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER); 
+		if(environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement){
+			environmentVariableSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		}
+
 	}
 
 	/*
@@ -349,5 +362,39 @@ public class ProjectType extends BuildObject implements IProjectType {
 				return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns the plugin.xml element of the projectEnvironmentSupplier extension or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getEnvironmentVariableSupplierElement(){
+		if (environmentVariableSupplierElement == null) {
+			if (superClass != null && superClass instanceof ProjectType) {
+				return ((ProjectType)superClass).getEnvironmentVariableSupplierElement();
+			}
+		}
+		return environmentVariableSupplierElement;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getEnvironmentVariableSupplier()
+	 */
+	public IProjectEnvironmentVariableSupplier getEnvironmentVariableSupplier(){
+		if (environmentVariableSupplier != null) {
+			return environmentVariableSupplier;
+		}
+		IConfigurationElement element = getEnvironmentVariableSupplierElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER) != null) {
+					environmentVariableSupplier = (IProjectEnvironmentVariableSupplier) element.createExecutableExtension(PROJECT_ENVIRONMENT_SUPPLIER);
+					return environmentVariableSupplier;
+				}
+			} catch (CoreException e) {}
+		}
+		return null;
 	}
 }

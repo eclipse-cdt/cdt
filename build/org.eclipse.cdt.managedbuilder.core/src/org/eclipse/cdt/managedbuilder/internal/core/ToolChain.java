@@ -28,6 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -59,6 +60,9 @@ public class ToolChain extends BuildObject implements IToolChain {
     private String scannerConfigDiscoveryProfileId;
 	private IConfigurationElement managedIsToolChainSupportedElement = null;
 	private IManagedIsToolChainSupported managedIsToolChainSupported = null;
+	private IConfigurationElement environmentVariableSupplierElement = null;
+	private IConfigurationEnvironmentVariableSupplier environmentVariableSupplier = null;
+
 	//  Miscellaneous
 	private boolean isExtensionToolChain = false;
 	private boolean isDirty = false;
@@ -225,6 +229,9 @@ public class ToolChain extends BuildObject implements IToolChain {
 		managedIsToolChainSupportedElement = toolChain.managedIsToolChainSupportedElement; 
 		managedIsToolChainSupported = toolChain.managedIsToolChainSupported; 
 
+		environmentVariableSupplierElement = toolChain.environmentVariableSupplierElement;
+		environmentVariableSupplier = toolChain.environmentVariableSupplier;
+
 		//  Clone the children
 		if (toolChain.builder != null) {
 			int nnn = ManagedBuildManager.getRandomNumber();
@@ -342,6 +349,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (managedIsToolChainSupported != null && element instanceof DefaultManagedConfigElement) {
 			managedIsToolChainSupportedElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		} 
+		
+		// Get the environmentVariableSupplier configuration element
+		String environmentVariableSupplier = element.getAttribute(CONFIGURATION_ENVIRONMENT_SUPPLIER); 
+		if(environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement){
+			environmentVariableSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -516,6 +529,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 		// Note: isToolChainSupported cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
 		if (managedIsToolChainSupportedElement != null) {
+			//  TODO:  issue warning?
+		}
+
+		// Note: environmentVariableSupplier cannot be specified in a project file because
+		//       an IConfigurationElement is needed to load it!
+		if(environmentVariableSupplierElement != null) {
 			//  TODO:  issue warning?
 		}
 
@@ -1122,6 +1141,40 @@ public class ToolChain extends BuildObject implements IToolChain {
 			return superClass.isSupported();
 		else
 			return true;
+	}
+
+	/**
+	 * Returns the plugin.xml element of the configurationEnvironmentSupplier extension or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getEnvironmentVariableSupplierElement(){
+		if (environmentVariableSupplierElement == null) {
+			if (superClass != null && superClass instanceof ToolChain) {
+				return ((ToolChain)superClass).getEnvironmentVariableSupplierElement();
+			}
+		}
+		return environmentVariableSupplierElement;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getEnvironmentVariableSupplier()
+	 */
+	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier(){
+		if (environmentVariableSupplier != null) {
+			return environmentVariableSupplier;
+		}
+		IConfigurationElement element = getEnvironmentVariableSupplierElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(CONFIGURATION_ENVIRONMENT_SUPPLIER) != null) {
+					environmentVariableSupplier = (IConfigurationEnvironmentVariableSupplier) element.createExecutableExtension(CONFIGURATION_ENVIRONMENT_SUPPLIER);
+					return environmentVariableSupplier;
+				}
+			} catch (CoreException e) {}
+		}
+		return null;
 	}
 
 }

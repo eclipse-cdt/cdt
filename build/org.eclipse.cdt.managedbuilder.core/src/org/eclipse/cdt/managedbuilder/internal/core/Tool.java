@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
@@ -73,6 +74,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private Map inputTypeMap;
 	private Vector outputTypeList;
 	private Map outputTypeMap;
+	private List envVarBuildPathList;
 	//  Managed Build model attributes
 	private String unusedChildren;
 	private Boolean isAbstract;
@@ -136,6 +138,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			} else if (toolElement.getName().equals(ITool.OUTPUT_TYPE)) {
 				OutputType outputType = new OutputType(this, toolElement);
 				addOutputType(outputType);
+			} else if (toolElement.getName().equals(IEnvVarBuildPath.BUILD_PATH_ELEMENT_NAME)){
+				addEnvVarBuildPath(new EnvVarBuildPath(this,toolElement));
 			}
 		}
 	}
@@ -310,6 +314,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		dependencyGeneratorElement = tool.dependencyGeneratorElement; 
 		dependencyGenerator = tool.dependencyGenerator; 
 
+		if(tool.envVarBuildPathList != null)
+			envVarBuildPathList = new ArrayList(tool.envVarBuildPathList);
+		
 		//  Clone the children
 		//  Note: This constructor ignores OptionCategories since they should not be
 		//        found on an non-extension tool - TODO: This may need to change!
@@ -2316,4 +2323,27 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	    }
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getEnvVarBuildPaths()
+	 */
+	public IEnvVarBuildPath[] getEnvVarBuildPaths(){
+		if(envVarBuildPathList != null){
+			return (IEnvVarBuildPath[])envVarBuildPathList.toArray(
+					new IEnvVarBuildPath[envVarBuildPathList.size()]);
+		}
+		else if(superClass != null)
+			return superClass.getEnvVarBuildPaths();
+		return null;
+	}
+	
+	private void addEnvVarBuildPath(IEnvVarBuildPath path){
+		if(path == null)
+			return;
+		if(envVarBuildPathList == null)
+			envVarBuildPathList = new ArrayList();
+			
+		envVarBuildPathList.add(path);
+	}
+	
+	
 }

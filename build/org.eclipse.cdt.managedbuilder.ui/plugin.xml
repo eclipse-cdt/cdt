@@ -98,6 +98,16 @@
       </page>
    </extension>
       
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%MngBuildPref.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage"
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.BuildPreferences">
+      </page>
+   </extension>
+      
 <!-- Managed Make Builder Tool Specifications -->
    <extension
          id="cdt.managed.build.info"
@@ -115,6 +125,11 @@
             command="gcc"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.c.linker">
+         <envVarBuildPath 
+         	pathType="buildpathLibrary"
+         	variableList="LIBRARY_PATH">
+         </envVarBuildPath>
+         
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
                name="%OptionCategory.General"
@@ -250,6 +265,10 @@
             command="g++"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.cpp.linker">
+         <envVarBuildPath 
+         	pathType="buildpathLibrary"
+         	variableList="LIBRARY_PATH">
+         </envVarBuildPath>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
                name="%OptionCategory.General"
@@ -504,6 +523,11 @@
             command="gcc"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.macosx.c.linker">
+         <envVarBuildPath 
+         	pathType="buildpathLibrary"
+         	variableList="LIBRARY_PATH">
+         </envVarBuildPath>
+         
          <optionCategory
                owner="cdt.managedbuild.tool.macosx.c.linker"
                name="%OptionCategory.General"
@@ -618,6 +642,10 @@
             command="g++"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.macosx.cpp.linker">
+         <envVarBuildPath 
+         	pathType="buildpathLibrary"
+         	variableList="LIBRARY_PATH">
+         </envVarBuildPath>
          <optionCategory
                owner="cdt.managedbuild.tool.macosx.cpp.linker"
                name="%OptionCategory.General"
@@ -727,6 +755,10 @@
 		  natureFilter="cnature"
 		  outputs="o"
 		  outputFlag="-o">
+         <envVarBuildPath 
+         	pathType="buildpathInclude"
+         	variableList="CPATH,C_INCLUDE_PATH">
+         </envVarBuildPath>
 		  <optionCategory
 		      owner="cdt.managedbuild.tool.gnu.c.compiler"
 			  name="%OptionCategory.Preproc"
@@ -967,6 +999,10 @@
 		  natureFilter="ccnature"
 		  outputs="o"
 		  outputFlag="-o">
+         <envVarBuildPath 
+         	pathType="buildpathInclude"
+         	variableList="CPATH,CPLUS_INCLUDE_PATH">
+         </envVarBuildPath>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.cpp.compiler"
 			  name="%OptionCategory.Preproc"
@@ -1183,6 +1219,44 @@
 		  </option>
 	  </tool>
       
+      <tool
+          id="cdt.managedbuild.tool.gnu.c.linker.cygwin"
+          superClass="cdt.managedbuild.tool.gnu.c.linker">
+          <envVarBuildPath 
+              pathType="buildpathLibrary"
+              variableList="LIBRARY_PATH"
+              buildPathResolver="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.CygwinPathResolver">
+          </envVarBuildPath>
+      </tool>
+      <tool
+          id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin"
+          superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+          <envVarBuildPath 
+              pathType="buildpathLibrary"
+              variableList="LIBRARY_PATH"
+              buildPathResolver="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.CygwinPathResolver">
+          </envVarBuildPath>
+      </tool>
+      <tool
+          id="cdt.managedbuild.tool.gnu.c.compiler.cygwin"
+          superClass="cdt.managedbuild.tool.gnu.c.compiler">
+          <envVarBuildPath 
+              pathType="buildpathInclude"
+              variableList="CPATH,C_INCLUDE_PATH"
+              buildPathResolver="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.CygwinPathResolver">
+          </envVarBuildPath>
+      </tool>      
+      <tool
+          id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin"
+          superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+          <envVarBuildPath 
+              pathType="buildpathInclude"
+              variableList="CPATH,CPLUS_INCLUDE_PATH"
+              buildPathResolver="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.CygwinPathResolver">
+          </envVarBuildPath>
+      </tool>      
+
+        
       <projectType      
             isAbstract="false"     
             isTest="false"
@@ -1651,6 +1725,7 @@
                      name="%ToolChainName.Dbg"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.debug"
@@ -1668,7 +1743,7 @@
 			      </builder>               		         
                   <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
 					  <option
 						  id="gnu.c.compiler.cygwin.exe.debug.option.optimization.level"
 						  defaultValue="gnu.c.optimization.level.none"
@@ -1682,7 +1757,7 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
                           id="gnu.cpp.compiler.cygwin.exe.debug.option.optimization.level"
                           defaultValue="gnu.cpp.compiler.optimization.level.none"
@@ -1697,12 +1772,12 @@
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug"
                       outputs="exe"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
                       outputs="exe"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                   </tool>                  
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.exe.debug"
@@ -1722,6 +1797,7 @@
                      name="%ToolChainName.Rel"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.exe.release"
@@ -1739,7 +1815,7 @@
 			      </builder>               		                       
                   <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
                       <option
                           id="gnu.c.compiler.cygwin.exe.release.option.optimization.level"
                           defaultValue="gnu.c.optimization.level.most"
@@ -1753,7 +1829,7 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
                           id="gnu.cpp.compiler.cygwin.exe.release.option.optimization.level"
                           defaultValue="gnu.cpp.compiler.optimization.level.most"
@@ -1768,12 +1844,12 @@
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release"
                       outputs="exe"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.release"
                       outputs="exe"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                   </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.exe.release"
@@ -1800,6 +1876,7 @@
                      name="%ToolChainName.Dbg"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.debug"
@@ -1817,7 +1894,7 @@
 			      </builder>               		         
                   <tool
 					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
 					  <option
 						  id="gnu.c.compiler.cygwin.so.debug.option.optimization.level"
 						  defaultValue="gnu.c.optimization.level.none"
@@ -1831,7 +1908,7 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
                           id="gnu.cpp.compiler.cygwin.so.debug.option.optimization.level"
                           defaultValue="gnu.cpp.compiler.optimization.level.none"
@@ -1846,7 +1923,7 @@
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug"
                       outputs="dll,a.dll"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                       <option
                           id="gnu.c.link.cygwin.so.debug.option.shared"
                           defaultValue="true"
@@ -1856,7 +1933,7 @@
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug"
                       outputs="dll,a.dll"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                       <option
                           id="gnu.cpp.link.cygwin.so.debug.option.shared"
                           defaultValue="true"
@@ -1881,6 +1958,7 @@
                      name="%ToolChainName.Rel"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.so.release"
@@ -1898,7 +1976,7 @@
 			      </builder>               		                                       
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
                       <option 
                           id="gnu.c.compiler.cygwin.so.release.option.optimization.level"
                           defaultValue="gnu.c.optimization.level.most"
@@ -1912,7 +1990,7 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
                           id="gnu.cpp.compiler.cygwin.so.release.option.optimization.level"
                           defaultValue="gnu.cpp.compiler.optimization.level.most"
@@ -1927,7 +2005,7 @@
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release"
                       outputs="dll,a.dll"
-                      superClass="cdt.managedbuild.tool.gnu.c.linker">
+                      superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                       <option
                           id="gnu.c.link.cygwin.so.release.option.shared"
                           defaultValue="true"
@@ -1937,7 +2015,7 @@
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release"
                       outputs="dll,a.dll"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.linker">
+                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                       <option
                           id="gnu.cpp.link.cygwin.so.release.option.shared"
                           defaultValue="true"
@@ -1969,6 +2047,7 @@
                      name="%ToolChainName.Dbg"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.debug">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.debug"
@@ -1986,7 +2065,7 @@
 			      </builder>               		                                                              
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
                       <option
                           id="gnu.c.compiler.cygwin.lib.debug.option.optimization.level"
                           defaultValue="gnu.c.optimization.level.none"
@@ -2000,7 +2079,7 @@
                   </tool>
 			      <tool
 			          id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
 					  <option
 					      id="gnu.cpp.compiler.cygwin.lib.debug.option.optimization.level"
 						  defaultValue="gnu.cpp.compiler.optimization.level.none"
@@ -2036,6 +2115,7 @@
                      name="%ToolChainName.Rel"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.release">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.lib.release"
@@ -2053,7 +2133,7 @@
 			      </builder>               		                                                                                              
                   <tool
                      id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                     superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
                      <option
                          id="gnu.c.compiler.cygwin.lib.release.option.optimization.level"
                          defaultValue="gnu.c.optimization.level.most"
@@ -2067,7 +2147,7 @@
                   </tool>
                   <tool
                      id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
+                     superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                      <option       
                          id="gnu.cpp.compiler.cygwin.lib.release.option.optimization.level"         
                          defaultValue="gnu.cpp.compiler.optimization.level.most"

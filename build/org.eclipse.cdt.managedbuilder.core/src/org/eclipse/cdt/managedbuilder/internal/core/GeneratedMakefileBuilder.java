@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration; 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -608,17 +609,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				CommandLauncher launcher = new CommandLauncher();
 				launcher.showCommand(true);
 	
-				// Set the environmennt, some scripts may need the CWD var to be set.
-				Properties props = launcher.getEnvironment();
-				props.put("CWD", workingDirectory.toOSString());	//$NON-NLS-1$
-				props.put("PWD", workingDirectory.toOSString());	//$NON-NLS-1$
+				// Set the environmennt
+				IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true);
 				String[] env = null;
 				ArrayList envList = new ArrayList();
-				Enumeration names = props.propertyNames();
-				if (names != null) {
-					while (names.hasMoreElements()) {
-						String key = (String) names.nextElement();
-						envList.add(key + "=" + props.getProperty(key)); //$NON-NLS-1$
+				if (variables != null) {
+					for(int i = 0; i < variables.length; i++){
+						envList.add(variables[i].getName() + "=" + variables[i].getValue());	//$NON-NLS-1$
 					}
 					env = (String[]) envList.toArray(new String[envList.size()]);
 				}

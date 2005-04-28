@@ -44,6 +44,8 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
+import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
@@ -61,6 +63,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -155,7 +158,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static Map buildModelListeners;
 	// Random number for derived object model elements
 	private static Random randomNumber;
+	// Environment Build Paths Change Listener
+	private static IEnvironmentBuildPathsChangeListener fEnvironmentBuildPathsChangeListener;
 	
+	static {
+		getEnvironmentVariableProvider().subscribe(
+				fEnvironmentBuildPathsChangeListener = new IEnvironmentBuildPathsChangeListener(){
+					public void buildPathsChanged(IConfiguration configuration, int buildPathType){
+						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE)
+							notifyListeners(configuration,null);
+					}
+				});
+	}
 	/**
 	 * Returns the next random number.
 	 * 
@@ -576,6 +590,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IManagedBuilderMakefileGenerator getBuildfileGenerator(IConfiguration config) {
 		try {
 			IToolChain toolChain = config.getToolChain();
+			if(toolChain != null){
 			IBuilder builder = toolChain.getBuilder();
 			IConfigurationElement element = builder.getBuildFileGeneratorElement();
 			if (element != null) {
@@ -589,6 +604,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					}
 				}
 			}
+		} 
 		} 
 		catch (CoreException e) {
 			// Probably not defined
@@ -650,7 +666,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static void notifyListeners(IConfiguration config, IOption option) {
 		// Continue if change is something that effect the scanner
 		try {
-			if (!(option.getValueType() == IOption.INCLUDE_PATH 
+			//an option can be null in the case of calling this method from the environment
+			//build path change listener
+			if (option != null && !(option.getValueType() == IOption.INCLUDE_PATH 
 				|| option.getValueType() == IOption.PREPROCESSOR_SYMBOLS)) {
 				return;
 			}
@@ -1330,7 +1348,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					buildInfo.setVersion(fileVersion);
 				}
 				if(!UpdateManagedProjectManager.isCompatibleProject(buildInfo)){
-					UpdateManagedProjectManager.updateProject(project, buildInfo);
+						UpdateManagedProjectManager.updateProject(project,buildInfo);
 				}
 				if (buildInfo.getManagedProject() == null ||
 					(!buildInfo.getManagedProject().isValid())) {
@@ -2023,5 +2041,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	
 	public static void OutputManifestError(String message) {
 		System.err.println(ManagedMakeMessages.getResourceString(MANIFEST_ERROR_HEADER) + message + NEWLINE);
+	}
+	
+	/**
+	 * Returns the instance of the Environment Variable Provider
+	 * 
+	 * @return IEnvironmentVariableProvider
+	 */
+	public static IEnvironmentVariableProvider getEnvironmentVariableProvider(){
+		return EnvironmentVariableProvider.getDefault();
 	}
 }

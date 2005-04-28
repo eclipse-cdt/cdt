@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002, 2005 IBM Software Corporation and others.
+ * Copyright (c) 2002,2005 IBM Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -30,16 +30,18 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.ITarget;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
@@ -439,6 +441,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				}
 			}
 		}
+		
+		//add paths specified in the environment
+		String envIncludePaths[] = ManagedBuildManager.getEnvironmentVariableProvider().getBuildPaths(config,IEnvVarBuildPath.BUILDPATH_INCLUDE);
+		if(envIncludePaths != null)
+			paths.addAll(Arrays.asList(envIncludePaths));
 		
 		// Answer the results as an array
 		return (String[])paths.toArray(new String[paths.size()]); 

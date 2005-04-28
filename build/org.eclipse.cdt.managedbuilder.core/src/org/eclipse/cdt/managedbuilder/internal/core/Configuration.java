@@ -34,6 +34,8 @@ import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -1208,6 +1210,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public void setRebuildState(boolean rebuild) {
 		rebuildNeeded = rebuild;
+		if(rebuild)
+			((EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider()).checkBuildPathVariables(this);
 	}
 
 	/* (non-Javadoc)
@@ -1296,5 +1300,15 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Add this resource to the list.
 		addResourceConfiguration(resConfig);
 		return resConfig;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getEnvironmentVariableSupplier()
+	 */
+	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier(){
+		IToolChain toolChain = getToolChain();
+		if(toolChain != null)
+			return toolChain.getEnvironmentVariableSupplier();
+		return null;
 	}
 }

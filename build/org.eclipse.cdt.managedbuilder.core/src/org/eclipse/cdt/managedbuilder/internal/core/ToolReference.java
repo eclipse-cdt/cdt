@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
+import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
@@ -1092,4 +1093,10 @@ public class ToolReference implements IToolReference {
 		return command;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getEnvVarBuildPaths()
+	 */
+	public IEnvVarBuildPath[] getEnvVarBuildPaths(){
+		return null;
+	}
 }

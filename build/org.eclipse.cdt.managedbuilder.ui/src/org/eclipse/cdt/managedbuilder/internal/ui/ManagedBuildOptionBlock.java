@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -12,18 +12,20 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
+import org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.BinaryParserBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
-import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
-import org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
@@ -32,6 +34,7 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 	private BuildSettingsBlock buildSettingsBlock;
 	private ErrorParserBlock errParserBlock;
 	private BinaryParserBlock binaryParserBlock;
+	private EnvironmentSetBlock environmentBlock;
 	private Object element;
 	
 	/**
@@ -45,6 +48,10 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		super(resParent, false);
 	}
 	
+	public ManagedBuildOptionBlock(BuildPreferencePage wspParent){
+		super(wspParent, false);
+	}
+	
 	public BuildPropertyPage getBuildPropertyPage() {
 		return (BuildPropertyPage)fParent;
 	}
@@ -52,6 +59,11 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 	public ResourceBuildPropertyPage getResourceBuildPropertyPage() {
 		return (ResourceBuildPropertyPage)fParent;
 	}
+	
+	public BuildPreferencePage getBuildPreferencePage() {
+		return (BuildPreferencePage)fParent;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#addTabs()
 	 */
@@ -62,8 +74,11 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			addTab(buildSettingsBlock = new BuildSettingsBlock((BuildPropertyPage) fParent));
 			addTab(errParserBlock = new ErrorParserBlock());
 			addTab(binaryParserBlock = new BinaryParserBlock());
+			addTab(environmentBlock = new EnvironmentSetBlock((BuildPropertyPage) fParent));
 		} else if (element instanceof IFile) {
 			addTab(toolsSettingsBlock = new ToolsSettingsBlock((ResourceBuildPropertyPage) fParent, element));
+		} else if (element instanceof IWorkspace) {
+			addTab(environmentBlock = new EnvironmentSetBlock((BuildPreferencePage) fParent));
 		}
 	}
 
@@ -81,6 +96,10 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 	
 	public ErrorParserBlock getErrorParserBlock() {
 		return errParserBlock;
+	}
+	
+	public EnvironmentSetBlock getEnvironmentBlock() {
+		return environmentBlock;
 	}
 	
 	public Control createContents(Composite parent, Object element) {
@@ -114,6 +133,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			// TODO
 			//getBinaryParserBlock().initializeValues();
 		}
+		if(getEnvironmentBlock()!= null) {
+		}
 	}
 
 	public void updateValues() {
@@ -131,9 +152,16 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 				// TODO
 				//getBinaryParserBlock().updateValues();
 			}
+			if(getCurrentPage() instanceof EnvironmentSetBlock) {
+				((EnvironmentSetBlock)getCurrentPage()).updateValues();
+			}
 		} else if( element instanceof IFile) {
 			if (getToolsSettingsBlock() != null) {
 				getToolsSettingsBlock().updateValues();
+			}
+		} else if(element instanceof IWorkspace) {
+			if(getEnvironmentBlock() != null) {
+				getEnvironmentBlock().updateValues();
 			}
 		}
 	}
@@ -154,9 +182,16 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 				// TODO
 				//getBinaryParserBlock().setValues();
 			}
+			if(getEnvironmentBlock() != null) {
+				getEnvironmentBlock().updateValues();
+			}
 		} else  if (element instanceof IFile) {
 			if (getToolsSettingsBlock() != null) {
 				getToolsSettingsBlock().updateValues();
+			}
+		} else if (element instanceof IWorkspace) {
+			if(getEnvironmentBlock() != null) {
+				getEnvironmentBlock().updateValues();
 			}
 		}
 	}
@@ -177,9 +212,14 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 				// TODO
 				//getBinaryParserBlock().removeValues(id);
 			}
+			if(getEnvironmentBlock()!= null) {
+			}
 		} else  if (element instanceof IFile) {
 			if (getToolsSettingsBlock()!= null) {
 				getToolsSettingsBlock().removeValues(id);
+			}
+		} else if (element instanceof IWorkspace) {
+			if(getEnvironmentBlock()!= null) {
 			}
 		}
 	}
@@ -199,9 +239,16 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if (getCurrentPage() instanceof BinaryParserBlock) {
 				return null;
 			}
+			if(getCurrentPage() instanceof EnvironmentSetBlock) {
+				return null;
+			}
 		} else if( element instanceof IFile) {
 			if (getCurrentPage() instanceof ToolsSettingsBlock) {
 				return toolsSettingsBlock.getPreferenceStore();
+			}
+		} else if (element instanceof IWorkspace) {
+			if(getEnvironmentBlock()!= null) {
+				return null;
 			}
 		}
 		return null;
@@ -218,11 +265,18 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		//  Currently, other settings are per-config, while binary parser settings are per-project
 		if (tab instanceof BinaryParserBlock) {
 			((BuildPropertyPage)fParent).enableConfigSelection(false);
-		} else {
+		} 
+		else {
 			if(element instanceof IProject) {
+				if(tab instanceof EnvironmentSetBlock){
+					((BuildPropertyPage)fParent).enableConfigSelection(
+							((EnvironmentSetBlock)tab).isConfigSelectionAllowed());
+				} 
+				else
 				((BuildPropertyPage)fParent).enableConfigSelection(true);
 			} else if ( element instanceof IFile) {
 				((ResourceBuildPropertyPage)fParent).enableConfigSelection(true);
+			} else if (element instanceof IWorkspace) {
 			}
 		}
 	}
@@ -242,6 +296,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			    ((ErrorParserBlock)tab).setDirty(b);
 			} else if (tab instanceof BinaryParserBlock) {
 			    //TODO  ManagedBuildSystem needs its own binary parser block
+			} else if(tab instanceof EnvironmentSetBlock) {
+				((EnvironmentSetBlock)tab).setModified(b);
 			}
 		}
 	}
@@ -262,6 +318,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			    if (((ErrorParserBlock)tab).isDirty()) return true;
 			} else if (tab instanceof BinaryParserBlock) {
 			    //TODO  ManagedBuildSystem needs its own binary parser block
+			} else if(tab instanceof EnvironmentSetBlock) {
+				return ((EnvironmentSetBlock)tab).isModified();
 			}
 			
 		}

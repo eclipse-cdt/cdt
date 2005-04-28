@@ -98,6 +98,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="projectEnvironmentSupplier" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the name of the class that implements IProjectEnvironmentVariableSupplier
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -318,6 +328,16 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="configurationEnvironmentSupplier" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the name of the class that implements IConfigurationEnvironmentVariableSupplier
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -360,6 +380,7 @@
             <element ref="optionCategory"/>
             <element ref="inputType"/>
             <element ref="outputType"/>
+            <element ref="envVarBuildPath"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -1248,6 +1269,48 @@ Version identifier for the managed build extension point. It is a string represe
                <documentation>
                   The actual string containing the three version tokens.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="envVarBuildPath">
+      <annotation>
+         <documentation>
+            Defines a set of environment variables used by a tool to represent the build paths (include paths or library paths).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="pathType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The build path type. Can be one of the following: &quot;buildpathInclude&quot;, &quot;buildpathLibrary&quot;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="variableList" type="string" use="required">
+            <annotation>
+               <documentation>
+                  comma-separated list of the environment variable names used to store the include paths
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pathDelimiter" type="string">
+            <annotation>
+               <documentation>
+                  Represent the delimiter used to separate the paths. If omitted the default system delimiter will be used. That is the &quot;:&quot; for Unix-like systems and the &quot;;&quot; for Win32 systems.
+If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelimiter&quot; is ignored
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="buildPathResolver" type="string">
+            <annotation>
+               <documentation>
+                  Should be set to the IBuildPathResolver interface that the tool-integrator can supply in order to provide his/her own logic of resolving the variable values to the build paths
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IBuildPathResolver"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

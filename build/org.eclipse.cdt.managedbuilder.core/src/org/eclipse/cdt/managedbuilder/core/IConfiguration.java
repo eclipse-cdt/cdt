@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
@@ -425,4 +426,12 @@ public interface IConfiguration extends IBuildObject {
 	 * @return boolean 
 	 */	
 	public boolean isSupported();
+	
+	/**
+	 * Returns the implementation of the IConfigurationEnvironmentVariableSupplier provided
+	 * by the tool-integrator or <code>null</code> if none.
+	 * 
+	 * @return IConfigurationEnvironmentVariableSupplier 
+	 */	
+	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier();
 }

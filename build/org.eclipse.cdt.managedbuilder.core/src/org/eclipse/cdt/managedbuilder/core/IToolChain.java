@@ -10,6 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 
 /**
  * This interface represents a tool-integrator-defined, ordered set of tools 
@@ -35,6 +38,8 @@ public interface IToolChain extends IBuildObject {
 	public static final String TARGET_TOOL = "targetTool";				//$NON-NLS-1$
 	public static final String SECONDARY_OUTPUTS = "secondaryOutputs";	//$NON-NLS-1$
 	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
+	public static final String CONFIGURATION_ENVIRONMENT_SUPPLIER = "configurationEnvironmentSupplier";			//$NON-NLS-1$
+	
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
 
@@ -289,4 +294,12 @@ public interface IToolChain extends IBuildObject {
 	 * @return boolean 
 	 */	
 	public boolean isSupported();
+	
+	/**
+	 * Returns the tool-integrator provided implementation of the configuration environment variable supplier
+	 * or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationEnvironmentVariableSupplier
+	 */
+	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier();
 }

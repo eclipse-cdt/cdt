@@ -1938,7 +1938,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclarator d = null;
         if (numKnRCParms > 0) {
             ICASTKnRFunctionDeclarator functionDecltor = createKnRFunctionDeclarator();
-            parmDeclarations = removeNullDeclarations(parmDeclarations);
+            parmDeclarations = (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, parmDeclarations );
             for (int i = 0; i < parmDeclarations.length; ++i) {
                 if (parmDeclarations[i] != null) {
                     parmDeclarations[i].setParent(functionDecltor);
@@ -2012,29 +2012,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         ((ASTNode) d).setOffsetAndLength(startingOffset, finalOffset
                 - startingOffset);
         return d;
-    }
-
-    /**
-     * @param parmDeclarations
-     * @return
-     */
-    private IASTDeclaration[] removeNullDeclarations(
-            IASTDeclaration[] parmDeclarations) {
-        int nullCount = 0;
-        for (int i = 0; i < parmDeclarations.length; ++i) {
-            if (parmDeclarations[i] == null)
-                ++nullCount;
-        }
-        if (nullCount == 0)
-            return parmDeclarations;
-        IASTDeclaration[] result = new IASTDeclaration[parmDeclarations.length
-                - nullCount];
-        int count = 0;
-        for (int i = 0; i < parmDeclarations.length; ++i) {
-            if (parmDeclarations[i] != null)
-                result[count++] = parmDeclarations[i];
-        }
-        return result;
     }
 
     protected IASTArrayDeclarator createArrayDeclarator() {

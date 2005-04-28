@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -104,46 +105,17 @@ public class CPPASTNewExpression extends CPPASTNode implements
      */
     public IASTExpression [] getNewTypeIdArrayExpressions() {
         if( arrayExpressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        removeNullExpressions();
-        return arrayExpressions;
+        return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, arrayExpressions );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#addNewTypeIdArrayExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
     public void addNewTypeIdArrayExpression(IASTExpression expression) {
-        if( arrayExpressions == null )
-        {
-            arrayExpressions = new IASTExpression[ DEFAULT_ARRAY_EXPRESSIONS_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( arrayExpressions.length == currentIndex )
-        {
-            IASTExpression [] old = arrayExpressions;
-            arrayExpressions = new IASTExpression[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                arrayExpressions[i] = old[i];
-        }
-        arrayExpressions[ currentIndex++ ] = expression;
+        arrayExpressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, arrayExpressions, expression );
     }
     
-    private void removeNullExpressions() {
-        int nullCount = 0; 
-        for( int i = 0; i < arrayExpressions.length; ++i )
-            if( arrayExpressions[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        IASTExpression [] old = arrayExpressions;
-        int newSize = old.length - nullCount;
-        arrayExpressions = new IASTExpression[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            arrayExpressions[i] = old[i];
-        currentIndex = newSize;
-    }
-
-    private int currentIndex = 0;    
     private IASTExpression [] arrayExpressions = null;
-    private static final int DEFAULT_ARRAY_EXPRESSIONS_LIST_SIZE = 4;
 
     public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -178,6 +150,13 @@ public class CPPASTNewExpression extends CPPASTNode implements
             other.setParent( child.getParent() );
             initializer  = (IASTExpression) other;
         }
-        
+        if( arrayExpressions == null ) return;
+        for( int i = 0; i < arrayExpressions.length; ++i )
+            if( arrayExpressions[i] == child )
+            {
+                other.setPropertyInParent( child.getPropertyInParent() );
+                other.setParent( child.getParent() );
+                arrayExpressions[i] = (IASTExpression) other;
+            }   
     }
 }

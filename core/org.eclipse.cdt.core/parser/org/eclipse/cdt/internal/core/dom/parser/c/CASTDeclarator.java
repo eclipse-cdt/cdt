@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -27,22 +28,7 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
     private IASTName name;
     private IASTDeclarator nestedDeclarator;
     private IASTPointerOperator [] pointerOps = null;
-    private static final int DEFAULT_PTROPS_LIST_SIZE = 2;
-    private int currentIndex;
 
-    private void removeNullPointers() {
-        int nullCount = 0; 
-        for( int i = 0; i < pointerOps.length; ++i )
-            if( pointerOps[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        IASTPointerOperator [] old = pointerOps;
-        int newSize = old.length - nullCount;
-        pointerOps = new IASTPointerOperator[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            pointerOps[i] = old[i];
-        currentIndex = newSize;
-    }
 
     
     /* (non-Javadoc)
@@ -50,8 +36,7 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
      */
     public IASTPointerOperator[] getPointerOperators() {
         if( pointerOps == null ) return IASTPointerOperator.EMPTY_ARRAY;
-        removeNullPointers();
-        return pointerOps;
+        return (IASTPointerOperator[]) ArrayUtil.removeNulls( IASTPointerOperator.class, pointerOps );
     }
 
     /* (non-Javadoc)
@@ -86,19 +71,8 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
      * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#addPointerOperator(org.eclipse.cdt.core.dom.ast.IASTPointerOperator)
      */
     public void addPointerOperator(IASTPointerOperator operator) {
-        if( pointerOps == null )
-        {
-            pointerOps = new IASTPointerOperator[ DEFAULT_PTROPS_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( pointerOps.length == currentIndex )
-        {
-            IASTPointerOperator [] old = pointerOps;
-            pointerOps = new IASTPointerOperator[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                pointerOps[i] = old[i];
-        }
-        pointerOps[ currentIndex++ ] = operator;    }
+        pointerOps = (IASTPointerOperator[]) ArrayUtil.append( IASTPointerOperator.class, pointerOps, operator );
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#setNestedDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)

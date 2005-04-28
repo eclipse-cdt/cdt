@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -22,25 +23,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CASTCompoundStatement extends CASTNode implements
         IASTCompoundStatement, IASTAmbiguityParent {
 
-    private int currentIndex = 0;
-    private void removeNullStatements() {
-        int nullCount = 0; 
-        for( int i = 0; i < statements.length; ++i )
-            if( statements[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        IASTStatement [] old = statements;
-        int newSize = old.length - nullCount;
-        statements = new IASTStatement[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            statements[i] = old[i];
-        currentIndex = newSize;
-    }
 
     
     private IASTStatement [] statements = null;
     private IScope scope = null;
-    private static final int DEFAULT_STATEMENT_LIST_SIZE = 8;
 
 
     /* (non-Javadoc)
@@ -48,27 +34,14 @@ public class CASTCompoundStatement extends CASTNode implements
      */
     public IASTStatement[] getStatements() {
         if( statements == null ) return IASTStatement.EMPTY_STATEMENT_ARRAY;
-        removeNullStatements();
-        return statements;
+        return (IASTStatement[]) ArrayUtil.removeNulls( IASTStatement.class, statements );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#addStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
      */
     public void addStatement(IASTStatement statement) {
-        if( statements == null )
-        {
-            statements = new IASTStatement[ DEFAULT_STATEMENT_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( statements.length == currentIndex )
-        {
-            IASTStatement [] old = statements;
-            statements = new IASTStatement[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                statements[i] = old[i];
-        }
-        statements[ currentIndex++ ] = statement;
+        statements = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, statements, statement );
     }
 
     /* (non-Javadoc)
@@ -96,14 +69,14 @@ public class CASTCompoundStatement extends CASTNode implements
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        IASTStatement [] s = getStatements();
-        for( int i = 0; i < s.length; ++i )
+        if( statements == null ) return;
+        for( int i = 0; i < statements.length; ++i )
         {
-            if( s[i] == child )
+            if( statements[i] == child )
             {
-                other.setParent( s[i].getParent() );
-                other.setPropertyInParent( s[i].getPropertyInParent() );
-                s[i] = (IASTStatement) other;
+                other.setParent( statements[i].getParent() );
+                other.setPropertyInParent( statements[i].getPropertyInParent() );
+                statements[i] = (IASTStatement) other;
                 break;
             }
         }

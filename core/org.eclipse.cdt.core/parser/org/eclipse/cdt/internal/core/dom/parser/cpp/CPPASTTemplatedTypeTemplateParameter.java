@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -27,42 +28,14 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
 
     public ICPPASTTemplateParameter[] getTemplateParameters() {
         if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
-        removeNullParameters();
-        return parameters;
+        return (ICPPASTTemplateParameter[]) ArrayUtil.removeNulls( ICPPASTTemplateParameter.class, parameters );
     }
 
     public void addTemplateParamter(ICPPASTTemplateParameter parm) {
-        if( parameters == null )
-        {
-            parameters = new ICPPASTTemplateParameter[ DEFAULT_PARMS_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( parameters.length == currentIndex )
-        {
-            ICPPASTTemplateParameter [] old = parameters;
-            parameters = new ICPPASTTemplateParameter[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                parameters[i] = old[i];
-        }
-        parameters[ currentIndex++ ] = parm;
-    }
-    private void removeNullParameters() {
-        int nullCount = 0; 
-        for( int i = 0; i < parameters.length; ++i )
-            if( parameters[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        ICPPASTTemplateParameter[] old = parameters;
-        int newSize = old.length - nullCount;
-        parameters = new ICPPASTTemplateParameter[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            parameters[i] = old[i];
-        currentIndex = newSize;
+        parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, parm );
     }
 
-    private int currentIndex = 0;    
     private ICPPASTTemplateParameter [] parameters = null;
-    private static final int DEFAULT_PARMS_LIST_SIZE = 4;
     private IASTName name;
     private IASTExpression defaultValue;
 

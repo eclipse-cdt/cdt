@@ -13,6 +13,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -29,8 +30,7 @@ public class CASTExpressionList extends CASTNode implements IASTExpressionList,
     public IASTExpression[] getExpressions() {
         if (expressions == null)
             return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        removeNullExpressions();
-        return expressions;
+        return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, expressions );
     }
 
     /*
@@ -39,42 +39,11 @@ public class CASTExpressionList extends CASTNode implements IASTExpressionList,
      * @see org.eclipse.cdt.core.dom.ast.IASTExpressionList#addExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
     public void addExpression(IASTExpression expression) {
-        if (expressions == null) {
-            expressions = new IASTExpression[DEFAULT_EXPRESSIONLIST_SIZE];
-            currentIndex = 0;
-        }
-        if (expressions.length == currentIndex) {
-            IASTExpression[] old = expressions;
-            expressions = new IASTExpression[old.length * 2];
-            for (int i = 0; i < old.length; ++i)
-                expressions[i] = old[i];
-        }
-        expressions[currentIndex++] = expression;
+        expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, expression );
     }
 
-    /**
-     * @param decls2
-     */
-    private void removeNullExpressions() {
-        int nullCount = 0;
-        for (int i = 0; i < expressions.length; ++i)
-            if (expressions[i] == null)
-                ++nullCount;
-        if (nullCount == 0)
-            return;
-        IASTExpression[] old = expressions;
-        int newSize = old.length - nullCount;
-        expressions = new IASTExpression[newSize];
-        for (int i = 0; i < newSize; ++i)
-            expressions[i] = old[i];
-        currentIndex = newSize;
-    }
 
-    private int currentIndex = 0;
-
-    private IASTExpression[] expressions = null;
-
-    private static final int DEFAULT_EXPRESSIONLIST_SIZE = 4;
+    private IASTExpression [] expressions = new IASTExpression[2];
 
     public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
@@ -97,12 +66,12 @@ public class CASTExpressionList extends CASTNode implements IASTExpressionList,
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        IASTExpression[] ez = getExpressions();
-        for (int i = 0; i < ez.length; ++i) {
-            if (child == ez[i]) {
+        if( expressions == null ) return;
+        for (int i = 0; i < expressions.length; ++i) {
+            if (child == expressions[i]) {
                 other.setPropertyInParent(child.getPropertyInParent());
                 other.setParent(child.getParent());
-                ez[i] = (IASTExpression) other;
+                expressions[i] = (IASTExpression) other;
             }
         }
     }

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
@@ -49,10 +50,6 @@ public class CASTTranslationUnit extends CASTNode implements
 		IASTTranslationUnit, IRequiresLocationInformation {
 
 	private IASTDeclaration[] decls = null;
-
-	private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
-
-	private int currentIndex = 0;
 
 	// Binding
 	private CScope compilationUnit = null;
@@ -74,17 +71,7 @@ public class CASTTranslationUnit extends CASTNode implements
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
 	public void addDeclaration(IASTDeclaration d) {
-		if (decls == null) {
-			decls = new IASTDeclaration[DEFAULT_CHILDREN_LIST_SIZE];
-			currentIndex = 0;
-		}
-		if (decls.length == currentIndex) {
-			IASTDeclaration[] old = decls;
-			decls = new IASTDeclaration[old.length * 2];
-			for (int i = 0; i < old.length; ++i)
-				decls[i] = old[i];
-		}
-		decls[currentIndex++] = d;
+        decls = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, decls, d );
 	}
 
 	/*
@@ -93,29 +80,10 @@ public class CASTTranslationUnit extends CASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations()
 	 */
 	public IASTDeclaration[] getDeclarations() {
-		if (decls == null)
-			return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-		removeNullDeclarations();
-		return decls;
+		if (decls == null) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
+		return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, decls );
 	}
 
-	/**
-	 * @param decls2
-	 */
-	private void removeNullDeclarations() {
-		int nullCount = 0;
-		for (int i = 0; i < decls.length; ++i)
-			if (decls[i] == null)
-				++nullCount;
-		if (nullCount == 0)
-			return;
-		IASTDeclaration[] old = decls;
-		int newSize = old.length - nullCount;
-		decls = new IASTDeclaration[newSize];
-		for (int i = 0; i < newSize; ++i)
-			decls[i] = old[i];
-		currentIndex = newSize;
-	}
 
 	/*
 	 * (non-Javadoc)

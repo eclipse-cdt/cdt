@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -35,44 +36,15 @@ public class CPPASTSimpleDeclaration extends CPPASTNode implements
      */
     public IASTDeclarator[] getDeclarators() {
         if( declarators == null ) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        removeNullDeclarators();
-        return declarators;
+        return (IASTDeclarator[]) ArrayUtil.removeNulls( IASTDeclarator.class, declarators );
     }
     
     public void addDeclarator( IASTDeclarator d )
     {
-        if( declarators == null )
-        {
-            declarators = new IASTDeclarator[ DEFAULT_DECLARATORS_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( declarators.length == currentIndex )
-        {
-            IASTDeclarator [] old = declarators;
-            declarators = new IASTDeclarator[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                declarators[i] = old[i];
-        }
-        declarators[ currentIndex++ ] = d;
+        declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, d );
     }
     
-    private void removeNullDeclarators() {
-        int nullCount = 0; 
-        for( int i = 0; i < declarators.length; ++i )
-            if( declarators[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        IASTDeclarator [] old = declarators;
-        int newSize = old.length - nullCount;
-        declarators = new IASTDeclarator[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            declarators[i] = old[i];
-        currentIndex = newSize;
-    }
-
-    private int currentIndex = 0;    
     private IASTDeclarator [] declarators = null;
-    private static final int DEFAULT_DECLARATORS_LIST_SIZE = 2;
     private IASTDeclSpecifier declSpecifier;
 
     /**

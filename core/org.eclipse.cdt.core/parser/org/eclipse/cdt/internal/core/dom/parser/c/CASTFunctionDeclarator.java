@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -20,27 +21,8 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
         IASTStandardFunctionDeclarator {
 
     private IASTParameterDeclaration [] parameters = null;
-    private static final int DEFAULT_PARAMETERS_LIST_SIZE = 2;
-    
-    private int currentIndex = 0;
     private boolean varArgs;
     
-    /**
-     * @param decls2
-     */
-    private void removeNullParameters() {
-        int nullCount = 0; 
-        for( int i = 0; i < parameters.length; ++i )
-            if( parameters[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        IASTParameterDeclaration [] old = parameters;
-        int newSize = old.length - nullCount;
-        parameters = new IASTParameterDeclaration[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            parameters[i] = old[i];
-        currentIndex = newSize;
-    }
 
     
     /* (non-Javadoc)
@@ -48,27 +30,14 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
      */
     public IASTParameterDeclaration[] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        removeNullParameters();
-        return parameters;
+        return (IASTParameterDeclaration[]) ArrayUtil.removeNulls( IASTParameterDeclaration.class, parameters );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#addParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
      */
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
-        if( parameters == null )
-        {
-            parameters = new IASTParameterDeclaration[ DEFAULT_PARAMETERS_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( parameters.length == currentIndex )
-        {
-            IASTParameterDeclaration [] old = parameters;
-            parameters = new IASTParameterDeclaration[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                parameters[i] = old[i];
-        }
-        parameters[ currentIndex++ ] = parameter;
+        parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, parameter );
     }
 
     /* (non-Javadoc)

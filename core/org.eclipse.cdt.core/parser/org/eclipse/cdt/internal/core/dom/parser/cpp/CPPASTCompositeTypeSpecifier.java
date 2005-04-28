@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -38,27 +39,14 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
      */
     public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
         if( baseSpecs == null ) return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
-        removeNullBaseSpecs();
-        return baseSpecs;
+        return (ICPPASTBaseSpecifier[]) ArrayUtil.removeNulls( ICPPASTBaseSpecifier.class, baseSpecs );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier#addBaseSpecifier(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
      */
     public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
-        if( baseSpecs == null )
-        {
-            baseSpecs = new ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[ DEFAULT_DECLARATIONS_LIST_SIZE ];
-            currentIndex2 = 0;
-        }
-        if( baseSpecs.length == currentIndex )
-        {
-            ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] old = baseSpecs;
-            baseSpecs = new ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                baseSpecs[i] = old[i];
-        }
-        baseSpecs[ currentIndex2++ ] = baseSpec;
+        baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.append( ICPPASTBaseSpecifier.class, baseSpecs, baseSpec );
     }
 
     /* (non-Javadoc)
@@ -94,8 +82,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
      */
     public IASTDeclaration[] getMembers() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-        removeNullDeclarations();
-        return declarations;
+        return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, declarations );
 
     }
 
@@ -103,54 +90,11 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
      * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#addMemberDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
      */
     public void addMemberDeclaration(IASTDeclaration declaration) {
-        if( declarations == null )
-        {
-            declarations = new IASTDeclaration[ DEFAULT_DECLARATIONS_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( declarations.length == currentIndex )
-        {
-            IASTDeclaration [] old = declarations;
-            declarations = new IASTDeclaration[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                declarations[i] = old[i];
-        }
-        declarations[ currentIndex++ ] = declaration;
+        declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
     }
 
-    private void removeNullDeclarations() {
-        int nullCount = 0; 
-        for( int i = 0; i < declarations.length; ++i )
-            if( declarations[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        IASTDeclaration [] old = declarations;
-        int newSize = old.length - nullCount;
-        declarations = new IASTDeclaration[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            declarations[i] = old[i];
-        currentIndex = newSize;
-    }
 
-    private int currentIndex = 0;    
-    private IASTDeclaration [] declarations = null;
-    private static final int DEFAULT_DECLARATIONS_LIST_SIZE = 4;
-
-    private void removeNullBaseSpecs() {
-        int nullCount = 0; 
-        for( int i = 0; i < baseSpecs.length; ++i )
-            if( baseSpecs[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] old = baseSpecs;
-        int newSize = old.length - nullCount;
-        baseSpecs = new ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            baseSpecs[i] = old[i];
-        currentIndex2 = newSize;
-    }
-
-    private int currentIndex2 = 0;    
+    private IASTDeclaration [] declarations = new IASTDeclaration[4];
     private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] baseSpecs = null;
 
     /* (non-Javadoc)

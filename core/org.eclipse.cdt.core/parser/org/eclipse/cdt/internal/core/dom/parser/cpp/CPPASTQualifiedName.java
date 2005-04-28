@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -65,45 +66,19 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#addName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public void addName(IASTName name) {
-		if (names == null) {
-			names = new IASTName[DEFAULT_NAMES_LIST_SIZE];
-			currentIndex = 0;
-		}
-		if (names.length == currentIndex) {
-			IASTName[] old = names;
-			names = new IASTName[old.length * 2];
-			for (int i = 0; i < old.length; ++i)
-				names[i] = old[i];
-		}
-		names[currentIndex++] = name;
+        names = (IASTName[]) ArrayUtil.append( IASTName.class, names, name );
 	}
 
 	/**
 	 * @param decls2
 	 */
 	private void removeNullNames() {
-		int nullCount = 0;
-		for (int i = 0; i < names.length; ++i)
-			if (names[i] == null)
-				++nullCount;
-		if (nullCount == 0)
-			return;
-		IASTName[] old = names;
-		int newSize = old.length - nullCount;
-		names = new IASTName[newSize];
-		for (int i = 0; i < newSize; ++i)
-			names[i] = old[i];
-		currentIndex = newSize;
+        names = (IASTName[]) ArrayUtil.removeNulls( IASTName.class, names );
+
 	}
 
-	private int currentIndex = 0;
-
 	private IASTName[] names = null;
-
-	private static final int DEFAULT_NAMES_LIST_SIZE = 4;
-
 	private boolean value;
-
 	private String signature;
 
 	/*

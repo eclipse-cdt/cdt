@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -27,19 +28,7 @@ public class CASTDesignatedInitializer extends CASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#addDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
      */
     public void addDesignator(ICASTDesignator designator) {
-        if( designators == null )
-        {
-            designators = new ICASTDesignator[ DEFAULT_DESIGNATORS_LIST_SIZE ];
-            currentIndex = 0;
-        }
-        if( designators.length == currentIndex )
-        {
-            ICASTDesignator [] old = designators;
-            designators = new ICASTDesignator[ old.length * 2 ];
-            for( int i = 0; i < old.length; ++i )
-                designators[i] = old[i];
-        }
-        designators[ currentIndex++ ] = designator;
+        designators = (ICASTDesignator[]) ArrayUtil.append( ICASTDesignator.class, designators, designator );
     }
 
     /* (non-Javadoc)
@@ -47,27 +36,10 @@ public class CASTDesignatedInitializer extends CASTNode implements
      */
     public ICASTDesignator[] getDesignators() {
         if( designators == null ) return ICASTDesignatedInitializer.EMPTY_DESIGNATOR_ARRAY;
-        removeNullDesignators();
-        return designators;
+        return (ICASTDesignator[]) ArrayUtil.removeNulls( ICASTDesignator.class, designators );
     }
 
-    private void removeNullDesignators() {
-        int nullCount = 0; 
-        for( int i = 0; i < designators.length; ++i )
-            if( designators[i] == null )
-                ++nullCount;
-        if( nullCount == 0 ) return;
-        ICASTDesignator [] old = designators;
-        int newSize = old.length - nullCount;
-        designators = new ICASTDesignator[ newSize ];
-        for( int i = 0; i < newSize; ++i )
-            designators[i] = old[i];
-        currentIndex = newSize;
-    }
-
-    private int currentIndex = 0;    
     private ICASTDesignator [] designators = null;
-    private static final int DEFAULT_DESIGNATORS_LIST_SIZE = 2;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#getRHSInitializer()
      */

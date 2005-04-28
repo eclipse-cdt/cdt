@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -29,17 +30,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	 * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier#addEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
 	public void addEnumerator(IASTEnumerator enumerator) {
-		if (enumerators == null) {
-			enumerators = new IASTEnumerator[DEFAULT_ENUMERATORS_LIST_SIZE];
-			currentIndex = 0;
-		}
-		if (enumerators.length == currentIndex) {
-			IASTEnumerator[] old = enumerators;
-			enumerators = new IASTEnumerator[old.length * 2];
-			for (int i = 0; i < old.length; ++i)
-				enumerators[i] = old[i];
-		}
-		enumerators[currentIndex++] = enumerator;
+        enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, enumerator );
 	}
 
 	/*
@@ -50,30 +41,11 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	public IASTEnumerator[] getEnumerators() {
 		if (enumerators == null)
 			return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-		removeNullEnumerators();
-		return enumerators;
+		return (IASTEnumerator[]) ArrayUtil.removeNulls( IASTEnumerator.class, enumerators );
 	}
 
-	private void removeNullEnumerators() {
-		int nullCount = 0;
-		for (int i = 0; i < enumerators.length; ++i)
-			if (enumerators[i] == null)
-				++nullCount;
-		if (nullCount == 0)
-			return;
-		IASTEnumerator[] old = enumerators;
-		int newSize = old.length - nullCount;
-		enumerators = new IASTEnumerator[newSize];
-		for (int i = 0; i < newSize; ++i)
-			enumerators[i] = old[i];
-		currentIndex = newSize;
-	}
-
-	private int currentIndex = 0;
 
 	private IASTEnumerator[] enumerators = null;
-
-	private static final int DEFAULT_ENUMERATORS_LIST_SIZE = 4;
 
 	/*
 	 * (non-Javadoc)

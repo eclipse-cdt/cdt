@@ -1,3 +1,12 @@
+2005-04-28 Alain Magloire
+	Added command -gdb-show endian
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java
+	+ mi/org/eclipse/cdt/debug/mi/core/command/MIGDBShowEndian.java
+	- mi/org/eclipse/cdt/debug/mi/core/command/MIShowEndian.java
+	+ mi/org/eclipse/cdt/debug/mi/core/output/MIGDBShowEndianInfo.java
+	- mi/org/eclipse/cdt/debug/mi/core/output/MIGDBShowEndian.java
+
 2005-04-27 Alain Magloire
 	Changes in the CDI interface
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/BreakpointManager.java

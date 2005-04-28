@@ -229,6 +229,10 @@ public class CommandFactory {
 		return new MIGDBShowAddressSize();
 	}
 
+	public MIGDBShowEndian createMIGDBShowEndian() {
+		return new MIGDBShowEndian();
+	}
+
 	public MIStackInfoDepth createMIStackInfoDepth() {
 		return new MIStackInfoDepth();
 	}

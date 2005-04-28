@@ -65,7 +65,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.MIJump;
-import org.eclipse.cdt.debug.mi.core.command.MIShowEndian;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBShowEndian;
 import org.eclipse.cdt.debug.mi.core.command.MISignal;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
@@ -76,7 +76,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIShowEndianInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowEndianInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
@@ -346,10 +346,10 @@ public class Target extends SessionObject implements ICDITarget {
 	public boolean isLittleEndian() throws CDIException {
 		if (fEndian == null) {
 			CommandFactory factory = miSession.getCommandFactory();
-			MIShowEndian endian = new MIShowEndian();
+			MIGDBShowEndian endian = factory.createMIGDBShowEndian();
 			try {
 				miSession.postCommand(endian);
-				MIShowEndianInfo info = endian.getMIShowEndianInfo();
+				MIGDBShowEndianInfo info = endian.getMIShowEndianInfo();
 				if (info == null) {
 					throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 				}

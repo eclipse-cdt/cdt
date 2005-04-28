@@ -12,17 +12,17 @@
 package org.eclipse.cdt.debug.mi.core.output;
 
 /**
- * show endian
-&"show endian\n"
-~"The target endianness is set automatically (currently little endian)\n"
-^done
+ * -gdb-show endian
+ * ~"The target endianness is set automatically (currently little endian)\n"
+ * ^done
+ * &"show endian\n"
  *
  */
-public class MIShowEndianInfo extends MIInfo {
+public class MIGDBShowEndianInfo extends MIInfo {
 
 	boolean littleEndian;
 
-	public MIShowEndianInfo(MIOutput out) {
+	public MIGDBShowEndianInfo(MIOutput out) {
 		super(out);
 		parse();
 	}
@@ -39,7 +39,7 @@ public class MIShowEndianInfo extends MIInfo {
 				if (oobs[i] instanceof MIConsoleStreamOutput) {
 					MIStreamRecord cons = (MIStreamRecord) oobs[i];
 					String str = cons.getString();
-					// We are interested in the signal info
+					// We are interested in the stream info
 					parseLine(str);
 				}
 			}

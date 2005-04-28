@@ -14,23 +14,23 @@ package org.eclipse.cdt.debug.mi.core.command;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
-import org.eclipse.cdt.debug.mi.core.output.MIShowEndianInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowEndianInfo;
 
-public class MIShowEndian extends CLICommand {
+public class MIGDBShowEndian extends MIGDBShow {
 
-	public MIShowEndian() {
-		super("show endian"); //$NON-NLS-1$
+	public MIGDBShowEndian() {
+		super(new String[] {"endian"}); //$NON-NLS-1$
 	}
 
-	public MIShowEndianInfo getMIShowEndianInfo() throws MIException {
-		return (MIShowEndianInfo)getMIInfo();
+	public MIGDBShowEndianInfo getMIShowEndianInfo() throws MIException {
+		return (MIGDBShowEndianInfo)getMIInfo();
 	}
 
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
 		if (out != null) {
-			info = new MIShowEndianInfo(out);
+			info = new MIGDBShowEndianInfo(out);
 			if (info.isError()) {
 				throwMIException(info, out);
 			}

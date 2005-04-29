@@ -558,81 +558,8 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		}
 	}
 	
-	/**
-	 [--Start Example(CPP 12-1):
-	struct A { }; // implicitlydeclared A::operator=
-	struct B : A {
-	B& operator=(const B &);
-	};
-	B& B::operator=(const B& s) {
-	this->A::operator=(s); // wellformed
-	return *this;
-	}
-	 --End Example]
-	 */
-	public void test12s1()  { // TODO raised bug 90653
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct A { }; // implicitlydeclared A::operator=\n"); //$NON-NLS-1$
-		buffer.append("struct B : A {\n"); //$NON-NLS-1$
-		buffer.append("B& operator=(const B &);\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("B& B::operator=(const B& s) {\n"); //$NON-NLS-1$
-		buffer.append("this->A::operator=(s); // wellformed\n"); //$NON-NLS-1$
-		buffer.append("return *this;\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
 
-	/**
-	 [--Start Example(CPP 12.7-2):
-	struct A { };
-	struct B : virtual A { };
-	struct C : B { };
-	struct D : virtual A { D(A*); };
-	struct X { X(A*); };
-	struct E : C, D, X {
-	E() : D(this), // undefined: upcast from E* to A*
-	// might use path E* ® D* ® A*
-	// but D is not constructed
-	// D((C*)this), // defined:
-	// E* -> C* defined because E() has started
-	// and C* -> A* defined because
-	// C fully constructed
-	X(this) //defined: upon construction of X,
-	// C/B/D/A sublattice is fully constructed
-	{ }
-	};
-	 --End Example]
-	 */
-	public void test12_7s2()  { // TODO raised bug 90664
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct A { };\n"); //$NON-NLS-1$
-		buffer.append("struct B : virtual A { };\n"); //$NON-NLS-1$
-		buffer.append("struct C : B { };\n"); //$NON-NLS-1$
-		buffer.append("struct D : virtual A { D(A*); };\n"); //$NON-NLS-1$
-		buffer.append("struct X { X(A*); };\n"); //$NON-NLS-1$
-		buffer.append("struct E : C, D, X {\n"); //$NON-NLS-1$
-		buffer.append("E() : D(this), // undefined: upcast from E* to A*\n"); //$NON-NLS-1$
-		buffer.append("// might use path E* ® D* ® A*\n"); //$NON-NLS-1$
-		buffer.append("// but D is not constructed\n"); //$NON-NLS-1$
-		buffer.append("// D((C*)this), // defined:\n"); //$NON-NLS-1$
-		buffer.append("// E* ® C* defined because E() has started\n"); //$NON-NLS-1$
-		buffer.append("// and C* ® A* defined because\n"); //$NON-NLS-1$
-		buffer.append("// C fully constructed\n"); //$NON-NLS-1$
-		buffer.append("X(this) //defined: upon construction of X,\n"); //$NON-NLS-1$
-		buffer.append("// C/B/D/A sublattice is fully constructed\n"); //$NON-NLS-1$
-		buffer.append("{ }\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
+
 
 	/**
 	 [--Start Example(CPP 13.4-5a):

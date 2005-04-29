@@ -33,6 +33,8 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Exceptionpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakAfter;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakCondition;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDisable;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakEnable;
@@ -298,12 +300,20 @@ public class BreakpointManager extends Manager {
 		boolean success = false;
 		try {
 			bpt.setCondition0(newCondition);
-			setLocationBreakpoint(bpt);
+			if (bpt instanceof Watchpoint)  {
+				setWatchpoint((Watchpoint)bpt);
+			} else {
+				setLocationBreakpoint(bpt);
+			}
 			success = true;
 		} finally {
 			if (!success) {
 				bpt.setCondition0(oldCondition);
-				setLocationBreakpoint(bpt);
+				if (bpt instanceof Watchpoint) {
+					setWatchpoint((Watchpoint)bpt);
+				} else {
+					setLocationBreakpoint(bpt);
+				}
 			}
 		}
 
@@ -571,42 +581,40 @@ public class BreakpointManager extends Manager {
 			threadIds = condition.getThreadIds();
 		}
 
-		if (bkpt.getLocation() != null) {
-			ICDILocation location = bkpt.getLocation();
+		ICDILocation location = bkpt.getLocation();
+		if (bkpt.isLineBreakpoint()) {
 			String file = location.getFile();
-			String function = location.getFunction();
 			if (file != null && file.length() > 0) {
 				line.append(file).append(':');
-				if (function != null && function.length() > 0) {
-					// GDB does not seem to accept function arguments when
-					// we use file name:
-					// (gdb) break file.c:Test(int)
-					// Will fail, altought it can accept this
-					// (gdb) break file.c:main
-					// so fall back to the line number or
-					// just the name of the function if lineno is invalid.
-					int paren = function.indexOf('(');
-					if (paren != -1) {
-						int no = location.getLineNumber();
-						if (no <= 0) {
-							String func = function.substring(0, paren);
-							line.append(func);
-						} else {
-							line.append(no);
-						}
-					} else {
-						line.append(function);
-					}
-				} else {
-					line.append(location.getLineNumber());
-				}
-			} else if (function != null && function.length() > 0) {
-				line.append(function);
-			} else if (location.getLineNumber() != 0) {
-				line.append(location.getLineNumber());
-			} else {
-				line.append('*').append(location.getAddress());
 			}
+			line.append(location.getLineNumber());
+		} else if (bkpt.isFunctionBreakpoint()) {
+			String file = location.getFile();
+			if (file != null && file.length() > 0) {
+				line.append(file).append(':');
+			}
+			String function = location.getFunction();
+			// GDB does not seem to accept function arguments when
+			// we use file name:
+			// (gdb) break file.c:Test(int)
+			// Will fail, altought it can accept this
+			// (gdb) break file.c:main
+			// so fall back to the line number or
+			// just the name of the function if lineno is invalid.
+			int paren = function.indexOf('(');
+			if (paren != -1) {
+				int no = location.getLineNumber();
+				if (no <= 0) {
+					String func = function.substring(0, paren);
+					line.append(func);
+				} else {
+					line.append(no);
+				}
+			} else {
+				line.append(function);
+			}
+		} else if (bkpt.isAddressBreakpoint()) {
+			line.append('*').append(location.getAddress());			
 		}
 
 		MIBreakInsert[] miBreakInserts;
@@ -693,11 +701,6 @@ public class BreakpointManager extends Manager {
 	public ICDIWatchpoint setWatchpoint(Target target, int type, int watchType, String expression,
 			ICDICondition condition) throws CDIException {
 
-		boolean access = ( (watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE && 
-						   (watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ );
-		boolean read = ( !((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE) && 
-						  (watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ );
-
 		try {
 			// Check if this an address watchpoint, and add a '*'
 			Integer.decode(expression);
@@ -706,6 +709,25 @@ public class BreakpointManager extends Manager {
 			//
 		}
 
+		Watchpoint bkpt = new Watchpoint(target, expression, type, watchType, condition);
+		setWatchpoint(bkpt);
+		List bList = getBreakpointsList(target);
+		bList.add(bkpt);
+
+		// Fire a created Event.
+		MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
+		if (miBreakpoints != null && miBreakpoints.length > 0) {
+			MISession miSession = target.getMISession();
+			miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
+		}
+		return bkpt;
+	}
+
+	public void setWatchpoint(Watchpoint wp) throws CDIException {
+		Target target = (Target)wp.getTarget();
+		boolean access = wp.isReadType() || wp.isWriteType();
+		boolean read = wp.isReadType() && ! wp.isWriteType();
+		String expression = wp.getWatchExpression();
 		MISession miSession = target.getMISession();
 		boolean state = suspendInferior(target);
 		CommandFactory factory = miSession.getCommandFactory();
@@ -714,29 +736,53 @@ public class BreakpointManager extends Manager {
 		MIBreakpoint[] points = null;
 		try {
 			miSession.postCommand(breakWatch);
-			MIBreakWatchInfo info = breakWatch.getMIBreakWatchInfo();
-			points = info.getMIBreakpoints();
-			if (info == null) {
+			MIBreakWatchInfo winfo = breakWatch.getMIBreakWatchInfo();
+			points = winfo.getMIBreakpoints();
+			if (winfo == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			if (points == null || points.length == 0) {
 				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Parsing_Error")); //$NON-NLS-1$
 			}
+
+			int no = points[0].getNumber();
+
+			// Put the condition now.
+			String exprCond = null;
+			int ignoreCount = 0;
+			String[] threadIds = null;
+			StringBuffer line = new StringBuffer();
+
+			ICDICondition condition = wp.getCondition();
+			if (condition != null) {
+				exprCond = condition.getExpression();
+				ignoreCount = condition.getIgnoreCount();
+				threadIds = condition.getThreadIds();
+			}
+			if (exprCond != null && exprCond.length() > 0) {
+				MIBreakCondition breakCondition = factory.createMIBreakCondition(no, exprCond);				
+				miSession.postCommand(breakCondition);
+				MIInfo info = breakCondition.getMIInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+			}
+			if (ignoreCount > 0) {
+				MIBreakAfter breakAfter = factory.createMIBreakAfter(no, ignoreCount);
+				miSession.postCommand(breakAfter);
+				MIInfo info = breakAfter.getMIInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}				
+			}
+			// how to deal with threads ???
+
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
 			resumeInferior(target, state);
 		}
-		Watchpoint bkpt = new Watchpoint(target, expression, type, watchType, condition);
-		bkpt.setMIBreakpoints(points);
-		List bList = getBreakpointsList(target);
-		bList.add(bkpt);
-
-		// Fire a created Event.
-		MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
-		if (miBreakpoints != null && miBreakpoints.length > 0)
-		miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
-		return bkpt;
+		wp.setMIBreakpoints(points);
 	}
 
 	Breakpoint[] exceptionBps = new Breakpoint[2];

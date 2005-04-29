@@ -165,6 +165,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				if (target != null) {
 					session.removeTargets(new Target[] { target });
 				}
+				cdiList.add(new ExitedEvent(session, (MIGDBExitEvent)miEvent));
 			} else if (miEvent instanceof MIDetachedEvent) {
 				cdiList.add(new DisconnectedEvent(session, (MIDetachedEvent)miEvent));
 			} else if (miEvent instanceof MIBreakpointDeletedEvent) {
@@ -322,6 +323,9 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			}
 		} catch (CDIException e) {
 			//System.out.println(e);
+			if (currentTarget.getMISession().getMIInferior().isTerminated()) {
+				return false;
+			}
 		}
 		return true;
 	}

@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowPrompt;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -340,6 +341,14 @@ public class MISession extends Observable {
 			// Let it throught:
 			if (!(cmd instanceof MIExecInterrupt)) {
 				throw new MIException(MIPlugin.getResourceString("src.MISession.Target_not_suspended")); //$NON-NLS-1$
+			}
+		}
+
+		if (inferior.isTerminated()) {
+			// the only thing that can call postCommand when the inferior is in a TERMINATED
+			// state is MIGDBShowExitCode, for when MIInferior is computing error code.
+			if (!(cmd instanceof MIGDBShowExitCode)) {
+				throw new MIException(MIPlugin.getResourceString("src.MISession.Inferior_Terminated"));
 			}
 		}
 

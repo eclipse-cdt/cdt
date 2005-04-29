@@ -31,16 +31,23 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
  */
 public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
+	static final int LINE_BP = 0x01;
+	static final int FUNCTION_BP = 0x02;
+	static final int ADDRESS_BP = 0x04;
+	static final int WATCH_BP =0x08;
+
 	ICDILocation fLocation;
 	ICDICondition condition;
 	MIBreakpoint[] miBreakpoints;
-	int type;
+	int fType;
 	boolean enable;
+	int fKind;
 
-	public Breakpoint(Target target, int kind, ICDILocation loc, ICDICondition cond) {
+	public Breakpoint(Target target, int type, ICDILocation loc, ICDICondition cond) {
 		super(target);
-		type = kind;
+		fType = type;
 		fLocation = loc;
+		setKind(fLocation);
 		condition = cond;
 		enable = true;
 	}
@@ -92,14 +99,14 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isHardware()
 	 */
 	public boolean isHardware() {
-		return (type == ICDIBreakpoint.HARDWARE);
+		return (fType == ICDIBreakpoint.HARDWARE);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isTemporary()
 	 */
 	public boolean isTemporary() {
-		return (type == ICDIBreakpoint.TEMPORARY);
+		return (fType == ICDIBreakpoint.TEMPORARY);
 	}
 
 	/**
@@ -155,5 +162,36 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
 	public void setLocation(ICDILocation loc) {
 		fLocation = loc;
+	}
+
+	void setKind(ICDILocation loc) {
+		if (loc != null) {
+			int line = loc.getLineNumber();
+			String func = loc.getFunction();
+			BigInteger addr = loc.getAddress();
+			if  (line > 0) {
+				fKind = LINE_BP;
+			} else if (func != null && func.length() > 0) {
+				fKind = FUNCTION_BP;
+			} else if (addr != null && !BigInteger.ZERO.equals(addr)) {
+				fKind = ADDRESS_BP;
+			}
+		}
+	}
+
+	public boolean isFunctionBreakpoint() {
+		return (fKind & FUNCTION_BP) != 0;
+	}
+
+	public boolean isLineBreakpoint() {
+		return (fKind & LINE_BP) != 0;
+	}
+	
+	public boolean isAddressBreakpoint() {
+		return (fKind & ADDRESS_BP) != 0;
+	}
+
+	public boolean isWatchpoint() {
+		return (this instanceof Watchpoint);
 	}
 }

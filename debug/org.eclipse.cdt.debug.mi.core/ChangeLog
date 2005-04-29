@@ -1,3 +1,12 @@
+2005-04-29 Alain Magloire
+	Fix PR 90090 PR 93317
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManger.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Session.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/event/ExitedEvent.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java
+	* mi/org/eclipse/cdt/debug/mi/core/MISession.java
+
 2005-02-01 Alain Magloire
 	Part of Fix for PR 84165
 	We check in the expression is a number and

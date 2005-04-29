@@ -24,12 +24,15 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.model.CProject;
@@ -1674,6 +1677,65 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertEquals( ((ASTNode)decls[0]).getOffset(), 38);
 		assertEquals( ((ASTNode)decls[0]).getLength(), 9);
 	}
-	
+
+    public void testBug86993() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("#define _BEGIN_STD_C extern \"C\" {\n"); //$NON-NLS-1$
+        buffer.append("#define _END_STD_C  }\n"); //$NON-NLS-1$
+        buffer.append("_BEGIN_STD_C\n"); //$NON-NLS-1$
+        buffer.append("char c; // selection on this fails because offset for \n"); //$NON-NLS-1$
+        buffer.append("_END_STD_C\n"); //$NON-NLS-1$
+        buffer.append("char foo() {\n"); //$NON-NLS-1$
+        buffer.append("return c;   \n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$            
+        
+        String code = buffer.toString();
+        int index = code.indexOf("return c;"); //$NON-NLS-1$
+        IASTNode node = parse( code, index + 7, index + 8, true );
+        assertNotNull( node );
+        assertTrue( node instanceof IASTName );
+        assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPVariable );
+        assertEquals( ((IASTName)node).toString(), "c" ); //$NON-NLS-1$
+        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        assertEquals(decls.length, 1);
+        assertEquals( decls[0].toString(), "c" ); //$NON-NLS-1$
+        assertEquals( ((ASTNode)decls[0]).getOffset(), 86);
+        assertEquals( ((ASTNode)decls[0]).getLength(), 1);
+        
+        index = code.indexOf("char c"); //$NON-NLS-1$
+        node = parse( code, index + 5, index + 6, true );
+        assertNotNull( node );
+        assertTrue( node instanceof IASTName );
+        assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPVariable );
+        IASTName[] refs = getReferencesOffTU((IASTName)node);
+        assertEquals(refs.length, 1);
+        assertEquals( refs[0].toString(), "c" ); //$NON-NLS-1$
+        assertEquals( ((ASTNode)refs[0]).getOffset(), 168);
+        assertEquals( ((ASTNode)decls[0]).getLength(), 1);
+    }
+    
+    public void testBug92632() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace N{ \n"); //$NON-NLS-1$
+        buffer.append("            template < class T > class AAA { T _t; };\n"); //$NON-NLS-1$
+        buffer.append("}       \n"); //$NON-NLS-1$
+        buffer.append("N::AAA<int> a;  \n"); //$NON-NLS-1$
+        
+        String code = buffer.toString();
+        int index = code.indexOf("AAA<int>"); //$NON-NLS-1$
+        IASTNode node = parse( code, index, index + 8, true );
+        assertNotNull( node );
+        assertTrue( node instanceof IASTName );
+        assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPTemplateInstance );
+        assertEquals( ((IASTName)node).toString(), "AAA" ); //$NON-NLS-1$
+        IASTName[] decls = getDeclarationOffTU((IASTName)node);
+        assertEquals(decls.length, 1);
+        assertEquals( decls[0].toString(), "AAA" ); //$NON-NLS-1$
+        assertEquals( ((ASTNode)decls[0]).getOffset(), 53);
+        assertEquals( ((ASTNode)decls[0]).getLength(), 3);
+    }
+    
 }
 

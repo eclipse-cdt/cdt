@@ -196,9 +196,9 @@ public abstract class FindAction extends SelectionParseAction {
             // TODO Devin should be able to implement this somehow, see PR 78118
             operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
             return;
-        } else {
-            resourceFile = fEditor.getInputFile();
         }
+        
+        resourceFile = fEditor.getInputFile();
         
 		IASTTranslationUnit tu = null;
 		IASTNode foundNode = null;

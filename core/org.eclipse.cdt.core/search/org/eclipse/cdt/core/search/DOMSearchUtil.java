@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.parser.ParseError;
@@ -212,31 +213,31 @@ public class DOMSearchUtil {
             IASTName[] results = new IASTName[1];
             results[0] = (IASTName)node;
             return results;
-        } else {
-            ASTVisitor collector = null;
-            if (getLanguageFromFile(file) == ParserLanguage.CPP) {
-                collector = new CPPNameCollector();
-            } else {
-                collector = new CNameCollector();
-            }
-            
-            node.accept( collector );
-            
-            List names = null;
-            if (collector instanceof CPPNameCollector) {
-                names = ((CPPNameCollector)collector).nameList;
-            } else {
-                names = ((CNameCollector)collector).nameList;
-            }
-        
-            IASTName[] results = new IASTName[names.size()];
-            for(int i=0; i<names.size(); i++) {
-                if (names.get(i) instanceof IASTName)
-                    results[i] = (IASTName)names.get(i);
-            }
-            
-            return results;
         }
+        
+        ASTVisitor collector = null;
+        if (getLanguageFromFile(file) == ParserLanguage.CPP) {
+            collector = new CPPNameCollector();
+        } else {
+            collector = new CNameCollector();
+        }
+        
+        node.accept( collector );
+        
+        List names = null;
+        if (collector instanceof CPPNameCollector) {
+            names = ((CPPNameCollector)collector).nameList;
+        } else {
+            names = ((CNameCollector)collector).nameList;
+        }
+        
+        IASTName[] results = new IASTName[names.size()];
+        for(int i=0; i<names.size(); i++) {
+            if (names.get(i) instanceof IASTName)
+                results[i] = (IASTName)names.get(i);
+        }
+        
+        return results;
     }
     
     /**
@@ -272,13 +273,20 @@ public class DOMSearchUtil {
              return BLANK_NAME_ARRAY;
          }
          
+         // fix for 92632
+         IBinding binding = searchName.resolveBinding();
+         if (binding instanceof ICPPTemplateInstance) {
+             if (((ICPPTemplateInstance)binding).getOriginalBinding() != null)
+                 binding = ((ICPPTemplateInstance)binding).getOriginalBinding();
+         }
+         
          if (limitTo == ICSearchConstants.DECLARATIONS) {
-             names = tu.getDeclarations(searchName.resolveBinding());
+             names = tu.getDeclarations(binding);
          } else if (limitTo == ICSearchConstants.REFERENCES) {
-             names = tu.getReferences(searchName.resolveBinding());
+             names = tu.getReferences(binding);
          } else { // assume ALL
-             names = tu.getDeclarations(searchName.resolveBinding());
-             names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(searchName.resolveBinding()));
+             names = tu.getDeclarations(binding);
+             names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
          }
          
          return names;

@@ -56,7 +56,8 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * @author dsteffle
  */
 public class DOMASTNodeLeaf implements IAdaptable {
-	private static final String VARIABLE_SIZED_ = "* "; //$NON-NLS-1$
+	private static final String INTERNAL = "internal"; //$NON-NLS-1$
+    private static final String VARIABLE_SIZED_ = "* "; //$NON-NLS-1$
 	private static final String VOLATILE_ = "volatile "; //$NON-NLS-1$
 	private static final String STATIC_ = "static "; //$NON-NLS-1$
 	private static final String RESTRICT_ = "restrict "; //$NON-NLS-1$
@@ -114,10 +115,15 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		
 		Class[] classes = node.getClass().getInterfaces();
 		for(int i=0; i<classes.length; i++) {
+            if (classes[i].getPackage().toString().indexOf(INTERNAL) >= 0)
+                continue;
+            
 			String interfaceName = classes[i].getName().substring(classes[i].getName().lastIndexOf(PERIOD) + 1);
 			if (hasProperPrefix(interfaceName)) {
 				buffer.append(interfaceName);
-				if (i+1 < classes.length && hasProperPrefix(classes[i+1].getName().substring(classes[i+1].getName().lastIndexOf(PERIOD) + 1)))
+				if (i+1 < classes.length && 
+                        hasProperPrefix(classes[i+1].getName().substring(classes[i+1].getName().lastIndexOf(PERIOD) + 1)) &&
+                        classes[i+1].getPackage().toString().indexOf(INTERNAL) < 0)
 					buffer.append(LIST_SEPARATOR);
 			}
 		}

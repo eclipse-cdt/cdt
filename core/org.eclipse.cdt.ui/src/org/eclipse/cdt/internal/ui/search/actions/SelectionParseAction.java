@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
@@ -168,7 +169,7 @@ public class SelectionParseAction extends Action {
 
 	//TODO: Change this to work with qualified identifiers
 	public SelSearchNode getSelection( int fPos ) {
-		IDocumentProvider prov = ( fEditor != null ) ? fEditor.getDocumentProvider() : null;
+ 		IDocumentProvider prov = ( fEditor != null ) ? fEditor.getDocumentProvider() : null;
  		IDocument doc = ( prov != null ) ? prov.getDocument(fEditor.getEditorInput()) : null;
  		
  		if( doc == null )
@@ -177,6 +178,7 @@ public class SelectionParseAction extends Action {
 		int pos= fPos;
 		char c;
 		int fStartPos =0, fEndPos=0;
+        int nonJavaStart=-1, nonJavaEnd=-1;
 		String selectedWord=null;
 		
 		try{
@@ -185,7 +187,11 @@ public class SelectionParseAction extends Action {
 
                 // TODO this logic needs to be improved
                 // ex: ~destr[cursor]uctors, p2->ope[cursor]rator=(zero), etc
-				if (!Character.isJavaIdentifierPart(c))
+                if (nonJavaStart == -1 && !Character.isJavaIdentifierPart(c)) {
+                    nonJavaStart=pos+1;
+                }
+                    
+                if (Character.isWhitespace(c))
                     break;
 
 				--pos;
@@ -196,22 +202,61 @@ public class SelectionParseAction extends Action {
 			int length= doc.getLength();
 			while (pos < length) {
 				c= doc.getChar(pos);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
+
+                if (nonJavaEnd == -1 && !Character.isJavaIdentifierPart(c)) {
+                    nonJavaEnd=pos;
+                }
+                if (Character.isWhitespace(c))
+                    break;
 				++pos;
 			}
 			fEndPos= pos;
 			selectedWord = doc.get(fStartPos, (fEndPos - fStartPos));
-		}
-		catch(BadLocationException e){
-		}
-		
-		SelSearchNode sel = new SelSearchNode();
-		sel.selText = selectedWord;
-		sel.selStart = fStartPos;
-		sel.selEnd = fEndPos;
-	
-		return sel;		
+        }
+        catch(BadLocationException e){
+        }
+        
+        SelSearchNode sel = new SelSearchNode();
+
+        // if there is a destructor and the cursor is in the destructor name's segment then get the entire destructor
+        if (selectedWord != null && selectedWord.indexOf('~') >= 0 && fPos - 2 >= fStartPos + selectedWord.lastIndexOf(new String(Keywords.cpCOLONCOLON))) {
+            int tildePos = selectedWord.indexOf('~');
+            int actualStart=fStartPos + tildePos;
+            int length=0;
+            char temp;
+            char[] lastSegment = selectedWord.substring(tildePos).toCharArray();
+            for(int i=1; i<lastSegment.length; i++) {
+                temp = lastSegment[i];
+                if (!Character.isJavaIdentifierPart(temp)) {
+                    length=i;
+                    break;
+                }
+            }
+            
+            // if the cursor is after the destructor name then use the regular boundaries 
+            if (fPos >= actualStart + length) {
+                try {
+                    sel.selText = doc.get(nonJavaStart, (nonJavaEnd - nonJavaStart));
+                } catch (BadLocationException e) {}
+                sel.selStart = nonJavaStart;
+                sel.selEnd = nonJavaEnd;
+            } else {
+                try {
+                    sel.selText = doc.get(actualStart, length);
+                } catch (BadLocationException e) {}
+                sel.selStart = actualStart;
+                sel.selEnd = actualStart + length;                
+            }
+        } else {
+            // otherwise use the non-java identifier parts as boundaries for the selection
+            try {
+                sel.selText = doc.get(nonJavaStart, (nonJavaEnd - nonJavaStart));
+            } catch (BadLocationException e) {}
+            sel.selStart = nonJavaStart;
+            sel.selEnd = nonJavaEnd;
+        }
+    
+        return sel;     
 	}
     
 	/**

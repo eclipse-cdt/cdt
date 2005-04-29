@@ -31,12 +31,13 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.AddressBreakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.AddressLocation;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Exceptionpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.FunctionBreakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.FunctionLocation;
 import org.eclipse.cdt.debug.mi.core.cdi.model.LineBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.LocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -392,10 +393,8 @@ public class BreakpointManager extends Manager {
 					wpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 					bList.add(wpoint);
 				} else {
-					Location location = new Location (allMIBreakpoints[i].getFile(),
-							allMIBreakpoints[i].getFunction(),
-							allMIBreakpoints[i].getLine(),
-							MIFormat.getBigInteger(allMIBreakpoints[i].getAddress()));
+					LineLocation location = new LineLocation (allMIBreakpoints[i].getFile(),
+							allMIBreakpoints[i].getLine());
 					// By default new breakpoint are LineBreakpoint
 					Breakpoint newBreakpoint = new LineBreakpoint(target, type, location, condition);
 					newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
@@ -768,8 +767,8 @@ public class BreakpointManager extends Manager {
 			synchronized(exceptionBps) {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[EXCEPTION_THROW_IDX] == null) {
-					Location location = new Location(null, EXCEPTION_FUNCS[id]);
-					LineBreakpoint bp = new LineBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
+					FunctionLocation location = new FunctionLocation(null, EXCEPTION_FUNCS[id]);
+					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					miBreakpoints = bp.getMIBreakpoints();
@@ -780,8 +779,8 @@ public class BreakpointManager extends Manager {
 			synchronized(exceptionBps) {
 				int id = EXCEPTION_THROW_IDX;
 				if (exceptionBps[id] == null) {
-					Location location = new Location(null, EXCEPTION_FUNCS[id]);
-					LineBreakpoint bp = new LineBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
+					FunctionLocation location = new FunctionLocation(null, EXCEPTION_FUNCS[id]);
+					FunctionBreakpoint bp = new FunctionBreakpoint(target, ICDIBreakpoint.REGULAR, location, null);
 					setLocationBreakpoint(bp);
 					exceptionBps[id] = bp;
 					if (miBreakpoints != null) {
@@ -813,16 +812,16 @@ public class BreakpointManager extends Manager {
 		return new Condition(ignoreCount, expression, tids);
 	}
 
-	public Location createLineLocation(String file, int line) {
-		return new Location(file, line);
+	public LineLocation createLineLocation(String file, int line) {
+		return new LineLocation(file, line);
 	}
 	
-	public Location createFunctionLocation(String file, String function) {
-		return new Location(file, function);
+	public FunctionLocation createFunctionLocation(String file, String function) {
+		return new FunctionLocation(file, function);
 	}
 
-	public Location createAddressLocation(BigInteger address) {
-		return new Location(address);
+	public AddressLocation createAddressLocation(BigInteger address) {
+		return new AddressLocation(address);
 	}
 
 	MIBreakInsert[] createMIBreakInsert(LocationBreakpoint bkpt) throws CDIException {

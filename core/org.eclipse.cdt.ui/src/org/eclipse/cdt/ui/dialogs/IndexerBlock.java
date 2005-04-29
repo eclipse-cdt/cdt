@@ -73,7 +73,6 @@ public class IndexerBlock extends AbstractCOptionPage {
     private ICOptionPage 		 	currentPage;
     
 	String initialSelected;
-	
 	private IPreferenceStore prefStore=CUIPlugin.getDefault().getPreferenceStore();
 	
     public IndexerBlock(){
@@ -244,10 +243,7 @@ public class IndexerBlock extends AbstractCOptionPage {
         }
         
         indexersComboBox.select(selectedIndex);
-		
-		String indexerPageID = getIndexerPageId(preferredIndexer);
-		initialSelected = getIndexerIdName(indexerPageID);
-        
+    
         return true;
     }
     

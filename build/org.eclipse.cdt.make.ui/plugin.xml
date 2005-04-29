@@ -380,7 +380,7 @@
          name="%MakefileDocumentFactory.name"
          point="org.eclipse.core.filebuffers.documentCreation">
       <factory
-            extensions="*"
+            contentTypeId="org.eclipse.cdt.make.core.makefile"
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentFactory">
       </factory>
    </extension>
@@ -389,7 +389,7 @@
          name="%MakefileDocumentSetupParticipant.name"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            extensions="*"
+            contentTypeId="org.eclipse.cdt.make.core.makefile"
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentSetupParticipant">
       </participant>
    </extension>

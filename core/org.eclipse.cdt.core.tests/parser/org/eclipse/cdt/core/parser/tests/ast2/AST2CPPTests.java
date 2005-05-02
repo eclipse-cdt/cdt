@@ -3830,5 +3830,9 @@ public class AST2CPPTests extends AST2BaseTest {
     	IFunction f1 = (IFunction) col.getName(0).resolveBinding();
     	assertInstances( col, f1, 5 );
 	}
+    
+    public void testBug90647() throws Exception {
+        parse( "char msg[] = \"Syntax error on line %s\\n\";", ParserLanguage.CPP ); //$NON-NLS-1$
+    }
 }
 

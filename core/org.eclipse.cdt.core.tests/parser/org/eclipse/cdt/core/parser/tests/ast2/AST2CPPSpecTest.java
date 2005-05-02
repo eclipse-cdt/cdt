@@ -11908,6 +11908,34 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 14.5.4-7):
+	namespace N {
+	template<class T1, class T2> class A { }; // primary template
+	}
+	using N::A; // refers to the primary template
+	namespace N {
+	template<class T> class A<T, T*> { }; // partial specialization
+	}
+	A<int,int*> a; // uses the partial specialization, which is found through
+	// the using declaration which refers to the primary template
+	 --End Example]
+	 */
+	public void test14_5_4s7() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace N {\n"); //$NON-NLS-1$
+		buffer.append("template<class T1, class T2> class A { }; // primary template\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("using N::A; // refers to the primary template\n"); //$NON-NLS-1$
+		buffer.append("namespace N {\n"); //$NON-NLS-1$
+		buffer.append("template<class T> class A<T, T*> { }; // partial specialization\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("A<int,int*> a; // uses the partial specialization, which is found through\n"); //$NON-NLS-1$
+		buffer.append("// the using declaration which refers to the primary template\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.5.5.1-4):
 	template<class T> void f();
 	template<int I> void f(); // OK: overloads the first template

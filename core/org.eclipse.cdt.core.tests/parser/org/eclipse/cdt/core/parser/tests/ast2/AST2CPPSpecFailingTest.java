@@ -592,37 +592,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 14.5.4-7):
-	namespace N {
-	template<class T1, class T2> class A { }; // primary template
-	}
-	using N::A; // refers to the primary template
-	namespace N {
-	template<class T> class A<T, T*> { }; // partial specialization
-	}
-	A<int,int*> a; // uses the partial specialization, which is found through
-	// the using declaration which refers to the primary template
-	 --End Example]
-	 */
-	public void test14_5_4s7()  { // TODO raised bug 90678
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("namespace N {\n"); //$NON-NLS-1$
-		buffer.append("template<class T1, class T2> class A { }; // primary template\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		buffer.append("using N::A; // refers to the primary template\n"); //$NON-NLS-1$
-		buffer.append("namespace N {\n"); //$NON-NLS-1$
-		buffer.append("template<class T> class A<T, T*> { }; // partial specialization\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		buffer.append("A<int,int*> a; // uses the partial specialization, which is found through\n"); //$NON-NLS-1$
-		buffer.append("// the using declaration which refers to the primary template\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 14.5.4.2-2):
 	template<int I, int J, class T> class X { };
 	template<int I, int J> class X<I, J, int> { }; // #1

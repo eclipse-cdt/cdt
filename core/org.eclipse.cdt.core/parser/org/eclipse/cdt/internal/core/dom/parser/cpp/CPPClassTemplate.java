@@ -37,9 +37,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -50,6 +52,29 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class CPPClassTemplate extends CPPTemplateDefinition implements
 		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType {
 	
+    public static class CPPClassTemplateDelegate extends CPPClassType.CPPClassTypeDelegate implements ICPPClassTemplate, ICPPInternalTemplate {
+        public CPPClassTemplateDelegate( IASTName name, ICPPClassType cls ) {
+            super( name, cls );
+        }
+        public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+            return ((ICPPClassTemplate)getBinding()).getPartialSpecializations();
+        }
+        public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
+            return ((ICPPClassTemplate)getBinding()).getTemplateParameters();
+        }
+        public void addSpecialization( IType[] arguments, ICPPSpecialization specialization ) {
+            ((ICPPInternalTemplate)getBinding()).addSpecialization( arguments, specialization );
+        }
+        public IBinding instantiate( IType[] arguments ) {
+            return ((ICPPInternalTemplate)getBinding()).instantiate( arguments );
+        }
+        public ICPPSpecialization deferredInstance( IType[] arguments ) {
+            return ((ICPPInternalTemplate)getBinding()).deferredInstance( arguments );
+        }
+        public ICPPSpecialization getInstance( IType[] arguments ) {
+            return ((ICPPInternalTemplate)getBinding()).getInstance( arguments );
+        }
+    }
 	private ICPPClassTemplatePartialSpecialization [] partialSpecializations = null;
 	
 	private class FindDefinitionAction extends CPPASTVisitor {
@@ -316,4 +341,11 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.trim( ICPPClassTemplatePartialSpecialization.class, partialSpecializations );
 		return partialSpecializations;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return new CPPClassTemplateDelegate( name, this );
+    }
 }

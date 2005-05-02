@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -1091,4 +1092,32 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		assertSame( ft.getParameterTypes()[0], C ); 
 	}
+	
+	public void test14_5_4s7_UsingClassTemplate() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace N {                                                \n"); //$NON-NLS-1$
+		buffer.append("   template<class T1, class T2> class A { };                 \n"); //$NON-NLS-1$
+		buffer.append("}                                                            \n"); //$NON-NLS-1$
+		buffer.append("using N::A;                                                  \n"); //$NON-NLS-1$
+		buffer.append("namespace N {                                                \n"); //$NON-NLS-1$
+		buffer.append("   template<class T> class A<T, T*> { };                     \n"); //$NON-NLS-1$
+		buffer.append("}                                                            \n"); //$NON-NLS-1$
+		buffer.append("A<int,int*> a;                                               \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPClassTemplate A1 = (ICPPClassTemplate) col.getName(3).resolveBinding();
+		ICPPClassTemplatePartialSpecialization A2 = (ICPPClassTemplatePartialSpecialization) col.getName(9).resolveBinding();
+		
+		ICPPClassType A3 = (ICPPClassType) col.getName(13).resolveBinding();
+		assertTrue( A3 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)A3).getTemplateDefinition(), A2 );
+		
+		ICPPClassTemplate A4 = (ICPPClassTemplate) col.getName(14).resolveBinding();
+		assertTrue( A4 instanceof ICPPDelegate );
+		assertSame( ((ICPPDelegate)A4).getBinding(), A1 );
+	}
+
 }

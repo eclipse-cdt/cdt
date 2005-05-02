@@ -41,6 +41,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -50,7 +51,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * Created on Jun 2, 2004
  */
 public class SelectionParseAction extends Action {
-	protected static final String CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE = "CSearchOperation.tooManyNames.message"; //$NON-NLS-1$
+	private static final String OPERATOR = "operator"; //$NON-NLS-1$
+    protected static final String CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE = "CSearchOperation.tooManyNames.message"; //$NON-NLS-1$
 	protected static final String CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE = "CSearchOperation.noNamesSelected.message"; //$NON-NLS-1$
 	protected static final String CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE = "CSearchOperation.operationUnavailable.message"; //$NON-NLS-1$
 	
@@ -218,8 +220,27 @@ public class SelectionParseAction extends Action {
         
         SelSearchNode sel = new SelSearchNode();
 
+        boolean selectedOperator=false;
+        if (selectedWord != null && selectedWord.indexOf(OPERATOR) >= 0 && fPos >= fStartPos + selectedWord.indexOf(OPERATOR) && fPos < fStartPos + selectedWord.indexOf(OPERATOR) + OPERATOR.length()) {
+            selectedOperator=true;
+        }
+    
+        // if the operator was selected, get its proper bounds
+        if (selectedOperator && fEditor.getEditorInput() instanceof IFileEditorInput &&  
+                CoreModel.hasCCNature(((IFileEditorInput)fEditor.getEditorInput()).getFile().getProject())) {
+            int actualStart=fStartPos + selectedWord.indexOf(OPERATOR);
+            int actualEnd=getOperatorActualEnd(doc, fStartPos + selectedWord.indexOf(OPERATOR) + OPERATOR.length());
+            
+            actualEnd=(actualEnd>0?actualEnd:fEndPos);
+            
+            try {
+                sel.selText = doc.get(actualStart, actualEnd - actualStart);
+            } catch (BadLocationException e) {}
+            sel.selStart = actualStart;
+            sel.selEnd = actualEnd;
+        // TODO Devin this only works for definitions of destructors right now
         // if there is a destructor and the cursor is in the destructor name's segment then get the entire destructor
-        if (selectedWord != null && selectedWord.indexOf('~') >= 0 && fPos - 2 >= fStartPos + selectedWord.lastIndexOf(new String(Keywords.cpCOLONCOLON))) {
+        } else if (selectedWord != null && selectedWord.indexOf('~') >= 0 && fPos - 2 >= fStartPos + selectedWord.lastIndexOf(new String(Keywords.cpCOLONCOLON))) {
             int tildePos = selectedWord.indexOf('~');
             int actualStart=fStartPos + tildePos;
             int length=0;
@@ -258,6 +279,211 @@ public class SelectionParseAction extends Action {
     
         return sel;     
 	}
+    
+    private int getOperatorActualEnd(IDocument doc, int index) {
+        char c1, c2;
+        int actualEnd=-1;
+        boolean multiComment=false;
+        boolean singleComment=false;
+        int possibleEnd=-1;
+        while (actualEnd==-1) {
+            try {
+                c1=doc.getChar(index);
+                c2=doc.getChar(index+1);
+                
+                // skip anything within a single-line comment
+                if (singleComment) {
+                    char c3=doc.getChar(index-1);
+                    if (c3 != '\\' && (c1 == '\n' || c1 == '\r' && c2 == '\n' )) {
+                        singleComment=false;
+                    }
+                    index++;
+                    continue;
+                }
+                // skip anything within a multi-line comment
+                if (multiComment) {
+                    if (c1 == '*' && c2 == '/') {
+                        multiComment=false;
+                        index+=2;
+                        continue;
+                    }
+                    index++;
+                    continue;
+                }
+                
+                switch(c1) {
+                case '+': {
+                    switch(c2) {
+                    case '=':
+                    case '+':
+                        actualEnd=index+2;
+                        break;
+                    default:
+                        actualEnd=index+1;
+                        break;
+                    }
+                    break;
+                }
+                case '-': {
+                    switch(c2) {
+                    case '=':
+                        actualEnd=index+2;
+                        break;
+                    case '-':
+                        switch(doc.getChar(index+2)) {
+                        case '>': {
+                            switch(doc.getChar(index+3)) {
+                            case '*':
+                                actualEnd=index+4;
+                                break;
+                            default:
+                                actualEnd=index+3;
+                                break;
+                            }
+                            break;
+                        }
+                        default:
+                            actualEnd=index+2;
+                            break;                                
+                        }
+                        break;
+                    default:
+                        
+                        break;
+                    }
+                    break;
+                }
+                case '|': {
+                    switch(c2) {
+                    case '=':
+                    case '|':
+                        actualEnd=index+2;
+                        break;
+                    default:
+                        actualEnd=index+1;
+                        break;
+                    }
+                    break;                  
+                }
+                case '&': {
+                    switch(c2) {
+                    case '=':
+                    case '&':
+                        actualEnd=index+2;
+                        break;
+                    default:
+                        actualEnd=index+1;
+                        break;
+                    }
+                    break;
+                }
+                case '/': {
+                    switch(c2) {
+                    case '/':
+                        singleComment=true;
+                        index+=2;
+                        break;
+                    case '*':
+                        multiComment=true;
+                        index+=2;
+                        break;
+                    case '=':
+                        actualEnd=index+2;
+                        break;
+                    default:
+                        actualEnd=index+1;
+                        break;
+                    }
+                    break;
+                }
+                case '*':
+                case '%': 
+                case '^': 
+                case '!': 
+                case '=': {
+                    switch(c2) {
+                    case '=':
+                        actualEnd=index+2;
+                        break;
+                    default:
+                        actualEnd=index+1;
+                        break;
+                    }
+                    break;
+                }
+                case '(': {
+                    if (possibleEnd > 0)
+                        actualEnd = possibleEnd;
+                    break;
+                }   
+                case ']':
+                case ')':
+                case ',':
+                case '~': {
+                    actualEnd=index+1;
+                    break;
+                }
+                case '<': {
+                    switch(c2) {
+                    case '=':
+                    case '<':
+                        switch(doc.getChar(index+2)) {
+                        case '=':
+                            actualEnd=index+3;
+                            break;
+                        default:
+                            actualEnd=index+2;
+                            break;
+                        }
+                        break;
+                    default:
+                        actualEnd=index;
+                        break;
+                    }
+                    break;                  
+                }
+                case '>': {
+                    switch(c2) {
+                    case '=':
+                    case '>':
+                        switch(doc.getChar(index+2)) {
+                        case '=':
+                            actualEnd=index+3;
+                            break;
+                        default:
+                            actualEnd=index+2;
+                            break;
+                        }
+                        break;
+                    default:
+                        actualEnd=index;
+                        break;
+                    }
+                    break;  
+                }
+                case 'n': { // start of "new"
+                    while (doc.getChar(++index) != 'w');
+                    possibleEnd=++index;
+                    break;
+                }
+                case 'd': { // start of "delete"
+                    while (doc.getChar(++index) != 't' && doc.getChar(index+1) != 'e');
+                    index+=2;
+                    possibleEnd=index;
+                    break;
+                }
+                default:
+                    index++;
+                    break;
+                }
+            } catch (BadLocationException e) {
+                // something went wrong
+                return -1;
+            }
+        }
+        
+        return actualEnd;
+    }
     
 	/**
 	  * Return the selected string from the editor

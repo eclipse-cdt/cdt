@@ -48,6 +48,7 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_N
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_Prefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTests;
+import org.eclipse.cdt.ui.tests.text.selectiontests.SelectionTests;
 
 
 
@@ -113,6 +114,10 @@ public class AutomatedSuite extends TestSuite {
 		
 		addTest( ContentAssistTests.suite() );
 		addTest( RegressionTestsUISuite.suite() );
+        
+        // selection tests
+        addTest( SelectionTests.suite() );      
+        
 		// Failed Tests
 		addTest(CompletionFailedTest_MemberReference_Arrow_Prefix2.suite());
 	}

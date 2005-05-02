@@ -81,7 +81,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
 	 */
 	public int getRoleForName(IASTName n ) {
 		if( this.name == n  )
-			return r_declaration;
+			return r_definition;
 		return r_unclear;
 	}
 

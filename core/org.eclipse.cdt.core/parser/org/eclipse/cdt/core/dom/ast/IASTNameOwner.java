@@ -16,10 +16,15 @@ public interface IASTNameOwner {
 	 * Role of name in this construct is a reference.
 	 */
 	public static final int r_reference = 1;
+    
+    /**
+     * Role of name in this construct is a definition. 
+     */
+    public static final int r_definition = 2;
 	/**
 	 * Role is unclear.
 	 */
-	public static final int r_unclear = 2; 
+	public static final int r_unclear = 3; 
 	
 	/**
 	 * Get the role for the name. 

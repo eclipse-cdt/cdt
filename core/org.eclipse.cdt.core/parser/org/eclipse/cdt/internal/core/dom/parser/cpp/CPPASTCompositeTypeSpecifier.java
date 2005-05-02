@@ -136,7 +136,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 	 */
 	public int getRoleForName(IASTName name) {
 		if( name == this.n )
-			return r_declaration;
+			return r_definition;
 		return r_unclear;
 	}
 }

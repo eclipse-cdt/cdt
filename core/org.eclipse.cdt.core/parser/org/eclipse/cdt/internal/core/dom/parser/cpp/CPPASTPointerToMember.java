@@ -46,7 +46,7 @@ public class CPPASTPointerToMember extends CPPASTPointer implements
 	 */
 	public int getRoleForName(IASTName name ) {
 		if( name  == this.n )
-			return r_declaration;
+			return r_reference;
 		return r_unclear;
 	}
 }

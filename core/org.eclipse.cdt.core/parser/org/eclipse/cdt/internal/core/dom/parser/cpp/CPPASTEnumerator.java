@@ -70,7 +70,7 @@ public class CPPASTEnumerator extends CPPASTNode implements IASTEnumerator, IAST
 	 */
 	public int getRoleForName(IASTName n) {
 		if( name == n )
-			return r_declaration;
+			return r_definition;
 		return r_reference;
 	}
 

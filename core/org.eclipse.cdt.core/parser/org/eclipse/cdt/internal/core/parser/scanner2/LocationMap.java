@@ -575,7 +575,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          */
         public int getRoleForName(IASTName n) {
             if (name == n)
-                return r_declaration;
+                return r_definition;
             return r_unclear;
         }
 
@@ -740,6 +740,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 return true;
             return false;
         }
+        
+        public boolean isDefinition() {
+            return isDeclaration();
+        }
 
         /*
          * (non-Javadoc)
@@ -784,7 +788,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          */
         public int getRoleForName(IASTName n) {
             if (name == n)
-                return r_declaration;
+                return r_definition;
             return r_unclear;
         }
 

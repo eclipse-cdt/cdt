@@ -69,7 +69,7 @@ public class CASTEnumerator extends CASTNode implements IASTEnumerator, IASTAmbi
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public int getRoleForName(IASTName n) {
-		if( n == name )return r_declaration;
+		if( n == name )return r_definition;
 		return r_unclear;
 	}
 

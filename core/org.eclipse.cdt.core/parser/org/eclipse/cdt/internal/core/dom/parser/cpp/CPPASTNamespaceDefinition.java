@@ -91,7 +91,7 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public int getRoleForName(IASTName n) {
-		if( name == n ) return r_declaration;
+		if( name == n ) return r_definition;
 		return r_unclear;
 	}
 

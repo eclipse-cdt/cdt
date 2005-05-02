@@ -10,12 +10,15 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -125,7 +128,19 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
 		{
 			IASTNode getParent = getParent();
 			if( getParent instanceof IASTDeclaration )
-				return r_declaration;
+            {
+                if( getParent instanceof IASTFunctionDefinition )
+                    return r_definition;
+                if( getParent instanceof IASTSimpleDeclaration )
+                {
+                    IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
+                    if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_extern )
+                        return r_declaration;
+                    if( getInitializer() == null )
+                        return r_declaration;
+                }
+				return r_definition;
+            }
 			if( getParent instanceof IASTTypeId )
 				return r_reference;
 			if( getParent instanceof IASTDeclarator )
@@ -134,7 +149,19 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
 				while ( t instanceof IASTDeclarator )
 					t = t.getParent();
 				if( t instanceof IASTDeclaration )
-					return r_declaration;
+                {
+                    if( getParent instanceof IASTFunctionDefinition )
+                        return r_definition;
+                    if( getParent instanceof IASTSimpleDeclaration )
+                    {
+                        IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
+                        if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_extern )
+                            return r_declaration;
+                        if( getInitializer() != null )
+                            return r_definition;
+                    }
+                    return r_definition;                    
+                }
 				if( t instanceof IASTTypeId )
 					return r_reference;
 			}

@@ -254,5 +254,16 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		
 		return false;
 	}
+    
+    public boolean isDefinition() {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTNameOwner) {
+            int role = ((IASTNameOwner) parent).getRoleForName(this);
+            if( role == IASTNameOwner.r_definition ) return true;
+            return false;
+        }
+        return false;
+    }
+
 
 }

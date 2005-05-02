@@ -22,13 +22,15 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 public class CPPASTName extends CPPASTNode implements IASTName {
 
     private char[] name;
-    private static final char[] EMPTY_CHAR_ARRAY = { };
+
+    private static final char[] EMPTY_CHAR_ARRAY = {};
+
     private IBinding binding = null;
 
     /**
-     * @param name 
+     * @param name
      */
-    public CPPASTName(char [] name ) {
+    public CPPASTName(char[] name) {
         this.name = name;
     }
 
@@ -39,78 +41,114 @@ public class CPPASTName extends CPPASTNode implements IASTName {
         name = EMPTY_CHAR_ARRAY;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-    	if( binding == null )
-    		binding = CPPVisitor.createBinding( this ); 
-    	
+        if (binding == null)
+            binding = CPPVisitor.createBinding(this);
+
         return binding;
     }
-    
-	public IBinding[] resolvePrefix() {
-		return CPPSemantics.prefixLookup(this);
-	}
-	
-    public void setBinding( IBinding binding ){
-    	this.binding = binding;
-    }
-    public IBinding getBinding(){
-    	return binding;
+
+    public IBinding[] resolvePrefix() {
+        return CPPSemantics.prefixLookup(this);
     }
 
-    /* (non-Javadoc)
+    public void setBinding(IBinding binding) {
+        this.binding = binding;
+    }
+
+    public IBinding getBinding() {
+        return binding;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        if( name == EMPTY_CHAR_ARRAY ) return null;
-        return new String( name );
+        if (name == EMPTY_CHAR_ARRAY)
+            return null;
+        return new String(name);
     }
-    
+
     public char[] toCharArray() {
-    	return name;
+        return name;
     }
-    
-    public void setName( char [] name )
-    {
+
+    public void setName(char[] name) {
         this.name = name;
     }
 
-    public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitNames ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
-		}
+    public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitNames) {
+            switch (action.visit(this)) {
+            case ASTVisitor.PROCESS_ABORT:
+                return false;
+            case ASTVisitor.PROCESS_SKIP:
+                return true;
+            default:
+                break;
+            }
+        }
         return true;
     }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
-	 */
-	public boolean isDeclaration() {
-		IASTNode parent = getParent();
-		if (parent instanceof IASTNameOwner) {
-			int role = ((IASTNameOwner) parent).getRoleForName(this);
-			if( role == IASTNameOwner.r_reference ) return false;
-			return true;
-		}
-		return false;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
-	 */
-	public boolean isReference() {
-		IASTNode parent = getParent();
-		if (parent instanceof IASTNameOwner) {
-			int role = ((IASTNameOwner) parent).getRoleForName(this);
-			if( role == IASTNameOwner.r_reference ) return true;
-			return false;
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
+     */
+    public boolean isDeclaration() {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTNameOwner) {
+            int role = ((IASTNameOwner) parent).getRoleForName(this);
+            switch (role) {
+            case IASTNameOwner.r_reference:
+            case IASTNameOwner.r_unclear:
+                return false;
+            default:
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
+     */
+    public boolean isReference() {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTNameOwner) {
+            int role = ((IASTNameOwner) parent).getRoleForName(this);
+            switch (role) {
+            case IASTNameOwner.r_reference:
+                return true;
+            default:
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public boolean isDefinition() {
+        IASTNode parent = getParent();
+        if (parent instanceof IASTNameOwner) {
+            int role = ((IASTNameOwner) parent).getRoleForName(this);
+            switch (role) {
+            case IASTNameOwner.r_definition:
+                return true;
+            default:
+                return false;
+            }
+        }
+        return false;
+    }
+
 }

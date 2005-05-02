@@ -100,6 +100,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -2206,15 +2208,32 @@ public class CPPSemantics {
                 return result;
             }
             //target is an explicit type conversion
-//            else if( prop == ICPPASTSimpleTypeConstructorExpression.INITIALIZER_VALUE )
-//            {
-//                
-//            }
-            //target is an explicit type conversion
             else if( prop == IASTCastExpression.OPERAND )
             {
             	IASTCastExpression cast = (IASTCastExpression) node.getParent();
             	return CPPVisitor.createType( cast.getTypeId().getAbstractDeclarator() );
+            }
+            //target is a template non-type parameter (14.3.2-5)
+            else if( prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT ){
+                ICPPASTTemplateId id = (ICPPASTTemplateId) node.getParent();
+                IASTNode [] args = id.getTemplateArguments();
+                int i = 0;
+                for ( ; i < args.length; i++ ) {
+                    if( args[i] == node ){
+                        break;
+                    }
+                }
+                ICPPTemplateDefinition template = (ICPPTemplateDefinition) id.getTemplateName().resolveBinding();
+                if( template != null ){
+                    try {
+                        ICPPTemplateParameter [] ps = template.getTemplateParameters();
+                        if( i < args.length && i < ps.length && ps[i] instanceof ICPPTemplateNonTypeParameter ){
+                            return ((ICPPTemplateNonTypeParameter)ps[i]).getType();
+                        }
+                    } catch ( DOMException e ) {
+                        return null;
+                    }
+                }
             }
             //target is the return value of a function, operator or conversion
             else if( prop == IASTReturnStatement.RETURNVALUE )

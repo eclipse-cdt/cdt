@@ -11796,6 +11796,44 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 14.3.2-5):
+	template<const int* pci> struct X {  };
+	int ai[10];
+	X<ai> xi; // array to pointer and qualification conversions
+	struct Y {  };
+	template<const Y& b> struct Z {  };
+	Y y;
+	Z<y> z; // no conversion, but note extra cvqualification
+	template<int (&pa)[5]> struct W {  };
+	int b[5];
+	W<b> w; // no conversion
+	void f(char);
+	void f(int);
+	template<void (*pf)(int)> struct A {  };
+	A<&f> a; // selects f(int)
+	 --End Example]
+	 */
+	public void test14_3_2s5() throws Exception  {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<const int* pci> struct X {  };\n"); //$NON-NLS-1$
+		buffer.append("int ai[10];\n"); //$NON-NLS-1$
+		buffer.append("X<ai> xi; // array to pointer and qualification conversions\n"); //$NON-NLS-1$
+		buffer.append("struct Y {  };\n"); //$NON-NLS-1$
+		buffer.append("template<const Y& b> struct Z {  };\n"); //$NON-NLS-1$
+		buffer.append("Y y;\n"); //$NON-NLS-1$
+		buffer.append("Z<y> z; // no conversion, but note extra cvqualification\n"); //$NON-NLS-1$
+		buffer.append("template<int (&pa)[5]> struct W {  };\n"); //$NON-NLS-1$
+		buffer.append("int b[5];\n"); //$NON-NLS-1$
+		buffer.append("W<b> w; // no conversion\n"); //$NON-NLS-1$
+		buffer.append("void f(char);\n"); //$NON-NLS-1$
+		buffer.append("void f(int);\n"); //$NON-NLS-1$
+		buffer.append("template<void (*pf)(int)> struct A {  };\n"); //$NON-NLS-1$
+		buffer.append("A<&f> a; // selects f(int)\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.5.2-2):
 	template <class T> struct A {
 	void f(int);

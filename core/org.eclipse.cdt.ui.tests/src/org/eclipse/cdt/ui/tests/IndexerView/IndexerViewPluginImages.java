@@ -48,41 +48,42 @@ public class IndexerViewPluginImages {
         } catch (MalformedURLException e) {}
     }   
     public static final String PLUGIN_ID = "org.eclipse.cdt.testplugin.CTestPlugin"; //$NON-NLS-1$
-    private static final String NAME_PREFIX= PLUGIN_ID + '.';
+    public static final String NAME_PREFIX= PLUGIN_ID + '.';
     private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
     public static final String ICON_PREFIX= "indexer_view/"; //$NON-NLS-1$
 
+    public static final String [] icon_images = {
+    	"macroDecl_obj.gif",
+    	"function_obj.gif",
+    	"namespace_obj.gif",     
+    	"function_ref_obj.gif",
+    	"namespace_ref_obj.gif",    
+    	"field_obj.gif",
+    	"enumerator_obj.gif",
+    	"method_public_obj.gif",
+    	"field_ref_obj.gif",
+    	"enumerator_ref_obj.gif",
+    	"method_public_ref_obj.gif",
+    	"typedecl_ref_obj.gif",
+    	"typedef_obj.gif",
+    	"class_obj.gif",      
+    	"variable_obj.gif",
+    	"struct_obj.gif",
+    	"enum_obj.gif",
+    	"union_obj.gif",
+    	"derived.gif",
+    	"friend.gif",
+    	"fwd_class.gif",
+    	"fwd_struct.gif",
+    	"fwd_union.gif", 
+    	"include_obj.gif"
+    };
+      
     public static final String IMG_REF= NAME_PREFIX + "ref_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_TYPE_REF= NAME_PREFIX + "typedecl_ref_obj.gif"; //$NON-NLS-1$
     public static final String IMG_TYPE_DECL= NAME_PREFIX + "typedecl_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_FUNCTION_REF= NAME_PREFIX + "function_ref_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_FUNCTION_DECL= NAME_PREFIX + "function_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_CONSTRUCTOR_REF= NAME_PREFIX + "constructor_ref_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_CONSTRUCTOR_DECL= NAME_PREFIX + "constructor_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_NAMESPACE_REF= NAME_PREFIX + "namespace_ref_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_NAMESPACE_DECL= NAME_PREFIX + "namespace_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_FIELD_REF= NAME_PREFIX + "field_ref_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_FIELD_DECL= NAME_PREFIX + "field_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_ENUMTOR_REF= NAME_PREFIX + "enumerator_ref_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_ENUMTOR_DECL= NAME_PREFIX + "enumerator_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_METHOD_REF= NAME_PREFIX + "method_public_ref_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_METHOD_DECL= NAME_PREFIX + "method_public_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_MACRO_DECL= NAME_PREFIX + "macroDecl_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_INCLUDE_REF= NAME_PREFIX + "include_obj.gif"; //$NON-NLS-1$
     public static final String IMG_SUPER_REF= NAME_PREFIX + "super_co.gif"; //$NON-NLS-1$
-    public static final String IMG_VARIABLE= NAME_PREFIX + "variable_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_CLASS= NAME_PREFIX + "class_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_ENUM= NAME_PREFIX + "enum_obj.gif"; //$NON-NLS-1$
     public static final String IMG_BACK= NAME_PREFIX + "ngback.gif"; //$NON-NLS-1$
     public static final String IMG_NEXT= NAME_PREFIX + "ngnext.gif"; //$NON-NLS-1$
-    public static final String IMG_STRUCT= NAME_PREFIX + "struct_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_TYPEDEF= NAME_PREFIX + "typedef_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_UNION= NAME_PREFIX + "union_obj.gif"; //$NON-NLS-1$
-    public static final String IMG_DERIVED= NAME_PREFIX + "derived.gif"; //$NON-NLS-1$
-    public static final String IMG_FRIEND= NAME_PREFIX + "friend.gif"; //$NON-NLS-1$
-    public static final String IMG_FWD_CLASS= NAME_PREFIX + "fwd_class.gif"; //$NON-NLS-1$
-    public static final String IMG_FWD_STRUCT= NAME_PREFIX + "fwd_struct.gif"; //$NON-NLS-1$
-    public static final String IMG_FWD_UNION= NAME_PREFIX + "fwd_union.gif"; //$NON-NLS-1$
     public static final String IMG_WARNING= NAME_PREFIX + "warning_icon.gif"; //$NON-NLS-1$
     public static final String IMG_FILTER_BUTTON= NAME_PREFIX + "filterbutton.gif"; //$NON-NLS-1$
     public static final String IMG_STATS= NAME_PREFIX + "stats.gif"; //$NON-NLS-1$
@@ -97,43 +98,23 @@ public class IndexerViewPluginImages {
     public static final String IMG_DISPLAY_FULL_NAME= NAME_PREFIX + "display_full_name.gif"; //$NON-NLS-1$
     
     public static final ImageDescriptor DESC_REF= createManaged(ICON_PREFIX, IMG_REF);
-    public static final ImageDescriptor DESC_TYPE_REF= createManaged(ICON_PREFIX, IMG_TYPE_REF);
-    public static final ImageDescriptor DESC_TYPE_DECL= createManaged(ICON_PREFIX, IMG_TYPE_DECL);
-    public static final ImageDescriptor DESC_FUNCTION_REF= createManaged(ICON_PREFIX, IMG_FUNCTION_REF);
-    public static final ImageDescriptor DESC_FUNCTION_DECL= createManaged(ICON_PREFIX, IMG_FUNCTION_DECL);
-    public static final ImageDescriptor DESC_CONSTRUCTOR_REF= createManaged(ICON_PREFIX, IMG_CONSTRUCTOR_REF);
-    public static final ImageDescriptor DESC_CONSTRUCTOR_DECL= createManaged(ICON_PREFIX, IMG_CONSTRUCTOR_DECL);
-    public static final ImageDescriptor DESC_NAMESPACE_REF= createManaged(ICON_PREFIX, IMG_NAMESPACE_REF);
-    public static final ImageDescriptor DESC_NAMESPACE_DECL= createManaged(ICON_PREFIX, IMG_NAMESPACE_DECL);
-    public static final ImageDescriptor DESC_FIELD_REF= createManaged(ICON_PREFIX, IMG_FIELD_REF);
-    public static final ImageDescriptor DESC_FIELD_DECL= createManaged(ICON_PREFIX, IMG_FIELD_DECL);
-    public static final ImageDescriptor DESC_ENUMTOR_REF= createManaged(ICON_PREFIX, IMG_ENUMTOR_REF);
-    public static final ImageDescriptor DESC_ENUMTOR_DECL= createManaged(ICON_PREFIX, IMG_ENUMTOR_DECL);
-    public static final ImageDescriptor DESC_METHOD_REF= createManaged(ICON_PREFIX, IMG_METHOD_REF);
-    public static final ImageDescriptor DESC_METHOD_DECL= createManaged(ICON_PREFIX, IMG_METHOD_DECL);
-    public static final ImageDescriptor DESC_MACRO_DECL= createManaged(ICON_PREFIX, IMG_MACRO_DECL);
-    public static final ImageDescriptor DESC_INCLUDE_REF= createManaged(ICON_PREFIX, IMG_INCLUDE_REF);
-    public static final ImageDescriptor DESC_SUPER_REF= createManaged(ICON_PREFIX, IMG_SUPER_REF);
-    public static final ImageDescriptor DESC_VARIABLE= createManaged(ICON_PREFIX, IMG_VARIABLE);
-    public static final ImageDescriptor DESC_CLASS= createManaged(ICON_PREFIX, IMG_CLASS);
-    public static final ImageDescriptor DESC_ENUM= createManaged(ICON_PREFIX, IMG_ENUM);
+    static {
+    	for (int i = 0 ; i < icon_images.length; i++) {
+    		createManaged(ICON_PREFIX, NAME_PREFIX + icon_images[i]);
+    	}
+    	createManaged(ICON_PREFIX, IMG_TYPE_DECL);
+      	createManaged(ICON_PREFIX, IMG_SUPER_REF);
+      	createManaged(ICON_PREFIX, IMG_WARNING);
+      	createManaged(ICON_PREFIX, IMG_GROUPED_ALL);
+      	createManaged(ICON_PREFIX, IMG_GROUPED_DECL);
+      	createManaged(ICON_PREFIX, IMG_GROUPED_REF);
+     	createManaged(ICON_PREFIX, IMG_GROUPED_TYPE);
+   }
+
     public static final ImageDescriptor DESC_BACK= createManaged(ICON_PREFIX, IMG_BACK);
     public static final ImageDescriptor DESC_NEXT= createManaged(ICON_PREFIX, IMG_NEXT);
-    public static final ImageDescriptor DESC_STRUCT= createManaged(ICON_PREFIX, IMG_STRUCT);
-    public static final ImageDescriptor DESC_TYPEDEF= createManaged(ICON_PREFIX, IMG_TYPEDEF);
-    public static final ImageDescriptor DESC_UNION= createManaged(ICON_PREFIX, IMG_UNION);
-    public static final ImageDescriptor DESC_DERIVED= createManaged(ICON_PREFIX, IMG_DERIVED);
-    public static final ImageDescriptor DESC_FRIEND= createManaged(ICON_PREFIX, IMG_FRIEND);
-    public static final ImageDescriptor DESC_FWD_CLASS= createManaged(ICON_PREFIX, IMG_FWD_CLASS);
-    public static final ImageDescriptor DESC_FWD_STRUCT= createManaged(ICON_PREFIX, IMG_FWD_STRUCT);
-    public static final ImageDescriptor DESC_FWD_UNION= createManaged(ICON_PREFIX, IMG_FWD_UNION);
-    public static final ImageDescriptor DESC_WARNING= createManaged(ICON_PREFIX, IMG_WARNING);
     public static final ImageDescriptor DESC_FILTER_BUTTON= createManaged(ICON_PREFIX, IMG_FILTER_BUTTON);
     public static final ImageDescriptor DESC_STATS= createManaged(ICON_PREFIX, IMG_STATS);
-    public static final ImageDescriptor DESC_GROUPED_ALL= createManaged(ICON_PREFIX, IMG_GROUPED_ALL);
-    public static final ImageDescriptor DESC_GROUPED_DECL= createManaged(ICON_PREFIX, IMG_GROUPED_DECL);
-    public static final ImageDescriptor DESC_GROUPED_REF= createManaged(ICON_PREFIX, IMG_GROUPED_REF);
-    public static final ImageDescriptor DESC_GROUPED_TYPE= createManaged(ICON_PREFIX, IMG_GROUPED_TYPE);
     public static final ImageDescriptor DESC_SEARCH_LOCATION= createManaged(ICON_PREFIX, IMG_SEARCH_LOCATION);
     public static final ImageDescriptor DESC_SORT= createManaged(ICON_PREFIX, IMG_SORT);
     public static final ImageDescriptor DESC_SORTED= createManaged(ICON_PREFIX, IMG_SORTED);
@@ -163,6 +144,9 @@ public class IndexerViewPluginImages {
     
     public static Image get(String key) {
         return imageRegistry.get(key);
+    }
+    public static Image get(int key) {
+        return imageRegistry.get(NAME_PREFIX + icon_images[key]);
     }
     
 

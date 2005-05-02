@@ -297,71 +297,14 @@ public class IndexerView extends ViewPart {
         }
 
         public Image getImage(Object obj) {
-           String imageKey = IndexerViewPluginImages.IMG_WARNING;
-
            if (obj instanceof IndexerNodeLeaf) {
-               String word = String.valueOf(((IndexerNodeLeaf)obj).getResult().getWord());
-               
-               /*if (word.startsWith(FilterIndexerViewDialog.ENTRY_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_REF;
-               } else*/ if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FUNCTION_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FUNCTION_DECL;
-               } /*else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_CONSTRUCTOR_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_CONSTRUCTOR_DECL_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_CONSTRUCTOR_DECL;
-               }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_NAMESPACE_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_NAMESPACE_DECL;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FIELD_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FIELD_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FIELD_DECL_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FIELD_DECL;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_ENUMTOR_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_ENUMTOR_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_ENUMTOR_DECL_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_ENUMTOR_DECL;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_METHOD_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_METHOD_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_METHOD_DECL_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_METHOD_DECL;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_MACRO_DECL_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_MACRO_DECL;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_INCLUDE_REF;
-               }/* else if (word.startsWith(FilterIndexerViewDialog.ENTRY_SUPER_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_SUPER_REF;
-               }*/ else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_TYPEDEF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_C_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_CLASS;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_V_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_VARIABLE;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_S_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_STRUCT;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_E_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_ENUM;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_U_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_UNION;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_TYPE_REF;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_D_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_DERIVED;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_F_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FRIEND;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_G_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FWD_CLASS;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_H_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FWD_STRUCT;
-               } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_I_STRING)) {
-                   imageKey = IndexerViewPluginImages.IMG_FWD_UNION;
-               }
+        	   IEntryResult result = ((IndexerNodeLeaf)obj).getResult();
+        	   int index = getKey(result.getMetaKind(), result.getKind(), result.getRefKind());
+        	   if (index > -1)
+        		   return IndexerViewPluginImages.get(index);
            }
            
-           return IndexerViewPluginImages.get(imageKey);
+           return IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_WARNING);
         }
      }
 
@@ -625,4 +568,47 @@ public class IndexerView extends ViewPart {
             }
         }
   }
+
+    public static int getKey(int meta, int kind, int ref) {   	             
+            switch (ref) {
+            case IIndex.REFERENCE :
+            	switch (meta) {
+            	case IIndex.TYPE      : return FilterIndexerViewDialog.ENTRY_TYPE_REF;
+            	case IIndex.FUNCTION  : return FilterIndexerViewDialog.ENTRY_FUNCTION_REF;
+            	case IIndex.METHOD    : return FilterIndexerViewDialog.ENTRY_METHOD_REF;
+            	case IIndex.FIELD     : return FilterIndexerViewDialog.ENTRY_FIELD_REF;
+            	case IIndex.MACRO     : return -1;
+            	case IIndex.NAMESPACE : return FilterIndexerViewDialog.ENTRY_NAMESPACE_REF;
+            	case IIndex.ENUMTOR   : return FilterIndexerViewDialog.ENTRY_ENUMTOR_REF;
+            	case IIndex.INCLUDE   : return FilterIndexerViewDialog.ENTRY_INCLUDE_REF;
+            	}
+            	break;
+            case IIndex.DECLARATION :
+            	switch (meta) {
+            	case IIndex.TYPE :
+            		switch (kind) {
+            		case IIndex.TYPE_CLASS      : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_CLASS;
+            		case IIndex.TYPE_STRUCT     : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_STRUCT;
+            		case IIndex.TYPE_UNION      : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_UNION;
+            		case IIndex.TYPE_ENUM       : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_ENUM;
+            		case IIndex.TYPE_VAR        : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_VAR;
+            		case IIndex.TYPE_TYPEDEF    : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_TYPEDEF;
+            		case IIndex.TYPE_DERIVED    : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_DERIVED;
+            		case IIndex.TYPE_FRIEND     : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FRIEND;
+            		case IIndex.TYPE_FWD_CLASS  : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FWD_CLASS;
+            		case IIndex.TYPE_FWD_STRUCT : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FWD_STRUCT;
+            		case IIndex.TYPE_FWD_UNION  : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FWD_UNION;
+            		}              
+            	case IIndex.FUNCTION  : return FilterIndexerViewDialog.ENTRY_FUNCTION_DECL;
+            	case IIndex.METHOD    : return FilterIndexerViewDialog.ENTRY_METHOD_DECL;
+            	case IIndex.FIELD     : return FilterIndexerViewDialog.ENTRY_FIELD_DECL;
+            	case IIndex.MACRO     : return FilterIndexerViewDialog.ENTRY_MACRO_DECL; 
+            	case IIndex.NAMESPACE : return FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL;
+            	case IIndex.ENUMTOR   : return FilterIndexerViewDialog.ENTRY_ENUMTOR_DECL;
+            	case IIndex.INCLUDE   : return -1;
+            	}
+            	break;
+            }
+            return 0;
+        }
 }

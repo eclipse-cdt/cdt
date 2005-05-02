@@ -28,9 +28,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
@@ -134,32 +132,13 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		decodedQualifications = null;
 	}
 	
-	protected void decodeIndexEntry(IEntryResult entryResult) {
-		char[] word = entryResult.getWord();
-		int size = word.length;
-		int firstSlash = 0;
-		int slash = 0;
-		
-		if( searchFor == FIELD ){ 
-			firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
-			slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
-		} else if( searchFor == VAR ) {
-			int realStart = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
-			firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, realStart + 1);
-			slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
-		} else if ( searchFor == ENUMTOR ){
-			firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );
-			slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
-		}
-				
-		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, slash);
-		
-		if( slash != -1 && slash+1 < size ){
-			char [][] temp = CharOperation.splitOn('/', CharOperation.subarray(word, slash+1, size));
-			this.decodedQualifications = new char [ temp.length ][];
-			for( int i = 0; i < temp.length; i++ ){
-				this.decodedQualifications[ i ] = temp[ temp.length - i - 1 ];
-			}
+	protected void decodeIndexEntry(IEntryResult entryResult) {		
+		this.decodedSimpleName = entryResult.extractSimpleName().toCharArray();	
+		String []missmatch = entryResult.getEnclosingNames();
+		if(missmatch != null) {
+			this.decodedQualifications = new char[missmatch.length][];
+			for (int i = 0; i < missmatch.length; i++)
+				this.decodedQualifications[i] = missmatch[i].toCharArray();
 		}
 	}
 	

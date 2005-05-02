@@ -22,7 +22,12 @@ public interface IEntryResult {
 	/**
 	 * Returns the encoded word of this entry
 	 */
-	public char[] getWord();
+	
+	public int getMetaKind();
+	public int getKind();
+	public int getRefKind();
+	public String getName();
+	
 	/**
 	 * Returns the offsets for this entry - offsets are in the same position
 	 * as the file references (ex. the first offset array belongs to the first
@@ -42,5 +47,6 @@ public interface IEntryResult {
 	 *  typeDecl/V/foo/namespace returns "foo"
 	 */
 	public String extractSimpleName();
+	public String[] getEnclosingNames();
 }
 

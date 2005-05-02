@@ -19,10 +19,8 @@ import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeInfo;
 import org.eclipse.cdt.core.browser.TypeReference;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
@@ -72,12 +70,9 @@ public class IndexerTypesJob extends IndexerJob {
 					throw new InterruptedException();
 				
 				IEntryResult entry = namespaceEntries[i];
-				char[] word = entry.getWord();
-				int firstSlash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, 0);
-				int slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
-				String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
+				String name = entry.getName();
 				if (name.length() != 0) {
-					String[] enclosingNames = getEnclosingNames(word, slash);
+					String[] enclosingNames = entry.getEnclosingNames();
 					addType(input, project, entry, ICElement.C_NAMESPACE, name, enclosingNames, monitor);
 				}
 			}
@@ -97,57 +92,28 @@ public class IndexerTypesJob extends IndexerJob {
 					throw new InterruptedException();
 				
 				IEntryResult entry = typeEntries[i];
-				char[] word = entry.getWord();
-				int firstSlash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, 0);
-				char decodedType = word[firstSlash + 1];
-				int type = getElementType(decodedType);
-				if (type != 0) {
-					firstSlash += 2;
-					int slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
-					String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
+				
+				String name = entry.getName();
+				switch (entry.getKind() ) {
+				case IIndex.TYPE_CLASS :
+				case IIndex.TYPE_STRUCT :
+				case IIndex.TYPE_TYPEDEF :
+				case IIndex.TYPE_ENUM :
+				case IIndex.TYPE_UNION :			
 					if (name.length() != 0) {  // skip anonymous structs
-						String[] enclosingNames = getEnclosingNames(word, slash);
-						addType(input, project, entry, type, name, enclosingNames, monitor);
+						addType(input, project, entry, entry.getKind(), name, entry.getEnclosingNames(), monitor);
 					}
-				} else if (decodedType == ICIndexStorageConstants.DERIVED_SUFFIX) {
-					firstSlash += 2;
-					int slash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1);
-					String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
+					break;
+				case IIndex.TYPE_DERIVED :
 					if (name.length() != 0) {  // skip anonymous structs
-						String[] enclosingNames = getEnclosingNames(word, slash);
-						addSuperTypeReference(input, project, entry, name, enclosingNames, monitor);
+						addSuperTypeReference(input, project, entry, name, entry.getEnclosingNames(), monitor);
 					}
+					break;
+				default:
+					break;
 				}
 			}
 		}
-	}
-
-	private int getElementType(char decodedType) {
-		switch (decodedType) {
-			case ICIndexStorageConstants.CLASS_SUFFIX :
-				return ICElement.C_CLASS;
-			case ICIndexStorageConstants.STRUCT_SUFFIX :
-				return ICElement.C_STRUCT;
-			case ICIndexStorageConstants.TYPEDEF_SUFFIX :
-				return ICElement.C_TYPEDEF;
-			case ICIndexStorageConstants.ENUM_SUFFIX :
-				return ICElement.C_ENUMERATION;
-			case ICIndexStorageConstants.UNION_SUFFIX :
-				return ICElement.C_UNION;
-		}
-		return 0;
-	}
-
-	private String[] getEnclosingNames(char[] word, int slash) {
-		String[] enclosingNames= null;
-		if (slash != -1 && slash + 1 < word.length) {
-			char[][] temp = CharOperation.splitOn('/', CharOperation.subarray(word, slash + 1, -1));
-			enclosingNames= new String[temp.length];
-			for (int i = 0; i < temp.length; i++) {
-				enclosingNames[i] = String.valueOf(temp[temp.length - i - 1]);
-			}
-		}
-		return enclosingNames;
 	}
 
 	private void addType(IndexInput input, IProject project, IEntryResult entry, int type, String name, String[] enclosingNames, IProgressMonitor monitor)

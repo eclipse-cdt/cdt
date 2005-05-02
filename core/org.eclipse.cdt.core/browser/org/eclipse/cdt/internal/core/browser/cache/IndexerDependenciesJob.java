@@ -14,10 +14,8 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.PathUtil;
-import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
@@ -90,9 +88,6 @@ public class IndexerDependenciesJob extends IndexerJob {
 	}
 
 	private IPath getIncludePath(IEntryResult entry) {
-		char[] word = entry.getWord();
-		int firstSlash = CharOperation.indexOf(ICIndexStorageConstants.SEPARATOR, word, 0);
-		String include = String.valueOf(CharOperation.subarray(word, firstSlash + 1, -1));
-		return PathUtil.getWorkspaceRelativePath(include);
+		return PathUtil.getWorkspaceRelativePath(entry.getName());
 	}
 }

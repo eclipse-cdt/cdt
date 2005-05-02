@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
@@ -144,21 +143,12 @@ public class MethodDeclarationPattern extends CSearchPattern {
 	}
 	
 	protected void decodeIndexEntry(IEntryResult entryResult) {
-		char[] word = entryResult.getWord();
-		int size = word.length;
-		
-		int firstSlash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, 0 );  
-		
-		int slash = CharOperation.indexOf( ICIndexStorageConstants.SEPARATOR, word, firstSlash + 1 );
-		
-		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, slash);
-		
-		if( slash != -1 && slash+1 < size ){
-			char [][] temp = CharOperation.splitOn('/', CharOperation.subarray(word, slash + 1, size));
-			this.decodedQualifications = new char [ temp.length ][];
-			for( int i = 0; i < temp.length; i++ ){
-				this.decodedQualifications[ i ] = temp[ temp.length - i - 1 ];
-			}
+		this.decodedSimpleName = entryResult.extractSimpleName().toCharArray();	
+		String []missmatch = entryResult.getEnclosingNames();
+		if(missmatch != null) {
+			this.decodedQualifications = new char[missmatch.length][];
+			for (int i = 0; i < missmatch.length; i++)
+				this.decodedQualifications[i] = missmatch[i].toCharArray();
 		}
 	}
 

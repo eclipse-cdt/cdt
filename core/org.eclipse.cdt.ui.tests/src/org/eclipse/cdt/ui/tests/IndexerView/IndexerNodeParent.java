@@ -165,7 +165,7 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
         if (sortName) {
             mid= list[(left + right) / 2].getName().toUpperCase();
         } else {
-            mid= new String(list[(left + right) / 2].getResult().getWord()).toUpperCase();
+            mid= new String(list[(left + right) / 2].getResult().getName()).toUpperCase();
         }
         do {
             String compareL = null;
@@ -174,15 +174,15 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
                 compareL = list[left].getName().toUpperCase();
                 compareR = list[right].getName().toUpperCase();
             } else {
-                compareL = new String(list[left].getResult().getWord()).toUpperCase();
-                compareR = new String(list[right].getResult().getWord()).toUpperCase();
+                compareL = new String(list[left].getResult().getName()).toUpperCase();
+                compareR = new String(list[right].getResult().getName()).toUpperCase();
             }
             while (compareL.compareTo(mid) < 0) {
                 left++;
                 if (sortName) {
                     compareL = list[left].getName().toUpperCase();
                 } else {
-                    compareL = new String(list[left].getResult().getWord()).toUpperCase();
+                    compareL = new String(list[left].getResult().getName()).toUpperCase();
                 }
             }
             while (mid.compareTo(compareR) < 0) {
@@ -190,7 +190,7 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
                 if (sortName) {
                     compareR = list[right].getName().toUpperCase();
                 } else {
-                    compareR = new String(list[right].getResult().getWord()).toUpperCase();
+                    compareR = new String(list[right].getResult().getName()).toUpperCase();
                 }
             }
             if (left <= right) {

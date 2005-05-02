@@ -49,96 +49,8 @@ public class IndexerNodeLeaf implements IAdaptable {
     private void setNameAndFiltersFlag() {
         if (result == null) return;
         
-        String word = String.valueOf(result.getWord());
-        String stringBeforeName = null;
-
-        // set the filtersFlag
-		if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_FUNCTION_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_FUNCTION_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_FUNCTION_DECL_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_FUNCTION_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_NAMESPACE_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_NAMESPACE_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FIELD_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_FIELD_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_FIELD_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_FIELD_DECL_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_FIELD_DECL_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_FIELD_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_ENUMTOR_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_ENUMTOR_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_ENUMTOR_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_ENUMTOR_DECL_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_ENUMTOR_DECL_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_ENUMTOR_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_METHOD_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_METHOD_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_METHOD_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_METHOD_DECL_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_METHOD_DECL_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_METHOD_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_MACRO_DECL_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_MACRO_DECL_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_MACRO_DECL;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_INCLUDE_REF_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_INCLUDE_REF;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_T_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_T;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_C_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_C_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_C;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_V_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_V_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_V;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_S_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_S_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_S;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_E_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_E_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_E;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_U_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_U_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_U;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_D_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_D_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_D;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_F_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_F_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_F;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_G_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_G_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_G;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_H_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_H_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_H;
-        } else if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_DECL_I_STRING)) {
-            stringBeforeName = FilterIndexerViewDialog.ENTRY_TYPE_DECL_I_STRING;
-            filtersType = FilterIndexerViewDialog.ENTRY_TYPE_DECL_I;
-        }
-
-        // set the name
-        if (word.startsWith(FilterIndexerViewDialog.ENTRY_TYPE_REF_STRING)) { // if the name is after an additional field then reset stringBeforeName
-            int start = word.indexOf(stringBeforeName) + stringBeforeName.length();
-            stringBeforeName = stringBeforeName + word.substring(start, start + 2);
-        }
-		if (stringBeforeName == null) {
-			name = word;
-			return;
-		}
-
-        name = word.substring(word.indexOf(stringBeforeName) + stringBeforeName.length());
-        
+        filtersType = IndexerView.getKey(result.getMetaKind(), result.getKind(), result.getRefKind());
+        name = result.getName();       
     }
     
     public IndexerNodeParent getParent() {
@@ -227,7 +139,7 @@ public class IndexerNodeLeaf implements IAdaptable {
                 }
                 
                 // add a word descriptor
-                text = new TextPropertyDescriptor(new TextDescriptorId(IENTRYRESULT_GETWORD__, String.valueOf(entryResult.getWord())), IENTRYRESULT_GETWORD__);
+                text = new TextPropertyDescriptor(new TextDescriptorId(IENTRYRESULT_GETWORD__, String.valueOf(entryResult.toString())), IENTRYRESULT_GETWORD__);
                 text.setCategory(IENTRYRESULT);
                 descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
                 

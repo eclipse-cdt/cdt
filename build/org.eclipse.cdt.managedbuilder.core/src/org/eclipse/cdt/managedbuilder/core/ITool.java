@@ -45,6 +45,9 @@ public interface ITool extends IBuildObject {
 	public static final String TOOL_ELEMENT_NAME = "tool";	//$NON-NLS-1$
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
 	
+	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
+	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
+	
 	public static final int FILTER_C = 0;
 	public static final int FILTER_CC = 1;
 	public static final int FILTER_BOTH = 2;
@@ -688,6 +691,34 @@ public interface ITool extends IBuildObject {
 	 * @return boolean 
 	 */
 	public boolean isExtensionElement();
+	
+	/**
+	 * Returns the 'versionsSupported' of this tool
+	 * 
+	 * @return String
+	 */
+	public String getVersionsSupported();
+	
+	/**
+	 * Returns the 'convertToId' of this tool
+	 * 
+	 * @return String
+	 */
+	public String getConvertToId();
+
+	/**
+	 * Sets the 'versionsSupported' attribute of the tool. 
+	 * 
+	 * @param versionsSupported
+	 */	
+	public void setVersionsSupported(String versionsSupported);
+	
+	/**
+	 * Sets the 'convertToId' attribute of the tool. 
+	 * 
+	 * @param convertToId
+	 */
+	public void setConvertToId(String convertToId);
 	
 	/**
 	 * Returns an array of the Environment Build Path variable descriptors

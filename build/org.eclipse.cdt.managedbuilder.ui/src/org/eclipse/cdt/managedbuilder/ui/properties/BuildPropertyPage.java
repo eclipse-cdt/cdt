@@ -301,11 +301,17 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();
-		configSelector.setItems(getConfigurationNames());
+		configSelector.setItems(getConfigurationNamesAndDescriptions());
 		
 		// Make sure the active configuration is selected
 		IConfiguration defaultConfig = info.getDefaultConfiguration();
-		int index = configSelector.indexOf(defaultConfig.getName());
+		int index;
+		if( (defaultConfig.getDescription() == null) || defaultConfig.getDescription().equals("") ) {	//$NON-NLS-1$
+			index = configSelector.indexOf(defaultConfig.getName());	
+		} else {
+			index = configSelector.indexOf(defaultConfig.getName() + "( " + defaultConfig.getDescription() + " )" );	//$NON-NLS-1$	//$NON-NLS-2$
+		}
+		
 		configSelector.select(index == -1 ? 0 : index);
 		handleConfigSelection();
 	}
@@ -313,13 +319,17 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	/* (non-Javadoc)
 	 * @return an array of names for the configurations defined for the chosen
 	 */
-	private String [] getConfigurationNames () {
-		String [] names = new String[configurations.length /*+ 1*/];
+	private String [] getConfigurationNamesAndDescriptions () {
+		String [] namesAndDescriptions = new String[configurations.length /*+ 1*/];
 		for (int index = 0; index < configurations.length; ++index) {
-			names[index] = configurations[index].getName();
+			String description = configurations[index].getDescription();
+			if ( (description == null) || (description.equals("")) )
+				namesAndDescriptions[index] = configurations[index].getName();	//$NON-NLS-1$
+			else
+				namesAndDescriptions[index] = configurations[index].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
 		}
 //		names[names.length - 1] = ManagedBuilderUIPlugin.getResourceString(ALL_CONFS);
-		return names;
+		return namesAndDescriptions;
 	}
 
 	public void enableConfigSelection (boolean enable) {
@@ -483,72 +493,36 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	}
 
 	// Event handler for the manage configuration button event
-	private void handleManageConfig () {
+	private void handleManageConfig() {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
-		ManageConfigDialog manageDialog = new ManageConfigDialog(getShell(), ManagedBuilderUIMessages.getResourceString(MANAGE_TITLE), info.getManagedProject());
+		ManageConfigDialog manageDialog = new ManageConfigDialog(getShell(),
+				ManagedBuilderUIMessages.getResourceString(MANAGE_TITLE), info
+						.getManagedProject());
 		if (manageDialog.open() == ManageConfigDialog.OK) {
-			boolean updateConfigs = false;
-			
 			// Check to see if any configurations have to be deleted
 			List deletedConfigs = manageDialog.getDeletedConfigIds();
 			Iterator iter = deletedConfigs.listIterator();
 			while (iter.hasNext()) {
-				String id = (String)iter.next();
-				
-				// Remove the configurations from the project 
-				info.getManagedProject().removeConfiguration(id);
-				
+				String id = (String) iter.next();
 				// Remove any settings stores
 				fOptionBlock.removeValues(id);
-				
-				// Clean up the UI
-				configurations = info.getManagedProject().getConfigurations();
-				configSelector.removeAll();
-				configSelector.setItems(getConfigurationNames());
-				configSelector.select(0);
-				updateConfigs = true;
 			}
-			
-			// Check to see if any have to be added
-			SortedMap newConfigs = manageDialog.getNewConfigs();
-			Set keys = newConfigs.keySet();
-			Iterator keyIter = keys.iterator();
-			while (keyIter.hasNext()) {
-				String name = (String) keyIter.next();
-				IConfiguration parent = (IConfiguration) newConfigs.get(name);
-				if (parent != null) {
-					int id = ManagedBuildManager.getRandomNumber();
-					
-					// Create ID for the new component based on the parent ID and random component
-					String newId = parent.getId();
-					int index = newId.lastIndexOf(ID_SEPARATOR);
-					if (index > 0) {
-						String lastComponent = newId.substring(index + 1, newId.length());
-						if (Character.isDigit(lastComponent.charAt(0))) {
-							// Strip the last component
-							newId = newId.substring(0, index);
-						}
-					}
-					newId += ID_SEPARATOR + id;
-					IConfiguration newConfig;
-					if (parent.isExtensionElement()) {
-						newConfig = info.getManagedProject().createConfiguration(parent, newId);
-					} else {
-						newConfig = info.getManagedProject().createConfigurationClone(parent, newId);
-					}
-					newConfig.setName(name);
-					newConfig.setArtifactName(info.getManagedProject().getDefaultArtifactName());
-					// Update the config lists
-					configurations = info.getManagedProject().getConfigurations();
-					configSelector.removeAll();
-					configSelector.setItems(getConfigurationNames());
-					configSelector.select(configSelector.indexOf(name));
-					updateConfigs = true;
-				}
+			// Update the config lists
+			configurations = info.getManagedProject().getConfigurations();
+			configSelector.removeAll();
+			configSelector.setItems(getConfigurationNamesAndDescriptions());
+
+			IConfiguration tmpSelectedConfiguration = manageDialog.getSelectedConfiguration();
+			String nameAndDescription = new String();
+			if ((tmpSelectedConfiguration.getDescription() == null)
+					|| (tmpSelectedConfiguration.getDescription().equals(""))) {	//$NON-NLS-1$
+				nameAndDescription = tmpSelectedConfiguration.getName();
+			} else {
+				nameAndDescription = tmpSelectedConfiguration.getName() + "( "	//$NON-NLS-1$
+						+ tmpSelectedConfiguration.getDescription() + " )";	//$NON-NLS-1$
 			}
-			if (updateConfigs){
-				handleConfigSelection();
-			}
+			configSelector.select(configSelector.indexOf(nameAndDescription));
+			handleConfigSelection();
 		}
 		return;
 	}

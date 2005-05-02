@@ -48,6 +48,8 @@ public class ToolReference implements IToolReference {
 	private String outputPrefix;
 	protected ITool parent;
 	private boolean resolved = true;
+	private String versionsSupported;
+	private String convertToId;
 	
 	/**
 	 * Create a new tool reference based on information contained in 
@@ -1091,6 +1093,60 @@ public class ToolReference implements IToolReference {
 	 */
 	public String getRawToolCommand() {
 		return command;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getConvertToId()
+	 */
+	public String getConvertToId() {
+		if (convertToId == null) {
+			// If I have a superClass, ask it
+			if (parent != null) {
+				return parent.getConvertToId();
+			} else {
+				return new String();
+			}
+		}
+		return convertToId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setConvertToId(String)
+	 */
+	public void setConvertToId(String convertToId) {
+		if (convertToId == null && this.convertToId == null) return;
+		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
+			this.convertToId = convertToId;
+			setDirty(true);
+		}
+		return;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getVersionsSupported()
+	 */
+	public String getVersionsSupported() {
+		if (versionsSupported == null) {
+			// If I have a superClass, ask it
+			if (parent != null) {
+				return parent.getVersionsSupported();
+			} else {
+				return new String();
+			}
+		}
+		return versionsSupported;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setVersionsSupported(String)
+	 */
+	public void setVersionsSupported(String versionsSupported) {
+		if (versionsSupported == null && this.versionsSupported == null) return;
+		if (versionsSupported == null || this.versionsSupported == null || !versionsSupported.equals(this.versionsSupported)) {
+			this.versionsSupported = versionsSupported;
+			setDirty(true);
+		}
+		return;
 	}
 
 	/* (non-Javadoc)

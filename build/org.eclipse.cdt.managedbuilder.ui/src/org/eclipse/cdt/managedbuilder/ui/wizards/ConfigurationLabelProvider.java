@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2005 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -24,7 +24,12 @@ public class ConfigurationLabelProvider	extends LabelProvider implements ITableL
 	// 
 	public String getColumnText(Object obj, int index) {
 		if (obj instanceof IConfiguration) {
-			return ((IConfiguration) obj).getName();
+			IConfiguration tmpConfig = (IConfiguration) obj;
+			
+			if( (tmpConfig.getDescription() == null)|| (tmpConfig.getDescription().equals("")) )	//$NON-NLS-1$
+				return ((IConfiguration) obj).getName();
+			else
+				return ( tmpConfig.getName() + " ( " + tmpConfig.getDescription() + " )");	//$NON-NLS-1$	//$NON-NLS-2$
 		}
 		return new String();
 	}

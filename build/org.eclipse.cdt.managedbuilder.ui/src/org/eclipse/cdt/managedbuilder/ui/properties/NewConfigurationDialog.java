@@ -25,6 +25,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,11 +51,13 @@ public class NewConfigurationDialog extends StatusDialog {
 	private static final String DUPLICATE = ERROR + ".duplicateName";	//$NON-NLS-1$	
 	private static final String CASE = ERROR + ".caseName";	//$NON-NLS-1$	
 	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
-
+	private static final String DESCRIPTION = LABEL + ".description";	//$NON-NLS-1$
+	
 	// Widgets
 	private Button btnClone;
 	private Button btnCopy;
 	private Text configName;
+	private Text configDescription;
 	private Combo copyConfigSelector;
 	private Combo cloneConfigSelector;
 	private Button btnShowAll;
@@ -67,6 +71,7 @@ public class NewConfigurationDialog extends StatusDialog {
 	private IConfiguration parentConfig;
 	private IManagedProject managedProject;
 	private String newName;
+	private String newDescription;
 	/** A list containing config names that have been defined but not added to the target */
 	final private ArrayList reservedNames;
 	final private String title;
@@ -78,15 +83,15 @@ public class NewConfigurationDialog extends StatusDialog {
 	 * @param nameList A list of names (Strings) that have been added by the user but have not yet been added to the target 
 	 * @param title The title of the dialog
 	 */
-	protected NewConfigurationDialog(Shell parentShell, IManagedProject managedProject, ArrayList nameList, String title) {
+	protected NewConfigurationDialog(Shell parentShell, IManagedProject managedProject, String title) {
 		super(parentShell);
 		this.title = title;
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 		newName = new String();
+		newDescription = new String();
 		parentConfig = null;
 		this.managedProject = managedProject;
-		reservedNames = nameList;
-		
+		reservedNames = new ArrayList();
 		// The default behaviour is to clone the settings
 		clone = true;
 		
@@ -94,6 +99,12 @@ public class NewConfigurationDialog extends StatusDialog {
 		definedConfigs = managedProject.getConfigurations();
 		IProjectType projectType = managedProject.getProjectType();
 		defaultConfigs = projectType.getConfigurations();
+		
+		// Get the defined configuration names
+		for (int i = 0; i < definedConfigs.length; i++) {
+			reservedNames.add(definedConfigs[i].getName());
+		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -103,23 +114,42 @@ public class NewConfigurationDialog extends StatusDialog {
 	 */
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
+			String description = new String();
+			String nameAndDescription = new String();
+			String baseConfigNameAndDescription = new String();
+			
 			newName = configName.getText().trim();
-			String baseConfigName = new String();
+			newDescription = configDescription.getText().trim();
+			
 			if (clone) {
-				baseConfigName = cloneConfigSelector.getItem(cloneConfigSelector.getSelectionIndex());				
+				baseConfigNameAndDescription = cloneConfigSelector.getItem(cloneConfigSelector.getSelectionIndex());				
 				for (int i = 0; i < definedConfigs.length; i++) {
 					IConfiguration config = definedConfigs[i];
-					if (config.getName().equals(baseConfigName)) {
+					description = config.getDescription();
+					
+					if( (description == null) || (description.equals("")) ){	//$NON-NLS-1$
+						nameAndDescription = config.getName();
+					} else {
+						nameAndDescription = config.getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
+					}
+					if (nameAndDescription.equals(baseConfigNameAndDescription)) {
 						parentConfig = config;
 						break;				
 					}
 				}
 			} else {
 				// Get the parent config out of the default config list
-				baseConfigName = copyConfigSelector.getItem(copyConfigSelector.getSelectionIndex());
+				baseConfigNameAndDescription = copyConfigSelector.getItem(copyConfigSelector.getSelectionIndex());
 				for (int i = 0; i < defaultConfigs.length; i++) {
 					IConfiguration config = defaultConfigs[i];
-					if (config.getName().equals(baseConfigName)) {
+					description = config.getDescription();
+	
+					if( (description == null) || (description.equals("")) ) {	//$NON-NLS-1$
+						nameAndDescription = config.getName();
+					} else {
+						nameAndDescription = config.getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$
+					}
+					if (nameAndDescription.equals(baseConfigNameAndDescription)) {
 						parentConfig = config;
 						break;				
 					}
@@ -127,6 +157,7 @@ public class NewConfigurationDialog extends StatusDialog {
 			}
 		} else {
 			newName = null;
+			newDescription = null;
 			parentConfig = null;
 		}
 		super.buttonPressed(buttonId);
@@ -154,20 +185,36 @@ public class NewConfigurationDialog extends StatusDialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout(3, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		// Add a label and a text widget
-		final Label nameLabel = new Label(composite, SWT.LEFT);
+
+		// Create a group for the name & description
+
+		final Group group1 = new Group(composite, SWT.NONE);
+		group1.setFont(composite.getFont());
+		GridLayout layout1 = new GridLayout(3, false);
+		group1.setLayout(layout1);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		group1.setLayoutData(gd);
+
+		// Add a label and a text widget for Configuration's name
+		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
 		nameLabel.setText(ManagedBuilderUIMessages.getResourceString(NAME));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+				
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
+		gd.grabExcessHorizontalSpace = false;
 		nameLabel.setLayoutData(gd);
-		configName = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		configName.setFont(composite.getFont());
+
+		configName = new Text(group1, SWT.SINGLE | SWT.BORDER);
+		configName.setFont(group1.getFont());
+		configName.setText(getNewName());
+		configName.setFocus();
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
@@ -178,7 +225,27 @@ public class NewConfigurationDialog extends StatusDialog {
 			}
 		});
 		
-		// Create a group fro the radio buttons 
+//		 Add a label and a text widget for Configuration's description
+        final Label descriptionLabel = new Label(group1, SWT.LEFT);
+        descriptionLabel.setFont(parent.getFont());
+        descriptionLabel.setText(ManagedBuilderUIMessages.getResourceString(DESCRIPTION));
+
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 1;
+		gd.grabExcessHorizontalSpace = false;
+        descriptionLabel.setLayoutData(gd);
+        configDescription = new Text(group1, SWT.SINGLE | SWT.BORDER);
+        configDescription.setFont(group1.getFont());
+		configDescription.setText(getNewDescription());
+		configDescription.setFocus();
+		
+        gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan = 2;
+        gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+        configDescription.setLayoutData(gd);
+		
+		// Create a group for the radio buttons
+
 		final Group group = new Group(composite, SWT.NONE);
 		group.setFont(composite.getFont());
 		group.setText(ManagedBuilderUIMessages.getResourceString(GROUP));
@@ -226,7 +293,7 @@ public class NewConfigurationDialog extends StatusDialog {
 		
 		cloneConfigSelector = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		cloneConfigSelector.setFont(group.getFont());
-		cloneConfigSelector.setItems(getDefinedConfigNames());
+		cloneConfigSelector.setItems(getDefinedConfigNamesAndDescriptions());
 		index = cloneConfigSelector.indexOf(newName);
 		cloneConfigSelector.select(index < 0 ? 0 : index);
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
@@ -286,16 +353,20 @@ public class NewConfigurationDialog extends StatusDialog {
 		}
 	
 		if(defaultConfigs.length != 0){
-			String names[] = new String[defaultConfigs.length];
-			for (int i = 0; i < defaultConfigs.length; ++i)
-				names[i] = defaultConfigs[i].getName();
-			
+			String namesAndDescriptions[] = new String[defaultConfigs.length];
+			for (int i = 0; i < defaultConfigs.length; ++i) {
+				if ( (defaultConfigs[i].getDescription() == null) || defaultConfigs[i].getDescription().equals(""))	//$NON-NLS-1$
+					namesAndDescriptions[i] = defaultConfigs[i].getName();
+				else
+					namesAndDescriptions[i] = defaultConfigs[i].getName() + "( " + defaultConfigs[i].getDescription() + " )";	//$NON-NLS-1$	//$NON-NLS-2$
+			}
+				
 			int selectionIndex = copyConfigSelector.getSelectionIndex();
 			String oldSelection = null;
 			if(selectionIndex != -1)
 				oldSelection = copyConfigSelector.getItem(selectionIndex);
 			
-			copyConfigSelector.setItems(names);
+			copyConfigSelector.setItems(namesAndDescriptions);
 			if(oldSelection != null)
 				selectionIndex = copyConfigSelector.indexOf(oldSelection);
 			if(selectionIndex == -1)
@@ -313,13 +384,16 @@ public class NewConfigurationDialog extends StatusDialog {
 	 * This list will be used to populate the list of configurations to 
 	 * clone.
 	 */
-	private String [] getDefinedConfigNames() {
-		String [] names = new String[definedConfigs.length];
+	private String [] getDefinedConfigNamesAndDescriptions() {
+		String [] namesAndDescriptions = new String[definedConfigs.length];
 		for (int index = 0; index < definedConfigs.length; ++index) {
 			IConfiguration config = definedConfigs[index];
-			names[index] = config.getName();
+			if ( (config.getDescription() == null) || config.getDescription().equals(""))	//$NON-NLS-1$
+				namesAndDescriptions[index] = config.getName();
+			else
+				namesAndDescriptions[index] = config.getName() + "( " + config.getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$
 		}
-		return names; 
+		return namesAndDescriptions; 
 	}
 
 	/**
@@ -440,10 +514,15 @@ public class NewConfigurationDialog extends StatusDialog {
 			status.setError(ManagedBuilderUIMessages.getFormattedString(CASE, currentName));
 		} else if (!validateName(currentName)) {
 			// TODO Create a decent I18N string to describe this problem
-			status.setError(ManagedBuilderUIMessages.getFormattedString(INVALID, currentName));	//$NON-NLS-1$
+			status.setError(ManagedBuilderUIMessages.getFormattedString(INVALID, currentName));
 		} 
 		
 		updateStatus(status);
 		return;
 	}
+	 public String getNewDescription() {
+        return newDescription;
+    }
+
+	
 }

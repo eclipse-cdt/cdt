@@ -87,6 +87,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private String outputPrefix;
 	private String errorParserIds;
 	private String commandLinePattern;
+	private String versionsSupported;
+	private String convertToId;
 	private Boolean advancedInputCategory;
 	private Boolean customBuildStep;
 	private String announcement;
@@ -403,6 +405,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		// Get the unused children, if any
 		unusedChildren = element.getAttribute(IProjectType.UNUSED_CHILDREN); 
 		
+		// Get the 'versionsSupported' attribute
+		versionsSupported =element.getAttribute(VERSIONS_SUPPORTED);
+		
+		// Get the 'convertToId' attribute
+		convertToId = element.getAttribute(CONVERT_TO_ID);
+
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
@@ -530,6 +538,16 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			}
 		}
 		
+		// Get the 'versionSupported' attribute
+		if (element.hasAttribute(VERSIONS_SUPPORTED)) {
+			versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
+		}
+		
+		// Get the 'convertToId' id
+		if (element.hasAttribute(CONVERT_TO_ID)) {
+			convertToId = element.getAttribute(CONVERT_TO_ID);
+		}
+		
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.hasAttribute(IToolChain.ERROR_PARSERS)) {
 			errorParserIds = element.getAttribute(IToolChain.ERROR_PARSERS);
@@ -649,6 +667,16 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				element.setAttribute(IProjectType.IS_ABSTRACT, isAbstract.toString());
 			}
 	
+			// versionsSupported
+			if (versionsSupported != null) {
+				element.setAttribute(VERSIONS_SUPPORTED, versionsSupported);
+			}
+			
+			// convertToId
+			if (convertToId != null) {
+				element.setAttribute(CONVERT_TO_ID, convertToId);
+			}
+			
 			// error parsers
 			if (errorParserIds != null) {
 				element.setAttribute(IToolChain.ERROR_PARSERS, errorParserIds);
@@ -2324,6 +2352,60 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getConvertToId()
+	 */
+	public String getConvertToId() {
+		if (convertToId == null) {
+			// If I have a superClass, ask it
+			if (superClass != null) {
+				return superClass.getConvertToId();
+			} else {
+				return EMPTY_STRING;
+			}
+		}
+		return convertToId;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setConvertToId(String)
+	 */
+	public void setConvertToId(String convertToId) {
+		if (convertToId == null && this.convertToId == null) return;
+		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
+			this.convertToId = convertToId;
+			setDirty(true);
+		}
+		return;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getVersionsSupported()
+	 */
+	public String getVersionsSupported() {
+		if (versionsSupported == null) {
+			// If I have a superClass, ask it
+			if (superClass != null) {
+				return superClass.getVersionsSupported();
+			} else {
+				return EMPTY_STRING;
+			}
+		}
+		return versionsSupported;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setVersionsSupported(String)
+	 */
+	public void setVersionsSupported(String versionsSupported) {
+		if (versionsSupported == null && this.versionsSupported == null) return;
+		if (versionsSupported == null || this.versionsSupported == null || !versionsSupported.equals(this.versionsSupported)) {
+			this.versionsSupported = versionsSupported;
+			setDirty(true);
+		}
+		return;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getEnvVarBuildPaths()
 	 */
 	public IEnvVarBuildPath[] getEnvVarBuildPaths(){
@@ -2344,6 +2426,5 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			
 		envVarBuildPathList.add(path);
 	}
-	
 	
 }

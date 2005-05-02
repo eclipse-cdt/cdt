@@ -58,6 +58,8 @@ public class ToolChain extends BuildObject implements IToolChain {
 	private String secondaryOutputIds;
 	private Boolean isAbstract;
     private String scannerConfigDiscoveryProfileId;
+	private String versionsSupported;
+	private String convertToId;
 	private IConfigurationElement managedIsToolChainSupportedElement = null;
 	private IManagedIsToolChainSupported managedIsToolChainSupported = null;
 	private IConfigurationElement environmentVariableSupplierElement = null;
@@ -324,6 +326,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 		// Get the scanner config discovery profile id
         scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
         
+		// Get the 'versionsSupported' attribute
+		versionsSupported =element.getAttribute(VERSIONS_SUPPORTED);
+		
+		// Get the 'convertToId' attribute
+		convertToId = element.getAttribute(CONVERT_TO_ID);
+		
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
@@ -415,6 +423,16 @@ public class ToolChain extends BuildObject implements IToolChain {
             scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
         }
         
+		// Get the 'versionSupported' attribute
+		if (element.hasAttribute(VERSIONS_SUPPORTED)) {
+			versionsSupported = element.getAttribute(VERSIONS_SUPPORTED);
+		}
+		
+		// Get the 'convertToId' id
+		if (element.hasAttribute(CONVERT_TO_ID)) {
+			convertToId = element.getAttribute(CONVERT_TO_ID);
+		}
+		
 		// Get the comma-separated list of valid OS
 		if (element.hasAttribute(OS_LIST)) {
 			String os = element.getAttribute(OS_LIST);
@@ -480,6 +498,16 @@ public class ToolChain extends BuildObject implements IToolChain {
             element.setAttribute(SCANNER_CONFIG_PROFILE_ID, scannerConfigDiscoveryProfileId);
         }
 
+		// versionsSupported
+		if (versionsSupported != null) {
+			element.setAttribute(VERSIONS_SUPPORTED, versionsSupported);
+		}
+		
+		// convertToId
+		if (convertToId != null) {
+			element.setAttribute(CONVERT_TO_ID, convertToId);
+		}
+		
 		if (osList != null) {
 			Iterator osIter = osList.listIterator();
 			String listValue = EMPTY_STRING;
@@ -1112,6 +1140,60 @@ public class ToolChain extends BuildObject implements IToolChain {
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getConvertToId()
+	 */
+	public String getConvertToId() {
+		if (convertToId == null) {
+			// If I have a superClass, ask it
+			if (superClass != null) {
+				return superClass.getConvertToId();
+			} else {
+				return EMPTY_STRING;
+			}
+		}
+		return convertToId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setConvertToId(String)
+	 */
+	public void setConvertToId(String convertToId) {
+		if (convertToId == null && this.convertToId == null) return;
+		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
+			this.convertToId = convertToId;
+			setDirty(true);
+		}
+		return;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getVersionsSupported()
+	 */
+	public String getVersionsSupported() {
+		if (versionsSupported == null) {
+			// If I have a superClass, ask it
+			if (superClass != null) {
+				return superClass.getVersionsSupported();
+			} else {
+				return EMPTY_STRING;
+			}
+		}
+		return versionsSupported;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setVersionsSupported(String)
+	 */
+	public void setVersionsSupported(String versionsSupported) {
+		if (versionsSupported == null && this.versionsSupported == null) return;
+		if (versionsSupported == null || this.versionsSupported == null || !versionsSupported.equals(this.versionsSupported)) {
+			this.versionsSupported = versionsSupported;
+			setDirty(true);
+		}
+		return;
 	}
 
 	private IManagedIsToolChainSupported getIsToolChainSupported(){

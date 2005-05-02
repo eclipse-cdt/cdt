@@ -11,7 +11,6 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 
 /**
@@ -35,6 +34,8 @@ public interface IToolChain extends IBuildObject {
 	public static final String OS_LIST = "osList";						//$NON-NLS-1$
 	public static final String ARCH_LIST = "archList";					//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";			//$NON-NLS-1$
+	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
+	public static final String CONVERT_TO_ID = "convertToId";			//$NON-NLS-1$
 	public static final String TARGET_TOOL = "targetTool";				//$NON-NLS-1$
 	public static final String SECONDARY_OUTPUTS = "secondaryOutputs";	//$NON-NLS-1$
 	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
@@ -75,6 +76,36 @@ public interface IToolChain extends IBuildObject {
 	 */
 	public void removeLocalTargetPlatform();
 
+	/**
+	 * Returns the 'versionsSupported' of this tool-chain
+	 * 
+	 * @return String
+	 */
+
+	public String getVersionsSupported();
+	/**
+	 * Returns the 'convertToId' of this tool-chain
+	 * 
+	 * @return String
+	 */
+
+	public String getConvertToId();
+	
+	/**
+	 * Sets the 'versionsSupported' attribute of the tool-chain. 
+	 * 
+	 * @param versionsSupported
+	 */
+	
+	public void setVersionsSupported(String versionsSupported);
+	
+	/**
+	 * Sets the 'convertToId' attribute of the tool-chain. 
+	 * 
+	 * @param convertToId
+	 */
+	public void setConvertToId(String convertToId);
+	
 	/**
 	 * Creates the <code>Builder</code> child of this tool-chain.
 	 *

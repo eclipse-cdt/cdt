@@ -16,13 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 
 public class ProjectType extends BuildObject implements IProjectType {
 	
@@ -39,6 +40,10 @@ public class ProjectType extends BuildObject implements IProjectType {
 	private Boolean isAbstract;
 	private Boolean isTest;
 	private String unusedChildren;
+
+	private IConfigurationElement configurationNameProviderElement = null;
+	private IConfigurationNameProvider configurationNameProvider = null;
+
 	private IConfigurationElement environmentVariableSupplierElement = null;
 	private IProjectEnvironmentVariableSupplier environmentVariableSupplier = null;
 
@@ -66,8 +71,23 @@ public class ProjectType extends BuildObject implements IProjectType {
 
 		// Load the configuration children
 		IManagedConfigElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
-		for (int n = 0; n < configs.length; ++n) {
-			Configuration config = new Configuration(this, configs[n]);
+		
+		String [] usedConfigNames = new String[0];
+		IConfigurationNameProvider configurationNameProvder = getConfigurationNameProvider();
+		
+		if (  configurationNameProvder != null ) {
+			// Tool Integrator provided 'ConfigurationNameProvider' class
+			// to get configuration names dynamically based architecture, os, toolchain version etc.
+			for (int n = 0; n < configs.length; ++n) {
+				Configuration config = new Configuration(this, configs[n]);
+				String newConfigName = configurationNameProvder.getNewConfigurationName(config, usedConfigNames);
+				config.setName(newConfigName);
+				usedConfigNames[n] = newConfigName;
+			}
+		} else {
+			for (int n = 0; n < configs.length; ++n) {
+				Configuration config = new Configuration(this, configs[n]);
+			}
 		}
 	}
 
@@ -129,12 +149,16 @@ public class ProjectType extends BuildObject implements IProjectType {
     		isTest = new Boolean("true".equals(isTestStr)); //$NON-NLS-1$
         }
 		
+		// Store the configuration element IFF there is a configuration name provider defined 
+		if (element.getAttribute(CONFIGURATION_NAME_PROVIDER) != null && element instanceof DefaultManagedConfigElement) {
+			configurationNameProviderElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
+		
 		// Get the environmentVariableSupplier configuration element
 		String environmentVariableSupplier = element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER); 
 		if(environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement){
 			environmentVariableSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
-
 	}
 
 	/*
@@ -362,6 +386,48 @@ public class ProjectType extends BuildObject implements IProjectType {
 				return true;
 		}
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getConfigurationNameProviderElement()
+	 */
+	public IConfigurationElement getConfigurationNameProviderElement() {
+		if(configurationNameProviderElement == null){
+			if(superClass != null) {
+				ProjectType tmpSuperClass = (ProjectType)superClass;
+				return tmpSuperClass.getConfigurationNameProviderElement();
+			}
+		}
+		return configurationNameProviderElement;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IProjectType#setConfigurationNameProviderElement(IConfigurationElement)
+	 */
+	
+	public void setConfigurationNameProviderElement(IConfigurationElement configurationElement) {
+		configurationNameProviderElement = configurationElement;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getConfigurationNameProvider()
+	 */
+	public IConfigurationNameProvider getConfigurationNameProvider() {
+		
+		if (configurationNameProvider != null) {
+			return configurationNameProvider;
+		}
+		
+		IConfigurationElement element = getConfigurationNameProviderElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(CONFIGURATION_NAME_PROVIDER) != null) {
+					configurationNameProvider = (IConfigurationNameProvider) element.createExecutableExtension(CONFIGURATION_NAME_PROVIDER);
+					return configurationNameProvider;
+				}
+			} catch (CoreException e) {}
+		}
+		return null;
 	}
 	
 	/**

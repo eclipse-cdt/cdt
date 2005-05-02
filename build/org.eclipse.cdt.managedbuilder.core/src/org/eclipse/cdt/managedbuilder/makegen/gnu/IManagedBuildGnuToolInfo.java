@@ -11,7 +11,6 @@
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
 import java.util.Vector;
-import java.util.HashMap;
 
 /**
  * This interface returns information about a Tool's inputs

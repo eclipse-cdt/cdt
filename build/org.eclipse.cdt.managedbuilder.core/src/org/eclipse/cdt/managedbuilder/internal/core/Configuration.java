@@ -72,6 +72,36 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private boolean rebuildNeeded = false;
 	private boolean resolved = true;
 
+	private String description;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getDescription()
+	 */
+	public String getDescription() {
+		if (description == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getDescription();
+			} else {
+				// I'm it
+				return EMPTY_STRING;
+			}
+		} else {
+			return description;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setDescription(java.lang.String)
+	 */
+	public void setDescription(String description) {
+		 if (description == null && this.description == null) return; 
+	        if (this.description == null || description == null || !description.equals(this.description)) { 
+				this.description = description; 
+	            isDirty = true; 
+	        }       
+	}
+	
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -316,6 +346,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// name
 		name = element.getAttribute(IConfiguration.NAME);
 		
+		// description
+		description = element.getAttribute(IConfiguration.DESCRIPTION);
+		
 		// parent
 		String parentID = element.getAttribute(IConfiguration.PARENT);
 		if (parentID != null) {
@@ -358,6 +391,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// name
 		if (element.hasAttribute(IConfiguration.NAME))
 			setName(element.getAttribute(IConfiguration.NAME));
+		
+		// description
+		if (element.hasAttribute(IConfiguration.DESCRIPTION))
+			setDescription(element.getAttribute(IConfiguration.DESCRIPTION));
 		
 		if (element.hasAttribute(IConfiguration.PARENT)) {
 			// See if the parent belongs to the same project
@@ -421,6 +458,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (name != null)
 			element.setAttribute(IConfiguration.NAME, name);
 			
+		if (description != null)
+			element.setAttribute(IConfiguration.DESCRIPTION, description);
+		
 		if (parent != null)
 			element.setAttribute(IConfiguration.PARENT, parent.getId());
 		

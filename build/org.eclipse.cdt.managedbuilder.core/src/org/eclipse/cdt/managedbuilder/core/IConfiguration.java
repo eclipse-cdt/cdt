@@ -38,6 +38,24 @@ public interface IConfiguration extends IBuildObject {
 	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
 	public static final String EXTENSION = "artifactExtension";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
+	
+	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+
+	
+	
+	/**
+	 * Returns the description of the configuration.
+	 * 
+	 * @return String
+	 */
+	public String getDescription();
+	
+	/**
+	 * Sets the description of the receiver to the value specified in the argument
+	 * 
+	 * @param description
+	 */
+	public void setDescription(String description);
 
 	/**
 	 * Creates a child resource configuration corresponding to the passed in file.

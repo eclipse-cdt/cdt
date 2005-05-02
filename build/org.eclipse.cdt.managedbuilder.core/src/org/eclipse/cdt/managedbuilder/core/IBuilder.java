@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,10 @@ public interface IBuilder extends IBuildObject {
 	public static final String BUILDER_ELEMENT_NAME = "builder"; 	//$NON-NLS-1$
 	public static final String BUILDFILEGEN_ID ="buildfileGenerator"; //$NON-NLS-1$
 	public static final String COMMAND = "command";	//$NON-NLS-1$
+	
+	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
+	public static final String CONVERT_TO_ID = "convertToId";			//$NON-NLS-1$
+	
 	
 	/**
 	 * Returns the command line arguments to pass to the build/make utility used 
@@ -156,5 +160,36 @@ public interface IBuilder extends IBuildObject {
 	 * @param b
 	 */
 	public void setIsAbstract(boolean b);
+	
+	/**
+	 * Returns the 'versionsSupported' of this builder
+	 * 
+	 * @return String
+	 */
+
+	public String getVersionsSupported();
+	
+	/**
+	 * Returns the 'convertToId' of this builder
+	 * 
+	 * @return String
+	 */
+
+	public String getConvertToId();
+	
+	/**
+	 * Sets the 'versionsSupported' attribute of the builder. 
+	 * 
+	 * @param versionsSupported
+	 */
+	
+	public void setVersionsSupported(String versionsSupported);
+	
+	/**
+	 * Sets the 'convertToId' attribute of the builder. 
+	 * 
+	 * @param convertToId
+	 */
+	public void setConvertToId(String convertToId);
 
 }

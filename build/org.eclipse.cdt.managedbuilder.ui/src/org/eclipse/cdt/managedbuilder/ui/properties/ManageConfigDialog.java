@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -14,26 +14,37 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
+import sun.security.x509.NameConstraintsExtension;
 
 public class ManageConfigDialog extends Dialog {
 	// String constants
@@ -43,11 +54,20 @@ public class ManageConfigDialog extends Dialog {
 	private static final String REMOVE = CMN_LABEL + ".remove";	//$NON-NLS-1$
 	private static final String PREFIX = "ManageConfig";	//$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String RESTORE = LABEL + ".restore";	//$NON-NLS-1$
+	private static final String CONVERSION_TARGET_LABEL = LABEL + ".conversionTargetLabel";	//$NON-NLS-1$
+	private static final String CONVERT_TARGET = LABEL + ".convertTarget";	//$NON-NLS-1$
+	private static final String RENAME = LABEL + ".rename";	//$NON-NLS-1$
 	private static final String CONFIGS = LABEL + ".configs";	//$NON-NLS-1$
 	private static final String CURRENT_CONFIGS = CONFIGS + ".current";	//$NON-NLS-1$
 	private static final String DELETED_CONFIGS = CONFIGS + ".deleted";	//$NON-NLS-1$
-	private static final String CONF_DLG = LABEL + ".new.config.dialog";	//$NON-NLS-1$
+	private static final String NEW_CONF_DLG = LABEL + ".new.config.dialog";	//$NON-NLS-1$
+	private static final String RENAME_CONF_DLG = LABEL + ".rename.config.dialog";	//$NON-NLS-1$
+	
+	private static final String TIP = PREFIX + ".tip";	//$NON-NLS-1$
+	private static final String CONVERSION_TARGET_TIP = TIP + ".conversionTarget";	//$NON-NLS-1$
+	private static final String CONVERT_TIP = TIP + ".convert";	//$NON-NLS-1$
+	
+	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
 
 	private static final String EMPTY_STRING = new String();
 
@@ -57,20 +77,23 @@ public class ManageConfigDialog extends Dialog {
 	private SortedMap existingConfigs;
 	// The target the configs belong to
 	private IManagedProject managedProject;
-	/** All new configs added by the user but not yet part of target */
-	private SortedMap newAddedConfigs;
-	/** All new configs removed by the user but not yet part of target */
-	private SortedMap removedNewConfigs;
+	
+	// selected Configuration
+	IConfiguration selectedConfiguration;
+
 	// The title of the dialog.
 	private String title = ""; //$NON-NLS-1$
 	
+	private Combo conversionTargetSelector;
+	private Button convertTargetBtn;
 	// Widgets
 	protected List currentConfigList;
-	protected List deletedConfigList;
+
 	protected Button newBtn;
 	protected Button okBtn;
 	protected Button removeBtn;
-	protected Button restoreBtn;
+	protected Button renameBtn;
+	
 	
 	/**
 	 * @param parentShell
@@ -85,11 +108,23 @@ public class ManageConfigDialog extends Dialog {
 		IConfiguration [] configs = managedProject.getConfigurations();
 		for (int i = 0; i < configs.length; i++) {
 			IConfiguration configuration = configs[i];
-			getExistingConfigs().put(configuration.getName(), configuration.getId());
+			String name = configuration.getName();
+			String description = configuration.getDescription();
+			String nameAndDescription = new String();
+			
+			if ( description == null || description.equals("") ) {	//$NON-NLS-1$
+				nameAndDescription = name;
+			} else {
+				nameAndDescription = name + "( " + description + " )"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			getExistingConfigs().put(nameAndDescription, configuration);
 		}
 		
+		// Set the selectedConfiguration to default configuration.
+		selectedConfiguration = ManagedBuildManager.getSelectedConfiguration(getProject());
+		
+		// clear DeletedConfig list
 		getDeletedConfigs().clear();
-		getNewConfigs().clear();
 	}
 
 	/* (non-Javadoc)
@@ -107,7 +142,7 @@ public class ManageConfigDialog extends Dialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		okBtn = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	//	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 
 		updateButtons();
 	}
@@ -120,39 +155,56 @@ public class ManageConfigDialog extends Dialog {
 		final Group configListGroup = new Group(parent, SWT.NONE);
 		configListGroup.setFont(parent.getFont());
 		configListGroup.setText(ManagedBuilderUIMessages.getResourceString(CONFIGS));
-		configListGroup.setLayout(new GridLayout(3, false));
+		configListGroup.setLayout(new GridLayout(1, false));
 		configListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		// Create the 2 labels first to align the buttons and list controls
-		final Label currentConfigLabel = new Label(configListGroup, SWT.LEFT);
-		currentConfigLabel.setFont(configListGroup.getFont());
-		currentConfigLabel.setText(ManagedBuilderUIMessages.getResourceString(CURRENT_CONFIGS));
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		currentConfigLabel.setLayoutData(data);
-		final Label deletedConfigLabel = new Label(configListGroup, SWT.LEFT);
-		deletedConfigLabel.setFont(configListGroup.getFont());
-		deletedConfigLabel.setText(ManagedBuilderUIMessages.getResourceString(DELETED_CONFIGS));
-		deletedConfigLabel.setLayoutData(new GridData());
-		
+	
 		// Create the current config List
 		currentConfigList = new List(configListGroup, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
 		currentConfigList.setFont(configListGroup.getFont());
-		data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH / 2);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH);
 		currentConfigList.setLayoutData(data);
 		currentConfigList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				currentConfigList = null;
 			}
 		});
+		currentConfigList.addListener(SWT.Selection, new Listener () {
+			public void handleEvent(Event e) {
+				handleConfigSelection();
+			}
+		});
 		
-		// Create a composite for the buttons		
+//		 Create a composite for the conversion target combo		
+		final Composite conversionGroup = new Composite(configListGroup, SWT.NULL);
+		conversionGroup.setFont(configListGroup.getFont());
+		conversionGroup.setLayout(new GridLayout(2, true));
+		conversionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// Create the Tool chain conversion target list
+		Label conversionTargetLabel = ControlFactory.createLabel(conversionGroup, ManagedBuilderUIMessages.getResourceString(CONVERSION_TARGET_LABEL));
+		conversionTargetSelector = new Combo(conversionGroup, SWT.READ_ONLY|SWT.DROP_DOWN);
+		conversionTargetSelector.addListener(SWT.Selection, new Listener () {
+			public void handleEvent(Event e) {
+				handleConversionTargetSelection();
+			}
+		});
+		conversionTargetSelector.setToolTipText(ManagedBuilderUIMessages.getResourceString(CONVERSION_TARGET_TIP));
+			
+		//		 Create a composite for the buttons		
 		final Composite buttonBar = new Composite(configListGroup, SWT.NULL);
 		buttonBar.setFont(configListGroup.getFont());
-		buttonBar.setLayout(new GridLayout(1, true));
-		buttonBar.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		buttonBar.setLayout(new GridLayout(4, true));
+		buttonBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		convertTargetBtn = ControlFactory.createPushButton(buttonBar, ManagedBuilderUIMessages.getResourceString(CONVERT_TARGET));
+		convertTargetBtn.setToolTipText(ManagedBuilderUIMessages.getResourceString(CONVERT_TIP));
+		convertTargetBtn.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+				handleConversionTargetSelection();
+			}
+		});
+		
 		newBtn = new Button(buttonBar, SWT.PUSH);
 		newBtn.setFont(buttonBar.getFont());
 		newBtn.setText(ManagedBuilderUIMessages.getResourceString(NEW));
@@ -183,32 +235,25 @@ public class ManageConfigDialog extends Dialog {
 			}
 		});
 
-		restoreBtn = new Button(buttonBar, SWT.PUSH);
-		restoreBtn.setFont(buttonBar.getFont());
-		restoreBtn.setText(ManagedBuilderUIMessages.getResourceString(RESTORE));
-		setButtonLayoutData(restoreBtn);
-		restoreBtn.addSelectionListener(new SelectionAdapter () {
+		renameBtn = new Button(buttonBar, SWT.PUSH);
+		renameBtn.setFont(buttonBar.getFont());
+		renameBtn.setText(ManagedBuilderUIMessages.getResourceString(RENAME));
+		setButtonLayoutData(renameBtn);
+		renameBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
-				handleRestorePressed();
+				handleRenamePressed();
 			}
 		});
-		restoreBtn.addDisposeListener(new DisposeListener() {
+		renameBtn.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				restoreBtn = null;				
+				renameBtn = null;				
 			}
 		});
 
-		//Create the deleted config list
-		deletedConfigList = new List(configListGroup, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
-		deletedConfigList.setFont(configListGroup.getFont());
-		data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH / 2);
-		deletedConfigList.setLayoutData(data);
-		deletedConfigList.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
-				deletedConfigList = null;
-			}
-		});
+	}
+	
+	private void handleConversionTargetSelection() {
+		return;
 	}
 	
 	/* (non-Javadoc)
@@ -224,14 +269,46 @@ public class ManageConfigDialog extends Dialog {
 		createConfigListGroup(comp);
 		
 		// Do the final widget prep
-		currentConfigList.setItems(getConfigurationNames());
-		currentConfigList.select(0);
+		// Set the configuration items
+		currentConfigList.setItems(getConfigurationNamesAndDescriptions());
+		
+		
+		//	Set the selection to selectedConfiguration.
+		String name = getSelectedConfiguration().getName();
+		String description = getSelectedConfiguration().getDescription();
+		String nameAndDescription = new String();
+		
+		if ( description == null || description.equals("") ) {	//$NON-NLS-1$
+			nameAndDescription = name;
+		} else {
+			nameAndDescription = name + "( " + description + " )";	//$NON-NLS-1$ //$NON-NLS-2$
+		}	
+		currentConfigList.select( currentConfigList.indexOf(nameAndDescription));	
+		
+		// Set the conversion target list.
+		updateConversionTargets(getSelectedConfiguration());
 		newBtn.setFocus();
 		return comp;
 	}
 
-	private String [] getConfigurationNames() {
-		return (String[]) getExistingConfigs().keySet().toArray(new String[getExistingConfigs().size()]);
+	private String [] getConversionTargetList(IConfiguration config) {
+		// This is temporary, once I implement backend & converter extension point,
+		// this will be replaced with original code.
+		String [] conversionTargetNames = { "GNU Toolchain version 4.0"};	//$NON-NLS-1$ 
+		return conversionTargetNames;
+	}
+	
+	private void updateConversionTargets(IConfiguration config) {
+		conversionTargetSelector.setItems( getConversionTargetList(config));
+		conversionTargetSelector.select(0);
+		conversionTargetSelector.setEnabled(conversionTargetSelector.getItemCount() > 1);
+		convertTargetBtn.setEnabled( conversionTargetSelector.getItemCount() > 1);
+	}
+	
+	private String [] getConfigurationNamesAndDescriptions() {
+		String [] namesAndDescriptions = (String[]) getExistingConfigs().keySet().toArray(new String[getExistingConfigs().size()]);
+		
+		return namesAndDescriptions;
 	}
 
 	/* (non-javadoc)
@@ -262,42 +339,7 @@ public class ManageConfigDialog extends Dialog {
 		return existingConfigs;
 	}
 	
-	/**
-	 * Answers a map of configuration names to <code>IConfiguration</code>.
-	 * The name is selected by the user and should be unique for the target 
-	 * it will be added to. The configuration is the what the new 
-	 * configuration will be based on.
-	 * 
-	 * @return Map   
-	 */
-	public SortedMap getNewConfigs() {
-		if (newAddedConfigs == null) {
-			newAddedConfigs = new TreeMap();
-		}
-		return newAddedConfigs;
-	}
-
-	// Answers a list of new configuration names that have been added-- 
-	// or added and removed--by the user, but that have not yet been added 
-	// to the target
-	private ArrayList getNewConfigNames() {
-		ArrayList names = new ArrayList();
-		names.addAll(getNewConfigs().keySet());
-		names.addAll(getRemovedNewConfigs().keySet());
-		return names;
-	}
 	
-	
-	// This data structure hangs on to a new configuration that is added
-	// by the user, then removed before it is added to the target. This is 
-	// a required bookeeping step because the user may change their minds and 
-	// restore the deleted configuration. 
-	private SortedMap getRemovedNewConfigs() {
-		if (removedNewConfigs == null) {
-			removedNewConfigs = new TreeMap();
-		}
-		return removedNewConfigs;
-	}
 	/*
 	 * @return the <code>IProject</code> associated with the managed project
 	 */
@@ -309,86 +351,206 @@ public class ManageConfigDialog extends Dialog {
 	 * Event handler for the add button
 	 */
 	protected void handleNewPressed() {
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		// Pop-up a dialog to properly handle the request
 		NewConfigurationDialog dialog = new NewConfigurationDialog(getShell(), 
 																   managedProject, 
-																   getNewConfigNames(),
-																   ManagedBuilderUIMessages.getResourceString(CONF_DLG));
+																   ManagedBuilderUIMessages.getResourceString(NEW_CONF_DLG));
 		if (dialog.open() == NewConfigurationDialog.OK) {
-			// Get the new name and configuration to base the new config on
+			// Get the new name & description and configuration to base the new config on
 			String newConfigName = dialog.getNewName(); 
-			getNewConfigs().put(newConfigName, dialog.getParentConfiguration());
-			currentConfigList.add(newConfigName);
-			currentConfigList.setSelection(currentConfigList.getItemCount() - 1);			
+			String newConfigDescription = dialog.getNewDescription();
+			IConfiguration parentConfig = dialog.getParentConfiguration();
+			
+			if (parentConfig != null) {
+				int id = ManagedBuildManager.getRandomNumber();
+				
+				// Create ID for the new component based on the parent ID and random component
+				String newId = parentConfig.getId();
+				int index = newId.lastIndexOf(ID_SEPARATOR);
+				if (index > 0) {
+					String lastComponent = newId.substring(index + 1, newId.length());
+					if (Character.isDigit(lastComponent.charAt(0))) {
+						// Strip the last component
+						newId = newId.substring(0, index);
+					}
+				}
+				newId += ID_SEPARATOR + id;
+				IConfiguration newConfig;
+				if (parentConfig.isExtensionElement()) {
+					newConfig = info.getManagedProject().createConfiguration(parentConfig, newId);
+				} else {
+					newConfig = info.getManagedProject().createConfigurationClone(parentConfig, newId);
+				}
+				
+				newConfig.setName(newConfigName);
+				newConfig.setDescription(newConfigDescription);
+				newConfig.setArtifactName(info.getManagedProject().getDefaultArtifactName());
+				
+				// Add this new configuration to the existing list.
+				String nameAndDescription = new String();
+				
+				if ( newConfigDescription == null || newConfigDescription.equals("") ) {	//$NON-NLS-1$
+					nameAndDescription = newConfigName;
+				} else {
+					nameAndDescription = newConfigName + "( " + newConfigDescription + " )";	//$NON-NLS-1$	//$NON-NLS-2$
+				}
+				
+				// Add the newConfig to the existing configurations
+				getExistingConfigs().put(nameAndDescription, newConfig);
+				
+				// Set the selected Configuration to the newConfig
+				setSelectedConfiguration(newConfig);
+				
+				// Update the Configuration combo list that is displayed to the user.
+				currentConfigList.setItems(getConfigurationNamesAndDescriptions());
+				
+				// Get the index of selected configuration & set selection in config list.
+				int configIndex = currentConfigList.indexOf(nameAndDescription);
+				currentConfigList.setSelection(configIndex);
+			}
+						
 		}
 
 		// Update the buttons based on the choices		
 		updateButtons();
 	}
 
-	/* (non-javadoc)
-	 * Event handler for the remove button 
-	 */
-	protected void handleRemovePressed() {
+	
+	protected void handleRenamePressed() {
+		IConfiguration selectedConfig = null;
+		String selectedConfigNameAndDescription = null;
+
 		// Determine which configuration was selected
 		int selectionIndex = currentConfigList.getSelectionIndex();
-		if (selectionIndex != -1){
-			String selectedConfigName = currentConfigList.getItem(selectionIndex);
-			
-			// If this is a newly added config, remove it from the new map 
-			// and add it to a special map to support the restore use case
-			if (getNewConfigs().containsKey(selectedConfigName)) {
-				IConfiguration selectedConfig = (IConfiguration) getNewConfigs().get(selectedConfigName); 
-				getRemovedNewConfigs().put(selectedConfigName, selectedConfig);
-				getNewConfigs().remove(selectedConfigName);
-			} else {
-				// If it is not a new item, the ID is in the existing list
-				String selectedConfigId = (String) getExistingConfigs().get(selectedConfigName);
-				getDeletedConfigs().put(selectedConfigName, selectedConfigId);
-			}
+		if (selectionIndex != -1) {
+			selectedConfigNameAndDescription = currentConfigList
+					.getItem(selectionIndex);
+			selectedConfig = (IConfiguration) getExistingConfigs().get(
+					selectedConfigNameAndDescription);
 
-			// Clean up the UI lists
-			currentConfigList.remove(selectionIndex);
-			currentConfigList.setSelection(selectionIndex - 1);
-			deletedConfigList.add(selectedConfigName);
-			deletedConfigList.setSelection(deletedConfigList.getItemCount() - 1);
-			updateButtons();
+			// Pop-up a dialog to properly handle the request
+			RenameConfigurationDialog dialog = new RenameConfigurationDialog(
+					getShell(), managedProject, selectedConfig,
+					ManagedBuilderUIMessages.getResourceString(RENAME_CONF_DLG));
+			if (dialog.open() == RenameConfigurationDialog.OK) {
+				// Get the new name & description for the selected configuration
+				String newConfigName = dialog.getNewName();
+
+				String newConfigDescription = dialog.getNewDescription();
+
+				selectedConfig.setName(newConfigName);
+				selectedConfig.setDescription(newConfigDescription);
+
+				// Remove the old configuration from the list and add renamed
+				// configuration to the list.
+				getExistingConfigs().remove(selectedConfigNameAndDescription);
+
+				String nameAndDescription = new String();
+
+				if (newConfigDescription == null
+						|| newConfigDescription.equals("")) {	//$NON-NLS-1$
+					nameAndDescription = newConfigName;
+				} else {
+					nameAndDescription = newConfigName + "( "	//$NON-NLS-1$
+							+ newConfigDescription + " )";	//$NON-NLS-1$
+				}
+				getExistingConfigs().put(nameAndDescription, selectedConfig);
+			
+				// Set the selected Configuration to the newConfig
+				setSelectedConfiguration(selectedConfig);
+				
+				// Update the Configuration combo list that is displayed to the user.
+				currentConfigList.setItems(getConfigurationNamesAndDescriptions());
+				
+				// Get the index of selected configuration & set selection in config list.
+				int configIndex = currentConfigList.indexOf(nameAndDescription);
+				currentConfigList.setSelection(configIndex);
+				
+				//	Update the buttons based on the choices
+				updateButtons();
+			}
 		}
 	}
 
-	/* (non-javadoc)
-	 * Event handler for the restore button
+	/*
+	 * (non-javadoc) Event handler for the remove button
 	 */
-	protected void handleRestorePressed() {
+	protected void handleRemovePressed() {
+		
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		
 		// Determine which configuration was selected
-		int selectionIndex = deletedConfigList.getSelectionIndex();
-		// Move the selected element from the correct deleted list to the current list
+		int selectionIndex = currentConfigList.getSelectionIndex();
 		if (selectionIndex != -1){
-			// Get the name of the item to delete
-			String selectedConfigName = deletedConfigList.getItem(selectionIndex);
+			String selectedConfigNameAndDescription = currentConfigList.getItem(selectionIndex);
 			
-			// The deleted config may be one of the existing configs or one of the
-			// new configs that have not been added to the target yet
-			if (getRemovedNewConfigs().containsKey(selectedConfigName)) {
-				IConfiguration restoredConfig = managedProject.getConfiguration(selectedConfigName);
-				getNewConfigs().put(selectedConfigName, restoredConfig);
-				getRemovedNewConfigs().remove(selectedConfigName);
-			} else {
-				getDeletedConfigs().remove(selectedConfigName);
+			// Get the confirmation from user before deleting the configuration
+			Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
+			boolean shouldDelete = MessageDialog.openQuestion(shell,
+			        ManagedBuilderUIMessages.getResourceString("ManageConfig.deletedialog.title"), //$NON-NLS-1$
+			        ManagedBuilderUIMessages.getFormattedString("ManageConfig.deletedialog.message",  //$NON-NLS-1$
+			                new String[] {selectedConfigNameAndDescription}));
+			if (shouldDelete) {
+				IConfiguration selectedConfig = (IConfiguration) getExistingConfigs()
+						.get(selectedConfigNameAndDescription);
+				String selectedConfigId = (String) selectedConfig.getId();
+				getDeletedConfigs().put(selectedConfigNameAndDescription,
+						selectedConfigId);
+
+				// Remove the configurations from the project & from list
+				// configuration list
+				info.getManagedProject().removeConfiguration(selectedConfigId);
+				getExistingConfigs().remove(selectedConfigNameAndDescription);
+
+				// Update the Configuration combo list that is displayed to the
+				// user.
+				currentConfigList
+						.setItems(getConfigurationNamesAndDescriptions());
+				currentConfigList
+						.setSelection(currentConfigList.getItemCount() - 1);
+
+				// Update selected configuration variable
+				selectionIndex = currentConfigList.getSelectionIndex();
+				if (selectionIndex != -1) {
+					selectedConfigNameAndDescription = currentConfigList
+							.getItem(selectionIndex);
+					selectedConfig = (IConfiguration) getExistingConfigs().get(
+							selectedConfigNameAndDescription);
+					setSelectedConfiguration(selectedConfig);
+				}
+				// Clean up the UI lists
+				updateButtons();
 			}
-			// Clean up the UI
-			deletedConfigList.remove(selectionIndex);
-			deletedConfigList.setSelection(selectionIndex - 1);
-			currentConfigList.add(selectedConfigName);
-			currentConfigList.setSelection(currentConfigList.getItemCount());
-			updateButtons();
 		}
 	}
 
 	private void updateButtons() {
 		// Disable the remove button if there is only 1 configuration
 		removeBtn.setEnabled(currentConfigList.getItemCount() > 1);
-		// Enable the restore button if there is anything in the deleted list
-		restoreBtn.setEnabled(deletedConfigList.getItemCount() > 0);
+		convertTargetBtn.setEnabled( conversionTargetSelector.getItemCount() > 1);
+	}
+
+	private void handleConfigSelection() {
+		// Determine which configuration was selected
+		int selectionIndex = currentConfigList.getSelectionIndex();
+
+		String selectedConfigNameAndDescription = currentConfigList
+				.getItem(selectionIndex);
+
+		IConfiguration selectedConfig = (IConfiguration) getExistingConfigs()
+				.get(selectedConfigNameAndDescription);
+		setSelectedConfiguration(selectedConfig);
+
+		updateConversionTargets(selectedConfig);
+		return;
+	}
+	
+	public IConfiguration getSelectedConfiguration() {
+		return selectedConfiguration;
+	}
+
+	public void setSelectedConfiguration(IConfiguration selectedConfiguration) {
+		this.selectedConfiguration = selectedConfiguration;
 	}
 }

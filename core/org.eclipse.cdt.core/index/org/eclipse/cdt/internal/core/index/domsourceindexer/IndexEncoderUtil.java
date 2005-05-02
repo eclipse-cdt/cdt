@@ -74,12 +74,10 @@ public class IndexEncoderUtil {
         IASTFileLocation fileLoc = null;
         
         IASTNodeLocation[] locs = node.getNodeLocations();
-        if (locs.length == 1) {
-            if (locs[0] instanceof IASTFileLocation) {
-                fileLoc = (IASTFileLocation) locs[0];
-            }
+        if (locs.length == 1 && locs[0] instanceof IASTFileLocation) {
+            fileLoc = (IASTFileLocation) locs[0];
         }
-        else if (locs.length > 1) {
+        else if (locs.length > 0) {
             fileLoc = node.getTranslationUnit().flattenLocationsToFile(locs);
         }
         return fileLoc;

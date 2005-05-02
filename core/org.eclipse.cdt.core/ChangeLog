@@ -1,3 +1,9 @@
+2005-05-02 Vladimir Hirsl
+	Fix for PR 96762: DOM indexer misses some obvious symbols
+		Fixed calculation of file locations for names inside macro definitions
+		
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexEncoderUtil.java
+
 2005-04-28 Alain Magloire
 	Patch from Devlin Steffler
 	FIXED 84606- CDT needs to take advantage of background refresh of projects

@@ -1598,6 +1598,9 @@ public class CPPSemantics {
                 } else {
                     pointOfDecl = nd.getOffset() + nd.getLength();
                 }
+            } else if( prop == ICPPASTUsingDeclaration.NAME ){
+                nd = (ASTNode) nd.getParent();
+            	pointOfDecl = nd.getOffset();
             } else if( prop == ICPPASTNamespaceAlias.ALIAS_NAME ){
             	nd = (ASTNode) nd.getParent();
             	pointOfDecl = nd.getOffset() + nd.getLength();

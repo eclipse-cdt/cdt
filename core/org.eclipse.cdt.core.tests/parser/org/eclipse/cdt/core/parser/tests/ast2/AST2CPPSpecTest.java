@@ -2636,6 +2636,68 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 7.3.3-10):
+	namespace A {
+	int x;
+	}
+	namespace B {
+	int i;
+	struct g { };
+	struct x { };
+	void f(int);
+	void f(double);
+	void g(char); // OK: hides struct g
+	}
+	void func()
+	{
+	int i;
+	using B::i; // error: i declared twice
+	void f(char);
+	using B::f; // OK: each f is a function
+	f(3.5); //calls B::f(double)
+	using B::g;
+	g('a'); //calls B::g(char)
+	struct g g1; // g1 has class type B::g
+	using B::x;
+	using A::x; // OK: hides struct B::x
+	x = 99; // assigns to A::x
+	struct x x1; // x1 has class type B::x
+	}
+	 --End Example]
+	 */
+	public void test7_3_3s10() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace A {\n"); //$NON-NLS-1$
+		buffer.append("int x;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("namespace B {\n"); //$NON-NLS-1$
+		buffer.append("int i;\n"); //$NON-NLS-1$
+		buffer.append("struct g { };\n"); //$NON-NLS-1$
+		buffer.append("struct x { };\n"); //$NON-NLS-1$
+		buffer.append("void f(int);\n"); //$NON-NLS-1$
+		buffer.append("void f(double);\n"); //$NON-NLS-1$
+		buffer.append("void g(char); // OK: hides struct g\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("void func()\n"); //$NON-NLS-1$
+		buffer.append("{\n"); //$NON-NLS-1$
+		buffer.append("int i;\n"); //$NON-NLS-1$
+		buffer.append("//using B::i; // error: i declared twice\n"); //$NON-NLS-1$
+		buffer.append("void f(char);\n"); //$NON-NLS-1$
+		buffer.append("using B::f; // OK: each f is a function\n"); //$NON-NLS-1$
+		buffer.append("f(3.5); //calls B::f(double)\n"); //$NON-NLS-1$
+		buffer.append("using B::g;\n"); //$NON-NLS-1$
+		buffer.append("g('a'); //calls B::g(char)\n"); //$NON-NLS-1$
+		buffer.append("struct g g1; // g1 has class type B::g\n"); //$NON-NLS-1$
+		buffer.append("using B::x;\n"); //$NON-NLS-1$
+		buffer.append("using A::x; // OK: hides struct B::x\n"); //$NON-NLS-1$
+		buffer.append("x = 99; // assigns to A::x\n"); //$NON-NLS-1$
+		buffer.append("struct x x1; // x1 has class type B::x\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 7.3.3-11):
 	namespace B {
 	void f(int);

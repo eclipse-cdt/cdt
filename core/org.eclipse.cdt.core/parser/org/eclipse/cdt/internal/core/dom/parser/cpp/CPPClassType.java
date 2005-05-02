@@ -98,7 +98,12 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
             return ((ICPPClassType)getBinding()).getCompositeScope();
         }
         public Object clone() {
-            return ((ICPPClassType)getBinding()).clone();
+            CPPClassTypeDelegate d = null;
+            try {
+                d = (CPPClassTypeDelegate) super.clone();
+            } catch ( CloneNotSupportedException e ) {
+            }
+            return d;
         }
 		public ICPPMethod[] getConversionOperators() {
 			IBinding binding = getBinding();

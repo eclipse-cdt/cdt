@@ -16,8 +16,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -26,7 +28,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 /**
  * @author aniefer
  */
-public class CPPUsingDeclaration implements ICPPUsingDeclaration {
+public class CPPUsingDeclaration implements ICPPUsingDeclaration, ICPPInternalBinding{
     private IASTName name;
     private ICPPDelegate [] delegates;
     
@@ -98,6 +100,49 @@ public class CPPUsingDeclaration implements ICPPUsingDeclaration {
      */
     public IScope getScope() {
         return CPPVisitor.getContainingScope( name.getParent() );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
+     */
+    public IASTNode[] getDeclarations() {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
+     */
+    public IASTNode getDefinition() {
+        IASTNode n = name.getParent();
+        if( n instanceof ICPPASTTemplateId )
+            n = n.getParent();
+            
+        return n;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+     */
+    public ICPPDelegate createDelegate( IASTName name ) {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
+     */
+    public void addDefinition( IASTNode node ) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
+     */
+    public void addDeclaration( IASTNode node ) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#removeDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
+     */
+    public void removeDeclaration( IASTNode node ) {
     }
 
 }

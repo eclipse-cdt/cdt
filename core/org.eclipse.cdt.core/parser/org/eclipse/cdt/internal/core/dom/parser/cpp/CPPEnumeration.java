@@ -38,7 +38,11 @@ public class CPPEnumeration implements IEnumeration, ICPPInternalBinding {
             return ((IEnumeration)getBinding()).getEnumerators();
         }
         public Object clone() {
-            return ((IEnumeration)getBinding()).clone();
+            try {
+                return super.clone();
+            } catch ( CloneNotSupportedException e ) {
+            }
+            return null;
         }
         public boolean isSameType( IType type ) {
             return ((IEnumeration)getBinding()).isSameType( type );

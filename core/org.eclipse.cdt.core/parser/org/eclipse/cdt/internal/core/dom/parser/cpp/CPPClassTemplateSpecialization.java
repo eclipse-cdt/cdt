@@ -1,4 +1,4 @@
-/**********************************************************************
+/*************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
@@ -7,102 +7,95 @@
  * 
  * Contributors: 
  * IBM - Initial API and implementation
- **********************************************************************/
+ */
 /*
- * Created on Apr 5, 2005
+ * Created on May 2, 2005
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
+ *
  */
-public class CPPClassTemplateSpecialization extends CPPClassTemplate implements
-		ICPPTemplateSpecialization {
+public class CPPClassTemplateSpecialization extends CPPClassSpecialization
+		implements ICPPClassTemplate, ICPPInternalTemplate {
 
-	private IType [] arguments;
+	private ObjectMap instances = null;
+	
 	/**
-	 * @param name
+	 * @param specialized
+	 * @param scope
+	 * @param argumentMap
 	 */
-	public CPPClassTemplateSpecialization(ICPPASTTemplateId name) {
-		super(name);
+	public CPPClassTemplateSpecialization(IBinding specialized,
+			ICPPScope scope, ObjectMap argumentMap) {
+		super(specialized, scope, argumentMap);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization#getArguments()
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate#getPartialSpecializations()
 	 */
-	public IType[] getArguments() {
-		if( arguments == null ){
-			ICPPASTTemplateId id = (ICPPASTTemplateId) getTemplateName();
-			arguments = CPPTemplates.createTypeArray( id.getTemplateArguments() );
-		}
-		return arguments;
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
+		// TODO Auto-generated method stub
+		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization#isPartialSpecialization()
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition#getTemplateParameters()
 	 */
-	public boolean isPartialSpecialization() {
-		return getTemplateParameters().length > 0;
+	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
+		ICPPClassTemplate template = (ICPPClassTemplate) getSpecializedBinding();
+		return template.getTemplateParameters();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization#getPrimaryTemplateDefinition()
-	 */
-	public ICPPTemplateDefinition getPrimaryTemplateDefinition() {
-		ICPPASTTemplateId id = (ICPPASTTemplateId) getTemplateName();
-		return (ICPPTemplateDefinition) id.getTemplateName().resolveBinding();
+	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {
+		if( instances == null )
+			instances = new ObjectMap(2);
+		instances.put( arguments, specialization );
 	}
-
-	public IBinding instantiate( IType [] args ){
-		ICPPTemplateInstance instance = getInstance( args );
-		if( instance != null ){
-			return instance;
-		}
-		
-		IType [] specArgs = getArguments();
-		if( specArgs.length != arguments.length ){
+	
+	public ICPPSpecialization getInstance( IType [] arguments ) {
+		if( instances == null )
 			return null;
-		}
 		
-		ObjectMap argMap = new ObjectMap( specArgs.length );
-		int numSpecArgs = specArgs.length;
-		for( int i = 0; i < numSpecArgs; i++ ){
-			IType spec = specArgs[i];
-			IType arg = args[i];
-			
-			//If the argument is a template parameter, we can't instantiate yet, defer for later
-			if( arg instanceof ICPPTemplateParameter ){
-				return deferredInstance( args );
-			}
-			try {
-				if( !CPPTemplates.deduceTemplateArgument( argMap,  spec, arg ) )
-					return null;
-			} catch (DOMException e) {
-				return null;
+		int found = -1;
+		for( int i = 0; i < instances.size(); i++ ){
+			IType [] args = (IType[]) instances.keyAt( i );
+			if( args.length == arguments.length ){
+				int j = 0;
+				for(; j < args.length; j++) {
+					if( !( args[j].isSameType( arguments[j] ) ) )
+						break;
+				}
+				if( j == args.length ){
+					found = i;
+					break;
+				}
 			}
 		}
-		
-		ICPPTemplateParameter [] params = getTemplateParameters();
-		int numParams = params.length;
-		for( int i = 0; i < numParams; i++ ){
-			if( params[i] instanceof IType && !argMap.containsKey( params[i] ) )
-				return null;
+		if( found != -1 ){
+			return (ICPPSpecialization) instances.getAt(found);
 		}
-		
-		instance = (ICPPTemplateInstance) CPPTemplates.createInstance( (ICPPScope) getScope(), this, argMap, args );
-		addInstance( args, instance );
-		
-		return instance;
+		return null;
+	}
+
+	public IBinding instantiate(IType[] arguments) {
+		// TODO Auto-generated method stub
+		return CPPTemplates.instantiateTemplate( this, arguments, argumentMap );
+	}
+
+	public ICPPSpecialization deferredInstance(IType[] arguments) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

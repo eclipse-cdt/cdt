@@ -83,6 +83,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -97,10 +98,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -1554,8 +1554,8 @@ public class CPPSemantics {
 	    if( node.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 	    
 	    ASTNode nd = null;
-	    if( obj instanceof ICPPTemplateInstance ){
-	        obj = ((ICPPTemplateInstance)obj).getOriginalBinding();
+	    if( obj instanceof ICPPSpecialization ){
+	        obj = ((ICPPSpecialization)obj).getSpecializedBinding();
 	    }
 	    
 	    if( obj instanceof ICPPInternalBinding ){
@@ -1650,8 +1650,8 @@ public class CPPSemantics {
 		        	       (type instanceof ICPPDelegate && ((ICPPDelegate)type).getBinding() == temp) )
 	        	{
 	        	    //ok, delegates are synonyms
-	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPTemplateSpecialization &&
-						   ((ICPPTemplateSpecialization)temp).getPrimaryTemplateDefinition() == type )
+	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPClassTemplatePartialSpecialization &&
+						   ((ICPPClassTemplatePartialSpecialization)temp).getPrimaryClassTemplate() == type )
 				{
 					//ok, stay with the template, the specialization, if applicable, will come out during instantiation
 				} else if( type != temp ) {
@@ -2035,14 +2035,14 @@ public class CPPSemantics {
 			
 			if( !hasWorse ){
 				//if they are both template functions, we can order them that way
-				boolean bestIsTemplate = (bestFn instanceof ICPPTemplateInstance && 
-										 ((ICPPTemplateInstance)bestFn).getOriginalBinding() instanceof ICPPFunctionTemplate);
-				boolean currIsTemplate = (currFn instanceof ICPPTemplateInstance && 
-						 				((ICPPTemplateInstance)currFn).getOriginalBinding() instanceof ICPPFunctionTemplate);
+				boolean bestIsTemplate = (bestFn instanceof ICPPSpecialization && 
+										 ((ICPPSpecialization)bestFn).getSpecializedBinding() instanceof ICPPFunctionTemplate);
+				boolean currIsTemplate = (currFn instanceof ICPPSpecialization && 
+						 				((ICPPSpecialization)currFn).getSpecializedBinding() instanceof ICPPFunctionTemplate);
 				if( bestIsTemplate && currIsTemplate )
 				{
-						ICPPFunctionTemplate t1 = (ICPPFunctionTemplate) ((ICPPTemplateInstance)bestFn).getOriginalBinding();
-						ICPPFunctionTemplate t2 = (ICPPFunctionTemplate) ((ICPPTemplateInstance)currFn).getOriginalBinding();
+						ICPPFunctionTemplate t1 = (ICPPFunctionTemplate) ((ICPPSpecialization)bestFn).getSpecializedBinding();
+						ICPPFunctionTemplate t2 = (ICPPFunctionTemplate) ((ICPPSpecialization)currFn).getSpecializedBinding();
 						int order = CPPTemplates.orderTemplateFunctions( t1, t2);
 						if ( order < 0 ){
 							hasBetter = true;	 				

@@ -360,7 +360,7 @@ public class CPPVisitor {
 		}
 		IBinding binding;
 		if( name instanceof ICPPASTTemplateId ){
-			return CPPTemplates.createClassPartialSpecialization( compType );
+			return CPPTemplates.createClassSpecialization( compType );
 		} 
         try {
             binding = (scope != null ) ? scope.getBinding( name, false ) : null;

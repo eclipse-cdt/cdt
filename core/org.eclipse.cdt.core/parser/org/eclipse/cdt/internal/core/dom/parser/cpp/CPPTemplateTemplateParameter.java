@@ -31,8 +31,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
@@ -40,7 +41,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * @author aniefer
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
-		ICPPTemplateTemplateParameter, ICPPClassType {
+		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate {
 
 	private ICPPTemplateParameter [] templateParameters = null;
 	
@@ -103,8 +104,8 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition#getTemplateSpecializations()
 	 */
-	public ICPPTemplateSpecialization[] getTemplateSpecializations() throws DOMException {
-		return ICPPTemplateSpecialization.EMPTY_TEMPLATE_SPECIALIZATION_ARRAY;
+	public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
+		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
 	/* (non-Javadoc)
@@ -237,4 +238,24 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
             return ((ITypedef)type).isSameType( this );
         return false;
     }
+
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
+	}
+
+	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {		
+	}
+
+	public IBinding instantiate(IType[] arguments) {
+		return deferredInstance( arguments );
+	}
+
+	public ICPPSpecialization deferredInstance(IType[] arguments) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ICPPSpecialization getInstance(IType[] arguments) {
+		return null;
+	}
 }

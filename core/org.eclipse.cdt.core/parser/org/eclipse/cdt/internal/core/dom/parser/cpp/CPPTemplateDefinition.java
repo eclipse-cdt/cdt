@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -30,15 +31,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -47,7 +45,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 /**
  * @author aniefer
  */
-public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, ICPPInternalBinding {
+public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, ICPPInternalTemplate {
 	public static final class CPPTemplateProblem extends ProblemBinding implements ICPPTemplateDefinition {
 		public CPPTemplateProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
@@ -55,7 +53,7 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 		public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
 			throw new DOMException( this );
 		}
-		public ICPPTemplateSpecialization[] getTemplateSpecializations() throws DOMException {
+		public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
 			throw new DOMException( this );
 		}
 		public String[] getQualifiedName() throws DOMException {
@@ -73,7 +71,6 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	protected IASTName definition = null;
 	
 	private ICPPTemplateParameter [] templateParameters = null;
-	private ICPPTemplateSpecialization [] specializations = null;
 	private ObjectMap instances = null;
 	
 	public CPPTemplateDefinition( IASTName name ) {
@@ -95,7 +92,7 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 		}
 	}
 
-	public abstract ICPPTemplateInstance deferredInstance( IType [] arguments );
+	public abstract ICPPSpecialization deferredInstance( IType [] arguments );
 	
 	public IBinding instantiate(ICPPASTTemplateId templateId ) {//IASTNode[] arguments) {
 		IASTNode [] args = templateId.getTemplateArguments();
@@ -104,104 +101,25 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	}
 	
 	public IBinding instantiate( IType [] arguments ){
-		ICPPTemplateDefinition template;
-		try {
-			template = CPPTemplates.matchTemplatePartialSpecialization( this, arguments );
-		} catch (DOMException e) {
-			return e.getProblem();
+		ICPPTemplateDefinition template = null;
+		if( this instanceof ICPPClassTemplate ){
+			try {
+				template = CPPTemplates.matchTemplatePartialSpecialization( (ICPPClassTemplate) this, arguments );
+			} catch (DOMException e) {
+				return e.getProblem();
+			}
 		}
 		
-		if( template != null && template instanceof ICPPTemplateSpecialization ){
+		if( template instanceof IProblemBinding )
+			return template;
+		if( template != null && template instanceof ICPPClassTemplatePartialSpecialization ){
 			return ((CPPTemplateDefinition)template).instantiate( arguments );	
 		}
 		
-		if( template == null ){
-			template = this;
-		}
-		
-		ICPPTemplateParameter[] parameters = null;
-		try {
-			parameters = template.getTemplateParameters();
-		} catch (DOMException e1) {
-			return e1.getProblem();
-		}
-		
-		int numParams = ( parameters != null ) ? parameters.length : 0;
-		int numArgs = arguments.length;
-		
-		if( numParams == 0 ){
-			return null;				
-		}
-
-		ObjectMap map = new ObjectMap( numParams );
-		ICPPTemplateParameter param = null;
-		IType arg = null;
-		IType[] actualArgs = new IType[ numParams ];
-		
-		for( int i = 0; i < numParams; i++ ){
-			arg = null;
-			param = parameters[i];
-			
-			if( i < numArgs ){
-				arg = arguments[i];
-				//If the argument is a template parameter, we can't instantiate yet, defer for later
-				if( arg instanceof ICPPTemplateParameter ){
-					return deferredInstance( arguments );
-				}
-			} else {
-				IType defaultType = null;
-				try {
-					if( param instanceof ICPPTemplateTypeParameter )
-						defaultType = ((ICPPTemplateTypeParameter)param).getDefault();
-					else if( param instanceof ICPPTemplateTemplateParameter )
-						defaultType = ((ICPPTemplateTemplateParameter)param).getDefault();
-					else if( param instanceof ICPPTemplateNonTypeParameter )
-						defaultType = CPPVisitor.getExpressionType( ((ICPPTemplateNonTypeParameter)param).getDefault() );
-				} catch (DOMException e) {
-					defaultType = e.getProblem();
-				}
-				if( defaultType != null ){
-					if( defaultType instanceof ICPPTemplateParameter ){
-						if( map.containsKey( defaultType ) ){
-							arg = (IType) map.get( defaultType );
-						}
-					} else {
-					    arg = defaultType;
-					}
-				} else {
-					//TODO problem
-					return null;
-				}
-			}
-			
-			if( CPPTemplates.matchTemplateParameterAndArgument( param, arg ) ){
-				map.put( param, arg );
-				actualArgs[i] = arg;
-			} else {
-				//TODO problem
-				return null;
-			}
-		}
-		
-		ICPPTemplateInstance instance = getInstance( actualArgs );
-		if( instance != null ){
-			return instance;
-		} 
-		
-		instance = (ICPPTemplateInstance) CPPTemplates.createInstance( (ICPPScope) getScope(), this, map, arguments );
-		addInstance( arguments, instance );
-	
-		return instance;	
+		return CPPTemplates.instantiateTemplate( this, arguments, null );
 	}
 	
-	public ICPPTemplateSpecialization [] getTemplateSpecializations() {
-		return (ICPPTemplateSpecialization[]) ArrayUtil.trim( ICPPTemplateSpecialization.class, specializations );
-	}
-	public void addSpecialization( ICPPTemplateSpecialization spec ){
-		specializations = (ICPPTemplateSpecialization[]) ArrayUtil.append( ICPPTemplateSpecialization.class, specializations, spec );
-		
-	}
-	public ICPPTemplateInstance getInstance( IType [] arguments ) {
+	public ICPPSpecialization getInstance( IType [] arguments ) {
 		if( instances == null )
 			return null;
 		
@@ -221,15 +139,15 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 			}
 		}
 		if( found != -1 ){
-			return (ICPPTemplateInstance) instances.getAt(found);
+			return (ICPPSpecialization) instances.getAt(found);
 		}
 		return null;
 	}
 	
-	public void addInstance( IType [] types, ICPPTemplateInstance instance ){
+	public void addSpecialization( IType [] types, ICPPSpecialization spec ){
 		if( instances == null )
 			instances = new ObjectMap( 2 );
-		instances.put( types, instance );
+		instances.put( types, spec );
 	}
 	
 	public IBinding resolveTemplateParameter(ICPPASTTemplateParameter templateParameter) {

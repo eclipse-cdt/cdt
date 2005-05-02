@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -138,7 +137,6 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
 	
 	private static final int FULLY_RESOLVED         = 1;
 	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
-	private static final int IS_STATIC              = 3 << 2;
 	private int bits = 0;
 	
 	public CPPFunction( ICPPASTFunctionDeclarator declarator ){
@@ -418,36 +416,39 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
         if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
-
-        //2 state bits, most significant = whether or not we've figure this out yet
-        //least significant = whether or not we are static
-        int state = ( bits & IS_STATIC ) >> 2;
-        if( state > 1 ) return (state % 2 != 0);
-        
-        IASTDeclSpecifier declSpec = null;
-        IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getDefinition();
-        if( dtor != null ){
-	        declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
-	        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
-	            bits |= 3 << 2;
-	            return true;
-	        }
-        }
-        
-        IASTFunctionDeclarator[] dtors = (IASTFunctionDeclarator[]) getDeclarations();
-        if( dtors != null ) {
-	        for( int i = 0; i < dtors.length; i++ ){
-	            IASTNode parent = dtors[i].getParent();
-	            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-	            if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
-	                bits |= 3 << 2;
-	                return true;
-	            }
-	        }
-        }
-        bits |= 2 << 2;
-        return false;
+		return hasStorageClass( this, IASTDeclSpecifier.sc_static );
     }
+//    }
+//	static public boolean isStatic
+//        //2 state bits, most significant = whether or not we've figure this out yet
+//        //least significant = whether or not we are static
+//        int state = ( bits & IS_STATIC ) >> 2;
+//        if( state > 1 ) return (state % 2 != 0);
+//        
+//        IASTDeclSpecifier declSpec = null;
+//        IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getDefinition();
+//        if( dtor != null ){
+//	        declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
+//	        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+//	            bits |= 3 << 2;
+//	            return true;
+//	        }
+//        }
+//        
+//        IASTFunctionDeclarator[] dtors = (IASTFunctionDeclarator[]) getDeclarations();
+//        if( dtors != null ) {
+//	        for( int i = 0; i < dtors.length; i++ ){
+//	            IASTNode parent = dtors[i].getParent();
+//	            declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+//	            if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+//	                bits |= 3 << 2;
+//	                return true;
+//	            }
+//	        }
+//        }
+//        bits |= 2 << 2;
+//        return false;
+//    }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
@@ -483,9 +484,9 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
         return new CPPFunctionDelegate( name, this );
     }
 
-	public boolean hasStorageClass( int storage ){
-	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) getDefinition();
-        ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) getDeclarations();
+	static public boolean hasStorageClass( ICPPInternalFunction function, int storage ){
+	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) function.getDefinition();
+        ICPPASTFunctionDeclarator[] ds = (ICPPASTFunctionDeclarator[]) function.getDeclarations();
         int i = -1;
         do{
             if( dtor != null ){
@@ -550,21 +551,21 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+        return hasStorageClass( this, IASTDeclSpecifier.sc_extern );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+        return hasStorageClass( this, IASTDeclSpecifier.sc_auto );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register );
+        return hasStorageClass( this, IASTDeclSpecifier.sc_register );
     }
 
     /* (non-Javadoc)

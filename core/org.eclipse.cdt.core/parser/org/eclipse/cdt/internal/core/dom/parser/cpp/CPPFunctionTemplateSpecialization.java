@@ -1,58 +1,90 @@
+/*************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ */
+/*
+ * Created on Apr 29, 2005
+ */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
-public class CPPFunctionTemplateSpecialization extends CPPFunction implements
-		ICPPTemplateSpecialization {
+/**
+ * @author aniefer
+ *
+ */
+public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization implements
+		ICPPFunctionTemplate, ICPPFunction, ICPPInternalTemplate {
 
-	private IASTName name = null;
-	private IType [] argumentTypes = null;
-	private ICPPFunctionTemplate primaryTemplate = null;
+	private ObjectMap instances = null;
 	
-	public CPPFunctionTemplateSpecialization(ICPPASTFunctionDeclarator declarator, ICPPFunctionTemplate primaryTemplate ) {
-		super(declarator);
-		this.primaryTemplate = primaryTemplate;
-		IASTName n = declarator.getName();
-	    if( n instanceof ICPPASTQualifiedName ){
-	        IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
-	        n = ns[ ns.length - 1 ];
-	    }
-		this.name = n;
+	public CPPFunctionTemplateSpecialization(IBinding specialized, ICPPScope scope, ObjectMap argumentMap) {
+		super(specialized, scope, argumentMap);
+	}
+
+	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
+		ICPPFunctionTemplate template = (ICPPFunctionTemplate) getSpecializedBinding();
+		return template.getTemplateParameters();
+	}
+
+	public ICPPDelegate createDelegate(IASTName name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {
+		if( instances == null )
+			instances = new ObjectMap(2);
+		instances.put( arguments, specialization );
 	}
 	
-	public IType [] getArguments() throws DOMException{
-		if( argumentTypes == null ){
-			IASTNode [] specArgs = ( name instanceof ICPPASTTemplateId ) ? ((ICPPASTTemplateId)name).getTemplateArguments() 
-																		 : IASTNode.EMPTY_NODE_ARRAY;
-			argumentTypes = CPPTemplates.deduceTemplateFunctionArguments( this, specArgs );
+	public ICPPSpecialization getInstance( IType [] arguments ) {
+		if( instances == null )
+			return null;
+		
+		int found = -1;
+		for( int i = 0; i < instances.size(); i++ ){
+			IType [] args = (IType[]) instances.keyAt( i );
+			if( args.length == arguments.length ){
+				int j = 0;
+				for(; j < args.length; j++) {
+					if( !( args[j].isSameType( arguments[j] ) ) )
+						break;
+				}
+				if( j == args.length ){
+					found = i;
+					break;
+				}
+			}
 		}
-		return argumentTypes;
+		if( found != -1 ){
+			return (ICPPSpecialization) instances.getAt(found);
+		}
+		return null;
+	}
+	
+	public IBinding instantiate(IType[] arguments) {
+		return CPPTemplates.instantiateTemplate( this, arguments, argumentMap ); 
 	}
 
-	public boolean isPartialSpecialization() {
-		return false;
+	public ICPPSpecialization deferredInstance(IType[] arguments) {
+		// TODO Auto-generated method stub
+		return null;
 	}
-
-	public ICPPTemplateDefinition getPrimaryTemplateDefinition() {
-		return primaryTemplate;
-	}
-
-	public ICPPTemplateParameter[] getTemplateParameters() {
-		return ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
-	}
-
-	public ICPPTemplateSpecialization[] getTemplateSpecializations() {
-		return ICPPTemplateSpecialization.EMPTY_TEMPLATE_SPECIALIZATION_ARRAY;
-	}
-
 }

@@ -31,11 +31,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -49,7 +49,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
 			throw new DOMException( this );
 		}
-		public ICPPTemplateSpecialization[] getTemplateSpecializations() throws DOMException {
+		public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
 			throw new DOMException( this );		
 		}
 		public String[] getQualifiedName() throws DOMException {
@@ -267,7 +267,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition#deferredInstance(org.eclipse.cdt.core.dom.ast.IType[])
 	 */
-	public ICPPTemplateInstance deferredInstance(IType[] arguments) {
+	public ICPPSpecialization deferredInstance(IType[] arguments) {
 		return new CPPDeferredFunctionInstance( this, arguments );
 	}
 	/* (non-Javadoc)

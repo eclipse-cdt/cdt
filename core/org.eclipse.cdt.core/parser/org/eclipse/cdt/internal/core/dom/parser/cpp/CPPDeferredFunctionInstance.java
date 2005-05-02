@@ -15,8 +15,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -24,18 +22,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
  */
-public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
-		ICPPFunction, ICPPTemplateInstance, ICPPInternalFunction {
+public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunction, ICPPInternalFunction {
 
 	private IType[] arguments;
-	private ICPPFunctionTemplate functionTemplate;
 
 	/**
 	 * @param scope
@@ -43,7 +36,7 @@ public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
 	 * @param argMap
 	 */
 	public CPPDeferredFunctionInstance( ICPPFunctionTemplate template, IType[] arguments ) {
-		this.functionTemplate = template;
+		super( null, template, null, arguments );
 		this.arguments = arguments;
 	}
 
@@ -58,7 +51,7 @@ public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
 	public IParameter[] getParameters() throws DOMException {
-		return ((ICPPFunction)functionTemplate).getParameters();
+		return ((ICPPFunction)getTemplateDefinition()).getParameters();
 	}
 
 	/* (non-Javadoc)
@@ -83,78 +76,6 @@ public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
 	public boolean isStatic() throws DOMException {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-	 */
-	public String[] getQualifiedName() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-	 */
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-	 */
-	public boolean isGloballyQualified() throws DOMException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
-	public char[] getNameCharArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
-	public IScope getScope() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getOriginalBinding()
-	 */
-	public IBinding getOriginalBinding() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getArgumentMap()
-	 */
-	public ObjectMap getArgumentMap() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance#getTemplate()
-	 */
-	public ICPPTemplateDefinition getTemplate() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -206,47 +127,11 @@ public class CPPDeferredFunctionInstance /*extends CPPInstance*/ implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-	 */
-	public IASTNode[] getDeclarations() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-	 */
-	public IASTNode getDefinition() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public ICPPDelegate createDelegate(IASTName name) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
-	public void addDefinition(IASTNode node) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
-	public void addDeclaration(IASTNode node) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void removeDeclaration(IASTNode node) {
-		
 	}
 
     /* (non-Javadoc)

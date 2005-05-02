@@ -26,5 +26,5 @@ public interface ICPPTemplateDefinition extends ICPPBinding{
 	 */
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException;
 	
-	public ICPPTemplateSpecialization[] getTemplateSpecializations() throws DOMException;
+	
 }

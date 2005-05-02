@@ -34,11 +34,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -48,6 +49,8 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  */
 public class CPPClassTemplate extends CPPTemplateDefinition implements
 		ICPPClassTemplate, ICPPClassType, ICPPInternalClassType {
+	
+	private ICPPClassTemplatePartialSpecialization [] partialSpecializations = null;
 	
 	private class FindDefinitionAction extends CPPASTVisitor {
 	    private char [] nameArray = CPPClassTemplate.this.getNameCharArray();
@@ -102,14 +105,15 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		super(name);
 	}
 
-	public ICPPTemplateInstance deferredInstance( IType [] arguments ){
-		ICPPTemplateInstance instance = getInstance( arguments );
+	public ICPPSpecialization deferredInstance( IType [] arguments ){
+		ICPPSpecialization instance = getInstance( arguments );
 		if( instance == null ){
 			instance = new CPPDeferredClassInstance( this, arguments );
-			addInstance( arguments, instance );
+			addSpecialization( arguments, instance );
 		}
 		return instance;
 	}
+	
 	private void checkForDefinition(){
 		FindDefinitionAction action = new FindDefinitionAction();
 		IASTNode node = CPPVisitor.getContainingBlockItem( declarations[0] ).getParent();
@@ -125,6 +129,11 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		
 		return;
 	}
+	
+	public void addPartialSpecialization( ICPPClassTemplatePartialSpecialization spec ){
+		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.append( ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec );
+	}
+	
 	private ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(){
 	    if( definition != null ){
 	        return (ICPPASTCompositeTypeSpecifier) definition.getParent();
@@ -302,4 +311,9 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
             return ((ITypedef)type).isSameType( this );
         return false;
     }
+
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
+		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.trim( ICPPClassTemplatePartialSpecialization.class, partialSpecializations );
+		return partialSpecializations;
+	}
 }

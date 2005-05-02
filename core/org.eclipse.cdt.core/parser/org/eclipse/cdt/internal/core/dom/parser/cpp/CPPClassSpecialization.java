@@ -1,56 +1,74 @@
-/*******************************************************************************
+/*************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ */
 /*
- * Created on Apr 14, 2005
+ * Created on Apr 29, 2005
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
+ *
  */
-public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassType {
+public class CPPClassSpecialization extends CPPSpecialization implements
+		ICPPClassType, ICPPInternalClassType {
 
-	public IType [] arguments = null;
-	public ICPPClassTemplate classTemplate = null;
-	
-	public CPPDeferredClassInstance(ICPPClassTemplate orig,	IType [] arguments ) {
-		super( null, orig, null, arguments );
-		this.arguments = arguments;
-		this.classTemplate = orig;
+	/**
+	 * @param specialized
+	 * @param scope
+	 */
+	public CPPClassSpecialization(IBinding specialized, ICPPScope scope, ObjectMap argumentMap) {
+		super(specialized, scope, argumentMap);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
 	public ICPPBase[] getBases() throws DOMException {
+		ICPPClassType cls = (ICPPClassType) getSpecializedBinding();
+		if( cls != null ){
+			ICPPBase [] bases = cls.getBases();
+			for (int i = 0; i < bases.length; i++) {
+				ICPPClassType T = bases[i].getBaseClass();
+				if( T instanceof ICPPTemplateTypeParameter && argumentMap.containsKey( T ) ){
+					IType t = (IType) argumentMap.get( T );
+					if( t instanceof ICPPClassType )
+						((CPPBaseClause)bases[i]).setBaseClass( (ICPPClassType) argumentMap.get(T) );
+				}
+			}
+			return bases;
+		}
+		// TODO Auto-generated method stub
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFields()
 	 */
 	public IField[] getFields() throws DOMException {
 		// TODO Auto-generated method stub
@@ -58,7 +76,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#findField(java.lang.String)
 	 */
 	public IField findField(String name) throws DOMException {
 		// TODO Auto-generated method stub
@@ -101,6 +119,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
 	public ICPPConstructor[] getConstructors() throws DOMException {
+		// TODO Auto-generated method stub
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
@@ -113,6 +132,35 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
+	 */
+	public int getKey() throws DOMException {
+		return ((ICPPClassType)getSpecializedBinding()).getKey();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
+	 */
+	public IScope getCompositeScope() throws DOMException {
+		IASTNode definition = getDefinition();
+		if( definition != null ){
+			IASTNode node = definition.getParent();
+	        while( node instanceof IASTName )
+	            node = node.getParent();
+	        if( node instanceof ICPPASTCompositeTypeSpecifier )
+	            return ((ICPPASTCompositeTypeSpecifier)node).getScope();
+		}
+		return ((ICPPClassType)getSpecializedBinding()).getCompositeScope(); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+	 */
+	public boolean isSameType(IType type) {
+		return type == this;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public ICPPDelegate createDelegate(IASTName name) {
@@ -120,48 +168,14 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
-	 */
-	public int getKey() throws DOMException {
+	public Object clone() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
-	 */
-	public IScope getCompositeScope() throws DOMException {
-		return ((ICPPClassType)classTemplate).getCompositeScope();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	 public Object clone(){
-        return this;
-    }
-
-	/**
-	 * @param argMap
-	 * @return
-	 */
-	public IType instantiate(ObjectMap argMap) {
-		
-		IType [] newArgs = new IType[ arguments.length ];
-		int size = arguments.length;
-		for( int i = 0; i < size; i++ ){
-			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap );
-		}
-		
-		return (IType) ((ICPPInternalTemplate)classTemplate).instantiate( newArgs );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
-	public boolean isSameType(IType type) {
+	public ICPPMethod[] getConversionOperators() {
 		// TODO Auto-generated method stub
-		return type == this;
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
+
 }

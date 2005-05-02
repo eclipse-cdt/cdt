@@ -219,6 +219,6 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
      */
     public boolean isMutable() {
-        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable );
+        return hasStorageClass( this, ICPPASTDeclSpecifier.sc_mutable );
     }
 }

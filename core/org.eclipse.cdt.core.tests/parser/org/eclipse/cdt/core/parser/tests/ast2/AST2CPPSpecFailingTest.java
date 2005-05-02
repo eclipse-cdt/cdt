@@ -659,41 +659,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		} catch (Exception e) {
 		}
 	}
-
-	/**
-	 [--Start Example(CPP 14.5.2-2):
-	template <class T> struct A {
-	void f(int);
-	template <class T2> void f(T2);
-	};
-	template <> void A<int>::f(int) { } // nontemplate member
-	template <> template <> void A<int>::f<>(int) { } // template member
-	int main()
-	{
-	A<char> ac;
-	ac.f(1); //nontemplate
-	ac.f('c'); //template
-	ac.f<>(1); //template
-	}
-	 --End Example]
-	 */
-	public void test14_5_2s2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template <class T> struct A {\n"); //$NON-NLS-1$
-		buffer.append("void f(int);\n"); //$NON-NLS-1$
-		buffer.append("template <class T2> void f(T2);\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("template <> void A<int>::f(int) { } // nontemplate member\n"); //$NON-NLS-1$
-		buffer.append("template <> template <> void A<int>::f<>(int) { } // template member\n"); //$NON-NLS-1$
-		buffer.append("int main()\n"); //$NON-NLS-1$
-		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("A<char> ac;\n"); //$NON-NLS-1$
-		buffer.append("ac.f(1); //nontemplate\n"); //$NON-NLS-1$
-		buffer.append("ac.f('c'); //template\n"); //$NON-NLS-1$
-		buffer.append("ac.f<>(1); //template\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 3);  //should be 0
-	}
 	
 	/**
 	 [--Start Example(CPP 14.5.3-1):

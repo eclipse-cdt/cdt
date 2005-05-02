@@ -276,8 +276,8 @@ public class DOMSearchUtil {
          // fix for 92632
          IBinding binding = searchName.resolveBinding();
          if (binding instanceof ICPPTemplateInstance) {
-             if (((ICPPTemplateInstance)binding).getOriginalBinding() != null)
-                 binding = ((ICPPTemplateInstance)binding).getOriginalBinding();
+             if (((ICPPTemplateInstance)binding).getTemplateDefinition() != null)
+                 binding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
          }
          
          if (limitTo == ICSearchConstants.DECLARATIONS) {

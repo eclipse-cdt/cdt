@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -30,7 +29,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 /**
  * @author aniefer
  */
-public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding, ICPPBinding {
+public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding {
     public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef {
         public CPPTypedefDelegate( IASTName name, ITypedef binding ) {
             super( name, binding );

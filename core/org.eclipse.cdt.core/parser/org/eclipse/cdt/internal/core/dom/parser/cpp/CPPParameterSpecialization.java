@@ -16,20 +16,17 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter.CPPParameterDelegate;
 
 /**
  * @author aniefer
  */
-public class CPPParameterInstance extends CPPInstance implements ICPPParameter, ICPPInternalBinding {
-
+public class CPPParameterSpecialization extends CPPSpecialization implements ICPPParameter {
 	private IType type = null;
 	
 	/**
@@ -37,32 +34,12 @@ public class CPPParameterInstance extends CPPInstance implements ICPPParameter, 
 	 * @param orig
 	 * @param argMap
 	 */
-	public CPPParameterInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType [] args ) {
-		super(scope, orig, argMap, args);
+	public CPPParameterSpecialization(ICPPParameter orig, ICPPScope scope, ObjectMap argMap) {
+		super( orig, scope, argMap );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-	 */
-	public IASTNode[] getDeclarations() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-	 */
-	public IASTNode getDefinition() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
-	public ICPPDelegate createDelegate(IASTName name) {
-		if( name == null ) {}
-		return null;
+	private ICPPParameter getParameter(){
+		return (ICPPParameter) getSpecializedBinding();
 	}
 
 	/* (non-Javadoc)
@@ -70,7 +47,7 @@ public class CPPParameterInstance extends CPPInstance implements ICPPParameter, 
 	 */
 	public IType getType() throws DOMException {
 		if( type == null ){
-			type = CPPTemplates.instantiateType( ((IParameter)getOriginalBinding()).getType(), getArgumentMap() );
+			type = CPPTemplates.instantiateType( getParameter().getType(), argumentMap );
 		}
 		return type;
 	}
@@ -79,27 +56,6 @@ public class CPPParameterInstance extends CPPInstance implements ICPPParameter, 
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
 	 */
 	public boolean isStatic() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-	 */
-	public String[] getQualifiedName() {
-		return CPPVisitor.getQualifiedName( this );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-	 */
-	public char[][] getQualifiedNameCharArray() {
-		return CPPVisitor.getQualifiedNameCharArray( this );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-	 */
-	public boolean isGloballyQualified() {
 		return false;
 	}
 
@@ -114,14 +70,14 @@ public class CPPParameterInstance extends CPPInstance implements ICPPParameter, 
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() throws DOMException {
-        return ((IParameter)getOriginalBinding()).isAuto();
+        return getParameter().isAuto();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() throws DOMException {
-        return ((IParameter)getOriginalBinding()).isRegister();
+        return getParameter().isRegister();
     }
 
     /* (non-Javadoc)
@@ -132,7 +88,10 @@ public class CPPParameterInstance extends CPPInstance implements ICPPParameter, 
     }
 
 	public IASTInitializer getDefaultValue() {
-		return ((ICPPParameter)getOriginalBinding()).getDefaultValue();
+		return getParameter().getDefaultValue();
 	}
 
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPParameterDelegate( name, this );
+	}
 }

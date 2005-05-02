@@ -23,14 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 
 /**
  * @author aniefer
  */
-public class CPPEnumeration implements IEnumeration, ICPPInternalBinding, ICPPBinding {
+public class CPPEnumeration implements IEnumeration, ICPPInternalBinding {
     public static class CPPEnumerationDelegate extends CPPDelegate implements IEnumeration {
         public CPPEnumerationDelegate( IASTName name, IEnumeration binding ) {
             super( name, binding );

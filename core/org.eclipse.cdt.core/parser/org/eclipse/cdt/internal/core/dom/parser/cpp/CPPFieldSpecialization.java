@@ -14,33 +14,38 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField.CPPFieldDelegate;
 
 /**
  * @author aniefer
  */
-public class CPPFieldInstance extends CPPInstance implements ICPPField {
+public class CPPFieldSpecialization extends CPPSpecialization implements ICPPField {
 	private IType type = null;
 	/**
 	 * @param orig
 	 * @param args
 	 * @param args
 	 */
-	public CPPFieldInstance(ICPPScope scope, IBinding orig, ObjectMap argMap, IType[] args ) {
-		super(scope, orig, argMap, args);
+	public CPPFieldSpecialization( IBinding orig, ICPPScope scope, ObjectMap argMap ) {
+		super(orig, scope, argMap);
 	}
 
+	private ICPPField getField() {
+		return (ICPPField) getSpecializedBinding();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
 	public int getVisibility() throws DOMException {
-		return ((ICPPField)getOriginalBinding()).getVisibility();
+		return getField().getVisibility();
 	}
 
 	/* (non-Javadoc)
@@ -48,7 +53,7 @@ public class CPPFieldInstance extends CPPInstance implements ICPPField {
 	 */
 	public IType getType() throws DOMException {
 		if( type == null ){
-			type = CPPTemplates.instantiateType( ((ICPPField)getOriginalBinding()).getType(), getArgumentMap() );
+			type = CPPTemplates.instantiateType( getField().getType(), argumentMap );
 		}
 		return type;
 	}
@@ -57,66 +62,39 @@ public class CPPFieldInstance extends CPPInstance implements ICPPField {
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
 	 */
 	public boolean isStatic() throws DOMException {
-		return ((ICPPField)getOriginalBinding()).isStatic();
+		return getField().isStatic();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-	 */
-	public String[] getQualifiedName() {
-		return CPPVisitor.getQualifiedName( this );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-	 */
-	public char[][] getQualifiedNameCharArray() {
-		return CPPVisitor.getQualifiedNameCharArray( this );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-	 */
-	public boolean isGloballyQualified() throws DOMException {
-        IScope scope = getScope();
-        while( scope != null ){
-            if( scope instanceof ICPPBlockScope || 
-            	scope.getScopeName() == null || 
-				scope.getScopeName().toCharArray().length == 0 )
-            {
-                return false;
-            }
-            scope = scope.getParent();
-        }
-        return true;
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
     public boolean isExtern() throws DOMException {
-        return ((ICPPField)getOriginalBinding()).isExtern();
+        return getField().isExtern();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() throws DOMException {
-        return ((ICPPField)getOriginalBinding()).isAuto();
+        return getField().isAuto();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() throws DOMException {
-        return ((ICPPField)getOriginalBinding()).isRegister();
+        return getField().isRegister();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
      */
     public boolean isMutable() throws DOMException {
-        return ((ICPPField)getOriginalBinding()).isMutable();
+        return getField().isMutable();
     }
+
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPFieldDelegate( name, this );
+	}
 
 }

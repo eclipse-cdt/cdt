@@ -13,9 +13,11 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+
 /**
  * @author aniefer
  */
 public interface ICPPClassTemplate extends ICPPTemplateDefinition {
-
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException;
 }

@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IType extends Cloneable {
+	public static final IType [] EMPTY_TYPE_ARRAY = new IType[0];
     public Object clone();
 
     /**

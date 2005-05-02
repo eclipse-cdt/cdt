@@ -45,7 +45,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	}
 
 	private ICPPClassType getOriginalClass(){
-		return (ICPPClassType) instance.getOriginalBinding();
+		return (ICPPClassType) instance.getTemplateDefinition();
 	}
 	public boolean isFullyCached(){
 		if( !isFullyCached ){
@@ -83,7 +83,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	    			} else {
 		    			binding = forceResolve ? n.resolveBinding() : n.getBinding();
 		    			if( binding != null ){
-		    				binding = CPPTemplates.createInstance( this, binding, instance.getArgumentMap(), instance.getArguments() );
+		    				binding = CPPTemplates.createSpecialization( this, binding, instance.getArgumentMap() );
 		    				if( instanceMap == ObjectMap.EMPTY_MAP )
 		    					instanceMap = new ObjectMap(2);
 			        		instanceMap.put( n, binding );
@@ -93,7 +93,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	    			if( instanceMap.containsKey( obj ) ){
 	    				binding = (IBinding) instanceMap.get( obj );
 	    			} else {
-	    				binding = CPPTemplates.createInstance( this, (IBinding) obj, instance.getArgumentMap(), instance.getArguments() );
+	    				binding = CPPTemplates.createSpecialization( this, (IBinding) obj, instance.getArgumentMap()  );
 	    				if( instanceMap == ObjectMap.EMPTY_MAP )
 	    					instanceMap = new ObjectMap(2);
 		        		instanceMap.put( obj, binding );

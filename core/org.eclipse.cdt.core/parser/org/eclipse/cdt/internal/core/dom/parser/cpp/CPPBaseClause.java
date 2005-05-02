@@ -44,7 +44,8 @@ public class CPPBaseClause implements ICPPBase {
             throw new DOMException( this );
         }
     }
-    ICPPASTBaseSpecifier base = null;
+    private ICPPASTBaseSpecifier base = null;
+	private ICPPClassType baseClass = null;
     
     public CPPBaseClause( ICPPASTBaseSpecifier base ){
         this.base = base;
@@ -54,14 +55,17 @@ public class CPPBaseClause implements ICPPBase {
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getBaseClass()
      */
     public ICPPClassType getBaseClass() {
-    	IBinding baseClass = base.getName().resolveBinding();
-    	if( baseClass instanceof ICPPClassType )
-    		return (ICPPClassType) baseClass;
-    	else if( baseClass instanceof IProblemBinding ){
-    		return new CPPClassType.CPPClassTypeProblem( base.getName(), ((IProblemBinding)baseClass).getID(), base.getName().toCharArray() );
-    	}
-    	
-        return new CPPClassType.CPPClassTypeProblem( base.getName(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND, base.getName().toCharArray() );
+		if( baseClass == null ){
+	    	IBinding b = base.getName().resolveBinding();
+	    	if( b instanceof ICPPClassType )
+	    		baseClass = (ICPPClassType) b;
+	    	else if( b instanceof IProblemBinding ){
+	    		baseClass =  new CPPClassType.CPPClassTypeProblem( base.getName(), ((IProblemBinding)b).getID(), base.getName().toCharArray() );
+	    	} else {
+				baseClass = new CPPClassType.CPPClassTypeProblem( base.getName(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND, base.getName().toCharArray() );
+	    	}
+		}
+		return baseClass;
     }
 
     /* (non-Javadoc)
@@ -87,5 +91,9 @@ public class CPPBaseClause implements ICPPBase {
     public boolean isVirtual() {
         return base.isVirtual();
     }
+
+	public void setBaseClass(ICPPClassType cls) {
+		baseClass = cls;
+	}
 
 }

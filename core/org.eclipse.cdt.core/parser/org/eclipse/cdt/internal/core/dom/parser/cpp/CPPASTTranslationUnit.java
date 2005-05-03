@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,6 +119,22 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return CPPVisitor.getDeclarations( this, b );
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDefinitions(org.eclipse.cdt.core.dom.ast.IBinding)
+     */
+    public IASTName[] getDefinitions(IBinding aBinding) {
+        IASTName[] foundDefs = getDeclarations(aBinding);
+        
+        for(int i=0; i<foundDefs.length; i++) {
+            if (!foundDefs[i].isDefinition())
+                foundDefs[i] = null;
+        }
+        
+        return (IASTName[])ArrayUtil.removeNulls(IASTName.class, foundDefs);
+    }
+    
     /*
      * (non-Javadoc)
      * 

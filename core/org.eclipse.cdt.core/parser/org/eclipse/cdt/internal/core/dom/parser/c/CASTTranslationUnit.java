@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002-2004 IBM Canada and others.
+ * Copyright (c) 2002, 2005 IBM Canada and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -110,6 +110,22 @@ public class CASTTranslationUnit extends CASTNode implements
         }
 		return CVisitor.getDeclarations(this, binding);
 	}
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDefinitions(org.eclipse.cdt.core.dom.ast.IBinding)
+     */
+    public IASTName[] getDefinitions(IBinding aBinding) {
+        IASTName[] foundDefs = getDeclarations(aBinding);
+        
+        for(int i=0; i<foundDefs.length; i++) {
+            if (!foundDefs[i].isDefinition())
+                foundDefs[i] = null;
+        }
+        
+        return (IASTName[])ArrayUtil.removeNulls(IASTName.class, foundDefs);
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -483,4 +499,5 @@ public class CASTTranslationUnit extends CASTNode implements
 			return EMPTY_STRING;
 		return resolver.getContainingFilename( offset );
 	}
+
 }

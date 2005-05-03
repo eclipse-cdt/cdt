@@ -920,6 +920,18 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
+            name="%ActionDefinition.opendef.name"
+            category="org.eclipse.cdt.ui.category.source"
+            description="%ActionDefinition.opendef.description"
+            id="org.eclipse.cdt.ui.edit.opendef">
+      </command>
+      <keyBinding
+            string="F2"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.opendef"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.opendecl.name"
             category="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.opendecl.description"

@@ -10,16 +10,11 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTests;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -128,7 +123,7 @@ public class SelectionTests extends TestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); // TODO Devin testing
+            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
         } catch (PartInitException e) {
             assertFalse(true);
         }
@@ -136,7 +131,39 @@ public class SelectionTests extends TestCase {
         if (part instanceof AbstractTextEditor) {
             ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,0));
             
-            final IAction action = ((AbstractTextEditor)part).getAction("OpenDeclarations");
+            final IAction action = ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
+            action.run();
+        
+            // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
+            ISelection sel = ((AbstractTextEditor)part).getSelectionProvider().getSelection();
+            
+            if (sel instanceof TextSelection) {
+                IASTName[] names = DOMSearchUtil.getSelectedNamesFrom(file, ((TextSelection)sel).getOffset(), ((TextSelection)sel).getLength());
+                
+                if (names.length == 0) {
+                    assertFalse(true);
+                } else {
+                    return names[0];
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    protected IASTNode testF2(IFile file, int offset) {
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IEditorPart part = null;
+        try {
+            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+        } catch (PartInitException e) {
+            assertFalse(true);
+        }
+        
+        if (part instanceof AbstractTextEditor) {
+            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,0));
+            
+            final IAction action = ((AbstractTextEditor)part).getAction("OpenDefinition"); //$NON-NLS-1$
             action.run();
         
             // the action above should highlight the declaration, so now retrieve it and use that selection to get the IASTName selected on the TU
@@ -202,4 +229,83 @@ public class SelectionTests extends TestCase {
         assertEquals(((ASTNode)node).getLength(), 9);
         
     }
+        
+    public void testBasicDefinition() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("extern int MyInt;       // MyInt is in another file\n"); //$NON-NLS-1$
+        buffer.append("extern const int MyConst;   // MyConst is in another file\n"); //$NON-NLS-1$
+        buffer.append("void MyFunc(int);       // often used in header files\n"); //$NON-NLS-1$
+        buffer.append("struct MyStruct;        // often used in header files\n"); //$NON-NLS-1$
+        buffer.append("typedef int NewInt;     // a normal typedef statement\n"); //$NON-NLS-1$
+        buffer.append("class MyClass;          // often used in header files\n"); //$NON-NLS-1$
+        buffer.append("int MyInt;\n"); //$NON-NLS-1$
+        buffer.append("extern const int MyConst = 42;\n"); //$NON-NLS-1$
+        buffer.append("void MyFunc(int a) { cout << a << endl; }\n"); //$NON-NLS-1$
+        buffer.append("struct MyStruct { int Member1; int Member2; };\n"); //$NON-NLS-1$
+        buffer.append("class MyClass { int MemberVar; };\n"); //$NON-NLS-1$
+        
+        String code = buffer.toString();
+        IFile file = importFile("testBasicDefinition.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("MyInt;\n") + 2; //$NON-NLS-1$
+        IASTNode def = testF2(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "MyInt"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 11);
+        assertEquals(((ASTNode)decl).getLength(), 5);
+        assertEquals(((IASTName)def).toString(), "MyInt"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 330);
+        assertEquals(((ASTNode)def).getLength(), 5);
+        
+        offset = code.indexOf("MyConst = 42") + 2; //$NON-NLS-1$
+        def = testF2(file, offset);
+        decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "MyConst"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 69);
+        assertEquals(((ASTNode)decl).getLength(), 7);
+        assertEquals(((IASTName)def).toString(), "MyConst"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 354);
+        assertEquals(((ASTNode)def).getLength(), 7);
+        
+        offset = code.indexOf("MyFunc(int a)") + 2; //$NON-NLS-1$
+        def = testF2(file, offset);
+        decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "MyFunc"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 115);
+        assertEquals(((ASTNode)decl).getLength(), 6);
+        assertEquals(((IASTName)def).toString(), "MyFunc"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 373);
+        assertEquals(((ASTNode)def).getLength(), 6);
+        
+        offset = code.indexOf("MyStruct {") + 2; //$NON-NLS-1$
+        def = testF2(file, offset);
+        decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "MyStruct"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 171);
+        assertEquals(((ASTNode)decl).getLength(), 8);
+        assertEquals(((IASTName)def).toString(), "MyStruct"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 417);
+        assertEquals(((ASTNode)def).getLength(), 8);
+        
+        offset = code.indexOf("MyClass {") + 2; //$NON-NLS-1$
+        def = testF2(file, offset);
+        decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "MyClass"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 278);
+        assertEquals(((ASTNode)decl).getLength(), 7);
+        assertEquals(((IASTName)def).toString(), "MyClass"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 463);
+        assertEquals(((ASTNode)def).getLength(), 7);
+    }
+    
 }

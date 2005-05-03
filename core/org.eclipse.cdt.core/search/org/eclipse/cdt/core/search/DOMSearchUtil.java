@@ -284,7 +284,12 @@ public class DOMSearchUtil {
              names = tu.getDeclarations(binding);
          } else if (limitTo == ICSearchConstants.REFERENCES) {
              names = tu.getReferences(binding);
-         } else { // assume ALL
+         } else if (limitTo == ICSearchConstants.DEFINITIONS) {
+             names = tu.getDefinitions(binding);
+         } else if (limitTo == ICSearchConstants.ALL_OCCURRENCES){
+             names = tu.getDeclarations(binding);
+             names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
+         } else {  // assume ALL
              names = tu.getDeclarations(binding);
              names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
          }

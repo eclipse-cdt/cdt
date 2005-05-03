@@ -16,13 +16,8 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.IMatch;
@@ -31,24 +26,15 @@ import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class OpenDeclarationsAction extends SelectionParseAction implements IUpdate {
@@ -69,58 +55,6 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 //		setDialogMessage(CEditorMessages.getString("OpenDeclarations.dialog.message")); //$NON-NLS-1$
 
 		searchEngine = new SearchEngine();
-	}
-
-//	protected void setDialogTitle(String title) {
-//		fDialogTitle= title;
-//	}
-//	
-//	protected void setDialogMessage(String message) {
-//		fDialogMessage= message;
-//	}
-	
-	protected SelSearchNode getSelectedStringFromEditor() {
-		ISelection selection = getSelection();
-		if( selection == null || !(selection instanceof ITextSelection) ) 
-	 		 return null;
-
- 		return getSelection( (ITextSelection)selection );
-	}
-	String projectName = "";  //$NON-NLS-1$
-	 private static class Storage
-	{
-		private IResource resource;
-		private String fileName;
-		private int offset=0;
-		private int length=0;
-
-		public final String getFileName() {
-			return fileName;
-		}
-		public Storage() {
-		}
-		public final IResource getResource() {
-			return resource;
-		}
-		public int getLength() {
-			return length;
-		}
-		public int getOffset() {
-			return offset;
-		}
-		public void setFileName(String fileName) {
-			this.fileName = fileName;
-		}
-		public void setLength(int length) {
-			this.length = length;
-		}
-		public void setOffset(int offset) {
-			this.offset = offset;
-		}
-		public void setResource(IResource resource) {
-			this.resource = resource;
-		}
-		
 	}
 
 	/* (non-Javadoc)
@@ -195,6 +129,8 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
                             storage.setLength(end - start);
                             storage.setOffset(start);
                             storage.setResource(ParserUtil.getResourceForFilename( fileName ));
+                        } else {
+                            operationNotAvailable(CSEARCH_OPERATION_NO_DECLARATION_MESSAGE);
                         }
 					} else {
 						// step 3 starts here
@@ -202,7 +138,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 						scope[0] = new CProject(null, fEditor.getInputFile().getProject());
 						Set matches = DOMSearchUtil.getMatchesFromSearchEngine(SearchEngine.createCSearchScope(scope), searchName, ICSearchConstants.DECLARATIONS);
 
-						if (matches != null) {
+						if (matches != null && matches.size() > 0) {
 							Iterator itr = matches.iterator();
 							while(itr.hasNext()) {
 								Object match = itr.next();
@@ -215,7 +151,9 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 									break;
 								}
 							}
-						}
+						} else {
+                            operationNotAvailable(CSEARCH_OPERATION_NO_DECLARATION_MESSAGE);
+                        }
 					}
 				} else if (selectedNames.length == 0){
 					operationNotAvailable(CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE);
@@ -263,105 +201,6 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 		 		 CUIPlugin.getDefault().log(x);
 		}
 	}
-
-	/**
-	 * @param string
-	 * @param i
-	 */
-	protected boolean open(String filename, int offset, int length) throws PartInitException, CModelException {
-		IPath path = new Path( filename );
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-		if( file != null )
-		{
-			open( file, offset, length );
-			return true;
-		}
-
-        ICProject cproject = CoreModel.getDefault().getCModel().getCProject( projectName );
-		ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
-		if (unit != null) {
-			setSelectionAtOffset( EditorUtility.openInEditor(unit), offset, length );
-			return true;
-		}
-        
-		FileStorage storage = new FileStorage(null, path);
-		IEditorPart part = EditorUtility.openInEditor(storage);
-		setSelectionAtOffset(part, offset, length);
-		return true;
-		
-	}
-	protected Shell getShell() {
-		return fEditor.getSite().getShell();
-	}
-	
-	
-	protected void open( IMatch element ) throws CModelException, PartInitException
-	{
-		open( element.getResource(), element.getStartOffset(), element.getEndOffset() - element.getStartOffset() );
-	}
-	
-	/**
-	 * Opens the editor on the given element and subsequently selects it.
-	 */
-	protected void open( IResource resource, int offset, int length ) throws CModelException, PartInitException {
-		IEditorPart part= EditorUtility.openInEditor(resource);
-		setSelectionAtOffset(part, offset, length);
-	}
 						
-	/**
-	 * @param part
-	 * @param offset
-	 * @param length TODO
-	 */
-	private void setSelectionAtOffset(IEditorPart part, int offset, int length) {
-		if( part instanceof AbstractTextEditor )
-        {
-			try {
-            ((AbstractTextEditor) part).selectAndReveal(offset, length);
-			} catch (Exception e) {}
-        }
-	}
-//	/**
-//	 * Shows a dialog for resolving an ambigous C element.
-//	 * Utility method that can be called by subclassers.
-//	 */
-//	protected IMatch selectCElement(List elements, Shell shell, String title, String message) {
-//		
-//		int nResults= elements.size();
-//		
-//		if (nResults == 0)
-//			return null;
-//		
-//		if (nResults == 1)
-//			return (IMatch) elements.get(0);
-//			
-//
-//		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new CSearchResultLabelProvider(), false, false);
-//		dialog.setTitle(title);
-//		dialog.setMessage(message);
-//		dialog.setElements(elements);
-//		
-//		if (dialog.open() == Window.OK) {
-//			Object[] selection= dialog.getResult();
-//			if (selection != null && selection.length > 0) {
-//				nResults= selection.length;
-//				for (int i= 0; i < nResults; i++) {
-//					Object current= selection[i];
-//					if (current instanceof IMatch)
-//						return (IMatch) current;
-//				}
-//			}
-//		}		
-//		return null;
-//	}	
-	
-
-	/* (non-Javadoc)
-	  * @see org.eclipse.ui.texteditor.IUpdate#update()
-	  */
-	 public void update() {
-	 		 setEnabled(getSelectedStringFromEditor() != null);
-	 }
-
 }
 

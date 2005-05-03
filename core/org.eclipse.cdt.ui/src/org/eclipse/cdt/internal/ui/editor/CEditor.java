@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2005.
  * All Rights Reserved.
  */
 package org.eclipse.cdt.internal.ui.editor;
@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
 import org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeHierarchyAction;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDefinitionAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
@@ -686,6 +687,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 		setAction("OpenDeclarations", action); //$NON-NLS-1$
 
+        action = new OpenDefinitionAction(this);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
+        setAction("OpenDefinition", action); //$NON-NLS-1$
+        
 		action = new OpenTypeHierarchyAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
 		setAction("OpenTypeHierarchy", action); //$NON-NLS-1$
@@ -729,6 +734,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "RemoveBlockComment"); //$NON-NLS-1$
 
 		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDeclarations"); //$NON-NLS-1$
+        addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDefinition"); //$NON-NLS-1$
 
 		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenTypeHierarchy"); //$NON-NLS-1$
         addAction(menu, ITextEditorActionConstants.GROUP_FIND, "GotoNextMember"); //$NON-NLS-1$

@@ -11,15 +11,12 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
-import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IWorkbenchSite;
 
 

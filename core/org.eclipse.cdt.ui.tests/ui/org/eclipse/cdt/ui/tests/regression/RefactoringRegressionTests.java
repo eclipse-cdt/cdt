@@ -421,26 +421,28 @@ public class RefactoringRegressionTests extends SearchRegressionTests {
         }
         fail ("An error should have occurred in the input check."); //$NON-NLS-1$
     }
-    public void testFunction_31() throws Exception {
-        StringWriter writer = new StringWriter();
-        writer.write( "void foo(){} 		    \n" ); //$NON-NLS-1$
-        writer.write( "void foo/*vp1*/(int i){}	\n" ); //$NON-NLS-1$
-        writer.write( "class Foo{               \n" ); //$NON-NLS-1$
-        writer.write( "   int method1(){        \n" ); //$NON-NLS-1$
-        writer.write( "    foo(3);              \n" ); //$NON-NLS-1$
-        writer.write( "    foo();  			    \n" ); //$NON-NLS-1$
-        writer.write( "   }                     \n" ); //$NON-NLS-1$
-        writer.write( "};                       \n" ); //$NON-NLS-1$
-        
-        String contents = writer.toString();
-        IFile file = importFile( "t.cpp", contents ); //$NON-NLS-1$
-        ISourceReference element = findElementAtOffset( file, contents.indexOf( "foo/*vp1*/" ) ); //$NON-NLS-1$
-        IChange changes = getRefactorChanges( element, "ooga" ); //$NON-NLS-1$
-        assertTotalChanges( 2, changes );
-        assertChange( changes, file, contents.indexOf("foo/*vp1*/"), 3, "ooga" );  //$NON-NLS-1$//$NON-NLS-2$
-        assertChange( changes, file, contents.indexOf("foo(3)"), 3, "ooga" );  //$NON-NLS-1$//$NON-NLS-2$
- 
-   }
+
+//    re: bugzilla 93550
+//    public void testFunction_31() throws Exception {
+//        StringWriter writer = new StringWriter();
+//        writer.write( "void foo(){} 		    \n" ); //$NON-NLS-1$
+//        writer.write( "void foo/*vp1*/(int i){}	\n" ); //$NON-NLS-1$
+//        writer.write( "class Foo{               \n" ); //$NON-NLS-1$
+//        writer.write( "   int method1(){        \n" ); //$NON-NLS-1$
+//        writer.write( "    foo(3);              \n" ); //$NON-NLS-1$
+//        writer.write( "    foo();  			    \n" ); //$NON-NLS-1$
+//        writer.write( "   }                     \n" ); //$NON-NLS-1$
+//        writer.write( "};                       \n" ); //$NON-NLS-1$
+//        
+//        String contents = writer.toString();
+//        IFile file = importFile( "t.cpp", contents ); //$NON-NLS-1$
+//        ISourceReference element = findElementAtOffset( file, contents.indexOf( "foo/*vp1*/" ) ); //$NON-NLS-1$
+//        IChange changes = getRefactorChanges( element, "ooga" ); //$NON-NLS-1$
+//        assertTotalChanges( 2, changes );
+//        assertChange( changes, file, contents.indexOf("foo/*vp1*/"), 3, "ooga" );  //$NON-NLS-1$//$NON-NLS-2$
+//        assertChange( changes, file, contents.indexOf("foo(3)"), 3, "ooga" );  //$NON-NLS-1$//$NON-NLS-2$
+// 
+//   }
     public void testMethod_32_72717() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write( "class Base { 		    	\n" ); //$NON-NLS-1$

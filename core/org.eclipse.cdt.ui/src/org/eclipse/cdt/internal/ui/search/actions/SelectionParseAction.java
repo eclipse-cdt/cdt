@@ -14,7 +14,10 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
@@ -28,22 +31,33 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
@@ -55,7 +69,9 @@ public class SelectionParseAction extends Action {
     protected static final String CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE = "CSearchOperation.tooManyNames.message"; //$NON-NLS-1$
 	protected static final String CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE = "CSearchOperation.noNamesSelected.message"; //$NON-NLS-1$
 	protected static final String CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE = "CSearchOperation.operationUnavailable.message"; //$NON-NLS-1$
-	
+    protected static final String CSEARCH_OPERATION_NO_DEFINITION_MESSAGE = "CSearchOperation.noDefinitionFound.message"; //$NON-NLS-1$
+    protected static final String CSEARCH_OPERATION_NO_DECLARATION_MESSAGE = "CSearchOperation.noDeclarationFound.message"; //$NON-NLS-1$
+        
 	protected IWorkbenchSite fSite;
 	protected CEditor fEditor;
 
@@ -522,4 +538,148 @@ public class SelectionParseAction extends Action {
 	 	protected int selEnd;
 	}
 
+    protected SelSearchNode getSelectedStringFromEditor() {
+        ISelection selection = getSelection();
+        if( selection == null || !(selection instanceof ITextSelection) ) 
+             return null;
+
+        return getSelection( (ITextSelection)selection );
+    }
+    
+    String projectName = "";  //$NON-NLS-1$
+    protected static class Storage
+    {
+        private IResource resource;
+        private String fileName;
+        private int offset=0;
+        private int length=0;
+
+        public final String getFileName() {
+            return fileName;
+        }
+        public Storage() {
+        }
+        public final IResource getResource() {
+            return resource;
+        }
+        public int getLength() {
+            return length;
+        }
+        public int getOffset() {
+            return offset;
+        }
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
+        }
+        public void setLength(int length) {
+            this.length = length;
+        }
+        public void setOffset(int offset) {
+            this.offset = offset;
+        }
+        public void setResource(IResource resource) {
+            this.resource = resource;
+        }
+        
+    }
+    
+    /**
+     * @param string
+     * @param i
+     */
+    protected boolean open(String filename, int offset, int length) throws PartInitException, CModelException {
+        IPath path = new Path( filename );
+        IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+        if( file != null )
+        {
+            open( file, offset, length );
+            return true;
+        }
+
+        ICProject cproject = CoreModel.getDefault().getCModel().getCProject( projectName );
+        ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
+        if (unit != null) {
+            setSelectionAtOffset( EditorUtility.openInEditor(unit), offset, length );
+            return true;
+        }
+        
+        FileStorage storage = new FileStorage(null, path);
+        IEditorPart part = EditorUtility.openInEditor(storage);
+        setSelectionAtOffset(part, offset, length);
+        return true;
+        
+    }
+    protected Shell getShell() {
+        return fEditor.getSite().getShell();
+    }
+    
+    
+    protected void open( IMatch element ) throws CModelException, PartInitException
+    {
+        open( element.getResource(), element.getStartOffset(), element.getEndOffset() - element.getStartOffset() );
+    }
+    
+    /**
+     * Opens the editor on the given element and subsequently selects it.
+     */
+    protected void open( IResource resource, int offset, int length ) throws CModelException, PartInitException {
+        IEditorPart part= EditorUtility.openInEditor(resource);
+        setSelectionAtOffset(part, offset, length);
+    }
+                        
+    /**
+     * @param part
+     * @param offset
+     * @param length TODO
+     */
+    protected void setSelectionAtOffset(IEditorPart part, int offset, int length) {
+        if( part instanceof AbstractTextEditor )
+        {
+            try {
+            ((AbstractTextEditor) part).selectAndReveal(offset, length);
+            } catch (Exception e) {}
+        }
+    }
+//  /**
+//   * Shows a dialog for resolving an ambigous C element.
+//   * Utility method that can be called by subclassers.
+//   */
+//  protected IMatch selectCElement(List elements, Shell shell, String title, String message) {
+//      
+//      int nResults= elements.size();
+//      
+//      if (nResults == 0)
+//          return null;
+//      
+//      if (nResults == 1)
+//          return (IMatch) elements.get(0);
+//          
+//
+//      ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new CSearchResultLabelProvider(), false, false);
+//      dialog.setTitle(title);
+//      dialog.setMessage(message);
+//      dialog.setElements(elements);
+//      
+//      if (dialog.open() == Window.OK) {
+//          Object[] selection= dialog.getResult();
+//          if (selection != null && selection.length > 0) {
+//              nResults= selection.length;
+//              for (int i= 0; i < nResults; i++) {
+//                  Object current= selection[i];
+//                  if (current instanceof IMatch)
+//                      return (IMatch) current;
+//              }
+//          }
+//      }       
+//      return null;
+//  }   
+    
+
+    /* (non-Javadoc)
+      * @see org.eclipse.ui.texteditor.IUpdate#update()
+      */
+     public void update() {
+             setEnabled(getSelectedStringFromEditor() != null);
+     }
+    
 }

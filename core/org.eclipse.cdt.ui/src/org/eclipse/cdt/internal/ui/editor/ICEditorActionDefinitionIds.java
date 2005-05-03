@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * Copyright (c) 2000, 2005 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.opendecl"</code>).
 	 */
 	public static final String OPEN_DECL= "org.eclipse.cdt.ui.edit.opendecl"; //$NON-NLS-1$
+    
+    /**
+     * Action definition ID of the open definition action
+     * (value <code>"org.eclipse.cdt.ui.edit.opendef"</code>).
+     */
+    public static final String OPEN_DEF= "org.eclipse.cdt.ui.edit.opendef"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the show in C/C++ Projects View action

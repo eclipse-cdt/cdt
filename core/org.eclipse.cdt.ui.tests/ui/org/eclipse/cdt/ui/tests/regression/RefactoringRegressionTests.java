@@ -130,7 +130,7 @@ public class RefactoringRegressionTests extends SearchRegressionTests {
         suite.addTest( new RefactoringRegressionTests("testConstructor_27") ); //$NON-NLS-1$
         suite.addTest( new RefactoringRegressionTests("testDestructor_28") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new RefactoringRegressionTests("testDestructor_29_72612"), 72612) ); //$NON-NLS-1$
-        suite.addTest( new RefactoringRegressionTests("testFunction_31") ); //$NON-NLS-1$
+//        suite.addTest( new RefactoringRegressionTests("testFunction_31") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new RefactoringRegressionTests("testMethod_32_72717"),72717) ); //$NON-NLS-1$
         suite.addTest( new RefactoringRegressionTests("testMethod_33_72605") ); //$NON-NLS-1$
         suite.addTest( new RefactoringRegressionTests("testMethod_34") ); //$NON-NLS-1$

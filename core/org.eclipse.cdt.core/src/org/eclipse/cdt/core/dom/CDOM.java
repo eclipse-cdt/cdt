@@ -17,6 +17,8 @@ import org.eclipse.cdt.internal.core.dom.PartialWorkingCopyCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.WorkingCopyCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 
 /**
  * @author jcamelon
@@ -154,6 +156,14 @@ public class CDOM implements IASTServiceProvider {
      */
     public void setWorkingCopyProvider(IWorkingCopyProvider workingCopyProvider) {
         this.provider = workingCopyProvider;
+    }
+
+    public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project, ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+        return defaultService.getTranslationUnit( fileToParse, project, fileCreator );
+    }
+
+    public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project) throws UnsupportedDialectException {
+        return defaultService.getTranslationUnit( fileToParse, project );
     }
 
 }

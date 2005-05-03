@@ -13,6 +13,8 @@ package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 
 /**
  * This is the mechanism that represents a parser service in the CDT.
@@ -47,6 +49,26 @@ public interface IASTServiceProvider {
      * Returns a parse tree that represents the content provided as parameters.
      * 
      * @param fileToParse the file in question
+     * @param project     project handle to help us figure out build settings 
+     * @param fileCreator @see CDOM#getCodeReaderFactory(int)
+     * @return syntactical parse tree
+     * @throws UnsupportedDialectException 
+     */
+    public IASTTranslationUnit getTranslationUnit( IStorage fileToParse, IProject project, ICodeReaderFactory fileCreator ) throws UnsupportedDialectException;
+    
+    /**
+     * Returns a parse tree that represents the content provided as parameters.
+     * 
+     * @param fileToParse the file in question
+     * @param project     project handle to help us figure out build settings 
+     * @return syntactical parse tree
+     * @throws UnsupportedDialectException 
+     */    
+    public IASTTranslationUnit getTranslationUnit( IStorage fileToParse, IProject project ) throws UnsupportedDialectException;
+    /**
+     * Returns a parse tree that represents the content provided as parameters.
+     * 
+     * @param fileToParse the file in question
      * @param fileCreator @see CDOM#getCodeReaderFactory(int)
      * @return syntactical parse tree
      * @throws UnsupportedDialectException
@@ -63,7 +85,7 @@ public interface IASTServiceProvider {
      * @throws UnsupportedDialectException
      */
     public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration )throws UnsupportedDialectException;
-
+    
     /**
      * Returns a parse tree that represents the content provided as parameters.
      * 

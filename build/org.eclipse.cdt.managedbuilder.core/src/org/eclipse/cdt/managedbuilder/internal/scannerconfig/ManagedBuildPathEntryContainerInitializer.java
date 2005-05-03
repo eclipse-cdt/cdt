@@ -43,7 +43,7 @@ public class ManagedBuildPathEntryContainerInitializer extends PathEntryContaine
 					TRACE_FOOTER + 
 					"Initializing path entry container");	//$NON-NLS-1$
 		}
-		CoreModel.getDefault().setPathEntryContainer(new ICProject[]{project}, new ManagedBuildCPathEntryContainer(project.getProject()), null);
+		CoreModel.setPathEntryContainer(new ICProject[]{project}, new ManagedBuildCPathEntryContainer(project.getProject()), null);
 	}
 
 }

@@ -779,7 +779,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private void initializePathEntries() {
 		try {
 			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(getOwner().getProject());
-			CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cProject}, container, new NullProgressMonitor());
+			CoreModel.setPathEntryContainer(new ICProject[]{cProject}, container, new NullProgressMonitor());
 		} catch (CModelException e) {
 		}
 	}

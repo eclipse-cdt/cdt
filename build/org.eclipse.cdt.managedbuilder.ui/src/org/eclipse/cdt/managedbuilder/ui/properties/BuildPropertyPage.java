@@ -13,8 +13,6 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedMap;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;

@@ -33,50 +33,49 @@ import org.eclipse.core.runtime.Platform;
  */
 public class CygpathTranslator {
 	private IPath cwd;
-	private String orgPath;
 	private String transPath;
+    private boolean isCygpathAvailable;
     private boolean status;
     
 
-	public CygpathTranslator(String path) {
-        this(MakeCorePlugin.getDefault().getStateLocation(), path);
+	public CygpathTranslator() {
+        this(MakeCorePlugin.getDefault().getStateLocation());
     }
     
-    public CygpathTranslator(IPath cwd, String path) {
+    public CygpathTranslator(IPath cwd) {
 		this.cwd = cwd;
-		orgPath = path;
-        status = false;
+        isCygpathAvailable = Platform.getOS().equals(Platform.OS_WIN32);
+        translate("/"); //$NON-NLS-1$
+        isCygpathAvailable = status;
 	}
 	
-    /**
-     * @return Returns the status.
-     */
-    public boolean isStatus() {
-        return status;
-    }
-    
-	public String run() {
+	public String translate(final String path) {
+        if (!isCygpathAvailable) 
+            return path;
+        
 		ISafeRunnable runnable = new ISafeRunnable() {
 			public void run() throws Exception {
-				transPath = platformRun();
+				transPath = platformRun(path);
 				if (transPath.startsWith("cygpath:")) {	//$NON-NLS-1$
 					transPath = null;
 				}
 			}
 
 			public void handleException(Throwable exception) {
-				transPath = orgPath;
+				transPath = path;
 				MakeCorePlugin.log(exception);
 			}
 		};
 		Platform.run(runnable);
+        
 		return transPath;
 	}
 
 	/**
+	 * @param path 
 	 * @return
 	 */
-	String platformRun() {
+	private String platformRun(String path) {
 		CommandLauncher launcher = new CommandLauncher();
 		launcher.showCommand(false);
 
@@ -84,7 +83,7 @@ public class CygpathTranslator {
 
 		Process p = launcher.execute(
 			new Path("cygpath"),			//$NON-NLS-1$
-			new String[] {"-m", orgPath},	//$NON-NLS-1$
+			new String[] {"-m", path},	//$NON-NLS-1$
 			new String[0],//setEnvironment(launcher, "c:/"),//$NON-NLS-1$
 			cwd);				//$NON-NLS-1$
 		if (p != null) {
@@ -103,7 +102,7 @@ public class CygpathTranslator {
                 status = true;
 				return output.toString().trim();
 		}
-		return orgPath;
+		return path;
 	}
 
 	/**
@@ -134,20 +133,16 @@ public class CygpathTranslator {
      * @return
      */
     public static List translateIncludePaths(List sumIncludes) {
-        CygpathTranslator test = new CygpathTranslator("/"); //$NON-NLS-1$
-        test.run();
-        if (!test.isStatus()) return sumIncludes;
+        CygpathTranslator cygpath = new CygpathTranslator();
+        if (!cygpath.isCygpathAvailable) return sumIncludes;
         
         List translatedIncludePaths = new ArrayList();
         for (Iterator i = sumIncludes.iterator(); i.hasNext(); ) {
             String includePath = (String) i.next();
             IPath realPath = new Path(includePath);
             if (!realPath.toFile().exists()) {
-                String translatedPath = includePath;
-                if (Platform.getOS().equals(Platform.OS_WIN32)) {
-                    translatedPath = (new CygpathTranslator(includePath)).run();
-                }
-                if (translatedPath != null) {
+                String translatedPath = cygpath.translate(includePath);
+                if (translatedPath != null && cygpath.status == true) {
                     if (!translatedPath.equals(includePath)) {
                         // Check if the translated path exists
                         IPath transPath = new Path(translatedPath);

@@ -37,10 +37,10 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
             List symbols = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
             
     		// This method will be called by the parser each time there is a new value
-    		Iterator pathIter = includes.listIterator();
+            List translatedIncludes = CygpathTranslator.translateIncludePaths(includes);
+    		Iterator pathIter = translatedIncludes.listIterator();
     		while (pathIter.hasNext()) {
-    			String path = (String) pathIter.next();
-    			String convertedPath = convertPath(path);
+    			String convertedPath = (String) pathIter.next();
     			// On MinGW, there is no facility for converting paths
     			if (convertedPath.startsWith("/")) continue;	//$NON-NLS-1$
     			// Add it if it is not a duplicate
@@ -61,17 +61,4 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
         }
 	}
 	
-	/* (non-Javadoc)
-	 * Converts the argument from a POSIX-style path to a valid Win32 path. 
-	 * If the string is already in the proper format it will not be changed.
-	 * 
-	 * @param path <code>String</code> containing path to convert 
-	 * @return <code>String</code> containing the converted path 
-	 */
-	private String convertPath(String includePath) {
-		// Convert a POSIX-style path to Win32
-		String translatedPath = new CygpathTranslator(includePath).run();
-		return translatedPath;
-	}
-
 }

@@ -1,3 +1,9 @@
+2005-05-03 Vladimir Hirsl
+	Fix for PR 91276: Cygpath on Linux for SCD?
+	Changes in CygpathTranslator that affect DefaultGnuWinScannerInfoCollector.
+	
+	* src/org/eclipse/cdt/managedbuilder/internal/scannerconfig/DefaultGnuWinScannerInfoCollector.java
+
 2005-03-18 Alain Magloire
 	Fix for PR 88110: Importing project that need converting would
 	create NPE and ResouceException failures.

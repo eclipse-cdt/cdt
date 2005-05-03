@@ -9,11 +9,6 @@
  * IBM Rational Software - Initial API and implementation 
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.IndexerView;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
@@ -46,10 +41,10 @@ public class FilterIndexerViewDialog extends Dialog {
 	private static String getStringDescription(int meta, int kind, int ref) {
 		return Index.getDescriptionOf(meta, kind, ref);
 	}
-    private static final int DECL_BUTTON_ID = 4;
-    private static final int REF_BUTTON_ID = 3;
-    private static final int TYPE_BUTTON_ID = 2;
-    private static final int ALL_BUTTON_ID = 1;
+    private static final int DECL_BUTTON_ID = 3;
+    private static final int REF_BUTTON_ID = 2;
+    private static final int TYPE_BUTTON_ID = 1;
+    private static final int ALL_BUTTON_ID = 0;
     private static final String GROUPED_SELECTIONS_LABEL = "Grouped Selections:"; //$NON-NLS-1$
     private static final String ALL_BUTTON = "All"; //$NON-NLS-1$
     private static final String TYPE_BUTTON = "type"; //$NON-NLS-1$
@@ -65,8 +60,8 @@ public class FilterIndexerViewDialog extends Dialog {
     Text filterText = null;
     private String pageSize = BLANK_STRING; //$NON-NLS-1$
     Text pageSizeText = null;
-    protected Collection fFilterMatcher = new HashSet();
-    protected Collection groupedButtonSelections = new HashSet();
+    protected boolean [] fFilterMatcher = new boolean [iAllTypes.length];
+    protected boolean[] groupedButtonSelections;
 
     private String message = "Filter Indexer Results (. = any character, .* = any string):"; //$NON-NLS-1$
 
@@ -138,8 +133,6 @@ public class FilterIndexerViewDialog extends Dialog {
         {IIndex.INCLUDE,   IIndex.ANY,             IIndex.REFERENCE}
     };
     
-    private Set fKnownTypes = new HashSet(iAllTypes.length);
-    
     // keep track of the buttons to programmatically change their state
     protected Button[] buttons = new Button[iAllTypes.length];
     protected Button allButton = null;
@@ -153,7 +146,13 @@ public class FilterIndexerViewDialog extends Dialog {
         this.root = root;
         this.projName = projName;
         
-        setVisibleTypes(iAllTypes.length);
+        for (int i = 0; i < iAllTypes.length; i++)
+        	fFilterMatcher[i] = false;
+        
+        groupedButtonSelections = new boolean[DECL_BUTTON_ID + 1];
+        for (int j = ALL_BUTTON_ID; j <= DECL_BUTTON_ID; j++)
+        	groupedButtonSelections[j] = false;
+        
         setDialogSettings(DIALOG_SETTINGS);
     }
     
@@ -221,19 +220,6 @@ public class FilterIndexerViewDialog extends Dialog {
         label.setFont(parent.getFont());
         return label;
     }
-    
-    /**
-     * Sets which CElement types are visible in the dialog.
-     * 
-     * @param types
-     *            Array of CElement types.
-     */
-    public void setVisibleTypes(int len) {
-        fKnownTypes.clear();
-        for (int i = 0; i < len; ++i) {
-            fKnownTypes.add(new Integer(i));
-        }
-    }
 
     /**
      * Creates a type filter checkbox.
@@ -247,20 +233,20 @@ public class FilterIndexerViewDialog extends Dialog {
         layout.marginHeight = 0;
         composite.setLayout(layout);
 
-        final Integer fTypeObject = new Integer(type);
+        final int type1 = type;
         Button checkbox = new Button(composite, SWT.CHECK);
         checkbox.setFont(composite.getFont());
         checkbox.setText(name);
         checkbox.setImage(icon);
-        checkbox.setSelection(fFilterMatcher.contains(fTypeObject));
+        checkbox.setSelection(fFilterMatcher[type]);
         checkbox.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (e.widget instanceof Button) {
                     Button aCheckbox = (Button) e.widget;
                     if (aCheckbox.getSelection())
-                        fFilterMatcher.add(fTypeObject);
+                        fFilterMatcher[type1] = true;
                     else
-                        fFilterMatcher.remove(fTypeObject);
+                        fFilterMatcher[type1] = false;
                 }
             }
         });
@@ -311,7 +297,7 @@ public class FilterIndexerViewDialog extends Dialog {
         allButton.setFont(upperRow.getFont());
         allButton.setText(ALL_BUTTON);
         allButton.setImage(IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_GROUPED_ALL));
-        allButton.setSelection(groupedButtonSelections.contains(new Integer(ALL_BUTTON_ID)));
+        allButton.setSelection(groupedButtonSelections[ALL_BUTTON_ID]);
         allButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) { 
                 if (e.widget instanceof Button) {
@@ -331,24 +317,14 @@ public class FilterIndexerViewDialog extends Dialog {
                     }
                     
                     // select/deselect the type, decl, ref buttons
-                    if (isChecked) {
-                        typeButton.setSelection(true);
-                        groupedButtonSelections.add(new Integer(TYPE_BUTTON_ID));
-                        declButton.setSelection(true);
-                        groupedButtonSelections.add(new Integer(DECL_BUTTON_ID));
-                        refButton.setSelection(true);
-                        groupedButtonSelections.add(new Integer(REF_BUTTON_ID));
-                        groupedButtonSelections.add(new Integer(ALL_BUTTON_ID));                        
-                    }
-                    else {
-                        typeButton.setSelection(false);
-                        groupedButtonSelections.remove(new Integer(TYPE_BUTTON_ID));
-                        declButton.setSelection(false);
-                        groupedButtonSelections.remove(new Integer(DECL_BUTTON_ID));
-                        refButton.setSelection(false);
-                        groupedButtonSelections.remove(new Integer(REF_BUTTON_ID));
-                        groupedButtonSelections.remove(new Integer(ALL_BUTTON_ID));
-                    }
+                    typeButton.setSelection(isChecked);
+                    groupedButtonSelections[TYPE_BUTTON_ID] = isChecked;
+                    declButton.setSelection(isChecked);
+                    groupedButtonSelections[DECL_BUTTON_ID] = isChecked;
+                    refButton.setSelection(isChecked);
+                    groupedButtonSelections[REF_BUTTON_ID] = isChecked;
+                    groupedButtonSelections[ALL_BUTTON_ID] = isChecked;                        
+
                 }
             }
         });
@@ -361,7 +337,7 @@ public class FilterIndexerViewDialog extends Dialog {
         typeButton.setFont(upperRow.getFont());
         typeButton.setText(TYPE_BUTTON);
         typeButton.setImage(IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_GROUPED_TYPE));
-        typeButton.setSelection(groupedButtonSelections.contains(new Integer(TYPE_BUTTON_ID)));
+        typeButton.setSelection(groupedButtonSelections[TYPE_BUTTON_ID]);
         typeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (e.widget instanceof Button) {
@@ -382,9 +358,7 @@ public class FilterIndexerViewDialog extends Dialog {
                         }
                     }
                     
-                    if (isChecked) groupedButtonSelections.add(new Integer(TYPE_BUTTON_ID));
-                    else groupedButtonSelections.remove(new Integer(TYPE_BUTTON_ID));
-                    
+                    groupedButtonSelections[TYPE_BUTTON_ID] = isChecked;
                     checkAllButton();
                 }
             }
@@ -398,7 +372,7 @@ public class FilterIndexerViewDialog extends Dialog {
         declButton.setFont(upperRow.getFont());
         declButton.setText(DECL_BUTTON);
         declButton.setImage(IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_GROUPED_DECL));
-        declButton.setSelection(groupedButtonSelections.contains(new Integer(DECL_BUTTON_ID)));
+        declButton.setSelection(groupedButtonSelections[DECL_BUTTON_ID]);
         declButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (e.widget instanceof Button) {
@@ -419,9 +393,7 @@ public class FilterIndexerViewDialog extends Dialog {
                         }
                     }
                     
-                    if (isChecked) groupedButtonSelections.add(new Integer(DECL_BUTTON_ID));
-                    else groupedButtonSelections.remove(new Integer(DECL_BUTTON_ID));
-                    
+                    groupedButtonSelections[DECL_BUTTON_ID] = isChecked;
                     checkAllButton();
                 }
             }
@@ -435,7 +407,7 @@ public class FilterIndexerViewDialog extends Dialog {
         refButton.setFont(upperRow.getFont());
         refButton.setText(REF_BUTTON);
         refButton.setImage(IndexerViewPluginImages.get(IndexerViewPluginImages.IMG_GROUPED_REF));
-        refButton.setSelection(groupedButtonSelections.contains(new Integer(REF_BUTTON_ID)));
+        refButton.setSelection(groupedButtonSelections[REF_BUTTON_ID]);
         refButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (e.widget instanceof Button) {
@@ -456,9 +428,7 @@ public class FilterIndexerViewDialog extends Dialog {
                         }
                     }
                     
-                    if (isChecked) groupedButtonSelections.add(new Integer(REF_BUTTON_ID));
-                    else groupedButtonSelections.remove(new Integer(REF_BUTTON_ID));
-                    
+                    groupedButtonSelections[REF_BUTTON_ID] = isChecked;
                     checkAllButton();
                 }
             }
@@ -479,14 +449,8 @@ public class FilterIndexerViewDialog extends Dialog {
             }
         }
         
-        if (isChecked) {
-            allButton.setSelection(true);
-            groupedButtonSelections.add(new Integer(ALL_BUTTON_ID));
-        }
-        else {
-            allButton.setSelection(false);
-            groupedButtonSelections.remove(new Integer(ALL_BUTTON_ID));
-        }
+        allButton.setSelection(isChecked);
+        groupedButtonSelections[ALL_BUTTON_ID] = isChecked;
     }
     
     /**
@@ -586,13 +550,13 @@ public class FilterIndexerViewDialog extends Dialog {
         for(int i = 0; i < iAllTypes.length; i++) {
             section.put(
             		getStringDescription(iAllTypes[i][0], iAllTypes[i][1], iAllTypes[i][2]), 
-            		fFilterMatcher.contains(new Integer(i)) );
+            		fFilterMatcher[i] );
         }
         
-        section.put(ALL_BUTTON, groupedButtonSelections.contains(new Integer(ALL_BUTTON_ID)));
-        section.put(TYPE_BUTTON, groupedButtonSelections.contains(new Integer(TYPE_BUTTON_ID)));
-        section.put(REF_BUTTON, groupedButtonSelections.contains(new Integer(REF_BUTTON_ID)));
-        section.put(DECL_BUTTON, groupedButtonSelections.contains(new Integer(DECL_BUTTON_ID)));
+        section.put(ALL_BUTTON, groupedButtonSelections[ALL_BUTTON_ID]);
+        section.put(TYPE_BUTTON, groupedButtonSelections[TYPE_BUTTON_ID]);
+        section.put(REF_BUTTON, groupedButtonSelections[REF_BUTTON_ID]);
+        section.put(DECL_BUTTON, groupedButtonSelections[DECL_BUTTON_ID]);
         
         section.put(PAGE_SIZE, pageSize);
     }
@@ -659,30 +623,14 @@ public class FilterIndexerViewDialog extends Dialog {
         }
         
         for(int i = 0; i < iAllTypes.length; i++) {
-            if (section.getBoolean(getStringDescription(iAllTypes[i][0], iAllTypes[i][1], iAllTypes[i][2]))) {
-                Integer typeObject = new Integer(i);
-                if (fKnownTypes.contains(typeObject))
-                    fFilterMatcher.add(typeObject);
-            }
+        	fFilterMatcher[i] = section.getBoolean(getStringDescription(iAllTypes[i][0], iAllTypes[i][1], iAllTypes[i][2]));
         }
      
         // get the grouped button selection status
-        if (section.getBoolean(ALL_BUTTON)) {
-            Integer typeObject = new Integer(ALL_BUTTON_ID);
-            groupedButtonSelections.add(typeObject);
-        }
-        if (section.getBoolean(TYPE_BUTTON)) {
-            Integer typeObject = new Integer(TYPE_BUTTON_ID);
-            groupedButtonSelections.add(typeObject);
-        }
-        if (section.getBoolean(REF_BUTTON)) {
-            Integer typeObject = new Integer(REF_BUTTON_ID);
-            groupedButtonSelections.add(typeObject);
-        }
-        if (section.getBoolean(DECL_BUTTON)) {
-            Integer typeObject = new Integer(DECL_BUTTON_ID);
-            groupedButtonSelections.add(typeObject);
-        }
+        groupedButtonSelections[ALL_BUTTON_ID] = section.getBoolean(ALL_BUTTON);
+        groupedButtonSelections[TYPE_BUTTON_ID] = section.getBoolean(TYPE_BUTTON);
+        groupedButtonSelections[REF_BUTTON_ID] = section.getBoolean(REF_BUTTON);
+        groupedButtonSelections[DECL_BUTTON_ID] = section.getBoolean(DECL_BUTTON);
     }
     
     public IndexerFilterManager createFilterManager() {

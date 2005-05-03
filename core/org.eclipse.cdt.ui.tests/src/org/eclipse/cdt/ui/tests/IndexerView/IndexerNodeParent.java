@@ -11,8 +11,6 @@
 package org.eclipse.cdt.ui.tests.IndexerView;
 
 import java.io.File;
-import java.util.Collection;
-
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
@@ -225,7 +223,7 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
         isForward = direction;
     }
     
-    public void setFilterManager(Collection filters, String filterName) {
+    public void setFilterManager(boolean [] filters, String filterName) {
         this.filterManager = new IndexerFilterManager(filters, filterName);
     }
     

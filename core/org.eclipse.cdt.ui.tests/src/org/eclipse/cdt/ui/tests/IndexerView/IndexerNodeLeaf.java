@@ -16,7 +16,6 @@ import java.io.IOException;
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
@@ -33,24 +32,15 @@ public class IndexerNodeLeaf implements IAdaptable {
     private int filtersType=0;
     
     IEntryResult result = null;
-    String name = null;
     File indexFile = null;
-    char type = EMPTY_SPACE;
     
     private IndexerNodeParent parent = null;
     
     public IndexerNodeLeaf(IEntryResult result, File indexFile) {
         this.result = result;
         this.indexFile = indexFile;
-        
-        setNameAndFiltersFlag();
-    }
-    
-    private void setNameAndFiltersFlag() {
-        if (result == null) return;
-        
-        filtersType = IndexerView.getKey(result.getMetaKind(), result.getKind(), result.getRefKind());
-        name = result.getName();       
+        if (result != null)
+        	this.filtersType = IndexerView.getKey(result.getMetaKind(), result.getKind(), result.getRefKind());
     }
     
     public IndexerNodeParent getParent() {
@@ -191,28 +181,21 @@ public class IndexerNodeLeaf implements IAdaptable {
     }
 
     public String toString() {
-        if (!parent.isDisplayFullName() && name.indexOf(ICIndexStorageConstants.SEPARATOR) > 0)
+        if (!parent.isDisplayFullName())
             return getShortName();
         
-        return name;
+        return getName();
     }
     
     public int getFiltersType() {
         return filtersType;
     }
-
-    public char getType() {
-        return type;
-    }
     
     public String getName() {
-        return name;
+        return result.getName();
     }
 	
 	public String getShortName() {
-		if (name.indexOf(ICIndexStorageConstants.SEPARATOR) > 0)
-			return name.substring(0, name.indexOf(ICIndexStorageConstants.SEPARATOR));
-		
-		return name;
+		return result.extractSimpleName();
 	}
 }

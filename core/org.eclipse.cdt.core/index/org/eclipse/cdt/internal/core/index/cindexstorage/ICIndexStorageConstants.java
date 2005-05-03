@@ -52,7 +52,7 @@ public interface ICIndexStorageConstants {
 	};
 
 	final static char [][] encodingTypes = { 
-			"".toCharArray(), 							   //$NON-NLS-1$
+			"".toCharArray(), 		// not used			   //$NON-NLS-1$
 			"Decl/".toCharArray(), 	// DECLARATIONS        //$NON-NLS-1$
 			"Ref/".toCharArray(), 	// REFERENCES          //$NON-NLS-1$
 			"Defn/".toCharArray() 	// DEFINTIONS          //$NON-NLS-1$
@@ -71,4 +71,35 @@ public interface ICIndexStorageConstants {
 			'H', // FWD_STRUCT       
 			'I'  // FWD_UNION
 	};
+	
+	final static char [][] accessSpecifiers = {
+		"".toCharArray(), 			// not used		   //$NON-NLS-1$
+		"private".toCharArray(), 	// private         //$NON-NLS-1$
+		"protected".toCharArray(), 	// protected       //$NON-NLS-1$
+		"public".toCharArray() 		// public          //$NON-NLS-1$
+	};
+	
+	final static char [][] cvQualifiers = {
+		"".toCharArray(), 			// not used		  //$NON-NLS-1$
+		"const".toCharArray(), 		// const          //$NON-NLS-1$
+		"volatile".toCharArray(), 	// volatile       //$NON-NLS-1$
+	};
+	
+	final static char [][] storageClassSpecifiers = {
+		"".toCharArray(), 			// not used		  //$NON-NLS-1$
+		"auto".toCharArray(), 		// auto          //$NON-NLS-1$
+		"register".toCharArray(), 	// register       //$NON-NLS-1$
+		"static".toCharArray(), 	// static          //$NON-NLS-1$
+		"extern".toCharArray(), 	// extern       //$NON-NLS-1$
+		"mutable".toCharArray(), 	// mutable          //$NON-NLS-1$
+	};
+	
+	final static char [][] functionSpecifiers = {
+		"".toCharArray(), 			// not used		   //$NON-NLS-1$
+		"inline".toCharArray(), 	// inline          //$NON-NLS-1$
+		"virtual".toCharArray(), 	// virtual         //$NON-NLS-1$
+		"explicit".toCharArray(), 	// explicit        //$NON-NLS-1$
+	};
+
+	
 }

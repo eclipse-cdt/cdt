@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
+import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
@@ -148,9 +150,10 @@ public abstract class FindAction extends SelectionParseAction {
 	 	if( obj == null || !(obj instanceof ICElement ) ){
 	 		operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
 	 		return;
-	 	} else {
-	 		clearStatusLine();
 	 	}
+
+        clearStatusLine();
+
 		ICElement element = (ICElement) obj;
 		
 		CSearchQuery job = createSearchQuery( element.getElementName(), CSearchUtil.getSearchForFromElement(element));
@@ -191,23 +194,18 @@ public abstract class FindAction extends SelectionParseAction {
 		
 		SelSearchNode selNode = getSelection( sel );
 		
-		IFile resourceFile = null;
-        if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
-            // TODO Devin should be able to implement this somehow, see PR 78118
-            operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
-            return;
-        }
+        IASTNode foundNode = null;
+        IASTTranslationUnit tu = null;
+        ParserLanguage lang = null;
+        String file = null;
         
-        resourceFile = fEditor.getInputFile();
-        
-		IASTTranslationUnit tu = null;
-		IASTNode foundNode = null;
-        
-        ParseWithProgress runnable = new ParseWithProgress(resourceFile);
+        ParseWithProgress runnable = new ParseWithProgress();
         ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(fEditor.getSite().getShell());
         try {
             progressMonitor.run(true, true, runnable);
             tu = runnable.getTu();
+            file = runnable.getFile();
+            lang = runnable.getLang();
         } catch (InvocationTargetException e1) {
             operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
             return;
@@ -215,15 +213,7 @@ public abstract class FindAction extends SelectionParseAction {
             operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
             return;
         }
-        
-		String file=null;
-		if( resourceFile != null )
-			file = resourceFile.getLocation().toOSString();
-		else
-		{
-			if( resourceFile instanceof ExternalEditorInput )
-				file = ((ExternalEditorInput)resourceFile).getStorage().getFullPath().toOSString();
-		}
+        		
 		try{
 			foundNode = tu.selectNodeForLocation(file, selNode.selStart, selNode.selEnd - selNode.selStart);
 		} 
@@ -231,7 +221,7 @@ public abstract class FindAction extends SelectionParseAction {
 		catch (Exception ex){}
 		catch ( VirtualMachineError vmErr){
 			if (vmErr instanceof OutOfMemoryError){
-				org.eclipse.cdt.internal.core.model.Util.log(null, "Selection Search Out Of Memory error: " + vmErr.getMessage() + " on File: " + resourceFile.getName(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
+				org.eclipse.cdt.internal.core.model.Util.log(null, "Selection Search Out Of Memory error: " + vmErr.getMessage() + " on File: " + file, ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		
@@ -240,7 +230,7 @@ public abstract class FindAction extends SelectionParseAction {
 			foundName = (IASTName)foundNode;
 		} else {
 			ASTVisitor collector = null;
-			if (DOMSearchUtil.getLanguageFromFile(resourceFile) == ParserLanguage.CPP) {
+			if (lang == ParserLanguage.CPP) {
 				collector = new DOMSearchUtil.CPPNameCollector();
 			} else {
 				collector = new DOMSearchUtil.CNameCollector();
@@ -289,27 +279,61 @@ public abstract class FindAction extends SelectionParseAction {
     
     private class ParseWithProgress implements IRunnableWithProgress 
     {
-        private IFile file=null;
         private IASTTranslationUnit tu = null;
+        private String file=null;
+        private ParserLanguage lang=null;
         
-        public ParseWithProgress(IFile file) {
-            this.file = file;
-        }
+        public ParseWithProgress() {}
 
         public void run(IProgressMonitor monitor) {
-            try {
-                tu = CDOM.getInstance().getASTService().getTranslationUnit(
-                        file,
-                        CDOM.getInstance().getCodeReaderFactory(
-                                CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
-            } catch (IASTServiceProvider.UnsupportedDialectException e) {
-                operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
-                return;
+            if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
+                ExternalEditorInput input = (ExternalEditorInput)fEditor.getEditorInput();
+                try {
+                    // get the project for the external editor input's translation unit
+                    ICElement project = input.getTranslationUnit();
+                    while (!(project instanceof ICProject) && project != null) {
+                        project = project.getParent();
+                    }
+                    
+                    if (project instanceof ICProject) {
+                        tu = CDOM.getInstance().getASTService().getTranslationUnit(input.getStorage(), ((ICProject)project).getProject());
+                        lang = DOMSearchUtil.getLanguage(input.getStorage().getFullPath(), ((ICProject)project).getProject());
+                    }
+                } catch (UnsupportedDialectException e) {
+                    operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+                    return;
+                }
+                
+                file = input.getStorage().getFullPath().toOSString();
+            } else {
+                IFile resourceFile = null;
+                resourceFile = fEditor.getInputFile();
+                
+                try {
+                    tu = CDOM.getInstance().getASTService().getTranslationUnit(
+                            resourceFile,
+                            CDOM.getInstance().getCodeReaderFactory(
+                                    CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+                } catch (IASTServiceProvider.UnsupportedDialectException e) {
+                    operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+                    return;
+                }
+                
+                file = resourceFile.getLocation().toOSString();
+                lang = DOMSearchUtil.getLanguageFromFile(resourceFile);
             }
         }
 
         public IASTTranslationUnit getTu() {
             return tu;
+        }
+
+        public String getFile() {
+            return file;
+        }
+
+        public ParserLanguage getLang() {
+            return lang;
         }
     };
 	

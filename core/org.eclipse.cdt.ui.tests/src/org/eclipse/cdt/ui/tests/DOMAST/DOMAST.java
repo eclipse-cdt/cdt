@@ -1226,6 +1226,11 @@ public class DOMAST extends ViewPart {
     				IFile aFile = ((CEditor)editor).getInputFile();
     				
     				// check if the file is a valid "compilation unit" (based on file extension)
+                    if (aFile == null) {
+                        MessageDialog.openInformation(shell, DOMAST.VIEW_NAME, NOT_VALID_COMPILATION_UNIT);
+                        return null;
+                    }
+                    
     				String ext = aFile.getFileExtension().toUpperCase();
     				if (!(ext.equals(EXTENSION_C) || ext.equals(EXTENSION_CC) || ext.equals(EXTENSION_CPP) || ext.equals(EXTENSION_CXX))) {
     					MessageDialog.openInformation(shell, DOMAST.VIEW_NAME, NOT_VALID_COMPILATION_UNIT);
@@ -1247,6 +1252,10 @@ public class DOMAST extends ViewPart {
 	}
     	
     public static ParserLanguage getLanguageFromFile(IFile file) {
+        if (file == null) { // assume CPP
+            return ParserLanguage.CPP;
+        }
+        
        	IProject project = file.getProject();
     	ICFileType type = CCorePlugin.getDefault().getFileType(project, file.getFullPath().lastSegment());
     	String lid = type.getLanguage().getId();

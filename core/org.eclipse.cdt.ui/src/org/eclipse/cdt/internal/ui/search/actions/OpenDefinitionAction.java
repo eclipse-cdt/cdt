@@ -13,9 +13,15 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.CDOM;
+import org.eclipse.cdt.core.dom.IASTServiceProvider;
+import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -24,12 +30,10 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -91,34 +95,47 @@ public class OpenDefinitionAction extends SelectionParseAction implements
                 int selectionStart = selNode.selStart;
                 int selectionLength = selNode.selEnd - selNode.selStart;
                 
-                IFile resourceFile = null;
-                
                 IASTName[] selectedNames = BLANK_NAME_ARRAY;
-                if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
-                    if( fEditor.getEditorInput() instanceof ITranslationUnitEditorInput )
-                    {
-                        ITranslationUnitEditorInput ip = (ITranslationUnitEditorInput) fEditor.getEditorInput();
-                        IResource r = ip.getTranslationUnit().getUnderlyingResource();
-                        if( r.getType() == IResource.FILE )
-                            resourceFile = (IFile) r;
-                        else
-                        {
-                            operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
-                            return;
-
-                        }
-                    }
-                }
-                else
-                    resourceFile = fEditor.getInputFile();
+                IASTTranslationUnit tu=null;
+                ParserLanguage lang=null;
                 
-
-                if (resourceFile != null) 
+                if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
+                    ExternalEditorInput input = (ExternalEditorInput)fEditor.getEditorInput();
+                    try {
+                        // get the project for the external editor input's translation unit
+                        ICElement project = input.getTranslationUnit();
+                        while (!(project instanceof ICProject) && project != null) {
+                            project = project.getParent();
+                        }
+                        
+                        if (project instanceof ICProject) {
+                            tu = CDOM.getInstance().getASTService().getTranslationUnit(input.getStorage(), ((ICProject)project).getProject());
+                            lang = DOMSearchUtil.getLanguage(input.getStorage().getFullPath(), ((ICProject)project).getProject());
+                            projectName = ((ICProject)project).getElementName();
+                        }
+                    } catch (UnsupportedDialectException e) {
+                        operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+                        return;
+                    }
+                } else {
+                    IFile resourceFile = null;
+                    resourceFile = fEditor.getInputFile();
+                    
+                    try {
+                        tu = CDOM.getInstance().getASTService().getTranslationUnit(
+                                resourceFile,
+                                CDOM.getInstance().getCodeReaderFactory(
+                                        CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+                    } catch (IASTServiceProvider.UnsupportedDialectException e) {
+                        operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+                        return;
+                    }
+                    lang = DOMSearchUtil.getLanguageFromFile(resourceFile);
                     projectName = findProjectName(resourceFile);
+                }
                 
                 // step 1 starts here
-                if (resourceFile != null)
-                    selectedNames = DOMSearchUtil.getSelectedNamesFrom(resourceFile, selectionStart, selectionLength);
+                selectedNames = DOMSearchUtil.getSelectedNamesFrom(tu, selectionStart, selectionLength, lang);
                                 
                 if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
                     IASTName searchName = selectedNames[0];

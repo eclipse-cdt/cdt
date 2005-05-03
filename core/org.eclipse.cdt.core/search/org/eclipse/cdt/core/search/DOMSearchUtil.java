@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Utility class to have commonly used algorithms in one place for searching with the DOM. 
@@ -171,7 +172,75 @@ public class DOMSearchUtil {
     }
     
     /**
-     * This is used to get a List of selected names in an IFile based on the offset and length into that IFile.
+     * This is used to get an array of selected names in an IASTTranslationUnit based on the offset 
+     * and length into that IASTTranslationUnit.
+     * 
+     * ex: IASTTranslationUnit contains: int foo;
+     * then getSelectedNamesFrom(file, 4, 3) will return the IASTName corresponding to foo 
+     * 
+     * @param tu 
+     * @param offset
+     * @param length
+     * @param lang
+     * @return
+     */
+    public static IASTName[] getSelectedNamesFrom(IASTTranslationUnit tu, int offset, int length, ParserLanguage lang) {
+        IASTNode node = null;
+        try{
+            node = tu.selectNodeForLocation(tu.getFilePath(), offset, length); // TODO Devin untested tu.getContainingFilename() ...
+        } 
+        catch (ParseError er){}
+        catch ( VirtualMachineError vmErr){
+            if (vmErr instanceof OutOfMemoryError){
+                org.eclipse.cdt.internal.core.model.Util.log(null, "Open Declarations Out Of Memory error: " + vmErr.getMessage() + " on File: " + tu.getContainingFilename(), ICLogConstants.CDT); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+        catch (Exception ex){}
+        
+        finally{
+            if (node == null){
+                return EMPTY_NAME_LIST;
+            }
+        }
+    
+        if (node instanceof IASTName) {
+            IASTName[] results = new IASTName[1];
+            results[0] = (IASTName)node;
+            return results;
+        }
+        
+        ASTVisitor collector = null;
+        if (lang == ParserLanguage.CPP) {
+            collector = new CPPNameCollector();
+        } else {
+            collector = new CNameCollector();
+        }
+        
+        node.accept( collector );
+        
+        List names = null;
+        if (collector instanceof CPPNameCollector) {
+            names = ((CPPNameCollector)collector).nameList;
+        } else {
+            names = ((CNameCollector)collector).nameList;
+        }
+        
+        IASTName[] results = new IASTName[names.size()];
+        for(int i=0; i<names.size(); i++) {
+            if (names.get(i) instanceof IASTName)
+                results[i] = (IASTName)names.get(i);
+        }
+        
+        return results;
+    }
+
+    
+    /**
+     * This is used to get an array of selected names in an IFile based on the offset and length 
+     * into that IFile.
+     * 
+     * NOTE:  Invoking this method causes a parse, if an IASTTranslationUnit is already obtained then
+     * invoke getSelectedNamesFrom(IASTTranslationUnit, int, int, ParserLanguage) instead.
      * 
      * ex: IFile contains: int foo;
      * then getSelectedNamesFrom(file, 4, 3) will return the IASTName corresponding to foo 
@@ -339,5 +408,19 @@ public class DOMSearchUtil {
             return (IASTName) nameList.get( idx );
         }
         public int size() { return nameList.size(); } 
+    }
+    
+    public static ParserLanguage getLanguage( IPath path, IProject project )
+    {    
+        ICFileType type = CCorePlugin.getDefault().getFileType(project, path.lastSegment());
+        boolean isHeader= type.isHeader();
+        if( isHeader ) 
+            return ParserLanguage.CPP; // assumption
+        String lid = type.getLanguage().getId();
+        if( lid.equals(ICFileTypeConstants.LANG_CXX))
+            return ParserLanguage.CPP;
+        if( lid.equals( ICFileTypeConstants.LANG_C ) )
+            return ParserLanguage.C;
+        return ParserLanguage.CPP;
     }
 }

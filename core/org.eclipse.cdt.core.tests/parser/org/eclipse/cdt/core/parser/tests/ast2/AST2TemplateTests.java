@@ -1120,4 +1120,58 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( ((ICPPDelegate)A4).getBinding(), A1 );
 	}
 
+	public void testTemplateTemplateParameter() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class A {                      \n"); //$NON-NLS-1$
+		buffer.append("   int x;                                        \n"); //$NON-NLS-1$
+		buffer.append("};                                               \n"); //$NON-NLS-1$
+		buffer.append("template<class T> class A<T*> {                  \n"); //$NON-NLS-1$
+		buffer.append("   char x;                                       \n"); //$NON-NLS-1$
+		buffer.append("};                                               \n"); //$NON-NLS-1$
+		buffer.append("template<template<class U> class V> class C {    \n"); //$NON-NLS-1$
+		buffer.append("   V<int> y;                                     \n"); //$NON-NLS-1$
+		buffer.append("   V<int*> z;                                    \n"); //$NON-NLS-1$
+		buffer.append("};                                               \n"); //$NON-NLS-1$
+		buffer.append("void f() {                                       \n"); //$NON-NLS-1$
+		buffer.append("   C<A> c;                                       \n"); //$NON-NLS-1$
+		buffer.append("   c.y.x;   c.z.x;                               \n"); //$NON-NLS-1$
+		buffer.append("}                                                \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPClassTemplate A1 = (ICPPClassTemplate) col.getName(1).resolveBinding();
+		ICPPField x1 = (ICPPField) col.getName(2).resolveBinding();
+		ICPPClassTemplatePartialSpecialization A2 = (ICPPClassTemplatePartialSpecialization) col.getName(4).resolveBinding();
+		ICPPField x2 = (ICPPField) col.getName(7).resolveBinding();
+		
+		ICPPClassTemplate C = (ICPPClassTemplate) col.getName(10).resolveBinding();
+		ICPPField y = (ICPPField) col.getName(13).resolveBinding();
+		ICPPField z = (ICPPField) col.getName(16).resolveBinding();
+		
+		ICPPClassType C1 = (ICPPClassType) col.getName(18).resolveBinding();
+		assertTrue( C1 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)C1).getTemplateDefinition(), C );
+		
+		ICPPField y2 = (ICPPField) col.getName(23).resolveBinding();
+		assertTrue( y2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)y2).getSpecializedBinding(), y );
+		IType t = y2.getType();
+		assertTrue( t instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)t).getTemplateDefinition(), A1 );
+		ICPPField x3 = (ICPPField) col.getName(24).resolveBinding();
+		assertTrue( x3 instanceof ICPPSpecialization );
+		assertEquals( ((ICPPSpecialization)x3).getSpecializedBinding(), x1 );         
+		
+		ICPPField z2 = (ICPPField) col.getName(26).resolveBinding();
+		assertTrue( z2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)z2).getSpecializedBinding(), z );
+		t = z2.getType();
+		assertTrue( t instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)t).getTemplateDefinition(), A2 );
+		ICPPField x4 = (ICPPField) col.getName(27).resolveBinding();
+		assertTrue( x4 instanceof ICPPSpecialization );
+		assertEquals( ((ICPPSpecialization)x4).getSpecializedBinding(), x2 );
+	}
 }

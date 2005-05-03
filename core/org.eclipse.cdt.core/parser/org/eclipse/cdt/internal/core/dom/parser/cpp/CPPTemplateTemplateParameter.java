@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
@@ -44,6 +45,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate {
 
 	private ICPPTemplateParameter [] templateParameters = null;
+	private ObjectMap instances = null;
 	
 	/**
 	 * @param name
@@ -243,19 +245,47 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
-	public void addSpecialization(IType[] arguments, ICPPSpecialization specialization) {		
-	}
-
 	public IBinding instantiate(IType[] arguments) {
 		return deferredInstance( arguments );
 	}
 
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		// TODO Auto-generated method stub
-		return null;
+		ICPPSpecialization instance = getInstance( arguments );
+		if( instance == null ){
+			instance = new CPPDeferredClassInstance( this, arguments );
+			addSpecialization( arguments, instance );
+		}
+		return instance;
 	}
 
-	public ICPPSpecialization getInstance(IType[] arguments) {
+	public ICPPSpecialization getInstance( IType [] arguments ) {
+		if( instances == null )
+			return null;
+		
+		int found = -1;
+		for( int i = 0; i < instances.size(); i++ ){
+			IType [] args = (IType[]) instances.keyAt( i );
+			if( args.length == arguments.length ){
+				int j = 0;
+				for(; j < args.length; j++) {
+					if( !( args[j].isSameType( arguments[j] ) ) )
+						break;
+				}
+				if( j == args.length ){
+					found = i;
+					break;
+				}
+			}
+		}
+		if( found != -1 ){
+			return (ICPPSpecialization) instances.getAt(found);
+		}
 		return null;
+	}
+	
+	public void addSpecialization( IType [] types, ICPPSpecialization spec ){
+		if( instances == null )
+			instances = new ObjectMap( 2 );
+		instances.put( types, spec );
 	}
 }

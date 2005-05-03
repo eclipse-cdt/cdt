@@ -45,7 +45,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 
@@ -152,6 +152,10 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 		int size = arguments.length;
 		for( int i = 0; i < size; i++ ){
 			newArgs[i] = CPPTemplates.instantiateType( arguments[i], argMap );
+		}
+		
+		if( argMap.containsKey( classTemplate ) ){
+			classTemplate = (ICPPClassTemplate) argMap.get( classTemplate );
 		}
 		
 		return (IType) ((ICPPInternalTemplate)classTemplate).instantiate( newArgs );

@@ -561,8 +561,7 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 		} else if( limitTo == DECLARATIONS ){
 			prefix = encodeEntry(IIndex.FUNCTION, ANY, DECLARATION);
 		} else if ( limitTo == DEFINITIONS ){
-			//TODO prefix = FUNCTION_DEF;
-			return encodeEntry(IIndex.FUNCTION, ANY, ANY);
+			return encodeEntry(IIndex.FUNCTION, ANY, DEFINITION);
 		} else {
 			return encodeEntry(IIndex.FUNCTION, ANY, ANY);
 		}

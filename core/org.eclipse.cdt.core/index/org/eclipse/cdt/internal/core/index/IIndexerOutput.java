@@ -29,9 +29,11 @@ public interface IIndexerOutput {
 	public void addFieldRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	
 	public void addMethodDecl(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/ int offset, int offsetLength, int offsetType);
+	public void addMethodDefn(int indexedFileNumber,  char [][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType);
 	public void addMethodRef(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/ int offset, int offsetLength, int offsetType);
 	
 	public void addFunctionDecl(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType);
+	public void addFunctionDefn(int indexedFileNumber,  char [][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType);
 	public void addFunctionRef(int indexedFileNumber, char [][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType);
 	
 	public void addNamespaceDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);

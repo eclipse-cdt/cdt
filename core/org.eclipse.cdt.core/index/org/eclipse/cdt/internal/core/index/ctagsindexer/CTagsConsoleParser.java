@@ -89,7 +89,7 @@ public class CTagsConsoleParser implements IConsoleParser {
     	} else if (kind.equals(ENUMERATOR)){
     		indexer.getOutput().addEnumtorDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(FUNCTION)){
-    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
+    		indexer.getOutput().addFunctionDefn(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(ENUM)){
     		indexer.getOutput().addEnumDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(MEMBER)){
@@ -98,7 +98,6 @@ public class CTagsConsoleParser implements IConsoleParser {
     		indexer.getOutput().addNamespaceDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(PROTOTYPE)){
     		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	    //type = ICSearchConstants.DEFINITIONS;
     	} else if (kind.equals(STRUCT)){
     		indexer.getOutput().addStructDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
     	} else if (kind.equals(TYPEDEF)){

@@ -113,12 +113,20 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 	    addRef(indexedFileNumber,  name, IIndex.METHOD, IIndex.DECLARATION, offset,offsetLength, offsetType);
 	}
 	
+	public void addMethodDefn(int indexedFileNumber, char[][] name, /*char[][] parameterTypes,*/ int offset, int offsetLength, int offsetType) {
+	    addRef(indexedFileNumber,  name, IIndex.METHOD, IIndex.DEFINITION, offset,offsetLength, offsetType);
+	}
+	
 	public void addMethodRef(int indexedFileNumber, char[][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType) {
 	    addRef(indexedFileNumber,  name, IIndex.METHOD, IIndex.REFERENCE, offset,offsetLength, offsetType);
 	}
 	
 	public void addFunctionDecl(int indexedFileNumber, char[][] name,/*char[][] parameterTypes,*/ int offset, int offsetLength, int offsetType) {
 	    addRef(indexedFileNumber,  name, IIndex.FUNCTION, IIndex.DECLARATION, offset,offsetLength, offsetType);
+	}
+	
+	public void addFunctionDefn(int indexedFileNumber, char[][] name, /*char[][] parameterTypes,*/ int offset, int offsetLength, int offsetType) {
+	    addRef(indexedFileNumber,  name, IIndex.FUNCTION, IIndex.DEFINITION, offset,offsetLength, offsetType);
 	}
 	
 	public void addFunctionRef(int indexedFileNumber, char[][] name, /*char[][] parameterTypes,*/int offset, int offsetLength, int offsetType) {

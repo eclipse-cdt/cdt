@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -82,6 +83,9 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	    				binding = (IBinding) instanceMap.get( n );
 	    			} else {
 		    			binding = forceResolve ? n.resolveBinding() : n.getBinding();
+		    			if (binding instanceof ICPPClassTemplatePartialSpecialization ){
+		    			    binding = null;
+		    			}
 		    			if( binding != null ){
 		    				binding = CPPTemplates.createSpecialization( this, binding, instance.getArgumentMap() );
 		    				if( instanceMap == ObjectMap.EMPTY_MAP )

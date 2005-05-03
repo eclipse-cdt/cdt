@@ -609,35 +609,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("template<int I>        void f(X<I, I, int>); // #B\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 2);
 	}
-	
-	/**
-	 [--Start Example(CPP 14.5.4.3-2):
-	template<class T> struct A {
-	template<class T2> struct B {}; // #1
-	template<class T2> struct B<T2*> {}; // #2
-	};
-	template<> template<class T2> struct A<short>::B {}; // #3
-	A<char>::B<int*> abcip; // uses #2
-	A<short>::B<int*> absip; // uses #3
-	A<char>::B<int> abci; // uses #1
-	 --End Example]
-	 */
-	public void test14_5_4_3s2()  { // TODO raised bug 90681
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
-		buffer.append("template<class T2> struct B {}; // #1\n"); //$NON-NLS-1$
-		buffer.append("template<class T2> struct B<T2*> {}; // #2\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("template<> template<class T2> struct A<short>::B {}; // #3\n"); //$NON-NLS-1$
-		buffer.append("A<char>::B<int*> abcip; // uses #2\n"); //$NON-NLS-1$
-		buffer.append("A<short>::B<int*> absip; // uses #3\n"); //$NON-NLS-1$
-		buffer.append("A<char>::B<int> abci; // uses #1\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
 
 	/**
 	 [--Start Example(CPP 14.5.5.1-5):
@@ -874,33 +845,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 14.7.3-17):
-	template<class T1> class A {
-	template<class T2> class B {
-	void mf();
-	};
-	};
-	template<> template<> A<int>::B<double> { };
-	template<> template<> void A<char>::B<char>::mf() { };
-	 --End Example]
-	 */
-	public void test14_7_3s17()  { // TODO doesn't compile via g++
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template<class T1> class A {\n"); //$NON-NLS-1$
-		buffer.append("template<class T2> class B {\n"); //$NON-NLS-1$
-		buffer.append("void mf();\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("template<> template<> A<int>::B<double> { };\n"); //$NON-NLS-1$
-		buffer.append("template<> template<> void A<char>::B<char>::mf() { };\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 14.8.2-2b):
 	template <class T> int f(typename T::B*);
 	int i = f<int>(0);
@@ -911,7 +855,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("template <class T> int f(typename T::B*);\n"); //$NON-NLS-1$
 		buffer.append("int i = f<int>(0);\n"); //$NON-NLS-1$
 		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+		parse(buffer.toString(), ParserLanguage.CPP, true, 1);
 		assertTrue(false);
 		} catch (Exception e) {
 		}
@@ -934,7 +878,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("int i = f<A>(0);\n"); //$NON-NLS-1$
 		buffer.append("int j = f<C>(0);\n"); //$NON-NLS-1$
 		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+		parse(buffer.toString(), ParserLanguage.CPP, true, 2);
 		assertTrue(false);
 		} catch (Exception e) {
 		}

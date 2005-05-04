@@ -13,6 +13,8 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -400,7 +402,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
 
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 13);
         ICPPNamespace A = (ICPPNamespace) collector.getName(0).resolveBinding();
@@ -430,7 +432,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
 
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 6);
         IVariable vA = (IVariable) collector.getName(0).resolveBinding();
@@ -441,10 +443,10 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(a.getType(), cA);
         assertInstances(collector, vA, 2);
         assertInstances(collector, cA, 2);
-        
+
         tu = parse(buffer.toString(), ParserLanguage.CPP);
         collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         cA = (ICompositeType) collector.getName(1).resolveBinding();
         IBinding A = collector.getName(3).resolveBinding();
@@ -463,7 +465,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 9);
         ICompositeType A = (ICompositeType) collector.getName(0)
@@ -493,7 +495,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
         IFunction f1 = (IFunction) collector.getName(0).resolveBinding();
         IFunction f2 = (IFunction) collector.getName(2).resolveBinding();
 
@@ -513,7 +515,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
         ICPPClassType anonStruct = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
         ICPPField x = (ICPPField) collector.getName(1).resolveBinding();
@@ -538,7 +540,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         ICPPClassType A1 = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
@@ -563,7 +565,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         ICPPClassType A1 = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
@@ -589,7 +591,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         ICPPClassType A1 = (ICPPClassType) collector.getName(0)
                 .resolveBinding();
@@ -610,7 +612,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         ICPPClassType x = (ICPPClassType) collector.getName(0).resolveBinding();
 
@@ -626,17 +628,17 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         IFunction f = (IFunction) collector.getName(0).resolveBinding();
         IParameter a = (IParameter) collector.getName(1).resolveBinding();
 
         assertInstances(collector, f, 2);
         assertInstances(collector, a, 3);
-        
+
         IScope scope = a.getScope();
-        assertNotNull( scope );
-        assertSame( scope.getParent(), f.getScope() );
+        assertNotNull(scope);
+        assertSame(scope.getParent(), f.getScope());
     }
 
     public void testSimpleFunctionCall() throws Exception {
@@ -649,7 +651,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         IFunction f = (IFunction) collector.getName(0).resolveBinding();
         IFunction g = (IFunction) collector.getName(1).resolveBinding();
@@ -668,7 +670,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         IVariable i = (IVariable) collector.getName(1).resolveBinding();
 
@@ -684,7 +686,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         ICPPClassType A = (ICPPClassType) collector.getName(0).resolveBinding();
         IField x = (IField) collector.getName(1).resolveBinding();
@@ -706,7 +708,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         IEnumeration hue = (IEnumeration) collector.getName(0).resolveBinding();
         IEnumerator red = (IEnumerator) collector.getName(1).resolveBinding();
@@ -730,7 +732,7 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testPointerToFunction() throws Exception {
         IASTTranslationUnit tu = parse("int (*pfi)();", ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
         IVariable pf = (IVariable) collector.getName(0).resolveBinding();
         IPointerType pt = (IPointerType) pf.getType();
         assertTrue(pt.getType() instanceof IFunctionType);
@@ -738,7 +740,7 @@ public class AST2CPPTests extends AST2BaseTest {
         tu = parse(
                 "struct A; int (*pfi)( int, struct A * );", ParserLanguage.CPP); //$NON-NLS-1$
         collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
         ICPPClassType A = (ICPPClassType) collector.getName(0).resolveBinding();
         pf = (IVariable) collector.getName(1).resolveBinding();
         pt = (IPointerType) pf.getType();
@@ -788,7 +790,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue(t_f_params[0] instanceof IBasicType);
         assertTrue(t_f_params[1] instanceof IBasicType);
 
-        //g is a pointer to a function that returns void and has 1 parameter
+        // g is a pointer to a function that returns void and has 1 parameter
         // struct A *
         IType t_g = g.getType();
         assertTrue(t_g instanceof IPointerType);
@@ -802,8 +804,8 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue(t_g_func_p1 instanceof IPointerType);
         assertSame(((IPointerType) t_g_func_p1).getType(), A);
 
-        //h is a pointer to a function that returns a pointer to a function
-        //the returned pointer to function returns void and takes 1 parameter
+        // h is a pointer to a function that returns a pointer to a function
+        // the returned pointer to function returns void and takes 1 parameter
         // int
         // the *h function takes 1 parameter struct A**
         IType t_h = h.getType();
@@ -861,23 +863,25 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         IFunction f = (IFunction) collector.getName(0).resolveBinding();
         ICPPNamespace A = (ICPPNamespace) collector.getName(1).resolveBinding();
         IFunction g = (IFunction) collector.getName(2).resolveBinding();
         ICPPNamespace X = (ICPPNamespace) collector.getName(3).resolveBinding();
 
-        ICPPUsingDeclaration using = (ICPPUsingDeclaration) collector.getName(5).resolveBinding();
-        ICPPDelegate [] delegates = using.getDelegates();
-        assertEquals( delegates.length, 1 );
-        assertSame( delegates[0].getBinding(), f );
+        ICPPUsingDeclaration using = (ICPPUsingDeclaration) collector
+                .getName(5).resolveBinding();
+        ICPPDelegate[] delegates = using.getDelegates();
+        assertEquals(delegates.length, 1);
+        assertSame(delegates[0].getBinding(), f);
         assertInstances(collector, delegates[0], 2);
         assertInstances(collector, A, 2);
         assertInstances(collector, X, 3);
-        
-        ICPPUsingDeclaration using_g = (ICPPUsingDeclaration) collector.getName(8).resolveBinding();
-        assertSame( using_g.getDelegates()[0].getBinding(), g );
+
+        ICPPUsingDeclaration using_g = (ICPPUsingDeclaration) collector
+                .getName(8).resolveBinding();
+        assertSame(using_g.getDelegates()[0].getBinding(), g);
         assertInstances(collector, using_g.getDelegates()[0], 2);
     }
 
@@ -894,7 +898,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         IFunction f = (IFunction) collector.getName(1).resolveBinding();
         IFunction g = (IFunction) collector.getName(8).resolveBinding();
@@ -917,7 +921,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         IProblemBinding x = (IProblemBinding) collector.getName(12)
                 .resolveBinding();
@@ -937,7 +941,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 15);
 
@@ -968,7 +972,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 15);
 
@@ -1002,7 +1006,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector collector = new CPPNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 6);
 
@@ -1077,27 +1081,27 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 8);
         ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
         IVariable x = (IVariable) col.getName(1).resolveBinding();
         ICPPNamespace B = (ICPPNamespace) col.getName(2).resolveBinding();
-        assertTrue( B instanceof ICPPDelegate );
-        assertSame( ((ICPPDelegate)B).getBinding(), A );
+        assertTrue(B instanceof ICPPDelegate);
+        assertSame(((ICPPDelegate) B).getBinding(), A);
 
         assertInstances(col, A, 2);
         assertInstances(col, B, 2);
         assertInstances(col, x, 3);
     }
 
-    //   public void testBug84250() throws Exception {
-    //      assertTrue(((IASTDeclarationStatement) ((IASTCompoundStatement)
+    // public void testBug84250() throws Exception {
+    // assertTrue(((IASTDeclarationStatement) ((IASTCompoundStatement)
     // ((IASTFunctionDefinition) parse(
-    //            "void f() { int (*p) [2]; }",
+    // "void f() { int (*p) [2]; }",
     // ParserLanguage.CPP).getDeclarations()[0]).getBody()).getStatements()[0]).getDeclaration()
     // instanceof IASTSimpleDeclaration); //$NON-NLS-1$
-    //   }
+    // }
 
     public void testBug84250() throws Exception {
         StringBuffer buffer = new StringBuffer();
@@ -1108,7 +1112,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
         IVariable p = (IVariable) col.getName(1).resolveBinding();
@@ -1129,7 +1133,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
 
@@ -1146,7 +1150,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 7);
 
@@ -1160,7 +1164,7 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testBug84266_2() throws Exception {
         IASTTranslationUnit tu = parse("struct s f(void);", ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
 
@@ -1169,7 +1173,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         tu = parse("struct s f(void){}", ParserLanguage.CPP); //$NON-NLS-1$
         col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
 
@@ -1187,7 +1191,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 13);
 
@@ -1215,7 +1219,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 9);
 
@@ -1261,9 +1265,10 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   AB::f(`c`);    \n"); //$NON-NLS-1$ use of ` ` deliberate!
         buffer.append("}                 \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false );
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP,
+                false, false);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         ICPPNamespace Y = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPNamespace A = (ICPPNamespace) col.getName(3).resolveBinding();
@@ -1272,9 +1277,9 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IFunction f = (IFunction) col.getName(16).resolveBinding();
         IFunction fdef = (IFunction) col.getName(5).resolveBinding();
-        assertTrue( col.getName(19).resolveBinding() instanceof IProblemBinding );
+        assertTrue(col.getName(19).resolveBinding() instanceof IProblemBinding);
         assertSame(f, fdef);
-//        assertEquals(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, f2.getID());
+        // assertEquals(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, f2.getID());
         assertInstances(col, Y, 2);
         assertInstances(col, A, 2);
         assertInstances(col, B, 2);
@@ -1294,14 +1299,14 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 9);
 
         ICPPClassType Node = (ICPPClassType) col.getName(1).resolveBinding();
         ICPPClassType Data = (ICPPClassType) col.getName(3).resolveBinding();
-        assertSame( Data.getScope(),  tu.getScope() );
-        
+        assertSame(Data.getScope(), tu.getScope());
+
         assertInstances(col, Node, 3);
         assertInstances(col, Data, 2);
     }
@@ -1315,7 +1320,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 11);
 
@@ -1341,7 +1346,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 17);
 
@@ -1392,15 +1397,15 @@ public class AST2CPPTests extends AST2BaseTest {
                 .getExpression();
         type = CPPVisitor.getExpressionType(ue);
 
-   		assertTrue( type instanceof IQualifierType );
-   		assertSame( ((IQualifierType) type).getType(), A );
-   		assertTrue( ((IQualifierType) type).isConst() );
+        assertTrue(type instanceof IQualifierType);
+        assertSame(((IQualifierType) type).getType(), A);
+        assertTrue(((IQualifierType) type).isConst());
     }
 
     public void testBug84710() throws Exception {
         IASTTranslationUnit tu = parse("class T { T(); };", ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
         ICPPConstructor T = (ICPPConstructor) col.getName(1).resolveBinding();
         assertTrue(CharArrayUtils.equals(T.getNameCharArray(),
                 "T".toCharArray())); //$NON-NLS-1$
@@ -1420,7 +1425,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         ICPPNamespace NS = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPClassType T = (ICPPClassType) col.getName(1).resolveBinding();
@@ -1450,7 +1455,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         IFunction fref = (IFunction) col.getName(14).resolveBinding();
         IFunction f1 = (IFunction) col.getName(1).resolveBinding();
@@ -1481,7 +1486,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(17, col.size());
 
@@ -1510,7 +1515,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(8, col.size());
 
@@ -1532,7 +1537,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(9, col.size());
     }
@@ -1541,7 +1546,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse("struct S; int S::* pm;", //$NON-NLS-1$
                 ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(4, col.size());
 
@@ -1566,7 +1571,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         IBinding ref = col.getName(11).resolveBinding();
         IVariable pm = (IVariable) col.getName(5).resolveBinding();
@@ -1587,7 +1592,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
         IVariable pm = (IVariable) col.getName(8).resolveBinding();
@@ -1619,56 +1624,60 @@ public class AST2CPPTests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
+        tu.accept(col);
     }
 
-//    public void testFindTypeBinding_1() throws Exception {
-//        IASTTranslationUnit tu = parse(
-//                "int x = 5; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
-//
-//        IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) tu
-//                .getDeclarations()[1]).getDeclarators()[0];
-//        IASTName name = fdtor.getParameters()[0].getDeclarator().getName();
-//        IBinding binding = CPPSemantics.findTypeBinding(tu, name);
-//        assertNull(binding);
-//
-//        tu = parse("struct x; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
-//
-//        fdtor = (IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) tu
-//                .getDeclarations()[1]).getDeclarators()[0];
-//        name = ((ICPPASTNamedTypeSpecifier) fdtor.getParameters()[0]
-//                .getDeclSpecifier()).getName();
-//        binding = CPPSemantics.findTypeBinding(tu, name);
-//        assertNotNull(binding);
-//        assertTrue(binding instanceof ICPPClassType);
-//    }
-//
-//    public void testFindTypeBinding_2() throws Exception {
-//        IASTTranslationUnit tu = parse(
-//                "struct B; void f() { B * bp; }", ParserLanguage.CPP); //$NON-NLS-1$
-//        IASTCompoundStatement compound = (IASTCompoundStatement) ((IASTFunctionDefinition) tu
-//                .getDeclarations()[1]).getBody();
-//        IASTBinaryExpression b = (IASTBinaryExpression) ((IASTExpressionStatement)compound.getStatements()[0]).getExpression();
-//        IBinding binding = ((IASTIdExpression)b.getOperand1()).getName().resolveBinding();
-////        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) ((IASTDeclarationStatement) compound
-////                .getStatements()[0]).getDeclaration();
-////        IBinding binding = CPPSemantics.findTypeBinding(compound,
-////                ((ICPPASTNamedTypeSpecifier)decl.getDeclSpecifier()).getName());
-//        assertNotNull(binding);
-//        assertTrue(binding instanceof ICPPClassType);
-//    }
+    // public void testFindTypeBinding_1() throws Exception {
+    // IASTTranslationUnit tu = parse(
+    // "int x = 5; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
+    //
+    // IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator)
+    // ((IASTSimpleDeclaration) tu
+    // .getDeclarations()[1]).getDeclarators()[0];
+    // IASTName name = fdtor.getParameters()[0].getDeclarator().getName();
+    // IBinding binding = CPPSemantics.findTypeBinding(tu, name);
+    // assertNull(binding);
+    //
+    // tu = parse("struct x; int y(x);", ParserLanguage.CPP); //$NON-NLS-1$
+    //
+    // fdtor = (IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) tu
+    // .getDeclarations()[1]).getDeclarators()[0];
+    // name = ((ICPPASTNamedTypeSpecifier) fdtor.getParameters()[0]
+    // .getDeclSpecifier()).getName();
+    // binding = CPPSemantics.findTypeBinding(tu, name);
+    // assertNotNull(binding);
+    // assertTrue(binding instanceof ICPPClassType);
+    // }
+    //
+    // public void testFindTypeBinding_2() throws Exception {
+    // IASTTranslationUnit tu = parse(
+    // "struct B; void f() { B * bp; }", ParserLanguage.CPP); //$NON-NLS-1$
+    // IASTCompoundStatement compound = (IASTCompoundStatement)
+    // ((IASTFunctionDefinition) tu
+    // .getDeclarations()[1]).getBody();
+    // IASTBinaryExpression b = (IASTBinaryExpression)
+    // ((IASTExpressionStatement)compound.getStatements()[0]).getExpression();
+    // IBinding binding =
+    // ((IASTIdExpression)b.getOperand1()).getName().resolveBinding();
+    // // IASTSimpleDeclaration decl = (IASTSimpleDeclaration)
+    // ((IASTDeclarationStatement) compound
+    // // .getStatements()[0]).getDeclaration();
+    // // IBinding binding = CPPSemantics.findTypeBinding(compound,
+    // // ((ICPPASTNamedTypeSpecifier)decl.getDeclSpecifier()).getName());
+    // assertNotNull(binding);
+    // assertTrue(binding instanceof ICPPClassType);
+    // }
 
     public void testBug85049() throws Exception {
-        StringBuffer buffer = new StringBuffer( "struct B { };\n" ); //$NON-NLS-1$
-        buffer.append( "void g() {\n" ); //$NON-NLS-1$
-        buffer.append( "B * bp;  //1\n" ); //$NON-NLS-1$
-        buffer.append( "}\n" ); //$NON-NLS-1$
-        IASTTranslationUnit t = parse( buffer.toString(), ParserLanguage.CPP );
+        StringBuffer buffer = new StringBuffer("struct B { };\n"); //$NON-NLS-1$
+        buffer.append("void g() {\n"); //$NON-NLS-1$
+        buffer.append("B * bp;  //1\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        IASTTranslationUnit t = parse(buffer.toString(), ParserLanguage.CPP);
         IASTFunctionDefinition g = (IASTFunctionDefinition) t.getDeclarations()[1];
         IASTCompoundStatement body = (IASTCompoundStatement) g.getBody();
-        assertTrue( body.getStatements()[0] instanceof IASTDeclarationStatement );
+        assertTrue(body.getStatements()[0] instanceof IASTDeclarationStatement);
     }
-    
 
     public void testPMConversions() throws Exception {
         StringBuffer buffer = new StringBuffer();
@@ -1679,82 +1688,82 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   int A::* pm = &A::i;                 \n"); //$NON-NLS-1$
         buffer.append("   f( pm );                             \n"); //$NON-NLS-1$
         buffer.append("}                                       \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IFunction f = (IFunction) col.getName(15).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
         ICPPField i = (ICPPField) col.getName(1).resolveBinding();
         ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
         IVariable pm = (IVariable) col.getName(11).resolveBinding();
-        
-        assertInstances( col, f, 2 );
-        assertInstances( col, A, 4 );
-        assertInstances( col, i, 3 );
-        assertInstances( col, B, 2 );
-        assertInstances( col, pm, 2 );
+
+        assertInstances(col, f, 2);
+        assertInstances(col, A, 4);
+        assertInstances(col, i, 3);
+        assertInstances(col, B, 2);
+        assertInstances(col, pm, 2);
     }
-    
+
     public void testPMKoenig() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "namespace N {                            \n" ); //$NON-NLS-1$
-        buffer.append( "   class A { public: int i; };           \n" ); //$NON-NLS-1$
-        buffer.append( "   void f( int A::* );                   \n" ); //$NON-NLS-1$
-        buffer.append( "}                                        \n" ); //$NON-NLS-1$
-        buffer.append( "int N::A::* pm = &N::A::i;               \n" ); //$NON-NLS-1$
-        buffer.append( "void g() {                               \n" ); //$NON-NLS-1$
-        buffer.append( "   f( pm );                              \n" ); //$NON-NLS-1$
-        buffer.append( "}                                        \n" ); //$NON-NLS-1$
-        
+        buffer.append("namespace N {                            \n"); //$NON-NLS-1$
+        buffer.append("   class A { public: int i; };           \n"); //$NON-NLS-1$
+        buffer.append("   void f( int A::* );                   \n"); //$NON-NLS-1$
+        buffer.append("}                                        \n"); //$NON-NLS-1$
+        buffer.append("int N::A::* pm = &N::A::i;               \n"); //$NON-NLS-1$
+        buffer.append("void g() {                               \n"); //$NON-NLS-1$
+        buffer.append("   f( pm );                              \n"); //$NON-NLS-1$
+        buffer.append("}                                        \n"); //$NON-NLS-1$
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IFunction f = (IFunction) col.getName(16).resolveBinding();
         ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(1).resolveBinding();
-        
-        assertInstances( col, f, 2 );
-        assertInstances( col, N, 3 );
-        assertInstances( col, A, 4 );
+
+        assertInstances(col, f, 2);
+        assertInstances(col, N, 3);
+        assertInstances(col, A, 4);
     }
-    
+
     public void testPMKoenig_2() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "namespace M {                            \n" ); //$NON-NLS-1$
-        buffer.append( "   class B { };                          \n" ); //$NON-NLS-1$
-        buffer.append( "   void f( B* );                         \n" ); //$NON-NLS-1$
-        buffer.append( "}                                        \n" ); //$NON-NLS-1$
-        buffer.append( "namespace N {                            \n" ); //$NON-NLS-1$
-        buffer.append( "   class A { public: M::B * b; };        \n" ); //$NON-NLS-1$
-        buffer.append( "}                                        \n" ); //$NON-NLS-1$
-        buffer.append( "M::B* N::A::* pm = &N::A::b;             \n" ); //$NON-NLS-1$
-        buffer.append( "void g() {                               \n" ); //$NON-NLS-1$
-        buffer.append( "   N::A * a;                             \n" ); //$NON-NLS-1$
-        buffer.append( "   f( a->*pm );                          \n" ); //$NON-NLS-1$
-        buffer.append( "}                                        \n" ); //$NON-NLS-1$
-        
+        buffer.append("namespace M {                            \n"); //$NON-NLS-1$
+        buffer.append("   class B { };                          \n"); //$NON-NLS-1$
+        buffer.append("   void f( B* );                         \n"); //$NON-NLS-1$
+        buffer.append("}                                        \n"); //$NON-NLS-1$
+        buffer.append("namespace N {                            \n"); //$NON-NLS-1$
+        buffer.append("   class A { public: M::B * b; };        \n"); //$NON-NLS-1$
+        buffer.append("}                                        \n"); //$NON-NLS-1$
+        buffer.append("M::B* N::A::* pm = &N::A::b;             \n"); //$NON-NLS-1$
+        buffer.append("void g() {                               \n"); //$NON-NLS-1$
+        buffer.append("   N::A * a;                             \n"); //$NON-NLS-1$
+        buffer.append("   f( a->*pm );                          \n"); //$NON-NLS-1$
+        buffer.append("}                                        \n"); //$NON-NLS-1$
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IFunction f = (IFunction) col.getName(27).resolveBinding();
         ICPPNamespace M = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
         ICPPNamespace N = (ICPPNamespace) col.getName(5).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(6).resolveBinding();
         IVariable pm = (IVariable) col.getName(17).resolveBinding();
-        
-        assertInstances( col, f, 2 );
-        assertInstances( col, M, 3 );
-        assertInstances( col, B, 6 );
-        assertInstances( col, N, 4 );
-        assertInstances( col, A, 5 );
-        assertInstances( col, pm, 2 );
+
+        assertInstances(col, f, 2);
+        assertInstances(col, M, 3);
+        assertInstances(col, B, 6);
+        assertInstances(col, N, 4);
+        assertInstances(col, A, 5);
+        assertInstances(col, pm, 2);
     }
-    
+
     public void testFriend_1() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class A {                       \n"); //$NON-NLS-1$
@@ -1763,248 +1772,252 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("};                              \n"); //$NON-NLS-1$
         buffer.append("void set();                     \n"); //$NON-NLS-1$
         buffer.append("class B{};                      \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
         IFunction set = (IFunction) col.getName(1).resolveBinding();
         ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
-        
-        assertInstances( col, set, 2 );
-        assertInstances( col, B, 2 );
-        
-        IBinding [] friends = A.getFriends();
-        assertEquals( 2, friends.length );
-        assertSame( friends[0], set );
-        assertSame( friends[1], B );
+
+        assertInstances(col, set, 2);
+        assertInstances(col, B, 2);
+
+        IBinding[] friends = A.getFriends();
+        assertEquals(2, friends.length);
+        assertSame(friends[0], set);
+        assertSame(friends[1], B);
     }
-    
+
     public void testBug59149() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class A { friend class B; friend class B; }; \n"); //$NON-NLS-1$
         buffer.append("class B{};                                   \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
-        
-        assertInstances( col, B, 3 );
-        
-        IBinding [] friends = A.getFriends();
-        assertEquals( friends.length, 1 );
-        assertSame( friends[0], B );
+
+        assertInstances(col, B, 3);
+
+        IBinding[] friends = A.getFriends();
+        assertEquals(friends.length, 1);
+        assertSame(friends[0], B);
     }
+
     public void testBug59302() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "class A {                      \n"); //$NON-NLS-1$
-        buffer.append( "   public: class N {};         \n"); //$NON-NLS-1$
-        buffer.append( "};                             \n"); //$NON-NLS-1$
-        buffer.append( "class B {                      \n"); //$NON-NLS-1$
-        buffer.append( "   friend class A::N;          \n"); //$NON-NLS-1$
-        buffer.append( "};                             \n"); //$NON-NLS-1$
-        
+        buffer.append("class A {                      \n"); //$NON-NLS-1$
+        buffer.append("   public: class N {};         \n"); //$NON-NLS-1$
+        buffer.append("};                             \n"); //$NON-NLS-1$
+        buffer.append("class B {                      \n"); //$NON-NLS-1$
+        buffer.append("   friend class A::N;          \n"); //$NON-NLS-1$
+        buffer.append("};                             \n"); //$NON-NLS-1$
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         ICPPClassType N = (ICPPClassType) col.getName(5).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
         ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
-        assertInstances( col, N, 3 );
-        
-        IBinding [] friends = B.getFriends();
-        assertEquals( friends.length, 1 );
-        assertSame( friends[0], N );
-        
-        assertEquals( A.getFriends().length, 0 );
-        assertEquals( N.getFriends().length, 0 );
+        assertInstances(col, N, 3);
+
+        IBinding[] friends = B.getFriends();
+        assertEquals(friends.length, 1);
+        assertSame(friends[0], N);
+
+        assertEquals(A.getFriends().length, 0);
+        assertEquals(N.getFriends().length, 0);
     }
-    
+
     public void testBug75482() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "class A {                      \n"); //$NON-NLS-1$
-        buffer.append( "   friend class B *helper();   \n");  //$NON-NLS-1$
-        buffer.append( "};                             \n"); //$NON-NLS-1$
-                
+        buffer.append("class A {                      \n"); //$NON-NLS-1$
+        buffer.append("   friend class B *helper();   \n"); //$NON-NLS-1$
+        buffer.append("};                             \n"); //$NON-NLS-1$
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IFunction helper = (IFunction) col.getName(2).resolveBinding();
-        assertSame( helper.getScope(), tu.getScope() );
-        
+        assertSame(helper.getScope(), tu.getScope());
+
         ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
-        assertSame( B.getScope(), A.getScope() );
-        
-        IBinding [] friends = A.getFriends();
-        assertEquals( friends.length, 1 );
-        assertSame( friends[0], helper );
+        assertSame(B.getScope(), A.getScope());
+
+        IBinding[] friends = A.getFriends();
+        assertEquals(friends.length, 1);
+        assertSame(friends[0], helper);
     }
-    
+
     public void testBug45763_1() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "void f( int );                         \n"); //$NON-NLS-1$
-        buffer.append( "void f( char );                        \n"); //$NON-NLS-1$
-        buffer.append( "void (*pf) (int) = &f;                 \n"); //$NON-NLS-1$
-        buffer.append( "void foo() {                           \n"); //$NON-NLS-1$
-        buffer.append( "   pf = &f;                            \n"); //$NON-NLS-1$
-        buffer.append( "}                                      \n"); //$NON-NLS-1$
-        
+        buffer.append("void f( int );                         \n"); //$NON-NLS-1$
+        buffer.append("void f( char );                        \n"); //$NON-NLS-1$
+        buffer.append("void (*pf) (int) = &f;                 \n"); //$NON-NLS-1$
+        buffer.append("void foo() {                           \n"); //$NON-NLS-1$
+        buffer.append("   pf = &f;                            \n"); //$NON-NLS-1$
+        buffer.append("}                                      \n"); //$NON-NLS-1$
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IFunction f1 = (IFunction) col.getName(0).resolveBinding();
         IFunction f2 = (IFunction) col.getName(2).resolveBinding();
         IVariable pf = (IVariable) col.getName(4).resolveBinding();
-        
-        assertInstances( col, pf, 2 );
-        assertInstances( col, f1, 3 );
-        assertInstances( col, f2, 1 );
+
+        assertInstances(col, pf, 2);
+        assertInstances(col, f1, 3);
+        assertInstances(col, f2, 1);
     }
-    
+
     public void testBug45763_2() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "void f( char );                        \n"); //$NON-NLS-1$
-        buffer.append( "void f( int  );                        \n"); //$NON-NLS-1$
-        buffer.append( "void g( void (*)( int ) ) {}           \n"); //$NON-NLS-1$
-        buffer.append( "void (*pg)( void(*)(int) );            \n"); //$NON-NLS-1$
-        buffer.append( "void foo() {                           \n"); //$NON-NLS-1$
-        buffer.append( "   g( &f );                            \n"); //$NON-NLS-1$
-        buffer.append( "   (*pg)( &f );                        \n"); //$NON-NLS-1$
-        buffer.append( "}                                      \n"); //$NON-NLS-1$
-        
+        buffer.append("void f( char );                        \n"); //$NON-NLS-1$
+        buffer.append("void f( int  );                        \n"); //$NON-NLS-1$
+        buffer.append("void g( void (*)( int ) ) {}           \n"); //$NON-NLS-1$
+        buffer.append("void (*pg)( void(*)(int) );            \n"); //$NON-NLS-1$
+        buffer.append("void foo() {                           \n"); //$NON-NLS-1$
+        buffer.append("   g( &f );                            \n"); //$NON-NLS-1$
+        buffer.append("   (*pg)( &f );                        \n"); //$NON-NLS-1$
+        buffer.append("}                                      \n"); //$NON-NLS-1$
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IFunction f1 = (IFunction) col.getName(0).resolveBinding();
         IFunction f2 = (IFunction) col.getName(2).resolveBinding();
         IFunction g = (IFunction) col.getName(4).resolveBinding();
         IVariable pg = (IVariable) col.getName(7).resolveBinding();
-        
-        assertInstances( col, f1, 1 );
-        assertInstances( col, f2, 3 );
-        assertInstances( col, g, 2 );
-        assertInstances( col, pg, 2 );
+
+        assertInstances(col, f1, 1);
+        assertInstances(col, f2, 3);
+        assertInstances(col, g, 2);
+        assertInstances(col, pg, 2);
     }
-    
+
     public void testBug45763_3() throws Exception {
-    	StringBuffer buffer = new StringBuffer();
-    	buffer.append("void f( int );                  \n"); //$NON-NLS-1$
-    	buffer.append("void f( char );                 \n"); //$NON-NLS-1$
-    	buffer.append("void (* bar () ) ( int ) {      \n"); //$NON-NLS-1$
-    	buffer.append("   return &f;                   \n"); //$NON-NLS-1$
-    	buffer.append("}                               \n"); //$NON-NLS-1$
-    	
-    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
-        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
-        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
-        IFunction bar = (IFunction) col.getName(4).resolveBinding();
-        assertNotNull( bar );
-        
-        assertInstances( col, f1, 2 );
-        assertInstances( col, f2, 1 );
-    }
-    public void _testBug45763_4() throws Exception {
-    	StringBuffer buffer = new StringBuffer();
-    	buffer.append("void f( int );                  \n"); //$NON-NLS-1$
-    	buffer.append("void f( char );                 \n"); //$NON-NLS-1$
-    	buffer.append("void foo () {                   \n"); //$NON-NLS-1$
-    	buffer.append("   ( void (*)(int) ) &f;        \n"); //$NON-NLS-1$
-    	buffer.append("}                               \n"); //$NON-NLS-1$
-    	
-    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
-        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
-        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
-        IFunction bar = (IFunction) col.getName(4).resolveBinding();
-        assertNotNull( bar );
-        
-        assertInstances( col, f1, 2 );
-        assertInstances( col, f2, 1 );
-    }
-    
-    public void testBug85824() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "extern int g;       \n "); //$NON-NLS-1$
-        buffer.append( "int g;              \n "); //$NON-NLS-1$
-        buffer.append( "void f() {  g = 1; }\n "); //$NON-NLS-1$
-        
-    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
-        IVariable g = (IVariable) col.getName(3).resolveBinding();
-        assertInstances( col, g, 3 );
-    }
-    
-    public void testPrefixLookup() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append( "struct A {            \n"); //$NON-NLS-1$
-        buffer.append( "    int a2;           \n"); //$NON-NLS-1$
-        buffer.append( "};                    \n"); //$NON-NLS-1$
-        buffer.append( "struct B : public A { \n"); //$NON-NLS-1$
-        buffer.append( "    int a1;           \n"); //$NON-NLS-1$
-        buffer.append( "    void f();         \n"); //$NON-NLS-1$
-        buffer.append( "}                     \n"); //$NON-NLS-1$
-        buffer.append( "int a3;               \n"); //$NON-NLS-1$
-        buffer.append( "void B::f(){          \n"); //$NON-NLS-1$
-        buffer.append( "   int a4;            \n"); //$NON-NLS-1$
-        buffer.append( "   a;                 \n"); //$NON-NLS-1$
-        buffer.append( "}                     \n"); //$NON-NLS-1$
+        buffer.append("void f( int );                  \n"); //$NON-NLS-1$
+        buffer.append("void f( char );                 \n"); //$NON-NLS-1$
+        buffer.append("void (* bar () ) ( int ) {      \n"); //$NON-NLS-1$
+        buffer.append("   return &f;                   \n"); //$NON-NLS-1$
+        buffer.append("}                               \n"); //$NON-NLS-1$
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
-        IASTName name = col.getName(11);
-        IBinding [] bs = CPPSemantics.prefixLookup( name );
-        assertEquals( 4, bs.length );
+        tu.accept(col);
+
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+        IFunction bar = (IFunction) col.getName(4).resolveBinding();
+        assertNotNull(bar);
+
+        assertInstances(col, f1, 2);
+        assertInstances(col, f2, 1);
     }
-    
-    public void testIsStatic() throws Exception {
+
+    public void _testBug45763_4() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("static void f();    \n" ); //$NON-NLS-1$
-        buffer.append("void f() {}         \n" ); //$NON-NLS-1$
-        
+        buffer.append("void f( int );                  \n"); //$NON-NLS-1$
+        buffer.append("void f( char );                 \n"); //$NON-NLS-1$
+        buffer.append("void foo () {                   \n"); //$NON-NLS-1$
+        buffer.append("   ( void (*)(int) ) &f;        \n"); //$NON-NLS-1$
+        buffer.append("}                               \n"); //$NON-NLS-1$
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
-        IFunction f = (IFunction) col.getName(1).resolveBinding();
-        assertTrue( f.isStatic() );
-        assertInstances( col, f, 2 );
+        tu.accept(col);
+
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+        IFunction bar = (IFunction) col.getName(4).resolveBinding();
+        assertNotNull(bar);
+
+        assertInstances(col, f1, 2);
+        assertInstances(col, f2, 1);
     }
-    
-//    public void testBug85310() throws Exception
-//    {
-//    	  StringBuffer buffer = new StringBuffer( "void f() {" ); //$NON-NLS-1$
-//    	  buffer.append( " if (__io.flags() & ios_base::showbase" );  //$NON-NLS-1$
-//    	  buffer.append( "	      || __i < 2 || __sign.size() > 1" ); //$NON-NLS-1$
-//    	  buffer.append( "	      || ((static_cast<part>(__p.field[3]) != money_base::none)" ); //$NON-NLS-1$
-//    	  buffer.append( "		  && __i == 2)) " ); //$NON-NLS-1$
-//    	  buffer.append( "	  return;" ); //$NON-NLS-1$
-//    	  buffer.append( "}"); //$NON-NLS-1$
-//    	  String code = buffer.toString();
-//    	  IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
-//    	  IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
-//    	  IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
-//    	  IASTIfStatement if_stmt = (IASTIfStatement) body.getStatements()[0];
-//    	  assertNotNull( if_stmt.getCondition() );
-//    }
-    
+
+    public void testBug85824() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("extern int g;       \n "); //$NON-NLS-1$
+        buffer.append("int g;              \n "); //$NON-NLS-1$
+        buffer.append("void f() {  g = 1; }\n "); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IVariable g = (IVariable) col.getName(3).resolveBinding();
+        assertInstances(col, g, 3);
+    }
+
+    public void testPrefixLookup() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct A {            \n"); //$NON-NLS-1$
+        buffer.append("    int a2;           \n"); //$NON-NLS-1$
+        buffer.append("};                    \n"); //$NON-NLS-1$
+        buffer.append("struct B : public A { \n"); //$NON-NLS-1$
+        buffer.append("    int a1;           \n"); //$NON-NLS-1$
+        buffer.append("    void f();         \n"); //$NON-NLS-1$
+        buffer.append("}                     \n"); //$NON-NLS-1$
+        buffer.append("int a3;               \n"); //$NON-NLS-1$
+        buffer.append("void B::f(){          \n"); //$NON-NLS-1$
+        buffer.append("   int a4;            \n"); //$NON-NLS-1$
+        buffer.append("   a;                 \n"); //$NON-NLS-1$
+        buffer.append("}                     \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IASTName name = col.getName(11);
+        IBinding[] bs = CPPSemantics.prefixLookup(name);
+        assertEquals(4, bs.length);
+    }
+
+    public void testIsStatic() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("static void f();    \n"); //$NON-NLS-1$
+        buffer.append("void f() {}         \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f = (IFunction) col.getName(1).resolveBinding();
+        assertTrue(f.isStatic());
+        assertInstances(col, f, 2);
+    }
+
+    // public void testBug85310() throws Exception
+    // {
+    // StringBuffer buffer = new StringBuffer( "void f() {" ); //$NON-NLS-1$
+    // buffer.append( " if (__io.flags() & ios_base::showbase" ); //$NON-NLS-1$
+    // buffer.append( " || __i < 2 || __sign.size() > 1" ); //$NON-NLS-1$
+    // buffer.append( " || ((static_cast<part>(__p.field[3]) !=
+    // money_base::none)" ); //$NON-NLS-1$
+    // buffer.append( " && __i == 2)) " ); //$NON-NLS-1$
+    // buffer.append( " return;" ); //$NON-NLS-1$
+    // buffer.append( "}"); //$NON-NLS-1$
+    // String code = buffer.toString();
+    // IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+    // IASTFunctionDefinition f = (IASTFunctionDefinition)
+    // tu.getDeclarations()[0];
+    // IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
+    // IASTIfStatement if_stmt = (IASTIfStatement) body.getStatements()[0];
+    // assertNotNull( if_stmt.getCondition() );
+    // }
+
     public void testBug86267() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct B { void mutate(); };     \n"); //$NON-NLS-1$
@@ -2016,24 +2029,24 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("void g() {                       \n"); //$NON-NLS-1$
         buffer.append("   B* pb = new (p) D1;           \n"); //$NON-NLS-1$
         buffer.append("}                                \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         ICPPClassType D1 = (ICPPClassType) col.getName(2).resolveBinding();
         ICPPClassType D2 = (ICPPClassType) col.getName(4).resolveBinding();
-        
-        ICPPConstructor [] ctors = D1.getConstructors();
+
+        ICPPConstructor[] ctors = D1.getConstructors();
         ICPPConstructor d1_ctor = ctors[0];
-        
+
         ctors = D2.getConstructors();
         ICPPConstructor d2_ctor = ctors[0];
-        
-        assertInstances( col, d1_ctor, 1 );
-        assertInstances( col, d2_ctor, 1 );
+
+        assertInstances(col, d1_ctor, 1);
+        assertInstances(col, d2_ctor, 1);
     }
-    
+
     public void testBug86269() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct C {                                  \n"); //$NON-NLS-1$
@@ -2048,24 +2061,24 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   }                                        \n"); //$NON-NLS-1$
         buffer.append("   return *this;                            \n"); //$NON-NLS-1$
         buffer.append("}                                           \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         ICPPClassType C = (ICPPClassType) col.getName(0).resolveBinding();
         ICPPMethod f = (ICPPMethod) col.getName(1).resolveBinding();
         ICPPMethod op = (ICPPMethod) col.getName(3).resolveBinding();
         IParameter other = (IParameter) col.getName(5).resolveBinding();
-        
-        assertInstances( col, C, 6 );
-        assertInstances( col, f, 2 );
-        assertInstances( col, op, 3 );
-        assertInstances( col, other, 4 );
-        
-        assertEquals( other.getName(), "other" ); //$NON-NLS-1$
+
+        assertInstances(col, C, 6);
+        assertInstances(col, f, 2);
+        assertInstances(col, op, 3);
+        assertInstances(col, other, 4);
+
+        assertEquals(other.getName(), "other"); //$NON-NLS-1$
     }
-    
+
     public void testBug86279() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("extern \"C\" {                               \n"); //$NON-NLS-1$
@@ -2077,19 +2090,19 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   printf( p );                              \n"); //$NON-NLS-1$
         buffer.append("   printf( \"abc\" );                        \n"); //$NON-NLS-1$
         buffer.append("}                                            \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IFunction r1 = (IFunction) col.getName(6).resolveBinding();
         IFunction r2 = (IFunction) col.getName(8).resolveBinding();
         IFunction printf = (IFunction) col.getName(0).resolveBinding();
-        
-        assertSame( printf, r1 );
-        assertSame( printf, r2 );
+
+        assertSame(printf, r1);
+        assertSame(printf, r2);
     }
-    
+
     public void testBug86346() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct S;            \n"); //$NON-NLS-1$
@@ -2098,47 +2111,49 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("void h() {           \n"); //$NON-NLS-1$
         buffer.append("   g( a );           \n"); //$NON-NLS-1$
         buffer.append("}                    \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
         IFunction g = (IFunction) col.getName(3).resolveBinding();
-        
-        assertInstances( col, S, 3 );
-        assertInstances( col, g, 2 );
+
+        assertInstances(col, S, 3);
+        assertInstances(col, g, 2);
     }
-    
-    public void testBug86288() throws Exception
-    {
-    	String code = "int *foo( int *b ) { return (int *)(b); }"; //$NON-NLS-1$
-    	IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
-    	IASTReturnStatement r = (IASTReturnStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[0];
-    	assertTrue( r.getReturnValue() instanceof IASTCastExpression );
+
+    public void testBug86288() throws Exception {
+        String code = "int *foo( int *b ) { return (int *)(b); }"; //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
+        IASTReturnStatement r = (IASTReturnStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
+                .getDeclarations()[0]).getBody()).getStatements()[0];
+        assertTrue(r.getReturnValue() instanceof IASTCastExpression);
     }
- 
-     public void testBug84476() throws Exception
-    {
-    	StringBuffer buffer = new StringBuffer();
-//    	buffer.append( "struct B {	int f();};\n"); //$NON-NLS-1$
-//    	buffer.append( "int (B::*pb)() = &B::f; \n"); //$NON-NLS-1$
-    	buffer.append( "void foo() {\n"); //$NON-NLS-1$
-    	buffer.append( "struct B {\n"); //$NON-NLS-1$
-    	buffer.append( "int f();\n"); //$NON-NLS-1$
-    	buffer.append( "};    			\n"); //$NON-NLS-1$
-    	buffer.append( "int (B::*pb)() = &B::f;\n");  //$NON-NLS-1$
-    	buffer.append( "}\n" ); //$NON-NLS-1$
-    	String code = buffer.toString();
-    	IASTFunctionDefinition foo = (IASTFunctionDefinition) parse( code, ParserLanguage.CPP ).getDeclarations()[0];
-    	IASTDeclarationStatement decl = (IASTDeclarationStatement) ((IASTCompoundStatement)foo.getBody()).getStatements()[1];
-    	IASTSimpleDeclaration pb = (IASTSimpleDeclaration) decl.getDeclaration();
-    	IASTDeclarator d = pb.getDeclarators()[0];
-    	assertEquals( d.getNestedDeclarator().getPointerOperators().length,  1 );
-    	assertEquals( d.getNestedDeclarator().getName().toString(), "pb" ); //$NON-NLS-1$
-    	assertTrue( d.getNestedDeclarator().getPointerOperators()[0] instanceof ICPPASTPointerToMember );
+
+    public void testBug84476() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        // buffer.append( "struct B { int f();};\n"); //$NON-NLS-1$
+        // buffer.append( "int (B::*pb)() = &B::f; \n"); //$NON-NLS-1$
+        buffer.append("void foo() {\n"); //$NON-NLS-1$
+        buffer.append("struct B {\n"); //$NON-NLS-1$
+        buffer.append("int f();\n"); //$NON-NLS-1$
+        buffer.append("};    			\n"); //$NON-NLS-1$
+        buffer.append("int (B::*pb)() = &B::f;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        String code = buffer.toString();
+        IASTFunctionDefinition foo = (IASTFunctionDefinition) parse(code,
+                ParserLanguage.CPP).getDeclarations()[0];
+        IASTDeclarationStatement decl = (IASTDeclarationStatement) ((IASTCompoundStatement) foo
+                .getBody()).getStatements()[1];
+        IASTSimpleDeclaration pb = (IASTSimpleDeclaration) decl
+                .getDeclaration();
+        IASTDeclarator d = pb.getDeclarators()[0];
+        assertEquals(d.getNestedDeclarator().getPointerOperators().length, 1);
+        assertEquals(d.getNestedDeclarator().getName().toString(), "pb"); //$NON-NLS-1$
+        assertTrue(d.getNestedDeclarator().getPointerOperators()[0] instanceof ICPPASTPointerToMember);
     }
-       
+
     public void testBug86336() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct T1 {                   \n"); //$NON-NLS-1$
@@ -2147,57 +2162,58 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   }                          \n"); //$NON-NLS-1$
         buffer.append("   T1( int ) {}               \n"); //$NON-NLS-1$
         buffer.append("};                            \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
-        ICPPConstructor T1_ctor = (ICPPConstructor) col.getName(6).resolveBinding();
+
+        ICPPConstructor T1_ctor = (ICPPConstructor) col.getName(6)
+                .resolveBinding();
         ICPPClassType T1 = (ICPPClassType) col.getName(0).resolveBinding();
-        
-        assertInstances( col, T1_ctor, 2 );
-        assertInstances( col, T1, 2 );
+
+        assertInstances(col, T1_ctor, 2);
+        assertInstances(col, T1, 2);
     }
-    
+
     public void testBug86306() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct S { int i; };    \n"); //$NON-NLS-1$
         buffer.append("void foo() {            \n"); //$NON-NLS-1$
         buffer.append("   int S::* pm = &S::i; \n"); //$NON-NLS-1$
         buffer.append("}                       \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPClassType S = (ICPPClassType) col.getName(0).resolveBinding();
-        
-        assertInstances( col, S, 3 );
-        
-        IASTName [] refs = tu.getReferences( S );
-        assertEquals( refs.length, 2 );
-        assertSame( refs[0], col.getName(4) );
-        assertSame( refs[1], col.getName(7) );
+
+        assertInstances(col, S, 3);
+
+        IASTName[] refs = tu.getReferences(S);
+        assertEquals(refs.length, 2);
+        assertSame(refs[0], col.getName(4));
+        assertSame(refs[1], col.getName(7));
     }
-    
+
     public void testBug86372() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class A {                           \n"); //$NON-NLS-1$
-		buffer.append("	public:                            \n"); //$NON-NLS-1$
-		buffer.append("   template <class T> void f(T);    \n"); //$NON-NLS-1$
-		buffer.append("   template <class T> struct X { }; \n"); //$NON-NLS-1$
-		buffer.append("};                                  \n"); //$NON-NLS-1$
-		buffer.append("class B : public A {                \n"); //$NON-NLS-1$
-		buffer.append(" public:                            \n"); //$NON-NLS-1$
-		buffer.append("   using A::f<double>; // illformed \n"); //$NON-NLS-1$
-		buffer.append("   using A::X<int>; // illformed    \n"); //$NON-NLS-1$
-		buffer.append("};                                  \n"); //$NON-NLS-1$
-		
-		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        buffer.append("	public:                            \n"); //$NON-NLS-1$
+        buffer.append("   template <class T> void f(T);    \n"); //$NON-NLS-1$
+        buffer.append("   template <class T> struct X { }; \n"); //$NON-NLS-1$
+        buffer.append("};                                  \n"); //$NON-NLS-1$
+        buffer.append("class B : public A {                \n"); //$NON-NLS-1$
+        buffer.append(" public:                            \n"); //$NON-NLS-1$
+        buffer.append("   using A::f<double>; // illformed \n"); //$NON-NLS-1$
+        buffer.append("   using A::X<int>; // illformed    \n"); //$NON-NLS-1$
+        buffer.append("};                                  \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
     }
-    
+
     public void testBug86319() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void foo() {                    \n"); //$NON-NLS-1$
@@ -2207,19 +2223,19 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("      a[i] = 1;                 \n"); //$NON-NLS-1$
         buffer.append("   int j = i;                   \n"); //$NON-NLS-1$
         buffer.append("}                               \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IVariable i1 = (IVariable) col.getName(1).resolveBinding();
         IVariable i2 = (IVariable) col.getName(3).resolveBinding();
-        
-        assertNotSame( i1, i2 );
-        assertInstances( col, i1, 2 );
-        assertInstances( col, i2, 4 );
+
+        assertNotSame(i1, i2);
+        assertInstances(col, i1, 2);
+        assertInstances(col, i2, 4);
     }
-    
+
     public void testBug86350() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class X { int i, j; };           \n"); //$NON-NLS-1$
@@ -2232,39 +2248,42 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   p->x.i;                       \n"); //$NON-NLS-1$
         buffer.append("   p->x.j;                       \n"); //$NON-NLS-1$
         buffer.append("}                                \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPField i = (ICPPField) col.getName(1).resolveBinding();
         ICPPField j = (ICPPField) col.getName(2).resolveBinding();
         ICPPField x = (ICPPField) col.getName(5).resolveBinding();
-        
-        assertInstances( col, i, 3 );
-        assertInstances( col, j, 3 );
-        assertInstances( col, x, 5 );
+
+        assertInstances(col, i, 3);
+        assertInstances(col, j, 3);
+        assertInstances(col, x, 5);
     }
+
     public void testBug84478() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append( "void foo() {\n" ); //$NON-NLS-1$
-		buffer.append( "  struct A {\n" ); //$NON-NLS-1$
-		buffer.append( "    int val;\n" ); //$NON-NLS-1$
-		buffer.append( "    A(int i) : val(i) { }\n" ); //$NON-NLS-1$
-		buffer.append( "    ~A() { }\n" ); //$NON-NLS-1$
-		buffer.append( "    operator bool() { return val != 0; }\n" ); //$NON-NLS-1$
-		buffer.append( "  };\n" ); //$NON-NLS-1$
-		buffer.append( "  int i = 1;\n" ); //$NON-NLS-1$
-		buffer.append( "  while (A a = i) {\n" );  //$NON-NLS-1$
-		buffer.append( "    i = 0;\n" ); //$NON-NLS-1$
-		buffer.append( "  }\n" ); //$NON-NLS-1$
-		buffer.append( "}\n" ); //$NON-NLS-1$
-		IASTFunctionDefinition foo = (IASTFunctionDefinition) parse( buffer.toString(), ParserLanguage.CPP ).getDeclarations()[0];
-		ICPPASTWhileStatement whileStatement = (ICPPASTWhileStatement) ((IASTCompoundStatement)foo.getBody()).getStatements()[2];
-		assertNull( whileStatement.getCondition() );
-		assertNotNull( whileStatement.getConditionDeclaration() );
-	}
-	    
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void foo() {\n"); //$NON-NLS-1$
+        buffer.append("  struct A {\n"); //$NON-NLS-1$
+        buffer.append("    int val;\n"); //$NON-NLS-1$
+        buffer.append("    A(int i) : val(i) { }\n"); //$NON-NLS-1$
+        buffer.append("    ~A() { }\n"); //$NON-NLS-1$
+        buffer.append("    operator bool() { return val != 0; }\n"); //$NON-NLS-1$
+        buffer.append("  };\n"); //$NON-NLS-1$
+        buffer.append("  int i = 1;\n"); //$NON-NLS-1$
+        buffer.append("  while (A a = i) {\n"); //$NON-NLS-1$
+        buffer.append("    i = 0;\n"); //$NON-NLS-1$
+        buffer.append("  }\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        IASTFunctionDefinition foo = (IASTFunctionDefinition) parse(
+                buffer.toString(), ParserLanguage.CPP).getDeclarations()[0];
+        ICPPASTWhileStatement whileStatement = (ICPPASTWhileStatement) ((IASTCompoundStatement) foo
+                .getBody()).getStatements()[2];
+        assertNull(whileStatement.getCondition());
+        assertNotNull(whileStatement.getConditionDeclaration());
+    }
+
     public void testBug86353() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void foo() {                      \n"); //$NON-NLS-1$
@@ -2272,32 +2291,32 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   {   enum { x = x };  }         \n"); //$NON-NLS-1$
         buffer.append("}                                 \n"); //$NON-NLS-1$
         buffer.append("enum { RED };                     \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IEnumerator enum_x = (IEnumerator) col.getName(3).resolveBinding();
         IBinding x_ref = col.getName(4).resolveBinding();
         IEnumerator RED = (IEnumerator) col.getName(6).resolveBinding();
-        
-        String [] s = ((ICPPBinding)RED).getQualifiedName();
-        assertEquals( s[0], "RED" ); //$NON-NLS-1$
-        assertTrue( ((ICPPBinding)RED).isGloballyQualified() );
-        
-        IASTName [] decls = tu.getDeclarations( enum_x );
-        assertEquals( decls.length, 1 );
-        assertSame( decls[0], col.getName(3) );
-        
-        decls = tu.getDeclarations( x_ref );
-        assertEquals( decls.length, 1 );
-        assertSame( decls[0], col.getName(1) );
-        
-        decls = tu.getDeclarations( RED );
-        assertEquals( decls.length, 1 );
-        assertSame( decls[0], col.getName(6) );
+
+        String[] s = ((ICPPBinding) RED).getQualifiedName();
+        assertEquals(s[0], "RED"); //$NON-NLS-1$
+        assertTrue(((ICPPBinding) RED).isGloballyQualified());
+
+        IASTName[] decls = tu.getDeclarations(enum_x);
+        assertEquals(decls.length, 1);
+        assertSame(decls[0], col.getName(3));
+
+        decls = tu.getDeclarations(x_ref);
+        assertEquals(decls.length, 1);
+        assertSame(decls[0], col.getName(1));
+
+        decls = tu.getDeclarations(RED);
+        assertEquals(decls.length, 1);
+        assertSame(decls[0], col.getName(6));
     }
-    
+
     public void _testBug86274() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class D {};                   \n"); //$NON-NLS-1$
@@ -2307,21 +2326,21 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   typeid(d1) == typeid(d2);  \n"); //$NON-NLS-1$
         buffer.append("   typeid( D ) == typeid(d2); \n"); //$NON-NLS-1$
         buffer.append("}                             \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        assertEquals( col.size(), 10 );
-        
+        assertEquals(col.size(), 10);
+
         IVariable d1 = (IVariable) col.getName(6).resolveBinding();
         IVariable d2 = (IVariable) col.getName(7).resolveBinding();
         ICPPClassType D = (ICPPClassType) col.getName(8).resolveBinding();
-        
-        assertInstances( col, D, 4 );
-        assertInstances( col, d1, 2 );
-        assertInstances( col, d2, 3 );
+
+        assertInstances(col, D, 4);
+        assertInstances(col, d1, 2);
+        assertInstances(col, d2, 3);
     }
-    
+
     public void testBug86546() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void point ( int = 3, int = 4 );        \n"); //$NON-NLS-1$
@@ -2330,16 +2349,16 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   point( 1 );                          \n"); //$NON-NLS-1$
         buffer.append("   point( );                            \n"); //$NON-NLS-1$
         buffer.append("}                                       \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IFunction point = (IFunction) col.getName(0).resolveBinding();
-        
-        assertInstances( col, point, 4 );
+
+        assertInstances(col, point, 4);
     }
-    
+
     public void testBug86358_1() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace Outer{                   \n"); //$NON-NLS-1$
@@ -2350,18 +2369,18 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("      void g() {  i++;  }          \n"); //$NON-NLS-1$
         buffer.append("   }                               \n"); //$NON-NLS-1$
         buffer.append("}                                  \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IVariable i = (IVariable) col.getName(4).resolveBinding();
         IVariable i2 = (IVariable) col.getName(7).resolveBinding();
-        
-        assertInstances( col, i, 2 );
-        assertInstances( col, i2, 2 );
+
+        assertInstances(col, i, 2);
+        assertInstances(col, i2, 2);
     }
-    
+
     public void testBug86358_2() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace Q {                    \n"); //$NON-NLS-1$
@@ -2372,27 +2391,27 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   namespace V {                 \n"); //$NON-NLS-1$
         buffer.append("   }                             \n"); //$NON-NLS-1$
         buffer.append("}                                \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IFunction f1 = (IFunction) col.getName(2).resolveBinding();
         ICPPFunction f2 = (ICPPFunction) col.getName(5).resolveBinding();
-        assertSame( f1, f2 );  
+        assertSame(f1, f2);
 
-        IASTName [] decls = tu.getDeclarations( f2 );
-        assertEquals( decls.length, 2 );
-        assertSame( decls[0], col.getName(2) );
-        assertSame( decls[1], col.getName(5) );
-        
-        String [] s = f2.getQualifiedName();
-        assertEquals( s[0], "Q" ); //$NON-NLS-1$
-        assertEquals( s[1], "V" ); //$NON-NLS-1$
-        assertEquals( s[2], "f" ); //$NON-NLS-1$
-        assertTrue( f2.isGloballyQualified() );
+        IASTName[] decls = tu.getDeclarations(f2);
+        assertEquals(decls.length, 2);
+        assertSame(decls[0], col.getName(2));
+        assertSame(decls[1], col.getName(5));
+
+        String[] s = f2.getQualifiedName();
+        assertEquals(s[0], "Q"); //$NON-NLS-1$
+        assertEquals(s[1], "V"); //$NON-NLS-1$
+        assertEquals(s[2], "f"); //$NON-NLS-1$
+        assertTrue(f2.isGloballyQualified());
     }
-    
+
     public void test86371() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct B {                          \n"); //$NON-NLS-1$
@@ -2404,77 +2423,77 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   void f( int ) { f('c'); }        \n"); //$NON-NLS-1$
         buffer.append("   void g( int ) { g('c'); }        \n"); //$NON-NLS-1$
         buffer.append("};                                  \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPFunction f_ref = (ICPPFunction) col.getName(12).resolveBinding();
-        assertTrue( f_ref instanceof ICPPDelegate );
+        assertTrue(f_ref instanceof ICPPDelegate);
         IFunction g_ref = (IFunction) col.getName(15).resolveBinding();
-        
+
         ICPPFunction f = (ICPPFunction) col.getName(1).resolveBinding();
-        assertSame( ((ICPPDelegate)f_ref).getBinding(), f );
-        
+        assertSame(((ICPPDelegate) f_ref).getBinding(), f);
+
         IFunction g = (IFunction) col.getName(13).resolveBinding();
-        assertSame( g, g_ref );
-        
-        assertInstances( col, f_ref, 1 );
-        assertInstances( col, g_ref, 2 );
-        
-        String [] s = f_ref.getQualifiedName();
-        assertEquals( s[0], "D" ); //$NON-NLS-1$
-        assertEquals( s[1], "f" ); //$NON-NLS-1$
-        assertTrue( f_ref.isGloballyQualified() );
-        
+        assertSame(g, g_ref);
+
+        assertInstances(col, f_ref, 1);
+        assertInstances(col, g_ref, 2);
+
+        String[] s = f_ref.getQualifiedName();
+        assertEquals(s[0], "D"); //$NON-NLS-1$
+        assertEquals(s[1], "f"); //$NON-NLS-1$
+        assertTrue(f_ref.isGloballyQualified());
+
         s = f.getQualifiedName();
-        assertEquals( s[0], "B" ); //$NON-NLS-1$
-        assertEquals( s[1], "f" ); //$NON-NLS-1$
-        assertTrue( f.isGloballyQualified() );
+        assertEquals(s[0], "B"); //$NON-NLS-1$
+        assertEquals(s[1], "f"); //$NON-NLS-1$
+        assertTrue(f.isGloballyQualified());
     }
-    
+
     public void testBug86369() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace Company_with_veryblahblah {}       \n"); //$NON-NLS-1$
         buffer.append("namespace CWVLN = Company_with_veryblahblah; \n"); //$NON-NLS-1$
         buffer.append("namespace CWVLN = Company_with_veryblahblah; \n"); //$NON-NLS-1$
         buffer.append("namespace CWVLN = CWVLN;                     \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPNamespace ns = (ICPPNamespace) col.getName(0).resolveBinding();
         ICPPNamespace alias = (ICPPNamespace) col.getName(1).resolveBinding();
-        
-        String [] s = ns.getQualifiedName();
-        assertEquals( s[0], "Company_with_veryblahblah" ); //$NON-NLS-1$
-        s = alias.getQualifiedName();
-        assertEquals( s[0], "CWVLN" ); //$NON-NLS-1$
-        
-        assertTrue( alias instanceof ICPPDelegate );
-        assertSame( ((ICPPDelegate)alias).getBinding(), ns );
-        
-        IASTName [] refs = tu.getReferences( ns );
-        assertEquals( refs.length, 2 );
-        assertSame( refs[0], col.getName(2) );
-        assertSame( refs[1], col.getName(4) );
 
-        IASTName [] decls = tu.getDeclarations( ns );
-        assertEquals( decls.length, 1 );
-        assertSame( decls[0], col.getName(0) );
-        
-        refs = tu.getReferences( alias );
-        assertEquals( refs.length, 1 );
-        assertSame( refs[0], col.getName(6) );
-        
-        decls = tu.getDeclarations( alias );
-        assertEquals( decls.length, 3 );
-        assertSame( decls[0], col.getName(1) );
-        assertSame( decls[1], col.getName(3) );
-        assertSame( decls[2], col.getName(5) );
+        String[] s = ns.getQualifiedName();
+        assertEquals(s[0], "Company_with_veryblahblah"); //$NON-NLS-1$
+        s = alias.getQualifiedName();
+        assertEquals(s[0], "CWVLN"); //$NON-NLS-1$
+
+        assertTrue(alias instanceof ICPPDelegate);
+        assertSame(((ICPPDelegate) alias).getBinding(), ns);
+
+        IASTName[] refs = tu.getReferences(ns);
+        assertEquals(refs.length, 2);
+        assertSame(refs[0], col.getName(2));
+        assertSame(refs[1], col.getName(4));
+
+        IASTName[] decls = tu.getDeclarations(ns);
+        assertEquals(decls.length, 1);
+        assertSame(decls[0], col.getName(0));
+
+        refs = tu.getReferences(alias);
+        assertEquals(refs.length, 1);
+        assertSame(refs[0], col.getName(6));
+
+        decls = tu.getDeclarations(alias);
+        assertEquals(decls.length, 3);
+        assertSame(decls[0], col.getName(1));
+        assertSame(decls[1], col.getName(3));
+        assertSame(decls[2], col.getName(5));
     }
-    
+
     public void testBug86470_1() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A {                  \n"); //$NON-NLS-1$
@@ -2482,30 +2501,31 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   void f( int );              \n"); //$NON-NLS-1$
         buffer.append("}                              \n"); //$NON-NLS-1$
         buffer.append("using A::f;                    \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
-        ICPPUsingDeclaration u = (ICPPUsingDeclaration) col.getName(7).resolveBinding();
-        
-        IASTName [] decls = tu.getDeclarations( u );
-        assertEquals( decls.length, 2 );
-        assertSame( decls[0], col.getName(1) );
-        assertSame( decls[1], col.getName(3) );
-        
-        ICPPDelegate [] delegates = u.getDelegates();
-        assertEquals( delegates.length, 2 );
-        
-        decls = tu.getDeclarations( delegates[0] );
-        assertEquals( decls.length, 1 );
-        assertSame( decls[0], col.getName(7) );
-        
-        decls = tu.getDeclarations( delegates[0].getBinding() );
-        assertEquals( decls.length, 1 );
-        assertSame( decls[0], col.getName(1) );
+
+        ICPPUsingDeclaration u = (ICPPUsingDeclaration) col.getName(7)
+                .resolveBinding();
+
+        IASTName[] decls = tu.getDeclarations(u);
+        assertEquals(decls.length, 2);
+        assertSame(decls[0], col.getName(1));
+        assertSame(decls[1], col.getName(3));
+
+        ICPPDelegate[] delegates = u.getDelegates();
+        assertEquals(delegates.length, 2);
+
+        decls = tu.getDeclarations(delegates[0]);
+        assertEquals(decls.length, 1);
+        assertSame(decls[0], col.getName(7));
+
+        decls = tu.getDeclarations(delegates[0].getBinding());
+        assertEquals(decls.length, 1);
+        assertSame(decls[0], col.getName(1));
     }
-    
+
     public void testBug86470_2() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A {                  \n"); //$NON-NLS-1$
@@ -2522,17 +2542,17 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   using B::f;                 \n"); //$NON-NLS-1$
         buffer.append("   f( 'c' );                   \n"); //$NON-NLS-1$
         buffer.append("}                              \n"); //$NON-NLS-1$
-                
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IFunction f_decl = (IFunction) col.getName(10).resolveBinding();
         IFunction f_ref = (IFunction) col.getName(19).resolveBinding();
-        assertTrue( f_ref instanceof ICPPDelegate );
-        assertSame( f_decl, ((ICPPDelegate)f_ref).getBinding() );
+        assertTrue(f_ref instanceof ICPPDelegate);
+        assertSame(f_decl, ((ICPPDelegate) f_ref).getBinding());
     }
-    
+
     public void testBug86470_3() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A {                       \n"); //$NON-NLS-1$
@@ -2544,30 +2564,32 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   g('a');                          \n"); //$NON-NLS-1$
         buffer.append("   struct g gg;                     \n"); //$NON-NLS-1$
         buffer.append("}                                   \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IBinding ref1 = col.getName(8).resolveBinding();
         IBinding ref2 = col.getName(9).resolveBinding();
-        
-        assertTrue( ref1 instanceof ICPPDelegate );
-        assertTrue( ref2 instanceof ICPPDelegate );
-        
-        ICPPClassType g_struct = (ICPPClassType) col.getName(1).resolveBinding();
+
+        assertTrue(ref1 instanceof ICPPDelegate);
+        assertTrue(ref2 instanceof ICPPDelegate);
+
+        ICPPClassType g_struct = (ICPPClassType) col.getName(1)
+                .resolveBinding();
         IFunction g_func = (IFunction) col.getName(2).resolveBinding();
-        
-        assertSame( g_struct, ((ICPPDelegate)ref2).getBinding() );
-        assertSame( g_func, ((ICPPDelegate)ref1).getBinding() );
-        
-        ICPPUsingDeclaration comp = (ICPPUsingDeclaration) col.getName(7).resolveBinding();
-        IASTName [] decls = tu.getDeclarations(comp);
-        assertEquals( decls.length, 2 );
-        assertSame( decls[0], col.getName(1) );
-        assertSame( decls[1], col.getName(2) );
+
+        assertSame(g_struct, ((ICPPDelegate) ref2).getBinding());
+        assertSame(g_func, ((ICPPDelegate) ref1).getBinding());
+
+        ICPPUsingDeclaration comp = (ICPPUsingDeclaration) col.getName(7)
+                .resolveBinding();
+        IASTName[] decls = tu.getDeclarations(comp);
+        assertEquals(decls.length, 2);
+        assertSame(decls[0], col.getName(1));
+        assertSame(decls[1], col.getName(2));
     }
-    
+
     public void testBug86470_4() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A {                       \n"); //$NON-NLS-1$
@@ -2582,36 +2604,37 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   x = 1;                           \n"); //$NON-NLS-1$
         buffer.append("   struct x xx;                     \n"); //$NON-NLS-1$
         buffer.append("}                                   \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPBinding ref1 = (ICPPBinding) col.getName(11).resolveBinding();
         ICPPBinding ref2 = (ICPPBinding) col.getName(12).resolveBinding();
-        
-        ICPPClassType x_struct = (ICPPClassType) col.getName(3).resolveBinding();
+
+        ICPPClassType x_struct = (ICPPClassType) col.getName(3)
+                .resolveBinding();
         IVariable x_var = (IVariable) col.getName(1).resolveBinding();
-        
-        assertTrue( ref1 instanceof ICPPDelegate );
-        assertTrue( ref2 instanceof ICPPDelegate );
-        assertSame( x_struct, ((ICPPDelegate)ref2).getBinding() );
-        assertSame( x_var, ((ICPPDelegate)ref1).getBinding() );
-        
-        IASTName [] refs = tu.getReferences( x_struct );
-        assertEquals( refs.length, 1 );
-        assertSame( refs[0], col.getName(10) );
-		
-        String [] s = ref2.getQualifiedName();
-        assertEquals( s[0], "x" ); //$NON-NLS-1$
-        assertFalse( ref2.isGloballyQualified() );
-        
+
+        assertTrue(ref1 instanceof ICPPDelegate);
+        assertTrue(ref2 instanceof ICPPDelegate);
+        assertSame(x_struct, ((ICPPDelegate) ref2).getBinding());
+        assertSame(x_var, ((ICPPDelegate) ref1).getBinding());
+
+        IASTName[] refs = tu.getReferences(x_struct);
+        assertEquals(refs.length, 1);
+        assertSame(refs[0], col.getName(10));
+
+        String[] s = ref2.getQualifiedName();
+        assertEquals(s[0], "x"); //$NON-NLS-1$
+        assertFalse(ref2.isGloballyQualified());
+
         s = x_struct.getQualifiedName();
-        assertEquals( s[0], "B" ); //$NON-NLS-1$
-        assertEquals( s[1], "x" ); //$NON-NLS-1$
-        assertTrue( x_struct.isGloballyQualified() );
+        assertEquals(s[0], "B"); //$NON-NLS-1$
+        assertEquals(s[1], "x"); //$NON-NLS-1$
+        assertTrue(x_struct.isGloballyQualified());
     }
-    
+
     public void testBug86470_5() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A {                       \n"); //$NON-NLS-1$
@@ -2623,28 +2646,28 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   using A::f;                      \n"); //$NON-NLS-1$
         buffer.append("   f( 3.5 );                        \n"); //$NON-NLS-1$
         buffer.append("}                                   \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPFunction f = (ICPPFunction) col.getName(3).resolveBinding();
-        
+
         ICPPFunction f_ref = (ICPPFunction) col.getName(11).resolveBinding();
-        assertTrue( f_ref instanceof ICPPDelegate );
-        assertSame( ((ICPPDelegate)f_ref).getBinding(), f );
-        
-        String [] s = f_ref.getQualifiedName();
-        assertEquals( s[0], "f" ); //$NON-NLS-1$
-        assertFalse( f_ref.isGloballyQualified() );
-        
+        assertTrue(f_ref instanceof ICPPDelegate);
+        assertSame(((ICPPDelegate) f_ref).getBinding(), f);
+
+        String[] s = f_ref.getQualifiedName();
+        assertEquals(s[0], "f"); //$NON-NLS-1$
+        assertFalse(f_ref.isGloballyQualified());
+
         s = f.getQualifiedName();
-        assertEquals( s[0], "A" ); //$NON-NLS-1$
-        assertEquals( s[1], "f" ); //$NON-NLS-1$
-        assertTrue( f.isGloballyQualified() );
+        assertEquals(s[0], "A"); //$NON-NLS-1$
+        assertEquals(s[1], "f"); //$NON-NLS-1$
+        assertTrue(f.isGloballyQualified());
     }
-    
-    public void testBug86678 () throws Exception {
+
+    public void testBug86678() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class B;                                 \n"); //$NON-NLS-1$
         buffer.append("class A {                                \n"); //$NON-NLS-1$
@@ -2659,16 +2682,16 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPClassType B = (ICPPClassType) col.getName(6).resolveBinding();
         ICPPField i = (ICPPField) col.getName(12).resolveBinding();
         IParameter p = (IParameter) col.getName(10).resolveBinding();
-        
-        assertInstances( col, B, 4 );
-        assertInstances( col, i, 2 );
-        assertInstances( col, p, 3 );
+
+        assertInstances(col, B, 4);
+        assertInstances(col, i, 2);
+        assertInstances(col, p, 3);
     }
-    
+
     public void testBug86543() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("int printf( const char *, ... );             \n"); //$NON-NLS-1$
@@ -2677,68 +2700,68 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   printf( \"hello\" );                      \n"); //$NON-NLS-1$
         buffer.append("   printf(\"a=%d b=%d\", a, b );             \n"); //$NON-NLS-1$
         buffer.append("}                                            \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IFunction printf = (IFunction) col.getName(6).resolveBinding();
-        assertInstances( col, printf, 3 );
+        assertInstances(col, printf, 3);
     }
-    
+
     public void testBug86554() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("int max( int a, int b, int c ) {                  \n"); //$NON-NLS-1$
         buffer.append("   int m = ( a > b ) ? a : b;                     \n"); //$NON-NLS-1$
         buffer.append("   return ( m > c ) ? m : c;                      \n"); //$NON-NLS-1$
         buffer.append("}                                                 \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IVariable m = (IVariable) col.getName(11).resolveBinding();
         IParameter a = (IParameter) col.getName(1).resolveBinding();
         IParameter b = (IParameter) col.getName(2).resolveBinding();
         IParameter c = (IParameter) col.getName(3).resolveBinding();
-        
-        String [] s = ((ICPPBinding)a).getQualifiedName();
-        assertEquals( s[0], "a" ); //$NON-NLS-1$
-        assertFalse( ((ICPPBinding)a).isGloballyQualified() );
-        
-        assertInstances( col, m, 3 );
-        assertInstances( col, a, 3 );
-        assertInstances( col, b, 3 );
-        assertInstances( col, c, 3 );
+
+        String[] s = ((ICPPBinding) a).getQualifiedName();
+        assertEquals(s[0], "a"); //$NON-NLS-1$
+        assertFalse(((ICPPBinding) a).isGloballyQualified());
+
+        assertInstances(col, m, 3);
+        assertInstances(col, a, 3);
+        assertInstances(col, b, 3);
+        assertInstances(col, c, 3);
     }
-    
+
     public void testBug86621() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("int g();                               \n"); //$NON-NLS-1$
         buffer.append("struct X { static int g(); };          \n"); //$NON-NLS-1$
         buffer.append("struct Y : X { static int i ; };       \n"); //$NON-NLS-1$
         buffer.append("int Y::i = g();                        \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPFunction g1 = (ICPPFunction) col.getName(0).resolveBinding();
         ICPPMethod g2 = (ICPPMethod) col.getName(9).resolveBinding();
-        
-        String [] s = g1.getQualifiedName();
-        assertEquals( s[0], "g" ); //$NON-NLS-1$
-        assertTrue( g1.isGloballyQualified() );
-        
+
+        String[] s = g1.getQualifiedName();
+        assertEquals(s[0], "g"); //$NON-NLS-1$
+        assertTrue(g1.isGloballyQualified());
+
         s = g2.getQualifiedName();
-        assertEquals( s[0], "X" ); //$NON-NLS-1$
-        assertEquals( s[1], "g" ); //$NON-NLS-1$
-        assertTrue( g2.isGloballyQualified() );
-        
-        assertInstances( col, g1, 1 );
-        assertInstances( col, g2, 2 );
+        assertEquals(s[0], "X"); //$NON-NLS-1$
+        assertEquals(s[1], "g"); //$NON-NLS-1$
+        assertTrue(g2.isGloballyQualified());
+
+        assertInstances(col, g1, 1);
+        assertInstances(col, g2, 2);
     }
-    
+
     public void testBug86649() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class V { int f(); int x; };                 \n"); //$NON-NLS-1$
@@ -2757,58 +2780,58 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   y++;                                      \n"); //$NON-NLS-1$
         buffer.append("   g();                                      \n"); //$NON-NLS-1$
         buffer.append("}                                            \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPField x = (ICPPField) col.getName(23).resolveBinding();
         ICPPMethod f = (ICPPMethod) col.getName(24).resolveBinding();
-        
-        String [] s= f.getQualifiedName();
-        assertEquals( s[0], "B" ); //$NON-NLS-1$
-        assertEquals( s[1], "f" ); //$NON-NLS-1$
-        assertTrue( f.isGloballyQualified() );
-        
+
+        String[] s = f.getQualifiedName();
+        assertEquals(s[0], "B"); //$NON-NLS-1$
+        assertEquals(s[1], "f"); //$NON-NLS-1$
+        assertTrue(f.isGloballyQualified());
+
         s = x.getQualifiedName();
-        assertEquals( s[0], "B" ); //$NON-NLS-1$
-        assertEquals( s[1], "x" ); //$NON-NLS-1$
-        assertTrue( x.isGloballyQualified() );
-        
+        assertEquals(s[0], "B"); //$NON-NLS-1$
+        assertEquals(s[1], "x"); //$NON-NLS-1$
+        assertTrue(x.isGloballyQualified());
+
         IProblemBinding y = (IProblemBinding) col.getName(25).resolveBinding();
         IProblemBinding g = (IProblemBinding) col.getName(26).resolveBinding();
-        
-        assertEquals( y.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP );
-        assertEquals( g.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP );
-        
-        assertInstances( col, x, 2 );
-        assertInstances( col, f, 2 );
+
+        assertEquals(y.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+        assertEquals(g.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP);
+
+        assertInstances(col, x, 2);
+        assertInstances(col, f, 2);
     }
-    
+
     public void testBug86827() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("struct C {                    \n"); //$NON-NLS-1$
         buffer.append("   int c;                     \n"); //$NON-NLS-1$
         buffer.append("   C() : c(0) { }             \n"); //$NON-NLS-1$
         buffer.append("};                            \n"); //$NON-NLS-1$
-        
+
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
-        ICPPVariable c = (ICPPVariable) col.getName(1).resolveBinding();
-        
-        String [] s = c.getQualifiedName();
-        assertEquals( s.length, 2 );
-        assertEquals( s[0], "C" ); //$NON-NLS-1$
-        assertEquals( s[1], "c" ); //$NON-NLS-1$
-        assertTrue( c.isGloballyQualified() );
 
-        IASTName [] refs = tu.getReferences( c );
-        assertEquals( refs.length, 1 );
-        assertSame( refs[0], col.getName(3) );
+        ICPPVariable c = (ICPPVariable) col.getName(1).resolveBinding();
+
+        String[] s = c.getQualifiedName();
+        assertEquals(s.length, 2);
+        assertEquals(s[0], "C"); //$NON-NLS-1$
+        assertEquals(s[1], "c"); //$NON-NLS-1$
+        assertTrue(c.isGloballyQualified());
+
+        IASTName[] refs = tu.getReferences(c);
+        assertEquals(refs.length, 1);
+        assertSame(refs[0], col.getName(3));
     }
-    
+
     public void testFind_1() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void f( int par ) {            \n"); //$NON-NLS-1$
@@ -2817,27 +2840,28 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("      int v2;                  \n"); //$NON-NLS-1$
         buffer.append("   }                           \n"); //$NON-NLS-1$
         buffer.append("}                              \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPVariable v1 = (ICPPVariable) col.getName(2).resolveBinding();
         ICPPVariable v2 = (ICPPVariable) col.getName(3).resolveBinding();
-        
-        String [] s = v1.getQualifiedName();
-        assertEquals( s[0], "v1" ); //$NON-NLS-1$
-        assertFalse( v1.isGloballyQualified() );
-        
+
+        String[] s = v1.getQualifiedName();
+        assertEquals(s[0], "v1"); //$NON-NLS-1$
+        assertFalse(v1.isGloballyQualified());
+
         s = v2.getQualifiedName();
-        assertEquals( s[0], "v2" ); //$NON-NLS-1$
-        assertFalse( v2.isGloballyQualified() );
-        
+        assertEquals(s[0], "v2"); //$NON-NLS-1$
+        assertFalse(v2.isGloballyQualified());
+
         ICPPBlockScope scope = (ICPPBlockScope) v2.getScope();
-        IBinding [] bs = scope.find( "v1" ); //$NON-NLS-1$
-        assertEquals( bs.length, 1 );
-        assertSame( bs[0], v1 );
+        IBinding[] bs = scope.find("v1"); //$NON-NLS-1$
+        assertEquals(bs.length, 1);
+        assertSame(bs[0], v1);
     }
+
     public void testFind_2() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class A { int a; };            \n"); //$NON-NLS-1$
@@ -2846,29 +2870,30 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("};                             \n"); //$NON-NLS-1$
         buffer.append("void B::f() {                  \n"); //$NON-NLS-1$
         buffer.append("}                              \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
         ICPPField a = (ICPPField) col.getName(1).resolveBinding();
         ICPPMethod f = (ICPPMethod) col.getName(7).resolveBinding();
-        
+
         IScope scope = f.getFunctionScope();
-        IBinding [] bs = scope.find( "a" ); //$NON-NLS-1$
-        assertEquals( bs.length, 1 );
-        assertSame( bs[0], a );
-        
-        bs = scope.find( "~B" ); //$NON-NLS-1$
-        assertEquals( bs.length, 1 );
-        assertTrue( bs[0] instanceof ICPPMethod );
-        assertTrue( bs[0].getName().equals( "~B" ) ); //$NON-NLS-1$
-        
-        bs = scope.find( "A" ); //$NON-NLS-1$
-        assertEquals( bs.length, 1 );
-        assertSame( bs[0], A );
+        IBinding[] bs = scope.find("a"); //$NON-NLS-1$
+        assertEquals(bs.length, 1);
+        assertSame(bs[0], a);
+
+        bs = scope.find("~B"); //$NON-NLS-1$
+        assertEquals(bs.length, 1);
+        assertTrue(bs[0] instanceof ICPPMethod);
+        assertTrue(bs[0].getName().equals("~B")); //$NON-NLS-1$
+
+        bs = scope.find("A"); //$NON-NLS-1$
+        assertEquals(bs.length, 1);
+        assertSame(bs[0], A);
     }
+
     public void testFind_3() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A {                       \n"); //$NON-NLS-1$
@@ -2879,36 +2904,39 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   void f( char );                  \n"); //$NON-NLS-1$
         buffer.append("   using A::f;                      \n"); //$NON-NLS-1$
         buffer.append("}                                   \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
         IFunction f1 = (IFunction) col.getName(1).resolveBinding();
         IFunction f2 = (IFunction) col.getName(3).resolveBinding();
         IFunction f3 = (IFunction) col.getName(6).resolveBinding();
-        
-        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(5).getParent().getParent();
-        IScope scope = ((IASTCompoundStatement)def.getBody()).getScope();
-        IBinding [] bs = scope.find( "f" ); //$NON-NLS-1$
-        assertEquals( bs.length, 3 );
-        assertSame( bs[0], f3 );
-        assertSame( ((ICPPDelegate)bs[1]).getBinding(), f1 );
-        assertSame( ((ICPPDelegate)bs[2]).getBinding(), f2 );
-        
-        String [] s = ((ICPPDelegate)bs[1]).getQualifiedName();
-        assertEquals( s.length, 1 );
-        assertEquals( s[0], "f" ); //$NON-NLS-1$
-        assertFalse( ((ICPPDelegate)bs[1]).isGloballyQualified() );
-        
-        s = ((ICPPBinding) ((ICPPDelegate)bs[1]).getBinding()).getQualifiedName();
-        assertEquals( s.length, 2 );
-        assertEquals( s[0], "A"); //$NON-NLS-1$
-        assertEquals( s[1], "f" ); //$NON-NLS-1$
-        assertTrue( ((ICPPBinding) ((ICPPDelegate)bs[1]).getBinding()).isGloballyQualified() );
-        
+
+        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(5)
+                .getParent().getParent();
+        IScope scope = ((IASTCompoundStatement) def.getBody()).getScope();
+        IBinding[] bs = scope.find("f"); //$NON-NLS-1$
+        assertEquals(bs.length, 3);
+        assertSame(bs[0], f3);
+        assertSame(((ICPPDelegate) bs[1]).getBinding(), f1);
+        assertSame(((ICPPDelegate) bs[2]).getBinding(), f2);
+
+        String[] s = ((ICPPDelegate) bs[1]).getQualifiedName();
+        assertEquals(s.length, 1);
+        assertEquals(s[0], "f"); //$NON-NLS-1$
+        assertFalse(((ICPPDelegate) bs[1]).isGloballyQualified());
+
+        s = ((ICPPBinding) ((ICPPDelegate) bs[1]).getBinding())
+                .getQualifiedName();
+        assertEquals(s.length, 2);
+        assertEquals(s[0], "A"); //$NON-NLS-1$
+        assertEquals(s[1], "f"); //$NON-NLS-1$
+        assertTrue(((ICPPBinding) ((ICPPDelegate) bs[1]).getBinding())
+                .isGloballyQualified());
+
     }
-    
+
     public void testFind_4() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("namespace A {                                  \n"); //$NON-NLS-1$
@@ -2925,24 +2953,25 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   using namespace A;                          \n"); //$NON-NLS-1$
         buffer.append("   using namespace C;                          \n"); //$NON-NLS-1$
         buffer.append("}                                              \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
         ICPPClassType f = (ICPPClassType) col.getName(1).resolveBinding();
         IFunction f1 = (IFunction) col.getName(2).resolveBinding();
         IFunction f2 = (IFunction) col.getName(4).resolveBinding();
-        
-        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(8).getParent().getParent();
-        IScope scope = ((IASTCompoundStatement)def.getBody()).getScope();
-        IBinding [] bs = scope.find( "f" ); //$NON-NLS-1$
-        assertEquals( bs.length, 3 );
-        assertSame( bs[0], f );
-        assertSame( bs[1], f1 );
-        assertSame( bs[2], f2 );
+
+        IASTFunctionDefinition def = (IASTFunctionDefinition) col.getName(8)
+                .getParent().getParent();
+        IScope scope = ((IASTCompoundStatement) def.getBody()).getScope();
+        IBinding[] bs = scope.find("f"); //$NON-NLS-1$
+        assertEquals(bs.length, 3);
+        assertSame(bs[0], f);
+        assertSame(bs[1], f1);
+        assertSame(bs[2], f2);
     }
-    
+
     public void testGets() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class A {                                 \n"); //$NON-NLS-1$
@@ -2953,886 +2982,984 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append("   int b;                                 \n"); //$NON-NLS-1$
         buffer.append("   void fb();                             \n"); //$NON-NLS-1$
         buffer.append("};                                        \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
         ICPPClassType B = (ICPPClassType) col.getName(3).resolveBinding();
         ICPPField a = (ICPPField) col.getName(1).resolveBinding();
         ICPPMethod fa = (ICPPMethod) col.getName(2).resolveBinding();
         ICPPField b = (ICPPField) col.getName(5).resolveBinding();
         ICPPMethod fb = (ICPPMethod) col.getName(6).resolveBinding();
-        
-        Object [] result = B.getDeclaredFields();
-        assertEquals( result.length, 1 );
-        assertSame( result[0], b );
-        
+
+        Object[] result = B.getDeclaredFields();
+        assertEquals(result.length, 1);
+        assertSame(result[0], b);
+
         result = B.getFields();
-        assertEquals( result.length, 2 );
-        assertSame( result[0], b );
-        assertSame( result[1], a );
-        
+        assertEquals(result.length, 2);
+        assertSame(result[0], b);
+        assertSame(result[1], a);
+
         result = B.getDeclaredMethods();
-        assertEquals( result.length, 1 );
-        assertSame( result[0], fb );
-        
+        assertEquals(result.length, 1);
+        assertSame(result[0], fb);
+
         result = B.getAllDeclaredMethods();
-        assertEquals( result.length, 2 );
-        assertSame( result[0], fb );
-        assertSame( result[1], fa );
-        
-        ICPPMethod [] B_implicit = ((ICPPClassScope)B.getCompositeScope()).getImplicitMethods();
-        assertEquals( B_implicit.length, 4 );
-        assertTrue( B_implicit[0].getName().equals( "B" ) ); //$NON-NLS-1$
-        assertTrue( B_implicit[1].getName().equals( "B" ) ); //$NON-NLS-1$
-        assertTrue( B_implicit[2].getName().equals( "operator =" ) ); //$NON-NLS-1$
-        assertTrue( B_implicit[3].getName().equals( "~B" ) ); //$NON-NLS-1$
-        
-        ICPPMethod [] A_implicit = ((ICPPClassScope)A.getCompositeScope()).getImplicitMethods();
-        assertEquals( A_implicit.length, 4 );
-        assertTrue( A_implicit[0].getName().equals( "A" ) ); //$NON-NLS-1$
-        assertTrue( A_implicit[1].getName().equals( "A" ) ); //$NON-NLS-1$
-        assertTrue( A_implicit[2].getName().equals( "operator =" ) ); //$NON-NLS-1$
-        assertTrue( A_implicit[3].getName().equals( "~A" ) ); //$NON-NLS-1$
-        
+        assertEquals(result.length, 2);
+        assertSame(result[0], fb);
+        assertSame(result[1], fa);
+
+        ICPPMethod[] B_implicit = ((ICPPClassScope) B.getCompositeScope())
+                .getImplicitMethods();
+        assertEquals(B_implicit.length, 4);
+        assertTrue(B_implicit[0].getName().equals("B")); //$NON-NLS-1$
+        assertTrue(B_implicit[1].getName().equals("B")); //$NON-NLS-1$
+        assertTrue(B_implicit[2].getName().equals("operator =")); //$NON-NLS-1$
+        assertTrue(B_implicit[3].getName().equals("~B")); //$NON-NLS-1$
+
+        ICPPMethod[] A_implicit = ((ICPPClassScope) A.getCompositeScope())
+                .getImplicitMethods();
+        assertEquals(A_implicit.length, 4);
+        assertTrue(A_implicit[0].getName().equals("A")); //$NON-NLS-1$
+        assertTrue(A_implicit[1].getName().equals("A")); //$NON-NLS-1$
+        assertTrue(A_implicit[2].getName().equals("operator =")); //$NON-NLS-1$
+        assertTrue(A_implicit[3].getName().equals("~A")); //$NON-NLS-1$
+
         result = B.getMethods();
-        assertEquals( result.length, 10 );
-        assertSame( result[0], fb );
-        assertSame( result[1], B_implicit[0] );
-        assertSame( result[2], B_implicit[1] );
-        assertSame( result[3], B_implicit[2] );
-        assertSame( result[4], B_implicit[3] );
-        assertSame( result[5], fa );
-        assertSame( result[6], A_implicit[0] );
-        assertSame( result[7], A_implicit[1] );
-        assertSame( result[8], A_implicit[2] );
-        assertSame( result[9], A_implicit[3] );
+        assertEquals(result.length, 10);
+        assertSame(result[0], fb);
+        assertSame(result[1], B_implicit[0]);
+        assertSame(result[2], B_implicit[1]);
+        assertSame(result[3], B_implicit[2]);
+        assertSame(result[4], B_implicit[3]);
+        assertSame(result[5], fa);
+        assertSame(result[6], A_implicit[0]);
+        assertSame(result[7], A_implicit[1]);
+        assertSame(result[8], A_implicit[2]);
+        assertSame(result[9], A_implicit[3]);
     }
-    
-    public void testBug87424() throws Exception{
-        IASTTranslationUnit tu = parse( "int * restrict x;", ParserLanguage.CPP, true ); //$NON-NLS-1$
+
+    public void testBug87424() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "int * restrict x;", ParserLanguage.CPP, true); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
+
         IVariable x = (IVariable) col.getName(0).resolveBinding();
         IType t = x.getType();
-        assertTrue( t instanceof IGPPPointerType );
-        assertTrue( ((IGPPPointerType) t).isRestrict() );
-        
-        tu = parse( "class A {}; int A::* restrict x;", ParserLanguage.CPP, true ); //$NON-NLS-1$
+        assertTrue(t instanceof IGPPPointerType);
+        assertTrue(((IGPPPointerType) t).isRestrict());
+
+        tu = parse("class A {}; int A::* restrict x;", ParserLanguage.CPP, true); //$NON-NLS-1$
         col = new CPPNameCollector();
         tu.accept(col);
-        
+
         x = (IVariable) col.getName(3).resolveBinding();
         t = x.getType();
-        assertTrue( t instanceof IGPPPointerToMemberType );
-        assertTrue( ((IGPPPointerToMemberType) t).isRestrict() );
+        assertTrue(t instanceof IGPPPointerToMemberType);
+        assertTrue(((IGPPPointerToMemberType) t).isRestrict());
     }
-    
+
     public void testBug87705() throws Exception {
-        IASTTranslationUnit tu = parse( "class A { friend class B::C; };", ParserLanguage.CPP, true ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(
+                "class A { friend class B::C; };", ParserLanguage.CPP, true); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
-        
-        IProblemBinding B = (IProblemBinding) col.getName(2).resolveBinding();
-        assertEquals( B.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND );
-        IProblemBinding C = (IProblemBinding) col.getName(3).resolveBinding();
-        assertEquals( C.getID(), IProblemBinding.SEMANTIC_BAD_SCOPE );
-    }
-    
-    public void testBug88459() throws Exception {
-    	IASTTranslationUnit tu = parse( "int f(); ", ParserLanguage.CPP ); //$NON-NLS-1$
-    	CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	IFunction f = (IFunction) col.getName(0).resolveBinding();
-    	assertFalse( f.isStatic() );	
-    }
-    
-    public void testBug88501_1() throws Exception {
-    	IASTTranslationUnit tu = parse( "void f(); void f( int ); struct f;", ParserLanguage.CPP ); //$NON-NLS-1$
-    	CPPNameCollector col = new CPPNameCollector();
-        tu.accept(col);
-        
-        assertTrue( col.getName(0).resolveBinding() instanceof IFunction );
-        assertTrue( col.getName(1).resolveBinding() instanceof IFunction );
-        assertTrue( col.getName(3).resolveBinding() instanceof ICPPClassType );
-    }
-        
-//    public void testBug8342_1() throws Exception {
-//    	IASTTranslationUnit tu = parse( "int a; int a;", ParserLanguage.CPP ); //$NON-NLS-1$
-//    	CPPNameCollector col = new CPPNameCollector();
-//        tu.accept(col);
-//        
-//        assertTrue( col.getName(0).resolveBinding() instanceof IVariable );
-//        IProblemBinding p = (IProblemBinding) col.getName(1).resolveBinding();
-//        assertEquals( p.getID(), IProblemBinding.SEMANTIC_INVALID_REDEFINITION );
-//    }
-    
-    public void testBug8342_2() throws Exception {
-    	IASTTranslationUnit tu = parse( "extern int a; extern char a;", ParserLanguage.CPP ); //$NON-NLS-1$
-    	CPPNameCollector col = new CPPNameCollector();
-        tu.accept(col);
-        
-        assertTrue( col.getName(0).resolveBinding() instanceof IVariable );
-        IProblemBinding p = (IProblemBinding) col.getName(1).resolveBinding();
-        assertEquals( p.getID(), IProblemBinding.SEMANTIC_INVALID_REDECLARATION );
-    }
-    
-    public void testNamespaceAlias_2() throws Exception {
-    	StringBuffer buffer = new StringBuffer();
-    	buffer.append("namespace A { int i; }      \n"); //$NON-NLS-1$
-    	buffer.append("namespace B = A;            \n"); //$NON-NLS-1$
-    	buffer.append("void f() {                  \n"); //$NON-NLS-1$
-    	buffer.append("   B::i;                    \n"); //$NON-NLS-1$
-    	buffer.append("}                           \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+        IProblemBinding B = (IProblemBinding) col.getName(2).resolveBinding();
+        assertEquals(B.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+        IProblemBinding C = (IProblemBinding) col.getName(3).resolveBinding();
+        assertEquals(C.getID(), IProblemBinding.SEMANTIC_BAD_SCOPE);
+    }
+
+    public void testBug88459() throws Exception {
+        IASTTranslationUnit tu = parse("int f(); ", ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f = (IFunction) col.getName(0).resolveBinding();
+        assertFalse(f.isStatic());
+    }
+
+    public void testBug88501_1() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "void f(); void f( int ); struct f;", ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        assertTrue(col.getName(0).resolveBinding() instanceof IFunction);
+        assertTrue(col.getName(1).resolveBinding() instanceof IFunction);
+        assertTrue(col.getName(3).resolveBinding() instanceof ICPPClassType);
+    }
+
+    // public void testBug8342_1() throws Exception {
+    // IASTTranslationUnit tu = parse( "int a; int a;", ParserLanguage.CPP );
+    // //$NON-NLS-1$
+    // CPPNameCollector col = new CPPNameCollector();
+    // tu.accept(col);
+    //        
+    // assertTrue( col.getName(0).resolveBinding() instanceof IVariable );
+    // IProblemBinding p = (IProblemBinding) col.getName(1).resolveBinding();
+    // assertEquals( p.getID(), IProblemBinding.SEMANTIC_INVALID_REDEFINITION );
+    // }
+
+    public void testBug8342_2() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "extern int a; extern char a;", ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        assertTrue(col.getName(0).resolveBinding() instanceof IVariable);
+        IProblemBinding p = (IProblemBinding) col.getName(1).resolveBinding();
+        assertEquals(p.getID(), IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
+    }
+
+    public void testNamespaceAlias_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A { int i; }      \n"); //$NON-NLS-1$
+        buffer.append("namespace B = A;            \n"); //$NON-NLS-1$
+        buffer.append("void f() {                  \n"); //$NON-NLS-1$
+        buffer.append("   B::i;                    \n"); //$NON-NLS-1$
+        buffer.append("}                           \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
         ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
-        ICPPNamespaceAlias alias = (ICPPNamespaceAlias) col.getName(6).resolveBinding();
+        ICPPNamespaceAlias alias = (ICPPNamespaceAlias) col.getName(6)
+                .resolveBinding();
         ICPPVariable i = (ICPPVariable) col.getName(7).resolveBinding();
-        
-        assertInstances( col, A, 2 );
-        assertInstances( col, alias, 2 );
-        assertInstances( col, i, 3 );
-        
-        String [] s = i.getQualifiedName();
-        assertEquals( s[0], "A" ); //$NON-NLS-1$
-        assertEquals( s[1], "i" ); //$NON-NLS-1$
-        assertTrue( i.isGloballyQualified() );
-        
+
+        assertInstances(col, A, 2);
+        assertInstances(col, alias, 2);
+        assertInstances(col, i, 3);
+
+        String[] s = i.getQualifiedName();
+        assertEquals(s[0], "A"); //$NON-NLS-1$
+        assertEquals(s[1], "i"); //$NON-NLS-1$
+        assertTrue(i.isGloballyQualified());
+
         s = alias.getQualifiedName();
-        assertEquals( s[0], "B" ); //$NON-NLS-1$
-        assertTrue( alias.isGloballyQualified() );
+        assertEquals(s[0], "B"); //$NON-NLS-1$
+        assertTrue(alias.isGloballyQualified());
     }
-    
+
     public void testBug89539() throws Exception {
-    	StringBuffer buffer = new StringBuffer();
-    	buffer.append("class A{};              \n"); //$NON-NLS-1$
-    	buffer.append("class B : public A {    \n"); //$NON-NLS-1$
-    	buffer.append("   B () : A() {}        \n"); //$NON-NLS-1$
-    	buffer.append("};                      \n"); //$NON-NLS-1$
-    	
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-    	CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPClassType A1 = (ICPPClassType) col.getName(0).resolveBinding();
-    	ICPPClassType A2 = (ICPPClassType) col.getName(2).resolveBinding();
-    	assertSame( A1, A2 );
-    	
-    	ICPPConstructor A3 = (ICPPConstructor) col.getName(4).resolveBinding();
-    	assertSame( A3.getScope(), A1.getCompositeScope() );
-    	
-    	tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-    	col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	assertTrue( col.getName(4).resolveBinding() instanceof ICPPConstructor );
-    }
-    
-    public void testBug89851() throws Exception {
-    	StringBuffer buffer = new StringBuffer();
-    	buffer.append( "class B * b;            \n"); //$NON-NLS-1$
-    	buffer.append( "class A {               \n"); //$NON-NLS-1$
-    	buffer.append( "   A * a;               \n"); //$NON-NLS-1$
-    	buffer.append( "};                      \n"); //$NON-NLS-1$
-    	buffer.append( "class A;                \n"); //$NON-NLS-1$
-    	
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-    	CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	assertTrue( col.getName(0).resolveBinding() instanceof ICPPClassType );
-    	assertTrue( col.getName(1).resolveBinding() instanceof ICPPVariable );
-    	assertTrue( col.getName(2).resolveBinding() instanceof ICPPClassType );
-    	assertTrue( col.getName(3).resolveBinding() instanceof ICPPClassType );
-    }
-    
-    public void testBug89828() throws Exception {
-        IASTTranslationUnit tu = parse( "class B * b; void f();  void f( int );", ParserLanguage.CPP ); //$NON-NLS-1$
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A{};              \n"); //$NON-NLS-1$
+        buffer.append("class B : public A {    \n"); //$NON-NLS-1$
+        buffer.append("   B () : A() {}        \n"); //$NON-NLS-1$
+        buffer.append("};                      \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col );
-        
-        assertTrue( col.getName(0).resolveBinding() instanceof ICPPClassType );
-    	assertTrue( col.getName(1).resolveBinding() instanceof ICPPVariable );
+        tu.accept(col);
+
+        ICPPClassType A1 = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPClassType A2 = (ICPPClassType) col.getName(2).resolveBinding();
+        assertSame(A1, A2);
+
+        ICPPConstructor A3 = (ICPPConstructor) col.getName(4).resolveBinding();
+        assertSame(A3.getScope(), A1.getCompositeScope());
+
+        tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        col = new CPPNameCollector();
+        tu.accept(col);
+
+        assertTrue(col.getName(4).resolveBinding() instanceof ICPPConstructor);
+    }
+
+    public void testBug89851() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class B * b;            \n"); //$NON-NLS-1$
+        buffer.append("class A {               \n"); //$NON-NLS-1$
+        buffer.append("   A * a;               \n"); //$NON-NLS-1$
+        buffer.append("};                      \n"); //$NON-NLS-1$
+        buffer.append("class A;                \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        assertTrue(col.getName(0).resolveBinding() instanceof ICPPClassType);
+        assertTrue(col.getName(1).resolveBinding() instanceof ICPPVariable);
+        assertTrue(col.getName(2).resolveBinding() instanceof ICPPClassType);
+        assertTrue(col.getName(3).resolveBinding() instanceof ICPPClassType);
+    }
+
+    public void testBug89828() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "class B * b; void f();  void f( int );", ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        assertTrue(col.getName(0).resolveBinding() instanceof ICPPClassType);
+        assertTrue(col.getName(1).resolveBinding() instanceof ICPPVariable);
         IFunction f1 = (IFunction) col.getName(2).resolveBinding();
         IFunction f2 = (IFunction) col.getName(3).resolveBinding();
-        
+
         IScope scope = tu.getScope();
-        IBinding [] bs = scope.find("f"); //$NON-NLS-1$
-        assertEquals( bs.length, 2 );
-        assertSame( bs[0], f1 );
-        assertSame( bs[1], f2 );
+        IBinding[] bs = scope.find("f"); //$NON-NLS-1$
+        assertEquals(bs.length, 2);
+        assertSame(bs[0], f1);
+        assertSame(bs[1], f2);
     }
-    
+
     public void testBug90039() throws Exception {
-    	StringBuffer buffer = new StringBuffer();
-    	buffer.append("class A {                  \n"); //$NON-NLS-1$
-    	buffer.append("   enum type { t1, t2 };   \n"); //$NON-NLS-1$
-    	buffer.append("   void f( type t );       \n"); //$NON-NLS-1$
-    	buffer.append("};                         \n"); //$NON-NLS-1$
-    	buffer.append("class B : public A {       \n"); //$NON-NLS-1$
-    	buffer.append("   void g() {              \n"); //$NON-NLS-1$
-    	buffer.append("      f( A::t1 );          \n"); //$NON-NLS-1$
-    	buffer.append("   }                       \n"); //$NON-NLS-1$
-    	buffer.append("};                         \n"); //$NON-NLS-1$
-    	
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A {                  \n"); //$NON-NLS-1$
+        buffer.append("   enum type { t1, t2 };   \n"); //$NON-NLS-1$
+        buffer.append("   void f( type t );       \n"); //$NON-NLS-1$
+        buffer.append("};                         \n"); //$NON-NLS-1$
+        buffer.append("class B : public A {       \n"); //$NON-NLS-1$
+        buffer.append("   void g() {              \n"); //$NON-NLS-1$
+        buffer.append("      f( A::t1 );          \n"); //$NON-NLS-1$
+        buffer.append("   }                       \n"); //$NON-NLS-1$
+        buffer.append("};                         \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col );
+        tu.accept(col);
 
-        IFunction f = (IFunction) col.getName( 10 ).resolveBinding();
-        IEnumerator t1 = (IEnumerator) col.getName( 13 ).resolveBinding();
+        IFunction f = (IFunction) col.getName(10).resolveBinding();
+        IEnumerator t1 = (IEnumerator) col.getName(13).resolveBinding();
 
-        assertInstances( col, f, 2 );
-        assertInstances( col, t1, 3 );
+        assertInstances(col, f, 2);
+        assertInstances(col, t1, 3);
     }
-    
+
     public void testBug90039_2() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void f( void ) {                 \n"); //$NON-NLS-1$
         buffer.append("   enum { one };                 \n"); //$NON-NLS-1$
         buffer.append("}                                \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col );
-        assertTrue( col.getName(0).resolveBinding() instanceof IFunction );
-        assertTrue( col.getName(1).resolveBinding() instanceof IParameter );
-        IEnumeration e = (IEnumeration) col.getName(2).resolveBinding(); 
+        tu.accept(col);
+        assertTrue(col.getName(0).resolveBinding() instanceof IFunction);
+        assertTrue(col.getName(1).resolveBinding() instanceof IParameter);
+        IEnumeration e = (IEnumeration) col.getName(2).resolveBinding();
         IEnumerator one = (IEnumerator) col.getName(3).resolveBinding();
-        assertSame( one.getType(), e );
-    }
-	
-	
-	public void testOperatorConversionNames() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-    	buffer.append("class Foo {\n"); //$NON-NLS-1$
-		buffer.append("public:\n"); //$NON-NLS-1$
-		buffer.append("operator int();\n"); //$NON-NLS-1$
-		buffer.append("char& operator[](unsigned int);\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-		
-		IASTName name1 = col.getName(1);
-		IASTName name2 = col.getName(2);
-		
-		assertNotNull(name1);
-		assertNotNull(name2);
-		
-		assertTrue(name1 instanceof ICPPASTConversionName);
-		assertTrue(name2 instanceof ICPPASTOperatorName);
-		
-		IASTTypeId typeId = ((ICPPASTConversionName)name1).getTypeId();
-		assertNotNull(typeId);
-		assertEquals( ((IASTSimpleDeclSpecifier)typeId.getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_int );
-		
-	}
-	
-    public void testBug36769B() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-    	buffer.append("class X { operator int(); }; \n"); //$NON-NLS-1$
-		buffer.append("X::operator int() { } \n"); //$NON-NLS-1$
-		buffer.append("template <class A,B> class X<A,C> { operator int(); }; \n"); //$NON-NLS-1$
-		buffer.append("template <class A,B> X<A,C>::operator int() { } \n"); //$NON-NLS-1$
-		
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-		
-		// 1,4,12,21  - conversion
-		// 2, 16 .isConversion
-		
-		assertEquals(col.size(), 22);
-		
-		assertNotNull(col.getName(1));
-		assertNotNull(col.getName(4));
-		assertNotNull(col.getName(12));
-		assertNotNull(col.getName(21));
-		assertNotNull(col.getName(2));
-		assertNotNull(col.getName(16));
-		
-		// ensure the conversions are conversions
-		assertTrue(col.getName(1) instanceof ICPPASTConversionName);
-		assertTrue(col.getName(4) instanceof ICPPASTConversionName);
-		assertTrue(col.getName(12) instanceof ICPPASTConversionName);
-		assertTrue(col.getName(21) instanceof ICPPASTConversionName);
-		assertNotNull(((ICPPASTConversionName)col.getName(1)).getTypeId());
-		assertNotNull(((ICPPASTConversionName)col.getName(4)).getTypeId());
-		assertNotNull(((ICPPASTConversionName)col.getName(12)).getTypeId());
-		assertNotNull(((ICPPASTConversionName)col.getName(21)).getTypeId());
-		
-		// ensure qualified name isConversionOrOperator
-		assertTrue(col.getName(2) instanceof ICPPASTQualifiedName);
-		assertTrue(col.getName(16) instanceof ICPPASTQualifiedName);
-		assertTrue(((ICPPASTQualifiedName)col.getName(2)).isConversionOrOperator());
-		assertTrue(((ICPPASTQualifiedName)col.getName(16)).isConversionOrOperator());
+        assertSame(one.getType(), e);
     }
 
-	public void testBug88662() throws Exception {
-        IASTTranslationUnit tu = parse( "int foo() {  return int();}", ParserLanguage.CPP ); //$NON-NLS-1$
-        IASTReturnStatement returnStatement = (IASTReturnStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[0];
-        ICPPASTSimpleTypeConstructorExpression expression = (ICPPASTSimpleTypeConstructorExpression) returnStatement.getReturnValue();
-        assertEquals( expression.getInitialValue(), null );
-        assertEquals( expression.getSimpleType(), ICPPASTSimpleTypeConstructorExpression.t_int );
+    public void testOperatorConversionNames() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class Foo {\n"); //$NON-NLS-1$
+        buffer.append("public:\n"); //$NON-NLS-1$
+        buffer.append("operator int();\n"); //$NON-NLS-1$
+        buffer.append("char& operator[](unsigned int);\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IASTName name1 = col.getName(1);
+        IASTName name2 = col.getName(2);
+
+        assertNotNull(name1);
+        assertNotNull(name2);
+
+        assertTrue(name1 instanceof ICPPASTConversionName);
+        assertTrue(name2 instanceof ICPPASTOperatorName);
+
+        IASTTypeId typeId = ((ICPPASTConversionName) name1).getTypeId();
+        assertNotNull(typeId);
+        assertEquals(((IASTSimpleDeclSpecifier) typeId.getDeclSpecifier())
+                .getType(), IASTSimpleDeclSpecifier.t_int);
+
     }
-    
-  
-	
+
+    public void testBug36769B() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class X { operator int(); }; \n"); //$NON-NLS-1$
+        buffer.append("X::operator int() { } \n"); //$NON-NLS-1$
+        buffer
+                .append("template <class A,B> class X<A,C> { operator int(); }; \n"); //$NON-NLS-1$
+        buffer.append("template <class A,B> X<A,C>::operator int() { } \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        // 1,4,12,21 - conversion
+        // 2, 16 .isConversion
+
+        assertEquals(col.size(), 22);
+
+        assertNotNull(col.getName(1));
+        assertNotNull(col.getName(4));
+        assertNotNull(col.getName(12));
+        assertNotNull(col.getName(21));
+        assertNotNull(col.getName(2));
+        assertNotNull(col.getName(16));
+
+        // ensure the conversions are conversions
+        assertTrue(col.getName(1) instanceof ICPPASTConversionName);
+        assertTrue(col.getName(4) instanceof ICPPASTConversionName);
+        assertTrue(col.getName(12) instanceof ICPPASTConversionName);
+        assertTrue(col.getName(21) instanceof ICPPASTConversionName);
+        assertNotNull(((ICPPASTConversionName) col.getName(1)).getTypeId());
+        assertNotNull(((ICPPASTConversionName) col.getName(4)).getTypeId());
+        assertNotNull(((ICPPASTConversionName) col.getName(12)).getTypeId());
+        assertNotNull(((ICPPASTConversionName) col.getName(21)).getTypeId());
+
+        // ensure qualified name isConversionOrOperator
+        assertTrue(col.getName(2) instanceof ICPPASTQualifiedName);
+        assertTrue(col.getName(16) instanceof ICPPASTQualifiedName);
+        assertTrue(((ICPPASTQualifiedName) col.getName(2))
+                .isConversionOrOperator());
+        assertTrue(((ICPPASTQualifiedName) col.getName(16))
+                .isConversionOrOperator());
+    }
+
+    public void testBug88662() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "int foo() {  return int();}", ParserLanguage.CPP); //$NON-NLS-1$
+        IASTReturnStatement returnStatement = (IASTReturnStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
+                .getDeclarations()[0]).getBody()).getStatements()[0];
+        ICPPASTSimpleTypeConstructorExpression expression = (ICPPASTSimpleTypeConstructorExpression) returnStatement
+                .getReturnValue();
+        assertEquals(expression.getInitialValue(), null);
+        assertEquals(expression.getSimpleType(),
+                ICPPASTSimpleTypeConstructorExpression.t_int);
+    }
+
     public void testBug90498_1() throws Exception {
-        IASTTranslationUnit tu = parse( "typedef INT ( FOO ) (INT);", ParserLanguage.CPP ); //$NON-NLS-1$
-        
-        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTTranslationUnit tu = parse(
+                "typedef INT ( FOO ) (INT);", ParserLanguage.CPP); //$NON-NLS-1$
+
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu
+                .getDeclarations()[0];
         IASTDeclSpecifier declSpec = decl.getDeclSpecifier();
-        assertTrue( declSpec instanceof ICPPASTNamedTypeSpecifier );
-        assertEquals( ((ICPPASTNamedTypeSpecifier)declSpec).getName().toString(), "INT" ); //$NON-NLS-1$
-        
+        assertTrue(declSpec instanceof ICPPASTNamedTypeSpecifier);
+        assertEquals(((ICPPASTNamedTypeSpecifier) declSpec).getName()
+                .toString(), "INT"); //$NON-NLS-1$
+
         IASTDeclarator dtor = decl.getDeclarators()[0];
-        assertTrue( dtor instanceof IASTFunctionDeclarator );
-        assertNotNull( dtor.getNestedDeclarator() );
+        assertTrue(dtor instanceof IASTFunctionDeclarator);
+        assertNotNull(dtor.getNestedDeclarator());
         IASTDeclarator nested = dtor.getNestedDeclarator();
-        assertEquals( nested.getName().toString(), "FOO" );  //$NON-NLS-1$
+        assertEquals(nested.getName().toString(), "FOO"); //$NON-NLS-1$
     }
-    
+
     public void testBug90498_2() throws Exception {
-        IASTTranslationUnit tu = parse( "int (* foo) (int) (0);", ParserLanguage.CPP ); //$NON-NLS-1$
-        
-        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTTranslationUnit tu = parse(
+                "int (* foo) (int) (0);", ParserLanguage.CPP); //$NON-NLS-1$
+
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu
+                .getDeclarations()[0];
         IASTDeclSpecifier declSpec = decl.getDeclSpecifier();
-        assertTrue( declSpec instanceof IASTSimpleDeclSpecifier );
-        
+        assertTrue(declSpec instanceof IASTSimpleDeclSpecifier);
+
         IASTDeclarator dtor = decl.getDeclarators()[0];
-        assertTrue( dtor instanceof IASTFunctionDeclarator );
-        assertNotNull( dtor.getNestedDeclarator() );
+        assertTrue(dtor instanceof IASTFunctionDeclarator);
+        assertNotNull(dtor.getNestedDeclarator());
         IASTDeclarator nested = dtor.getNestedDeclarator();
-        assertEquals( nested.getName().toString(), "foo" );  //$NON-NLS-1$
-        
-        assertNotNull( dtor.getInitializer() );
+        assertEquals(nested.getName().toString(), "foo"); //$NON-NLS-1$
+
+        assertNotNull(dtor.getInitializer());
     }
-    
-    
+
     public void testBug866274() throws Exception {
-        StringBuffer buffer = new StringBuffer( "class D { /* ... */ };\n" ); //$NON-NLS-1$
-        buffer.append( "D d1;\n"); //$NON-NLS-1$
-        buffer.append( "const D d2;\n"); //$NON-NLS-1$
-        buffer.append( "void foo() {\n"); //$NON-NLS-1$
-        buffer.append( "    typeid(d1) == typeid(d2);\n"); //$NON-NLS-1$
-        buffer.append( "    typeid(D) == typeid(d2);\n"); //$NON-NLS-1$
-        buffer.append( "}\n"); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
-        IASTFunctionDefinition foo = (IASTFunctionDefinition) tu.getDeclarations()[3];
+        StringBuffer buffer = new StringBuffer("class D { /* ... */ };\n"); //$NON-NLS-1$
+        buffer.append("D d1;\n"); //$NON-NLS-1$
+        buffer.append("const D d2;\n"); //$NON-NLS-1$
+        buffer.append("void foo() {\n"); //$NON-NLS-1$
+        buffer.append("    typeid(d1) == typeid(d2);\n"); //$NON-NLS-1$
+        buffer.append("    typeid(D) == typeid(d2);\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        IASTFunctionDefinition foo = (IASTFunctionDefinition) tu
+                .getDeclarations()[3];
         IASTCompoundStatement cs = (IASTCompoundStatement) foo.getBody();
-        IASTStatement [] subs = cs.getStatements();
-        for( int i = 0; i < subs.length; ++i )
-        {
-            IASTBinaryExpression be = (IASTBinaryExpression) ((IASTExpressionStatement)subs[i]).getExpression();
-            if( i == 1 )
-            {
-                IASTTypeIdExpression expression = (IASTTypeIdExpression) be.getOperand1();
+        IASTStatement[] subs = cs.getStatements();
+        for (int i = 0; i < subs.length; ++i) {
+            IASTBinaryExpression be = (IASTBinaryExpression) ((IASTExpressionStatement) subs[i])
+                    .getExpression();
+            if (i == 1) {
+                IASTTypeIdExpression expression = (IASTTypeIdExpression) be
+                        .getOperand1();
                 IASTTypeId typeId = expression.getTypeId();
-                assertTrue( ((IASTNamedTypeSpecifier)typeId.getDeclSpecifier()).getName().resolveBinding() instanceof IType );
+                assertTrue(((IASTNamedTypeSpecifier) typeId.getDeclSpecifier())
+                        .getName().resolveBinding() instanceof IType);
+            } else {
+                IASTUnaryExpression expression = (IASTUnaryExpression) be
+                        .getOperand1();
+                IASTIdExpression idExpression = (IASTIdExpression) expression
+                        .getOperand();
+                assertTrue(idExpression.getName().resolveBinding() instanceof IVariable);
             }
-            else
-            {
-                IASTUnaryExpression expression = (IASTUnaryExpression) be.getOperand1();
-                IASTIdExpression idExpression = (IASTIdExpression) expression.getOperand();
-                assertTrue( idExpression.getName().resolveBinding() instanceof IVariable );
-            }
-            IASTUnaryExpression expression = (IASTUnaryExpression) be.getOperand2();
-            IASTIdExpression idExpression = (IASTIdExpression) expression.getOperand();
-            assertTrue( idExpression.getName().resolveBinding() instanceof IVariable );
-            
+            IASTUnaryExpression expression = (IASTUnaryExpression) be
+                    .getOperand2();
+            IASTIdExpression idExpression = (IASTIdExpression) expression
+                    .getOperand();
+            assertTrue(idExpression.getName().resolveBinding() instanceof IVariable);
+
         }
     }
 
-    
     public void testTypedefFunction() throws Exception {
-        IASTTranslationUnit tu = parse( "typedef int foo (int);", ParserLanguage.CPP ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(
+                "typedef int foo (int);", ParserLanguage.CPP); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col );
-        
+        tu.accept(col);
+
         IBinding binding = col.getName(0).resolveBinding();
-        assertTrue( binding instanceof ITypedef );
-        assertTrue( ((ITypedef)binding).getType() instanceof IFunctionType );
+        assertTrue(binding instanceof ITypedef);
+        assertTrue(((ITypedef) binding).getType() instanceof IFunctionType);
     }
-    
+
     public void testBug90616() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "void f( int );          \n"); //$NON-NLS-1$
-        buffer.append( "void foo(){             \n"); //$NON-NLS-1$
-        buffer.append( "   f( ( 1, 2 ) );       \n"); //$NON-NLS-1$
-        buffer.append( "}                       \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	IFunction f1 = (IFunction) col.getName(0).resolveBinding();
-    	IFunction f2 = (IFunction) col.getName(3).resolveBinding();
-    	assertSame( f1, f2 );
+        buffer.append("void f( int );          \n"); //$NON-NLS-1$
+        buffer.append("void foo(){             \n"); //$NON-NLS-1$
+        buffer.append("   f( ( 1, 2 ) );       \n"); //$NON-NLS-1$
+        buffer.append("}                       \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(3).resolveBinding();
+        assertSame(f1, f2);
     }
-    
+
     public void testBug90603() throws Exception {
-        IASTTranslationUnit tu = parse( "class X { void f(){} };", ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
-    	ICPPMethod f1 = (ICPPMethod) col.getName(1).resolveBinding();
-    	
-    	assertFalse( f1.isStatic() );
-    	
-    	String[] qns = f1.getQualifiedName();
-    	assertEquals( qns.length, 2 );
-    	assertEquals( qns[0], "X" ); //$NON-NLS-1$
-    	assertEquals( qns[1], "f" ); //$NON-NLS-1$
-    	assertTrue( f1.isGloballyQualified() );
-    	assertEquals( f1.getVisibility(), ICPPMember.v_private );
-    	
-    	assertSame( f1.getScope(), X.getCompositeScope() );
+        IASTTranslationUnit tu = parse(
+                "class X { void f(){} };", ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPMethod f1 = (ICPPMethod) col.getName(1).resolveBinding();
+
+        assertFalse(f1.isStatic());
+
+        String[] qns = f1.getQualifiedName();
+        assertEquals(qns.length, 2);
+        assertEquals(qns[0], "X"); //$NON-NLS-1$
+        assertEquals(qns[1], "f"); //$NON-NLS-1$
+        assertTrue(f1.isGloballyQualified());
+        assertEquals(f1.getVisibility(), ICPPMember.v_private);
+
+        assertSame(f1.getScope(), X.getCompositeScope());
     }
-    
+
     public void testBug90662() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class X {   };           \n"); //$NON-NLS-1$
         buffer.append("X x;                     \n"); //$NON-NLS-1$
         buffer.append("class X {   };           \n"); //$NON-NLS-1$
 
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
-    	IVariable x = (IVariable) col.getName(2).resolveBinding();
-    	IProblemBinding problem = (IProblemBinding) col.getName(3).resolveBinding();
-    	assertSame( x.getType(), X );
-    	assertEquals( problem.getID(), IProblemBinding.SEMANTIC_INVALID_REDEFINITION );
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
+        IVariable x = (IVariable) col.getName(2).resolveBinding();
+        IProblemBinding problem = (IProblemBinding) col.getName(3)
+                .resolveBinding();
+        assertSame(x.getType(), X);
+        assertEquals(problem.getID(),
+                IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
     }
-	
-	public void testOperatorNames() throws Exception {
-	        StringBuffer buffer = new StringBuffer();
-	        buffer.append("struct C {                               \n"); //$NON-NLS-1$
-			buffer.append("   void* operator new [ ] (unsigned int);\n"); //$NON-NLS-1$
-			buffer.append("   void* operator new (unsigned int);\n"); //$NON-NLS-1$
-			buffer.append("   void operator delete [ ] ( void * );       \n"); //$NON-NLS-1$
-			buffer.append("   void operator delete (void *);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator+=(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator -= (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator *=   (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   cosnt C& operator /= (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator %= (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator^=(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator&= (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator |= (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator >>=(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator<<= (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator<<(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator>>(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator /**/   == /**/  (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator != /**/ (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator <= (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator /**/ >=(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator =(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator&& (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator ||(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator ++(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator-- (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator/**/,/**/(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator->*\n(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator -> (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator /**/ ( /**/ ) /**/ (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator /**/ [ /**/ ] /**/ (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator + (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator- (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator *(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator /(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator % /**/(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator ^(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator &(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator |(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator   ~ (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator \t\r\n ! /**/ (const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator <(const C&);\n"); //$NON-NLS-1$
-			buffer.append("   const C& operator>(const C&);\n"); //$NON-NLS-1$
-			buffer.append("};                                       \n"); //$NON-NLS-1$
 
-	        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-	        CPPNameCollector col = new CPPNameCollector();
-	        tu.accept( col );
-
-	        assertEquals(col.size(), 161);
-			assertEquals(col.getName(1).toString(), "operator new[]"); //$NON-NLS-1$
-			assertEquals(col.getName(3).toString(), "operator new"); //$NON-NLS-1$
-			assertEquals(col.getName(5).toString(), "operator delete[]"); //$NON-NLS-1$
-			assertEquals(col.getName(7).toString(), "operator delete"); //$NON-NLS-1$
-			assertEquals(col.getName(10).toString(), "operator +="); //$NON-NLS-1$
-			assertEquals(col.getName(14).toString(), "operator -="); //$NON-NLS-1$
-			assertEquals(col.getName(18).toString(), "operator *="); //$NON-NLS-1$
-			assertEquals(col.getName(22).toString(), "operator /="); //$NON-NLS-1$
-			assertEquals(col.getName(26).toString(), "operator %="); //$NON-NLS-1$
-			assertEquals(col.getName(30).toString(), "operator ^="); //$NON-NLS-1$
-			assertEquals(col.getName(34).toString(), "operator &="); //$NON-NLS-1$
-			assertEquals(col.getName(38).toString(), "operator |="); //$NON-NLS-1$
-			assertEquals(col.getName(42).toString(), "operator >>="); //$NON-NLS-1$
-			assertEquals(col.getName(46).toString(), "operator <<="); //$NON-NLS-1$
-			assertEquals(col.getName(50).toString(), "operator <<"); //$NON-NLS-1$
-			assertEquals(col.getName(54).toString(), "operator >>"); //$NON-NLS-1$
-			assertEquals(col.getName(58).toString(), "operator =="); //$NON-NLS-1$
-			assertEquals(col.getName(62).toString(), "operator !="); //$NON-NLS-1$
-			assertEquals(col.getName(66).toString(), "operator <="); //$NON-NLS-1$
-			assertEquals(col.getName(70).toString(), "operator >="); //$NON-NLS-1$
-			assertEquals(col.getName(74).toString(), "operator ="); //$NON-NLS-1$
-			assertEquals(col.getName(78).toString(), "operator &&"); //$NON-NLS-1$
-			assertEquals(col.getName(82).toString(), "operator ||"); //$NON-NLS-1$
-			assertEquals(col.getName(86).toString(), "operator ++"); //$NON-NLS-1$
-			assertEquals(col.getName(90).toString(), "operator --"); //$NON-NLS-1$
-			assertEquals(col.getName(94).toString(), "operator ,"); //$NON-NLS-1$
-			assertEquals(col.getName(98).toString(), "operator ->*"); //$NON-NLS-1$
-			assertEquals(col.getName(102).toString(), "operator ->"); //$NON-NLS-1$
-			assertEquals(col.getName(106).toString(), "operator ()"); //$NON-NLS-1$
-			assertEquals(col.getName(110).toString(), "operator []"); //$NON-NLS-1$
-			assertEquals(col.getName(114).toString(), "operator +"); //$NON-NLS-1$
-			assertEquals(col.getName(118).toString(), "operator -"); //$NON-NLS-1$
-			assertEquals(col.getName(122).toString(), "operator *"); //$NON-NLS-1$
-			assertEquals(col.getName(126).toString(), "operator /"); //$NON-NLS-1$
-			assertEquals(col.getName(130).toString(), "operator %"); //$NON-NLS-1$
-			assertEquals(col.getName(134).toString(), "operator ^"); //$NON-NLS-1$
-			assertEquals(col.getName(138).toString(), "operator &"); //$NON-NLS-1$
-			assertEquals(col.getName(142).toString(), "operator |"); //$NON-NLS-1$
-			assertEquals(col.getName(146).toString(), "operator ~"); //$NON-NLS-1$
-			assertEquals(col.getName(150).toString(), "operator !"); //$NON-NLS-1$
-			assertEquals(col.getName(154).toString(), "operator <"); //$NON-NLS-1$
-			assertEquals(col.getName(158).toString(), "operator >"); //$NON-NLS-1$
-	}
-	
-	public void testBug90623() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append( "typedef int I;             \n"); //$NON-NLS-1$
-	    buffer.append( "typedef int I;             \n"); //$NON-NLS-1$
-	    buffer.append( "typedef I I;               \n"); //$NON-NLS-1$
-	    buffer.append( "class A {                  \n"); //$NON-NLS-1$
-	    buffer.append( "   typedef char I;         \n"); //$NON-NLS-1$
-	    buffer.append( "   typedef char I;         \n"); //$NON-NLS-1$
-	    buffer.append( "   typedef I I;            \n"); //$NON-NLS-1$
-	    buffer.append( "};                         \n"); //$NON-NLS-1$
-	    
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ITypedef I1 = (ITypedef) col.getName(0).resolveBinding();
-    	ITypedef I2 = (ITypedef) col.getName(1).resolveBinding();
-    	ITypedef I3 = (ITypedef) col.getName(2).resolveBinding();
-    	ITypedef I4 = (ITypedef) col.getName(3).resolveBinding();
-    	ITypedef I8 = (ITypedef) col.getName(5).resolveBinding();
-    	ITypedef I5 = (ITypedef) col.getName(8).resolveBinding();
-    	ITypedef I6 = (ITypedef) col.getName(7).resolveBinding();
-    	ITypedef I7 = (ITypedef) col.getName(6).resolveBinding();
-    	//ITypedef I8 = (ITypedef) col.getName(5).resolveBinding();
-    	
-    	assertSame( I1, I2 );
-    	assertSame( I2, I3 );
-    	assertSame( I3, I4 );
-    	assertNotSame( I4, I5 );
-    	assertSame( I5, I6 );
-    	assertSame( I6, I7 );
-    	assertSame( I7, I8 );
-    	
-    	assertTrue( I1.getType() instanceof IBasicType );
-    	assertEquals( ((IBasicType)I1.getType()).getType(), IBasicType.t_int );
-    	
-    	assertTrue( I8.getType() instanceof IBasicType );
-    	assertEquals( ((IBasicType)I8.getType()).getType(), IBasicType.t_char );    	
-	}
-		
-	public void testBug90623_2() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append( "typedef int I;             \n"); //$NON-NLS-1$
-	    buffer.append( "void f11( I i );           \n"); //$NON-NLS-1$
-	    buffer.append( "void main(){ f a; }          \n"); //$NON-NLS-1$
-	    
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-
-    	IASTName f = col.getName( 5 );
-    	f.resolvePrefix();
-	}
-	
-	public void testBug90654_1() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("class X {            \n"); //$NON-NLS-1$
-		buffer.append("   X( const X & );   \n"); //$NON-NLS-1$
-		buffer.append("};                   \n"); //$NON-NLS-1$
-		buffer.append("class Y {            \n"); //$NON-NLS-1$
-		buffer.append("   operator X ();    \n"); //$NON-NLS-1$
-		buffer.append("};                   \n"); //$NON-NLS-1$
-		buffer.append("Y y;                 \n"); //$NON-NLS-1$
-		buffer.append("X x = new X( y );    \n"); //$NON-NLS-1$
-		
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPConstructor ctor1 = (ICPPConstructor) col.getName(1).resolveBinding();
-    	ICPPConstructor ctor = (ICPPConstructor) col.getName(11).resolveBinding();
-    	assertSame( ctor, ctor1 );
-	}
-	public void testBug90654_2() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct A {                \n"); //$NON-NLS-1$
-		buffer.append("   operator short();      \n"); //$NON-NLS-1$
-		buffer.append("} a;                      \n"); //$NON-NLS-1$
-		buffer.append("int f( int );             \n"); //$NON-NLS-1$
-		buffer.append("int f( float );           \n"); //$NON-NLS-1$
-		buffer.append("int x = f(a);             \n"); //$NON-NLS-1$
-		
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	IFunction f1 = (IFunction) col.getName(3).resolveBinding();
-    	IFunction f2 = (IFunction) col.getName(8).resolveBinding();
-    	assertSame( f1, f2 );
-	}
-	
-	public void testBug90653() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct A {};                    \n"); //$NON-NLS-1$
-		buffer.append("struct B : public A {           \n"); //$NON-NLS-1$
-		buffer.append("   B& operator = (const B & );  \n"); //$NON-NLS-1$
-		buffer.append("};                              \n"); //$NON-NLS-1$
-		buffer.append("B& B::operator = (const B & s){ \n"); //$NON-NLS-1$
-		buffer.append("   this->A::operator=(s);       \n"); //$NON-NLS-1$
-		buffer.append("   return *this;                \n"); //$NON-NLS-1$
-		buffer.append("}                               \n"); //$NON-NLS-1$
-		
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
-    	ICPPMethod implicit = A.getMethods()[2];
-    	
-    	ICPPMethod op1 = (ICPPMethod) col.getName(4).resolveBinding();
-    	ICPPMethod op2 = (ICPPMethod) col.getName(10).resolveBinding();
-    	
-    	ICPPMethod op = (ICPPMethod) col.getName(15).resolveBinding();
-    	
-    	assertSame( op1, op2 );
-    	assertSame( op, implicit );
-	}
-	
-	public void testBug86618() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("void f( char * );            \n"); //$NON-NLS-1$
-		buffer.append("void foo() {                 \n"); //$NON-NLS-1$
-		buffer.append("   f( \"test\" );            \n"); //$NON-NLS-1$
-		buffer.append("}                            \n"); //$NON-NLS-1$
-
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-
-    	IFunction f = (IFunction) col.getName(0).resolveBinding();
-    	assertInstances( col, f, 2 );
-	}
-	
-	public void testBug45129() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append("void f( int (*pf) (char) );       \n"); //$NON-NLS-1$
-	    buffer.append("int g( char );                    \n"); //$NON-NLS-1$
-	    buffer.append("void foo () {                     \n"); //$NON-NLS-1$
-	    buffer.append("   f( g ) ;                       \n"); //$NON-NLS-1$
-	    buffer.append("}                                 \n"); //$NON-NLS-1$
-	    
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPFunction f1 = (ICPPFunction) col.getName(0).resolveBinding();
-    	ICPPFunction g1 = (ICPPFunction) col.getName(3).resolveBinding();
-    	
-    	IBinding f2 = col.getName(6).resolveBinding();
-    	IBinding g2 = col.getName(7).resolveBinding();
-    	
-    	assertSame( f1, f2 );
-    	assertSame( g1, g2 );
-	}
-    
-    public void testAmbiguousStatements() throws Exception
-    {
+    public void testOperatorNames() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "class ABC { \n"); //$NON-NLS-1$
-        buffer.append( "   class DEF { };\n"); //$NON-NLS-1$
-        buffer.append( "   static int GHI;\n"); //$NON-NLS-1$
-        buffer.append( "}; \n"); //$NON-NLS-1$
-        buffer.append( "int ABC::GHI = 77; // ray bourque\n"); //$NON-NLS-1$
-        buffer.append( "int f() { \n"); //$NON-NLS-1$
-        buffer.append( "  int value;\n"); //$NON-NLS-1$
-        buffer.append( "  ABC::DEF * var;\n"); //$NON-NLS-1$
-        buffer.append( "  ABC::GHI * value;\n"); //$NON-NLS-1$
-        buffer.append( "}"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
-        IASTDeclaration [] declarations = tu.getDeclarations();
-        assertEquals( 3, declarations.length );
-        IASTCompoundStatement cs = (IASTCompoundStatement) ((IASTFunctionDefinition)declarations[2]).getBody();
-        assertTrue( cs.getStatements()[1] instanceof IASTDeclarationStatement );
-        assertTrue( cs.getStatements()[2] instanceof IASTExpressionStatement );
-        
+        buffer.append("struct C {                               \n"); //$NON-NLS-1$
+        buffer.append("   void* operator new [ ] (unsigned int);\n"); //$NON-NLS-1$
+        buffer.append("   void* operator new (unsigned int);\n"); //$NON-NLS-1$
+        buffer.append("   void operator delete [ ] ( void * );       \n"); //$NON-NLS-1$
+        buffer.append("   void operator delete (void *);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator+=(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator -= (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator *=   (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   cosnt C& operator /= (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator %= (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator^=(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator&= (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator |= (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator >>=(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator<<= (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator<<(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator>>(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator /**/   == /**/  (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator != /**/ (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator <= (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator /**/ >=(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator =(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator&& (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator ||(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator ++(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator-- (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator/**/,/**/(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator->*\n(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator -> (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator /**/ ( /**/ ) /**/ (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator /**/ [ /**/ ] /**/ (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator + (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator- (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator *(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator /(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator % /**/(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator ^(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator &(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator |(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator   ~ (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator \t\r\n ! /**/ (const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator <(const C&);\n"); //$NON-NLS-1$
+        buffer.append("   const C& operator>(const C&);\n"); //$NON-NLS-1$
+        buffer.append("};                                       \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        assertEquals(col.size(), 161);
+        assertEquals(col.getName(1).toString(), "operator new[]"); //$NON-NLS-1$
+        assertEquals(col.getName(3).toString(), "operator new"); //$NON-NLS-1$
+        assertEquals(col.getName(5).toString(), "operator delete[]"); //$NON-NLS-1$
+        assertEquals(col.getName(7).toString(), "operator delete"); //$NON-NLS-1$
+        assertEquals(col.getName(10).toString(), "operator +="); //$NON-NLS-1$
+        assertEquals(col.getName(14).toString(), "operator -="); //$NON-NLS-1$
+        assertEquals(col.getName(18).toString(), "operator *="); //$NON-NLS-1$
+        assertEquals(col.getName(22).toString(), "operator /="); //$NON-NLS-1$
+        assertEquals(col.getName(26).toString(), "operator %="); //$NON-NLS-1$
+        assertEquals(col.getName(30).toString(), "operator ^="); //$NON-NLS-1$
+        assertEquals(col.getName(34).toString(), "operator &="); //$NON-NLS-1$
+        assertEquals(col.getName(38).toString(), "operator |="); //$NON-NLS-1$
+        assertEquals(col.getName(42).toString(), "operator >>="); //$NON-NLS-1$
+        assertEquals(col.getName(46).toString(), "operator <<="); //$NON-NLS-1$
+        assertEquals(col.getName(50).toString(), "operator <<"); //$NON-NLS-1$
+        assertEquals(col.getName(54).toString(), "operator >>"); //$NON-NLS-1$
+        assertEquals(col.getName(58).toString(), "operator =="); //$NON-NLS-1$
+        assertEquals(col.getName(62).toString(), "operator !="); //$NON-NLS-1$
+        assertEquals(col.getName(66).toString(), "operator <="); //$NON-NLS-1$
+        assertEquals(col.getName(70).toString(), "operator >="); //$NON-NLS-1$
+        assertEquals(col.getName(74).toString(), "operator ="); //$NON-NLS-1$
+        assertEquals(col.getName(78).toString(), "operator &&"); //$NON-NLS-1$
+        assertEquals(col.getName(82).toString(), "operator ||"); //$NON-NLS-1$
+        assertEquals(col.getName(86).toString(), "operator ++"); //$NON-NLS-1$
+        assertEquals(col.getName(90).toString(), "operator --"); //$NON-NLS-1$
+        assertEquals(col.getName(94).toString(), "operator ,"); //$NON-NLS-1$
+        assertEquals(col.getName(98).toString(), "operator ->*"); //$NON-NLS-1$
+        assertEquals(col.getName(102).toString(), "operator ->"); //$NON-NLS-1$
+        assertEquals(col.getName(106).toString(), "operator ()"); //$NON-NLS-1$
+        assertEquals(col.getName(110).toString(), "operator []"); //$NON-NLS-1$
+        assertEquals(col.getName(114).toString(), "operator +"); //$NON-NLS-1$
+        assertEquals(col.getName(118).toString(), "operator -"); //$NON-NLS-1$
+        assertEquals(col.getName(122).toString(), "operator *"); //$NON-NLS-1$
+        assertEquals(col.getName(126).toString(), "operator /"); //$NON-NLS-1$
+        assertEquals(col.getName(130).toString(), "operator %"); //$NON-NLS-1$
+        assertEquals(col.getName(134).toString(), "operator ^"); //$NON-NLS-1$
+        assertEquals(col.getName(138).toString(), "operator &"); //$NON-NLS-1$
+        assertEquals(col.getName(142).toString(), "operator |"); //$NON-NLS-1$
+        assertEquals(col.getName(146).toString(), "operator ~"); //$NON-NLS-1$
+        assertEquals(col.getName(150).toString(), "operator !"); //$NON-NLS-1$
+        assertEquals(col.getName(154).toString(), "operator <"); //$NON-NLS-1$
+        assertEquals(col.getName(158).toString(), "operator >"); //$NON-NLS-1$
     }
-	
-	public void testBug86639() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-		buffer.append("void f(){                              \n"); //$NON-NLS-1$
-		buffer.append("   union { int a; char* p; };          \n"); //$NON-NLS-1$
-		buffer.append("   a = 1;                              \n"); //$NON-NLS-1$
-		buffer.append("}                                      \n"); //$NON-NLS-1$
-		
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPField a = (ICPPField) col.getName(2).resolveBinding();
-    	ICPPField a2 = (ICPPField) col.getName(4).resolveBinding();
-    	assertSame( a, a2 );
-	}
-	
-	public void testBug80940() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append( "void f () {                     \n"); //$NON-NLS-1$
-	    buffer.append( "   int aa1, aa2;                \n"); //$NON-NLS-1$
-	    buffer.append( "   a;                           \n"); //$NON-NLS-1$
-	    buffer.append( "}                               \n"); //$NON-NLS-1$
-	    
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	IVariable a1 = (IVariable) col.getName(1).resolveBinding();
-    	IVariable a2 = (IVariable) col.getName(2).resolveBinding();
-    	
-    	IBinding [] bs = col.getName(3).resolvePrefix();
-    	assertEquals( bs.length, 2 );
-    	assertSame( bs[0], a1 );
-    	assertSame( bs[1], a2 );
-	}
-	
-	public void testBug77024() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append("struct Ex {                            \n"); //$NON-NLS-1$
-	    buffer.append("   int d();                            \n"); //$NON-NLS-1$
-	    buffer.append("   int d() const;                      \n"); //$NON-NLS-1$
-	    buffer.append("};                                     \n"); //$NON-NLS-1$
-	    buffer.append("int Ex::d() {}                         \n"); //$NON-NLS-1$
-	    buffer.append("int Ex::d() const {}                   \n"); //$NON-NLS-1$
-	    buffer.append("void f() {                             \n"); //$NON-NLS-1$
-	    buffer.append("   const Ex * e;                       \n"); //$NON-NLS-1$
-	    buffer.append("   e->d();                             \n"); //$NON-NLS-1$
-	    buffer.append("}                                      \n"); //$NON-NLS-1$
-	    
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPFunction d1 = (ICPPFunction) col.getName(1).resolveBinding();
-    	ICPPFunction d2 = (ICPPFunction) col.getName(2).resolveBinding();
-    	
-    	assertNotSame( d1, d2 );
-    	
-    	assertFalse( ((ICPPFunctionType)d1.getType()).isConst() );
-    	assertTrue( ((ICPPFunctionType)d2.getType()).isConst() );
-    	
-    	ICPPFunction dr1 = (ICPPFunction) col.getName(5).resolveBinding();
-    	ICPPFunction dr2 = (ICPPFunction) col.getName(8).resolveBinding();
-    	
-    	assertSame( d1, dr1 );
-    	assertSame( d2, dr2 );
-    	
-    	IBinding r = col.getName(13).resolveBinding();
-    	assertSame( d2, r );
-	}
-	
-	public void testBug91773() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append("class P {                    \n"); //$NON-NLS-1$
-	    buffer.append("   Point() : xCoord(0) {}    \n"); //$NON-NLS-1$
-	    buffer.append("   int xCoord;               \n"); //$NON-NLS-1$
-	    buffer.append("};                           \n"); //$NON-NLS-1$
-	    
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	ICPPField x = (ICPPField) col.getName(2).resolveBinding();
-    	ICPPField x2 = (ICPPField) col.getName(3).resolveBinding();
-    	assertSame( x, x2 );
-	}
-	
-	public void testBug90648() throws ParserException
-    {
-        IASTTranslationUnit tu = parse( "int f() { int (&ra)[3] = a; }", ParserLanguage.CPP ); //$NON-NLS-1$
-        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
+
+    public void testBug90623() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("typedef int I;             \n"); //$NON-NLS-1$
+        buffer.append("typedef int I;             \n"); //$NON-NLS-1$
+        buffer.append("typedef I I;               \n"); //$NON-NLS-1$
+        buffer.append("class A {                  \n"); //$NON-NLS-1$
+        buffer.append("   typedef char I;         \n"); //$NON-NLS-1$
+        buffer.append("   typedef char I;         \n"); //$NON-NLS-1$
+        buffer.append("   typedef I I;            \n"); //$NON-NLS-1$
+        buffer.append("};                         \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ITypedef I1 = (ITypedef) col.getName(0).resolveBinding();
+        ITypedef I2 = (ITypedef) col.getName(1).resolveBinding();
+        ITypedef I3 = (ITypedef) col.getName(2).resolveBinding();
+        ITypedef I4 = (ITypedef) col.getName(3).resolveBinding();
+        ITypedef I8 = (ITypedef) col.getName(5).resolveBinding();
+        ITypedef I5 = (ITypedef) col.getName(8).resolveBinding();
+        ITypedef I6 = (ITypedef) col.getName(7).resolveBinding();
+        ITypedef I7 = (ITypedef) col.getName(6).resolveBinding();
+        // ITypedef I8 = (ITypedef) col.getName(5).resolveBinding();
+
+        assertSame(I1, I2);
+        assertSame(I2, I3);
+        assertSame(I3, I4);
+        assertNotSame(I4, I5);
+        assertSame(I5, I6);
+        assertSame(I6, I7);
+        assertSame(I7, I8);
+
+        assertTrue(I1.getType() instanceof IBasicType);
+        assertEquals(((IBasicType) I1.getType()).getType(), IBasicType.t_int);
+
+        assertTrue(I8.getType() instanceof IBasicType);
+        assertEquals(((IBasicType) I8.getType()).getType(), IBasicType.t_char);
+    }
+
+    public void testBug90623_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("typedef int I;             \n"); //$NON-NLS-1$
+        buffer.append("void f11( I i );           \n"); //$NON-NLS-1$
+        buffer.append("void main(){ f a; }          \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IASTName f = col.getName(5);
+        f.resolvePrefix();
+    }
+
+    public void testBug90654_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class X {            \n"); //$NON-NLS-1$
+        buffer.append("   X( const X & );   \n"); //$NON-NLS-1$
+        buffer.append("};                   \n"); //$NON-NLS-1$
+        buffer.append("class Y {            \n"); //$NON-NLS-1$
+        buffer.append("   operator X ();    \n"); //$NON-NLS-1$
+        buffer.append("};                   \n"); //$NON-NLS-1$
+        buffer.append("Y y;                 \n"); //$NON-NLS-1$
+        buffer.append("X x = new X( y );    \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPConstructor ctor1 = (ICPPConstructor) col.getName(1)
+                .resolveBinding();
+        ICPPConstructor ctor = (ICPPConstructor) col.getName(11)
+                .resolveBinding();
+        assertSame(ctor, ctor1);
+    }
+
+    public void testBug90654_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct A {                \n"); //$NON-NLS-1$
+        buffer.append("   operator short();      \n"); //$NON-NLS-1$
+        buffer.append("} a;                      \n"); //$NON-NLS-1$
+        buffer.append("int f( int );             \n"); //$NON-NLS-1$
+        buffer.append("int f( float );           \n"); //$NON-NLS-1$
+        buffer.append("int x = f(a);             \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f1 = (IFunction) col.getName(3).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(8).resolveBinding();
+        assertSame(f1, f2);
+    }
+
+    public void testBug90653() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct A {};                    \n"); //$NON-NLS-1$
+        buffer.append("struct B : public A {           \n"); //$NON-NLS-1$
+        buffer.append("   B& operator = (const B & );  \n"); //$NON-NLS-1$
+        buffer.append("};                              \n"); //$NON-NLS-1$
+        buffer.append("B& B::operator = (const B & s){ \n"); //$NON-NLS-1$
+        buffer.append("   this->A::operator=(s);       \n"); //$NON-NLS-1$
+        buffer.append("   return *this;                \n"); //$NON-NLS-1$
+        buffer.append("}                               \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPMethod implicit = A.getMethods()[2];
+
+        ICPPMethod op1 = (ICPPMethod) col.getName(4).resolveBinding();
+        ICPPMethod op2 = (ICPPMethod) col.getName(10).resolveBinding();
+
+        ICPPMethod op = (ICPPMethod) col.getName(15).resolveBinding();
+
+        assertSame(op1, op2);
+        assertSame(op, implicit);
+    }
+
+    public void testBug86618() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f( char * );            \n"); //$NON-NLS-1$
+        buffer.append("void foo() {                 \n"); //$NON-NLS-1$
+        buffer.append("   f( \"test\" );            \n"); //$NON-NLS-1$
+        buffer.append("}                            \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f = (IFunction) col.getName(0).resolveBinding();
+        assertInstances(col, f, 2);
+    }
+
+    public void testBug45129() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f( int (*pf) (char) );       \n"); //$NON-NLS-1$
+        buffer.append("int g( char );                    \n"); //$NON-NLS-1$
+        buffer.append("void foo () {                     \n"); //$NON-NLS-1$
+        buffer.append("   f( g ) ;                       \n"); //$NON-NLS-1$
+        buffer.append("}                                 \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPFunction f1 = (ICPPFunction) col.getName(0).resolveBinding();
+        ICPPFunction g1 = (ICPPFunction) col.getName(3).resolveBinding();
+
+        IBinding f2 = col.getName(6).resolveBinding();
+        IBinding g2 = col.getName(7).resolveBinding();
+
+        assertSame(f1, f2);
+        assertSame(g1, g2);
+    }
+
+    public void testAmbiguousStatements() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class ABC { \n"); //$NON-NLS-1$
+        buffer.append("   class DEF { };\n"); //$NON-NLS-1$
+        buffer.append("   static int GHI;\n"); //$NON-NLS-1$
+        buffer.append("}; \n"); //$NON-NLS-1$
+        buffer.append("int ABC::GHI = 77; // ray bourque\n"); //$NON-NLS-1$
+        buffer.append("int f() { \n"); //$NON-NLS-1$
+        buffer.append("  int value;\n"); //$NON-NLS-1$
+        buffer.append("  ABC::DEF * var;\n"); //$NON-NLS-1$
+        buffer.append("  ABC::GHI * value;\n"); //$NON-NLS-1$
+        buffer.append("}"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        IASTDeclaration[] declarations = tu.getDeclarations();
+        assertEquals(3, declarations.length);
+        IASTCompoundStatement cs = (IASTCompoundStatement) ((IASTFunctionDefinition) declarations[2])
+                .getBody();
+        assertTrue(cs.getStatements()[1] instanceof IASTDeclarationStatement);
+        assertTrue(cs.getStatements()[2] instanceof IASTExpressionStatement);
+
+    }
+
+    public void testBug86639() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f(){                              \n"); //$NON-NLS-1$
+        buffer.append("   union { int a; char* p; };          \n"); //$NON-NLS-1$
+        buffer.append("   a = 1;                              \n"); //$NON-NLS-1$
+        buffer.append("}                                      \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPField a = (ICPPField) col.getName(2).resolveBinding();
+        ICPPField a2 = (ICPPField) col.getName(4).resolveBinding();
+        assertSame(a, a2);
+    }
+
+    public void testBug80940() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f () {                     \n"); //$NON-NLS-1$
+        buffer.append("   int aa1, aa2;                \n"); //$NON-NLS-1$
+        buffer.append("   a;                           \n"); //$NON-NLS-1$
+        buffer.append("}                               \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IVariable a1 = (IVariable) col.getName(1).resolveBinding();
+        IVariable a2 = (IVariable) col.getName(2).resolveBinding();
+
+        IBinding[] bs = col.getName(3).resolvePrefix();
+        assertEquals(bs.length, 2);
+        assertSame(bs[0], a1);
+        assertSame(bs[1], a2);
+    }
+
+    public void testBug77024() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct Ex {                            \n"); //$NON-NLS-1$
+        buffer.append("   int d();                            \n"); //$NON-NLS-1$
+        buffer.append("   int d() const;                      \n"); //$NON-NLS-1$
+        buffer.append("};                                     \n"); //$NON-NLS-1$
+        buffer.append("int Ex::d() {}                         \n"); //$NON-NLS-1$
+        buffer.append("int Ex::d() const {}                   \n"); //$NON-NLS-1$
+        buffer.append("void f() {                             \n"); //$NON-NLS-1$
+        buffer.append("   const Ex * e;                       \n"); //$NON-NLS-1$
+        buffer.append("   e->d();                             \n"); //$NON-NLS-1$
+        buffer.append("}                                      \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPFunction d1 = (ICPPFunction) col.getName(1).resolveBinding();
+        ICPPFunction d2 = (ICPPFunction) col.getName(2).resolveBinding();
+
+        assertNotSame(d1, d2);
+
+        assertFalse(((ICPPFunctionType) d1.getType()).isConst());
+        assertTrue(((ICPPFunctionType) d2.getType()).isConst());
+
+        ICPPFunction dr1 = (ICPPFunction) col.getName(5).resolveBinding();
+        ICPPFunction dr2 = (ICPPFunction) col.getName(8).resolveBinding();
+
+        assertSame(d1, dr1);
+        assertSame(d2, dr2);
+
+        IBinding r = col.getName(13).resolveBinding();
+        assertSame(d2, r);
+    }
+
+    public void testBug91773() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class P {                    \n"); //$NON-NLS-1$
+        buffer.append("   Point() : xCoord(0) {}    \n"); //$NON-NLS-1$
+        buffer.append("   int xCoord;               \n"); //$NON-NLS-1$
+        buffer.append("};                           \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        ICPPField x = (ICPPField) col.getName(2).resolveBinding();
+        ICPPField x2 = (ICPPField) col.getName(3).resolveBinding();
+        assertSame(x, x2);
+    }
+
+    public void testBug90648() throws ParserException {
+        IASTTranslationUnit tu = parse(
+                "int f() { int (&ra)[3] = a; }", ParserLanguage.CPP); //$NON-NLS-1$
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu
+                .getDeclarations()[0];
         IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
-        final IASTDeclarationStatement statement = (IASTDeclarationStatement) body.getStatements()[0];
-        IASTSimpleDeclaration d = (IASTSimpleDeclaration) statement.getDeclaration();
-        IASTSimpleDeclSpecifier declSpec = (IASTSimpleDeclSpecifier) d.getDeclSpecifier();
-        assertEquals( IASTSimpleDeclSpecifier.t_int, declSpec.getType() );
+        final IASTDeclarationStatement statement = (IASTDeclarationStatement) body
+                .getStatements()[0];
+        IASTSimpleDeclaration d = (IASTSimpleDeclaration) statement
+                .getDeclaration();
+        IASTSimpleDeclSpecifier declSpec = (IASTSimpleDeclSpecifier) d
+                .getDeclSpecifier();
+        assertEquals(IASTSimpleDeclSpecifier.t_int, declSpec.getType());
         final IASTDeclarator[] declarators = d.getDeclarators();
-        assertEquals( declarators.length, 1 );
-        assertTrue( declarators[0] instanceof IASTArrayDeclarator );
+        assertEquals(declarators.length, 1);
+        assertTrue(declarators[0] instanceof IASTArrayDeclarator);
     }
-    
+
     public void testBug92980() throws Exception {
         String code = "struct A { A(); A(const A&) throw(1); ~A() throw(X); };"; //$NON-NLS-1$
-        parse( code, ParserLanguage.CPP, true, false );
+        parse(code, ParserLanguage.CPP, true, false);
     }
-	
-	public void testBug92882() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append("class Dummy { int v(); int d; };                \n"); //$NON-NLS-1$
-	    buffer.append("void Dummy::v( int ){ d++; }                    \n"); //$NON-NLS-1$
-	   
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	assertTrue( col.getName(5).resolveBinding() instanceof IProblemBinding );
-    	ICPPField d1 = (ICPPField) col.getName(2).resolveBinding();
-    	ICPPField d2 = (ICPPField) col.getName(7).resolveBinding();
-    	assertSame( d1, d2 );
-	}
-	
-	public void testBug86547() throws Exception {
-	    StringBuffer buffer = new StringBuffer();
-	    buffer.append("void f( int, int );                    \n"); //$NON-NLS-1$
-	    buffer.append("void f( int, int = 3);                 \n"); //$NON-NLS-1$
-	    buffer.append("void f( int = 2, int );                \n"); //$NON-NLS-1$
-	    buffer.append("void g() {                             \n"); //$NON-NLS-1$
-	    buffer.append("   f( 3 );                             \n"); //$NON-NLS-1$
-	    buffer.append("   f( );                               \n"); //$NON-NLS-1$
-	    buffer.append("}                                      \n"); //$NON-NLS-1$
-	    
-	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
-		CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	IFunction f1 = (IFunction) col.getName(0).resolveBinding();
-    	assertInstances( col, f1, 5 );
-	}
-    
-    public void testBug90647() throws Exception {
-        parse( "char msg[] = \"Syntax error on line %s\\n\";", ParserLanguage.CPP ); //$NON-NLS-1$
-    }
-}
 
+    public void testBug92882() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class Dummy { int v(); int d; };                \n"); //$NON-NLS-1$
+        buffer.append("void Dummy::v( int ){ d++; }                    \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        assertTrue(col.getName(5).resolveBinding() instanceof IProblemBinding);
+        ICPPField d1 = (ICPPField) col.getName(2).resolveBinding();
+        ICPPField d2 = (ICPPField) col.getName(7).resolveBinding();
+        assertSame(d1, d2);
+    }
+
+    public void testBug86547() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f( int, int );                    \n"); //$NON-NLS-1$
+        buffer.append("void f( int, int = 3);                 \n"); //$NON-NLS-1$
+        buffer.append("void f( int = 2, int );                \n"); //$NON-NLS-1$
+        buffer.append("void g() {                             \n"); //$NON-NLS-1$
+        buffer.append("   f( 3 );                             \n"); //$NON-NLS-1$
+        buffer.append("   f( );                               \n"); //$NON-NLS-1$
+        buffer.append("}                                      \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+
+        IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+        assertInstances(col, f1, 5);
+    }
+
+    public void testBug90647() throws Exception {
+        parse(
+                "char msg[] = \"Syntax error on line %s\\n\";", ParserLanguage.CPP); //$NON-NLS-1$
+    }
+
+    public void testBug82766() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int main(int argc, char **argv)\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("int sum=0;\n"); //$NON-NLS-1$
+        buffer.append("int i;\n"); //$NON-NLS-1$
+        buffer.append("for (i = 0; i < 10; ++i)\n"); //$NON-NLS-1$
+        buffer.append("for (int j = 0; j < 3; ++j)\n"); //$NON-NLS-1$
+        buffer.append("sum += j;\n"); //$NON-NLS-1$
+        buffer.append("for (i = 0; i < 10; ++i)\n"); //$NON-NLS-1$
+        buffer.append("for (int j = 0; j < 3; ++j) // line X\n"); //$NON-NLS-1$
+        buffer.append("sum += j;  // line Y\n"); //$NON-NLS-1$
+        buffer.append("int k;\n"); //$NON-NLS-1$
+        buffer.append("k = sum;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );
+    }
+
+    public void testBug77385() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int main(int argc, char *argv[])\n" ); //$NON-NLS-1$
+        buffer.append( "{\n" ); //$NON-NLS-1$
+        buffer.append( "    unsigned long l = 0;\n" ); //$NON-NLS-1$
+        buffer.append( "char *c;\n" );             //$NON-NLS-1$
+        buffer.append( "l |= ((unsigned long)(*((c)++)))<<24;\n" ); //$NON-NLS-1$
+        buffer.append( "}\n" ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );
+    }
+    
+    public void testBug83997() throws Exception {
+        IASTTranslationUnit tu = parse( "namespace { int x; }", ParserLanguage.CPP ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );
+        
+    }
+    
+    protected void assertNoProblemBindings(CPPNameCollector col) {
+        Iterator i = col.nameList.iterator();
+        while( i.hasNext() )
+        {
+            IASTName n = (IASTName) i.next();
+            assertNotNull( n.resolveBinding());
+            assertFalse( n.resolveBinding() instanceof IProblemBinding );
+        }
+    }
+    
+    protected void assertProblemBindings(CPPNameCollector col, int count ) {
+        Iterator i = col.nameList.iterator();
+        int sum = 0;
+        while( i.hasNext() )
+        {
+            IASTName n = (IASTName) i.next();
+            assertNotNull( n.resolveBinding());
+            if( n.getBinding() instanceof IProblemBinding )
+                ++sum;
+        }
+        assertEquals( count, sum );
+    }
+
+}

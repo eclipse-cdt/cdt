@@ -1736,7 +1736,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     protected IASTNodeLocation createSoleLocation(_Context c, int offset,
             int length) {
-        if (c instanceof _IPreprocessorDirective) {
+        if (c instanceof _IPreprocessorDirective || c instanceof _Problem ) {
             if (c.containsInDirective(offset, length)) {
                 _CompositeContext parent = c.parent;
                 while (!(parent instanceof _CompositeFileContext))
@@ -1745,7 +1745,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 return new FileLocation(fc.reader.filename, reconcileOffset(fc,
                         c, offset), length);
             }
-
         }
         if (c instanceof _CompositeFileContext) {
             return new FileLocation(

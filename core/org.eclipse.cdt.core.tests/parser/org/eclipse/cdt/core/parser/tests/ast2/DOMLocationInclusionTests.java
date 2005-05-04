@@ -351,6 +351,27 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
             assertEquals( "_INCLUDE_H_".length(), flatLoc.getNodeLength() ); //$NON-NLS-1$
         }        
     }
+    
+    public void testIProblemLocation() throws Exception
+    {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "#include <not_found.h>\n"); //$NON-NLS-1$
+        buffer.append( "int x,y,z;"); //$NON-NLS-1$
+        String code = buffer.toString();
+        IFile f = importFile( "blah.c", code ); //$NON-NLS-1$
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse( f, p ); //$NON-NLS-1$
+            IASTProblem [] prbs = tu.getPreprocessorProblems();
+            assertEquals( prbs.length, 1 );
+            IASTNodeLocation [] locs = prbs[0].getNodeLocations();
+            assertEquals( locs.length, 1 );
+            IASTFileLocation fileLoc = (IASTFileLocation) locs[0];
+            assertEquals( code.indexOf( "#include" ), fileLoc.getNodeOffset() ); //$NON-NLS-1$
+            assertEquals( "#include <not_found.h>\n".length(), fileLoc.getNodeLength() ); //$NON-NLS-1$  
+        }
+        
+    }
 
     public static Test suite() {
         TestSuite suite = new TestSuite(DOMLocationInclusionTests.class);

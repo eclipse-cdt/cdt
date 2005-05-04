@@ -1358,10 +1358,18 @@
             name="%CDTIndexer.nullindexer"
             id="org.eclipse.cdt.ui.nullindexerUI"/>
  	  <indexerUI
+            class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
+            id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
+            indexerID="org.eclipse.cdt.core.domsourceindexer"
+            name="%CDTIndexer.domsourceindexer"/>
+<!-- to enable indexer problem markers property page
+	 uncomment this entry and comment the previous one
+ 	  <indexerUI
             class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
             indexerID="org.eclipse.cdt.core.domsourceindexer"
             name="%CDTIndexer.domsourceindexer"/>
+-->
       <indexerUI
             class="org.eclipse.cdt.ui.dialogs.CTagsIndexerBlock"
             indexerID="org.eclipse.cdt.core.ctagsindexer"

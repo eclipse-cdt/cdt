@@ -19,12 +19,14 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexRequest;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.sourceindexer.IndexRequest;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -375,4 +377,30 @@ public class IndexManager extends JobManager{
 			job.schedule();
 	    }
 	}
+    
+    static private class RemoveIndexMarkersJob extends Job{
+        private final IResource resource;
+        public RemoveIndexMarkersJob( IResource resource, String name ){
+            super( name );
+            this.resource = resource;
+        }
+        protected IStatus run(IProgressMonitor monitor) {
+            try {
+                resource.deleteMarkers( ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE );
+            } catch (CoreException e) {
+                return Status.CANCEL_STATUS;
+            }
+            return Status.OK_STATUS;        
+        }
+        
+    }
+    
+    public void removeIndexerProblems( IResource resource){
+        String jobName = "remove markers"; //$NON-NLS-1$
+        RemoveIndexMarkersJob job = new RemoveIndexMarkersJob( resource, jobName );
+        job.setRule( resource );
+        job.setPriority( Job.DECORATE );
+        job.schedule();
+    }
+    
 }

@@ -3,6 +3,7 @@ package org.eclipse.cdt.internal.core.index.nullindexer;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -67,8 +68,7 @@ public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
 	}
 
 	public void indexerRemoved(IProject project) {
-		// TODO Auto-generated method stub
-
+        CCorePlugin.getDefault().getCoreModel().getIndexManager().removeIndexerProblems(project);
 	}
 
 	public void index(IFile document, IIndexerOutput output) throws IOException {

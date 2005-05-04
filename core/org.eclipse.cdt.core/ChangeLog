@@ -1,4 +1,19 @@
 2005-05-02 Vladimir Hirsl
+	Fix for PR 92599: [Indexer] Remove annotation markers preference from DOMIndexer & friends
+	Removed indexer problem markers property page block for DOMIndexer.
+	Only inclusion not found preprocessor problem markers are going to be
+	generated (there isn't an option in UI to disable/enable them yet).
+	Also, fixed deleting of indexer problem markers when indexer is changed.
+	
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/nullindexer/NullIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexer.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+
+2005-05-02 Vladimir Hirsl
 	Fix for PR 96762: DOM indexer misses some obvious symbols
 		Fixed calculation of file locations for names inside macro definitions
 		

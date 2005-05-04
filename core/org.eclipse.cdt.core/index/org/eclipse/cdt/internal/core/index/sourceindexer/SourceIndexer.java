@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
-import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -74,6 +73,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	public static final int PREPROCESSOR_PROBLEMS_BIT = 1;
 	public static final int SEMANTIC_PROBLEMS_BIT = 1 << 1;
 	public static final int SYNTACTIC_PROBLEMS_BIT = 1 << 2;
+    public static final int INCLUSION_PROBLEMS_BIT = 1 << 3;
 
 	public static final String SOURCE_INDEXER_ID = "originalsourceindexer"; //$NON-NLS-1$
 	public static final String SOURCE_INDEXER_UNIQUE_ID = CCorePlugin.PLUGIN_ID + "." + SOURCE_INDEXER_ID; //$NON-NLS-1$;
@@ -84,7 +84,6 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
     protected IndexManager  	indexManager = null; 
 	
 	protected HashSet 			jobSet = null;
-	private boolean				indexEnabled = false;
 	
     protected long		    	totalIndexTime = 0;
 	
@@ -161,12 +160,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	 * Warning: Does not check whether index is consistent (not being used)
 	 */
 	public synchronized boolean haveEncounteredHeader(IPath projectPath, IPath filePath) {
-		
-		if (!(indexStorage instanceof CIndexStorage))
-			return false;
-		
-		SimpleLookupTable headerTable = ((CIndexStorage)indexStorage).getEncounteredHeaders(); 
-		
+		SimpleLookupTable headerTable = indexStorage.getEncounteredHeaders(); 
 		
 		// Path is already canonical per construction
 		ObjectSet headers = (ObjectSet) headerTable.get(projectPath);
@@ -269,7 +263,6 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 			if (cext.length > 0) {
 				//initializeIndexerId();
 				for (int i = 0; i < cext.length; i++) {
-					String id = cext[i].getID();
 						String orig = cext[i].getExtensionData("indexmarkers"); //$NON-NLS-1$
 						if (orig != null){
 							Integer tempInt = new Integer(orig);
@@ -336,30 +329,9 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 		
 	}
 	
-	static private class RemoveIndexMarkersJob extends Job{
-		private final IResource resource;
-		public RemoveIndexMarkersJob( IResource resource, String name ){
-			super( name );
-			this.resource = resource;
-		}
-		protected IStatus run(IProgressMonitor monitor) {
-			try {
-				resource.deleteMarkers( ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE );
-			} catch (CoreException e) {
-				return Status.CANCEL_STATUS;
-			}
-			return Status.OK_STATUS;		
-		}
-		
-	}
-	
 	public void removeIndexerProblems( IResource resource){
-		String jobName = "remove markers"; //$NON-NLS-1$
-		RemoveIndexMarkersJob job = new RemoveIndexMarkersJob( resource, jobName );
-		job.setRule( resource );
-		job.setPriority( Job.DECORATE );
-		job.schedule();
-	}
+        indexManager.removeIndexerProblems(resource);
+    }
 	
 	public void addIndexChangeListener(IIndexChangeListener listener) {
 		synchronized(indexChangeListeners) {
@@ -422,8 +394,8 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	 * No more job awaiting.
 	 */
 	public void notifyIdle(long idlingTime){
-		if (idlingTime > 1000 && ((CIndexStorage) indexStorage).getNeedToSave()) 
-			((CIndexStorage) indexStorage).saveIndexes();
+		if (idlingTime > 1000 && indexStorage.getNeedToSave()) 
+			indexStorage.saveIndexes();
 	}
 
 	/* (non-Javadoc)
@@ -504,7 +476,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	 * @see org.eclipse.cdt.core.index2.IIndexer#indexJobFinishedNotification(org.eclipse.cdt.internal.core.search.processing.IIndexJob)
 	 */
 	public void indexJobFinishedNotification(IIndexJob job) {
-		((CIndexStorage)indexStorage).setNeedToSave(true);
+		indexStorage.setNeedToSave(true);
 		
 		if (job instanceof AddCompilationUnitToIndex){
 			AddCompilationUnitToIndex tempJob = (AddCompilationUnitToIndex) job;
@@ -655,15 +627,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
     }
 
 	public void indexerRemoved(IProject project) {
-		//Remove any existing problem markers
-		/*try {
-			 IMarker[] markers = project.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
-			for (int i=0; i<markers.length; i++){
-				removeIndexerProblems(markers[i].getResource());
-			}
-		} catch (CoreException e) {}*/
-		
+        removeIndexerProblems(project);
 	}
-	
 	
 }

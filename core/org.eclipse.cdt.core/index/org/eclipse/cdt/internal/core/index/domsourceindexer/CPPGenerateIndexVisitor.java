@@ -10,13 +10,11 @@
  ***********************************************************************/
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -42,12 +40,9 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexerOutputWrapper.EntryType;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Path;
 
 public class CPPGenerateIndexVisitor extends CPPASTVisitor {
     private DOMSourceIndexerRunner indexer; 
-    private IFile resourceFile;
     
     {
         shouldVisitNames          = true;
@@ -68,10 +63,9 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
 //        shouldVisitTemplateParameters = false;
     }
     
-    public CPPGenerateIndexVisitor(DOMSourceIndexerRunner indexer, IFile resourceFile) {
+    public CPPGenerateIndexVisitor(DOMSourceIndexerRunner indexer) {
         super();
         this.indexer = indexer;
-        this.resourceFile = resourceFile;
     }
 
     /* (non-Javadoc)
@@ -98,7 +92,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)) {
             // Get the location
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(problem);
-            processProblem(problem, loc);
+            indexer.processProblem(problem, loc);
         }
         return super.visit(problem);
     }
@@ -115,7 +109,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
                 // Get the location
                 IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
-                processProblem(name, loc);
+                indexer.processProblem(name, loc);
             }
             return;
         }
@@ -128,21 +122,6 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             int indexFlag = IndexEncoderUtil.calculateIndexFlags(indexer, loc);
     
             processNameBinding(name, binding, loc, indexFlag, null); // function will determine limitTo
-        }
-    }
-
-    /**
-     * @param name
-     */
-    private void processProblem(IASTNode node, IASTFileLocation loc) {
-        IFile tempFile = resourceFile;
-        //If we are in an include file, get the include file
-        if (loc != null) {
-            String fileName = loc.getFileName();
-            tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
-            if (tempFile != null) {
-                indexer.generateMarkerProblem(tempFile, resourceFile, node, loc);
-            }
         }
     }
 

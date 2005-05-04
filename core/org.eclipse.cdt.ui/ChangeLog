@@ -1,3 +1,12 @@
+2005-05-04 Vladimir Hirsl
+	Fix for PR 92599: [Indexer] Remove annotation markers preference from DOMIndexer & friends
+	Replaced indexer problem markers property page block for DOMIndexer.
+	(from SourceIndexerBlock to NullIndexerBlock).
+	Only inclusion not found preprocessor problem markers are going to be
+	generated (there isn't an option in UI to disable/enable them yet).
+
+	* plugin.xml
+	
 2005-04-22 Vladimir Hirsl
 	Added per file C/C++ Includes & Symbols property page to display
 	per file scanner info (discovered and user specified).

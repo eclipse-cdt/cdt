@@ -133,7 +133,7 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	 * @see org.eclipse.cdt.core.index.ICDTIndexer#indexJobFinishedNotification(org.eclipse.cdt.internal.core.search.processing.IIndexJob)
 	 */
 	public void indexJobFinishedNotification(IIndexJob job) {
-		((CIndexStorage)indexStorage).setNeedToSave(true);
+		indexStorage.setNeedToSave(true);
 		
 		if (job instanceof CTagsAddCompilationUnitToIndex){
 		    CTagsAddCompilationUnitToIndex tempJob = (CTagsAddCompilationUnitToIndex) job;
@@ -371,11 +371,7 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	}
 
 	public void indexerRemoved(IProject project) {
-		//Remove any existing problem markers
-		try {
-			project.deleteMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
-		} catch (CoreException e) {}
-		
+        indexManager.removeIndexerProblems(project);
 	}
 	
 

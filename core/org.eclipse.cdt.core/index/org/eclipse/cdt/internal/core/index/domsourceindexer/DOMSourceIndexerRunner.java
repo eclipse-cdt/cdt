@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -79,6 +80,8 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         output.addIndexedFile(file.getFullPath().toString());
       
         int problems = indexer.indexProblemsEnabled(resourceFile.getProject());
+        // enable inclusion problem markers
+        problems |= SourceIndexer.INCLUSION_PROBLEMS_BIT;
         setProblemMarkersEnabled(problems);
         requestRemoveMarkers(resourceFile, null);
         
@@ -100,12 +103,13 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             
             processIncludeDirectives(tu.getDependencyTree());
             processMacroDefinitions(tu.getMacroDefinitions());
+            processPreprocessorProblems(tu.getPreprocessorProblems());
             
             ASTVisitor visitor = null;
             if (language == ParserLanguage.CPP) {
-                visitor = new CPPGenerateIndexVisitor(this, resourceFile);
+                visitor = new CPPGenerateIndexVisitor(this);
             } else {
-                visitor = new CGenerateIndexVisitor(this, resourceFile);
+                visitor = new CGenerateIndexVisitor(this);
             }
            
             tu.accept(visitor);   
@@ -239,6 +243,36 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         
     }
 
+    /**
+     * @param preprocessorProblems
+     */
+    private void processPreprocessorProblems(IASTProblem[] preprocessorProblems) {
+        for (int i = 0; i < preprocessorProblems.length; i++) {
+            IASTProblem problem = preprocessorProblems[i];
+
+            if (areProblemMarkersEnabled() && shouldRecordProblem(problem)) {
+                // Get the location
+                IASTFileLocation loc = IndexEncoderUtil.getFileLocation(problem);
+                processProblem(problem, loc);
+            }
+        }
+    }
+
+    /**
+     * @param name
+     */
+    public void processProblem(IASTNode node, IASTFileLocation loc) {
+        IFile tempFile = resourceFile;
+        //If we are in an include file, get the include file
+        if (loc != null) {
+            String fileName = loc.getFileName();
+            tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+            if (tempFile != null) {
+                generateMarkerProblem(tempFile, resourceFile, node, loc);
+            }
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object, java.lang.Object)
      */
@@ -289,11 +323,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                     int start = fileLoc.getNodeOffset();
                     int end = start + fileLoc.getNodeLength();
                     marker.setAttribute(IMarker.LOCATION, fileLoc.getStartingLineNumber());
-                    marker.setAttribute(IMarker.LOCATION, 1);
                     marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + errorMessage);
                     marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
                     marker.setAttribute(IMarker.LINE_NUMBER, fileLoc.getStartingLineNumber());
-                    marker.setAttribute(IMarker.LINE_NUMBER, 1);
                     marker.setAttribute(IMarker.CHAR_START, start);
                     marker.setAttribute(IMarker.CHAR_END, end); 
                     marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString());
@@ -310,7 +342,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         boolean semantics = (getProblemMarkersEnabled() & SourceIndexer.SEMANTIC_PROBLEMS_BIT ) != 0;
         boolean syntax = (getProblemMarkersEnabled() & SourceIndexer.SYNTACTIC_PROBLEMS_BIT ) != 0;
         
-        if (problem.checkCategory(IASTProblem.PREPROCESSOR_RELATED) || 
+        if (problem.checkCategory(IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND)) {
+            return true;
+        }
+        else if (problem.checkCategory(IASTProblem.PREPROCESSOR_RELATED) || 
                 problem.checkCategory(IASTProblem.SCANNER_RELATED))
             return preprocessor && problem.getID() != IASTProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
         else if (problem.checkCategory(IASTProblem.SEMANTICS_RELATED))

@@ -712,6 +712,8 @@ public class CPPVisitor {
 						return ((ICPPClassType)binding).getCompositeScope();
 					} else if( binding instanceof ICPPNamespace ){
 						return ((ICPPNamespace)binding).getNamespaceScope();
+					} else if( binding instanceof ICPPInternalUnknown ){
+					    return ((ICPPInternalUnknown)binding).getUnknownScope();
 					} else if( binding instanceof IProblemBinding ){
 						if( binding instanceof ICPPScope )
 							return (IScope) binding;

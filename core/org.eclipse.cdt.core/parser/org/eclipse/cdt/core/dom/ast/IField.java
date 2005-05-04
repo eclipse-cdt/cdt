@@ -15,4 +15,6 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IField extends IVariable {
 
+    public static final IField[] EMPTY_FIELD_ARRAY = new IField[0];
+
 }

@@ -9506,7 +9506,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("typename T::X x; // illformed: finds the data member X\n"); //$NON-NLS-1$
 		buffer.append("// not the member type X\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.CPP, true, 2);
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
 	/**

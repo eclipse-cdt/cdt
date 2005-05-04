@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -42,10 +43,11 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  * @author aniefer
  */
 public class CPPTemplateTemplateParameter extends CPPTemplateParameter implements
-		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate {
+		ICPPTemplateTemplateParameter, ICPPClassType, ICPPInternalTemplate, ICPPInternalUnknown {
 
 	private ICPPTemplateParameter [] templateParameters = null;
 	private ObjectMap instances = null;
+	private ICPPScope unknownScope = null;
 	
 	/**
 	 * @param name
@@ -55,6 +57,13 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		// TODO Auto-generated constructor stub
 	}
 
+	public ICPPScope getUnknownScope() {
+	    if( unknownScope == null ) {
+	        unknownScope = new CPPUnknownScope( this, null );
+	    }
+	    return unknownScope;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter#getTemplateParameters()
 	 */
@@ -288,4 +297,12 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 			instances = new ObjectMap( 2 );
 		instances.put( types, spec );
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
+     */
+    public IBinding resolveUnknown( ObjectMap argMap ) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -542,6 +543,8 @@ public class CPPTemplates {
 			spec = new CPPMethodSpecialization( decl, scope, argMap );
 		} else if( decl instanceof ICPPFunction ) {
 			spec = new CPPFunctionSpecialization( decl, scope, argMap );
+		} else if( decl instanceof ITypedef ){
+		    spec = new CPPTypedefSpecialization( decl, scope, argMap );
 		}
 		return spec;
 	}
@@ -588,6 +591,15 @@ public class CPPTemplates {
 			newType = (IType) argMap.get( type );
 		} else if( type instanceof CPPDeferredClassInstance ){
 			newType = ((CPPDeferredClassInstance)type).instantiate( argMap );
+		} else if( type instanceof ICPPInternalUnknown ){
+		    IBinding binding;
+            try {
+                binding = ((ICPPInternalUnknown)type).resolveUnknown( argMap );
+            } catch ( DOMException e ) {
+                binding = e.getProblem();
+            }
+            if( binding instanceof IType )
+		        newType = (IType) binding; 
 		}
 	
 		return newType;

@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IBinding {
-
+    public static final IBinding[] EMPTY_BINDING_ARRAY = new IBinding[0];
 	/**
 	 * The name of the binding.
 	 * 

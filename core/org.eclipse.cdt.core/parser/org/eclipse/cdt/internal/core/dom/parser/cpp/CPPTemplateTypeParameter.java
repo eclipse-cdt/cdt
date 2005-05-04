@@ -16,17 +16,21 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
  */
 public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
-		ICPPTemplateTypeParameter, IType {
+		ICPPTemplateTypeParameter, IType, ICPPInternalUnknown {
 
+    private ICPPScope unknownScope = null;
 	/**
 	 * @param name
 	 */
@@ -34,6 +38,12 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 		super(name);
 	}
 
+	public ICPPScope getUnknownScope() {
+	    if( unknownScope == null ) {
+	        unknownScope = new CPPUnknownScope( this, null );
+	    }
+	    return unknownScope;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter#getDefault()
 	 */
@@ -61,5 +71,13 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
         if( type instanceof ITypedef )
             return ((ITypedef)type).isSameType( this );
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknown#resolveUnknown(org.eclipse.cdt.core.parser.util.ObjectMap)
+     */
+    public IBinding resolveUnknown( ObjectMap argMap ) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

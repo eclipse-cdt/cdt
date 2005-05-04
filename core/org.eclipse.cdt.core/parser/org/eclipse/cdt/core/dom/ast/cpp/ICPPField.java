@@ -16,5 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
  * @author Doug Schaefer
  */
 public interface ICPPField extends IField, ICPPMember, ICPPVariable {
+    public static final ICPPField [] EMPTY_CPPFIELD_ARRAY = new ICPPField[0];
 
 }

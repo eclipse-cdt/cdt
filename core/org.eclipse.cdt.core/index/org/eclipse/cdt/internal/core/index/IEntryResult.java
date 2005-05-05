@@ -28,6 +28,10 @@ public interface IEntryResult {
 	public int getRefKind();
 	public String getName();
 	
+	public String getStringMetaKind();
+	public String getStringKind();
+	public String getStringRefKind();
+	
 	/**
 	 * Returns the offsets for this entry - offsets are in the same position
 	 * as the file references (ex. the first offset array belongs to the first

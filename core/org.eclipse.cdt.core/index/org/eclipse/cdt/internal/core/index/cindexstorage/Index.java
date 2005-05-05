@@ -201,6 +201,30 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 			input.close();
 		}		
 	}
+	
+	/**
+	 * Returns the path list 
+	 */
+	public String [] getDocumentList() throws IOException {
+		IndexInput input= new BlocksIndexInput(indexFile);
+		try {
+			input.open();
+			int num = input.getNumFiles();
+			String [] result = new String[num+1];
+			for(int i = 1; i < num+1; i++) {
+				//i+1 since reference encoding starts at 1
+				IndexedFileEntry file = input.getIndexedFile(i);
+				if (file != null) 
+					result[i] = file.getPath();
+				else 
+					result[i] = null;
+			}
+			
+			return result;
+		} finally {
+			input.close();
+		}		
+	}
 	/**
 	 * see IIndex.hasChanged
 	 */
@@ -265,7 +289,18 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 			//rename the file created to become the main index
 			File mainIndexFile= (File) mainIndexInput.getSource();
 			File tempIndexFile= (File) tempIndexOutput.getDestination();
-			mainIndexFile.delete();
+			boolean deleted = mainIndexFile.delete();
+			
+			int counter=0;
+			while (!deleted && counter<5){
+				System.out.println("Not deleted");
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {}
+				counter++;
+				deleted=mainIndexFile.delete();
+			}
+			
 			tempIndexFile.renameTo(mainIndexFile);
 		} finally {		
 			//initialise remove vectors and addsindex, and change the state

@@ -75,6 +75,9 @@ public interface IIndex {
 		/**
 		 * Returns the number of documents indexed.
 		 */
+		
+		String [] getDocumentList() throws IOException;
+		
 		int getNumDocuments() throws IOException;
 		/**
 		 * Returns the number of unique words indexed.

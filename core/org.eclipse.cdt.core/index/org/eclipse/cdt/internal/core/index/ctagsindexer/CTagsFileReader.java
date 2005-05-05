@@ -76,7 +76,7 @@ public class CTagsFileReader {
 			   
 			   String fileName = tagEntry.fileName;
 			   
-			   if (currentFileName == null ||
+		   if (currentFileName == null ||
 			      (!currentFileName.equals(fileName))){
 			      currentFileName = fileName; 
 			      currentFile = (IFile) project.findMember(fileName);
@@ -93,14 +93,10 @@ public class CTagsFileReader {
 				  if (currentFile != null){
 				      indexer = new MiniIndexer(currentFile);
 				      index.add(currentFile,indexer);
-					  //encode new tag in current file
-					  char[][] fullName = parser.getQualifiedName(tagEntry);
-					  //encode name
-					  String lineNumber = (String) tagEntry.tagExtensionField.get(CTagsConsoleParser.LINE);
-					  indexer.addToOutput(fullName,(String)tagEntry.tagExtensionField.get(CTagsConsoleParser.KIND), Integer.parseInt(lineNumber));
 				  }
-			   }
+			  }
 			  
+		   	  indexer.addToOutput(tagEntry);
 			  
 			}
 		} catch (IOException e){}
@@ -116,44 +112,14 @@ public class CTagsFileReader {
         public MiniIndexer(IFile currentFile) {
             this.currentFile = currentFile;
         }
-        public void addToOutput(char[][]fullName, String kind, int lineNumber){
-        	if (kind == null)
-        	  return;
+        public void addToOutput(CTagEntry tagEntry){
         	
 	        IndexedFileEntry mainIndexFile = this.output.getIndexedFile(currentFile.getFullPath().toString());
 			int fileNum = 0;
 	        if (mainIndexFile != null)
 				fileNum = mainIndexFile.getFileID();
 			
-	        
-	    	if (kind.equals(CTagsConsoleParser.CLASS)){
-	    		output.addClassDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.MACRO)){
-	    		output.addMacroDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.ENUMERATOR)){
-	    		output.addEnumtorDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.FUNCTION)){
-	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.ENUM)){
-	    		output.addEnumDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.MEMBER)){
-	    		output.addFieldDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.NAMESPACE)){
-	    		output.addNamespaceDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.PROTOTYPE)){
-	    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	    //type = ICSearchConstants.DEFINITIONS;
-	    	} else if (kind.equals(CTagsConsoleParser.STRUCT)){
-	    		output.addStructDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.TYPEDEF)){
-	    		output.addTypedefDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.UNION)){
-	    		output.addUnionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.VARIABLE)){
-	    		output.addVariableDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
-	    	} else if (kind.equals(CTagsConsoleParser.EXTERNALVAR)){
-	    	
-	    	}
+			tagEntry.addTagToIndexOutput(fileNum, this.output);
 	    }
         /* (non-Javadoc)
          * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)

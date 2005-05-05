@@ -67,10 +67,16 @@ public int hashCode(){
 	return CharOperation.hashCode(getWord());
 }
 public String toString(){
-	char [] word = getWord();
-	StringBuffer buffer = new StringBuffer(word.length * 2);
-	buffer.append("EntryResult: word="); //$NON-NLS-1$
-	buffer.append(word);
+	StringBuffer buffer = new StringBuffer();
+	buffer.append("EntryResult: " + getName() + "\n\tmeta="); //$NON-NLS-1$
+	buffer.append(ICIndexStorageConstants.encodings[meta_type]);
+	if(meta_type == IIndex.TYPE) {
+		buffer.append(" type=");
+		buffer.append(ICIndexStorageConstants.typeConstantNames[kind]);
+	}
+	buffer.append(" Reference=");
+	buffer.append(ICIndexStorageConstants.encodingTypes[reftype]);
+	
 	buffer.append(", refs={"); //$NON-NLS-1$
 	for (int i = 0; i < fileRefs.length; i++){
 		if (i > 0) buffer.append(',');
@@ -89,7 +95,7 @@ public String toString(){
 		}
 		buffer.append(']'); 
 	}
-	buffer.append(" }"); //$NON-NLS-1$
+	buffer.append(" }\n"); //$NON-NLS-1$
 	return buffer.toString();
 }
 /* (non-Javadoc)
@@ -116,19 +122,18 @@ public String extractSimpleName() {
 }
 
 private void decode(char [] word) {
-	String aWord = new String(word);
 	int pos = 0;
 	meta_type = 0;
 	for (int i = 1; i < ICIndexStorageConstants.encodings.length; i ++){
-		if (aWord.indexOf(new String(ICIndexStorageConstants.encodings[i]), pos) == 0) {
+		if (CharOperation.prefixEquals(ICIndexStorageConstants.encodings[i], word)) {
 			meta_type = i;
 			pos += ICIndexStorageConstants.encodings[i].length;
 			break;
 		}
 	}
 	
-	for ( int i = 1; i < ICIndexStorageConstants.encodingTypes.length; i++) {
-		if (aWord.indexOf(new String(ICIndexStorageConstants.encodingTypes[i]), pos) == pos) {
+	for ( int i = 1; i < ICIndexStorageConstants.encodingTypes.length; i++) {		
+		if (CharOperation.fragmentEquals(ICIndexStorageConstants.encodingTypes[i], word, pos, true)) {
 			reftype = i;
 			pos += ICIndexStorageConstants.encodingTypes[i].length;
 			break;
@@ -180,6 +185,15 @@ public int getRefKind() {
 }
 public String getName() {
 	return longname;
+}
+public String getStringMetaKind() {
+	return String.valueOf(ICIndexStorageConstants.encodings[meta_type]);
+}
+public String getStringKind() {
+	return ICIndexStorageConstants.typeConstantNames[kind];
+}
+public String getStringRefKind() {
+	return String.valueOf(ICIndexStorageConstants.encodingTypes[reftype]);
 }
 
 }

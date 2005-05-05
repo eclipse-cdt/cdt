@@ -127,12 +127,15 @@ public class IndexerView extends ViewPart {
                         
                         try {                         
                             IEntryResult[] results = index.getEntries(IIndex.ANY, IIndex.ANY, IIndex.ANY );
+							
+							
                             if (results == null) return Status.CANCEL_STATUS;
-                            
+							String [] fileMap = index.getDocumentList();
+							
                             int size = results.length; 
                             IndexerNodeLeaf[] children = new IndexerNodeLeaf[size];
                             for(int j=0; j<size; j++) {
-                                children[j] = new IndexerNodeLeaf(results[j], index.getIndexFile());
+                                children[j] = new IndexerNodeLeaf(results[j], fileMap);
                                 children[j].setParent(invisibleRoot);
                             }
                             
@@ -583,6 +586,7 @@ public class IndexerView extends ViewPart {
             	case IIndex.INCLUDE   : return FilterIndexerViewDialog.ENTRY_INCLUDE_REF;
             	}
             	break;
+            case IIndex.DEFINITION :
             case IIndex.DECLARATION :
             	switch (meta) {
             	case IIndex.TYPE :

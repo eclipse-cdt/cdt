@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.core.index.ctagsindexer;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+
 
 class CTagEntry{
 	private final CTagsConsoleParser parser;
@@ -53,8 +56,10 @@ class CTagEntry{
 				case 2: // LINE NUMBER;
 					try {
 						String sub = token.trim();
-						if (Character.isDigit(sub.charAt(0))) {
-							lineNumber = Integer.parseInt(sub);
+						int i = sub.indexOf(';');
+						String num = sub.substring(0, i);
+						if (Character.isDigit(num.charAt(0))) {
+							lineNumber = Integer.parseInt(num);
 						}
 					} catch (NumberFormatException e) {
 					} catch (IndexOutOfBoundsException e) {
@@ -71,5 +76,76 @@ class CTagEntry{
 				break;
 			}
 		}
+	}
+	
+	   /**
+     * @param tempTag
+     * @return
+     */
+    public char[][] getQualifiedName() {
+        char[][] fullName = null;
+        String name = null;
+        String[] types = {CTagsConsoleParser.NAMESPACE, CTagsConsoleParser.CLASS, CTagsConsoleParser.STRUCT, CTagsConsoleParser.UNION, CTagsConsoleParser.FUNCTION, CTagsConsoleParser.ENUM};
+       
+        for (int i=0; i<types.length; i++){
+            //look for name
+            name = (String) tagExtensionField.get(types[i]); 
+            if (name != null)
+                break;
+        }
+        
+        if (name != null){
+	        StringTokenizer st = new StringTokenizer(name, CTagsConsoleParser.COLONCOLON);
+			fullName = new char[st.countTokens() + 1][];
+			int i=0;
+			while (st.hasMoreTokens()){
+			    fullName[i] = st.nextToken().toCharArray();
+			    i++;
+			}
+			fullName[i] = elementName.toCharArray();
+        } else {
+            fullName = new char[1][];
+            fullName[0] = elementName.toCharArray();
+        }
+        
+        return fullName;
+    }
+	
+	public void addTagToIndexOutput(int fileNum, IIndexerOutput output){
+		
+		String kind = (String) tagExtensionField.get(CTagsConsoleParser.KIND);
+	    
+	    if (kind == null)
+	    	  return;
+		
+		char[][] fullName = getQualifiedName();
+	
+		if (kind.equals(CTagsConsoleParser.CLASS)){
+    		output.addClassDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.MACRO)){
+    		output.addMacroDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.ENUMERATOR)){
+    		output.addEnumtorDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.FUNCTION)){
+    		output.addFunctionDefn(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.ENUM)){
+    		output.addEnumDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.MEMBER)){
+    		output.addFieldDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.NAMESPACE)){
+    		output.addNamespaceDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.PROTOTYPE)){
+    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.STRUCT)){
+    		output.addStructDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.TYPEDEF)){
+    		output.addTypedefDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.UNION)){
+    		output.addUnionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.VARIABLE)){
+    		output.addVariableDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+    	} else if (kind.equals(CTagsConsoleParser.EXTERNALVAR)){
+    	
+    	}
 	}
 }

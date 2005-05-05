@@ -10,17 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.IndexerView;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
-import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
@@ -84,7 +79,7 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
 					  fileResource =tempResource;
 				  else
 					  fileResource = tempPath;
-                  collector.acceptMatch( createMatch(fileResource, matches[i].getStart(), 
+                  collector.acceptMatch( createMatch(fileResource, matches[i].getOffsetType(), matches[i].getStart(), 
                           matches[i].getEnd(), matches[i].getName(), matches[i].getPath()) );
                 }
             } catch (CoreException ce) {}
@@ -97,52 +92,50 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
     }
     
     private MatchInfo[] generateMatchInfo() {
-        IndexInput input = new BlocksIndexInput(leaf.indexFile);
+		String [] fileMap = leaf.getFileMap();
         IEntryResult entryResult = leaf.getResult();
         MatchInfo[] matches = new MatchInfo[DEFAULT_MATCH_INFO_SIZE];
-        try {
-            input.open();
            
-            int[] references = entryResult.getFileReferences();
-            int[][]offsets = entryResult.getOffsets();
-            int[][]offsetLengths = entryResult.getOffsetLengths();
-            if (offsets != null){
-                for (int j=0; j<offsets.length; j++){
-                    for (int k=0; k<offsets[j].length; k++){
-                        MatchInfo match = new MatchInfo();
-                        if (references.length > j-1) {
-                            IndexedFileEntry file = input.getIndexedFile(references[j]);
-                            if (file != null){
-								IPath filePath = new Path(file.getPath());
-								//If we can verify that the file exists within the workspace, we'll use it
-								//to open the appropriate editor - if not we can just set the path and we'll
-								//use the external editor mechanism
-                                IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(filePath);
-								if (tempFile != null && tempFile.exists())
-									match.setResource(tempFile);
-								else {
-									match.setPath(PathUtil.getWorkspaceRelativePath(file.getPath()));
-								}
-								
-                            }
+        int[] references = entryResult.getFileReferences();
+        int[][]offsets = entryResult.getOffsets();
+        int[][]offsetLengths = entryResult.getOffsetLengths();
+        if (offsets != null){
+            for (int j=0; j<offsets.length; j++){
+                for (int k=0; k<offsets[j].length; k++){
+                    MatchInfo match = new MatchInfo();
+                    if (references.length > j-1) {
+                        String file = fileMap[references[j]];
+                        if (file != null){
+							IPath filePath = new Path(file);
+							//If we can verify that the file exists within the workspace, we'll use it
+							//to open the appropriate editor - if not we can just set the path and we'll
+							//use the external editor mechanism
+                            IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(filePath);
+							if (tempFile != null && tempFile.exists())
+								match.setResource(tempFile);
+							else {
+								match.setPath(PathUtil.getWorkspaceRelativePath(file));
+							}
+							
                         }
-                        int start=0;
-                        int end=0;
-                        try {
-                        start=Integer.valueOf(String.valueOf(offsets[j][k]).substring(1)).intValue();
-                        end=start+offsetLengths[j][k];
-                        } catch (NumberFormatException nfe) {}
-                        
-                        match.setStart(start) ;
-                        match.setEnd(end);
-                        match.setName(leaf.getName());
-                        
-                        matches = (MatchInfo[])ArrayUtil.append(MatchInfo.class, matches, match);
                     }
+					int offsetType=0;
+                    int start=0;
+                    int end=0;
+                    try {
+				    offsetType=Integer.valueOf(String.valueOf(offsets[j][k]).substring(0,1)).intValue();
+                    start=Integer.valueOf(String.valueOf(offsets[j][k]).substring(1)).intValue();
+                    end=start+offsetLengths[j][k];
+                    } catch (NumberFormatException nfe) {}
+                    
+				    match.setOffsetType(offsetType);
+				    match.setStart(start) ;
+                    match.setEnd(end);
+                    match.setName(leaf.getName());
+                    
+                    matches = (MatchInfo[])ArrayUtil.append(MatchInfo.class, matches, match);
                 }
             }
-            
-        } catch (IOException e) {
         }
 
         return matches;
@@ -150,6 +143,7 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
     
     private class MatchInfo {
         private IPath path=null;
+		private int offsetType=0;
         private int start=0;
         private int end=0;
         private String name=null;
@@ -158,7 +152,13 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
         public IPath getPath() {
             return path;
         }
-        public void setPath(IPath path) {
+		public void setOffsetType(int offsetType){
+			this.offsetType=offsetType; 
+		}
+       public int getOffsetType() {
+			return offsetType;
+		}
+		public void setPath(IPath path) {
             this.path = path;
         }
         public int getEnd() {
@@ -187,7 +187,7 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
 		}
     }
     
-     public IMatch createMatch( Object fileResource, int start, int end, String name, IPath referringElement ) {
+     public IMatch createMatch( Object fileResource,int offsetType, int start, int end, String name, IPath referringElement ) {
         BasicSearchMatch result = new BasicSearchMatch();
         if( fileResource instanceof IResource )
             result.resource = (IResource) fileResource;
@@ -201,6 +201,8 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
         
         result.name = name;
     
+		result.offsetType = offsetType;
+		
         result.type = ICElement.C_FIELD; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
         result.visibility = ICElement.CPP_PUBLIC; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
         result.returnType = BLANK_STRING;

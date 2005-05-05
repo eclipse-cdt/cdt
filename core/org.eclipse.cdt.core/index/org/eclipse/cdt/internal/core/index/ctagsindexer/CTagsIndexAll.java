@@ -36,12 +36,13 @@ import org.eclipse.core.runtime.Path;
  */
 class CTagsIndexAll extends CTagsIndexRequest {
 	IProject project;
-	static String ctagsFile = CCorePlugin.getDefault().getStateLocation().append("tempctags").toOSString(); //$NON-NLS-1$
+	private String ctagsFile;
 	private String ctagsFileToUse;
 	
 	public CTagsIndexAll(IProject project, CTagsIndexer indexer) {
 		super(project.getFullPath(), indexer);
 		this.project = project;
+		this.ctagsFile = CCorePlugin.getDefault().getStateLocation().append(project.getName() + ".ctags").toOSString(); //$NON-NLS-1$
 	}
 	
 	public boolean equals(Object o) {

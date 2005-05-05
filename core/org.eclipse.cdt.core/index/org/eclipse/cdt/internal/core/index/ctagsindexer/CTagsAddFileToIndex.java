@@ -54,6 +54,7 @@ public abstract class CTagsAddFileToIndex extends CTagsIndexRequest {
 			return false;
 		} finally {
 			monitor.exitWrite(); // free write lock
+		    indexer.request(new CTagsSaveIndex(this.indexPath, indexer));
 		}
 		return true;
 	}

@@ -9,11 +9,9 @@
  * IBM Rational Software - Initial API and implementation 
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.IndexerView;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
+//import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -38,8 +36,14 @@ import org.eclipse.swt.widgets.Text;
  */
 public class FilterIndexerViewDialog extends Dialog {
 
-	private static String getStringDescription(int meta, int kind, int ref) {
-		return Index.getDescriptionOf(meta, kind, ref);
+	private static String getStringDescription(int index) {
+		return buttonNames[index];
+	}
+	
+	private static String getUniqueStringDescription(int index) {
+		//return Index.getDescriptionOf(meta, kind, ref);
+		//return buttonNames[index] + new String(ICIndexStorageConstants.encodingTypes[iAllTypes[index][2]]);
+		return String.valueOf(index);
 	}
     private static final int DECL_BUTTON_ID = 3;
     private static final int REF_BUTTON_ID = 2;
@@ -52,13 +56,15 @@ public class FilterIndexerViewDialog extends Dialog {
     private static final String REF_BUTTON = "Ref"; //$NON-NLS-1$
     private static final String BLANK_STRING = ""; //$NON-NLS-1$
     private static final String PAGE_SIZE_ = "Page Size:"; //$NON-NLS-1$
-    private static final String TYPESELECTIONDIALOG_FILTERLABEL = "TypeSelectionDialog.filterLabel"; //$NON-NLS-1$
+    private static final String TYPESELECTIONDIALOG_DeclLABEL = "Declarations:"; //$NON-NLS-1$
+    private static final String TYPESELECTIONDIALOG_RefLABEL = "References:"; //$NON-NLS-1$
     private static final String FILTER_INDEXER_RESULTS = "Filter Indexer Results"; //$NON-NLS-1$
     private static final String SETTINGS = "Settings"; //$NON-NLS-1$
     private static final String PAGE_SIZE = "PAGE_SIZE"; //$NON-NLS-1$
+	private static final String FILTER_TEXT = "Filter"; //$NON-NLS-1$
     private String fFilter = BLANK_STRING; //$NON-NLS-1$
     Text filterText = null;
-    private String pageSize = BLANK_STRING; //$NON-NLS-1$
+    private int pageSize = IndexerNodeParent.PAGE_SIZE;
     Text pageSizeText = null;
     protected boolean [] fFilterMatcher = new boolean [iAllTypes.length];
     protected boolean[] groupedButtonSelections;
@@ -125,7 +131,7 @@ public class FilterIndexerViewDialog extends Dialog {
         {IIndex.TYPE,      IIndex.TYPE_STRUCT,     IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_ENUM,       IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_UNION,      IIndex.DECLARATION},
-        {IIndex.TYPE,      IIndex.TYPE_DERIVED,    Index.DECLARATION},
+        {IIndex.TYPE,      IIndex.TYPE_DERIVED,    IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_FRIEND,     IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_FWD_CLASS,  IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_FWD_STRUCT, IIndex.DECLARATION},
@@ -133,6 +139,32 @@ public class FilterIndexerViewDialog extends Dialog {
         {IIndex.INCLUDE,   IIndex.ANY,             IIndex.REFERENCE}
     };
     
+	private static String [] buttonNames = {
+		"Macro",
+		"Function",
+		"Namepace",
+		"Function",
+		"Namespace",
+		"Field",
+		"Enumtor",
+		"Method",
+		"Field",
+		"Enumtor",
+		"Method",
+		"Type",
+		"Typedef",
+		"Class",
+		"Variable",
+		"Struct",
+		"Enum",
+		"Union",
+		"Derived",
+		"Friend",
+		"Fwd Class",
+		"Fwd Struct",
+		"Fwd Union",
+		"Include"
+	};
     // keep track of the buttons to programmatically change their state
     protected Button[] buttons = new Button[iAllTypes.length];
     protected Button allButton = null;
@@ -225,7 +257,7 @@ public class FilterIndexerViewDialog extends Dialog {
      * Creates a type filter checkbox.
      */
     private void createTypeCheckbox(Composite parent, int type) {
-    	String name = getStringDescription(iAllTypes[type][0], iAllTypes[type][1], iAllTypes[type][2]);
+    	String name = getStringDescription(type);
         Image icon = IndexerViewPluginImages.get(type);
 
         Composite composite = new Composite(parent, SWT.NONE);
@@ -243,10 +275,7 @@ public class FilterIndexerViewDialog extends Dialog {
             public void widgetSelected(SelectionEvent e) {
                 if (e.widget instanceof Button) {
                     Button aCheckbox = (Button) e.widget;
-                    if (aCheckbox.getSelection())
-                        fFilterMatcher[type1] = true;
-                    else
-                        fFilterMatcher[type1] = false;
+                    fFilterMatcher[type1] = aCheckbox.getSelection();
                 }
             }
         });
@@ -255,7 +284,7 @@ public class FilterIndexerViewDialog extends Dialog {
         label.setFont(composite.getFont());
         label.setText(name);
         
-        buttons = (Button[])ArrayUtil.append(Button.class, buttons, checkbox);
+        buttons[type] = checkbox;
     }
 
 
@@ -266,8 +295,7 @@ public class FilterIndexerViewDialog extends Dialog {
      *            area to create controls in
      */
     private void createTypeFilterArea(Composite parent) {
-        createLabel(parent, TypeInfoMessages
-                .getString(TYPESELECTIONDIALOG_FILTERLABEL)); 
+        createLabel(parent,TYPESELECTIONDIALOG_DeclLABEL); 
 
         Composite upperRow = new Composite(parent, SWT.NONE);
         GridLayout upperLayout = new GridLayout(3, true);
@@ -279,7 +307,20 @@ public class FilterIndexerViewDialog extends Dialog {
         // the for loop is here to guarantee we always
         // create the checkboxes in the same order
         for (int i = 0; i < iAllTypes.length; ++i) {
-                createTypeCheckbox(upperRow, i);
+				if(iAllTypes[i][2] == IIndex.DECLARATION)
+					createTypeCheckbox(upperRow, i);
+        }
+		
+        createLabel(parent,TYPESELECTIONDIALOG_RefLABEL); 
+		
+        Composite lowerRow = new Composite(parent, SWT.NONE);
+        lowerRow.setLayout(upperLayout);
+		
+        // the for loop is here to guarantee we always
+        // create the checkboxes in the same order
+        for (int i = 0; i < iAllTypes.length; ++i) {
+			if(iAllTypes[i][2] == IIndex.REFERENCE)
+                createTypeCheckbox(lowerRow, i);
         }
     }
 
@@ -309,8 +350,7 @@ public class FilterIndexerViewDialog extends Dialog {
                     // select/deselect all of the buttons in the buttons array
                     for(int i=0; i<buttons.length; i++) {
                         if (buttons[i]!=null) {
-                            if (isChecked) buttons[i].setSelection(true);
-                            else buttons[i].setSelection(false);
+                            buttons[i].setSelection(isChecked);
                             event.widget = buttons[i];
                             buttons[i].notifyListeners(SWT.Selection, event);
                         }
@@ -349,9 +389,8 @@ public class FilterIndexerViewDialog extends Dialog {
                     // select/deselect all of the buttons in the buttons array
                     for(int i=0; i<buttons.length; i++) {
                         if (buttons[i] != null) {
-                            if (buttons[i].getText().indexOf(TYPE_BUTTON) >= 0) {
-                                if (isChecked) buttons[i].setSelection(true);
-                                else buttons[i].setSelection(false);
+                            if (iAllTypes[i][0] == IIndex.TYPE) {
+                                buttons[i].setSelection(isChecked);
                                 event.widget = buttons[i];
                                 buttons[i].notifyListeners(SWT.Selection, event);
                             }
@@ -384,9 +423,8 @@ public class FilterIndexerViewDialog extends Dialog {
                     // select/deselect all of the buttons in the buttons array
                     for(int i=0; i<buttons.length; i++) {
                         if (buttons[i] != null) {
-                            if (buttons[i].getText().indexOf(DECL_BUTTON) >= 0) {
-                                if (isChecked) buttons[i].setSelection(true);
-                                else buttons[i].setSelection(false);
+                            if (iAllTypes[i][2] == IIndex.DECLARATION) {
+                                buttons[i].setSelection(isChecked);
                                 event.widget = buttons[i];
                                 buttons[i].notifyListeners(SWT.Selection, event);
                             }
@@ -419,9 +457,8 @@ public class FilterIndexerViewDialog extends Dialog {
                     // select/deselect all of the buttons in the buttons array
                     for(int i=0; i<buttons.length; i++) {
                         if (buttons[i] != null) {
-                            if (buttons[i].getText().toUpperCase().indexOf(REF_BUTTON.toUpperCase()) >= 0) {
-                                if (isChecked) buttons[i].setSelection(true);
-                                else buttons[i].setSelection(false);
+                            if (iAllTypes[i][2] == IIndex.REFERENCE) {
+                                buttons[i].setSelection(isChecked);
                                 event.widget = buttons[i];
                                 buttons[i].notifyListeners(SWT.Selection, event);
                             }
@@ -472,7 +509,7 @@ public class FilterIndexerViewDialog extends Dialog {
         pageSizeText.setLayoutData(data);
         pageSizeText.setFont(parent.getFont());
 
-        pageSizeText.setText((pageSize == null ? BLANK_STRING : pageSize));
+        pageSizeText.setText(String.valueOf(pageSize));
     }
 
     /**
@@ -549,7 +586,7 @@ public class FilterIndexerViewDialog extends Dialog {
 
         for(int i = 0; i < iAllTypes.length; i++) {
             section.put(
-            		getStringDescription(iAllTypes[i][0], iAllTypes[i][1], iAllTypes[i][2]), 
+            		getUniqueStringDescription(i), 
             		fFilterMatcher[i] );
         }
         
@@ -559,6 +596,7 @@ public class FilterIndexerViewDialog extends Dialog {
         section.put(DECL_BUTTON, groupedButtonSelections[DECL_BUTTON_ID]);
         
         section.put(PAGE_SIZE, pageSize);
+		section.put(FILTER_TEXT, fFilter);
     }
 
     /**
@@ -566,10 +604,11 @@ public class FilterIndexerViewDialog extends Dialog {
      */
     protected void writeDefaultSettings(IDialogSettings section) {	
         for(int i = 0; i < iAllTypes.length; i++) {
-        	String description = getStringDescription(iAllTypes[i][0], iAllTypes[i][1], iAllTypes[i][2]);
+        	String description = getUniqueStringDescription(i);
             section.put(description, true);
         }
               
+		section.put(FILTER_TEXT, fFilter);
         section.put(PAGE_SIZE, IndexerNodeParent.PAGE_SIZE);
     }
 
@@ -616,14 +655,14 @@ public class FilterIndexerViewDialog extends Dialog {
             int height = section.getInt(SETTINGS_HEIGHT);
             fSize = new Point(width, height);
             
-            pageSize = String.valueOf(section.getInt(PAGE_SIZE));
+            pageSize = section.getInt(PAGE_SIZE);
         } catch (NumberFormatException e) {
             fLocation = null;
             fSize = null;
         }
         
         for(int i = 0; i < iAllTypes.length; i++) {
-        	fFilterMatcher[i] = section.getBoolean(getStringDescription(iAllTypes[i][0], iAllTypes[i][1], iAllTypes[i][2]));
+        	fFilterMatcher[i] = section.getBoolean(getUniqueStringDescription(i));
         }
      
         // get the grouped button selection status
@@ -631,6 +670,9 @@ public class FilterIndexerViewDialog extends Dialog {
         groupedButtonSelections[TYPE_BUTTON_ID] = section.getBoolean(TYPE_BUTTON);
         groupedButtonSelections[REF_BUTTON_ID] = section.getBoolean(REF_BUTTON);
         groupedButtonSelections[DECL_BUTTON_ID] = section.getBoolean(DECL_BUTTON);
+		fFilter = section.get(FILTER_TEXT);
+		if (fFilter == null)
+			fFilter = BLANK_STRING;
     }
     
     public IndexerFilterManager createFilterManager() {
@@ -639,21 +681,20 @@ public class FilterIndexerViewDialog extends Dialog {
     
     private void apply() {
         fFilter = filterText.getText();
-        pageSize = pageSizeText.getText();
-        writeSettings(getDialogSettings());
-        root.setFilterManager(fFilterMatcher, fFilter);
-        
-        int size=IndexerNodeParent.PAGE_SIZE;
+		pageSize=IndexerNodeParent.PAGE_SIZE;
         try {
-            size = Integer.valueOf(pageSize).intValue();
-            if (size<=0) size=IndexerNodeParent.PAGE_SIZE;
+            pageSize = Integer.valueOf(pageSizeText.getText()).intValue();
+            if (pageSize<=0) 
+				pageSize=IndexerNodeParent.PAGE_SIZE;
         } catch (NumberFormatException e) {}
-        
-        root.setPageSize(size);
+		
+        root.setFilterManager(fFilterMatcher, fFilter);
+        root.setPageSize(pageSize);
         root.reset();
+		writeSettings(getDialogSettings());
     }
     
-    public String getPageSize() {
+    public int getPageSize() {
         return pageSize;
     }
 

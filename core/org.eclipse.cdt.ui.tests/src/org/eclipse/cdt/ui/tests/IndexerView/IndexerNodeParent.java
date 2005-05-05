@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.IndexerView;
 
-import java.io.File;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
@@ -34,18 +33,15 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
     private boolean displayFullName=true;
     private boolean navigate=false;
     
-    public IndexerNodeParent(IEntryResult result, File indexerFile, IndexerView.ViewContentProvider view) {
-        super(result, indexerFile);
+    public IndexerNodeParent(IEntryResult result, String [] fileMap, IndexerView.ViewContentProvider view) {
+        super(result, fileMap);
         
         // create an IndexerFilterManager using the FilterIndexerViewDialog (since all of the work is done there anyways)
         FilterIndexerViewDialog dialog = new FilterIndexerViewDialog(CTestPlugin.getStandardDisplay().getActiveShell(), this, view.getProjectName());
         dialog.readSettings(dialog.getDialogSettings());
         
         filterManager = dialog.createFilterManager();
-        
-        try {
-            pageSize = Integer.valueOf(dialog.getPageSize()).intValue();
-        } catch (NumberFormatException e) {}
+        pageSize = dialog.getPageSize();
         
         this.view = view;
     }

@@ -10,11 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.index.ctagsindexer;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.cdt.core.IConsoleParser;
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 
 /**
@@ -58,7 +54,7 @@ public class CTagsConsoleParser implements IConsoleParser {
     public boolean processLine(String line) {
         CTagEntry tempTag = new CTagEntry(this, line);
         if (indexer != null)
-            encodeTag(tempTag);
+            tempTag.addTagToIndexOutput(getFileNumber(), indexer.getOutput());
         
         return false;
     }
@@ -66,49 +62,6 @@ public class CTagsConsoleParser implements IConsoleParser {
     public CTagEntry processLineReturnTag(String line){
         CTagEntry tempTag = new CTagEntry(this, line);
         return tempTag;
-    }
-
-    
-    /**
-     * @param tempTag
-     */
-    private void encodeTag(CTagEntry tempTag) {
-    	String kind = (String)tempTag.tagExtensionField.get(KIND);
-    
-    	if (kind == null)
-    	  return;
-    	
-    	char[][] fullName = getQualifiedName(tempTag);
-    	ICSearchConstants.LimitTo type = ICSearchConstants.DECLARATIONS;
-    	int lineNumber = Integer.parseInt( (String)tempTag.tagExtensionField.get(LINE) );
-    	
-    	if (kind.equals(CLASS)){
-    		indexer.getOutput().addClassDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(MACRO)){
-    		indexer.getOutput().addMacroDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(ENUMERATOR)){
-    		indexer.getOutput().addEnumtorDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(FUNCTION)){
-    		indexer.getOutput().addFunctionDefn(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(ENUM)){
-    		indexer.getOutput().addEnumDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(MEMBER)){
-    		indexer.getOutput().addFieldDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(NAMESPACE)){
-    		indexer.getOutput().addNamespaceDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(PROTOTYPE)){
-    		indexer.getOutput().addFunctionDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(STRUCT)){
-    		indexer.getOutput().addStructDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(TYPEDEF)){
-    		indexer.getOutput().addTypedefDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(UNION)){
-    		indexer.getOutput().addUnionDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(VARIABLE)){
-    		indexer.getOutput().addVariableDecl(getFileNumber(), fullName, lineNumber, 1, IIndex.LINE);
-    	} else if (kind.equals(EXTERNALVAR)){
-    	
-    	}
     }
 
     /**
@@ -123,38 +76,7 @@ public class CTagsConsoleParser implements IConsoleParser {
         
         return fileNum;
     }
-    /**
-     * @param tempTag
-     * @return
-     */
-    public char[][] getQualifiedName(CTagEntry tempTag) {
-        char[][] fullName = null;
-        String name = null;
-        String[] types = {NAMESPACE, CLASS, STRUCT, UNION, FUNCTION, ENUM};
-       
-        for (int i=0; i<types.length; i++){
-            //look for name
-            name = (String) tempTag.tagExtensionField.get(types[i]); 
-            if (name != null)
-                break;
-        }
-        
-        if (name != null){
-	        StringTokenizer st = new StringTokenizer(name, COLONCOLON);
-			fullName = new char[st.countTokens() + 1][];
-			int i=0;
-			while (st.hasMoreTokens()){
-			    fullName[i] = st.nextToken().toCharArray();
-			    i++;
-			}
-			fullName[i] = tempTag.elementName.toCharArray();
-        } else {
-            fullName = new char[1][];
-            fullName[0] = tempTag.elementName.toCharArray();
-        }
-        
-        return fullName;
-    }
+ 
  
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.index.ctagsindexer.IConsoleParser#shutdown()

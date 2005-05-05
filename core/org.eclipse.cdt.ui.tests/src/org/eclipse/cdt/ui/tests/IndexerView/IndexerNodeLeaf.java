@@ -10,15 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.IndexerView;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
-import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
-import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -31,14 +26,18 @@ public class IndexerNodeLeaf implements IAdaptable {
     private static final char EMPTY_SPACE = ' ';
     private int filtersType=0;
     
-    IEntryResult result = null;
-    File indexFile = null;
+    private IEntryResult result = null;
+	private String [] fileMap = null;
+	
+	public String[] getFileMap() {
+		return fileMap;
+	}
     
     private IndexerNodeParent parent = null;
     
-    public IndexerNodeLeaf(IEntryResult result, File indexFile) {
+    public IndexerNodeLeaf(IEntryResult result, String[] fileMap) {
         this.result = result;
-        this.indexFile = indexFile;
+        this.fileMap = fileMap;
         if (result != null)
         	this.filtersType = IndexerView.getKey(result.getMetaKind(), result.getKind(), result.getRefKind());
     }
@@ -84,18 +83,14 @@ public class IndexerNodeLeaf implements IAdaptable {
             
             TextPropertyDescriptor text = null;
             
-            IndexInput input = new BlocksIndexInput(indexFile);
-            try {
-                input.open();
-
                 // get the reference descriptors
                 int[] references = entryResult.getFileReferences();
                 if (references != null) {
                     for (int j = 0; j < references.length; ++j) {
-                        IndexedFileEntry file = input.getIndexedFile(references[j]);
-                        if (file != null && file.getPath() != null) {
+                        String file = fileMap[references[j]];
+                        if (file != null) {
                             String id = REFERENCE_NUMBER_ + String.valueOf(j);
-                            text = new TextPropertyDescriptor(new TextDescriptorId(id, PathUtil.getWorkspaceRelativePath(file.getPath()).toOSString()), id);
+                            text = new TextPropertyDescriptor(new TextDescriptorId(id, PathUtil.getWorkspaceRelativePath(file).toOSString()), id);
                             text.setCategory(REFERENCES);
                             descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
                         }
@@ -127,15 +122,24 @@ public class IndexerNodeLeaf implements IAdaptable {
                         descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
                     }
                 }
-                
+				
                 // add a word descriptor
-                text = new TextPropertyDescriptor(new TextDescriptorId(IENTRYRESULT_GETWORD__, String.valueOf(entryResult.toString())), IENTRYRESULT_GETWORD__);
+                text = new TextPropertyDescriptor(new TextDescriptorId("MetaKind", entryResult.getStringMetaKind()), "MetaKind");
                 text.setCategory(IENTRYRESULT);
                 descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
-                
-            } catch (IOException e) {
-            }
-            
+				
+		          // add a word descriptor
+				if (entryResult.getMetaKind() == IIndex.TYPE) {
+					text = new TextPropertyDescriptor(new TextDescriptorId("TypeKind", entryResult.getStringKind()), "TypeKind");
+					text.setCategory(IENTRYRESULT);
+					descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
+				}
+		          // add a word descriptor
+                text = new TextPropertyDescriptor(new TextDescriptorId("ReferenceKind", entryResult.getStringRefKind()), "ReferenceKind");
+                text.setCategory(IENTRYRESULT);
+                descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
+
+				
             return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, descriptors);
         }
         

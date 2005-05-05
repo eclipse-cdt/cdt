@@ -95,15 +95,13 @@ public class CTagsIndexerRunner extends AbstractIndexer {
             OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
             
             IPath fileDirectory = resourceFile.getRawLocation().removeLastSegments(1);
-            //Process p = launcher.execute(fCompileCommand, args, setEnvironment(launcher), fWorkingDirectory);
             Process p = launcher.execute(new Path("ctags"), args, null, fileDirectory); //$NON-NLS-1$
             if (p != null) {
                 try {
                     // Close the input of the Process explicitely.
                     // We will never write to it.
                     p.getOutputStream().close();
-                } catch (IOException e) {
-                }
+                } catch (IOException e) {}
                 if (launcher.waitAndRead(consoleOut, consoleErr, new NullProgressMonitor()) != CommandLauncher.OK) {
                     errMsg = launcher.getErrorMessage();
                 }
@@ -123,13 +121,7 @@ public class CTagsIndexerRunner extends AbstractIndexer {
             }  
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object, java.lang.Object)
-     */
-    protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location) {
-        // TODO Auto-generated method stub
-        
-    }
+    protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location) {}
 	
 	
     

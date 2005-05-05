@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
  * @author aniefer
  */
 public class CPPUnknownScope implements ICPPScope {
-    private ICPPScope parentScope = null;
     private IBinding binding = null;
     private IASTName scopeName = null;
     private CharArrayObjectMap map = null;
@@ -78,7 +77,7 @@ public class CPPUnknownScope implements ICPPScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
      */
-    public void removeBinding( IBinding binding ) {
+    public void removeBinding( IBinding binding1 ) {
 
     }
 

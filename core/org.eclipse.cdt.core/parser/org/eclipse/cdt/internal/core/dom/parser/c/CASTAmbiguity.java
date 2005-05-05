@@ -51,9 +51,12 @@ public abstract class CASTAmbiguity extends CASTNode  {
      * @param j
      * @throws DOMException
      */
-    protected void clearCache(IASTName[] names, int j) throws DOMException {
+    protected void clearCache(IASTName[] names, int j) {
         IScope scope = CPPVisitor.getContainingScope( names[j] );
-        scope.flushCache();
+        try {
+            scope.flushCache();
+        } catch (DOMException e) {
+        }
     }
 
     /**
@@ -64,11 +67,12 @@ public abstract class CASTAmbiguity extends CASTNode  {
      */
     protected boolean reduceAmbiguity(ASTVisitor visitor, IASTNode[] nodes, int bestIndex) {
         IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
-        IASTNode s = nodes[bestIndex ];
-        owner.replace( this, nodes[bestIndex] );
-        if( !s.accept( visitor ) ) return false;
+        IASTNode s = nodes[bestIndex];
+        owner.replace(this, nodes[bestIndex]);
+        if (!s.accept(visitor))
+            return false;
         return true;
-    }
+   }
     
     protected abstract IASTNode [] getNodes();
     

@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
@@ -389,6 +390,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IToken simpleDeclarationMark;
 
+    private static final IASTNode[] EMPTY_NODE_ARRAY = new IASTNode[0];
+
     public IASTTranslationUnit parse() {
         long startTime = System.currentTimeMillis();
         translationUnit();
@@ -633,8 +636,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTExpression multiplicativeExpression()
             throws BacktrackException, EndOfFileException;
 
-    protected abstract IASTTypeId typeId(boolean skipArrayMods,
-            boolean forNewExpression) throws BacktrackException,
+    protected abstract IASTTypeId typeId(boolean forNewExpression) throws BacktrackException,
             EndOfFileException;
 
     protected abstract IASTExpression castExpression()
@@ -938,7 +940,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if (LT(1) == IToken.tLPAREN) {
             try {
                 consume(IToken.tLPAREN);
-                d = typeId(false, false);
+                d = typeId(false);
                 lastOffset = consume(IToken.tRPAREN).getEndOffset();
             } catch (BacktrackException bt) {
                 backup(m);
@@ -974,7 +976,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             } else
                 try {
                     consume(IToken.tLPAREN);
-                    d = typeId(false, false);
+                    d = typeId(false);
                     lastOffset = consume(IToken.tRPAREN).getEndOffset();
                 } catch (BacktrackException bt) {
                     backup(m);
@@ -2105,5 +2107,107 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throwBacktrack(token.getOffset(), token.getLength());
     }
 
+    protected IASTNode[] parseTypeIdOrUnaryExpression(boolean typeIdWithParentheses ) throws EndOfFileException {
+        IASTTypeId typeId = null; 
+        IASTExpression unaryExpression = null;
+        IToken typeIdLA = null, unaryExpressionLA = null;
+        IToken mark = mark();
+        try
+        {
+            if( typeIdWithParentheses )
+                consume( IToken.tLPAREN );
+            typeId = typeId( false );
+            if( typeIdWithParentheses )
+            {
+                switch (LT(1)) {
+                case IToken.tRPAREN:
+                case IToken.tEOC:
+                    consume();
+                    break;
+                default:
+                    throw backtrack;
+                }
+
+            }
+            typeIdLA = LA(1);
+        }
+        catch( BacktrackException bte )
+        {
+            typeId = null;
+        }
+        backup( mark );
+        try
+        {
+            unaryExpression = unaryExpression();
+            unaryExpressionLA = LA(1);
+        }
+        catch( BacktrackException bte )
+        {
+            unaryExpression = null;
+        }
+        IASTNode [] result;
+        if( unaryExpression == null && typeId != null )
+        {
+            backup( typeIdLA );
+            result = new IASTNode[1];
+            result[0] = typeId; 
+            return result;
+        }
+        if( unaryExpression != null && typeId == null )
+        {
+            backup( unaryExpressionLA );
+            result = new IASTNode[1];
+            result[0] = unaryExpression; 
+            return result;
+        }
+        if( unaryExpression != null && typeId != null && typeIdLA == unaryExpressionLA )
+        {
+            result = new IASTNode[2];
+            result[0] = typeId;
+            result[1] = unaryExpression;
+            return result;
+        }
+        return EMPTY_NODE_ARRAY;
+        
+    }
+
+    protected abstract IASTAmbiguousExpression createAmbiguousExpression();
+
+    protected IASTExpression parseSizeofExpression() throws BacktrackException, EndOfFileException {
+        int startingOffset = consume(IToken.t_sizeof).getOffset();
+        IASTNode[] choice = parseTypeIdOrUnaryExpression(true);
+        switch (choice.length) {
+        case 1:
+            int lastOffset = calculateEndOffset(choice[0]);
+            if (choice[0] instanceof IASTExpression)
+                return buildUnaryExpression(IASTUnaryExpression.op_sizeof,
+                        (IASTExpression) choice[0], startingOffset, lastOffset);
+            else if (choice[0] instanceof IASTTypeId)
+                return buildTypeIdExpression(IASTTypeIdExpression.op_sizeof,
+                        (IASTTypeId) choice[0], startingOffset, lastOffset);
+            throwBacktrack(LA(1));
+            break;
+        case 2:
+            lastOffset = calculateEndOffset(choice[0]);
+            IASTAmbiguousExpression ambExpr = createAmbiguousExpression();
+            IASTExpression e1 = buildTypeIdExpression(
+                    IASTTypeIdExpression.op_sizeof, (IASTTypeId) choice[0],
+                    startingOffset, lastOffset);
+            IASTExpression e2 = buildUnaryExpression(
+                    IASTUnaryExpression.op_sizeof, (IASTExpression) choice[1],
+                    startingOffset, lastOffset);
+            ambExpr.addExpression(e1);
+            e1.setParent(ambExpr);
+            e1.setPropertyInParent(IASTAmbiguousExpression.SUBEXPRESSION);
+            ambExpr.addExpression(e2);
+            e2.setParent(ambExpr);
+            e2.setPropertyInParent(IASTAmbiguousExpression.SUBEXPRESSION);
+            ((ASTNode) ambExpr).setOffsetAndLength((ASTNode) e2);
+            return ambExpr;
+        default:
+        }
+        throwBacktrack(LA(1));
+        return null;
+    }
 
 }

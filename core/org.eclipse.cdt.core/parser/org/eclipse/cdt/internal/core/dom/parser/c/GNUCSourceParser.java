@@ -101,6 +101,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 /**
@@ -799,7 +800,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             // If this isn't a type name, then we shouldn't be here
             try {
                 try {
-                    typeId = typeId(false, false);
+                    typeId = typeId(false);
                     consume(IToken.tRPAREN);
                     castExpression = castExpression();
                 } catch (BacktrackException bte) {
@@ -849,7 +850,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tLPAREN) {
                 try {
                     consume(IToken.tLPAREN);
-                    typeId = typeId(false, false);
+                    typeId = typeId(false);
                     lastOffset = consume(IToken.tRPAREN).getEndOffset();
                 } catch (BacktrackException bt) {
                     backup(mark);
@@ -924,7 +925,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IToken m = mark();
             try {
                 int offset = consume(IToken.tLPAREN).getOffset();
-                IASTTypeId t = typeId(false, false);
+                IASTTypeId t = typeId(false);
                 consume(IToken.tRPAREN).getEndOffset();
                 IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
                 firstExpression = buildTypeIdInitializerExpression(t, i,
@@ -1194,8 +1195,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTIdExpression();
     }
 
-    protected IASTTypeId typeId(boolean skipArrayModifiers,
-            boolean forNewExpression) throws EndOfFileException,
+    protected IASTTypeId typeId(boolean forNewExpression) throws EndOfFileException,
             BacktrackException {
         IToken mark = mark();
         int startingOffset = mark.getOffset();
@@ -2595,50 +2595,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTAmbiguousStatement();
     }
 
-//    static class HeuristicTypeDetector extends CASTVisitor
-//    {
-//        private final char[] lookingForName;
-//        boolean result = false;
-//        
-//        {
-//            shouldVisitDeclarations = true;
-//        }
-//
-//        public HeuristicTypeDetector( char [] name )
-//        {
-//            this.lookingForName = name;
-//        }
-//
-//        public int visit(IASTDeclaration declaration) {
-//            if( declaration instanceof IASTSimpleDeclaration )
-//            {
-//                IASTSimpleDeclaration sd = (IASTSimpleDeclaration) declaration;
-//                if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef )
-//                {
-//                    IASTDeclarator [] declarators = sd.getDeclarators();
-//                    for( int i = 0; i < declarators.length; ++i )
-//                        if( CharArrayUtils.equals( declarators[i].getName().toCharArray(), lookingForName ) )
-//                        {
-//                            result = true;
-//                            return PROCESS_ABORT;
-//                        }
-//                }
-//            }
-//            return PROCESS_CONTINUE;
-//        }
-//        
-//        public boolean getAnswer()
-//        {
-//            return result;
-//        }
-//        
-//    }
-//    
-//    protected boolean queryIsTypeName(IASTName name) {
-//        HeuristicTypeDetector nc = new HeuristicTypeDetector( name.toCharArray() );
-//        translationUnit.accept(nc);
-//        return nc.result;
-//    }
+    protected IASTAmbiguousExpression createAmbiguousExpression() {
+        return new CASTAmbiguousExpression();
+    }
 
 
 }

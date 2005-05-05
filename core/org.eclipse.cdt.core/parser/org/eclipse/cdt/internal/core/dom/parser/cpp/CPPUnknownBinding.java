@@ -70,7 +70,7 @@ public class CPPUnknownBinding implements ICPPInternalUnknown {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public ICPPDelegate createDelegate( IASTName name ) {
+    public ICPPDelegate createDelegate( IASTName name1 ) {
         return null;
     }
 

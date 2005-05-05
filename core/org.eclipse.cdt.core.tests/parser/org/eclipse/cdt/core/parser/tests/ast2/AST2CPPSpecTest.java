@@ -12136,4 +12136,79 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
         parse(buffer.toString(), ParserLanguage.CPP, true, 0);
     }
 
+    /**
+     [--Start Example(CPP 3.3.6-5):
+    typedef int c;
+    enum { i = 1 };
+    class X {
+    int i=3;
+    char v[i];
+    int f() { return sizeof(c); } // OK: X::c
+    char c;
+    enum { i = 2 };
+    };
+    typedef char* T;
+    struct Y {
+    typedef long T;
+    T b;
+    };
+    typedef int I;
+    class D {
+    typedef I I; // error, even though no reordering involved
+    };
+     --End Example]
+     */
+    public void test3_3_6s5() throws Exception { // 90606
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("typedef int c;\n"); //$NON-NLS-1$
+        buffer.append("enum { i = 1 };\n"); //$NON-NLS-1$
+        buffer.append("class X {\n"); //$NON-NLS-1$
+        buffer.append("int i=3;\n"); //$NON-NLS-1$
+        buffer.append("char v[i];\n"); //$NON-NLS-1$
+        buffer.append("int f() { return sizeof(c); } // OK: X::c\n"); //$NON-NLS-1$
+        buffer.append("char c;\n"); //$NON-NLS-1$
+        buffer.append("enum { i = 2 };\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("typedef char* T;\n"); //$NON-NLS-1$
+        buffer.append("struct Y {\n"); //$NON-NLS-1$
+        buffer.append("typedef long T;\n"); //$NON-NLS-1$
+        buffer.append("T b;\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("typedef int I;\n"); //$NON-NLS-1$
+        buffer.append("class D {\n"); //$NON-NLS-1$
+        buffer.append("typedef I I; // error, even though no reordering involved\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+    }
+    
+    /**
+     [--Start Example(CPP 13.4-5a):
+    int f(double);
+    int f(int);
+    int (*pfd)(double) = &f; // selects f(double)
+    int (*pfi)(int) = &f; // selects f(int)
+    int (*pfe)(...) = &f; // error: type mismatch
+    int (&rfi)(int) = f; // selects f(int)
+    int (&rfd)(double) = f; // selects f(double)
+    void g() {
+    (int (*)(int))&f; // cast expression as selector
+    }
+     --End Example]
+     * @throws ParserException 
+     */
+    public void test13_4s5a() throws ParserException  { // bug 90674
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int f(double);\n"); //$NON-NLS-1$
+        buffer.append("int f(int);\n"); //$NON-NLS-1$
+        buffer.append("int (*pfd)(double) = &f; // selects f(double)\n"); //$NON-NLS-1$
+        buffer.append("int (*pfi)(int) = &f; // selects f(int)\n"); //$NON-NLS-1$
+        buffer.append("int (*pfe)(...) = &f; // error: type mismatch\n"); //$NON-NLS-1$
+        buffer.append("int (&rfi)(int) = f; // selects f(int)\n"); //$NON-NLS-1$
+        buffer.append("int (&rfd)(double) = f; // selects f(double)\n"); //$NON-NLS-1$
+        buffer.append("void g() {\n"); //$NON-NLS-1$
+        buffer.append("(int (*)(int))&f; // cast expression as selector\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        parse(buffer.toString(), ParserLanguage.CPP, false, 0);
+    }
+    
 }

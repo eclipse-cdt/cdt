@@ -1,6 +1,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -229,9 +230,10 @@ public class AST2UtilOldTests extends AST2BaseTest {
 	}
 	// Kind UNARY_SIZEOF_TYPEID : unsigned int          
 	public void testUnarySizeofTypeId() throws Exception { 
-		IASTTranslationUnit tu = parse("int y = foo( sizeof(x) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse("int x, y = foo( sizeof(x) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
-		isExpressionStringEqual( ((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getExpression(), "foo(sizeof (x))" ); //$NON-NLS-1$
+		final IASTExpression expression = ((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[1].getInitializer()).getExpression();
+        isExpressionStringEqual( expression, "foo(sizeof (x))" ); //$NON-NLS-1$
 	}
 	// Kind NEW_TYPEID                   
 	public void testNewTypeId() throws Exception { 

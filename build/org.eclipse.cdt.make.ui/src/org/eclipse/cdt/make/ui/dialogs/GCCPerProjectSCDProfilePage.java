@@ -44,8 +44,6 @@ import org.eclipse.swt.widgets.Text;
  * @author vhirsl
  */
 public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
-    private static final int DEFAULT_HEIGHT = 160;
-
     private static final String BO_PROVIDER_PARSER_ENABLED_BUTTON = PREFIX + ".boProvider.parser.enabled.button"; //$NON-NLS-1$
     private static final String BO_PROVIDER_OPEN_LABEL = PREFIX + ".boProvider.open.label"; //$NON-NLS-1$
     private static final String BO_PROVIDER_BROWSE_BUTTON = PREFIX + ".boProvider.browse.button"; //$NON-NLS-1$
@@ -111,8 +109,24 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         // load label
         Label loadLabel = ControlFactory.createLabel(profileGroup,
                 MakeUIPlugin.getResourceString(BO_PROVIDER_OPEN_LABEL));
-        ((GridData) loadLabel.getLayoutData()).horizontalSpan = 3;
+        ((GridData) loadLabel.getLayoutData()).horizontalSpan = 2;
 
+        // load button
+        bopLoadButton = ControlFactory.createPushButton(profileGroup,
+                MakeUIPlugin.getResourceString(BO_PROVIDER_LOAD_BUTTON));
+        ((GridData) bopLoadButton.getLayoutData()).widthHint = 
+                SWTUtil.getButtonWidthHint(bopLoadButton);
+        bopLoadButton.addSelectionListener(new SelectionAdapter() {
+            
+            public void widgetSelected(SelectionEvent event) {
+                handleBOPLoadFileButtonSelected();
+            }
+
+        });
+        if (getContainer().getProject() == null) {  // project properties
+            bopLoadButton.setVisible(false);
+        }
+        
         // text field
         bopOpenFileText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
         bopOpenFileText.addModifyListener(new ModifyListener() {
@@ -120,6 +134,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
                 handleModifyOpenFileText();
             }
         });
+        bopLoadButton.setEnabled(loadButtonInitialEnabled && handleModifyOpenFileText());
         
         // browse button
         Button browseButton = ControlFactory.createPushButton(profileGroup,
@@ -153,22 +168,8 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
             }
         });
 
-        // load button
-        bopLoadButton = ControlFactory.createPushButton(profileGroup,
-                MakeUIPlugin.getResourceString(BO_PROVIDER_LOAD_BUTTON));
-        ((GridData) bopLoadButton.getLayoutData()).widthHint = 
-                SWTUtil.getButtonWidthHint(bopLoadButton);
-        bopLoadButton.addSelectionListener(new SelectionAdapter() {
-            
-            public void widgetSelected(SelectionEvent event) {
-                handleBOPLoadFileButtonSelected();
-            }
-
-        });
-        bopLoadButton.setEnabled(loadButtonInitialEnabled);
-        if (getContainer().getProject() == null) {  // project properties
-            bopLoadButton.setVisible(false);
-        }
+        // variable button
+        addVariablesButton(profileGroup, bopOpenFileText);
         
         ControlFactory.createSeparator(profileGroup, 3);
         
@@ -238,11 +239,12 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         initializeValues();
     }
 
-    protected void handleModifyOpenFileText() {
+    protected boolean handleModifyOpenFileText() {
         String fileName = getBopOpenFileText();
         bopLoadButton.setEnabled(bopEnabledButton.getSelection() &&
                                  fileName.length() > 0 &&
                                  new File(fileName).exists());
+        return bopLoadButton.getEnabled();
     }
 
     protected void handleModifyRunCommandText() {
@@ -313,15 +315,18 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         
                             public void run() {
                                 if (!instance.shell.isDisposed()) {
-                                    instance.bopLoadButton.setEnabled(instance.bopEnabledButton.getSelection());
+                                    loadButtonInitialEnabled = instance.bopEnabledButton.getSelection() && handleModifyOpenFileText();
+                                    instance.bopLoadButton.setEnabled(loadButtonInitialEnabled);
                                 }
-                                loadButtonInitialEnabled = instance.bopEnabledButton.getSelection();//true;
+                                else {
+                                    loadButtonInitialEnabled = true;
+                                }
                             }
                             
                         });
                     }
                     else {
-                        loadButtonInitialEnabled = instance.bopEnabledButton.getSelection();//true;
+                        loadButtonInitialEnabled = true;
                     }
                 }
                 //lock.release();

@@ -17,7 +17,6 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchScopeFactory;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
 

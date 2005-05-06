@@ -791,13 +791,13 @@
             visible="false"
             id="org.eclipse.cdt.ui.CElementCreationActionSet">
          <action
-               id="org.eclipse.cdt.ui.actions.NewTypeDropDown"
-               toolbarPath="Normal/CCWizards"
                class="org.eclipse.cdt.internal.ui.wizards.NewTypeDropDownAction"
                disabledIcon="icons/dtool16/newclass_wiz.gif"
                icon="icons/etool16/newclass_wiz.gif"
+               id="org.eclipse.cdt.ui.actions.NewTypeDropDown"
                label="%NewTypeDropDownAction.label"
-               pulldown="true"
+               style="pulldown"
+               toolbarPath="Normal/CCWizards"
                tooltip="%NewTypeDropDownAction.tooltip">
          </action>
          <action
@@ -807,7 +807,7 @@
                disabledIcon="icons/dtool16/newcfile_wiz.gif"
                icon="icons/etool16/newcfile_wiz.gif"
                label="%NewFileDropDownAction.label"
-               pulldown="true"
+               style="pulldown"
                tooltip="%NewFileDropDownAction.tooltip">
          </action>
          <action
@@ -817,7 +817,7 @@
                disabledIcon="icons/dtool16/newsrcfldr_wiz.gif"
                icon="icons/etool16/newsrcfldr_wiz.gif"
                label="%NewFolderDropDownAction.label"
-               pulldown="true"
+               style="pulldown"
                tooltip="%NewFolderDropDownAction.tooltip">
          </action>
          <action
@@ -827,7 +827,7 @@
                disabledIcon="icons/dtool16/newcprj_wiz.gif"
                icon="icons/etool16/newcprj_wiz.gif"
                label="%NewProjectDropDownAction.label"
-               pulldown="true"
+               style="pulldown"
                tooltip="%NewProjectDropDownAction.tooltip">
          </action>
       </actionSet>
@@ -847,13 +847,104 @@
       </CBuildConsole>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <scope
+   		 point="org.eclipse.ui.contexts">
+   	   <context
             name="%scope.cEditor.name"
-            parent="org.eclipse.ui.textEditorScope"
+            parentId="org.eclipse.ui.textEditorScope"
             description="%cEditor.description"
             id="org.eclipse.cdt.ui.cEditorScope">
-      </scope>
+       </context>
+   </extension> 
+   <extension
+   		 point="org.eclipse.ui.bindings">
+   	 <key
+            sequence="Ctrl+Shift+F"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.format"/>
+     <key
+            sequence="Ctrl+/"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.comment"/>
+     <key
+            sequence="Ctrl+\"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.uncomment"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>    
+     <key
+            sequence="Ctrl+Shift+/"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.add.block.comment"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+Shift+\"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
+     <key
+            sequence="F2"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.opendef"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="F3"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.opendecl"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+Shift+T"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.navigate.opentype"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            commandId="org.eclipse.cdt.ui.search.findrefs"
+            sequence="Ctrl+Shift+G"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            commandId="org.eclipse.cdt.ui.search.finddecl"
+            sequence="Ctrl+G"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="F4"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+Shift+H"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+Shift+N"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.add.include"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+O"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.open.outline"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+Shift+ARROW_DOWN"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.goto.next.member"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+Shift+ARROW_UP"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.goto.prev.member"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="Ctrl+Shift+P"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
       <category
             name="%category.source.name"
             description="%category.source.description"
@@ -862,210 +953,109 @@
       <command
             name="%ActionDefinition.format.name"
             description="%ActionDefinition.format.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.format">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+F"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.format"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.comment.name"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.comment.description"
             id="org.eclipse.cdt.ui.edit.text.c.comment">
       </command>
-      <keyBinding
-            string="Ctrl+/"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.comment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.uncomment.name"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.uncomment.description"
             id="org.eclipse.cdt.ui.edit.text.c.uncomment">
       </command>
-      <keyBinding
-            string="Ctrl+\"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.uncomment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.addBlockComment.name"
             description="%ActionDefinition.addBlockComment.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.add.block.comment">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+/"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.add.block.comment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.removeBlockComment.name"
             description="%ActionDefinition.removeBlockComment.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.remove.block.comment">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+\"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.opendef.name"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.opendef.description"
             id="org.eclipse.cdt.ui.edit.opendef">
       </command>
-      <keyBinding
-            string="F2"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.opendef"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.opendecl.name"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.opendecl.description"
             id="org.eclipse.cdt.ui.edit.opendecl">
       </command>
-      <keyBinding
-            string="F3"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.opendecl"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.openType.name"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.openType.description"
             id="org.eclipse.cdt.ui.navigate.opentype">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+T"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.navigate.opentype"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.opencview.name"
             description="%ActionDefinition.opencview.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.opencview">
       </command>
       <command
             description="%ActionDefinition.finddecl.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             name="%ActionDefinition.finddecl.name"
             id="org.eclipse.cdt.ui.search.finddecl"/>
       <command
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.findrefs.description"
             name="%ActionDefinition.findrefs.name"
             id="org.eclipse.cdt.ui.search.findrefs"/>
-      <keyBinding
-            command="org.eclipse.cdt.ui.search.findrefs"
-            string="Ctrl+Shift+G"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      <keyBinding
-            command="org.eclipse.cdt.ui.search.finddecl"
-            string="Ctrl+G"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <command
             name="%ActionDefinition.openTypeHierarchy.name"
             description="%ActionDefinition.openTypeHierarchy.description"
-            category="org.eclipse.ui.category.navigate"
+            categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy">
       </command>
-      <keyBinding
-            string="F4"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.openTypeInHierarchy.name"
             description="%ActionDefinition.openTypeInHierarchy.description"
-            category="org.eclipse.ui.category.navigate"
+            categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+H"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.addInclude.name"
             description="%ActionDefinition.addInclude.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.add.include">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+N"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.add.include"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.showOutline.name"
             description="%ActionDefinition.showOutline.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.open.outline">
       </command>
-      <keyBinding
-            string="Ctrl+O"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.open.outline"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.GotoNextMember.name"
             description="%ActionDefinition.GotoNextMember.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.goto.next.member">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+ARROW_DOWN"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.goto.next.member"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.GotoPrevMember.name"
             description="%ActionDefinition.GotoPrevMember.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.goto.prev.member">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+ARROW_UP"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.goto.prev.member"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-
       <command
             name="%ActionDefinition.gotoMatchingBracket.name"
             description="%ActionDefinition.gotoMatchingBracket.description"
-            category="org.eclipse.cdt.ui.category.source"
+            categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket">
       </command>
-      <keyBinding
-            string="Ctrl+Shift+P"
-            scope="org.eclipse.cdt.ui.cEditorScope"
-            command="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"

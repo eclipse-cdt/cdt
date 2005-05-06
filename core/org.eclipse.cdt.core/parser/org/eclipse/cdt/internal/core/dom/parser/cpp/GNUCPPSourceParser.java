@@ -935,8 +935,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             declSpecifier = declSpecifierSeq(true, true);
             if (LT(1) != IToken.tEOC)
                 declarator = declarator(
-                        SimpleDeclarationStrategy.TRY_CONSTRUCTOR, forNewExpression,
-                        forNewExpression);
+                        SimpleDeclarationStrategy.TRY_CONSTRUCTOR, forNewExpression);
         } catch (BacktrackException bt) {
             backup(mark);
             throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
@@ -3549,7 +3548,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTDeclarator initDeclarator(SimpleDeclarationStrategy strategy)
             throws EndOfFileException, BacktrackException {
-        IASTDeclarator d = declarator(strategy, false, false);
+        IASTDeclarator d = declarator(strategy, false);
 
         IASTInitializer initializer = optionalCPPInitializer(d);
         if (initializer != null) {
@@ -3681,19 +3680,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * (constantExpression)? "]" | "(" declarator")" | directDeclarator "("
      * parameterDeclarationClause ")" (oldKRParameterDeclaration)* declaratorId :
      * name
-     * 
      * @param forNewTypeId
-     *            TODO
-     * @param skipArrayDeclarator
      *            TODO
      * @param container
      *            IParserCallback object that represents the owner declaration.
+     * 
      * @return declarator that this parsing produced.
      * @throws BacktrackException
      *             request a backtrack
      */
     protected IASTDeclarator declarator(SimpleDeclarationStrategy strategy,
-            boolean forNewTypeId, boolean skipArrayDeclarator)
+            boolean forNewTypeId)
             throws EndOfFileException, BacktrackException {
 
         IToken la = LA(1);
@@ -3722,8 +3719,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 IToken mark = mark();
                 try {
                     consume();
-                    innerDecl = declarator(strategy, forNewTypeId,
-                            skipArrayDeclarator);
+                    innerDecl = declarator(strategy, forNewTypeId);
                     finalOffset = consume(IToken.tRPAREN).getEndOffset();
                 } catch (BacktrackException bte) {
                     backup(mark);
@@ -3746,32 +3742,33 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 switch (LT(1)) {
                 case IToken.tLPAREN:
 
-                    boolean failed = false;
-
-                    // temporary fix for initializer/function declaration
-                    // ambiguity
-                    if (!LA(2).looksLikeExpression()
-                            && strategy != SimpleDeclarationStrategy.TRY_VARIABLE) {
-                        if (LT(2) == IToken.tIDENTIFIER) {
-                            IToken newMark = mark();
-                            consume(IToken.tLPAREN);
-                            try {
-                                name();
-                                // TODO - we need to lookup/resolve this name
-                                // see if its a type ...
-                                // if it is a type, failed = false
-                                // else failed = true
-                                failed = false;
-                            } catch (BacktrackException b) {
-                                failed = true;
-                            }
-
-                            backup(newMark);
-                        }
-                    }
+//                    boolean failed = false;
+//
+//                    // temporary fix for initializer/function declaration
+//                    // ambiguity
+//                    if (!LA(2).looksLikeExpression()
+//                            && strategy != SimpleDeclarationStrategy.TRY_VARIABLE) {
+//                        if (LT(2) == IToken.tIDENTIFIER) {
+//                            IToken newMark = mark();
+//                            consume(IToken.tLPAREN);
+//                            try {
+//                                name();
+//                                // TODO - we need to lookup/resolve this name
+//                                // see if its a type ...
+//                                // if it is a type, failed = false
+//                                // else failed = true
+//                                failed = false;
+//                            } catch (BacktrackException b) {
+//                                failed = true;
+//                            }
+//
+//                            backup(newMark);
+//                        }
+//                    }
                     if ((!LA(2).looksLikeExpression()
                             && strategy != SimpleDeclarationStrategy.TRY_VARIABLE
-                            && !failed && !forNewTypeId)) {
+//                            && !failed 
+                            && !forNewTypeId)) {
                         // parameterDeclarationClause
                         isFunction = true;
                         // TODO need to create a temporary scope object here
@@ -3906,7 +3903,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     }
                     break;
                 case IToken.tLBRACKET:
-                    if (skipArrayDeclarator)
+                    if (forNewTypeId)
                         break;
                     arrayMods = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
                     consumeArrayModifiers(arrayMods);

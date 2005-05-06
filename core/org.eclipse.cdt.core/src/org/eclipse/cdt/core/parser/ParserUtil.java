@@ -125,6 +125,9 @@ public class ParserUtil
     		IFile resultingResource = root.getFile(path);
     		if( resultingResource != null && resultingResource.exists() ) 
     		    return resultingResource;
+            resultingResource = root.getFileForLocation( path );
+            if( resultingResource != null && resultingResource.exists() ) 
+                return resultingResource;
     		return null;
         }
         catch( IllegalArgumentException iae ) //thrown on invalid paths

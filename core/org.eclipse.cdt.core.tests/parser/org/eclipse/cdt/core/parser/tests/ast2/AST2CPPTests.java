@@ -3944,7 +3944,6 @@ public class AST2CPPTests extends AST2BaseTest {
         while( i.hasNext() )
         {
             IASTName n = (IASTName) i.next();
-            assertNotNull( n.resolveBinding());
             assertFalse( n.resolveBinding() instanceof IProblemBinding );
         }
     }
@@ -3962,4 +3961,11 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( count, sum );
     }
 
+    public void testBug85786() throws Exception {
+        IASTTranslationUnit tu = parse( "void f( int ); void foo () { void * p = &f; ( (void (*) (int)) p ) ( 1 ); }", ParserLanguage.C ); //$NON-NLS-1$
+        CPPNameCollector nameResolver = new CPPNameCollector();
+        tu.accept( nameResolver );
+        assertNoProblemBindings( nameResolver );
+    }
+    
 }

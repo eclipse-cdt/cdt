@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -3082,4 +3084,32 @@ public class AST2Tests extends AST2BaseTest {
             assertFalse( col.getName( i ).resolveBinding() instanceof IProblemBinding );
 		
 	}
+    
+    public void testBug85786() throws Exception {
+        IASTTranslationUnit tu = parse( "void f( int ); void foo () { void * p = &f; ( (void (*) (int)) p ) ( 1 ); }", ParserLanguage.C ); //$NON-NLS-1$
+        CNameCollector nameResolver = new CNameCollector();
+        tu.accept( nameResolver );
+        assertNoProblemBindings( nameResolver );
+    }
+    
+    protected void assertNoProblemBindings(CNameCollector col) {
+        Iterator i = col.nameList.iterator();
+        while( i.hasNext() )
+        {
+            IASTName n = (IASTName) i.next();
+            assertFalse( n.resolveBinding() instanceof IProblemBinding );
+        }
+    }
+    
+    protected void assertProblemBindings(CNameCollector col, int count ) {
+        Iterator i = col.nameList.iterator();
+        int sum = 0;
+        while( i.hasNext() )
+        {
+            IASTName n = (IASTName) i.next();
+            if( n.getBinding() instanceof IProblemBinding )
+                ++sum;
+        }
+        assertEquals( count, sum );
+    }
 }

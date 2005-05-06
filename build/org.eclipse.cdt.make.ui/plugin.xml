@@ -112,26 +112,47 @@
       </objectContribution>
    </extension>
    <extension
-      point="org.eclipse.ui.commands">
-      <scope
-            name="%scope.makefileEditor.name"
-            parent="org.eclipse.ui.textEditorScope"
+   		 point="org.eclipse.ui.contexts">
+   	   <context
+   	  		name="%scope.makefileEditor.name"
+            parentId="org.eclipse.ui.textEditorScope"
             description="%makefileEditor.description"
             id="org.eclipse.cdt.make.ui.makefileEditorScope">
-      </scope>
+       </context>
+   </extension>
+   <extension
+   		 point="org.eclipse.ui.bindings">
+     <!-- Makefile Editor keybindings  -->
+     <key
+            sequence="F3"
+            contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
+            commandId="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
+      <key
+            sequence="Ctrl+/"
+            contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
+            commandId="org.eclipse.cdt.make.ui.edit.text.makefile.comment"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>  
+      <key
+            sequence="Ctrl+\"
+            contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
+            commandId="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
+   <extension
+      point="org.eclipse.ui.commands">
       <command
             name="%CommandTargetBuild.name"
             description="%CommandTargetBuild.description"
-            category="org.eclipse.ui.category.project"
+            categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.cdt.make.ui.targetBuildCommand">
       </command>
       <command
             name="%CommandTargetCreate.name"
             description="%CommandTargetCreate.description"
-            category="org.eclipse.ui.category.project"
+            categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.cdt.make.ui.targetCreateCommand">
       </command>
-<!-- Makefile Editor keybindings  -->
       <category
             name="%category.source.name"
             description="%category.source.description"
@@ -140,40 +161,21 @@
       <command
             name="%ActionDefinition.comment.name"
             description="%ActionDefinition.comment.description"
-            category="org.eclipse.cdt.make.ui.category.source"
+            categoryId="org.eclipse.cdt.make.ui.category.source"
             id="org.eclipse.cdt.make.ui.edit.text.makefile.comment">
       </command>
-      <keyBinding
-            string="Ctrl+/"
-            scope="org.eclipse.cdt.make.ui.makefileEditorScope"
-            command="org.eclipse.cdt.make.ui.edit.text.makefile.comment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.uncomment.name"
             description="%ActionDefinition.uncomment.description"
-            category="org.eclipse.cdt.make.ui.category.source"
+            categoryId="org.eclipse.cdt.make.ui.category.source"
             id="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment">
       </command>
-      <keyBinding
-            string="Ctrl+\"
-            scope="org.eclipse.cdt.make.ui.makefileEditorScope"
-            command="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.opendecl.name"
-            category="org.eclipse.cdt.make.ui.category.source"
+            categoryId="org.eclipse.cdt.make.ui.category.source"
             description="%ActionDefinition.opendecl.description"
             id="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl">
-      </command>
-      <keyBinding
-            string="F3"
-            scope="org.eclipse.cdt.make.ui.makefileEditorScope"
-            command="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      
+      </command> 
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

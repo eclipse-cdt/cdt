@@ -175,8 +175,7 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0); //Andrew, there should be problem bindings here - 2
 		} catch (Exception e) {
 		}
 	}

@@ -28,14 +28,14 @@ public class CASTIfStatement extends CASTNode implements IASTIfStatement, IASTAm
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#getCondition()
      */
-    public IASTExpression getCondition() {
+    public IASTExpression getConditionExpression() {
         return condition;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
-    public void setCondition(IASTExpression condition) {
+    public void setConditionExpression(IASTExpression condition) {
         this.condition = condition;
     }
 

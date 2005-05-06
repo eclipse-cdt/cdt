@@ -1272,7 +1272,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTIfStatement ifStatement = (IASTIfStatement) compound
                 .getStatements()[2];
-        exp = (IASTBinaryExpression) ifStatement.getCondition();
+        exp = (IASTBinaryExpression) ifStatement.getConditionExpression();
         ue = (IASTUnaryExpression) exp.getOperand1();
         id1 = (IASTIdExpression) ue.getOperand();
         id2 = (IASTIdExpression) exp.getOperand2();
@@ -2599,16 +2599,16 @@ public class AST2Tests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         IASTIfStatement if_statement = (IASTIfStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
                 .getDeclarations()[0]).getBody()).getStatements()[0];
-        assertEquals(((IASTBinaryExpression) if_statement.getCondition())
+        assertEquals(((IASTBinaryExpression) if_statement.getConditionExpression())
                 .getOperator(), IASTBinaryExpression.op_equals);
         IASTIfStatement second_if_statement = (IASTIfStatement) if_statement
                 .getElseClause();
         assertEquals(
-                ((IASTBinaryExpression) second_if_statement.getCondition())
+                ((IASTBinaryExpression) second_if_statement.getConditionExpression())
                         .getOperator(), IASTBinaryExpression.op_lessThan);
         IASTIfStatement third_if_statement = (IASTIfStatement) second_if_statement
                 .getElseClause();
-        assertEquals(((IASTBinaryExpression) third_if_statement.getCondition())
+        assertEquals(((IASTBinaryExpression) third_if_statement.getConditionExpression())
                 .getOperator(), IASTBinaryExpression.op_greaterThan);
     }
 

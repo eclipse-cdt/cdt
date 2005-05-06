@@ -43,7 +43,7 @@ public interface IASTIfStatement extends IASTStatement {
 	 * 
 	 * @return the condition <code>IASTExpression</code>
 	 */
-	public IASTExpression getCondition();
+	public IASTExpression getConditionExpression();
 
 	/**
 	 * Set the condition in the if statement.
@@ -51,7 +51,7 @@ public interface IASTIfStatement extends IASTStatement {
 	 * @param condition
 	 *            <code>IASTExpression</code>
 	 */
-	public void setCondition(IASTExpression condition);
+	public void setConditionExpression(IASTExpression condition);
 
 	/**
 	 * Get the statement that is executed if the condition is true.

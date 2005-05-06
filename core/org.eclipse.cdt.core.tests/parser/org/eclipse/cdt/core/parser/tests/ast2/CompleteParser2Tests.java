@@ -992,11 +992,11 @@ public class CompleteParser2Tests extends TestCase {
 		IASTFunctionDefinition foo = (IASTFunctionDefinition) tu.getDeclarations()[1];
 		IASTCompoundStatement compound  = (IASTCompoundStatement) foo.getBody();
 		IASTIfStatement ifstmt = (IASTIfStatement) compound.getStatements()[0];
-		assertTrue( ifstmt.getCondition() instanceof IASTIdExpression );
+		assertTrue( ifstmt.getConditionExpression() instanceof IASTIdExpression );
 		assertTrue( ifstmt.getThenClause() instanceof IASTCompoundStatement );
 		assertTrue( ifstmt.getElseClause() instanceof IASTIfStatement );
 		ifstmt = (IASTIfStatement) ifstmt.getElseClause();
-		assertTrue( ifstmt.getCondition() instanceof IASTUnaryExpression );
+		assertTrue( ifstmt.getConditionExpression() instanceof IASTUnaryExpression );
 		assertTrue( ifstmt.getThenClause() instanceof IASTReturnStatement );
 		assertTrue( ifstmt.getElseClause() instanceof IASTCompoundStatement );
 		

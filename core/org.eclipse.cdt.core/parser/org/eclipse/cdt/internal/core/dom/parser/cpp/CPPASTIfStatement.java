@@ -11,31 +11,33 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTIfStatement extends CPPASTNode implements IASTIfStatement, IASTAmbiguityParent {
+public class CPPASTIfStatement extends CPPASTNode implements ICPPASTIfStatement, IASTAmbiguityParent {
     private IASTExpression condition;
     private IASTStatement thenClause;
     private IASTStatement elseClause;
+    private IASTDeclaration condDecl;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#getCondition()
      */
-    public IASTExpression getCondition() {
+    public IASTExpression getConditionExpression() {
         return condition;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
-    public void setCondition(IASTExpression condition) {
+    public void setConditionExpression(IASTExpression condition) {
         this.condition = condition;
     }
 
@@ -76,8 +78,10 @@ public class CPPASTIfStatement extends CPPASTNode implements IASTIfStatement, IA
 	        }
 		}
         if( condition != null ) if( !condition.accept( action ) ) return false;
+        if( condDecl != null )  if( !condDecl.accept( action )) return false;
         if( thenClause != null ) if( !thenClause.accept( action ) ) return false;
         if( elseClause != null ) if( !elseClause.accept( action ) ) return false;
+        
         return true;
     }
     
@@ -94,5 +98,13 @@ public class CPPASTIfStatement extends CPPASTNode implements IASTIfStatement, IA
             other.setPropertyInParent( child.getPropertyInParent() );
             elseClause = (IASTStatement) other;            
         }
+    }
+
+    public IASTDeclaration getConditionDeclaration() {
+        return condDecl;
+    }
+
+    public void setConditionDeclaration(IASTDeclaration d) {
+        condDecl = d;
     }
 }

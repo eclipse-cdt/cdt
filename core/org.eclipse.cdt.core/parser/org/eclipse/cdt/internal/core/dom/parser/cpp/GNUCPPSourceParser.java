@@ -92,6 +92,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -4820,7 +4821,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected IASTIfStatement createIfStatement() {
+    protected ICPPASTIfStatement createIfStatement() {
         return new CPPASTIfStatement();
     }
 
@@ -5000,7 +5001,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         int startOffset = consume(IToken.t_while).getOffset();
         consume(IToken.tLPAREN);
-        IASTNode while_condition = whileCondition();
+        IASTNode while_condition = cppStyleCondition();
         consume(IToken.tRPAREN);
         IASTStatement while_body = statement();
 
@@ -5029,7 +5030,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected IASTNode whileCondition() throws BacktrackException,
+    protected IASTNode cppStyleCondition() throws BacktrackException,
             EndOfFileException {
         IToken mark = mark();
         try {
@@ -5064,6 +5065,143 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     protected IASTAmbiguousStatement createAmbiguousStatement() {
         return new CPPASTAmbiguousStatement();
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseIfStatement() throws EndOfFileException, BacktrackException {
+        ICPPASTIfStatement result = null;
+        ICPPASTIfStatement if_statement = null;
+        int start = LA(1).getOffset();
+        if_loop: while (true) {
+            int so = consume(IToken.t_if).getOffset();
+            consume(IToken.tLPAREN);
+            IASTNode condition = null;
+            try {
+                condition = cppStyleCondition(); //TODO should be while condition
+    			if (LT(1) == IToken.tEOC) {
+    				// Completing in the condition
+    				ICPPASTIfStatement new_if = createIfStatement();
+                    if( condition instanceof IASTExpression )
+                        new_if.setConditionExpression((IASTExpression) condition);
+                    else if( condition instanceof IASTDeclaration )
+                        new_if.setConditionDeclaration((IASTDeclaration) condition);
+    				condition.setParent(new_if);
+    				condition.setPropertyInParent(IASTIfStatement.CONDITION);
+    				
+    				if (if_statement != null) {
+                        if_statement.setElseClause(new_if);
+                        new_if.setParent(if_statement);
+                        new_if.setPropertyInParent(IASTIfStatement.ELSE);
+    				}
+    				return result != null ? result : new_if; 
+    			}
+                consume(IToken.tRPAREN);
+            } catch (BacktrackException b) {
+                IASTProblem p = failParse(b);
+                IASTProblemExpression ps = createProblemExpression();
+                ps.setProblem(p);
+                ((ASTNode) ps).setOffsetAndLength(((ASTNode) p).getOffset(),
+                        ((ASTNode) p).getLength());
+                p.setParent(ps);
+                p.setPropertyInParent(IASTProblemHolder.PROBLEM);
+                condition = ps;
+                if( LT(1) == IToken.tRPAREN )
+                	consume();
+                else if( LT(2) == IToken.tRPAREN )
+                {
+                	consume();
+                	consume();
+                }
+                else
+                	failParseWithErrorHandling();
+            }
+    
+            IASTStatement thenClause = statement();
+    
+            ICPPASTIfStatement new_if_statement = createIfStatement();
+            ((ASTNode) new_if_statement).setOffset(so);
+            if( condition != null && condition instanceof IASTExpression ) // shouldn't be possible but failure in condition() makes it so
+            {
+                new_if_statement.setConditionExpression((IASTExpression) condition);
+                condition.setParent(new_if_statement);
+                condition.setPropertyInParent(IASTIfStatement.CONDITION);
+            }
+            if (thenClause != null) {
+                new_if_statement.setThenClause(thenClause);
+                thenClause.setParent(new_if_statement);
+                thenClause.setPropertyInParent(IASTIfStatement.THEN);
+                ((ASTNode) new_if_statement)
+                        .setLength(calculateEndOffset(thenClause)
+                                - ((ASTNode) new_if_statement).getOffset());
+            }
+            if (LT(1) == IToken.t_else) {
+                consume(IToken.t_else);
+                if (LT(1) == IToken.t_if) {
+                    // an else if, don't recurse, just loop and do another if
+    
+                    if (if_statement != null) {
+                        if_statement.setElseClause(new_if_statement);
+                        new_if_statement.setParent(if_statement);
+                        new_if_statement
+                                .setPropertyInParent(IASTIfStatement.ELSE);
+                        ((ASTNode) if_statement)
+                                .setLength(calculateEndOffset(new_if_statement)
+                                        - ((ASTNode) if_statement).getOffset());
+                    }
+                    if (result == null && if_statement != null)
+                        result = if_statement;
+                    if (result == null)
+                        result = new_if_statement;
+    
+                    if_statement = new_if_statement;
+                    continue if_loop;
+                }
+                IASTStatement elseStatement = statement();
+                new_if_statement.setElseClause(elseStatement);
+                elseStatement.setParent(new_if_statement);
+                elseStatement.setPropertyInParent(IASTIfStatement.ELSE);
+                if (if_statement != null) {
+                    if_statement.setElseClause(new_if_statement);
+                    new_if_statement.setParent(if_statement);
+                    new_if_statement.setPropertyInParent(IASTIfStatement.ELSE);
+                    ((ASTNode) if_statement)
+                            .setLength(calculateEndOffset(new_if_statement)
+                                    - ((ASTNode) if_statement).getOffset());
+                } else {
+                    if (result == null && if_statement != null)
+                        result = if_statement;
+                    if (result == null)
+                        result = new_if_statement;
+                    if_statement = new_if_statement;
+                }
+            } else {
+            	if( thenClause != null )
+                    ((ASTNode) new_if_statement)
+                            .setLength(calculateEndOffset(thenClause) - start);
+                if (if_statement != null) {
+                    if_statement.setElseClause(new_if_statement);
+                    new_if_statement.setParent(if_statement);
+                    new_if_statement.setPropertyInParent(IASTIfStatement.ELSE);
+                    ((ASTNode) new_if_statement)
+                            .setLength(calculateEndOffset(new_if_statement)
+                                    - start);
+                }
+                if (result == null && if_statement != null)
+                    result = if_statement;
+                if (result == null)
+                    result = new_if_statement;
+    
+                if_statement = new_if_statement;
+            }
+            break if_loop;
+        }
+    
+        reconcileLengths(result);
+        return result;
     }
 
 }

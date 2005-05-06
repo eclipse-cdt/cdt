@@ -12211,4 +12211,5 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
         parse(buffer.toString(), ParserLanguage.CPP, false, 0);
     }
     
+    
 }

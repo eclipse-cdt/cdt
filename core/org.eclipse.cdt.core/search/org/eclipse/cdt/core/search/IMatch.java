@@ -8,22 +8,18 @@
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
  *******************************************************************************/
-/*
- * Created on Jul 10, 2003
- */
+
 package org.eclipse.cdt.core.search;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @author aniefer
+ * Interface used for returning matches from the Search Engine
  *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public interface IMatch {
-
+	
 	int getElementType();
 
 	int getVisibility();
@@ -35,12 +31,27 @@ public interface IMatch {
 	IResource getResource();
 	
 	IPath getLocation();
-	
-	IPath getReferenceLocation();
 
+	IPath getReferenceLocation();
+	/**
+	 * Returns the start offset for this match. Note that clients should use
+	 * getOffsetType to determine if this is a LINE or an OFFSET
+	 * @return start offset
+	 */
 	int getStartOffset();
-	
+	/**
+	 * Returns the end offset for this match. Note that clients should use
+	 * getOffsetType to determine if this is a LINE or an OFFSET. The end offset
+	 * is meaningless for LINE offsets; instead use IDocument.getLineLength to
+	 * figure out the length of the line.
+	 * @return end offset
+	 */
 	int getEndOffset();
+	/**
+	 * Returns the type of offset either IIndex.LINE or IIndex.OFFSET
+	 * @return IIndex.LINE or IIndex.OFFSET
+	 */
+	public int getOffsetType();
 
 	boolean isStatic();
 	boolean isConst();

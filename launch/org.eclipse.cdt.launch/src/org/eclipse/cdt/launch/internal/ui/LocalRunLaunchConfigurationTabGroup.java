@@ -30,7 +30,6 @@ public class LocalRunLaunchConfigurationTabGroup extends AbstractLaunchConfigura
 			new CArgumentsTab(),
 			new MigratingCEnvironmentTab(),
 			new CDebuggerTab(false),
-//			new CSourceLookupTab(),
 			new SourceLookupTab(),
 			new CommonTab() 
 		};

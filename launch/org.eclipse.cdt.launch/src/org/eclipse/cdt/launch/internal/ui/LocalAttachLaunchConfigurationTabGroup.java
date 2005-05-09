@@ -27,7 +27,6 @@ public class LocalAttachLaunchConfigurationTabGroup extends AbstractLaunchConfig
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new CMainTab(),
 			new CDebuggerTab(true),
-//			new CSourceLookupTab(),
 			new SourceLookupTab(),
 			new CommonTab()
 		};

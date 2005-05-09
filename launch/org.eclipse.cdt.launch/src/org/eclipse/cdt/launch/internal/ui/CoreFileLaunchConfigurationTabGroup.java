@@ -29,7 +29,6 @@ public class CoreFileLaunchConfigurationTabGroup extends AbstractLaunchConfigura
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new CMainTab(),
 			new CoreFileDebuggerTab(),
-//			new CSourceLookupTab(),
 			new SourceLookupTab(),
 			new CommonTab()
 		};

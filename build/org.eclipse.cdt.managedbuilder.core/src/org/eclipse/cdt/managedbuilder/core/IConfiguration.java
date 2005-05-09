@@ -29,10 +29,10 @@ import org.eclipse.core.resources.IResource;
 public interface IConfiguration extends IBuildObject {
 	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
-       public static final String PREBUILD_STEP = "prebuildStep";      //$NON-NLS-1$ 
-       public static final String POSTBUILD_STEP = "postbuildStep";    //$NON-NLS-1$ 
-       public static final String PREANNOUNCEBUILD_STEP = "preannouncebuildStep";              //$NON-NLS-1$ 
-       public static final String POSTANNOUNCEBUILD_STEP = "postannouncebuildStep";    //$NON-NLS-1$ 
+    public static final String PREBUILD_STEP = "prebuildStep";      //$NON-NLS-1$ 
+    public static final String POSTBUILD_STEP = "postbuildStep";    //$NON-NLS-1$ 
+    public static final String PREANNOUNCEBUILD_STEP = "preannouncebuildStep";      //$NON-NLS-1$ 
+    public static final String POSTANNOUNCEBUILD_STEP = "postannouncebuildStep";    //$NON-NLS-1$ 
 	// Schema element names
 	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$
 	public static final String ERROR_PARSERS = "errorParsers";	//$NON-NLS-1$
@@ -106,28 +106,28 @@ public interface IConfiguration extends IBuildObject {
 	public String getBuildCommand();
 	
 	/**
-     * Returns the prebuild step from this configuration's builder 
+     * Returns the prebuild step command
      * 
      * @return String 
      */ 
     public String getPrebuildStep(); 
        
     /** 
-     * Returns the postbuild step from this configuration's builder 
+     * Returns the postbuild step command 
      * 
      * @return String 
      */ 
     public String getPostbuildStep(); 
  
     /** 
-     * Returns the display string associated with the prebuild step from this configuration's builder 
+     * Returns the display string associated with the prebuild step 
      * 
      * @return String 
      */ 
     public String getPreannouncebuildStep(); 
        
     /** 
-     * Returns the display string associated with the postbuild step from this configuration's builder 
+     * Returns the display string associated with the postbuild step 
      * 
      * @return String 
      */ 

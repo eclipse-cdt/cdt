@@ -23,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -30,6 +31,7 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -250,6 +252,16 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
+		
+		// Display a "Confirm" dialog box, since:
+		//   1.  The defaults are immediately applied
+		//   2.  The action cannot be undone
+		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
+		boolean shouldDefault = MessageDialog.openConfirm(shell,
+					ManagedBuilderUIMessages.getResourceString("BuildSettingsBlock.defaults.title"), //$NON-NLS-1$
+					ManagedBuilderUIMessages.getResourceString("BuildSettingsBlock.defaults.message")); //$NON-NLS-1$
+		if (!shouldDefault) return;
+		
 		IConfiguration config = parent.getSelectedConfiguration();
 		config.setArtifactName(config.getManagedProject().getDefaultArtifactName());
 		config.setArtifactExtension(null);
@@ -257,9 +269,15 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		if (!builder.isExtensionElement()) {
 			config.getToolChain().removeLocalBuilder();
 		}
+		
+		// Save the information that was reset
+		ManagedBuildManager.setDefaultConfiguration(parent.getProject(), parent.getSelectedConfiguration());
+		ManagedBuildManager.saveBuildInfo(parent.getProject(), false);
+		
 		setValues();
+		
 		makeCommandDefault.setSelection(true);
-		makeCommandEntry.setEditable(false);
+		makeCommandEntry.setEditable(false);	
 		
 		setDirty(false);
 	}

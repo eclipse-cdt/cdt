@@ -32,6 +32,7 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 
 	private ToolsSettingsBlock toolsSettingsBlock;
 	private BuildSettingsBlock buildSettingsBlock;
+	private BuildStepSettingsBlock buildStepSettingsBlock;
 	private ErrorParserBlock errParserBlock;
 	private BinaryParserBlock binaryParserBlock;
 	private EnvironmentSetBlock environmentBlock;
@@ -72,6 +73,7 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		if (element instanceof IProject) {
 			addTab(toolsSettingsBlock = new ToolsSettingsBlock((BuildPropertyPage) fParent, element));
 			addTab(buildSettingsBlock = new BuildSettingsBlock((BuildPropertyPage) fParent));
+			addTab(buildStepSettingsBlock = new BuildStepSettingsBlock((BuildPropertyPage) fParent));
 			addTab(errParserBlock = new ErrorParserBlock());
 			addTab(binaryParserBlock = new BinaryParserBlock());
 			addTab(environmentBlock = new EnvironmentSetBlock((BuildPropertyPage) fParent));
@@ -88,6 +90,10 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 	
 	public BuildSettingsBlock getBuildSettingsBlock() {
 		return buildSettingsBlock;
+	}
+	
+	public BuildStepSettingsBlock getBuildStepSettingsBlock() {
+		return buildStepSettingsBlock;
 	}
 
 	public BinaryParserBlock getBinaryParserBlock() {
@@ -125,6 +131,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		if (getBuildSettingsBlock()!= null) {
 			getBuildSettingsBlock().initializeValues();
 		}
+		if (getBuildStepSettingsBlock()!= null) {
+			getBuildStepSettingsBlock().initializeValues();
+		}		
 		if (getErrorParserBlock()!= null) {
 			// TODO
 			//getErrorParserBlock().initializeValues();
@@ -145,6 +154,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if (getBuildSettingsBlock() != null) {
 				getBuildSettingsBlock().updateValues();
 			}
+			if (getBuildStepSettingsBlock() != null) {
+				getBuildStepSettingsBlock().updateValues();
+			}			
 			if (getErrorParserBlock() != null) {
 				getErrorParserBlock().updateValues();
 			}
@@ -173,6 +185,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			}
 			if (getBuildSettingsBlock() != null) {
 				getBuildSettingsBlock().setValues();
+			}
+			if (getBuildStepSettingsBlock() != null) {
+				getBuildStepSettingsBlock().setValues();
 			}
 			if (getErrorParserBlock() != null) {
 				// TODO
@@ -204,6 +219,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if (getBuildSettingsBlock() != null) {
 				getBuildSettingsBlock().removeValues(id);
 			}
+			if (getBuildStepSettingsBlock() != null) {
+				getBuildStepSettingsBlock().removeValues(id);
+			}			
 			if (getErrorParserBlock() != null) {
 				// TODO
 				//getErrorParserBlock().removeValues(id);
@@ -233,6 +251,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if (getCurrentPage() instanceof BuildSettingsBlock) {
 				return buildSettingsBlock.getPreferenceStore();
 			}
+			if (getCurrentPage() instanceof BuildStepSettingsBlock) {
+				return buildStepSettingsBlock.getPreferenceStore();
+			}			
 			if (getCurrentPage() instanceof ErrorParserBlock) {
 				return errParserBlock.getPreferenceStore();
 			}
@@ -292,6 +313,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			    ((BuildSettingsBlock)tab).setDirty(b);
 			} else if (tab instanceof ToolsSettingsBlock) {
 				    ((ToolsSettingsBlock)tab).setDirty(b);
+			} else if (tab instanceof BuildStepSettingsBlock) {
+			    ((BuildStepSettingsBlock)tab).setDirty(b);					
 			} else if (tab instanceof ErrorParserBlock) {
 			    ((ErrorParserBlock)tab).setDirty(b);
 			} else if (tab instanceof BinaryParserBlock) {
@@ -314,6 +337,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			    if (((BuildSettingsBlock)tab).isDirty()) return true;
 			} else if (tab instanceof ToolsSettingsBlock) {
 			    if (((ToolsSettingsBlock)tab).isDirty()) return true;
+			} else if (tab instanceof BuildStepSettingsBlock) {
+			    if (((BuildStepSettingsBlock)tab).isDirty()) return true;				
 			} else if (tab instanceof ErrorParserBlock) {
 			    if (((ErrorParserBlock)tab).isDirty()) return true;
 			} else if (tab instanceof BinaryParserBlock) {

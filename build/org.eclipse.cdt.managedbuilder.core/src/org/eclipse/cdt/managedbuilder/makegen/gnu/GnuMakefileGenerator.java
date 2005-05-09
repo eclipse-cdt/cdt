@@ -232,6 +232,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
 	private static final String BUILD_TOP = COMMENT + ".build.toprules";	//$NON-NLS-1$	
 	private static final String ALL_TARGET = COMMENT + ".build.alltarget";	//$NON-NLS-1$	
+	private static final String MAINBUILD_TARGET = COMMENT + ".build.mainbuildtarget";	//$NON-NLS-1$
 	private static final String BUILD_TARGETS = COMMENT + ".build.toptargets";	//$NON-NLS-1$	
 	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$
 	
@@ -1119,6 +1120,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String defaultTarget = "all:"; //$NON-NLS-1$
 		if (prebuildStep.length() > 0) {
 
+			// Add the comment for the "All" target
+			buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(ALL_TARGET) + NEWLINE);
+
 			buffer.append(defaultTarget + WHITESPACE);
 			buffer.append(PREBUILD + WHITESPACE);
 
@@ -1130,13 +1134,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// needed below
 			defaultTarget = defaultTarget.concat(COLON);
 			buffer.append(NEWLINE + NEWLINE);
+
+			// Add the comment for the "main-build" target
+			buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MAINBUILD_TARGET) + NEWLINE);					
 		}
+		else
+			// Add the comment for the "All" target
+			buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(ALL_TARGET) + NEWLINE);
 
 		// Write out the all target first in case someone just runs make
 		// all: <target_name> or mainbuild: <target_name>
-
-		// Add the comment
-		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(ALL_TARGET) + NEWLINE);
                
 		String outputPrefix = EMPTY_STRING;
 		if (targetTool != null) { 		
@@ -1279,20 +1286,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		//  Get the target tool and generate the rule
 		if (targetTool != null) { 		
 			if (addRuleForTool(targetTool, buffer, true, buildTargetName, buildTargetExt, 
-					outputVarsAdditionsList, managedProjectOutputs)) {
+					outputVarsAdditionsList, managedProjectOutputs, postbuildStep)) {
 				//  Mark the target tool as processed
 				for (int i=0; i<buildTools.length; i++) {
 					if (targetTool == buildTools[i]) {
 						buildToolsUsed[i] = true;
 					}
 				}
-			    // If there is a post build step, then add a recursive invocation of MAKE to invoke it after the main build
-			    // Note that $(MAKE) will instantiate in the recusive invocation to the make command that was used to invoke
-			    // the makefile originally 
-			    if (postbuildStep) { 
-			        buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE);
-			        buffer.append(TAB + MAKE + WHITESPACE + NO_PRINT_DIR + WHITESPACE + POSTBUILD + NEWLINE);       
-			    } 
 			}
 		} else {
 			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_NO_TARGET_TOOL + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
@@ -1306,7 +1306,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			IInputType type = tool.getPrimaryInputType();
 			if (type != null && type.getMultipleOfType()) {
 				if (!buildToolsUsed[i]) {
-					addRuleForTool(tool, buffer, false, null, null, outputVarsAdditionsList, null);
+					addRuleForTool(tool, buffer, false, null, null, outputVarsAdditionsList, null, false);
 					//  Mark the target tool as processed
 					buildToolsUsed[i] = true;
 					// Look for tools that consume the output
@@ -1352,9 +1352,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @param targetName  If this is the "targetTool", the target file extension, else <code>null</code>
 	 * @param outputVarsAdditionsList  list to add needed build output variables to
 	 * @param managedProjectOutputs  Other projects in the workspace that this project depends upon
+	 * @param bPostBuildStep  Emit post-build step invocation
 	 */
 	protected boolean addRuleForTool(ITool tool, StringBuffer buffer, boolean bTargetTool, String targetName, String targetExt, 
-			List outputVarsAdditionsList, Vector managedProjectOutputs) {
+			List outputVarsAdditionsList, Vector managedProjectOutputs, boolean bEmitPostBuildStepCall) {
 		
 		//  Get the tool's inputs and outputs
 		Vector inputs = new Vector();
@@ -1454,7 +1455,18 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		} else {
 			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
 		}
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
+		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE);				
+		
+		// If there is a post build step, then add a recursive invocation of MAKE to invoke it after the main build
+	    // Note that $(MAKE) will instantiate in the recusive invocation to the make command that was used to invoke
+	    // the makefile originally 
+	    if (bEmitPostBuildStepCall) {
+	        buffer.append(TAB + MAKE + WHITESPACE + NO_PRINT_DIR + WHITESPACE + POSTBUILD + NEWLINE + NEWLINE);       
+	    }
+	    else {
+			// Just emit a blank line
+			buffer.append(NEWLINE);
+	    }
 		
 		// If we have secondary outputs, output dependency rules without commands
 		if (enumeratedSecondaryOutputs.size() > 0) {
@@ -1465,7 +1477,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			}
 			buffer.append(NEWLINE);
 		}
-				
 		return true;
 	}
 
@@ -1491,7 +1502,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 							    (outVariable != null && inVariable != null &&
 								 outVariable.equals(inVariable))) {
 								if (addRuleForTool(buildTools[k], buffer, false, null, null, 
-										outputVarsAdditionsList, null)) {
+										outputVarsAdditionsList, null, false)) {
 									buildToolsUsed[k] = true;
 									// Look for tools that consume the output
 									generateRulesForConsumers(buildTools[k], outputVarsAdditionsList, buffer);

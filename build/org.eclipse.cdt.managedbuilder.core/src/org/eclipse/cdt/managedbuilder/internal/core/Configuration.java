@@ -271,7 +271,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			preannouncebuildStep = new String(cloneConfig.preannouncebuildStep);
 		}
 		if (cloneConfig.postannouncebuildStep != null) {
-			postannouncebuildStep = new String(	cloneConfig.postannouncebuildStep);
+			postannouncebuildStep = new String(cloneConfig.postannouncebuildStep);
 		} 
 		
 		// Clone the configuration's children
@@ -1140,9 +1140,9 @@ public class Configuration extends BuildObject implements IConfiguration {
     public void setPrebuildStep(String step) { 
         if (step == null && prebuildStep == null) return; 
         if (prebuildStep == null || step == null || !prebuildStep.equals(step)) { 
-                prebuildStep = step; 
-                setRebuildState(true); 
-                isDirty = true; 
+            prebuildStep = step; 
+            setRebuildState(true); 
+            isDirty = true; 
         } 
     } 
 	
@@ -1153,9 +1153,9 @@ public class Configuration extends BuildObject implements IConfiguration {
     public void setPostbuildStep(String step) { 
         if (step == null && postbuildStep == null) return; 
         if (postbuildStep == null || step == null || !postbuildStep.equals(step)) { 
-                postbuildStep = step; 
-                setRebuildState(true); 
-                isDirty = true; 
+            postbuildStep = step; 
+            setRebuildState(true); 
+            isDirty = true; 
         }       
     } 
 	
@@ -1165,9 +1165,9 @@ public class Configuration extends BuildObject implements IConfiguration {
     public void setPreannouncebuildStep(String announceStep) { 
         if (announceStep == null && preannouncebuildStep == null) return; 
         if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
-                preannouncebuildStep = announceStep; 
-                setRebuildState(true); 
-                isDirty = true; 
+            preannouncebuildStep = announceStep; 
+            setRebuildState(true); 
+            isDirty = true; 
         } 
     } 
  
@@ -1177,9 +1177,9 @@ public class Configuration extends BuildObject implements IConfiguration {
     public void setPostannouncebuildStep(String announceStep) { 
         if (announceStep == null && postannouncebuildStep == null) return; 
         if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
-                postannouncebuildStep = announceStep; 
-                setRebuildState(true); 
-                isDirty = true; 
+            postannouncebuildStep = announceStep; 
+            setRebuildState(true); 
+            isDirty = true; 
         } 
     } 
 	

@@ -655,10 +655,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						boolean quit = false;
 						premakeArgs.add("-q"); //$NON-NLS-1$ 
 						premakeArgs.add("main-build"); //$NON-NLS-1$ 
-						premakeTargets = (String[]) premakeArgs
-								.toArray(new String[premakeArgs.size()]);
-						proc = launcher.execute(makeCommand, premakeTargets,
-								env, workingDirectory);
+						premakeTargets = (String[]) premakeArgs.toArray(new String[premakeArgs.size()]);
+						proc = launcher.execute(makeCommand, premakeTargets, env, workingDirectory);
 						if (proc != null) {
 							try {
 								// Close the input of the process since we will never write to it
@@ -674,8 +672,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 							errMsg = launcher.getErrorMessage();
 						}
 
-						if ((errMsg != null && errMsg.length() > 0)
-								|| proc == null) {
+						if ((errMsg != null && errMsg.length() > 0) || proc == null) {
 							// Can't tell if the build is needed, so assume it is, and let any errors be triggered
 							// when the "real" build is invoked below 
 							makeArgs.add("pre-build"); //$NON-NLS-1$ 
@@ -687,14 +684,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 								isuptodate = true;
 								// Report that the build was up to date, and thus nothing needs to be built
 								String uptodateMsg = ManagedMakeMessages
-										.getFormattedString(NOTHING_BUILT,
-												currentProject.getName());
+										.getFormattedString(NOTHING_BUILT, currentProject.getName());
+								buf = new StringBuffer();
+								buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 								buf.append(uptodateMsg);
-								buf.append(System.getProperty(
-										"line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+								buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 								// Write message on the console 
-								consoleOutStream.write(buf.toString()
-										.getBytes());
+								consoleOutStream.write(buf.toString().getBytes());
 								consoleOutStream.flush();
 								consoleOutStream.close();
 								stdout.close();
@@ -725,13 +721,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					makeArgs.addAll(Arrays.asList(getMakeTargets(buildType)));
 				}
 
-				makeTargets = (String[]) makeArgs.toArray(new String[makeArgs
-						.size()]);
+				makeTargets = (String[]) makeArgs.toArray(new String[makeArgs.size()]);
 
 				// Launch make - main invocation 
 				if (!isuptodate) {
 					proc = launcher.execute(makeCommand, makeTargets, env,
-							workingDirectory);
+								workingDirectory);
 					if (proc != null) {
 						try {
 							// Close the input of the process since we will never write to it

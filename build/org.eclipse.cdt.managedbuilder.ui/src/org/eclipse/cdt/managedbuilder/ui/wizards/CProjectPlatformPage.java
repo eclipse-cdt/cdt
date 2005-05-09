@@ -62,6 +62,8 @@ public class CProjectPlatformPage extends WizardPage {
 	private static final String SHOWALL_CONFIG_LABEL = LABEL + ".showall.config"; //$NON-NLS-1$
 	private static final String TARGET_LABEL = LABEL + ".platform"; //$NON-NLS-1$
 	private static final String TARGET_TIP = TIP + ".platform"; //$NON-NLS-1$
+	private static final String FORCEDCONFIG_TIP = TIP + ".forcedconfigs"; //$NON-NLS-1$
+	
 
 	protected NewManagedProjectWizard parentWizard;
 	protected Combo platformSelection;
@@ -69,6 +71,7 @@ public class CProjectPlatformPage extends WizardPage {
 	protected IProjectType selectedProjectType;
 	protected Button showAllProjTypes;
 	protected Button showAllConfigs;
+	protected boolean showAllConfigsForced;
 	protected CheckboxTableViewer tableViewer;
 	protected String[] projectTypeNames;
 	protected ArrayList projectTypes;
@@ -85,6 +88,7 @@ public class CProjectPlatformPage extends WizardPage {
 		selectedProjectType = null;
 		selectedConfigurations = new ArrayList(0);
 		this.parentWizard = parentWizard;
+		showAllConfigsForced = false;
 	}
 
 	/**
@@ -187,7 +191,7 @@ public class CProjectPlatformPage extends WizardPage {
 		showAllConfigs.setText(ManagedBuilderUIMessages.getResourceString(SHOWALL_CONFIG_LABEL));
 		showAllConfigs.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				populateConfigurations();
+				populateConfigurations(true);
 			}
 		});
 		showAllConfigs.addDisposeListener(new DisposeListener() {
@@ -279,29 +283,72 @@ public class CProjectPlatformPage extends WizardPage {
 				parentWizard.updateProjectTypeProperties();
 			}
 		}
-		populateConfigurations();
+		populateConfigurations(false);
 		setPageComplete(validatePage());
 	}
 
 	/**
 	 * Populate the table viewer with either all known configurations
 	 * or only with the supported configurations depending on whether a user
-	 * has chosen to diaplay unsupported configurations or not 
+	 * has chosen to display unsupported configurations or not 
 	 * By default, only supported configurations are selected.
 	 */
-	private void populateConfigurations() {
-		if(selectedProjectType == null)
+	private void populateConfigurations(boolean showallconfigsevent) {
+		if (selectedProjectType == null)
 			return;
 		boolean showAll = showAllConfigs != null ? showAllConfigs.getSelection() : false;
 		IConfiguration selected[] = null;
 		
-		if(showAll){
+		if (showAll) {
 			configurations = selectedProjectType.getConfigurations();
 			selected = filterSupportedConfigurations(configurations);
 		}
-		else{
+		else {
 			configurations = filterSupportedConfigurations(selectedProjectType.getConfigurations());
 			selected = configurations;
+		}
+	
+		// Check for buildable configs on this platform
+		if (selected.length == 0) {
+			// No buildable configs on this platform
+			if (showallconfigsevent) {
+				// "Show All Configurations" button pressed by user
+				if (showAll) {		
+					// "Show All Configurations" check box "checked" by user
+					// For a project with no buildable configs, all available 
+					// configs should be displayed and checked
+					configurations = selectedProjectType.getConfigurations();
+					selected = configurations;
+				}
+				if (showAllConfigsForced) {
+				    // The previous setting of this check box was done automatically when a project type
+				    // with no buildable configs was encountered; undo this state now and honor the 
+					// user's button click
+					setMessage(null, NONE);
+					showAllConfigsForced = false;
+				}
+			}
+			else {
+				configurations = selectedProjectType.getConfigurations();
+				selected = configurations;
+				if (!showAll) {			    
+				    showAllConfigsForced = true;
+					showAllConfigs.setSelection(true);					  												
+				}
+			}
+			// Indicate that there are no buildable configurations on this platform for this project
+			// type and that all configurations will be selected
+			setMessage(ManagedBuilderUIMessages.getResourceString(FORCEDCONFIG_TIP), WARNING);
+		}
+		else { 
+			setMessage(null, NONE);
+			if (showAllConfigsForced) {
+			    showAllConfigsForced = false;
+			    showAllConfigs.setSelection(false);
+				// Redo filtering in light of reset of "show all configs" to false
+				configurations = filterSupportedConfigurations(selectedProjectType.getConfigurations());
+				selected = configurations;
+			}
 		}
 		
 		tableViewer.setInput(configurations);
@@ -310,14 +357,28 @@ public class CProjectPlatformPage extends WizardPage {
 	}
 
 	/**
-	 * Returns the array of supported configurations found in the configuurations
-	 * passes to this method
+	 * Returns the array of supported configurations found in the configurations
+	 * passed to this method
 	 */
 	IConfiguration[] filterSupportedConfigurations(IConfiguration cfgs[]){
 		ArrayList supported = new ArrayList();
-		for(int i = 0; i < cfgs.length; i++){
-			if(cfgs[i].isSupported())
-					supported.add(cfgs[i]);
+		String os = Platform.getOS();
+		String arch = Platform.getOSArch();
+
+		for (int i = 0; i < cfgs.length; i++) {
+			// First, filter on supported state
+			if (cfgs[i].isSupported()) {				
+				// Now, apply the OS and ARCH filters to determine if the configuration should be shown
+				// Determine if the configuration's tool-chain supports this OS & Architecture.
+				IToolChain tc = cfgs[i].getToolChain();
+				List osList = Arrays.asList(tc.getOSList());
+				if (osList.contains("all") || osList.contains(os)) {	//$NON-NLS-1$
+					List archList = Arrays.asList(tc.getArchList());
+					if (archList.contains("all") || archList.contains(arch)) { //$NON-NLS-1$
+						supported.add(cfgs[i]);						
+					}
+				}		
+			}
 		}
 		return (IConfiguration[])supported.toArray(new IConfiguration[supported.size()]);
 	}

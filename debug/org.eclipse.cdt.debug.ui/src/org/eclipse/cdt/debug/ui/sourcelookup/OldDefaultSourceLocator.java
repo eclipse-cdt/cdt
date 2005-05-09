@@ -13,26 +13,15 @@ package org.eclipse.cdt.debug.ui.sourcelookup;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.SourceLookupFactory;
-import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
-import org.eclipse.cdt.debug.internal.ui.CDebugImages;
-import org.eclipse.cdt.debug.internal.ui.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
-import org.eclipse.cdt.debug.internal.ui.editors.NoSymbolOrSourceElement;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -41,17 +30,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.ListDialog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -61,58 +41,6 @@ import org.xml.sax.SAXException;
  * Old default source locator. We keep it for migration purposes.
  */
 public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdaptable {
-
-	public class SourceSelectionDialog extends ListDialog {
-
-		private SelectionButtonDialogField fAlwaysUseThisFileButton = new SelectionButtonDialogField( SWT.CHECK );
-
-		public SourceSelectionDialog( Shell parent ) {
-			super( parent );
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.dialogs.ListDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-		 */
-		protected Control createDialogArea( Composite parent ) {
-			Composite comp = ControlFactory.createComposite( parent, 1 );
-			super.createDialogArea( comp );
-			Composite comp1 = ControlFactory.createComposite( comp, 1 );
-			fAlwaysUseThisFileButton.setLabelText( SourceLookupMessages.getString( "OldDefaultSourceLocator.0" ) ); //$NON-NLS-1$
-			fAlwaysUseThisFileButton.doFillIntoGrid( comp1, 1 );
-			return comp;
-		}
-
-		public boolean alwaysMapToSelection() {
-			return fAlwaysUseThisFileButton.isSelected();
-		}
-	}
-
-	public class SourceElementLabelProvider extends LabelProvider {
-
-		protected CDebugImageDescriptorRegistry fDebugImageRegistry = CDebugUIPlugin.getImageDescriptorRegistry();
-
-		public SourceElementLabelProvider() {
-			super();
-		}
-
-		public String getText( Object element ) {
-			if ( element instanceof IFile )
-				return ((IFile)element).getFullPath().toString();
-			if ( element instanceof FileStorage )
-				return ((FileStorage)element).getFullPath().toOSString();
-			return super.getText( element );
-		}
-
-		public Image getImage( Object element ) {
-			if ( element instanceof IFile )
-				return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_WORKSPACE_SOURCE_FILE );
-			if ( element instanceof FileStorage )
-				return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_EXTERNAL_SOURCE_FILE );
-			return super.getImage( element );
-		}
-	}
 
 	/**
 	 * Identifier for the 'Default C/C++ Source Locator' extension (value <code>"org.eclipse.cdt.debug.ui.DefaultSourceLocator"</code>).
@@ -133,17 +61,11 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	 */
 	private ICSourceLocator fSourceLocator;
 
-	private HashMap fFramesToSource = null;
-
-	private HashMap fNamesToSource = null;
-
 	public OldDefaultSourceLocator() {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
 	public String getMemento() throws CoreException {
@@ -175,9 +97,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
 	public void initializeFromMemento( String memento ) throws CoreException {
@@ -222,9 +142,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 		abort( SourceLookupMessages.getString( "OldDefaultSourceLocator.6" ), ex ); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException {
@@ -234,9 +152,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 			initializeFromMemento( memento );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter( Class adapter ) {
@@ -251,95 +167,10 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
 	 */
 	public Object getSourceElement( IStackFrame stackFrame ) {
-		Object res = cacheLookup( stackFrame );
-		if ( res == null ) {
-			res = getCSourceLocator().getSourceElement( stackFrame );
-			if ( res instanceof List ) {
-				List list = (List)res;
-				if ( list.size() != 0 ) {
-					SourceSelectionDialog dialog = createSourceSelectionDialog( list );
-					dialog.open();
-					Object[] objs = dialog.getResult();
-					res = (objs != null && objs.length > 0) ? objs[0] : null;
-					if ( res != null )
-						cacheSourceElement( stackFrame, res, dialog.alwaysMapToSelection() );
-				}
-				else
-					res = null;
-			}
-		}
-		if ( res == null ) {
-			if ( stackFrame instanceof ICStackFrame && !isEmpty( ((ICStackFrame)stackFrame).getFile() ) ) {
-				res = new FileNotFoundElement( stackFrame );
-			}
-			else // don't show in editor
-			{
-				res = new NoSymbolOrSourceElement( stackFrame );
-			}
-		}
-		return res;
-	}
-
-	protected void saveChanges( ILaunchConfiguration configuration, IPersistableSourceLocator locator ) {
-		try {
-			ILaunchConfigurationWorkingCopy copy = configuration.copy( configuration.getName() );
-			copy.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, locator.getMemento() );
-			copy.doSave();
-		}
-		catch( CoreException e ) {
-			CDebugUIPlugin.errorDialog( e.getMessage(), (IStatus)null );
-		}
-	}
-
-	private SourceSelectionDialog createSourceSelectionDialog( List list ) {
-		SourceSelectionDialog dialog = new SourceSelectionDialog( CDebugUIPlugin.getActiveWorkbenchShell() );
-		dialog.setInput( list.toArray() );
-		dialog.setContentProvider( new ArrayContentProvider() );
-		dialog.setLabelProvider( new SourceElementLabelProvider() );
-		dialog.setTitle( SourceLookupMessages.getString( "OldDefaultSourceLocator.7" ) ); //$NON-NLS-1$
-		dialog.setMessage( SourceLookupMessages.getString( "OldDefaultSourceLocator.8" ) ); //$NON-NLS-1$
-		dialog.setInitialSelections( new Object[]{ list.get( 0 ) } );
-		return dialog;
-	}
-
-	private void cacheSourceElement( IStackFrame frame, Object sourceElement, boolean alwaysMapToSelection ) {
-		if ( alwaysMapToSelection ) {
-			String name = getFileName( frame );
-			if ( name != null ) {
-				if ( fNamesToSource == null )
-					fNamesToSource = new HashMap();
-				fNamesToSource.put( name, sourceElement );
-			}
-		}
-		else {
-			if ( fFramesToSource == null )
-				fFramesToSource = new HashMap();
-			fFramesToSource.put( frame, sourceElement );
-		}
-	}
-
-	private Object cacheLookup( IStackFrame frame ) {
-		String name = getFileName( frame );
-		if ( name != null && fNamesToSource != null ) {
-			Object result = fNamesToSource.get( name );
-			if ( result != null )
-				return result;
-		}
-		return (fFramesToSource != null) ? fFramesToSource.get( frame ) : null;
-	}
-
-	private String getFileName( IStackFrame frame ) {
-		if ( frame instanceof ICStackFrame ) {
-			String name = ((ICStackFrame)frame).getFile();
-			if ( !isEmpty( name ) )
-				return name.trim();
-		}
 		return null;
 	}
 

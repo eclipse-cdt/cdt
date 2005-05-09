@@ -888,16 +888,6 @@
          </action>
       </editorContribution>
       <editorContribution
-            targetID="org.eclipse.cdt.debug.ui.editor.CDebugEditor"
-            id="org.eclipse.cdt.debug.ui.CDebugEditor.BreakpointRulerActions">
-         <action
-               label="%Dummy.label"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
-               actionID="RulerDoubleClick"
-               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
-         </action>
-      </editorContribution>
-      <editorContribution
             targetID="org.eclipse.cdt.ui.editor.asm.AsmEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor.BreakpointRulerActions">
          <action
@@ -942,12 +932,6 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.cdt.debug.core.model.ICDebugTarget"
-            name="%SourcePropertyPage.name"
-            class="org.eclipse.cdt.debug.ui.sourcelookup.SourcePropertyPage"
-            id="org.eclipse.cdt.debug.ui.sourcelookup.SourcePropertyPage">
-      </page>
-      <page
             adaptable="true"
             objectClass="org.eclipse.cdt.debug.core.model.ICBreakpoint"
             class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPropertyPage"
@@ -969,17 +953,6 @@
             class="org.eclipse.cdt.debug.internal.ui.propertypages.ModulePropertyPage"
             name="%CommonModulePage.label"
             id="org.eclipse.cdt.debug.ui.propertypages.module.common"/>
-   </extension>
-   <extension
-         id="org.eclipse.cdt.debug.ui.editors"
-         point="org.eclipse.ui.editors">
-      <editor
-            name="%CDebugEditor.name"
-            icon="icons/obj16/filenotfound_obj.gif"
-            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
-            class="org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor"
-            id="org.eclipse.cdt.debug.ui.editor.CDebugEditor">
-      </editor>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">

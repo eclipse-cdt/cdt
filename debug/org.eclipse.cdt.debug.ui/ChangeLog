@@ -1,3 +1,32 @@
+2005-05-09 Mikhail Khodjaiants
+	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
+	Removed CDebugEditor and old source lookup related classes and interfaces.
+	* CDebugModelPresentation.java
+	- CDebugEditor.java
+	- EditorInputDelegate.java
+	- EditorMessages.java
+	- EditorMessages.properties
+	- FileNotFoundElement.java
+	- NoSymbolOrSourceElement.java
+	- AddDirectorySourceLocationBlock.java
+	- AddDirectorySourceLocationWizard.java
+	- AddProjectSourceLocationBlock.java
+	- AddProjectSourceLocationWizard.java
+	- AddSourceLocationWizard.java
+	- SourceLocationSelectionPage.java
+	- SourceLocationWizardNode.java
+	- WizardMessages.java
+	- WizardMessages.properties
+	- INewSourceLocationWizard.java
+	* OldDefaultSourceLocator.java
+	- SourceListDialogField.java
+	- SourceLookupBlock.java
+	- SourceLookupLabelProvider.java
+	* SourceLookupMessages.properties
+	- SourcePropertyPage.java
+	* plugin.properties
+	* plugin.xml
+
 2005-04-27 Mikhail Khodjaiants
 	Added path validation to CDirectorySourceContainerDialog.
 	* CDirectorySourceContainerDialog.java

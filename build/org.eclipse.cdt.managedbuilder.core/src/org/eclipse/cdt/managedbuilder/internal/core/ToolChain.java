@@ -54,7 +54,7 @@ public class ToolChain extends BuildObject implements IToolChain {
 	private String errorParserIds;
 	private List osList;
 	private List archList;
-	private String targetToolId;
+	private String targetToolIds;
 	private String secondaryOutputIds;
 	private Boolean isAbstract;
     private String scannerConfigDiscoveryProfileId;
@@ -216,8 +216,8 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (toolChain.archList != null) {
 			archList = new ArrayList(toolChain.archList);
 		}
-		if (toolChain.targetToolId != null) {
-			targetToolId = new String(toolChain.targetToolId);
+		if (toolChain.targetToolIds != null) {
+			targetToolIds = new String(toolChain.targetToolIds);
 		}
 		if (toolChain.secondaryOutputIds != null) {
 			secondaryOutputIds = new String(toolChain.secondaryOutputIds);
@@ -321,7 +321,7 @@ public class ToolChain extends BuildObject implements IToolChain {
 		secondaryOutputIds = element.getAttribute(SECONDARY_OUTPUTS);
 		
 		// Get the target tool id
-		targetToolId = element.getAttribute(TARGET_TOOL);
+		targetToolIds = element.getAttribute(TARGET_TOOL);
 		
 		// Get the scanner config discovery profile id
         scannerConfigDiscoveryProfileId = element.getAttribute(SCANNER_CONFIG_PROFILE_ID);
@@ -415,7 +415,7 @@ public class ToolChain extends BuildObject implements IToolChain {
 		
 		// Get the target tool id
 		if (element.hasAttribute(TARGET_TOOL)) {
-			targetToolId = element.getAttribute(TARGET_TOOL);
+			targetToolIds = element.getAttribute(TARGET_TOOL);
 		}
 		
         // Get the scanner config discovery profile id
@@ -490,8 +490,8 @@ public class ToolChain extends BuildObject implements IToolChain {
 			element.setAttribute(SECONDARY_OUTPUTS, secondaryOutputIds);
 		}
         
-        if (targetToolId != null) {
-            element.setAttribute(TARGET_TOOL, targetToolId);
+        if (targetToolIds != null) {
+            element.setAttribute(TARGET_TOOL, targetToolIds);
         }
         
         if (scannerConfigDiscoveryProfileId != null) {
@@ -839,20 +839,45 @@ public class ToolChain extends BuildObject implements IToolChain {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTargetTool()
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTargetToolIds()
 	 */
-	public String getTargetToolId() {
-		if (targetToolId == null) {
+	public String getTargetToolIds() {
+		if (targetToolIds == null) {
 			// Ask superClass for its list
 			if (superClass != null) {
-				return superClass.getTargetToolId();
+				return superClass.getTargetToolIds();
 			} else {
 				return null;
 			}
 		}
-		return targetToolId;
+		return targetToolIds;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getTargetToolList()
+	 */
+	public String[] getTargetToolList() {
+		String IDs = getTargetToolIds();
+		String[] targetTools;
+		if (IDs != null) {
+			// Check for an empty string
+			if (IDs.length() == 0) {
+				targetTools = new String[0];
+			} else {
+				StringTokenizer tok = new StringTokenizer(IDs, ";"); //$NON-NLS-1$
+				List list = new ArrayList(tok.countTokens());
+				while (tok.hasMoreElements()) {
+					list.add(tok.nextToken());
+				}
+				String[] strArr = {""};	//$NON-NLS-1$
+				targetTools = (String[]) list.toArray(strArr);
+			}
+		} else {
+			targetTools = new String[0];
+		}
+		return targetTools;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getErrorParserIds(IConfiguration)
 	 */
@@ -975,12 +1000,12 @@ public class ToolChain extends BuildObject implements IToolChain {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setTargetTool()
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setTargetToolIds()
 	 */
-	public void setTargetTool(String newId) {
-		if (targetToolId == null && newId == null) return;
-		if (targetToolId == null || newId == null || !newId.equals(targetToolId)) {
-			targetToolId = newId;
+	public void setTargetToolIds(String newIds) {
+		if (targetToolIds == null && newIds == null) return;
+		if (targetToolIds == null || newIds == null || !newIds.equals(targetToolIds)) {
+			targetToolIds = newIds;
 			isDirty = true;					
 		}
 	}

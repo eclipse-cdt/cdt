@@ -240,11 +240,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 	private static final String OBJS_MACRO = "OBJS";	//$NON-NLS-1$
 	private static final String DEPS_MACRO = "DEPS";	//$NON-NLS-1$
+	private static final String MACRO_ADDITION_ADDPREFIX_HEADER = "${addprefix ";	//$NON-NLS-1$
 	private static final String MACRO_ADDITION_ADDPREFIX_SUFFIX = "," + WHITESPACE + LINEBREAK;	//$NON-NLS-1$
 	private static final String MACRO_ADDITION_PREFIX_SUFFIX = "+=" + WHITESPACE + LINEBREAK;	//$NON-NLS-1$
 	private static final String PREBUILD = "pre-build"; //$NON-NLS-1$ 
 	private static final String MAINBUILD = "main-build"; //$NON-NLS-1$ 
 	private static final String POSTBUILD = "post-build"; //$NON-NLS-1$ 
+	private static final String SECONDARY_OUTPUTS = "secondary-outputs"; //$NON-NLS-1$ 
 	
 	// Local variables needed by generator
 	private String buildTargetName;
@@ -1144,6 +1146,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		if (buildTargetExt.length() > 0) {
 			buffer.append(DOT + buildTargetExt);
 		}
+		
+		// Add the Secondary Outputs to the all target, if any
+		IOutputType[] secondaryOutputs = config.getToolChain().getSecondaryOutputs();
+		if (secondaryOutputs.length > 0) {
+			buffer.append(WHITESPACE + SECONDARY_OUTPUTS);
+		}
+
 		buffer.append(NEWLINE + NEWLINE);
 
 		/*
@@ -1218,6 +1227,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(TAB + DASH + AT + ECHO + WHITESPACE + SINGLE_QUOTE
 					+ WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
 		} 
+
+		// Add the Secondary Outputs target, if needed
+		if (secondaryOutputs.length > 0) {
+			buffer.append(SECONDARY_OUTPUTS + COLON);
+			Vector outs2 = calculateSecondaryOutputs(secondaryOutputs);
+			for (int i=0; i<outs2.size(); i++) {
+				buffer.append(WHITESPACE + (String)outs2.get(i));
+			}
+			buffer.append(NEWLINE + NEWLINE); 
+		}
+
 		// Add all the needed dummy and phony targets
 		buffer.append(".PHONY: all clean dependents" + NEWLINE); //$NON-NLS-1$
 		buffer.append(".SECONDARY:"); //$NON-NLS-1$
@@ -1340,14 +1360,23 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		Vector inputs = new Vector();
 		Vector dependencies = new Vector();
 		Vector outputs = new Vector();
-		Vector enumeratedOutputs = new Vector();
+		Vector enumeratedPrimaryOutputs = new Vector();
+		Vector enumeratedSecondaryOutputs = new Vector();
 		Vector outputVariables = new Vector();
 		String outputPrefix = EMPTY_STRING;
-		if (!getToolInputsOutputs(tool, inputs, dependencies, outputs, enumeratedOutputs, outputVariables, 
-				bTargetTool, managedProjectOutputs)) {
+
+		if (!getToolInputsOutputs(tool, inputs, dependencies, outputs, 
+				enumeratedPrimaryOutputs, enumeratedSecondaryOutputs,
+				outputVariables, bTargetTool, managedProjectOutputs)) {
 			return false;
 		}
 
+		//  If we have no primary output, make all of the secondary outputs the primary output
+		if (enumeratedPrimaryOutputs.size() == 0) {
+			enumeratedPrimaryOutputs = enumeratedSecondaryOutputs;
+			enumeratedSecondaryOutputs.clear();
+		}
+		
 		//  Add the output variables for this tool to our list
 		outputVarsAdditionsList.addAll(outputVariables);
 		
@@ -1355,20 +1384,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String buildRule = EMPTY_STRING;
 		String outflag = tool.getOutputFlag();
 		
-		Iterator iter = enumeratedOutputs.listIterator();
+		String primaryOutputs = EMPTY_STRING;
 		boolean first = true;
-		while(iter.hasNext()) {
-			String output = (String)iter.next();
-			if (!first) buildRule += WHITESPACE;
+		for (int i=0; i<enumeratedPrimaryOutputs.size(); i++) {
+			String output = (String)enumeratedPrimaryOutputs.get(i);
+			if (!first) primaryOutputs += WHITESPACE;
 			first = false;
-			buildRule += output;
+			primaryOutputs += output;
 		}
-		buildRule += (COLON + WHITESPACE);
-		iter = inputs.listIterator();
+
+		buildRule += (primaryOutputs + COLON + WHITESPACE);
+		
 		first = true;
-		iter = dependencies.listIterator();
-		while(iter.hasNext()) {
-			String input = (String)iter.next();
+		for (int i=0; i<dependencies.size(); i++) {
+			String input = (String)dependencies.get(i);
 			if (!first) buildRule += WHITESPACE;
 			first = false;
 			buildRule += input;
@@ -1398,7 +1427,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String[] cmdInputs = (String[])inputs.toArray(new String[inputs.size()]);
 		IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
 		IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, tool.getToolCommand(), 
-				flags, outflag, outputPrefix, OUT_MACRO, cmdInputs, tool.getCommandLinePattern() );
+				flags, outflag, outputPrefix, primaryOutputs, cmdInputs, tool.getCommandLinePattern() );
 		// The command to build
 		String buildCmd = null;
 		if( cmdLInfo == null ) {
@@ -1409,7 +1438,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				// TODO report error
 				toolFlags = EMPTY_STRING;
 			}
-			buildCmd = tool.getToolCommand() + WHITESPACE + toolFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO;
+			buildCmd = tool.getToolCommand() + WHITESPACE + toolFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + primaryOutputs + WHITESPACE + IN_MACRO;
 		}
 		else buildCmd = cmdLInfo.getCommandLine();
 		buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
@@ -1426,6 +1455,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
 		}
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
+		
+		// If we have secondary outputs, output dependency rules without commands
+		if (enumeratedSecondaryOutputs.size() > 0) {
+			String primaryOutput = (String)enumeratedPrimaryOutputs.get(0);
+			for (int i=0; i<enumeratedSecondaryOutputs.size(); i++) {
+				String output = (String)enumeratedSecondaryOutputs.get(0);
+				buffer.append(output + COLON + WHITESPACE + primaryOutput + NEWLINE);
+			}
+			buffer.append(NEWLINE);
+		}
+				
 		return true;
 	}
 
@@ -1465,8 +1505,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	protected boolean getToolInputsOutputs(ITool tool, 
-			Vector inputs, Vector dependencies, Vector outputs, Vector enumeratedOutputs, Vector outputVariables,
-			boolean bTargetTool, Vector managedProjectOutputs) {
+			Vector inputs, Vector dependencies, Vector outputs, 
+			Vector enumeratedPrimaryOutputs, Vector enumeratedSecondaryOutputs, 
+			Vector outputVariables,	boolean bTargetTool, Vector managedProjectOutputs) {
 		
 		//  Get the information regarding the tool's inputs and outputs from the objects
 		//  created by calculateToolInputsOutputs
@@ -1482,7 +1523,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		//  Populate the output Vectors
 		inputs.addAll(toolInfo.getCommandInputs());
 		outputs.addAll(toolInfo.getCommandOutputs());
-		enumeratedOutputs.addAll(toolInfo.getEnumeratedOutputs());
+		enumeratedPrimaryOutputs.addAll(toolInfo.getEnumeratedPrimaryOutputs());
+		enumeratedSecondaryOutputs.addAll(toolInfo.getEnumeratedSecondaryOutputs());
 		outputVariables.addAll(toolInfo.getOutputVariables());
 		dependencies.addAll(toolInfo.getCommandDependencies());
 		
@@ -1493,6 +1535,37 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			}
 		}
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @param fileHandle
+	 * @throws CoreException
+	 */
+	protected Vector calculateSecondaryOutputs(IOutputType[] secondaryOutputs) {
+		Vector buildVars = new Vector();
+		for (int i=0; i<buildTools.length; i++) {
+			// Add the specified output build variables
+			IOutputType[] outTypes = buildTools[i].getOutputTypes();
+			if (outTypes != null && outTypes.length > 0) {
+				for (int j=0; j<outTypes.length; j++) {
+					IOutputType outType = outTypes[j];
+					//  Is this one of the secondary outputs?
+					//  Look for an outputType with this ID, or one with a superclass with this id
+					thisType: 
+					for (int k = 0; k < secondaryOutputs.length; k++) {
+						IOutputType matchType = outType;
+						do {
+							if (matchType.getId().equals(secondaryOutputs[k].getId())) {
+								buildVars.add(outType.getBuildVariable());
+								break thisType;
+							}		
+							matchType = matchType.getSuperClass();
+						} while (matchType != null);
+					}
+				}
+			}
+		}
+		return buildVars;
 	}
 	
 	
@@ -1566,16 +1639,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry)iterator.next();
 			String macroName = (String)entry.getKey();
-			addMacroAdditionPrefix(buildVarToRuleStringMap, macroName, "$(ROOT)/" + relativePath, true);	//$NON-NLS-1$
+			addMacroAdditionPrefix(buildVarToRuleStringMap, macroName, null, false);
 		}
 		iterator = buildOutVars.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry)iterator.next();
 			String macroName = (String)entry.getKey();
-			addMacroAdditionPrefix(buildVarToRuleStringMap, macroName, "./" + relativePath, true);
+			addMacroAdditionPrefix(buildVarToRuleStringMap, macroName, "./" + relativePath, true);	  //$NON-NLS-1$
 		}
 		// Create an entry for the DEPS macro
-		addMacroAdditionPrefix(buildVarToRuleStringMap, DEPS_MACRO, "./" + relativePath, true);
+		addMacroAdditionPrefix(buildVarToRuleStringMap, DEPS_MACRO, "./" + relativePath, true);	  //$NON-NLS-1$
  		
  		// String buffers
  		StringBuffer buffer = new StringBuffer();	// Return buffer
@@ -1601,7 +1674,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 							
 		// Write out the macro addition entries to the buffer
-		buffer.append(writeAdditionMacros(buildVarToRuleStringMap, true));
+		buffer.append(writeAdditionMacros(buildVarToRuleStringMap));
 		return buffer.append(ruleBuffer + NEWLINE);
 	}
 
@@ -1642,7 +1715,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					continue;
 				}
 				//  Add the resource name to the makefile line that adds resources to the build variable
-				addMacroAdditionFile(buildVarToRuleStringMap, varName, resource.getName());
+				String srcName;
+				if (generatedSource) { 
+					srcName = resource.getName();
+				} else {
+					String resourceLocation = resource.getLocation().toString();
+					String projectLocation = project.getLocation().toString();
+					//if (resource.isLinked()) {   NOTE: we don't use this since children of linked resources return false
+					if(!resourceLocation.startsWith(projectLocation)) {
+						srcName = resourceLocation;
+					} else {
+						srcName = "$(ROOT)/" + relativePath + resource.getName();     //$NON-NLS-1$
+					}
+				}
+				addMacroAdditionFile(buildVarToRuleStringMap, varName, srcName); 
 				
 				//  Generate the rule to build this source file
 				IInputType inputType = tool.getInputType(ext);
@@ -1670,7 +1756,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						// For support of pre-CDT 3.0 integrations.
 						buildVariable = OBJS_MACRO;   //$NON-NLS-1$
 					}
-					Vector generatedOutputs = calculateOutputsForSource(tool, relativePath, resource);
+					Vector generatedOutputs = calculateOutputsForSource(tool, relativePath, resource, false);
 					for (int k=0; k<generatedOutputs.size(); k++) {
 						//  TODO - this will only work for outputs generated below the build output directory?
 						//         try an option that generates an output outside of the project
@@ -1724,13 +1810,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String outflag = null;
 		String outputPrefix = null;
 		IManagedDependencyGenerator depGen = info.getDependencyGenerator(inputExtension);
-		boolean doDepGen = (depGen != null && depGen.getCalculatorType() == IManagedDependencyGenerator.TYPE_COMMAND); 
+		boolean doDepGen = (depGen != null && depGen.getCalculatorType() == IManagedDependencyGenerator.TYPE_COMMAND);
+		boolean patternRule = false;
 
 		// If the tool creates a dependency file, add it to the list
 		if (doDepGen) {
 			String depFile =  relativePath + resourceName + DOT + DEP_EXT;
 			getDependencyMakefiles().add(depFile);
-			generatedDepFile.append(depFile);
+			generatedDepFile.append(resourceName + DOT + DEP_EXT);
 		}
 	
 		/*
@@ -1755,31 +1842,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		//	We need to check whether we have any resource specific build information.
 		IResourceConfiguration resConfig = null;
 		if( config != null ) resConfig = config.getResourceConfiguration(resource.getFullPath().toString());
-		
-		// figure out path to use to resource
-		if(!resourceLocation.toString().startsWith(projectLocation)) {
-			// it IS linked, so use the actual location
-			isItLinked = true;
-			resourcePath = resourceLocation.toString();
-			// Need a hardcoded rule, not a pattern rule, as a linked file
-			// can reside in any path
-			buildRule = relativePath + resourceName + OptDotExt + COLON + WHITESPACE + resourcePath;
-		} else {
-			// use the relative path (not really needed to store per se but in the future someone may want this)
-			resourcePath = relativePath; 
-			
-			// The rule and command to add to the makefile
-			String home = (generatedSource)? DOT : ROOT;
-			if( resConfig != null) {
-				buildRule = resourcePath + resourceName + OptDotExt + COLON + WHITESPACE + home + SEPARATOR + resourcePath + resourceName + DOT + inputExtension;
-			} else {
-				buildRule = relativePath + WILDCARD + OptDotExt + COLON + WHITESPACE + home + SEPARATOR + resourcePath + WILDCARD + DOT + inputExtension;
-			}
-		} // end fix for PR 70491
 
-		// Add any additional dependencies specified:
-		//  1. in additionalInput elements
-		//  2. from a dependency calculator not of TYPE_COMMAND
 		ITool tool;
 		if( resConfig != null) {
 			ITool[] tools = resConfig.getTools();
@@ -1787,16 +1850,54 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		} else {
 			tool = info.getToolFromInputExtension(inputExtension);
 		}
-		// Get any additional dependencies specified for the tool
+		
+		// figure out path to use to resource
+		String primaryOutputName = EMPTY_STRING;
+		String primaryDependencyName = EMPTY_STRING;
+		//if (resource.isLinked()) {   NOTE: we don't use this since children of linked resources return false
+		if(!resourceLocation.toString().startsWith(projectLocation)) {
+			// it IS linked, so use the actual location
+			isItLinked = true;
+			resourcePath = resourceLocation.toString();
+			// Need a hardcoded rule, not a pattern rule, as a linked file
+			// can reside in any path
+			primaryOutputName = relativePath + resourceName + OptDotExt;
+			primaryDependencyName = resourcePath;
+		} else {
+			// use the relative path (not really needed to store per se but in the future someone may want this)
+			resourcePath = relativePath; 
+			
+			// The rule and command to add to the makefile
+			String home = (generatedSource)? DOT : ROOT;
+			if( resConfig != null) {
+				// Need a hardcoded rule, not a pattern rule
+				primaryOutputName = resourcePath + resourceName + OptDotExt;
+				primaryDependencyName = home + SEPARATOR + resourcePath + resourceName + DOT + inputExtension;
+			} else {
+				primaryOutputName = relativePath + WILDCARD + OptDotExt;
+				primaryDependencyName = home + SEPARATOR + resourcePath + WILDCARD + DOT + inputExtension;
+				patternRule = true;
+			}
+		} // end fix for PR 70491
+
+		buildRule = primaryOutputName;
+
+		// If this is a pattern rule, add any additional outputs here
+		String otherPrimaryOutputs = EMPTY_STRING;
+		if (patternRule) {
+			Vector addlOutputs = calculateOutputsForSource(tool, relativePath, resource, true);
+			for (int i=0; i<addlOutputs.size(); i++) {
+				otherPrimaryOutputs += WHITESPACE + ((IPath)addlOutputs.get(i)).toString();
+			}
+		}
+		
+		buildRule += otherPrimaryOutputs + COLON + WHITESPACE + primaryDependencyName;
+
+		// Other additional inputs
+		// Get any additional dependencies specified for the tool in other InputType elements and AdditionalInput elements
 		IPath[] addlDepPaths = tool.getAdditionalDependencies();
 		for (int i=0; i<addlDepPaths.length; i++) {
 			buildRule += WHITESPACE + addlDepPaths[i].toString();
-		}
-		if (depGen != null && depGen.getCalculatorType() != IManagedDependencyGenerator.TYPE_COMMAND) { 
-			Vector addlDepsVector = calculateDependenciesForSource(depGen, tool, relativePath, resource);
-			for (int i=0; i<addlDepsVector.size(); i++) {
-				buildRule += WHITESPACE + addlDepsVector.get(i).toString();
-			}
 		}
 				
 		// No duplicates in a makefile
@@ -1824,7 +1925,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				// TODO add some routines to catch this
 				flags = EMPTY_STRING_ARRAY;
 			}
-			// Get any additional dependencies specified for the tool
+			// Other additional inputs
+			// Get any additional dependencies specified for the tool in other InputType elements and AdditionalInput elements
 			IPath[] addlInputPaths = tool.getAdditionalResources();
 			for (int i=0; i<addlInputPaths.length; i++) {
 				inputs.add(addlDepPaths[i].toString());
@@ -1832,7 +1934,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// Call the command line generator
 			IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
 			cmdLInfo = cmdLGen.generateCommandLineInfo( tool, cmd, flags, outflag, outputPrefix,
-					OUT_MACRO, (String[])inputs.toArray(new String[inputs.size()]), tool.getCommandLinePattern() );
+					OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]), tool.getCommandLinePattern() );
 	
 			String buildCmd = cmdLInfo.getCommandLine();
 			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
@@ -1847,17 +1949,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			outflag = info.getOutputFlag(outputExtension);
 			outputPrefix = info.getOutputPrefix(outputExtension);
 			String[] flags = buildFlags.split( "\\s" ); //$NON-NLS-1$
-			// Get any additional dependencies specified for the tool
+			// Other additional inputs
+			// Get any additional dependencies specified for the tool in other InputType elements and AdditionalInput elements
 			IPath[] addlInputPaths = tool.getAdditionalResources();
 			for (int i=0; i<addlInputPaths.length; i++) {
 				inputs.add(addlDepPaths[i].toString());
 			}
 			// Call the command line generator
 			cmdLInfo = info.generateCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
-					OUT_MACRO, (String[])inputs.toArray(new String[inputs.size()]) );
+					OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]) );
 			// The command to build
 			String buildCmd = null;
-			if( cmdLInfo == null ) buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + OUT_MACRO + WHITESPACE + IN_MACRO;
+			if( cmdLInfo == null ) buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + 
+					outflag + WHITESPACE + outputPrefix + OUT_MACRO + otherPrimaryOutputs + WHITESPACE + IN_MACRO;
 			else buildCmd = cmdLInfo.getCommandLine();
 			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 			buffer.append(TAB + AT + buildCmd);
@@ -1875,6 +1979,30 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append(NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
+
+
+		//  Add separate dependency lines per file if necessary
+		boolean addedDepLines = false; 
+		if (depGen != null && depGen.getCalculatorType() != IManagedDependencyGenerator.TYPE_COMMAND) { 
+			Vector addlDepsVector = calculateDependenciesForSource(depGen, tool, relativePath, resource);
+			for (int i=0; i<addlDepsVector.size(); i++) {
+				buffer.append(primaryOutputName + COLON + WHITESPACE + addlDepsVector.get(i).toString() + NEWLINE);
+				addedDepLines = true;
+			}
+		}
+
+		// If this is NOT a pattern rule, add any additional outputs here using dependency lines
+		if (!patternRule) {
+			Vector addlOutputs = calculateOutputsForSource(tool, relativePath, resource, true);
+			for (int i=0; i<addlOutputs.size(); i++) {
+				buffer.append(((IPath)addlOutputs.get(i)).toString() + COLON + WHITESPACE + primaryOutputName + NEWLINE);
+				addedDepLines = true;
+			}
+		}
+		if (addedDepLines) {
+			buffer.append(NEWLINE);			
+		}
+
 	}
 
 	/* (non-Javadoc)
@@ -1895,7 +2023,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 *  @param resource
 	 *  @return Vector of IPaths that are relative to the build directory 
 	 */  
-	protected Vector calculateOutputsForSource(ITool tool, String relativePath, IResource resource) {
+	protected Vector calculateOutputsForSource(ITool tool, 
+			String relativePath, IResource resource, boolean ignorePrimary) {
 		Vector outputs = new Vector();
 		String inExt = resource.getFileExtension();
 		String outExt = tool.getOutputExtension(inExt);
@@ -1904,13 +2033,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		if (outTypes != null && outTypes.length > 0) {
 			for (int i=0; i<outTypes.length; i++) {
 				IOutputType type = outTypes[i];
+				boolean primaryOutput = (type == tool.getPrimaryOutputType());
+				if (primaryOutput && ignorePrimary) continue;
 				String outputPrefix = type.getOutputPrefix();
 				String variable = type.getBuildVariable();
 				boolean multOfType = type.getMultipleOfType();
-				boolean primaryOutput = (type == tool.getPrimaryOutputType());
-				IOption option = getOption(tool, type.getOptionId());
+				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
 				IManagedOutputNameProvider nameProvider = type.getNameProvider();
-				String outputNames = type.getOutputNames();
+				String[] outputNames = type.getOutputNames();
 
 				//  1.  If the tool is the build target and this is the primary output, 
 				//      use artifact name & extension
@@ -1950,9 +2080,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				} else
 				//  4.  If outputNames is specified, use it
 				if (outputNames != null) {
-					String[] pathTokens = outputNames.split(";"); //$NON-NLS-1$
-					for (int j = 0; j < pathTokens.length; j++) {
-						outputs.add(Path.fromOSString(pathTokens[j]));
+					for (int j = 0; j < outputNames.length; j++) {
+						outputs.add(Path.fromOSString(outputNames[j]));
 					}
 				} else {
 				//  4.  Use the name pattern to generate a transformation macro 
@@ -1990,14 +2119,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			//     In this case, the output file name is the input file name with
 			//     the output extension.
 
-			IPath outPath = resource.getFullPath().removeFileExtension();
-			String outPrefix = tool.getOutputPrefix();
-			if (outPrefix.length() > 0) {
-				String outName = outPrefix + outPath.lastSegment();
-				outPath = outPath.removeLastSegments(1).append(outName);
+			if (!ignorePrimary) {
+				IPath outPath = Path.fromOSString(resource.getFullPath().removeFileExtension().lastSegment());
+				String outPrefix = tool.getOutputPrefix();
+				if (outPrefix.length() > 0) {
+					String outName = outPrefix + outPath.lastSegment();
+					outPath = outPath.removeLastSegments(1).append(outName);
+				}
+				outPath = outPath.addFileExtension(outExt);
+				outputs.add(outPath);
 			}
-			outPath = outPath.addFileExtension(outExt);
-			outputs.add(outPath);
 		}
 		
 		return outputs;
@@ -2143,9 +2274,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	protected void addMacroAdditionPrefix(HashMap map, String macroName, String relativePath, boolean addPrefix) {
 		// there is no entry in the map, so create a buffer for this macro
 		StringBuffer tempBuffer = new StringBuffer();
-		tempBuffer.append(macroName + WHITESPACE + MACRO_ADDITION_PREFIX_SUFFIX);	//$NON-NLS-1$
+		tempBuffer.append(macroName + WHITESPACE + MACRO_ADDITION_PREFIX_SUFFIX);
 		if (addPrefix) {
-			tempBuffer.append("${addprefix " + relativePath + MACRO_ADDITION_ADDPREFIX_SUFFIX);	//$NON-NLS-1$ //$NON-NLS-2$
+			tempBuffer.append(MACRO_ADDITION_ADDPREFIX_HEADER + relativePath + MACRO_ADDITION_ADDPREFIX_SUFFIX);
 		}
 		
 		// have to store the buffer in String form as StringBuffer is not a sublcass of Object
@@ -2186,7 +2317,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	/* (non-Javadoc)
 	 * Write all macro addition entries in a map to the buffer
 	 */
-	protected StringBuffer writeAdditionMacros(HashMap map, boolean addPrefix) {
+	protected StringBuffer writeAdditionMacros(HashMap map) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_VARS) + NEWLINE);
@@ -2199,12 +2330,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// Check if we added any files to the rule
 			// Currently, we do this by comparing the end of the rule buffer to MACRO_ADDITION_PREFIX_SUFFIX
 			if (!(macroString.endsWith(MACRO_ADDITION_PREFIX_SUFFIX)) && 
-					!(macroString.endsWith(MACRO_ADDITION_ADDPREFIX_SUFFIX))) {
+				!(macroString.endsWith(MACRO_ADDITION_ADDPREFIX_SUFFIX))) {
 				StringBuffer currentBuffer = new StringBuffer();
-				currentBuffer.append( macroString);
 				// Close off the rule
-				if (addPrefix) {
-					currentBuffer.append("}"); //$NON-NLS-1$
+				if (macroString.indexOf(MACRO_ADDITION_ADDPREFIX_HEADER) >= 0) {
+					currentBuffer.append(macroString + "}" + NEWLINE); //$NON-NLS-1$
+				} else {
+					// Remove the final "/"
+					if (macroString.endsWith(LINEBREAK)) {
+						macroString = macroString.substring(0, (macroString.length() - 2)) + NEWLINE;
+					}
+					currentBuffer.append(macroString);
 				}
 				currentBuffer.append(NEWLINE);
  			
@@ -2403,28 +2539,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			ruleList = new Vector();
 		}
 		return ruleList;
-	}
-
-	/* (non-Javadoc)
-	 * Returns the option that matches the option ID in this tool
-	 */
-	public IOption getOption(ITool tool, String optionId) {
-		if (optionId == null) return null;
-		
-		//  Look for an option with this ID, or an option with a superclass with this id
-		IOption[] options = tool.getOptions();
-		for (int i = 0; i < options.length; i++) {
-			IOption targetOption = options[i];
-			IOption option = targetOption;
-			do {
-				if (optionId.equals(option.getId())) {
-					return targetOption;
-				}		
-				option = option.getSuperClass();
-			} while (option != null);
-		}
-		
-		return null;
 	}
 	
 	/*************************************************************************

@@ -39,15 +39,15 @@ public interface IAdditionalInput {
 	public IInputType getParent();
 
 	/**
-	 * Returns a semi-colon separated list of the relative or absolute paths of the resources
+	 * Returns an array of the relative or absolute paths of the resources
 	 * to which this element applies.
 	 * The resources must be a member of the project, the output from another tool in the 
 	 * tool-chain, or an external file.  The file name of the path can use GNU Make pattern 
 	 * rule syntax (in order to generate the name from the input file name).
 	 * 
-	 * @return String
+	 * @return String[]
 	 */
-	public String getPaths();
+	public String[] getPaths();
 
 	/**
 	 * Sets semi-colon separated list of the relative or absolute paths of the resources to 

@@ -118,12 +118,9 @@
       </managedBuildRevision>
       <tool
             natureFilter="cnature"
-            sources="o"
-			outputs=""
             name="%ToolName.linker.gnu.c"
             outputFlag="-o"
             command="gcc"
-            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.c.linker">
          <envVarBuildPath 
          	pathType="buildpathLibrary"
@@ -255,15 +252,32 @@
                id="gnu.c.link.option.defname"
                valueType="string">
          </option>
+         <inputType
+            sources="o"
+			multipleOfType="true"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.gnu.c.linker.input">
+            <additionalInput
+            	paths="$(USER_OBJS)"
+            	kind="additionalinputdependency">
+            </additionalInput>
+            <additionalInput
+            	paths="$(LIBS)"
+            	kind="additionalinput">
+            </additionalInput>
+         </inputType>
+         <outputType
+			outputs=""
+            buildVariable="EXECUTABLES"
+            id="cdt.managedbuild.tool.gnu.c.linker.output">
+         </outputType>
       </tool>
       <tool
             natureFilter="ccnature"
-            sources="o"
-            outputs=""
             name="%ToolName.linker.gnu.cpp"
             outputFlag="-o"
             command="g++"
-            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.cpp.linker">
          <envVarBuildPath 
          	pathType="buildpathLibrary"
@@ -386,16 +400,32 @@
                valueType="string"
                id="gnu.cpp.link.option.defname">
          </option>
+         <inputType
+            sources="o"
+			multipleOfType="true"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.gnu.cpp.linker.input">
+            <additionalInput
+            	paths="$(USER_OBJS)"
+            	kind="additionalinputdependency">
+            </additionalInput>
+            <additionalInput
+            	paths="$(LIBS)"
+            	kind="additionalinput">
+            </additionalInput>
+         </inputType>
+         <outputType
+			outputs=""
+            buildVariable="EXECUTABLES"
+            id="cdt.managedbuild.tool.gnu.cpp.linker.output">
+         </outputType>
       </tool>
       <tool
             natureFilter="both"
             isAbstract="true"
-            sources="o"
             name="%ToolName.archiver.gnu"
-            outputs="a"
             command="ar"
-            outputPrefix="lib"
-            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.gnu.archiver">
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.archiver"
@@ -409,6 +439,27 @@
                valueType="string"
                id="gnu.both.lib.option.flags">
          </option>
+         <inputType
+            sources="o"
+			multipleOfType="true"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.gnu.archiver.input">
+            <additionalInput
+            	paths="$(USER_OBJS)"
+            	kind="additionalinputdependency">
+            </additionalInput>
+            <additionalInput
+            	paths="$(LIBS)"
+            	kind="additionalinput">
+            </additionalInput>
+         </inputType>
+         <outputType
+			outputs="a"
+            outputPrefix="lib"
+            buildVariable="ARCHIVES"
+            id="cdt.managedbuild.tool.gnu.archiver.output">
+         </outputType>
       </tool>
       <!--tool
             command="windres"
@@ -475,8 +526,6 @@
       </tool-->
       <tool
             command="as"
-            sources="s,S"
-            outputs="o"
             name="%ToolName.assembler.gnu"
             outputFlag="-o"
             id="cdt.managedbuild.tool.gnu.assembler"
@@ -513,15 +562,21 @@
                category="gnu.asm.category.general"
                name="%Option.Gnu.Assembler.version"
                id="gnu.both.asm.option.version"/>
+         <inputType
+            sources="s,S"
+            id="cdt.managedbuild.tool.gnu.assembler.input">
+         </inputType>
+         <outputType
+			outputs="o"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.gnu.assembler.output">
+         </outputType>
       </tool>
       <tool
             natureFilter="cnature"
-            sources="o"
-            outputs=""
             name="%ToolName.linker.macosx.c"
             outputFlag="-o"
             command="gcc"
-            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.macosx.c.linker">
          <envVarBuildPath 
          	pathType="buildpathLibrary"
@@ -632,15 +687,32 @@
                id="macosx.c.link.option.shared"
                valueType="boolean">
          </option>
+         <inputType
+            sources="o"
+			multipleOfType="true"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.macosx.c.linker.input">
+            <additionalInput
+            	paths="$(USER_OBJS)"
+            	kind="additionalinputdependency">
+            </additionalInput>
+            <additionalInput
+            	paths="$(LIBS)"
+            	kind="additionalinput">
+            </additionalInput>
+         </inputType>
+         <outputType
+			outputs=""
+            buildVariable="EXECUTABLES"
+            id="cdt.managedbuild.tool.macosx.c.linker.output">
+         </outputType>
       </tool>
       <tool
             natureFilter="ccnature"
-            sources="o"
-            outputs=""
             name="%ToolName.linker.macosx.cpp"
             outputFlag="-o"
             command="g++"
-            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
             id="cdt.managedbuild.tool.macosx.cpp.linker">
          <envVarBuildPath 
          	pathType="buildpathLibrary"
@@ -742,18 +814,34 @@
                valueType="boolean"
                id="macosx.cpp.link.option.shared">
          </option>
+         <inputType
+            sources="o"
+			multipleOfType="true"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
+            buildVariable="OBJS"
+            id="cdt.managedbuild.tool.macosx.cpp.linker.input">
+            <additionalInput
+            	paths="$(USER_OBJS)"
+            	kind="additionalinputdependency">
+            </additionalInput>
+            <additionalInput
+            	paths="$(LIBS)"
+            	kind="additionalinput">
+            </additionalInput>
+         </inputType>
+         <outputType
+			outputs=""
+            buildVariable="EXECUTABLES"
+            id="cdt.managedbuild.tool.macosx.cpp.linker.output">
+         </outputType>
       </tool>
       
       <tool
 		  name="%ToolName.compiler.gnu.c"
 		  id="cdt.managedbuild.tool.gnu.c.compiler"
 		  isAbstract="true"
-		  sources="c"
 		  command="gcc"
-		  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
-		  headerExtensions="h"
 		  natureFilter="cnature"
-		  outputs="o"
 		  outputFlag="-o">
          <envVarBuildPath 
          	pathType="buildpathInclude"
@@ -987,17 +1075,24 @@
 			  id="gnu.c.compiler.option.misc.ansi"
 			  valueType="boolean">
 		  </option>
+          <inputType
+		      sources="c"
+			  dependencyExtensions="h"
+			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
+              id="cdt.managedbuild.tool.gnu.c.compiler.input">
+          </inputType>
+          <outputType
+			  outputs="o"
+              buildVariable="OBJS"
+              id="cdt.managedbuild.tool.gnu.c.compiler.output">
+          </outputType>
 	  </tool>
 	  <tool
 		  name="%ToolName.compiler.gnu.cpp"
 		  id="cdt.managedbuild.tool.gnu.cpp.compiler"
 		  isAbstract="true"
-		  sources="c,C,cc,cxx,cpp"
 		  command="g++"
-		  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
-		  headerExtensions="h,H,hpp"
 		  natureFilter="ccnature"
-		  outputs="o"
 		  outputFlag="-o">
          <envVarBuildPath 
          	pathType="buildpathInclude"
@@ -1217,6 +1312,17 @@
 			  id="gnu.cpp.compiler.option.other.verbose"
 			  valueType="boolean">
 		  </option>
+          <inputType
+			  sources="c,C,cc,cxx,cpp"
+			  dependencyExtensions="h,H,hpp"
+			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
+              id="cdt.managedbuild.tool.gnu.cpp.compiler.input">
+          </inputType>
+          <outputType
+			  outputs="o"
+              buildVariable="OBJS"
+              id="cdt.managedbuild.tool.gnu.cpp.compiler.output">
+          </outputType>
 	  </tool>
       
       <tool
@@ -1227,6 +1333,11 @@
               variableList="LIBRARY_PATH"
               buildPathResolver="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.CygwinPathResolver">
           </envVarBuildPath>
+          <outputType
+			  outputs="exe"
+              superClass="cdt.managedbuild.tool.gnu.c.linker.output"
+              id="cdt.managedbuild.tool.gnu.c.linker.cygwin.output">
+          </outputType>
       </tool>
       <tool
           id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin"
@@ -1236,6 +1347,11 @@
               variableList="LIBRARY_PATH"
               buildPathResolver="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.CygwinPathResolver">
           </envVarBuildPath>
+		  <outputType
+			  outputs="exe"
+              superClass="cdt.managedbuild.tool.gnu.cpp.linker.output"
+			  id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output">
+		  </outputType>
       </tool>
       <tool
           id="cdt.managedbuild.tool.gnu.c.compiler.cygwin"
@@ -1271,6 +1387,7 @@
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.exe.debug;cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.exe.debug">
 		          <targetPlatform
@@ -1338,6 +1455,7 @@
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.exe.release;cdt.managedbuild.tool.gnu.cpp.linker.exe.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.exe.release">
 		          <targetPlatform
@@ -1413,6 +1531,7 @@
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.so.debug;cdt.managedbuild.tool.gnu.cpp.linker.so.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.so.debug">
 		          <targetPlatform
@@ -1459,25 +1578,35 @@
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.c.linker.so.debug"
-					  outputs="so"
-					  outputPrefix="lib"
 					  superClass="cdt.managedbuild.tool.gnu.c.linker">
 					  <option
 						  id="gnu.c.link.so.debug.option.shared"
 						  defaultValue="true"
 						  superClass="gnu.c.link.option.shared">
 					  </option>
+			          <outputType
+						  outputs="so"
+						  outputPrefix="lib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.output"
+			              id="cdt.managedbuild.tool.gnu.c.linker.so.debug.output">
+			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug"
-					  outputs="so"
-					  outputPrefix="lib"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.linker">
 					  <option
 						  id="gnu.cpp.link.so.debug.option.shared"
 						  defaultValue="true"
 						  superClass="gnu.cpp.link.option.shared">
 					  </option>
+			          <outputType
+						  outputs="so"
+						  outputPrefix="lib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.output"
+			              id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.output">
+			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.so.debug"
@@ -1495,6 +1624,7 @@
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.so.release;cdt.managedbuild.tool.gnu.cpp.linker.so.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.so.release">
 		          <targetPlatform
@@ -1541,25 +1671,35 @@
 				  </tool>				
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.c.linker.so.release"
-					  outputs="so"
-					  outputPrefix="lib"
 					  superClass="cdt.managedbuild.tool.gnu.c.linker">
 					  <option
 						  id="gnu.c.link.so.release.option.shared"
 						  defaultValue="true"
 						  superClass="gnu.c.link.option.shared">
 					  </option>
+			          <outputType
+						  outputs="so"
+						  outputPrefix="lib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.output"
+			              id="cdt.managedbuild.tool.gnu.c.linker.so.release.output">
+			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.linker.so.release"
-					  outputs="so"
-					  outputPrefix="lib"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.linker">
 					  <option
 						  id="gnu.cpp.link.so.release.option.shared"
 						  defaultValue="true"
 						  superClass="gnu.cpp.link.option.shared">
 					  </option>
+			          <outputType
+						  outputs="so"
+						  outputPrefix="lib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.output"
+			              id="cdt.managedbuild.tool.gnu.cpp.linker.so.release.output">
+			          </outputType>
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.so.release"
@@ -1584,6 +1724,7 @@
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.gnu.archiver.lib.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.lib.debug">
 				  <targetPlatform
@@ -1630,8 +1771,6 @@
                   </tool>
 			      <tool
 		    		  id="cdt.managedbuild.tool.gnu.archiver.lib.debug"
-				      outputs="a"
-                      outputPrefix="lib"
 			          superClass="cdt.managedbuild.tool.gnu.archiver">
 				  </tool>                 
 				  <tool
@@ -1650,6 +1789,7 @@
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.gnu.archiver.lib.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.lib.release">
 		          <targetPlatform
@@ -1696,8 +1836,6 @@
 				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.archiver.lib.release"
-					  outputs="a"
-                      outputPrefix="lib"
 				      superClass="cdt.managedbuild.tool.gnu.archiver">
 				  </tool>
 				  <tool
@@ -1723,6 +1861,7 @@
                      archList="all"
                      osList="win32"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
@@ -1771,12 +1910,10 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug"
-                      outputs="exe"
                       superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
-                      outputs="exe"
                       superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                   </tool>                  
 				  <tool
@@ -1795,6 +1932,7 @@
                      archList="all"
                      osList="win32"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
@@ -1843,12 +1981,10 @@
                   </tool>                      
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release"
-                      outputs="exe"
                       superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.release"
-                      outputs="exe"
                       superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                   </tool>
 				  <tool
@@ -1874,6 +2010,7 @@
                      archList="all"
                      osList="win32"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
@@ -1922,23 +2059,33 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug"
-                      outputs="dll,a.dll"
                       superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                       <option
                           id="gnu.c.link.cygwin.so.debug.option.shared"
                           defaultValue="true"
                           superClass="gnu.c.link.option.shared">
                       </option>
+			          <outputType
+	                      outputs="dll,a.dll"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.output"
+			              id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug.output">
+			          </outputType>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug"
-                      outputs="dll,a.dll"
                       superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                       <option
                           id="gnu.cpp.link.cygwin.so.debug.option.shared"
                           defaultValue="true"
                           superClass="gnu.cpp.link.option.shared">
                       </option>
+			          <outputType
+	                      outputs="dll,a.dll"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output"
+			              id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug.output">
+			          </outputType>
                   </tool>                  
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.so.debug"
@@ -1956,6 +2103,7 @@
                      archList="all"
                      osList="win32"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
@@ -2004,23 +2152,33 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release"
-                      outputs="dll,a.dll"
                       superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
                       <option
                           id="gnu.c.link.cygwin.so.release.option.shared"
                           defaultValue="true"
                           superClass="gnu.c.link.option.shared">
                       </option>
+			          <outputType
+	                      outputs="dll,a.dll"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.output"
+			              id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release.output">
+			          </outputType>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release"
-                      outputs="dll,a.dll"
                       superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin">
                       <option
                           id="gnu.cpp.link.cygwin.so.release.option.shared"
                           defaultValue="true"
                           superClass="gnu.cpp.link.option.shared">
                       </option>
+			          <outputType
+	                      outputs="dll,a.dll"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.output"
+			              id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release.output">
+			          </outputType>
                   </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.so.release"
@@ -2045,6 +2203,7 @@
                      archList="all"
                      osList="win32"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
@@ -2093,8 +2252,6 @@
 				  </tool>  
                   <tool
                       id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.debug"
-                      outputPrefix="lib"
-                      outputs="a"
                       superClass="cdt.managedbuild.tool.gnu.archiver">
                   </tool>
 				  <tool
@@ -2113,6 +2270,7 @@
                      archList="all"
                      osList="win32"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
                      isToolChainSupported="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
@@ -2160,15 +2318,13 @@
                      </option>
                  </tool>
                  <tool
-                    id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
-                    outputPrefix="lib"
-                    outputs="a"
-                    superClass="cdt.managedbuild.tool.gnu.archiver">
+                     id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
+                     superClass="cdt.managedbuild.tool.gnu.archiver">
                  </tool>
-				  <tool
+				 <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.release"
 					  superClass="cdt.managedbuild.tool.gnu.assembler">
-				  </tool>   
+				 </tool>   
               </toolChain>                                                                                				                    
          </configuration>         
       </projectType>
@@ -2187,6 +2343,7 @@
                      archList="all"
                      osList="macosx"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug;cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.macosx.exe.debug">
                   <targetPlatform
@@ -2254,6 +2411,7 @@
                      archList="all"
                      osList="macosx"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release;cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.macosx.exe.release">
                   <targetPlatform
@@ -2329,6 +2487,7 @@
                      archList="all"
                      osList="macosx"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.so.debug;cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.macosx.so.debug">
                   <targetPlatform
@@ -2375,8 +2534,6 @@
                   </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.debug"
-					  outputs="dylib"
-					  outputPrefix="lib"
 					  superClass="cdt.managedbuild.tool.macosx.c.linker">
 					  <option
 					      id="macosx.c.link.macosx.so.debug.option.shared"
@@ -2393,16 +2550,28 @@
 						  defaultValue="true"
 						  superClass="macosx.c.link.option.nodeflibs">
 					  </option>
+			          <outputType
+	                      outputs="dylib"
+	                      outputPrefix="lib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.macosx.c.linker.output"
+			              id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.debug.output">
+			          </outputType>
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.debug"
-					  outputs="dylib"
 					  superClass="cdt.managedbuild.tool.macosx.cpp.linker">
 					  <option
 					      id="macosx.cpp.link.macosx.so.debug.option.shared"
 						  defaultValue="true"
 						  superClass="macosx.cpp.link.option.shared">
 					  </option>
+			          <outputType
+	                      outputs="dylib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output"
+			              id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.debug.output">
+			          </outputType>
 				  </tool>                                  
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.so.debug"
@@ -2420,6 +2589,7 @@
                      archList="all"
                      osList="macosx"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.tool.macosx.c.linker.macosx.so.release;cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.macosx.so.release">
                   <targetPlatform
@@ -2466,8 +2636,6 @@
                   </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.release"
-					  outputs="dylib"
-					  outputPrefix="lib"
 					  superClass="cdt.managedbuild.tool.macosx.c.linker">
 					  <option
 					      id="macosx.c.link.macosx.so.release.option.shared"
@@ -2484,16 +2652,28 @@
 						  defaultValue="true"
 						  superClass="macosx.c.link.option.nodeflibs">
 					  </option>
+			          <outputType
+	                      outputs="dylib"
+	                      outputPrefix="lib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.macosx.c.linker.output"
+			              id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.release.output">
+			          </outputType>
 				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.release"
-					  outputs="dylib"
 					  superClass="cdt.managedbuild.tool.macosx.cpp.linker">
 					  <option
 					      id="macosx.cpp.link.macosx.so.release.option.shared"
 						  defaultValue="true"
 						  superClass="macosx.cpp.link.option.shared">
 					  </option>
+			          <outputType
+	                      outputs="dylib"
+			              buildVariable="LIBRARIES"
+			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output"
+			              id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.release.output">
+			          </outputType>
 				  </tool>                
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.so.release"
@@ -2518,6 +2698,7 @@
                      archList="all"
                      osList="macosx"
                      name="%ToolChainName.Dbg"
+                     targetTool="cdt.managedbuild.toolmacosx.lib.debug.gnu.archiver"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.macosx.lib.debug">
                   <targetPlatform
@@ -2564,8 +2745,6 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.toolmacosx.lib.debug.gnu.archiver"
-                      outputPrefix="lib"
-                      outputs="a"
                       superClass="cdt.managedbuild.tool.gnu.archiver">
                   </tool>                                   
 				  <tool
@@ -2584,6 +2763,7 @@
                      archList="all"
                      osList="macosx"
                      name="%ToolChainName.Rel"
+                     targetTool="cdt.managedbuild.toolmacosx.lib.release.gnu.archiver"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.gnu.macosx.lib.release">
                   <targetPlatform
@@ -2630,8 +2810,6 @@
                   </tool>
                   <tool
                       id="cdt.managedbuild.toolmacosx.lib.release.gnu.archiver"
-                      outputPrefix="lib"
-                      outputs="a"
                       superClass="cdt.managedbuild.tool.gnu.archiver">
                   </tool>                 
 				  <tool

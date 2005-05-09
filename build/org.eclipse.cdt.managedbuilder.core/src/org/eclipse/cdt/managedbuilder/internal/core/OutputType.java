@@ -685,7 +685,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOuputType#getOutputNames()
 	 */
-	public String getOutputNames() {
+	public String[] getOutputNames() {
 		if (outputNames == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
@@ -694,14 +694,15 @@ public class OutputType extends BuildObject implements IOutputType {
 				return null;
 			}
 		}
-		return outputNames;
+		String[] nameTokens = outputNames.split(";"); //$NON-NLS-1$
+		return nameTokens;
 	}
 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOuputType#setOutputNames()
 	 */
-	public void getOutputNames(String names) {
+	public void setOutputNames(String names) {
 		if (names == null && outputNames == null) return;
 		if (outputNames == null || names == null || !(names.equals(outputNames))) {
 			outputNames = names;
@@ -713,14 +714,16 @@ public class OutputType extends BuildObject implements IOutputType {
 	 * @see org.eclipse.cdt.core.build.managed.IOuputType#getPrimaryInputType()
 	 */
 	public IInputType getPrimaryInputType() {
-		if (primaryInputType == null) {
+		IInputType ret = primaryInputType;
+		if (ret == null) {
 			if (superClass != null) {
-				return superClass.getPrimaryInputType();
-			} else {
-				return null;
+				ret = superClass.getPrimaryInputType();
+			}
+			if (ret == null) {
+				ret = getParent().getPrimaryInputType();
 			}			
 		}
-		return primaryInputType;
+		return ret;
 	}
 
 	/* (non-Javadoc)

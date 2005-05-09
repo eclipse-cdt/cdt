@@ -1330,15 +1330,7 @@ If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelim
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of the extension point usage:
-&lt;p&gt;
-&lt;pre&gt;
-   &lt;extension
-         id=&quot;buildExample&quot;
-         name=&quot;Definitions for Build Example&quot;
-         point=&quot;org.eclipse.cdt.managedbuilder.core.buildDefinitions&quot;&gt;
-   etc...
-&lt;/pre&gt;
+         [Enter examples here.]
       </documentation>
    </annotation>
 

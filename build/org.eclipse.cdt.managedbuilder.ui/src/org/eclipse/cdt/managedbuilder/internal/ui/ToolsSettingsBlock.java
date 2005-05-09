@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -17,7 +17,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildOptionSettingsPage;
@@ -67,6 +70,8 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	private static final String TREE_LABEL = LABEL + ".ToolTree";	//$NON-NLS-1$
 	private static final String OPTIONS_LABEL = LABEL + ".ToolOptions";	//$NON-NLS-1$
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 20, 30 };
+
+	private static final String EMPTY_STRING = new String();
 	
 	/*
 	 * Dialog widgets
@@ -365,6 +370,9 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 
 	protected void setValues() {
 		
+		IConfiguration config = null;	
+		IResourceConfiguration resConfig = null;
+		
 		if (provider == null) {
 //			IResource element = parent.getProject(); 
 			IResource resource = (IResource) element;
@@ -372,9 +380,11 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			optionList.setContentProvider(provider);
 		}
 		if ( element instanceof IProject ) {
-			optionList.setInput(parent.getSelectedConfiguration());	
+			config = parent.getSelectedConfiguration();	
+			optionList.setInput(config);	
 		} else if ( element instanceof IFile){
-			optionList.setInput(resParent.getCurrentResourceConfig());
+			resConfig = resParent.getCurrentResourceConfig();
+			optionList.setInput(resConfig);
 		}
 		
 		optionList.expandAll();
@@ -399,11 +409,58 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		// Determine what the selection in the tree should be
 		Object primary = null;
 		if (selectedTool != null) {
-			// There is a selected tool defined
-			primary = selectedTool;
+			// There is a selected tool defined.  See if it matches any current tool (by name)
+			ITool[] tools = null;
+			if ( element instanceof IProject ) {
+				tools = config.getFilteredTools();
+			} else if ( element instanceof IFile){
+				tools = resConfig.getTools();
+			}			
+			String matchName = selectedTool.getName();
+			for (int i=0; i<tools.length; i++) {
+				ITool tool = tools[i];
+				if (tool.getName().equals(matchName)) {
+					primary = tool;
+					break;
+				}
+			}
 		} else if (selectedCategory != null) {
-			// There is a selected option or category
-			primary = selectedCategory;
+			// There is a selected option or category.  
+			// See if it matches any category in the current config (by name)
+			ITool[] tools = null;
+			if ( element instanceof IProject ) {
+				tools = config.getFilteredTools();
+			} else if ( element instanceof IFile){
+				tools = resConfig.getTools();
+			}
+			String matchName = EMPTY_STRING;
+			IBuildObject catOrTool = selectedCategory;
+			do {
+				matchName = catOrTool.getName() + matchName;
+				if (catOrTool instanceof ITool) break;
+				else if (catOrTool instanceof IOptionCategory) {
+					catOrTool = ((IOptionCategory)catOrTool).getOwner();					
+				} else break;
+			} while (catOrTool != null);
+			for (int i=0; i<tools.length && primary == null; i++) {
+				ITool tool = tools[i];
+				IOptionCategory[] cats = tool.getChildCategories();
+				for (int j=0; j<cats.length; j++) {
+					String catName = EMPTY_STRING;
+					catOrTool = cats[j]; 
+					do {
+						catName = catOrTool.getName() + catName;
+						if (catOrTool instanceof ITool) break;
+						else if (catOrTool instanceof IOptionCategory) {
+							catOrTool = ((IOptionCategory)catOrTool).getOwner();					
+						} else break;
+					} while (catOrTool != null);
+					if (catName.equals(matchName)) {
+						primary = cats[j];
+						break;
+					}
+				}
+			}
 		} 
 		
 		if (primary == null) {

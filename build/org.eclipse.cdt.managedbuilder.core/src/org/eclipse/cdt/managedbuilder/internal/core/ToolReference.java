@@ -1061,6 +1061,10 @@ public class ToolReference implements IToolReference {
 	public void setCustomBuildStep(boolean customBuildStep) {
 	}
 
+	public IOption getOptionBySuperClassId(String id) {
+		return null;
+	}
+
 	/*
 	 * The following methods are added to allow the converter from ToolReference -> Tool
 	 * to retrieve the actual value of attributes.  These routines do not go to the

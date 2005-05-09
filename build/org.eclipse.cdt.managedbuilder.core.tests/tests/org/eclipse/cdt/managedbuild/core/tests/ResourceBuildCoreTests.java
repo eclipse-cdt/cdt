@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -31,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -84,7 +84,7 @@ public class ResourceBuildCoreTests extends TestCase {
 			project = createProject(projectName);
 			
 			// Now associate the builder with the project
-			addManagedBuildNature(project);
+			ManagedBuildTestHelper.addManagedBuildNature(project);
 			IProjectDescription description = project.getDescription();
 			// Make sure it has a managed nature
 			if (description != null) {
@@ -97,7 +97,7 @@ public class ResourceBuildCoreTests extends TestCase {
 	
 		// Find the base project type definition
 		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
-		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu.exe");
+		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.exe");
 		assertNotNull(projType);
 		
 		// Create the managed-project (.cdtbuild) for our project that builds an executable.
@@ -271,7 +271,7 @@ public class ResourceBuildCoreTests extends TestCase {
 			project = createProject(projectName);
 			
 			// Now associate the builder with the project
-			addManagedBuildNature(project);
+			ManagedBuildTestHelper.addManagedBuildNature(project);
 			IProjectDescription description = project.getDescription();
 			// Make sure it has a managed nature
 			if (description != null) {
@@ -284,7 +284,7 @@ public class ResourceBuildCoreTests extends TestCase {
 	
 		// Find the base project type definition
 		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
-		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu.exe");
+		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.exe");
 		assertNotNull(projType);
 		
 		// Create the managed-project (.cdtbuild) for our project that builds an executable.
@@ -372,7 +372,7 @@ public class ResourceBuildCoreTests extends TestCase {
 			project = createProject(projectName);
 			
 			// Now associate the builder with the project
-			addManagedBuildNature(project);
+			ManagedBuildTestHelper.addManagedBuildNature(project);
 			IProjectDescription description = project.getDescription();
 			// Make sure it has a managed nature
 			if (description != null) {
@@ -385,7 +385,7 @@ public class ResourceBuildCoreTests extends TestCase {
 	
 		// Find the base project type definition
 		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
-		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu.exe");
+		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.exe");
 		assertNotNull(projType);
 		
 		// Create the managed-project (.cdtbuild) for our project that builds an executable.
@@ -624,7 +624,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		try {
 			project = createProject(projectName);
 			// Now associate the builder with the project
-			addManagedBuildNature(project);
+			ManagedBuildTestHelper.addManagedBuildNature(project);
 			IProjectDescription description = project.getDescription();
 			// Make sure it has a managed nature
 			if (description != null) {
@@ -637,7 +637,7 @@ public class ResourceBuildCoreTests extends TestCase {
 	
 		// Find the base project type definition
 		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
-		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu.exe");
+		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.exe");
 		assertNotNull(projType);
 		
 		// Create the managed-project (.cdtbuild) for our project that builds a dummy executable
@@ -711,34 +711,5 @@ public class ResourceBuildCoreTests extends TestCase {
 	//	checkBuildTestSettings(info);
 		ManagedBuildManager.removeBuildInfo(project);
 	}
-
-	private void addManagedBuildNature (IProject project) {
-		// Create the buildinformation object for the project
-		IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		info.setValid(true);
-		
-		// Add the managed build nature
-		try {
-			ManagedCProjectNature.addManagedNature(project, new NullProgressMonitor());
-			// ManagedCProjectNature.addManagedBuilder(project, new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail("Test failed on adding managed build nature or builder: " + e.getLocalizedMessage());
-		}
-
-		// Associate the project with the managed builder so the clients can get proper information
-		ICDescriptor desc = null;
-		try {
-			desc = CCorePlugin.getDefault().getCProjectDescription(project, true);
-			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
-		} catch (CoreException e) {
-			fail("Test failed on adding managed builder as scanner info provider: " + e.getLocalizedMessage());
-		}
-		try {
-			desc.saveProjectData();
-		} catch (CoreException e) {
-			fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
-	}
-		
 	
 }	

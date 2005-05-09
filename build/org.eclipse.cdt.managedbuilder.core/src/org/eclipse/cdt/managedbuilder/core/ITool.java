@@ -102,6 +102,20 @@ public interface ITool extends IBuildObject {
 	 * @since 2.0
 	 */
 	public IOption getOptionById(String id);
+
+	/**
+	 * Get the <code>IOption</code> in the receiver with the specified 
+	 * ID, or an option with a superclass with this id. 
+	 * 
+	 * <p>If the receiver does not have an option with that ID, the method 
+	 * returns <code>null</code>. It is the responsibility of the caller to 
+	 * verify the return value.  
+	 * 
+	 * @param id unique identifier of the option to search for
+	 * @return <code>IOption</code>
+	 * @since 3.0
+	 */
+	public IOption getOptionBySuperClassId(String id);
 	
 	/**
 	 * Returns the complete list of options that are available for this tool.
@@ -187,7 +201,8 @@ public interface ITool extends IBuildObject {
 
 	/**
 	 * Returns all of the additional input resources of all InputType children.
-	 * Note: This does not include additional dependencies.
+	 * Note: This does not include the primary InputType and does not include
+	 * additional dependencies.
 	 * 
 	 * @return IPath[]
 	 */
@@ -195,7 +210,8 @@ public interface ITool extends IBuildObject {
 
 	/**
 	 * Returns all of the additional dependency resources of all InputType children.
-	 * Note: This does not include additional inputs.
+	 * Note: This does not include the primary InputType and does not include 
+	 * additional inputs.
 	 * 
 	 * @return IPath[]
 	 */

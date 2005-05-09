@@ -642,22 +642,26 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTargetTool()
 	 */
 	public ITool getTargetTool() {
-		String targetToolId = toolChain.getTargetToolId();
-		if (targetToolId == null) return null;
+		String[] targetToolIds = toolChain.getTargetToolList();
+		if (targetToolIds == null || targetToolIds.length == 0) return null;
 		
-		//  Look for a tool with this ID, or a tool with a superclass with this id
+		//  For each target tool id, in list order,
+		//  look for a tool with this ID, or a tool with a superclass with this id.
+		//  Stop when we find a match
 		ITool[] tools = getFilteredTools();
-		for (int i = 0; i < tools.length; i++) {
-			ITool targetTool = tools[i];
-			ITool tool = targetTool;
-			do {
-				if (targetToolId.equals(tool.getId())) {
-					return targetTool;
-				}		
-				tool = tool.getSuperClass();
-			} while (tool != null);
+		for (int i=0; i<targetToolIds.length; i++) {
+			String targetToolId = targetToolIds[i];
+			for (int j=0; j<tools.length; j++) {
+				ITool targetTool = tools[j];
+				ITool tool = targetTool;
+				do {
+					if (targetToolId.equals(tool.getId())) {
+						return targetTool;
+					}		
+					tool = tool.getSuperClass();
+				} while (tool != null);
+			}
 		}
-		
 		return null;
 	}
 

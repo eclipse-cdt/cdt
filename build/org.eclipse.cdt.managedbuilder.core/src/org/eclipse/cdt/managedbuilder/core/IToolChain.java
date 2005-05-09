@@ -264,18 +264,37 @@ public interface IToolChain extends IBuildObject {
 	public void setScannerConfigDiscoveryProfileId(String profileId);
 
 	/**
-	 * Returns the id in this tool-chain that creates the build artifact.  
+	 * Returns the sem-colon separated list of Tool ids containing each 
+	 * tool that can create the final build artifact (the end target of 
+	 * the build).  MBS will use the first ID in the list that matches 
+	 * a Tool in the ToolChain.  One reason for specifying a list, is 
+	 * that different versions of a tool can be selected based upon the 
+	 * project nature (e.g. different tool definitions for a linker for C vs. C++).
 	 * 
 	 * @return String
 	 */
-	public String getTargetToolId();
+	public String getTargetToolIds();
 
 	/**
-	 * Sets the tool in this tool-chain that creates the build artifact.  
+	 * Sets the sem-colon separated list of Tool ids containing each 
+	 * tool that can create the final build artifact (the end target of 
+	 * the build).  
 	 * 
-	 * @param targetToolId
+	 * @param targetToolIds
 	 */
-	public void setTargetTool(String targetToolId);
+	public void setTargetToolIds(String targetToolIds);
+
+	/**
+	 * Returns the list of Tool ids containing each 
+	 * tool that can create the final build artifact (the end target of 
+	 * the build).  MBS will use the first ID in the list that matches 
+	 * a Tool in the ToolChain.  One reason for specifying a list, is 
+	 * that different versions of a tool can be selected based upon the 
+	 * project nature (e.g. different tool definitions for a linker for C vs. C++).
+	 * 
+	 * @return String[]
+	 */
+	public String[] getTargetToolList();
 	
 	/**
 	 * Returns the OutputTypes in this tool-chain, besides the primary 

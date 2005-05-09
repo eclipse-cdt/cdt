@@ -440,13 +440,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					}
 				}
 			}
+			//add paths specified in the environment
+			String envIncludePaths[] = ManagedBuildManager.getEnvironmentVariableProvider().getBuildPaths(config,IEnvVarBuildPath.BUILDPATH_INCLUDE);
+			if(envIncludePaths != null)
+				paths.addAll(Arrays.asList(envIncludePaths));
 		}
-		
-		//add paths specified in the environment
-		String envIncludePaths[] = ManagedBuildManager.getEnvironmentVariableProvider().getBuildPaths(config,IEnvVarBuildPath.BUILDPATH_INCLUDE);
-		if(envIncludePaths != null)
-			paths.addAll(Arrays.asList(envIncludePaths));
-		
+				
 		// Answer the results as an array
 		return (String[])paths.toArray(new String[paths.size()]); 
 	}

@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -62,6 +61,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 
 /*
  *  These tests exercise CDT 2.0 manifest file functionality 
@@ -505,7 +505,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		try {
 			project = createProject(projectName);
 			// Now associate the builder with the project
-			addManagedBuildNature(project);
+			ManagedBuildTestHelper.addManagedBuildNature(project);
 			IProjectDescription description = project.getDescription();
 			// Make sure it has a managed nature
 			if (description != null) {
@@ -731,34 +731,6 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(4, i);
 	}
 	
-	private void addManagedBuildNature (IProject project) {
-		// Create the buildinformation object for the project
-		IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		info.setValid(true);
-		
-		// Add the managed build nature
-		try {
-			ManagedCProjectNature.addManagedNature(project, new NullProgressMonitor());
-			ManagedCProjectNature.addManagedBuilder(project, new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail("Test failed on adding managed build nature or builder: " + e.getLocalizedMessage());
-		}
-
-		// Associate the project with the managed builder so the clients can get proper information
-		ICDescriptor desc = null;
-		try {
-			desc = CCorePlugin.getDefault().getCProjectDescription(project, true);
-			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
-		} catch (CoreException e) {
-			fail("Test failed on adding managed builder as scanner info provider: " + e.getLocalizedMessage());
-		}
-		try {
-			desc.saveProjectData();
-		} catch (CoreException e) {
-			fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
-	}
-
 	/**
 	 * Tests the tool settings through the interface the makefile generator
 	 * uses.
@@ -1772,7 +1744,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		try {
 			project = createProject(projectName2);
 			// Now associate the builder with the project
-			addManagedBuildNature(project);
+			ManagedBuildTestHelper.addManagedBuildNature(project);
 			IProjectDescription description = project.getDescription();
 			// Make sure it has a managed nature
 			if (description != null) {

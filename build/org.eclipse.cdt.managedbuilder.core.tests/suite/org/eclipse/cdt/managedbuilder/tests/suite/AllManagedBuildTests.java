@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.managedbuild.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuild.core.tests.ManagedCommandLineGeneratorTest;
 import org.eclipse.cdt.managedbuild.core.tests.ManagedProjectUpdateTests;
 import org.eclipse.cdt.managedbuild.core.tests.ResourceBuildCoreTests;
+import org.eclipse.cdt.managedbuild.core.tests.ManagedProject21MakefileTests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -38,6 +39,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ManagedProjectUpdateTests.suite());
 		suite.addTest(ManagedCommandLineGeneratorTest.suite());
 		suite.addTest(ResourceBuildCoreTests.suite());
+		suite.addTest(ManagedProject21MakefileTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

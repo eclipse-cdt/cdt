@@ -210,8 +210,12 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getPaths()
 	 */
-	public String getPaths() {
-		return paths;
+	public String[] getPaths() {
+		if (paths == null) {
+			return null;
+		}
+		String[] nameTokens = paths.split(";"); //$NON-NLS-1$
+		return nameTokens;
 	}
 
 	/* (non-Javadoc)
@@ -229,6 +233,9 @@ public class AdditionalInput implements IAdditionalInput {
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getKind()
 	 */
 	public int getKind() {
+		if (kind == null) {
+			return KIND_ADDITIONAL_INPUT_DEPENDENCY;
+		}
 		return kind.intValue();
 	}
 

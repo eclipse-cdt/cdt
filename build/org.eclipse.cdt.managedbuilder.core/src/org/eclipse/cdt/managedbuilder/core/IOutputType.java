@@ -189,18 +189,18 @@ public interface IOutputType extends IBuildObject {
 	public void setOutputPrefix(String prefix);
 
 	/**
-	 * Returns the paths of the complete set of output files for this outputType 
+	 * Returns the file names of the complete set of output files for this outputType 
 	 * 
-	 * @return String
+	 * @return String[]
 	 */
-	public String getOutputNames();
+	public String[] getOutputNames();
 
 	/**
-	 * Sets the complete set of output files for this outputType 
+	 * Sets the complete set of output file names for this outputType 
 	 * 
 	 * @param names
 	 */
-	public void getOutputNames(String names);
+	public void setOutputNames(String names);
 
 	/**
 	 * Returns the pattern, using the Gnu pattern rule syntax, for deriving the 

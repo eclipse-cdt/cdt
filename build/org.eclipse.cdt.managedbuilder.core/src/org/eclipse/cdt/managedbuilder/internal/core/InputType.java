@@ -595,7 +595,7 @@ public class InputType extends BuildObject implements IInputType {
 		while (iter.hasNext()) {
 			AdditionalInput ai = (AdditionalInput) iter.next();
 			boolean match = false;
-			String[] tokens = ai.getPaths().split(";"); //$NON-NLS-1$
+			String[] tokens = ai.getPaths();
 			if (tokens.length == inputTokens.length) {
 				match = true;
 				for (int i = 0; i < tokens.length; i++) {
@@ -637,11 +637,10 @@ public class InputType extends BuildObject implements IInputType {
 			int kind = current.getKind();
 			if (kind == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY ||
 				kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
-				String paths = current.getPaths();
+				String[] paths = current.getPaths();
 				if (paths != null) {
-					String[] pathTokens = paths.split(";"); //$NON-NLS-1$
-					for (int i = 0; i < pathTokens.length; i++) {
-						deps.add(Path.fromOSString(pathTokens[i]));
+					for (int i = 0; i < paths.length; i++) {
+						deps.add(Path.fromOSString(paths[i]));
 					}
 				}
 			}
@@ -660,11 +659,10 @@ public class InputType extends BuildObject implements IInputType {
 			int kind = current.getKind();
 			if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT ||
 				kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
-				String paths = current.getPaths();
+				String[] paths = current.getPaths();
 				if (paths != null) {
-					String[] pathTokens = paths.split(";"); //$NON-NLS-1$
-					for (int i = 0; i < pathTokens.length; i++) {
-						ins.add(Path.fromOSString(pathTokens[i]));
+					for (int i = 0; i < paths.length; i++) {
+						ins.add(Path.fromOSString(paths[i]));
 					}
 				}
 			}

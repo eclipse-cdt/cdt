@@ -121,4 +121,46 @@
             type="text"/>
    </extension>
 
+<!-- =================================================================================== -->
+<!-- Define C/C++ "object" files ContentTypes                                            -->
+<!-- =================================================================================== -->
+  <extension point="org.eclipse.core.runtime.contentTypes">
+	  <!-- declares a content type for object files -->
+	  <content-type id="compiledObjectFile" name="%objectFileName" 
+		  priority="high"/>
+	  <!-- declares a content type for executable files -->
+      <content-type id="executableFile" name="%executableName" 
+          priority="high"/>
+	  <!-- declares a content type for static libraries -->
+      <content-type id="staticLibrary" name="%staticLibraryName" 
+          priority="high"/>
+	  <!-- declares a content type for shared libraries -->
+      <content-type id="sharedLibrary" name="%sharedLibraryName" 
+          priority="high"/>
+  </extension>
+
+  <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+       file-extensions="obj,o"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.executableFile"
+       file-extensions="exe,"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.staticLibrary"
+       file-extensions="lib,a"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.sharedLibrary"
+       file-extensions="dll,so"/>
+   </extension> 
+
 </plugin>

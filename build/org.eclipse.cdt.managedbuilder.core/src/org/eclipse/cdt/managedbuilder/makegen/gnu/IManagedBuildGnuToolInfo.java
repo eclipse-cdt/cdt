@@ -59,11 +59,18 @@ public interface IManagedBuildGnuToolInfo {
 	public Vector getCommandOutputs();
 	
 	/**
-	 * Returns the raw list of tool's output file names.
+	 * Returns the raw list of tool's primary output file names.
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getEnumeratedOutputs();
+	public Vector getEnumeratedPrimaryOutputs();
+	
+	/**
+	 * Returns the raw list of tool's secondary output file names.
+	 * 
+	 *  @return Vector
+	 */
+	public Vector getEnumeratedSecondaryOutputs();
 	
 	/**
 	 * Returns the raw list of tool's output variable names.

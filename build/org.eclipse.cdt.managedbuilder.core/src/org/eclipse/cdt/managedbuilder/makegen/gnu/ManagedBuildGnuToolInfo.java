@@ -61,7 +61,8 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	private Vector commandInputs = new Vector();
 	private Vector enumeratedInputs = new Vector();
 	private Vector commandOutputs = new Vector();
-	private Vector enumeratedOutputs = new Vector();
+	private Vector enumeratedPrimaryOutputs = new Vector();
+	private Vector enumeratedSecondaryOutputs = new Vector();
 	private Vector outputVariables = new Vector();
 	private Vector commandDependencies = new Vector();
 	//private Vector enumeratedDependencies = new Vector();
@@ -103,8 +104,12 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		return commandOutputs;
 	}
 
-	public Vector getEnumeratedOutputs() {
-		return enumeratedOutputs;
+	public Vector getEnumeratedPrimaryOutputs() {
+		return enumeratedPrimaryOutputs;
+	}
+
+	public Vector getEnumeratedSecondaryOutputs() {
+		return enumeratedSecondaryOutputs;
 	}
 
 	public Vector getOutputVariables() {
@@ -138,61 +143,110 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	public boolean calculateInputs(GnuMakefileGenerator makeGen, IResource[] projResources, boolean lastChance) {
 		// Get the inputs for this tool invocation
 		// Note that command inputs that are also dependencies are also added to the command dependencies list
+		
+		/* The priorities for determining the names of the inputs of a tool are:
+		 *  1.  If an option is specified, use the value of the option.
+		 *  2.  If a build variable is specified, use the files that have been added to the build variable as
+		 *      the output(s) of other build steps.
+		 *  3.  Use the file extensions and the resources in the project 
+		 */
 		boolean done = true;
-		Vector myCommandInputs = new Vector();
-		Vector myCommandDependencies = new Vector();
-		Vector myEnumeratedInputs = new Vector();
+		Vector myCommandInputs = new Vector();			// Inputs for the tool command line
+		Vector myCommandDependencies = new Vector();	// Dependencies for the make rule
+		Vector myEnumeratedInputs = new Vector();		// Complete list of individual inputs
 
 		IInputType[] inTypes = tool.getInputTypes();
 		if (inTypes != null && inTypes.length > 0) {
 			for (int i=0; i<inTypes.length; i++) {
 				IInputType type = inTypes[i];
 				String variable = type.getBuildVariable();
+				boolean primaryInput = type.getPrimaryInput();
 				boolean useFileExts = false;
-				if (variable.length() > 0) {
-					String cmdVariable = variable = "$(" + variable + ")";			//$NON-NLS-1$	//$NON-NLS-2$
-					myCommandInputs.add(cmdVariable);
-					myCommandDependencies.add(cmdVariable);
-					// If there is an output variable with the same name, get
-					// the files associated with it.
-					List outMacroList = makeGen.getBuildVariableList(variable, true);
-					if (outMacroList != null) {
-						myEnumeratedInputs.addAll(outMacroList);
-					} else {
-						// If "last chance", then calculate using file extensions below
-						if (lastChance) {
-							useFileExts = true;
+				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
+				
+				//  Option?
+				if (option != null) {
+					try {
+						List inputs = new ArrayList();
+						int optType = option.getValueType();
+						if (optType == IOption.STRING) {
+							inputs.add(option.getStringValue());
+						} else if (
+								optType == IOption.STRING_LIST ||
+								optType == IOption.LIBRARIES ||
+								optType == IOption.OBJECTS) {
+							inputs = (List)option.getValue();
+						}
+						//myCommandInputs.add(inputs);
+						if (primaryInput) {
+							myCommandDependencies.add(0, inputs);
 						} else {
-							done = false;
-							break;
+							myCommandDependencies.add(inputs);
+						}
+						//myEnumeratedInputs.add(inputs);
+					} catch( BuildException ex ) {
+					}
+					
+				} else {
+				
+					//  Build Variable?
+					if (variable.length() > 0) {
+						String cmdVariable = variable = "$(" + variable + ")";			//$NON-NLS-1$	//$NON-NLS-2$
+						myCommandInputs.add(cmdVariable);
+						if (primaryInput) {
+							myCommandDependencies.add(0, cmdVariable);
+						} else {
+							myCommandDependencies.add(cmdVariable);
+						}
+						// If there is an output variable with the same name, get
+						// the files associated with it.
+						List outMacroList = makeGen.getBuildVariableList(variable, true);
+						if (outMacroList != null) {
+							myEnumeratedInputs.addAll(outMacroList);
+						} else {
+							// If "last chance", then calculate using file extensions below
+							if (lastChance) {
+								useFileExts = true;
+							} else {
+								done = false;
+								break;
+							}
 						}
 					}
-				} 
-				if (variable.length() == 0 || useFileExts) {
-					if (type.getMultipleOfType()) {
-						// Calculate myEnumeratedInputs using the file extensions and the resources in the project
-						String[] exts = tool.getAllInputExtensions();
-						if (projResources != null) {
-							for (int j=0; j<projResources.length; j++) {
-								if (projResources[i].getType() == IResource.FILE) {
-									String fileExt = projResources[i].getFileExtension();
-									for (int k=0; k<exts.length; k++) {
-										if (fileExt.equals(exts[k])) {
-											//  TODO - is project relative correct?
-											if (!useFileExts) {
-												myCommandInputs.add(projResources[i].getProjectRelativePath());
+					
+					//  Use file extensions
+					if (variable.length() == 0 || useFileExts) {
+						if (type.getMultipleOfType()) {
+							// Calculate myEnumeratedInputs using the file extensions and the resources in the project
+							String[] exts = tool.getAllInputExtensions();
+							if (projResources != null) {
+								for (int j=0; j<projResources.length; j++) {
+									if (projResources[i].getType() == IResource.FILE) {
+										String fileExt = projResources[i].getFileExtension();
+										for (int k=0; k<exts.length; k++) {
+											if (fileExt.equals(exts[k])) {
+												//  TODO - is project relative correct?
+												if (!useFileExts) {
+													myCommandInputs.add(projResources[i].getProjectRelativePath());
+													if (primaryInput) {
+														myCommandDependencies.add(0, projResources[i].getProjectRelativePath());
+													} else {
+														myCommandDependencies.add(projResources[i].getProjectRelativePath());
+													}
+												}
+												myEnumeratedInputs.add(projResources[i].getProjectRelativePath());
+												break;
 											}
-											myEnumeratedInputs.add(projResources[i].getProjectRelativePath());
-											break;
 										}
 									}
 								}
 							}
+						} else {
+							// Rule will be generated by addRuleForSource
 						}
-					} else {
-						// Rule will be generated by addRuleForSource
 					}
 				}
+				
 				// Get any additional inputs specified in the manifest file or the project file
 				IAdditionalInput[] addlInputs = type.getAdditionalInputs();
 				if (addlInputs != null) {
@@ -201,12 +255,11 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						int kind = addlInput.getKind();
 						if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT ||
 							kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
-							String paths = addlInput.getPaths();
+							String[] paths = addlInput.getPaths();
 							if (paths != null) {
-								String[] pathTokens = paths.split(";"); //$NON-NLS-1$
-								for (int k = 0; k < pathTokens.length; k++) {
-									myCommandInputs.add(pathTokens[k]);
-									myEnumeratedInputs.add(pathTokens[k]);
+								for (int k = 0; k < paths.length; k++) {
+									myCommandInputs.add(paths[k]);
+									myEnumeratedInputs.add(paths[k]);
 								}
 							}
 						}
@@ -233,7 +286,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		
 		if (done) {
 			commandInputs.addAll(myCommandInputs);
-			commandDependencies.addAll(myCommandDependencies);
+			commandDependencies.addAll(0, myCommandDependencies);
 			enumeratedInputs.addAll(myEnumeratedInputs);
 			inputsCalculated = true;
 			return true;
@@ -243,7 +296,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	}
 	
 	 /*
-	 * The priorities for determining the names of the ouputs of a tool are:
+	 * The priorities for determining the names of the outputs of a tool are:
 	 *  1.  If the tool is the build target and primary output, use artifact name & extension
 	 *  2.  If an option is specified, use the value of the option
 	 *  3.  If a nameProvider is specified, call it
@@ -251,12 +304,16 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	 *  5.  Use the name pattern to generate a transformation macro 
 	 *      so that the source names can be transformed into the target names 
 	 *      using the built-in string substitution functions of <code>make</code>.
+	 *      
+	 * NOTE: If an option is not specified and this is not the primary output type, the outputs
+	 *       from the type are not added to the command line     
 	 */  
 	public boolean calculateOutputs(GnuMakefileGenerator makeGen, HashSet handledInputExtensions, boolean lastChance) {
 
 		boolean done = true;
 		Vector myCommandOutputs = new Vector();
-		Vector myEnumeratedOutputs = new Vector();
+		Vector myEnumeratedPrimaryOutputs = new Vector();
+		Vector myEnumeratedSecondaryOutputs = new Vector();
 	    HashMap myOutputMacros = new HashMap();
 		//  The next two fields are used together
 		Vector myBuildVars = new Vector();
@@ -272,9 +329,9 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				String variable = type.getBuildVariable();
 				boolean multOfType = type.getMultipleOfType();
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());
-				IOption option = makeGen.getOption(tool, type.getOptionId());
+				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
 				IManagedOutputNameProvider nameProvider = type.getNameProvider();
-				String outputNames = type.getOutputNames();
+				String[] outputNames = type.getOutputNames();
 				
 				//  1.  If the tool is the build target and this is the primary output, 
 				//      use artifact name & extension
@@ -306,7 +363,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								}
 							}
 						}
-						myCommandOutputs.addAll(outputs);
+						//myCommandOutputs.addAll(outputs);
 						typeEnumeratedOutputs.addAll(outputs);
 						if (variable.length() > 0) {
 							if (myOutputMacros.containsKey(variable)) {
@@ -334,7 +391,9 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 						outNames = nameProvider.getOutputNames(tool, inputPaths);
 						if (outNames != null) {
-							myCommandOutputs.addAll(Arrays.asList(outNames));
+							if (primaryOutput) {
+								myCommandOutputs.addAll(Arrays.asList(outNames));
+							}
 							typeEnumeratedOutputs.addAll(Arrays.asList(outNames));
 						}
 					}
@@ -350,10 +409,11 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				} else
 				//  4.  If outputNames is specified, use it
 				if (outputNames != null) {
-					String[] pathTokens = outputNames.split(";"); //$NON-NLS-1$
-					if (pathTokens.length > 0) {
-						List namesList = Arrays.asList(pathTokens);
-						myCommandOutputs.addAll(namesList);
+					if (outputNames.length > 0) {
+						List namesList = Arrays.asList(outputNames);
+						if (primaryOutput) {
+							myCommandOutputs.addAll(namesList);
+						}
 						typeEnumeratedOutputs.addAll(namesList);
 						if (variable.length() > 0) {
 							if (myOutputMacros.containsKey(variable)) {
@@ -405,7 +465,9 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								fileName = "default"; //$NON-NLS-1$
 							}
 							//  Replace the % with the file name
-							myCommandOutputs.add(namePattern.replaceAll("%", fileName)); //$NON-NLS-1$ 
+							if (primaryOutput) {
+								myCommandOutputs.add(namePattern.replaceAll("%", fileName)); //$NON-NLS-1$
+							}
 							typeEnumeratedOutputs.add(namePattern.replaceAll("%", fileName)); //$NON-NLS-1$
 							if (variable.length() > 0) {
 								List outputs = new ArrayList();
@@ -425,7 +487,11 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					myBuildVars.add(variable);
 					myBuildVarsValues.add(typeEnumeratedOutputs);
 				}
-				myEnumeratedOutputs.addAll(typeEnumeratedOutputs);
+				if (primaryOutput) {
+					myEnumeratedPrimaryOutputs.addAll(typeEnumeratedOutputs);
+				} else {
+					myEnumeratedSecondaryOutputs.addAll(typeEnumeratedOutputs);
+				}
 			}
 		} else {
 			if (bIsTargetTool) {
@@ -435,7 +501,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					outputName += (DOT + targetExt);
 				}
 				myCommandOutputs.add(outputName);
-				myEnumeratedOutputs.add(outputName);
+				myEnumeratedPrimaryOutputs.add(outputName);
 			} else {
 				// For support of pre-CDT 3.0 integrations.
 				// NOTE WELL:  This only supports the case of a single "target tool"
@@ -463,7 +529,8 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 
 		if (done) {
 			commandOutputs.addAll(myCommandOutputs);
-			enumeratedOutputs.addAll(myEnumeratedOutputs);
+			enumeratedPrimaryOutputs.addAll(myEnumeratedPrimaryOutputs);
+			enumeratedSecondaryOutputs.addAll(myEnumeratedSecondaryOutputs);
 			outputVariables.addAll(myOutputMacros.keySet());
 			outputsCalculated = true;
 			for (int i=0; i<myBuildVars.size(); i++) {
@@ -548,11 +615,10 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						int kind = addlInput.getKind();
 						if (kind == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY ||
 							kind == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
-							String paths = addlInput.getPaths();
+							String[] paths = addlInput.getPaths();
 							if (paths != null) {
-								String[] pathTokens = paths.split(";"); //$NON-NLS-1$
-								for (int k = 0; k < pathTokens.length; k++) {
-									myCommandDependencies.add(pathTokens[k]);
+								for (int k = 0; k < paths.length; k++) {
+									myCommandDependencies.add(paths[k]);
 									//myEnumeratedInputs.add(pathTokens[k]);
 								}
 							}

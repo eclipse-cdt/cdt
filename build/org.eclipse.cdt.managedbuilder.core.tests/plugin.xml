@@ -16,6 +16,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.compare"/>
    </requires>
 
 <!-- Managed Make Builder Tool Specifications - CDT 2.0 format -->
@@ -1202,9 +1203,9 @@
       
       <projectType      
             isAbstract="false"     
-            isTest="true"
-            name="testgnu.exe"
-            id="cdt.managedbuild.target.testgnu.exe">
+            isTest="true" 
+            name="testgnu21.exe"
+            id="cdt.managedbuild.target.testgnu21.exe">
          <configuration
                name="Dbg"
                id="cdt.managedbuild.config.testgnu.exe.debug"
@@ -1343,8 +1344,8 @@
       <projectType      
             isAbstract="false"     
             isTest="true"
-            name="testgnu.so"
-            id="cdt.managedbuild.target.testgnu.so">
+            name="testgnu21.so"
+            id="cdt.managedbuild.target.testgnu21.so">
          <configuration
                name="Debug"
                cleanCommand="rm -rf"
@@ -1511,9 +1512,9 @@
           
       <projectType 
             isTest="true"
-            name="testgnu.lib"
+            name="testgnu21.lib"
             isAbstract="false"
-            id="cdt.managedbuild.target.testgnu.lib">                        
+            id="cdt.managedbuild.target.testgnu21.lib">                        
          <configuration
 			   name="Dbg"
 			   artifactExtension="a"

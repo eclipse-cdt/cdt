@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -48,7 +50,7 @@ public class ScannerConfigDiscoveryTests extends TestCase {
 	protected void setUp() throws Exception {
 		fMonitor = new NullProgressMonitor();
 		
-		fCProject = ManagedBuildTestHelper.createProject("SCD");
+		fCProject = ManagedBuildTestHelper.createProject("SCD", (IPath)null, MakeCorePlugin.MAKE_PROJECT_ID, null);
 		fCFile = fCProject.getProject().getFile("main.c");
 		if (!fCFile.exists()) {
 			fCFile.create(new ByteArrayInputStream(" \n".getBytes()), false, fMonitor);

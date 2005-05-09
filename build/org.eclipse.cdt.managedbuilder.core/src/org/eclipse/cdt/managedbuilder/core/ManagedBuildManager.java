@@ -114,8 +114,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public  static final String MANIFEST_ERROR_DUPLICATE = "ManagedBuildManager.error.manifest.duplicate";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	
-	// This is the version of the manifest and project files that
-	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(2, 1, 0);
+	// This is the version of the manifest and project files
+	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(3, 0, 0);
 	private static Map depCalculatorsMap;
 	private static boolean projectTypesLoaded = false;
 	// Project types defined in the manifest files
@@ -1291,11 +1291,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			// This is a 1.2 manifest and we are compatible for now
 			return true;
 		}
-		//  isCompatibleWith will return FALSE, if:
-		//   o  The major versions are not equal
-		//   o  The major versions are equal, but the remainder of the manifest version # is
-		//      greater than the MBS version #
-		return(buildInfoVersion.isCompatibleWith(version));
+		return(buildInfoVersion.isGreaterOrEqualTo(version));
 	}
 	
 	/* (non-Javadoc)
@@ -1322,20 +1318,21 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			// Since 2.0 this will be a processing instruction containing version
 			if (rootElement.getNodeType() != Node.PROCESSING_INSTRUCTION_NODE) {
 				// This is a 1.2 project and it must be updated
-
 			} else {
 				// Make sure that the version is compatible with the manager
 				fileVersion = rootElement.getNodeValue();
 				PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
-				//  isCompatibleWith will return FALSE, if:
-				//   o  The major versions are not equal
-				//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
-				//      greater than the MBS version #
-				if (!buildInfoVersion.isCompatibleWith(version)) {
-					throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_VERSION_ERROR, project.getName())); 
-				}
 				if (buildInfoVersion.isGreaterThan(version)) {
-					// TODO Upgrade the project
+					// This is >= 2.0 project, but earlier than the current MBS version - it may need to be updated
+				} else {
+					// This is a 
+					//  isCompatibleWith will return FALSE, if:
+					//   o  The major versions are not equal
+					//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
+					//      greater than the MBS version #
+					if (!buildInfoVersion.isCompatibleWith(version)) {
+						throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_VERSION_ERROR, project.getName())); 
+					}
 				}
 			}
 			

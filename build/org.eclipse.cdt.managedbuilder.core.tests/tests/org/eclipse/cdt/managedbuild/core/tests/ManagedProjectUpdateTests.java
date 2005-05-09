@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -40,8 +41,10 @@ public class ManagedProjectUpdateTests extends TestCase {
 		
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_Update"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_Update"));
+		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_Update"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_NoUpdate"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_NoUpdate"));
+		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_NoUpdate"));
 		
 		return suite;
 	}
@@ -75,7 +78,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 				projectName = projectName.substring(0,projectName.length()-".zip".length());
 				if(projectName.length() == 0)
 					continue;
-				IProject project = ManagedBuildTestHelper.createProject(projectName,projectZips[i]);
+				IProject project = ManagedBuildTestHelper.createProject(projectName, projectZips[i], null, null);
 				if(project != null)
 					projectList.add(project);
 			}
@@ -89,7 +92,8 @@ public class ManagedProjectUpdateTests extends TestCase {
 		return (IProject[])projectList.toArray(new IProject[projectList.size()]);
 	}
 	
-	private void doTestProjectUpdate(String version, boolean updateProject, boolean overwriteBackupFiles){
+	private void doTestProjectUpdate(String version, boolean updateProject, boolean overwriteBackupFiles, 
+			IPath[] files){
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
 			public String queryOverwrite(String file) {
 				return ALL;
@@ -99,8 +103,8 @@ public class ManagedProjectUpdateTests extends TestCase {
 				return NO_ALL;
 			}};
 		
-		UpdateManagedProjectManager.setBackupFileOverwriteQuery(updateProject ? queryALL : queryNOALL);
-		UpdateManagedProjectManager.setUpdateProjectQuery(overwriteBackupFiles ? queryALL : queryNOALL);
+		UpdateManagedProjectManager.setBackupFileOverwriteQuery(overwriteBackupFiles ? queryALL : queryNOALL);
+		UpdateManagedProjectManager.setUpdateProjectQuery(updateProject ? queryALL : queryNOALL);
 		
 		IProject projects[] = createVersionProjects(version);
 		if(projects == null || projects.length == 0)
@@ -132,6 +136,15 @@ public class ManagedProjectUpdateTests extends TestCase {
 				catch(OperationCanceledException e){
 					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
 				}
+				
+				//compare the generated makefiles to their benchmarks
+				if (files != null && files.length > 0) {
+					if (i == 0) {
+						String configName = info.getDefaultConfiguration().getName();
+						IPath buildDir = Path.fromOSString(configName);
+						ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
+					}
+				}
 			}
 		}
 		
@@ -144,7 +157,12 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 * in case when user chooses to update the project 
 	 */
 	public void testProjectUpdate12_Update(){
-		doTestProjectUpdate("1.2",true,true);
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		doTestProjectUpdate("1.2", true, true, makefiles);
 	}
 
 	/* (non-Javadoc)
@@ -152,7 +170,26 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 * in case when user chooses to update the project 
 	 */
 	public void testProjectUpdate20_Update(){
-		doTestProjectUpdate("2.0",true,true);
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		doTestProjectUpdate("2.0", true, true, makefiles);
+	}
+
+	/* (non-Javadoc)
+	 * tests project v2.1 update 
+	 * in case when user chooses to update the project 
+	 */
+	public void testProjectUpdate21_Update(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk"), 
+				 Path.fromOSString("Functions/subdir.mk")};
+		doTestProjectUpdate("2.1", true, true, makefiles);
 	}
 
 	/* (non-Javadoc)
@@ -160,7 +197,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 * in case when user chooses not to update the project 
 	 */
 	public void testProjectUpdate12_NoUpdate(){
-		doTestProjectUpdate("1.2",false,true);
+		doTestProjectUpdate("1.2", false, true, null);
 	}
 
 	/* (non-Javadoc)
@@ -168,6 +205,14 @@ public class ManagedProjectUpdateTests extends TestCase {
 	 * in case when user chooses not to update the project 
 	 */
 	public void testProjectUpdate20_NoUpdate(){
-		doTestProjectUpdate("2.0",false,true);
+		doTestProjectUpdate("2.0", false, true, null);
+	}
+
+	/* (non-Javadoc)
+	 * tests project v2.1 update 
+	 * in case when user chooses not to update the project 
+	 */
+	public void testProjectUpdate21_NoUpdate(){
+		doTestProjectUpdate("2.1", false, true, null);
 	}
 }

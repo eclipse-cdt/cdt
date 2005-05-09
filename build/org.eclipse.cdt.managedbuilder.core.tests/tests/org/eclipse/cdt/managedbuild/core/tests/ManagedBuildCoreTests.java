@@ -54,11 +54,11 @@ public class ManagedBuildCoreTests extends TestCase {
 	 */
 	public void testLoadManifest() throws Exception {
 		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
-		exeType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu.exe");
+		exeType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.exe");
 		checkExeProjectType(exeType);				
-		dllType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu.so");
+		dllType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.so");
 		checkSoProjectType(dllType);	
-		libType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu.lib");
+		libType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.lib");
 		checkLibProjectType(libType);	
 	}
 		

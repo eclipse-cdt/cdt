@@ -242,9 +242,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			} else if (toolElement.getNodeName().equals(ITool.OPTION_CAT)) {
 				new OptionCategory(this, (Element)toolElement);
 			} else if (toolElement.getNodeName().equals(ITool.INPUT_TYPE)) {
-				new InputType(this, (Element)toolElement);
+				InputType inputType = new InputType(this, (Element)toolElement);
+				addInputType(inputType);
 			} else if (toolElement.getNodeName().equals(ITool.OUTPUT_TYPE)) {
-				new OutputType(this, (Element)toolElement);
+				OutputType outputType = new OutputType(this, (Element)toolElement);
+				addOutputType(outputType);
 			}
 		}
 	}
@@ -924,6 +926,28 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptionBySuperClassId(java.lang.String)
+	 */
+	public IOption getOptionBySuperClassId(String optionId) {
+		if (optionId == null) return null;
+		
+		//  Look for an option with this ID, or an option with a superclass with this id
+		IOption[] options = getOptions();
+		for (int i = 0; i < options.length; i++) {
+			IOption targetOption = options[i];
+			IOption option = targetOption;
+			do {
+				if (optionId.equals(option.getId())) {
+					return targetOption;
+				}		
+				option = option.getSuperClass();
+			} while (option != null);
+		}
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
 	 */
 	public IOptionCategory[] getChildCategories() {
@@ -973,7 +997,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				IInputType ourType = (IInputType)ourTypes.get(i);
 				int j;
 				for (j = 0; j < types.length; j++) {
-					if (ourType.getSuperClass().getId().equals(types[j].getId())) {
+					if (ourType.getSuperClass() != null &&
+					    ourType.getSuperClass().getId().equals(types[j].getId())) {
 						types[j] = ourType;
 						break;
 					}
@@ -1045,7 +1070,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				IOutputType ourType = (IOutputType)ourTypes.get(i);
 				int j;
 				for (j = 0; j < types.length; j++) {
-					if (ourType.getSuperClass().getId().equals(types[j].getId())) {
+					if (ourType.getSuperClass() != null &&
+					    ourType.getSuperClass().getId().equals(types[j].getId())) {
 						types[j] = ourType;
 						break;
 					}
@@ -1533,9 +1559,36 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		List allDeps = new ArrayList();
 		IInputType[] types = getInputTypes();
 		for (int i=0; i<types.length; i++) {
-			IPath[] deps = types[i].getAdditionalDependencies();
+			IInputType type = types[i];
+			//  Additional dependencies come from 2 places.
+			//  1.  From AdditionalInput childen
+			IPath[] deps = type.getAdditionalDependencies();
 			for (int j=0; j<deps.length; j++) {
 				allDeps.add(deps[j]);
+			}
+			//  2.  From InputTypes that other than the primary input type
+			if (!type.getPrimaryInput()) {
+				if (type.getOptionId() != null) {
+					IOption option = getOptionBySuperClassId(type.getOptionId());
+					if (option != null) {
+						try {
+							List inputs = new ArrayList();
+							int optType = option.getValueType();
+							if (optType == IOption.STRING) {
+								inputs.add(option.getStringValue());
+							} else if (
+									optType == IOption.STRING_LIST ||
+									optType == IOption.LIBRARIES ||
+									optType == IOption.OBJECTS) {
+								inputs = (List)option.getValue();
+							}
+							allDeps.addAll(inputs);
+						} catch( BuildException ex ) {
+						}
+					}
+				} else if (type.getBuildVariable() != null && type.getBuildVariable().length() > 0) {
+					allDeps.add("$(" + type.getBuildVariable() + ")");   //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 		return (IPath[])allDeps.toArray(new IPath[allDeps.size()]);
@@ -1548,9 +1601,19 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		List allRes = new ArrayList();
 		IInputType[] types = getInputTypes();
 		for (int i=0; i<types.length; i++) {
-			IPath[] res = types[i].getAdditionalResources();
+			IInputType type = types[i];
+			//  Additional dependencies come from 2 places.
+			//  1.  From AdditionalInput childen
+			IPath[] res = type.getAdditionalResources();
 			for (int j=0; j<res.length; j++) {
 				allRes.add(res[j]);
+			}
+			//  2.  From InputTypes that other than the primary input type
+			if (!type.getPrimaryInput()) {
+				String var = type.getBuildVariable();
+				if (var != null && var.length() > 0) {
+					allRes.add("$(" + type.getBuildVariable() + ")");   //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 		return (IPath[])allRes.toArray(new IPath[allRes.size()]);

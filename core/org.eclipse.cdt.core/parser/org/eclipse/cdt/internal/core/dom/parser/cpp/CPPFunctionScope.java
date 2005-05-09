@@ -83,7 +83,8 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) getPhysicalNode();
 	    IASTName name = fdtor.getName();
 	    if( name instanceof ICPPASTQualifiedName ){
-	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	        ICPPASTQualifiedName qual = (ICPPASTQualifiedName) name;
+	        IASTName [] ns = qual.getNames();
 	        if( ns.length > 1){
 	            IBinding binding = ns[ ns.length - 2 ].resolveBinding();
 	            if( binding instanceof ICPPClassType )
@@ -91,10 +92,12 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	            else if( binding instanceof ICPPNamespace )
 	                return ((ICPPNamespace)binding).getNamespaceScope();
 	            return binding.getScope();
+	        } else if( qual.isFullyQualified() ){
+	            return qual.getTranslationUnit().getScope();
 	        }
 	    } 
 	        
-	    return CPPVisitor.getContainingScope( fdtor );
+	    return CPPVisitor.getContainingScope( name );
 	}
 
 

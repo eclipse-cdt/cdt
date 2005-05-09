@@ -169,9 +169,7 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
 	            IScope scope = getScope();
                 try {
                     IASTNode node = scope.getPhysicalNode();
-                    while( !( node instanceof IASTTranslationUnit) )
-    	                node = node.getParent();
-    	            tu = (IASTTranslationUnit) node;
+                    tu = node.getTranslationUnit();
                 } catch ( DOMException e ) {
                 }
 	        }

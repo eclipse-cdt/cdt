@@ -53,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -68,7 +69,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -98,6 +98,13 @@ public class CPPTemplates {
 		IASTNode parent = param.getParent();
 		IBinding binding = null;
 		if( parent instanceof ICPPASTTemplateDeclaration ){
+//			IASTName name = getTemplateName( (ICPPASTTemplateDeclaration) parent );
+//			if( name != null ){
+//				if( name instanceof ICPPASTTemplateId && !(name.getParent() instanceof ICPPASTQualifiedName) )
+//					name = ((ICPPASTTemplateId)name).getTemplateName();
+//					
+//				binding = name.resolveBinding();
+//			}
 			ICPPASTTemplateDeclaration [] templates = new ICPPASTTemplateDeclaration [] { (ICPPASTTemplateDeclaration) parent };
 			
 			while( parent.getParent() instanceof ICPPASTTemplateDeclaration ){
@@ -315,7 +322,7 @@ public class CPPTemplates {
 		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name );
 		data.forceQualified = true;
 		IScope scope = CPPVisitor.getContainingScope( name );
-		if( scope instanceof ICPPTemplateScope && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME ){
+		if( scope instanceof ICPPTemplateScope ){
 			try {
 				scope = scope.getParent();
 			} catch (DOMException e) {
@@ -501,14 +508,6 @@ public class CPPTemplates {
 		
 		return null;
 	}
-	/**
-	 * @param scope
-	 * @return
-	 */
-	public static ICPPTemplateDefinition getTemplateDefinition(ICPPTemplateScope scope) {
-		if( scope != null ) {}
-		return null;
-	}
 
 	/**
 	 * @param decl
@@ -608,55 +607,109 @@ public class CPPTemplates {
 	public static ICPPASTTemplateDeclaration getTemplateDeclaration( IASTName name ){
 		if( name == null ) return null;
 		
-//		if( name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME )
-//			name = (IASTName) name.getParent();
-//		
-//		if( !(name instanceof ICPPASTTemplateId) )
-//			return null;
-		
 		IASTNode parent = name.getParent();
-		while( parent != null && !(parent instanceof ICPPASTTemplateDeclaration) &&
-			   !(parent instanceof ICPPASTTemplatedTypeTemplateParameter) )
-		{
-			parent = parent.getParent();
+		while( parent instanceof IASTName ){
+		    parent = parent.getParent();
+		}
+		if( parent instanceof IASTDeclSpecifier ){
+		    parent = parent.getParent();
+		} else {
+			while( parent instanceof IASTDeclarator ){
+			    parent = parent.getParent();
+			}
+		}
+		if( parent instanceof IASTDeclaration && parent.getParent() instanceof ICPPASTTemplateDeclaration ){
+		    parent = parent.getParent();
+		} else {
+			return null;
 		}
 		
-		if( parent == null ) return null;
-		
 		if( parent instanceof ICPPASTTemplateDeclaration ){
-			ICPPASTTemplateDeclaration [] templates = new ICPPASTTemplateDeclaration [] { (ICPPASTTemplateDeclaration) parent };
-			
-			while( parent.getParent() instanceof ICPPASTTemplateDeclaration ){
-				parent = parent.getParent();
-				templates = (ICPPASTTemplateDeclaration[]) ArrayUtil.append( ICPPASTTemplateDeclaration.class, templates, parent );
+		    ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) parent;
+		    while( templateDecl.getParent() instanceof ICPPASTTemplateDeclaration )
+		        templateDecl = (ICPPASTTemplateDeclaration) templateDecl.getParent();
+
+			IASTName [] ns = null;
+			if( name instanceof ICPPASTQualifiedName ){
+				ns = ((ICPPASTQualifiedName)name).getNames();
+				name = ns[ ns.length - 1 ];
+			} else if( name.getParent() instanceof ICPPASTQualifiedName ){
+				ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
 			}
-			templates = (ICPPASTTemplateDeclaration[]) ArrayUtil.trim( ICPPASTTemplateDeclaration.class, templates );
-			
-			if( name == null )
-				return null;
-				
-			if( name.getParent() instanceof ICPPASTQualifiedName ){
-				int idx = templates.length;
-				int i = -1;
-				IASTName [] ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
+			if( ns != null ){
+				IASTDeclaration currDecl = templateDecl;
 				for (int j = 0; j < ns.length; j++) {
-					if( ns[j] instanceof ICPPASTTemplateId || j + 1 == ns.length){
-						++i;
-					}
 					if( ns[j] == name ){
-						if( i < idx )
-							return templates[ i ];
-						return null;
+						if( ns[j] instanceof ICPPASTTemplateId || j + 1 == ns.length ){
+							if( currDecl instanceof ICPPASTTemplateDeclaration )
+								return (ICPPASTTemplateDeclaration) currDecl;
+							return null;
+						}
+					}
+					if( ns[j] instanceof ICPPASTTemplateId ){
+						if( currDecl instanceof ICPPASTTemplateDeclaration )
+							currDecl = ((ICPPASTTemplateDeclaration) currDecl).getDeclaration();
+						else
+							return null; //??? this would imply bad ast or code
 					}
 				}
 			} else {
-				return templates[0];
+				return templateDecl;
 			}
-		} else if( parent instanceof ICPPASTTemplatedTypeTemplateParameter ){
-			
 		}
 		return  null;
+	}
+	
+	public static IASTName getTemplateName( ICPPASTTemplateDeclaration templateDecl ){
+	    if( templateDecl == null ) return null;
+		
+	    ICPPASTTemplateDeclaration decl = templateDecl;
+		while( decl.getParent() instanceof ICPPASTTemplateDeclaration )
+		    decl = (ICPPASTTemplateDeclaration) decl.getParent(); 
 
+		IASTDeclaration nestedDecl = templateDecl.getDeclaration();
+		while( nestedDecl instanceof ICPPASTTemplateDeclaration ){
+			nestedDecl = ((ICPPASTTemplateDeclaration)nestedDecl).getDeclaration();
+		}
+		
+		IASTName name = null;
+		if( nestedDecl instanceof IASTSimpleDeclaration ){
+		    IASTSimpleDeclaration simple = (IASTSimpleDeclaration) nestedDecl;
+		    if( simple.getDeclarators().length == 1 ){
+				IASTDeclarator dtor = simple.getDeclarators()[0];
+				while( dtor.getNestedDeclarator() != null )
+					dtor = dtor.getNestedDeclarator();
+		        name = dtor.getName();
+		    } else if( simple.getDeclarators().length == 0 ){
+		        IASTDeclSpecifier spec = simple.getDeclSpecifier();
+		        if( spec instanceof ICPPASTCompositeTypeSpecifier )
+		            name = ((ICPPASTCompositeTypeSpecifier)spec).getName();
+		        else if( spec instanceof ICPPASTElaboratedTypeSpecifier )
+		            name = ((ICPPASTElaboratedTypeSpecifier)spec).getName();
+		    }
+		} else if( nestedDecl instanceof IASTFunctionDefinition ){
+		    name = ((IASTFunctionDefinition)nestedDecl).getDeclarator().getName();
+		}
+		if( name != null ){
+		    if( name instanceof ICPPASTQualifiedName ){
+				IASTName [] ns = ((ICPPASTQualifiedName) name).getNames();
+				IASTDeclaration currDecl = decl;
+				for (int j = 0; j < ns.length; j++) {
+					if( ns[j] instanceof ICPPASTTemplateId || j + 1 == ns.length){
+						if( currDecl == templateDecl )
+							return ns[j];
+						if( currDecl instanceof ICPPASTTemplateDeclaration )
+							currDecl = ((ICPPASTTemplateDeclaration)currDecl).getDeclaration();
+						else
+							return null;
+					}
+				}
+		    } else {
+		        return name;
+		    }
+		}
+
+		return  null;
 	}
 	
 	private static class ClearBindingAction extends CPPASTVisitor {
@@ -692,6 +745,9 @@ public class CPPTemplates {
 			return false;
 		}
 		ICPPASTTemplateDeclaration templateDecl = getTemplateDeclaration( name );
+		if( templateDecl == null )
+			return false;
+		
 		ICPPASTTemplateParameter [] templateParams = templateDecl.getTemplateParameters();
 		if( defParams.length != templateParams.length )
 			return false;
@@ -718,7 +774,7 @@ public class CPPTemplates {
 					int i = 0;
 					for(; i < ps.length; i++) {
 						IType t1 = CPPVisitor.createType( params[i].getDeclarator() );
-						IType t2 = ps[0].getType();
+						IType t2 = ps[i].getType();
 						if( ! t1.isSameType( t2 ) ){
 							break;
 						}

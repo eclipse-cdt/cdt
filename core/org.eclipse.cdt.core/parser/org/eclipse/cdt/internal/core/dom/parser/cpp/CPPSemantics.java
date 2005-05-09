@@ -730,7 +730,13 @@ public class CPPSemantics {
 	    IASTNode parent = name.getParent();
 	    
     	if( parent instanceof ICPPASTBaseSpecifier ) {
-	        IASTNode n = CPPVisitor.getContainingBlockItem( parent );
+    	    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) parent.getParent();
+    	    IASTName n = compSpec.getName();
+    	    if( n instanceof ICPPASTQualifiedName ){
+    	        IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
+    	        n = ns[ ns.length - 1 ];
+    	    }
+    	    
 	        return (ICPPScope) CPPVisitor.getContainingScope( n );
 	    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
 	    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) parent;
@@ -810,8 +816,6 @@ public class CPPSemantics {
 		
 		while( scope != null ){
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem( node );
-			if( blockItem != null && scope.getPhysicalNode() != blockItem.getParent() && !(scope instanceof ICPPNamespaceScope) )
-				blockItem = node;
 			
 			ArrayWrapper directives = null;
 			if( !data.usingDirectivesOnly ){
@@ -871,7 +875,7 @@ public class CPPSemantics {
 				return;
 			
 			//if still not found, loop and check our containing scope
-			if( data.qualified() ) {
+			if( data.qualified() && !(scope instanceof ICPPTemplateScope) ) {
 				if( !data.usingDirectives.isEmpty() )
 					data.usingDirectivesOnly = true;
 				else
@@ -880,7 +884,23 @@ public class CPPSemantics {
 			
 			if( blockItem != null )
 				node = blockItem;
-			scope = (ICPPScope) scope.getParent();
+			
+			ICPPScope parentScope = (ICPPScope) scope.getParent();
+			if( parentScope instanceof ICPPTemplateScope ){
+			    IASTNode parent = node.getParent();
+			    while( parent != null && !(parent instanceof ICPPASTTemplateDeclaration) ){
+			        node = parent;
+			        parent = parent.getParent();
+			    }
+			    if( parent != null ){
+			        ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) parent;
+			        ICPPTemplateScope templateScope = templateDecl.getScope();
+			        if( templateScope.getTemplateDefinition() == ((ICPPTemplateScope)parentScope).getTemplateDefinition() ){
+			            parentScope = templateScope;
+			        }
+			    }
+			}
+			scope = parentScope;
 		}
 	}
 
@@ -2837,14 +2857,13 @@ public class CPPSemantics {
     }
 
 	public static boolean isSameFunction(IFunction function, IASTDeclarator declarator) {
-		IASTNode parent = declarator.getParent();
-		while( !(parent instanceof IASTDeclaration) ){
-			parent = parent.getParent();
-		}
+		IASTName name = declarator.getName();
+		ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration( name );
+
 		boolean fnIsTemplate = ( function instanceof ICPPFunctionTemplate );
-		boolean dtorIsTemplate = (parent.getPropertyInParent() == ICPPASTTemplateDeclaration.OWNED_DECLARATION ); 
+		boolean dtorIsTemplate = ( templateDecl != null ); 
 		if( fnIsTemplate && dtorIsTemplate ){
-			return CPPTemplates.isSameTemplate( (ICPPTemplateDefinition)function, declarator.getName() );
+			return CPPTemplates.isSameTemplate( (ICPPTemplateDefinition)function, name );
 		} else if( fnIsTemplate ^ dtorIsTemplate ){
 			return false;
 		} 

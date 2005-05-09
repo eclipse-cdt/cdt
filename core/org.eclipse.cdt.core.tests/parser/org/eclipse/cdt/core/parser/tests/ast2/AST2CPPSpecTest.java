@@ -9768,6 +9768,34 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 14.6.1-6):
+	namespace N {
+	class C { };
+	template<class T> class B {
+	void f(T);
+	};
+	}
+	template<class C> void N::B<C>::f(C) {
+	C b; // C is the template parameter, not N::C
+	}
+	 --End Example]
+	 */
+	public void test14_6_1s6() throws Exception { 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace N {\n"); //$NON-NLS-1$
+		buffer.append("int C;\n"); //$NON-NLS-1$
+		buffer.append("template<class T> class B {\n"); //$NON-NLS-1$
+		buffer.append("void f(T);\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("template<class C> void N::B<C>::f(C) {\n"); //$NON-NLS-1$
+		buffer.append("C b; // C is the template parameter, not N::C\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.6.1-7):
 	struct A {
 	struct B {  };
@@ -10424,6 +10452,51 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("template<> inline void f<>(int) {  } // OK: inline\n"); //$NON-NLS-1$
 		buffer.append("template<> int g<>(int) {  } // OK: not inline\n"); //$NON-NLS-1$
 
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
+	 [--Start Example(CPP 14.7.3-16):
+	template<class T> struct A {
+	void f(T);
+	template<class X> void g(T,X);
+	void h(T) { }
+	};
+	// specialization
+	template<> void A<int>::f(int);
+	// out of class member template definition
+	template<class T> template<class X> void A<T>::g(T,X) { }
+	// member template partial specialization
+	template<> template<class X> void A<int>::g(int,X);
+	// member template specialization
+	template<> template<>
+	void A<int>::g(int,char); // X deduced as char
+	template<> template<>
+	void A<int>::g<char>(int,char); // X specified as char
+	// member specialization even if defined in class definition
+	template<> void A<int>::h(int) { }
+	 --End Example]
+	 */
+	public void test14_7_3s16() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> struct A {\n"); //$NON-NLS-1$
+		buffer.append("void f(T);\n"); //$NON-NLS-1$
+		buffer.append("template<class X> void g(T,X);\n"); //$NON-NLS-1$
+		buffer.append("void h(T) { }\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("// specialization\n"); //$NON-NLS-1$
+		buffer.append("template<> void A<int>::f(int);\n"); //$NON-NLS-1$
+		buffer.append("// out of class member template definition\n"); //$NON-NLS-1$
+		buffer.append("template<class T> template<class X> void A<T>::g(T,X) { }\n"); //$NON-NLS-1$
+		buffer.append("// member template partial specialization\n"); //$NON-NLS-1$
+		buffer.append("template<> template<class X> void A<int>::g(int,X);\n"); //$NON-NLS-1$
+		buffer.append("// member template specialization\n"); //$NON-NLS-1$
+		buffer.append("template<> template<>\n"); //$NON-NLS-1$
+		buffer.append("void A<int>::g(int,char); // X deduced as char\n"); //$NON-NLS-1$
+		buffer.append("template<> template<>\n"); //$NON-NLS-1$
+		buffer.append("void A<int>::g<char>(int,char); // X specified as char\n"); //$NON-NLS-1$
+		buffer.append("// member specialization even if defined in class definition\n"); //$NON-NLS-1$
+		buffer.append("template<> void A<int>::h(int) { }\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	

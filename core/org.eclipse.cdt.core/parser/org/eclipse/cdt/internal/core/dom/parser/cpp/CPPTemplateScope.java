@@ -13,8 +13,17 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 
@@ -53,4 +62,40 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 		return null;
 	}
 
+	public IScope getParent() {
+	    ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) getPhysicalNode();
+	    IASTName name = CPPTemplates.getTemplateName( templateDecl );
+	    IASTNode p = name.getParent();
+	    if( p instanceof ICPPASTQualifiedName ){
+	        ICPPASTQualifiedName qual = (ICPPASTQualifiedName) p;
+	        IASTName [] names = qual.getNames();
+	        int i = 0;
+			for( ; i < names.length; i++ ){
+				if( names[i] == name ) break;
+			}
+			if( i > 0 ){
+			    try {
+					IBinding binding = names[i - 1].resolveBinding();
+					if( binding instanceof ICPPClassType ){
+						return ((ICPPClassType)binding).getCompositeScope();
+					} else if( binding instanceof ICPPNamespace ){
+						return ((ICPPNamespace)binding).getNamespaceScope();
+					} else if( binding instanceof ICPPInternalUnknown ){
+					    return ((ICPPInternalUnknown)binding).getUnknownScope();
+					} else if( binding instanceof IProblemBinding ){
+						if( binding instanceof ICPPScope )
+							return (IScope) binding;
+						return new CPPScope.CPPScopeProblem( names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
+					}
+			    } catch( DOMException e ){
+			        return e.getProblem(); 
+			    }
+			} else if( qual.isFullyQualified() ){
+			    return qual.getTranslationUnit().getScope();
+			}
+	    }
+	    while( templateDecl.getParent() instanceof ICPPASTTemplateDeclaration )
+	    	templateDecl = (ICPPASTTemplateDeclaration) templateDecl.getParent();
+	    return CPPVisitor.getContainingScope( templateDecl );
+	}
 }

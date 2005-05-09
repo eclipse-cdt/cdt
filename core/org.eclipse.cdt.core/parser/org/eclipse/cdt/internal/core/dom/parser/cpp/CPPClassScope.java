@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -66,7 +67,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         	name = ns[ ns.length - 1 ];
         }
         
-        IBinding binding = compTypeSpec.getName().resolveBinding();
+        IBinding binding = name.resolveBinding();
         if( !(binding instanceof ICPPClassType ) )
         	return;
         
@@ -98,6 +99,16 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    m = new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), IParameter.EMPTY_PARAMETER_ARRAY );
 	    implicits[3] = m;
 	    addBinding( m );
+	}
+	
+	public IScope getParent() {
+	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+	    IASTName compName = compType.getName();
+	    if( compName instanceof ICPPASTQualifiedName ){
+	    	IASTName [] ns = ((ICPPASTQualifiedName)compName).getNames();
+	    	compName = ns[ ns.length - 1 ];
+	    }
+		return CPPVisitor.getContainingScope( compName );
 	}
 	
 	/* (non-Javadoc)
@@ -172,7 +183,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	            return CPPSemantics.resolveAmbiguities( name, getConstructors( resolve ) );
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
-            return compType.getName().resolveBinding();
+            return compName.resolveBinding();
 	    }
 	    return super.getBinding( name, resolve );
 	}
@@ -195,7 +206,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	public IBinding[] find(String name) throws DOMException {
 	    char [] n = name.toCharArray();
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    if( CharArrayUtils.equals( n, compType.getName().toCharArray() ) ){
+	    IASTName compName = compType.getName();
+	    if( compName instanceof ICPPASTQualifiedName ){
+	    	IASTName [] ns = ((ICPPASTQualifiedName)compName).getNames();
+	    	compName = ns[ ns.length - 1 ];
+	    }
+	    if( CharArrayUtils.equals( n, compName.toCharArray() ) ){
 	        return (IBinding[]) ArrayUtil.addAll( IBinding.class, null, getConstructors( true ) );
 	    }
 	    return super.find( name );

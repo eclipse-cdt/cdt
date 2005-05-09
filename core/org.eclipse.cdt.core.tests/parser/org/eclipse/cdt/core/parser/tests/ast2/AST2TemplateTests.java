@@ -1174,6 +1174,79 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( x4 instanceof ICPPSpecialization );
 		assertEquals( ((ICPPSpecialization)x4).getSpecializedBinding(), x2 );
 	}
+	public void _testNestedTypeSpecializations() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class T> class A {               \n"); //$NON-NLS-1$
+		buffer.append("   typedef T _T;                           \n"); //$NON-NLS-1$
+		buffer.append("  _T t;                                    \n"); //$NON-NLS-1$
+		buffer.append("};                                         \n"); //$NON-NLS-1$
+		buffer.append("void f() {                                 \n"); //$NON-NLS-1$
+		buffer.append("   A<int> a;                               \n"); //$NON-NLS-1$
+		buffer.append("   a.t;                                    \n"); //$NON-NLS-1$
+		buffer.append("}                                          \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ITypedef _T = (ITypedef) col.getName(3).resolveBinding();
+		assertSame( _T.getType(), T );
+		
+		ICPPField t = (ICPPField) col.getName(5).resolveBinding();
+		assertSame( t.getType(), _T );
+		
+		ICPPField t2 = (ICPPField) col.getName(11).resolveBinding();
+		assertTrue( t2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)t2).getSpecializedBinding(), t );
+		
+		IType type = t2.getType();
+		assertTrue( type instanceof ITypedef );
+		assertTrue( type instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)type).getSpecializedBinding(), _T );
+		
+		type = ((ITypedef)type).getType();
+		assertTrue( type instanceof IBasicType );
+		assertEquals( ((IBasicType)type).getType(), IBasicType.t_int );
+	}
+	
+	public void _testNestedClassTypeSpecializations() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class T> class A {                          \n"); //$NON-NLS-1$
+		buffer.append("   class B { T t; };                                  \n"); //$NON-NLS-1$
+		buffer.append("   B b;                                               \n"); //$NON-NLS-1$
+		buffer.append("};                                                    \n"); //$NON-NLS-1$
+		buffer.append("void f() {                                            \n"); //$NON-NLS-1$
+		buffer.append("   A<int> a;                                          \n"); //$NON-NLS-1$
+		buffer.append("   a.b.t;                                             \n"); //$NON-NLS-1$
+		buffer.append("}                                                     \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+		ICPPField t = (ICPPField) col.getName(4).resolveBinding();
+		assertSame( t.getType(), T );
+		ICPPField b = (ICPPField) col.getName(6).resolveBinding();
+		assertSame( b.getType(), B );
+		
+		ICPPField b2 = (ICPPField) col.getName(12).resolveBinding();
+		ICPPField t2 = (ICPPField) col.getName(13).resolveBinding();
+		
+		assertTrue( b2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)b2).getSpecializedBinding(), b );
+		
+		IType type = b2.getType();
+		assertTrue( type instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)type).getSpecializedBinding(), B );
+		
+		assertTrue( t2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)t2).getSpecializedBinding(), t );
+		assertTrue( t2.getType() instanceof IBasicType );
+		assertEquals( ((IBasicType)t2.getType()).getType(), IBasicType.t_int );
+	}
 	
 	public void testTemplateParameterQualifiedType_1() throws Exception {
 	    StringBuffer buffer = new StringBuffer();
@@ -1234,5 +1307,170 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( t, B );
 	}
 	
+	public void testTemplateScopes() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("template <class T> class A {               \n"); //$NON-NLS-1$
+	    buffer.append("   A<T> a;                                 \n"); //$NON-NLS-1$
+	    buffer.append("   void f();                               \n"); //$NON-NLS-1$
+	    buffer.append("};                                         \n"); //$NON-NLS-1$
+	    buffer.append("template <class U> void A<U>::f(){         \n"); //$NON-NLS-1$
+	    buffer.append("   U u;                                    \n"); //$NON-NLS-1$
+	    buffer.append("}                                          \n"); //$NON-NLS-1$
+
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ICPPClassTemplate A = (ICPPClassTemplate) col.getName(1).resolveBinding();
+		ICPPClassType A2 = (ICPPClassType) col.getName(2).resolveBinding();
+		
+		ICPPTemplateParameter U = (ICPPTemplateParameter) col.getName(7).resolveBinding();
+		assertSame( U, T );
+		ICPPClassType A3 = (ICPPClassType) col.getName(9).resolveBinding();
+		assertTrue( A3 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance) A3).getTemplateDefinition(), A );
+		assertSame( A2, A3 );
+		
+		
+		ICPPTemplateParameter U2 = (ICPPTemplateParameter) col.getName(13).resolveBinding();
+		assertSame( U, U2 );
+		assertSame( T, U );
+	}
 	
+	public void testTemplateScopes_2() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("class A {                              \n"); //$NON-NLS-1$
+	    buffer.append("   template < class T > void f(T);     \n"); //$NON-NLS-1$
+	    buffer.append("};                                     \n"); //$NON-NLS-1$
+	    buffer.append("template <class U> void A::f<>(U){}    \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(1).resolveBinding();
+		ICPPFunctionTemplate f1 = (ICPPFunctionTemplate) col.getName(2).resolveBinding();
+		ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(3).resolveBinding();
+		assertSame( T, T2 );
+		
+		ICPPTemplateParameter U = (ICPPTemplateParameter) col.getName(5).resolveBinding();
+		assertSame( T, U );
+		ICPPClassType A2 = (ICPPClassType) col.getName(7).resolveBinding();
+		assertSame( A, A2 );
+		ICPPMethod f2 = (ICPPMethod) col.getName(8).resolveBinding();
+		IBinding U2 = col.getName(10).resolveBinding();
+		assertSame( U, U2 );
+		
+		assertTrue( f2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)f2).getSpecializedBinding(), f1 );
+	}
+	
+	public void test14_7_3s16() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> struct A {                              \n"); //$NON-NLS-1$
+		buffer.append("   void f(T);                                             \n"); //$NON-NLS-1$
+		buffer.append("   template<class X> void g(T,X);                         \n"); //$NON-NLS-1$
+		buffer.append("   void h(T) { }                                          \n"); //$NON-NLS-1$
+		buffer.append("};                                                        \n"); //$NON-NLS-1$
+		buffer.append("template<> void A<int>::f(int);                           \n"); //$NON-NLS-1$
+		buffer.append("template<class T> template<class X> void A<T>::g(T,X) { } \n"); //$NON-NLS-1$
+		buffer.append("template<> template<class X> void A<int>::g(int,X);       \n"); //$NON-NLS-1$
+		buffer.append("template<> template<> void A<int>::g(int,char);           \n"); //$NON-NLS-1$
+		buffer.append("template<> template<> void A<int>::g<char>(int,char);     \n"); //$NON-NLS-1$
+		buffer.append("template<> void A<int>::h(int) { }                        \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ICPPClassType A = (ICPPClassType) col.getName(1).resolveBinding();
+		ICPPMethod f = (ICPPMethod) col.getName(2).resolveBinding();
+		ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(3).resolveBinding();
+		assertSame( T, T2 );
+		
+		ICPPTemplateParameter X = (ICPPTemplateParameter) col.getName(5).resolveBinding();
+		ICPPFunctionTemplate g = (ICPPFunctionTemplate) col.getName(6).resolveBinding();
+		ICPPTemplateParameter T3 = (ICPPTemplateParameter) col.getName(7).resolveBinding();
+		assertSame( T, T3 );
+		ICPPTemplateParameter X2 = (ICPPTemplateParameter) col.getName(9).resolveBinding();
+		assertSame( X, X2 );
+		
+		ICPPMethod h = (ICPPMethod) col.getName(11).resolveBinding();
+		ICPPTemplateParameter T4 = (ICPPTemplateParameter) col.getName(12).resolveBinding();
+		assertSame( T, T4 );
+		
+		ICPPClassType A2 = (ICPPClassType) col.getName(15).resolveBinding();
+		assertTrue( A2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)A2).getTemplateDefinition(), A );
+		ICPPMethod f2 = (ICPPMethod) col.getName(17).resolveBinding();
+		assertTrue( f2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)f2).getSpecializedBinding(), f );
+		
+		ICPPTemplateParameter TR = (ICPPTemplateParameter) col.getName(19).resolveBinding();
+		assertSame( T, TR );
+		ICPPTemplateParameter XR = (ICPPTemplateParameter) col.getName(20).resolveBinding();
+		assertSame( X, XR );
+		ICPPClassType A3 = (ICPPClassType) col.getName(22).resolveBinding();
+		assertTrue( A3 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)A3).getTemplateDefinition(), A );
+		assertNotSame( A2, A3 );
+		
+		ICPPMethod g2 = (ICPPMethod) col.getName(25).resolveBinding();
+		assertSame( g2, g );
+		TR = (ICPPTemplateParameter) col.getName(26).resolveBinding();
+		assertSame( T, TR );
+		XR = (ICPPTemplateParameter) col.getName(28).resolveBinding();
+		assertSame( X, XR );
+		
+		assertSame( col.getName(32).resolveBinding(), A2 );
+		assertSame( col.getName(39).resolveBinding(), A2 );
+		assertSame( col.getName(45).resolveBinding(), A2 );
+		assertSame( col.getName(52).resolveBinding(), A2 );
+		
+		ICPPMethod h2 = (ICPPMethod) col.getName(54).resolveBinding();
+		assertTrue( h2 instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)h2).getSpecializedBinding(), h );
+	}
+	
+	public void test14_6_1s6() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace N {                                                 \n"); //$NON-NLS-1$
+		buffer.append("   int C;                                                     \n"); //$NON-NLS-1$
+		buffer.append("   template<class T> class B {                                \n"); //$NON-NLS-1$
+		buffer.append("      void f(T);                                              \n"); //$NON-NLS-1$
+		buffer.append("   };                                                         \n"); //$NON-NLS-1$
+		buffer.append("}                                                             \n"); //$NON-NLS-1$
+		buffer.append("template<class C> void N::B<C>::f(C) {                        \n"); //$NON-NLS-1$
+		buffer.append("   C b; // C is the template parameter, not N::C              \n"); //$NON-NLS-1$
+		buffer.append("}                                                             \n"); //$NON-NLS-1$
+
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(2).resolveBinding();
+		ICPPClassTemplate B = (ICPPClassTemplate) col.getName(3).resolveBinding();
+		ICPPMethod f = (ICPPMethod) col.getName(4).resolveBinding();
+		ICPPTemplateParameter TR = (ICPPTemplateParameter) col.getName(5).resolveBinding();
+		assertSame( T, TR );
+		
+		ICPPTemplateParameter C = (ICPPTemplateParameter) col.getName(7).resolveBinding();
+		assertSame( C, T );
+		
+		ICPPClassType B2 = (ICPPClassType) col.getName(10).resolveBinding();
+		assertTrue( B2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)B2).getTemplateDefinition(), B );
+		
+		ICPPTemplateParameter CR = (ICPPTemplateParameter) col.getName(12).resolveBinding();
+		assertSame( CR, T );
+		
+		ICPPMethod f2 = (ICPPMethod) col.getName(13).resolveBinding();
+		assertSame( f2, f );
+		
+		CR = (ICPPTemplateParameter) col.getName(14).resolveBinding();
+		assertSame( CR, T );
+	}
 }

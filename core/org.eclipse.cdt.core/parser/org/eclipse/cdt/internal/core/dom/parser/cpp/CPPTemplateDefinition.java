@@ -164,6 +164,19 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
     			break;
     	}
     	
+    	if( definition != null || (declarations != null && declarations.length > 0 ) ){
+    	    IASTName templateName = ( definition != null ) ? definition : declarations[0];
+    	    ICPPASTTemplateDeclaration temp = CPPTemplates.getTemplateDeclaration( templateName );
+    	    ICPPASTTemplateParameter [] params = temp.getTemplateParameters();
+    	    if( params.length > i ) {
+    	        IASTName paramName = CPPTemplates.getTemplateParameterName( params[i] );
+    	        if( paramName.getBinding() != null ){
+    	            binding = paramName.getBinding();
+    	            name.setBinding( binding );
+    	            return binding;
+    	        }
+    	    }
+    	}
     	//create a new binding and set it for the corresponding parameter in all known decls
     	if( templateParameter instanceof ICPPASTSimpleTypeTemplateParameter )
     		binding = new CPPTemplateTypeParameter( name );
@@ -211,7 +224,7 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( getTemplateName().getParent() );
+		return CPPVisitor.getContainingScope( getTemplateName() );
 	}
 
 	/* (non-Javadoc)

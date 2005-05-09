@@ -1,3 +1,7 @@
+2005-05-09 Alain Magloire
+	Patch from David Daoust, PR 94120
+	* src/org/eclipse/cdt/internal/ui/wizards/CWizardRegistry.java
+
 2005-05-06 Alain Magloire
 	PR 93902 to fix warnings.
 	* plugin.xml

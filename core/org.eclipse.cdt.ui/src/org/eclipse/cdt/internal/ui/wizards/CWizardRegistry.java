@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
  * Convenience class for drop-in C/C++ Wizard contributions.
@@ -35,6 +34,12 @@ public class CWizardRegistry {
 	private final static String ATT_CFOLDER = "cfolder";//$NON-NLS-1$
 	private final static String ATT_CPROJECT = "cproject";//$NON-NLS-1$
 	private final static String ATT_CCPROJECT = "ccproject";//$NON-NLS-1$
+    private final static String TAG_CLASS = "class"; //$NON-NLS-1$
+    private final static String TAG_ID = "id"; //$NON-NLS-1$
+    private final static String PL_NEW = "newWizards"; //$NON-NLS-1$
+
+	
+	
 	
 	/**
 	 * Checks if wizard supports C projects.
@@ -104,7 +109,7 @@ public class CWizardRegistry {
 	        return Boolean.valueOf(project).booleanValue();
 	    }
 
-	    IConfigurationElement[] classElements = element.getChildren(IWorkbenchConstants.TAG_CLASS);
+	    IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
 			for (int i = 0; i < classElements.length; i++) {
 				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
@@ -167,7 +172,7 @@ public class CWizardRegistry {
 	}
 	
     private static boolean isTypeWizard(IConfigurationElement element) {
-		IConfigurationElement[] classElements = element.getChildren(IWorkbenchConstants.TAG_CLASS);
+		IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
 			for (int i = 0; i < classElements.length; i++) {
 				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
@@ -228,7 +233,7 @@ public class CWizardRegistry {
 	}
 	
     private static boolean isFileWizard(IConfigurationElement element) {
-		IConfigurationElement[] classElements = element.getChildren(IWorkbenchConstants.TAG_CLASS);
+		IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
 			for (int i = 0; i < classElements.length; i++) {
 				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
@@ -289,7 +294,7 @@ public class CWizardRegistry {
 	}
 	
     private static boolean isFolderWizard(IConfigurationElement element) {
-		IConfigurationElement[] classElements = element.getChildren(IWorkbenchConstants.TAG_CLASS);
+		IConfigurationElement[] classElements = element.getChildren(TAG_CLASS);
 		if (classElements.length > 0) {
 			for (int i = 0; i < classElements.length; i++) {
 				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
@@ -318,7 +323,7 @@ public class CWizardRegistry {
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element= elements[i];
 			if (isCProjectWizard(element)) {
-	            String id = element.getAttribute(IWorkbenchConstants.TAG_ID);
+	            String id = element.getAttribute(TAG_ID);
 	            if (id != null && !idList.contains(id)) {
 	            	idList.add(id);
 	            }
@@ -328,7 +333,7 @@ public class CWizardRegistry {
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element= elements[i];
 			if (isCCProjectWizard(element)) {
-	            String id = element.getAttribute(IWorkbenchConstants.TAG_ID);
+	            String id = element.getAttribute(TAG_ID);
 	            if (id != null && !idList.contains(id)) {
 	            	idList.add(id);
 	            }
@@ -346,7 +351,7 @@ public class CWizardRegistry {
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
 			if (isCProjectWizard(element)) {
-	            String id = element.getAttribute(IWorkbenchConstants.TAG_ID);
+	            String id = element.getAttribute(TAG_ID);
 	            if (id != null && !idList.contains(id)) {
 	            	idList.add(id);
 	    	        IAction action = new OpenNewWizardAction(element);
@@ -360,7 +365,7 @@ public class CWizardRegistry {
 	    for (int i = 0; i < elements.length; ++i) {
 			IConfigurationElement element = elements[i];
 			if (isCCProjectWizard(element)) {
-	            String id = element.getAttribute(IWorkbenchConstants.TAG_ID);
+	            String id = element.getAttribute(TAG_ID);
 	            if (id != null && !idList.contains(id)) {
 	            	idList.add(id);
 	    	        IAction action = new OpenNewWizardAction(element);
@@ -390,7 +395,7 @@ public class CWizardRegistry {
 	 */
 	public static IConfigurationElement[] getAllWizardElements() {
 		List elemList = new ArrayList();
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_NEW);
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, PL_NEW);
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {

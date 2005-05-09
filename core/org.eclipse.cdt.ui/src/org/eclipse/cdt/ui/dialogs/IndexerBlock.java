@@ -117,11 +117,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 		layout.marginWidth= 0;
 		layout.verticalSpacing= 0;
 		layout.horizontalSpacing= GridData.FILL_HORIZONTAL;
+		composite.setLayoutData(null);
 		composite.setFont(font);
 		setControl(composite);
       
-		  
-	    // create a composite for general scanner config discovery options
         Composite scComp = ControlFactory.createComposite(composite, 1);
         ((GridLayout)scComp.getLayout()).marginHeight = 0;
         ((GridLayout)scComp.getLayout()).marginTop = 5;

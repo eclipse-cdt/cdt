@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -73,7 +74,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         
         implicits = new ICPPMethod[4];
         ICPPClassType clsType = (ICPPClassType) binding;
-        
+        if( clsType instanceof ICPPClassTemplate ){
+            try {
+                clsType = (ICPPClassType) CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) clsType );
+            } catch ( DOMException e ) {
+            }
+        }
         char [] className = name.toCharArray();
                
         //default constructor: A()

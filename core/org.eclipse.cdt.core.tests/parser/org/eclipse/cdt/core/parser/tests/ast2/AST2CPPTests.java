@@ -3986,4 +3986,42 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, n, 3 );
     }
     
+    public void testDeclDefn() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int a;                \n"); //$NON-NLS-1$
+        buffer.append("extern int b;         \n"); //$NON-NLS-1$
+        buffer.append("extern int c = 1;     \n"); //$NON-NLS-1$
+        buffer.append("int f( );             \n"); //$NON-NLS-1$
+        buffer.append("int f( int p ){}      \n"); //$NON-NLS-1$
+        buffer.append("struct S;             \n"); //$NON-NLS-1$
+        buffer.append("struct S { int d; };  \n"); //$NON-NLS-1$
+        buffer.append("struct X {            \n"); //$NON-NLS-1$
+        buffer.append("   static int y;      \n"); //$NON-NLS-1$
+        buffer.append("};                    \n"); //$NON-NLS-1$
+        buffer.append("namespace N {}        \n"); //$NON-NLS-1$
+        buffer.append("int X::y = 1;         \n"); //$NON-NLS-1$
+        buffer.append("int ( *g(int) )(int); \n"); //$NON-NLS-1$
+        buffer.append("int ( *pf)(int);      \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        assertTrue( col.getName(0).isDefinition() );   //a
+        assertFalse( col.getName(1).isDefinition() );  //b
+        assertTrue( col.getName(2).isDefinition() );   //c
+        assertFalse( col.getName(3).isDefinition() );  //f ()
+        assertTrue( col.getName(4).isDefinition() );   //f () {}
+        assertTrue( col.getName(5).isDefinition() );   //p
+        assertFalse( col.getName(6).isDefinition() );  //struct S;
+        assertTrue( col.getName(7).isDefinition() );   //struct S {}
+        assertTrue( col.getName(8).isDefinition() );   //d
+        assertTrue( col.getName(9).isDefinition() );   //X
+        assertFalse( col.getName(10).isDefinition() ); //y
+        assertTrue( col.getName(11).isDefinition() ); //N
+        assertTrue( col.getName(12).isDefinition() ); //X::y
+        assertFalse( col.getName(15).isDefinition() ); //g
+        assertTrue( col.getName(18).isDefinition() ); //pf
+    }
+    
 }

@@ -14,10 +14,12 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -127,19 +129,26 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
 	 */
 	public int getRoleForName(IASTName n) {
         IASTNode getParent = getParent();
+        boolean fnDtor = ( this instanceof IASTFunctionDeclarator );
         if( getParent instanceof IASTDeclaration )
         {
             if( getParent instanceof IASTFunctionDefinition )
                 return r_definition;
             if( getParent instanceof IASTSimpleDeclaration )
             {
+                if( getInitializer() != null )
+                    return r_definition;
+                
                 IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
-                if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_extern )
+                int storage = sd.getDeclSpecifier().getStorageClass(); 
+                if( storage == IASTDeclSpecifier.sc_extern || 
+                    storage == IASTDeclSpecifier.sc_typedef ||
+                    storage == IASTDeclSpecifier.sc_static )
+                {
                     return r_declaration;
-                if( getInitializer() == null )
-                    return r_declaration;
+                }
             }
-            return r_definition;
+            return fnDtor ? r_declaration : r_definition;
         }
         if( getParent instanceof IASTTypeId )
             return r_reference;
@@ -154,17 +163,25 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
                     return r_definition;
                 if( getParent instanceof IASTSimpleDeclaration )
                 {
-                    IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
-                    if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_extern )
-                        return r_declaration;
                     if( getInitializer() != null )
                         return r_definition;
+                    IASTSimpleDeclaration sd = (IASTSimpleDeclaration) getParent;
+                    int storage = sd.getDeclSpecifier().getStorageClass();
+                    if( storage == IASTDeclSpecifier.sc_extern || 
+                        storage == IASTDeclSpecifier.sc_typedef ||
+                        storage == IASTDeclSpecifier.sc_static )
+                    {
+                        return r_declaration;
+                    }
                 }
-                return r_definition;                    
+                return fnDtor ? r_declaration : r_definition;                    
             }
             if( t instanceof IASTTypeId )
                 return r_reference;
         }
+        if( getParent instanceof IASTParameterDeclaration )
+            return ( n.toCharArray().length > 0 ) ? r_definition : r_declaration;
+        
         return r_unclear;
 	}
 }

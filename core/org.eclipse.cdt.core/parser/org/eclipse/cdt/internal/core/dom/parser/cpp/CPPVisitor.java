@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -701,6 +702,18 @@ public class CPPVisitor {
 			    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)temp).getBody();
 			    		return body.getScope();
 			    	}
+			    } else if( parent instanceof IASTArrayModifier || parent instanceof IASTInitializer ){
+			        IASTNode d = parent.getParent();
+			        while( !(d instanceof IASTDeclarator) )
+			            d = d.getParent();
+			        IASTDeclarator dtor = (IASTDeclarator) d;
+			        while( dtor.getNestedDeclarator() != null )
+			            dtor = dtor.getNestedDeclarator();
+			        IASTName name = dtor.getName();
+			        if( name instanceof ICPPASTQualifiedName ){
+			            IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+			            return getContainingScope( ns[ ns.length - 1 ] );
+			        }
 			    }
 		    } else if( node instanceof ICPPASTTemplateParameter ){
 		    	return CPPTemplates.getContainingScope( node );

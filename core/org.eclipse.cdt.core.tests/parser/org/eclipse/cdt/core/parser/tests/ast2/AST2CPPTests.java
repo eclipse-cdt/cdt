@@ -3968,4 +3968,22 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNoProblemBindings( nameResolver );
     }
     
+    public void testBug90610() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class C {                   \n"); //$NON-NLS-1$
+        buffer.append("   static const int n = 1;  \n"); //$NON-NLS-1$
+        buffer.append("   static int arr[ n ];     \n"); //$NON-NLS-1$
+        buffer.append("};                          \n"); //$NON-NLS-1$
+        buffer.append("int C::arr[n];              \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPField n = (ICPPField) col.getName(1).resolveBinding();
+        assertTrue( n.isStatic() );
+        
+        assertInstances( col, n, 3 );
+    }
+    
 }

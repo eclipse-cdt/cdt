@@ -75,37 +75,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 3.4.3-3):
-	class X { };
-	class C {
-	class X { };
-	static const int number = 50;
-	static X arr[number];
-	};
-	X C::arr[number]; // illformed:
-	// equivalent to: ::X C::arr[C::number];
-	// not to: C::X C::arr[C::number];
-	 --End Example]
-	 */
-	public void test3_4_3s3()  { // TODO raised bug 90610
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("class X { };\n"); //$NON-NLS-1$
-		buffer.append("class C {\n"); //$NON-NLS-1$
-		buffer.append("class X { };\n"); //$NON-NLS-1$
-		buffer.append("static const int number = 50;\n"); //$NON-NLS-1$
-		buffer.append("static X arr[number];\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("X C::arr[number]; // illformed:\n"); //$NON-NLS-1$
-		buffer.append("// equivalent to: ::X C::arr[C::number];\n"); //$NON-NLS-1$
-		buffer.append("// not to: C::X C::arr[C::number];\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 6.4-3):
 	int foo() {
 	if (int x = f()) {

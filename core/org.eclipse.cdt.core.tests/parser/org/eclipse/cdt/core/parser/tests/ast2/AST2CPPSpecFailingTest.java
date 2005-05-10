@@ -42,53 +42,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 3.2-5):
-	// translation unit 1:
-	struct X {
-	X(int);
-	X(int, int);
-	};
-	X::X(int = 0) { }
-	class D: public X { };
-	D d2; // X(int) called by D()
-	// translation unit 2:
-	struct X {
-	X(int);
-	X(int, int);
-	};
-	X::X(int = 0, int = 0) { }
-	class D: public X { }; // X(int, int) called by D();
-	// D()’s implicit definition
-	// violates the ODR
-	 --End Example]
-	 */
-	public void test3_2s5()  { // TODO raised bug 90602 
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("// translation unit 1:\n"); //$NON-NLS-1$
-		buffer.append("struct X {\n"); //$NON-NLS-1$
-		buffer.append("X(int);\n"); //$NON-NLS-1$
-		buffer.append("X(int, int);\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("X::X(int = 0) { }\n"); //$NON-NLS-1$
-		buffer.append("class D: public X { };\n"); //$NON-NLS-1$
-		buffer.append("D d2; // X(int) called by D()\n"); //$NON-NLS-1$
-		buffer.append("// translation unit 2:\n"); //$NON-NLS-1$
-		buffer.append("struct X {\n"); //$NON-NLS-1$
-		buffer.append("X(int);\n"); //$NON-NLS-1$
-		buffer.append("X(int, int);\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("X::X(int = 0, int = 0) { }\n"); //$NON-NLS-1$
-		buffer.append("class D: public X { }; // X(int, int) called by D();\n"); //$NON-NLS-1$
-		buffer.append("// D()’s implicit definition\n"); //$NON-NLS-1$
-		buffer.append("// violates the ODR\n"); //$NON-NLS-1$
-		try{
-			parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-			assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 3.4.1-10):
 	struct A {
 	typedef int AT;

@@ -279,7 +279,9 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
             }
             getBuildInfo().save();
             if (isProfileDifferentThenPersisted()) {
-                changeDiscoveryContainer(project);
+				if (project != null) {
+					changeDiscoveryContainer(project);
+				}
                 updatePersistedProfile();
             }
         }        

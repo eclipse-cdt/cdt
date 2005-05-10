@@ -123,6 +123,7 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
                             IFile file = project.getFile(fileName);
                             addCompilerCommand(file, command);
                         }
+						applyFileDeltas();
                     }
                 }
             }
@@ -149,7 +150,9 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
     
     private ScannerInfoData sid; // scanner info data
     
-    private List siChangedForFileList; // list of files for which scanner info has changed
+//    private List siChangedForFileList; 		// list of files for which scanner info has changed
+	private Map siChangedForFileMap;		// (file, comandId) map for deltas
+	private List siChangedForCommandIdList;	// list of command ids for which scanner info has changed
     
     private SortedSet freeCommandIdPool;   // sorted set of free command ids
     private int commandIdCounter = 0;
@@ -162,8 +165,10 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
     public PerFileSICollector() {
         sid = new ScannerInfoData();
         
-        siChangedForFileList = new ArrayList();
-        
+//        siChangedForFileList = new ArrayList();
+		siChangedForFileMap = new HashMap();
+		siChangedForCommandIdList = new ArrayList();
+		
         freeCommandIdPool = new TreeSet();
         siAvailable = false;
     }
@@ -267,38 +272,103 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
             cmd.setCommandId(commandId);
             sid.commandIdCommandMap.put(cmd.getCommandIdAsInteger(), cmd);
         }
-        Integer commandId = cmd.getCommandIdAsInteger();
-        // update sid.commandIdToFilesMap
-        Set fileSet = (Set) sid.commandIdToFilesMap.get(commandId);
-        if (fileSet == null) {
-            fileSet = new HashSet();
-            sid.commandIdToFilesMap.put(commandId, fileSet);
-        }
-        if (fileSet.add(file)) {
-            // update fileToCommandIdsMap
-            boolean change = true;
-            Integer oldCommandId = (Integer) sid.fileToCommandIdMap.get(file);
-            if (oldCommandId != null) {
-                if (oldCommandId.equals(commandId)) {
-                    change = false;
-                }
-                else {
-                    Set oldFileSet = (Set) sid.commandIdToFilesMap.get(oldCommandId);
-                    oldFileSet.remove(file);
-                }
-            }
-            if (change) {
-                sid.fileToCommandIdMap.put(file, commandId);
-                // TODO generate change event for this resource
-                IPath path = file.getFullPath();
-                if (!siChangedForFileList.contains(path)) {
-                    siChangedForFileList.add(path);
-                }
-            }
-        }
+		
+		generateFileDelta(file, cmd);
+//		updateFileForCommand(file, cmd);
+		
+		
+//        Integer commandId = cmd.getCommandIdAsInteger();
+//        // update sid.commandIdToFilesMap
+//        Set fileSet = (Set) sid.commandIdToFilesMap.get(commandId);
+//        if (fileSet == null) {
+//            fileSet = new HashSet();
+//            sid.commandIdToFilesMap.put(commandId, fileSet);
+//        }
+//        if (fileSet.add(file)) {
+//            // update fileToCommandIdsMap
+//            boolean change = true;
+//            Integer oldCommandId = (Integer) sid.fileToCommandIdMap.get(file);
+//            if (oldCommandId != null) {
+//                if (oldCommandId.equals(commandId)) {
+//                    change = false;
+//                }
+//                else {
+//                    Set oldFileSet = (Set) sid.commandIdToFilesMap.get(oldCommandId);
+//                    oldFileSet.remove(file);
+//                }
+//            }
+//            if (change) {
+//                sid.fileToCommandIdMap.put(file, commandId);
+//                // TODO generate change event for this resource
+//                IPath path = file.getFullPath();
+//                if (!siChangedForFileList.contains(path)) {
+//                    siChangedForFileList.add(path);
+//                }
+//            }
+//        }
     }
 
-    private void removeUnusedCommands() {
+    /**
+	 * @param file
+	 * @param cmd
+	 */
+	private void generateFileDelta(IFile file, CCommandDSC cmd) {
+        Integer commandId = cmd.getCommandIdAsInteger();
+		Integer oldCommandId = (Integer) sid.fileToCommandIdMap.get(file);
+
+		if (oldCommandId != null && oldCommandId.equals(commandId)) {
+			// already exists; remove form delta
+			siChangedForFileMap.remove(file);
+		}
+		else {
+			// new (file, commandId) pair
+			siChangedForFileMap.put(file, commandId);
+		}
+	}
+
+	/**
+	 * @param file
+	 * @param cmd
+	 */
+	private void applyFileDeltas() {
+		for (Iterator i = siChangedForFileMap.keySet().iterator(); i.hasNext(); ) {
+			IFile file = (IFile) i.next();
+			Integer commandId = (Integer) siChangedForFileMap.get(file);
+			if (commandId != null) {
+			
+		        // update sid.commandIdToFilesMap
+		        Set fileSet = (Set) sid.commandIdToFilesMap.get(commandId);
+		        if (fileSet == null) {
+		            fileSet = new HashSet();
+		            sid.commandIdToFilesMap.put(commandId, fileSet);
+		        }
+		        if (fileSet.add(file)) {
+		            // update fileToCommandIdsMap
+		            boolean change = true;
+		            Integer oldCommandId = (Integer) sid.fileToCommandIdMap.get(file);
+		            if (oldCommandId != null) {
+		                if (oldCommandId.equals(commandId)) {
+		                    change = false;
+		                }
+		                else {
+		                    Set oldFileSet = (Set) sid.commandIdToFilesMap.get(oldCommandId);
+		                    oldFileSet.remove(file);
+		                }
+		            }
+		            if (change) {
+		                sid.fileToCommandIdMap.put(file, commandId);
+		                // TODO generate change event for this resource
+//			                IPath path = file.getFullPath();
+//			                if (!siChangedForFileList.contains(path)) {
+//			                    siChangedForFileList.add(path);
+//			                }
+		            }
+		        }
+			}
+		}
+	}
+
+	private void removeUnusedCommands() {
         for (Iterator i = sid.commandIdToFilesMap.entrySet().iterator(); i.hasNext(); ) {
             Entry entry = (Entry) i.next();
             Integer cmdId = (Integer) entry.getKey();
@@ -341,25 +411,29 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
             monitor = new NullProgressMonitor();
         }
         monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
-        removeUnusedCommands();
+//        removeUnusedCommands();
         monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-        if (!siChangedForFileList.isEmpty()) {
-//        MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
-//        DiscoveredScannerInfoStore.getInstance().loadDiscoveredScannerInfoFromState(project, this);
+        if (scannerInfoChanged()) {
+			applyFileDeltas();
+	        removeUnusedCommands();
             monitor.worked(50);
             monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
             try {
                 // update scanner configuration
+//                MakeCorePlugin.getDefault().getDiscoveryManager().
+//                        updateDiscoveredInfo(createPathInfoObject(), siChangedForFileList);
                 MakeCorePlugin.getDefault().getDiscoveryManager().
-                        updateDiscoveredInfo(createPathInfoObject(), siChangedForFileList);
-    //            DiscoveredScannerInfoStore.getInstance().saveDiscoveredScannerInfoToState(project, this);
+                		updateDiscoveredInfo(createPathInfoObject(), new ArrayList(siChangedForFileMap.keySet()));
                 monitor.worked(50);
             } catch (CoreException e) {
                 MakeCorePlugin.log(e);
             }
-            siChangedForFileList.clear();
         }
-        monitor.done();
+//        siChangedForFileList.clear();
+		siChangedForFileMap.clear();
+		siChangedForCommandIdList.clear();
+
+		monitor.done();
     }
 
     /* (non-Javadoc)
@@ -369,11 +443,16 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         return new PerFileDiscoveredPathInfo();
     }
 
+	private boolean scannerInfoChanged() {
+//		return !siChangedForFileList.isEmpty();
+		return !siChangedForFileMap.isEmpty();
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#getCollectedScannerInfo(java.lang.Object, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
      */
     public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
-        List rv = null;
+        List rv = new ArrayList();
         // check the resource
         String errorMessage = null;
         if (resource == null) {
@@ -394,7 +473,6 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         }
         else if (project.equals(((IResource)resource).getProject())) {
             if (type.equals(ScannerInfoTypes.COMPILER_COMMAND)) {
-                rv = new ArrayList();
                 for (Iterator i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext(); ) {
                     Integer cmdId = (Integer) i.next();
                     Set fileSet = (Set) sid.commandIdToFilesMap.get(cmdId);
@@ -402,6 +480,30 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
                         rv.add(sid.commandIdCommandMap.get(cmdId));
                     }
                 }
+            }
+            else if (type.equals(ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND)) {
+//				if (!siChangedForFileList.isEmpty()) {
+				if (scannerInfoChanged()) {
+					if (siChangedForCommandIdList.isEmpty()) {
+//						for (Iterator i = siChangedForFileList.iterator(); i.hasNext(); ) {
+						for (Iterator i = siChangedForFileMap.keySet().iterator(); i.hasNext(); ) {
+//							IPath path = (IPath) i.next();
+							IFile file = (IFile) i.next();
+							Integer cmdId = (Integer) siChangedForFileMap.get(file);
+							if (cmdId != null) {
+								if (!siChangedForCommandIdList.contains(cmdId)) {
+									siChangedForCommandIdList.add(cmdId);
+								}
+							}
+						}
+					}
+					Collections.sort(siChangedForCommandIdList);
+					for (Iterator i = siChangedForCommandIdList.iterator(); i.hasNext(); ) {
+						Integer cmdId = (Integer) i.next();
+						CCommandDSC command = (CCommandDSC) sid.commandIdCommandMap.get(cmdId);
+						rv.add(command);
+					}
+				}
             }
         }
         return rv;
@@ -444,17 +546,20 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
      */
     public void deleteAll(IResource resource) {
         if (resource.equals(project)) {
-            siChangedForFileList = new ArrayList();
+//            siChangedForFileList = new ArrayList();
+            siChangedForFileMap.clear();
             Set changedFiles = sid.fileToCommandIdMap.keySet();
             for (Iterator i = changedFiles.iterator(); i.hasNext(); ) {
                 IFile file = (IFile) i.next();
-                IPath path = file.getFullPath();
-                siChangedForFileList.add(path);
+//                IPath path = file.getFullPath();
+//                siChangedForFileList.add(path);
+                siChangedForFileMap.put(file, null);
             }
 
             sid = new ScannerInfoData();
             
-            freeCommandIdPool = new TreeSet();
+            commandIdCounter = 0;
+			freeCommandIdPool.clear();
             siAvailable = false;
         }
     }
@@ -621,23 +726,27 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
             return sid;
         }
 
-        /**
-         * @param path
-         * @return
-         */
-        private CCommandDSC getCommand(IPath path) {
-            CCommandDSC cmd = null;
-            IFile file = project.getWorkspace().getRoot().getFile(path);
-            if (file != null) {
-                Integer cmdId = (Integer) sid.fileToCommandIdMap.get(file);
-                if (cmdId != null) {
-                    // get the command
-                    cmd = (CCommandDSC) sid.commandIdCommandMap.get(cmdId);
-                }
-            }
-            return cmd;
-        }
+    }
 
+    /**
+     * @param path
+     * @return
+     */
+    private CCommandDSC getCommand(IPath path) {
+        IFile file = project.getWorkspace().getRoot().getFile(path);
+		return getCommand(file);
+    }
+
+    private CCommandDSC getCommand(IFile file) {
+        CCommandDSC cmd = null;
+        if (file != null) {
+            Integer cmdId = (Integer) sid.fileToCommandIdMap.get(file);
+            if (cmdId != null) {
+                // get the command
+                cmd = (CCommandDSC) sid.commandIdCommandMap.get(cmdId);
+            }
+        }
+        return cmd;
     }
 
 }

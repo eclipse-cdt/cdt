@@ -424,7 +424,8 @@ public class PathEntryUtil {
 			boolean recurseInContainers) {
 		IProject project = cProject.getProject();
 		IPath path = entry.getPath();
-		if (entry.getEntryKind() != IPathEntry.CDT_PROJECT) {
+		if (entry.getEntryKind() != IPathEntry.CDT_PROJECT &&
+				entry.getEntryKind() != IPathEntry.CDT_CONTAINER) {
 			if (!isValidWorkspacePath(project, path)) {
 				return new CModelStatus(
 						ICModelStatusConstants.INVALID_PATHENTRY,

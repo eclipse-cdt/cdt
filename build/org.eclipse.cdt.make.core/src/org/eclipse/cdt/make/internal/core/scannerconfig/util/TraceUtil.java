@@ -44,7 +44,7 @@ public class TraceUtil {
 	
 	public static void outputTrace(String prefix, String msg, String postfix) {
 		if (isTracing()) {
-			System.out.println();
+			//System.out.println();
 			System.out.println(prefix + ' ' + msg + ' ' + postfix);
 		}
 	}
@@ -66,7 +66,7 @@ public class TraceUtil {
 	 */
 	public static void outputTrace(String title, String subtitle1, List item1, List item1new, String subtitle2, List item2) {
 		if (isTracing()) {
-			System.out.println();
+			//System.out.println();
 			System.out.println(title);
 			final String prefix = "  ";	//$NON-NLS-1$
 			final String doublePrefix = "    ";	//$NON-NLS-1$

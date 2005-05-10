@@ -61,7 +61,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
             bMultiline = false;
             sMultiline = ""; //$NON-NLS-1$
         }
-        TraceUtil.outputTrace("AbstractGCCBOPConsoleParser parsing line:", TraceUtil.EOL, line);    //$NON-NLS-1$ //$NON-NLS-2$
+        TraceUtil.outputTrace("AbstractGCCBOPConsoleParser parsing line: [", line, "]");    //$NON-NLS-1$ //$NON-NLS-2$
         // make\[[0-9]*\]:  error_desc
         int firstColon= line.indexOf(':');
         String make = line.substring(0, firstColon + 1);

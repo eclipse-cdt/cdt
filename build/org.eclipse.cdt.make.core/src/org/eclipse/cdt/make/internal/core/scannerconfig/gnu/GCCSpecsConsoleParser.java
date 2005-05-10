@@ -54,7 +54,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	public boolean processLine(String line) {
 		boolean rc = false;
-		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line:", TraceUtil.EOL, line);	//$NON-NLS-1$ //$NON-NLS-2$
+		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line: [", line, "]");	//$NON-NLS-1$ //$NON-NLS-2$
 
 		// contribution of -dD option
 		if (line.startsWith(DEFINE)) {

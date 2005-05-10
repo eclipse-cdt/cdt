@@ -60,7 +60,7 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
         if (collector instanceof IScannerInfoCollector2) {
             IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
             List commands = collector2.getCollectedScannerInfo(
-                    resource.getProject(), ScannerInfoTypes.COMPILER_COMMAND);
+                    resource.getProject(), ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND);
             if (commands != null && commands.size() > 0) {
         
                 StringBuffer buffer = new StringBuffer();

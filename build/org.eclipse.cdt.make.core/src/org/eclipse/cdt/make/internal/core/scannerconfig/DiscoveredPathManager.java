@@ -29,6 +29,7 @@ import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -170,7 +171,8 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
                 if (changedResources != null) {
                     List changeDelta = new ArrayList(changedResources.size());
                     for (Iterator i = changedResources.iterator(); i.hasNext(); ) {
-                        IPath path = (IPath) i.next();
+						IFile file = (IFile) i.next();
+                        IPath path = file.getFullPath();
                         changeDelta.add(new PathEntryContainerChanged(path, 3)); // both include paths and symbols changed
                     }
                     CoreModel.pathEntryContainerUpdates(container, 

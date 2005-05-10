@@ -39,7 +39,6 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
     private final static int QUOTE_INCLUDES = 1;
     private final static int INCLUDES = 2;
     
-    private IProject fProject = null;
     private IScannerInfoCollector fCollector = null;
     
     private int expectingIncludes = NO_INCLUDES;
@@ -52,7 +51,6 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
      */
     public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
-        this.fProject = project;
         this.fCollector = collector;
     }
 
@@ -61,7 +59,7 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
      */
     public boolean processLine(String line) {
         boolean rc = false;
-        TraceUtil.outputTrace("GCCPerFileSIPConsoleParser parsing line:", TraceUtil.EOL, line);  //$NON-NLS-1$ //$NON-NLS-2$
+        TraceUtil.outputTrace("GCCPerFileSIPConsoleParser parsing line: [", line, "]");  //$NON-NLS-1$//$NON-NLS-2$
 
         if (line.startsWith(COMMAND_ID_BEGIN)) {
             commandId = Integer.parseInt(line.substring(COMMAND_ID_BEGIN.length()));

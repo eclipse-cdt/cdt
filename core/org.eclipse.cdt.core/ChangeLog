@@ -1,3 +1,12 @@
+2005-05-10 Vladimir Hirsl
+	Fix for PR 94500: [Path Entry] Problem marker: Invalid project path: DISCOVERED_SCANNER_INFO
+	
+	* model/org/eclipse/cdt/internal/core/model/PathEntryUtil.java
+	
+	Fix for infinite loop in LocationMap.createSoleLocation(..). Courtesy of John C.
+	
+	* parser/org/eclipse/cdt/internal/core/parser/scanner2/LoactionMap.java
+
 2005-05-02 Vladimir Hirsl
 	Fix for PR 92599: [Indexer] Remove annotation markers preference from DOMIndexer & friends
 	Removed indexer problem markers property page block for DOMIndexer.

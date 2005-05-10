@@ -123,18 +123,18 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         }
         if (fUtil != null) {
             IPath pFilePath = fUtil.getAbsolutePath(filePath);
-            String longFileName = pFilePath.toString();
             String shortFileName = pFilePath.removeFileExtension().lastSegment();
             String genericLine = line.replaceAll(filePath, "LONG_NAME"); //$NON-NLS-1$
             genericLine = genericLine.replaceAll(shortFileName+"\\.", "SHORT_NAME\\."); //$NON-NLS-1$ //$NON-NLS-2$
 
             CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine, extensionsIndex > 0);
-            List cmdList = new ArrayList();
-            cmdList.add(cmd);
-            Map sc = new HashMap(1);
-            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
             if (getProject().getLocation().isPrefixOf(pFilePath)) {
-            	IPath relPath = pFilePath.removeFirstSegments(getProject().getLocation().segmentCount());
+	            List cmdList = new ArrayList();
+	            cmdList.add(cmd);
+	            Map sc = new HashMap(1);
+	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
+
+				IPath relPath = pFilePath.removeFirstSegments(getProject().getLocation().segmentCount());
                 IFile file = getProject().getFile(relPath);
                 getCollector().contributeToScannerConfig(file, sc);
             }

@@ -1740,7 +1740,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             if (c.containsInDirective(offset, length)) {
                 _CompositeContext parent = c.parent;
                 while (!(parent instanceof _CompositeFileContext))
-                    parent = c.parent;
+                    parent = parent.parent;
                 _CompositeFileContext fc = (_CompositeFileContext) parent;
                 return new FileLocation(fc.reader.filename, reconcileOffset(fc,
                         c, offset), length);
@@ -1758,7 +1758,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             {
                 _CompositeContext parent = c.parent;
                 while (!(parent instanceof _CompositeFileContext))
-                    parent = c.parent;
+                    parent = parent.parent;
                 _CompositeFileContext fc = (_CompositeFileContext) parent;
                 return new FileLocation(fc.reader.filename, reconcileOffset(fc,
                         c, offset), length);                

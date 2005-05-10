@@ -42,26 +42,4 @@ public interface IScannerInfoCollector2 extends IScannerInfoCollector {
      */
     public IDiscoveredPathInfo createPathInfoObject();
     
-//    /**
-//     * Answers a map of collected defines that the the compiler uses by default. 
-//     * The symbols are defined in the map as a (macro, value) pair as follows 
-//     * <p><p><code>-DFOO</code> will be stored as ("FOO","")
-//     * <p><code>-DFOO=BAR</code> will be stored as ("FOO","BAR")
-//     * <p><p>Duplicates will not be stored in the map and any whitespaces in 
-//     * the macro or value will be trimmed out.
-//     *  
-//     * @return a <code>Map</code> of defined symbols and values
-//     */
-//    public Map getDefinedSymbols();
-//    
-//    
-//    /**
-//     * Answers a <code>List</code> of unique built-in includes paths that have been 
-//     * collected for the receiver. The paths are stored as <code>String</code> in the proper 
-//     * format for the host tools. 
-//     * 
-//     * @return a <code>List</code> of built-in compiler include search paths.  
-//     */
-//    public List getIncludePaths();
-    
 }

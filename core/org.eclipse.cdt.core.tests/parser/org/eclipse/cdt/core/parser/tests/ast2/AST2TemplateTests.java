@@ -13,10 +13,15 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -43,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 
 /**
  * @author aniefer
@@ -1525,4 +1531,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPClassType A3 = (ICPPClassType) col.getName(11).resolveBinding();
 		assertSame( A2, A3 );
 	}
+	
+	public void testBug74204() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("template <class T> class A {       \n"); //$NON-NLS-1$
+	    buffer.append("   A<T>* p;                        \n"); //$NON-NLS-1$
+	    buffer.append("   void f() { this; }              \n"); //$NON-NLS-1$
+	    buffer.append("};                                 \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		IField p = (IField) col.getName(5).resolveBinding();
+		
+		IASTName f = col.getName(6);
+		IASTFunctionDefinition fdef = (IASTFunctionDefinition) f.getParent().getParent();
+		IASTExpressionStatement statement = (IASTExpressionStatement) ((IASTCompoundStatement)fdef.getBody()).getStatements()[0];
+		IType type = CPPVisitor.getExpressionType( statement.getExpression() );
+		
+		assertTrue( type.isSameType( p.getType() ) );
+	}
+	
 }

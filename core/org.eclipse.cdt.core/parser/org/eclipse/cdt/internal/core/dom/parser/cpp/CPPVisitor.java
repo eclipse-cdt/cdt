@@ -104,6 +104,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -1544,6 +1545,9 @@ public class CPPVisitor {
 				if( s instanceof ICPPClassScope ){
 					ICPPClassScope cScope = (ICPPClassScope) s;
 					IType type = cScope.getClassType();
+					if( type instanceof ICPPClassTemplate ){
+					    type = (IType) CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) type );
+					}
 					if( dtor.isConst() || dtor.isVolatile() )
 						type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile() );
 					type = new CPPPointerType( type );

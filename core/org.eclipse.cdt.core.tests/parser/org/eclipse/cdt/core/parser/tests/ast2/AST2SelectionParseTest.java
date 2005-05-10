@@ -751,31 +751,6 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertEquals(((ICPPClassType)name.resolveBinding()).getName(), "A"); //$NON-NLS-1$
 	}
 	
-	// TODO no template support yet for new AST?
-//	public void testBug72814() throws Exception{
-//	    Writer writer = new StringWriter();
-//	    writer.write( "namespace N{                               \n"); //$NON-NLS-1$
-//	    writer.write( "   template < class T > class AAA { T _t };\n"); //$NON-NLS-1$
-//	    writer.write( "}                                          \n"); //$NON-NLS-1$
-//	    writer.write( "N::AAA<int> a;                             \n"); //$NON-NLS-1$
-//	    
-//	    String code = writer.toString();
-//	    int startIndex = code.indexOf( "AAA<int>" ); //$NON-NLS-1$
-//		int length = "AAA".length(); //$NON-NLS-1$
-//		IASTNode node = parse( code, ParserLanguage.CPP, startIndex, length );
-//		assertNotNull(node);
-//	    
-////	    assertTrue( node instanceof IASTClassSpecifier );
-////	    assertEquals( ((IASTClassSpecifier)node).getName(), "AAA" ); //$NON-NLS-1$
-//	    
-//		length = "AAA<int>".length(); //$NON-NLS-1$ 
-//		node = parse( code, ParserLanguage.CPP, startIndex, length );
-//		assertNotNull(node);
-//	    
-////	    assertTrue( node instanceof IASTClassSpecifier );
-////	    assertEquals( ((IASTClassSpecifier)node).getName(), "AAA" ); //$NON-NLS-1$
-//	}
-	
 	public void testBug72710() throws Exception
 	{
 		Writer writer = new StringWriter();

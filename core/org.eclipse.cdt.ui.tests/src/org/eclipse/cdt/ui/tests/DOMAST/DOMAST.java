@@ -473,6 +473,7 @@ public class DOMAST extends ViewPart {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
+				if (view == null) return;
 				view.refresh();
 				
 				if (view.getTree().getItems().length > 0) {
@@ -684,6 +685,7 @@ public class DOMAST extends ViewPart {
    }
 
    public void setContentProvider(ViewContentProvider vcp) {
+	  if (viewer == null) return;
       viewer.setContentProvider(vcp);
    }
    

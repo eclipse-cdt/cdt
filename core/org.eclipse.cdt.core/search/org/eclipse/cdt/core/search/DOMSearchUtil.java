@@ -34,7 +34,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -47,6 +49,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -88,6 +91,9 @@ public class DOMSearchUtil {
     }
     
     private static CSearchPattern createPattern( IBinding binding, LimitTo limitTo, boolean caseSensitive) {
+		if (binding == null)
+			return null;
+		
         // build the SearchFor/pattern based on the IBinding
         SearchFor searchFor = createSearchFor(binding);
         if (binding instanceof IFunction) {
@@ -187,7 +193,7 @@ public class DOMSearchUtil {
     public static IASTName[] getSelectedNamesFrom(IASTTranslationUnit tu, int offset, int length, ParserLanguage lang) {
         IASTNode node = null;
         try{
-            node = tu.selectNodeForLocation(tu.getFilePath(), offset, length); // TODO Devin untested tu.getContainingFilename() ...
+            node = tu.selectNodeForLocation(tu.getFilePath(), offset, length);
         } 
         catch (ParseError er){}
         catch ( VirtualMachineError vmErr){
@@ -335,36 +341,55 @@ public class DOMSearchUtil {
      * @return IASTName[] declarations, references, or both depending on limitTo that correspond to the IASTName searchName searched for
      */
     public static IASTName[] getNamesFromDOM(IASTName searchName, LimitTo limitTo) {
-         IASTName[] names = null;
-         IASTTranslationUnit tu = searchName.getTranslationUnit();
-         
-         if (tu == null) {
-             return BLANK_NAME_ARRAY;
-         }
-         
-         // fix for 92632
-         IBinding binding = searchName.resolveBinding();
-         if (binding instanceof ICPPTemplateInstance) {
-             if (((ICPPTemplateInstance)binding).getTemplateDefinition() != null)
-                 binding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
-         }
-         
-         if (limitTo == ICSearchConstants.DECLARATIONS) {
-             names = tu.getDeclarations(binding);
-         } else if (limitTo == ICSearchConstants.REFERENCES) {
-             names = tu.getReferences(binding);
-         } else if (limitTo == ICSearchConstants.DEFINITIONS) {
-             names = tu.getDefinitions(binding);
-         } else if (limitTo == ICSearchConstants.ALL_OCCURRENCES){
-             names = tu.getDeclarations(binding);
-             names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
-         } else {  // assume ALL
-             names = tu.getDeclarations(binding);
-             names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
-         }
-         
-         return names;
+		IASTName[] names = null;
+		IASTTranslationUnit tu = searchName.getTranslationUnit();
+		
+		if (tu == null) {
+			return BLANK_NAME_ARRAY;
+		}
+		
+		IBinding binding = searchName.resolveBinding();
+		names = getNames(tu, binding, limitTo);
+		
+		if (names == null || names.length == 0) { // try alternate strategies
+			// fix for 92632
+			if (binding instanceof ICPPTemplateInstance) {
+				if (((ICPPTemplateInstance)binding).getTemplateDefinition() != null) {
+					binding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
+					names = getNames(tu, binding, limitTo);
+				}
+			}
+			
+			// fix for 86829
+			try {
+				if (binding instanceof ICPPConstructor && binding.getScope() instanceof ICPPClassScope) {
+					binding =  ((ICPPClassScope)binding.getScope()).getClassType();
+					names = getNames(tu, binding, limitTo);
+				}
+			} catch (DOMException e) {}
+		}
+		
+		return names;
     }
+	
+	private static IASTName[] getNames(IASTTranslationUnit tu, IBinding binding, LimitTo limitTo) {
+        IASTName[] names = null;
+		if (limitTo == ICSearchConstants.DECLARATIONS) {
+            names = tu.getDeclarations(binding);
+        } else if (limitTo == ICSearchConstants.REFERENCES) {
+            names = tu.getReferences(binding);
+        } else if (limitTo == ICSearchConstants.DEFINITIONS) {
+            names = tu.getDefinitions(binding);
+        } else if (limitTo == ICSearchConstants.ALL_OCCURRENCES){
+            names = tu.getDeclarations(binding);
+            names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
+        } else {  // assume ALL
+            names = tu.getDeclarations(binding);
+            names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
+        }
+		
+		return names;
+	}
 
     /**
      * The CPPNameCollector used to get IASTNames from an IASTNode.

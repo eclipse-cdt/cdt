@@ -69,7 +69,7 @@ public class CPPASTNamespaceAlias extends CPPASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public int getRoleForName(IASTName n) {
-		if( alias == n ) return r_declaration;
+		if( alias == n ) return r_definition;
 		if( qualifiedName == n ) return r_reference;
 		return r_unclear;
 	}

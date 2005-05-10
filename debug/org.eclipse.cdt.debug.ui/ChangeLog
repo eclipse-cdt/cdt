@@ -1,5 +1,17 @@
 2005-05-09 Mikhail Khodjaiants
 	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
+	Removed unused images.
+	- icons/dtool16/adddirsource_wiz.gif
+	- icons/dtool16/addprjsource_wiz.gif
+	- icons/etool16/adddirsource_wiz.gif
+	- icons/etool16/addprjsource_wiz.gif
+	- icons/wizban/add_dir_source_location_wiz.gif
+	- icons/wizban/add_prj_source_location_wiz.gif
+	- icons/wizban/add_source_location_wiz.gif
+	* CDebugImages.java
+
+2005-05-09 Mikhail Khodjaiants
+	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
 	Removed CDebugEditor and old source lookup related classes and interfaces.
 	* CDebugModelPresentation.java
 	- CDebugEditor.java

@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -121,13 +120,6 @@ public class CDebugImages
 	public static final String IMG_LCL_DETAIL_PANE_HIDE = NAME_PREFIX + "det_pane_hide.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_COLLAPSE_ALL = NAME_PREFIX + "collapseall.gif";	//$NON-NLS-1$
 
-	public static final String IMG_TOOLS_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "adddirsource_wiz.gif";	//$NON-NLS-1$
-	public static final String IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "addprjsource_wiz.gif";	//$NON-NLS-1$
-
-	public static final String IMG_WIZBAN_ADD_SOURCE_LOCATION = NAME_PREFIX + "add_source_location_wiz.gif";	//$NON-NLS-1$
-	public static final String IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "add_dir_source_location_wiz.gif";	//$NON-NLS-1$
-	public static final String IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "add_prj_source_location_wiz.gif";	//$NON-NLS-1$
-
 	public static final String IMG_WIZBAN_ADD_SOURCE = NAME_PREFIX + "addsrcloc_wiz.gif";	//$NON-NLS-1$
 
 	/*
@@ -140,7 +132,7 @@ public class CDebugImages
 	private static final String T_ELCL = "elcl16"; //$NON-NLS-1$
 	private static final String T_DLCL = "dlcl16"; //$NON-NLS-1$
 //	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
-	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
+//	private static final String T_ETOOL = "etool16"; //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_OVRS_ERROR = createManaged( T_OVR, IMG_OVRS_ERROR );
 	public static final ImageDescriptor DESC_OVRS_WARNING = createManaged( T_OVR, IMG_OVRS_WARNING );
@@ -188,12 +180,7 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_EXTERNAL_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_EXTERNAL_SOURCE_FILE );
 	public static final ImageDescriptor DESC_OBJS_PATH_MAPPING = createManaged( T_OBJ, IMG_OBJS_PATH_MAPPING );
 	public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged( T_OBJ, IMG_OBJS_PATH_MAP_ENTRY );
-	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE_LOCATION );
-	public static final ImageDescriptor DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_PRJ_SOURCE_LOCATION );
-	public static final ImageDescriptor DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION );
 	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE );
-	public static final ImageDescriptor DESC_TOOLS_ADD_PRJ_SOURCE_LOCATION = createManaged( T_ETOOL, IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION );
-	public static final ImageDescriptor DESC_TOOLS_ADD_DIR_SOURCE_LOCATION = createManaged( T_ETOOL, IMG_TOOLS_ADD_DIR_SOURCE_LOCATION );
 	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_ELCL, IMG_LCL_CAST_TO_TYPE );
 	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_ELCL, IMG_LCL_DISPLAY_AS_ARRAY );
 	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE = createManaged( T_ELCL, IMG_LCL_RESUME_AT_LINE );

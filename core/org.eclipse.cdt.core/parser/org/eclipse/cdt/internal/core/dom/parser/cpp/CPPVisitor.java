@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
@@ -445,7 +446,9 @@ public class CPPVisitor {
 		
 		if( parent instanceof IASTTypeId )
 		    return CPPSemantics.resolveBinding( name );
-		else if( parent.getPropertyInParent() == ICPPASTTemplateSpecialization.OWNED_DECLARATION ){
+		else if( parent.getPropertyInParent() == ICPPASTTemplateSpecialization.OWNED_DECLARATION ||
+		         parent.getPropertyInParent() == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION )
+		{
 			return CPPTemplates.createFunctionSpecialization( name );
 		}
 		

@@ -10225,6 +10225,33 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 14.7.2-2):
+	template<class T> class Array { void mf(); };
+	template class Array<char>;
+	template void Array<int>::mf();
+	template<class T> void sort(Array<T>& v) {  }
+	template void sort(Array<char>&); // argument is deduced here
+	namespace N {
+	template<class T> void f(T&) { }
+	}
+	template void N::f<int>(int&);
+	 --End Example]
+	 */
+	public void test14_7_2s2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class Array { void mf(); };\n"); //$NON-NLS-1$
+		buffer.append("template class Array<char>;\n"); //$NON-NLS-1$
+		buffer.append("template void Array<int>::mf();\n"); //$NON-NLS-1$
+		buffer.append("template<class T> void sort(Array<T>& v) {  }\n"); //$NON-NLS-1$
+		buffer.append("template void sort(Array<char>&); // argument is deduced here\n"); //$NON-NLS-1$
+		buffer.append("namespace N {\n"); //$NON-NLS-1$
+		buffer.append("template<class T> void f(T&) { }\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("template void N::f<int>(int&);\n"); //$NON-NLS-1$
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.7.2-5):
 	namespace N {
 	template<class T> class Y { void mf() { } };
@@ -10254,6 +10281,24 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 14.7.2-6):
+	template<class T> class Array {  };
+	template<class T> void sort(Array<T>& v);
+	// instantiate sort(Array<int>&) - templateargument deduced
+	template void sort<>(Array<int>&);
+	 --End Example]
+	 */
+	public void test14_7_2s6() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class Array {  };\n"); //$NON-NLS-1$
+		buffer.append("template<class T> void sort(Array<T>& v);\n"); //$NON-NLS-1$
+		buffer.append("// instantiate sort(Array<int>&) - templateargument deduced\n"); //$NON-NLS-1$
+		buffer.append("template void sort<>(Array<int>&);\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 14.7.2-9):
 	char* p = 0;
 	template<class T> T g(T = &p);
@@ -10265,6 +10310,26 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("char* p = 0;\n"); //$NON-NLS-1$
 		buffer.append("template<class T> T g(T = &p);\n"); //$NON-NLS-1$
 		buffer.append("template int g<int>(int); // OK even though &p isn’t an int.\n"); //$NON-NLS-1$
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
+	 [--Start Example(CPP 14.7.3-1):
+	template<class T> class stream;
+	template<> class stream<char> {  };
+	template<class T> class Array {  };
+	template<class T> void sort(Array<T>& v) {  }
+	template<> void sort<char*>(Array<char*>&) ;
+	 --End Example]
+	 */
+	public void test14_7_3s1() throws Exception { 
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class stream;\n"); //$NON-NLS-1$
+		buffer.append("template<> class stream<char> {  };\n"); //$NON-NLS-1$
+		buffer.append("template<class T> class Array {  };\n"); //$NON-NLS-1$
+		buffer.append("template<class T> void sort(Array<T>& v) {  }\n"); //$NON-NLS-1$
+		buffer.append("template<> void sort<char*>(Array<char*>&) ;\n"); //$NON-NLS-1$
+	
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
@@ -10376,6 +10441,25 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("template<> class N::Y<double> {  }; // OK: specialization\n"); //$NON-NLS-1$
 		buffer.append("// in same namespace\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
+	 [--Start Example(CPP 14.7.3-11):
+	template<class T> class Array {  };
+	template<class T> void sort(Array<T>& v);
+	// explicit specialization for sort(Array<int>&)
+	// with deduces templateargument of type int
+	template<> void sort(Array<int>&);
+	 --End Example]
+	 */
+	public void test14_7_3s11() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class Array {  };\n"); //$NON-NLS-1$
+		buffer.append("template<class T> void sort(Array<T>& v);\n"); //$NON-NLS-1$
+		buffer.append("// explicit specialization for sort(Array<int>&)\n"); //$NON-NLS-1$
+		buffer.append("// with deduces templateargument of type int\n"); //$NON-NLS-1$
+		buffer.append("template<> void sort(Array<int>&);\n"); //$NON-NLS-1$
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0 );
 	}
 	
 	/**

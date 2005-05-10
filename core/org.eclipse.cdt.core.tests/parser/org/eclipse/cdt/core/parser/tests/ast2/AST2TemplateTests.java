@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -38,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -1472,5 +1472,57 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		CR = (ICPPTemplateParameter) col.getName(14).resolveBinding();
 		assertSame( CR, T );
+	}
+	
+	public void testBug90689_ExplicitInstantiation() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("template <class T> class Array {};                    \n"); //$NON-NLS-1$
+	    buffer.append("template <class T> void sort( Array<T> & );           \n"); //$NON-NLS-1$
+	    buffer.append("template void sort<>( Array<int> & );                 \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+	    ICPPClassTemplate A = (ICPPClassTemplate) col.getName(1).resolveBinding();
+	    ICPPFunctionTemplate s = (ICPPFunctionTemplate) col.getName(3).resolveBinding();
+	    
+	    ICPPClassType A2 = (ICPPClassType) col.getName(4).resolveBinding();
+	    assertTrue( A2 instanceof ICPPTemplateInstance );
+	    assertSame( ((ICPPTemplateInstance)A2).getTemplateDefinition(), A );
+	    
+	    ICPPFunction s2 = (ICPPFunction) col.getName(8).resolveBinding();
+	    assertTrue( s2 instanceof ICPPTemplateInstance );
+	    assertSame( ((ICPPTemplateInstance)s2).getTemplateDefinition(), s );
+	    
+	    ICPPClassType A3 = (ICPPClassType) col.getName(10).resolveBinding();
+	    assertTrue( A3 instanceof ICPPTemplateInstance );
+	    assertSame( ((ICPPTemplateInstance)A3).getTemplateDefinition(), A );
+	    assertNotSame( A2, A3 );
+	}
+	
+	public void test14_7_2s2_ExplicitInstantiation() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> class Array { };                              \n"); //$NON-NLS-1$
+		buffer.append("template class Array<char>;                                     \n"); //$NON-NLS-1$
+		buffer.append("template<class T> void sort(Array<T>& v) {  }                   \n"); //$NON-NLS-1$
+		buffer.append("template void sort(Array<char>&); // argument is deduced here   \n"); //$NON-NLS-1$
+
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+
+		ICPPClassTemplate A1 = (ICPPClassTemplate) col.getName(1).resolveBinding();
+		ICPPClassType A2 = (ICPPClassType) col.getName(2).resolveBinding();
+		assertTrue( A2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)A2).getTemplateDefinition(), A1 );
+		
+		ICPPFunctionTemplate s1 = (ICPPFunctionTemplate) col.getName(5).resolveBinding();
+		ICPPFunction s2 = (ICPPFunction) col.getName(10).resolveBinding();
+		assertTrue( s2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)s2).getTemplateDefinition(), s1 );
+		
+		ICPPClassType A3 = (ICPPClassType) col.getName(11).resolveBinding();
+		assertSame( A2, A3 );
 	}
 }

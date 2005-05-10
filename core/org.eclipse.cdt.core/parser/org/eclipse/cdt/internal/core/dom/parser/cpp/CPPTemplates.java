@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -207,7 +208,11 @@ public class CPPTemplates {
 			parent = parent.getParent();
 		}
 
-		if( parent instanceof ICPPASTCompositeTypeSpecifier && segment == 1 ){
+		if( parent instanceof ICPPASTElaboratedTypeSpecifier && parent.getParent() instanceof IASTSimpleDeclaration 
+		    && segment != 0 )
+		{
+		    return createClassExplicitInstantiation( (ICPPASTElaboratedTypeSpecifier) parent );
+		} else if( parent instanceof ICPPASTCompositeTypeSpecifier && segment != 0 ){
 			return createClassSpecialization( (ICPPASTCompositeTypeSpecifier) parent );
 		} else if( parent instanceof ICPPASTFunctionDeclarator && segment != 0 ){
 			return createFunctionSpecialization( id );
@@ -247,6 +252,25 @@ public class CPPTemplates {
 		return template;
 	}
 
+	protected static IBinding createClassExplicitInstantiation( ICPPASTElaboratedTypeSpecifier elabSpec ){
+	    IASTName name = elabSpec.getName();
+	    if( name instanceof ICPPASTQualifiedName ){
+			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+			name = ns[ ns.length - 1 ];
+		}
+	    ICPPASTTemplateId id = (ICPPASTTemplateId) name;
+	    IBinding template = id.getTemplateName().resolveBinding();
+		if( !(template instanceof ICPPClassTemplate) ) 
+			return null;  //TODO: problem?
+		
+		ICPPClassTemplate classTemplate = (ICPPClassTemplate) template;
+		IType [] args = createTypeArray( id.getTemplateArguments() );
+		if( classTemplate instanceof ICPPInternalTemplate ){
+		    IBinding binding = ((ICPPInternalTemplate)classTemplate).instantiate( args );
+		    return binding;
+		}
+		return null;
+	}
 	protected static IBinding createClassSpecialization( ICPPASTCompositeTypeSpecifier compSpec ){
 		IASTName name = compSpec.getName();
 		if( name instanceof ICPPASTQualifiedName ){
@@ -321,10 +345,10 @@ public class CPPTemplates {
 	protected static IBinding createFunctionSpecialization( IASTName name ){
 		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name );
 		data.forceQualified = true;
-		IScope scope = CPPVisitor.getContainingScope( name );
+		ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope( name );
 		if( scope instanceof ICPPTemplateScope ){
 			try {
-				scope = scope.getParent();
+				scope = (ICPPScope) scope.getParent();
 			} catch (DOMException e) {
 			}
 		}
@@ -355,19 +379,25 @@ public class CPPTemplates {
 			return e.getProblem();
 		}
 		if( map_types != null ){
-			ICPPSpecialization spec = null;
-			if( function instanceof ICPPMethod )
-				spec = new CPPMethodSpecialization( function, (ICPPScope) scope, (ObjectMap) map_types[0] );
-			else 
-				spec = new CPPFunctionSpecialization( function, (ICPPScope) scope, (ObjectMap) map_types[0] );
-			((ICPPInternalTemplate)function).addSpecialization( (IType[]) map_types[1], spec );
-			while( !(parent instanceof IASTDeclaration ) )
+		    while( !(parent instanceof IASTDeclaration ) )
 				parent = parent.getParent();
-			if( parent instanceof IASTSimpleDeclaration )
-				((ICPPInternalBinding)spec).addDeclaration( name );
-			else if( parent instanceof IASTFunctionDefinition )
-				((ICPPInternalBinding)spec).addDefinition( name );
-			return spec;
+		    
+		    ICPPSpecialization spec = null;
+		    if( parent.getParent() instanceof ICPPASTExplicitTemplateInstantiation ){
+		        spec = (ICPPSpecialization) CPPTemplates.createInstance( scope, function, (ObjectMap)map_types[0], (IType[])map_types[1] );
+		    } else {
+				if( function instanceof ICPPMethod )
+					spec = new CPPMethodSpecialization( function, scope, (ObjectMap) map_types[0] );
+				else 
+					spec = new CPPFunctionSpecialization( function, scope, (ObjectMap) map_types[0] );
+				
+				if( parent instanceof IASTSimpleDeclaration )
+					((ICPPInternalBinding)spec).addDeclaration( name );
+				else if( parent instanceof IASTFunctionDefinition )
+					((ICPPInternalBinding)spec).addDefinition( name );
+		    }
+		    ((ICPPInternalTemplate)function).addSpecialization( (IType[]) map_types[1], spec );
+		    return spec;
 		}
 		//TODO problem?
 		return null;	
@@ -992,6 +1022,12 @@ public class CPPTemplates {
 	 * @return
 	 */
 	static private IType getArgumentTypeForDeduction( IType aType, boolean pIsAReferenceType ) {
+		if( aType instanceof ICPPReferenceType ){
+		    try {
+                aType = ((ICPPReferenceType)aType).getType();
+            } catch ( DOMException e ) {
+            }
+		}
 		IType result = aType;
 		if( !pIsAReferenceType ){
 			try {

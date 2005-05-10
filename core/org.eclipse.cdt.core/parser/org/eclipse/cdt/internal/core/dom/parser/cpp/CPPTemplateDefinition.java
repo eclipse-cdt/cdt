@@ -25,7 +25,10 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -282,6 +285,13 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
+	    if( node instanceof ICPPASTCompositeTypeSpecifier ){
+	        node = ((ICPPASTCompositeTypeSpecifier)node).getName();
+	        if( node instanceof ICPPASTQualifiedName ){
+	            IASTName [] ns = ((ICPPASTQualifiedName)node).getNames();
+	            node = ns[ ns.length - 1];
+	        }
+	    }
 		if( !(node instanceof IASTName) )
 			return;
 		updateTemplateParameterBindings( (IASTName) node );
@@ -292,6 +302,13 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
+	    if( node instanceof ICPPASTElaboratedTypeSpecifier ){
+	        node = ((ICPPASTElaboratedTypeSpecifier)node).getName();
+	        if( node instanceof ICPPASTQualifiedName ){
+	            IASTName [] ns = ((ICPPASTQualifiedName)node).getNames();
+	            node = ns[ ns.length - 1];
+	        }
+	    }
 		if( !(node instanceof IASTName) )
 			return;
 		IASTName declName = (IASTName) node;

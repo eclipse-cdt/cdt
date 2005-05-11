@@ -333,7 +333,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
                 getSCProfileConfiguration(profileId).getProfileScope();
         List changedResources = new ArrayList();
-        changedResources.add(project.getFullPath());
+//        changedResources.add(project.getFullPath());
+        changedResources.add(project);
         MakeCorePlugin.getDefault().getDiscoveryManager().changeDiscoveredContainer(
                 project, profileScope, changedResources);
     }

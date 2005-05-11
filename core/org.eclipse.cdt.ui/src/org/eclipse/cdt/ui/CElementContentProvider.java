@@ -192,6 +192,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		if (isPathEntryChange(delta)) {
 			 // throw the towel and do a full refresh of the affected C project. 
 			postRefresh(element.getCProject());
+			return;// bailout
 		}
 		
 		if (delta.getResourceDeltas() != null) {

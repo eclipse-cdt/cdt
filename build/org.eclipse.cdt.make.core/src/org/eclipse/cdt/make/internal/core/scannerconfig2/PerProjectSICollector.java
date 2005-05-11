@@ -201,7 +201,9 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
                     monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
                     try {
                         // update scanner configuration
-                        MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(pathInfo, null);
+						List resourceDelta = new ArrayList(1);
+						resourceDelta.add(project);
+                        MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(pathInfo, resourceDelta);
                         monitor.worked(50);
                     } catch (CoreException e) {
                         MakeCorePlugin.log(e);

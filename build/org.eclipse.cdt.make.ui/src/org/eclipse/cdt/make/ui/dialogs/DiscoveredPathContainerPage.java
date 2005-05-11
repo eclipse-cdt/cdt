@@ -208,7 +208,9 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
             
 			try {
 				// update scanner configuration
-				MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(info, null);
+				List resourceDelta = new ArrayList(1);
+				resourceDelta.add(fCProject.getProject());
+				MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(info, resourceDelta);
 				return true;
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);

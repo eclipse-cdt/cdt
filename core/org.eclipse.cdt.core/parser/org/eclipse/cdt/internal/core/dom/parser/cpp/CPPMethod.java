@@ -77,7 +77,10 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		//first check if we already know it
 		if( declarations != null ){
 			for( int i = 0; i < declarations.length; i++ ){
-				IASTDeclaration decl = (IASTDeclaration) declarations[i].getParent();
+			    IASTDeclarator dtor = declarations[i];
+			    while( dtor.getParent() instanceof IASTDeclarator )
+			        dtor = (IASTDeclarator) dtor.getParent();
+				IASTDeclaration decl = (IASTDeclaration) dtor.getParent();
 				if( decl.getParent() instanceof ICPPASTCompositeTypeSpecifier )
 					return decl;
 			}

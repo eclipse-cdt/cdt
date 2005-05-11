@@ -496,14 +496,11 @@ public class CPPVisitor {
 			parent = param.getParent();
 			if( parent instanceof IASTStandardFunctionDeclarator ) {
 				IASTStandardFunctionDeclarator fDtor = (IASTStandardFunctionDeclarator) param.getParent();
-				if( fDtor.getParent() instanceof IASTDeclarator || fDtor.getNestedDeclarator() != null )
+				if( /*fDtor.getParent() instanceof IASTDeclarator ||*/ fDtor.getNestedDeclarator() != null )
 				    return null;
 				IBinding temp = fDtor.getName().resolveBinding();
-				if( temp instanceof CPPFunction ){
-					CPPFunction function = (CPPFunction) temp;
-					binding = function.resolveParameter( param );
-				} else if( temp instanceof CPPFunctionTemplate ) {
-					binding = ((CPPFunctionTemplate)temp).resolveFunctionParameter( param );
+				if( temp instanceof ICPPInternalFunction ){
+					binding = ((ICPPInternalFunction) temp).resolveParameter( param );
 				} else if( temp instanceof IProblemBinding ){
 				    //problems with the function, still create binding for the parameter
 				    binding = new CPPParameter( name );
@@ -673,11 +670,15 @@ public class CPPVisitor {
 			    IASTNode parent = node.getParent();
 			    if( parent instanceof ICPPASTFunctionDeclarator ){
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
-					ASTNodeProperty prop = dtor.getPropertyInParent();
-					if( prop == IASTSimpleDeclaration.DECLARATOR )
-					    return dtor.getFunctionScope();
-					else if( prop == IASTFunctionDefinition.DECLARATOR )
-					    return ((IASTCompoundStatement)((IASTFunctionDefinition)dtor.getParent()).getBody()).getScope();
+					if( dtor.getNestedDeclarator() == null ) {
+						while( parent.getParent() instanceof IASTDeclarator )
+						    parent = (ICPPASTFunctionDeclarator) parent.getParent();
+						ASTNodeProperty prop = parent.getPropertyInParent();
+						if( prop == IASTSimpleDeclaration.DECLARATOR )
+						    return dtor.getFunctionScope();
+						else if( prop == IASTFunctionDefinition.DECLARATOR )
+						    return ((IASTCompoundStatement)((IASTFunctionDefinition)parent.getParent()).getBody()).getScope();
+					}
 			    } else if( parent instanceof ICPPASTTemplateDeclaration ){
 			    	return CPPTemplates.getContainingScope( node );
 			    }

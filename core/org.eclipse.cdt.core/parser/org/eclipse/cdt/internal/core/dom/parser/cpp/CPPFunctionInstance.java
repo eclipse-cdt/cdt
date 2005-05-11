@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -136,5 +137,13 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
      */
     public boolean isStatic( boolean resolveAll ) {
         return ((ICPPInternalFunction)getTemplateDefinition()).isStatic( resolveAll );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#resolveParameter(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
+     */
+    public IBinding resolveParameter( IASTParameterDeclaration param ) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -244,7 +243,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	 * @param param
 	 * @return
 	 */
-	public IBinding resolveFunctionParameter(ICPPASTParameterDeclaration param) {
+	public IBinding resolveParameter(IASTParameterDeclaration param) {
 	   	IASTName name = param.getDeclarator().getName();
     	IBinding binding = name.getBinding();
     	if( binding != null )

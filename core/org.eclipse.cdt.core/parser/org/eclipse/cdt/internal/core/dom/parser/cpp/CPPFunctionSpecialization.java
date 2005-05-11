@@ -15,9 +15,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -141,4 +143,79 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPFunctionDelegate( name, this );
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#resolveParameter(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
+     */
+    public IBinding resolveParameter( IASTParameterDeclaration param ) {
+        IASTDeclarator dtor = param.getDeclarator();
+        while( dtor.getNestedDeclarator() != null )
+            dtor = dtor.getNestedDeclarator();
+        IASTName name = dtor.getName();
+    	IBinding binding = name.getBinding();
+    	if( binding != null )
+    		return binding;
+		
+    	ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) param.getParent();
+    	IASTParameterDeclaration [] ps = fdtor.getParameters();
+    	int i = 0;
+    	for( ; i < ps.length; i++ ){
+    		if( param == ps[i] )
+    			break;
+    	}
+    	
+        try {
+            IParameter [] params = getParameters();
+            if( i < params.length ){
+        	    name.setBinding( params[i] );
+        	    if( params[i] instanceof ICPPInternalBinding )
+        	        ((ICPPInternalBinding)params[i]).addDeclaration( name );
+        	    return params[i];
+        	}
+
+        } catch ( DOMException e ) {
+            return e.getProblem();
+        }
+        return null;
+    }
+    
+    public void addDefinition(IASTNode node) {
+        IASTNode n = node;
+		while( n instanceof IASTName )
+			n = n.getParent();
+		if( !(n instanceof ICPPASTFunctionDeclarator) )
+			return;
+	    updateParameterBindings( (ICPPASTFunctionDeclarator) n );
+        super.addDefinition( node );
+	}
+	public void addDeclaration(IASTNode node) {
+	    IASTNode n = node;
+		while( n instanceof IASTName )
+			n = n.getParent();
+		if( !(n instanceof ICPPASTFunctionDeclarator) )
+			return;
+	    updateParameterBindings( (ICPPASTFunctionDeclarator) n );
+        super.addDefinition( node );
+	}
+    protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
+        IParameter [] params = null;
+        try {
+            params = getParameters();
+        } catch ( DOMException e ) {
+            return;
+        }
+        IASTParameterDeclaration [] nps = fdtor.getParameters();
+    	for( int i = 0; i < nps.length; i++ ){
+    		//temp = (CPPParameter) ops[i].getDeclarator().getName().getBinding();
+    		if( params[i] != null ){
+    		    IASTDeclarator dtor = nps[i].getDeclarator();
+    		    while( dtor.getNestedDeclarator() != null )
+    		        dtor = dtor.getNestedDeclarator();
+    		    IASTName name = dtor.getName();
+    			name.setBinding( params[i] );
+    			if( params[i] instanceof ICPPInternalBinding )
+    			    ((ICPPInternalBinding)params[i]).addDeclaration( name );
+    		}
+    	}
+    }
 }

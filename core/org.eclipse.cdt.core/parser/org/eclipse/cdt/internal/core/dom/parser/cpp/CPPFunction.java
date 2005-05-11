@@ -82,6 +82,9 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
         public boolean isStatic( boolean resolveAll ) {
             return ((ICPPInternalFunction)getBinding()).isStatic( resolveAll );
         }
+        public IBinding resolveParameter( IASTParameterDeclaration param ) {
+            return ((ICPPInternalFunction)getBinding()).resolveParameter( param );
+        }
     }
     public static class CPPFunctionProblem extends ProblemBinding implements ICPPFunction {
         public CPPFunctionProblem( IASTNode node, int id, char[] arg ) {
@@ -348,7 +351,10 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
     }
 
     public IBinding resolveParameter( IASTParameterDeclaration param ){
-    	IASTName name = param.getDeclarator().getName();
+        IASTDeclarator dtor = param.getDeclarator();
+        while( dtor.getNestedDeclarator() != null )
+            dtor = dtor.getNestedDeclarator();
+    	IASTName name = dtor.getName();
     	IBinding binding = name.getBinding();
     	if( binding != null )
     		return binding;
@@ -394,7 +400,10 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
     	for( int i = 0; i < nps.length; i++ ){
     		temp = (CPPParameter) ops[i].getDeclarator().getName().getBinding();
     		if( temp != null ){
-    		    IASTName name = nps[i].getDeclarator().getName();
+    		    IASTDeclarator dtor = nps[i].getDeclarator();
+    		    while( dtor.getNestedDeclarator() != null )
+    		        dtor = dtor.getNestedDeclarator();
+    		    IASTName name = dtor.getName();
     			name.setBinding( temp );
     			temp.addDeclaration( name );
     		}

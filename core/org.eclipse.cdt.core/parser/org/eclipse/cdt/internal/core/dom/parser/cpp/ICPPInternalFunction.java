@@ -14,10 +14,15 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+
 /**
  * @author aniefer
  */
 public interface ICPPInternalFunction extends ICPPInternalBinding {
 
+    public IBinding resolveParameter( IASTParameterDeclaration param );
+    
     public boolean isStatic( boolean resolveAll );
 }

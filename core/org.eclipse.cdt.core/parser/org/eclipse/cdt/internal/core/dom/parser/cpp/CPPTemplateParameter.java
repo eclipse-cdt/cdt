@@ -131,13 +131,14 @@ public class CPPTemplateParameter implements ICPPTemplateParameter, ICPPInternal
 	   if( declarations == null )
 	        declarations = new IASTName[] { name };
 	    else {
-	        //keep the lowest offset declaration in [0]
+	        if( declarations.length > 0 && declarations[0] == node )
+	            return;
+			//keep the lowest offset declaration in [0]
 			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-			    IASTName temp = declarations[0];
-			    declarations[0] = name;
-			    name = temp;
+				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+			} else {
+				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
 			}
-	        declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
 	    }
 	}
 	public void removeDeclaration(IASTNode node) {

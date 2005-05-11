@@ -176,6 +176,8 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
     	        if( paramName.getBinding() != null ){
     	            binding = paramName.getBinding();
     	            name.setBinding( binding );
+    	            if( binding instanceof ICPPInternalBinding )
+    	                ((ICPPInternalBinding)binding).addDeclaration( name );
     	            return binding;
     	        }
     	    }
@@ -198,8 +200,10 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 			temp = template.getTemplateParameters()[i];
 
     		IASTName n = CPPTemplates.getTemplateParameterName( temp );
-    		if( n != name ) {
+    		if( n != name && n.getBinding() == null ) {
     		    n.setBinding( binding );
+    		    if( binding instanceof ICPPInternalBinding )
+	                ((ICPPInternalBinding)binding).addDeclaration( n );
     		}
 
 		}

@@ -354,7 +354,7 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
     		if( temp != null ){
     		    IASTName n = CPPTemplates.getTemplateParameterName( nps[i] );
     			n.setBinding( temp );
-    			temp.addDeclaration( name );
+    			temp.addDeclaration( n );
     		}
     	}
     }

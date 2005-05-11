@@ -1887,6 +1887,9 @@ public class CPPSemantics {
 			} else {
 				cls = new CPPClassType.CPPClassTypeProblem( scope.getPhysicalNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray() );
 			}
+			if( cls instanceof ICPPClassTemplate ){
+			    cls = (ICPPClassType) CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) cls );
+			}
 			IType implicitType = cls;
 			if( ftype.isConst() || ftype.isVolatile() ){
 				implicitType = new CPPQualifierType( implicitType, ftype.isConst(), ftype.isVolatile() );

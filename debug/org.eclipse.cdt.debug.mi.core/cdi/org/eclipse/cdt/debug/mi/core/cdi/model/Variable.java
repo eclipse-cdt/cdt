@@ -193,6 +193,23 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 					} else {
 						fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
+				} else if (t instanceof ICDIReferenceType) {
+					ICDIType subType = ((ICDIReferenceType)t).getComponentType();
+					if (subType instanceof ICDIStructType) {
+						if (isCPPLanguage()) {
+							if (!isFake()
+									|| (isFake() && !(fName.equals("private") || fName.equals("public") || fName.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								childFake = true;
+								childType = t;
+							} else {
+								fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+						} else { // If not C++ language
+							fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					} else {
+						fn = "(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} else if (t instanceof ICDIStructType) {
 					if (isCPPLanguage()) {
 						// For C++ in GDB the children of the

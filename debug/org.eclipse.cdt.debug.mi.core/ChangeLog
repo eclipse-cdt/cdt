@@ -1,3 +1,7 @@
+2005-05-12 Alain Magloire
+	Fix PR 94841
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+
 2005-04-28 Alain Magloire
 	Added command -gdb-show endian
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java

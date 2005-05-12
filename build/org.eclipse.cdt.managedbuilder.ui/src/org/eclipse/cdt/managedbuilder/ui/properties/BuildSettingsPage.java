@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Rational Software Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -27,15 +27,27 @@ public abstract class BuildSettingsPage extends FieldEditorPreferencePage {
 	 * @param style
 	 */
 	protected BuildSettingsPage(IConfiguration config) {
-		// Must be a grid layout and we don't want another set of buttons
-		super(GRID);
+ 		// fix for PR 63973
+ 		// If we use a grid layout then widgets that should be layed out horizontally,
+ 		// e.g. StringButtonFieldEditor, will have their component widgets
+ 		// arranged vertically.  This looks terrible when you have for instance
+ 		// a StringButtonFieldEditor, which has a label, an edit box, and a "modify" button
+ 		// to the right because all three will be stacked vertically.
+ 		super(FLAT);
+ 		// end fix for 63973
 		noDefaultAndApplyButton();
 		configuration = config;
 	}
 
 	protected BuildSettingsPage(IResourceConfiguration resConfig) {
-		// Must be a grid layout and we don't want another set of buttons
-		super(GRID);
+ 		// fix for PR 63973
+ 		// If we use a grid layout then widgets that should be layed out horizontally,
+ 		// e.g. StringButtonFieldEditor, will have their component widgets
+ 		// arranged vertically.  This looks terrible when you have for instance
+ 		// a StringButtonFieldEditor, which has a label, an edit box, and a "modify" button
+ 		// to the right because all three will be stacked vertically.
+ 		super(FLAT);
+ 		// end fix for 63973
 		noDefaultAndApplyButton();
 		this.resConfig = resConfig;
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -25,7 +25,10 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.swt.graphics.Point;
+import java.lang.AssertionError;
 
 public class BuildOptionSettingsPage extends BuildSettingsPage {
 	private Map fieldsMap = new HashMap();
@@ -77,11 +80,39 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 				// editor for it
 				switch (opt.getValueType()) {
 					case IOption.STRING :
-						StringFieldEditor stringField = new StringFieldEditor(
-								opt.getId(), opt.getName(), getFieldEditorParent());
-						addField(stringField);
-						fieldsMap.put(opt.getId(), stringField);
-						break;
+					 	// fix for PR 63973
+					 	// Check browse type.
+					 	// If browsing is set, use a field editor that has a browse button of
+					 	// the appropriate type.
+					 	// Otherwise, use a regular text field.
+					 	switch(opt.getBrowseType())
+					 	{
+					 		case IOption.BROWSE_DIR :
+					 			DirectoryFieldEditor dirFieldEditor = new DirectoryFieldEditor(
+										opt.getId(), opt.getName(), getFieldEditorParent());
+					 			addField(dirFieldEditor);
+								fieldsMap.put(opt.getId(), dirFieldEditor);
+					 			break;
+					 							
+					 		case IOption.BROWSE_FILE:
+					 			FileFieldEditor fileFieldEditor = new FileFieldEditor(
+										opt.getId(), opt.getName(), getFieldEditorParent());			
+					 			addField(fileFieldEditor);		
+								fieldsMap.put(opt.getId(), fileFieldEditor);
+					 			break;
+					 							
+					 		case IOption.BROWSE_NONE:
+								StringFieldEditor stringField = new StringFieldEditor(
+										opt.getId(), opt.getName(), getFieldEditorParent());
+								addField(stringField);
+								fieldsMap.put(opt.getId(), stringField);
+					 			break;
+					 						
+					 		default:
+					 			// should not be possible
+					 			throw( new AssertionError()); }
+					 	// end fix for 63973
+					 	break;
 					case IOption.BOOLEAN :
 						BooleanFieldEditor booleanField = new BooleanFieldEditor(
 								opt.getId(), opt.getName(), getFieldEditorParent());

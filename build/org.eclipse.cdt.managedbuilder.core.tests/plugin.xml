@@ -1823,6 +1823,7 @@
                category="gnu.c.link.category30.shared"
                command="-Wl,-soname="
                id="gnu.c.link.option30.soname"
+               browseType="file"
                valueType="string">
          </option>
          <option
@@ -1830,6 +1831,7 @@
                category="gnu.c.link.category30.shared"
                command="-Wl,--out-implib="
                id="gnu.c.link.option30.implname"
+               browseType="directory"
                valueType="string">
          </option>
          <option
@@ -1971,6 +1973,7 @@
                category="gnu.cpp.link.category30.shared"
                command="-Wl,-soname="
                valueType="string"
+               browseType="file"
                id="gnu.cpp.link.option30.soname">
          </option>
          <option
@@ -1978,6 +1981,7 @@
                category="gnu.cpp.link.category30.shared"
                command="-Wl,--out-implib="
                valueType="string"
+               browseType="directory"
                id="gnu.cpp.link.option30.implname">
          </option>
          <option
@@ -3148,6 +3152,11 @@
                   <tool
                       id="test30_1.gnu.so.c.linker"
                       superClass="cdt.managedbuild.tool.testgnu30.c.linker">
+			         <option
+			               defaultValue="true"
+			               id="test30_1.gnu.c.link.option30.shared"
+			               superClass="gnu.c.link.option30.shared">
+			         </option>
 			         <inputType
 			            buildVariable="STRIPPEDOBJS"
 			            id="test30_1.gnu.so.c.linker.input"

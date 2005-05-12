@@ -650,8 +650,10 @@ public class OutputType extends BuildObject implements IOutputType {
 	 */
 	public boolean isOutputExtension(String ext) {
 		String[] exts = getOutputExtensions();
-		for (int i=0; i<exts.length; i++) {
-			if (ext.equals(exts[i])) return true;
+		if (exts != null) {
+			for (int i=0; i<exts.length; i++) {
+				if (ext.equals(exts[i])) return true;
+			}
 		}
 		return false;
 	}

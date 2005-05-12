@@ -1845,7 +1845,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String OptDotExt = ""; //$NON-NLS-1$
 		boolean isItLinked = false;
 		
-		if (outputExtension != "") //$NON-NLS-1$
+		if (outputExtension != null && outputExtension.length() > 0)
 	        OptDotExt = DOT + outputExtension; 
 
 		IConfiguration config = info.getDefaultConfiguration();

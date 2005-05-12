@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1575,19 +1576,22 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 							List inputs = new ArrayList();
 							int optType = option.getValueType();
 							if (optType == IOption.STRING) {
-								inputs.add(option.getStringValue());
+								inputs.add(Path.fromOSString(option.getStringValue()));
 							} else if (
 									optType == IOption.STRING_LIST ||
 									optType == IOption.LIBRARIES ||
 									optType == IOption.OBJECTS) {
-								inputs = (List)option.getValue();
+								List inputNames = (List)option.getValue();
+								for (int j=0; j<inputNames.size(); j++) {
+									inputs.add(Path.fromOSString((String)inputNames.get(j)));
+								}
 							}
 							allDeps.addAll(inputs);
 						} catch( BuildException ex ) {
 						}
 					}
 				} else if (type.getBuildVariable() != null && type.getBuildVariable().length() > 0) {
-					allDeps.add("$(" + type.getBuildVariable() + ")");   //$NON-NLS-1$ //$NON-NLS-2$
+					allDeps.add(Path.fromOSString("$(" + type.getBuildVariable() + ")"));   //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -1612,7 +1616,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			if (!type.getPrimaryInput()) {
 				String var = type.getBuildVariable();
 				if (var != null && var.length() > 0) {
-					allRes.add("$(" + type.getBuildVariable() + ")");   //$NON-NLS-1$ //$NON-NLS-2$
+					allRes.add(Path.fromOSString("$(" + type.getBuildVariable() + ")"));   //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -1952,8 +1956,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			List allExts = new ArrayList();
 			for (int i=0; i<types.length; i++) {
 				String[] exts = types[i].getOutputExtensions();
-				for (int j=0; j<exts.length; j++) {
-					allExts.add(exts[j]);
+				if (exts != null) {
+					for (int j=0; j<exts.length; j++) {
+						allExts.add(exts[j]);
+					}
 				}
 			}
 			if (allExts.size() > 0) {

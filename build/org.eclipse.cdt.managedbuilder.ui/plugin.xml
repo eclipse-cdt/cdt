@@ -114,7 +114,7 @@
          name="Managed Build Tools Description"
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision
-            fileVersion="2.1.0">
+            fileVersion="3.0.0">
       </managedBuildRevision>
       <tool
             natureFilter="cnature"

@@ -16,7 +16,6 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.internal.ui.dnd.BasicSelectionTransferDragAdapter;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,10 +32,6 @@ public class SelectionTransferDragAdapter extends BasicSelectionTransferDragAdap
 				Object element= iter.next();
 				if (element instanceof ICElement) {
 					ICElement celement = (ICElement)element;
-					IResource res = celement.getResource();
-					if (res != null) {
-						return false;
-					}
 					if (!(element instanceof ISourceReference)) {
 						return  false;
 					}

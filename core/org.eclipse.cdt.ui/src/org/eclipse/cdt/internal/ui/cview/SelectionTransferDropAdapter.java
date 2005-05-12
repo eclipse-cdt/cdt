@@ -320,6 +320,9 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 		List resources= new ArrayList(elements.size());
 		for (Iterator iter= elements.iterator(); iter.hasNext();) {
 			Object element= iter.next();
+			if (element instanceof ITranslationUnit) {
+				continue;
+			}
 			if (element instanceof ICElement)
 				resources.add(element);
 		}

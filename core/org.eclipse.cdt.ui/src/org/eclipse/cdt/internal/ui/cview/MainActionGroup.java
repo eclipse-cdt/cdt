@@ -29,6 +29,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -109,7 +110,8 @@ public class MainActionGroup extends CViewActionGroup {
 
 	protected void makeActions() {
 		final Viewer viewer = getCView().getViewer();
-		Shell shell = getCView().getViewSite().getShell();
+		IShellProvider shellProvider = getCView().getViewSite();
+		Shell shell = shellProvider.getShell();
 
 		openFileGroup = new OpenFileGroup(getCView());
 		openProjectGroup = new OpenProjectGroup(getCView());
@@ -145,7 +147,7 @@ public class MainActionGroup extends CViewActionGroup {
 
 		addBookmarkAction = new AddBookmarkAction(shell);
 		addTaskAction = new AddTaskAction(shell);
-		propertyDialogAction = new PropertyDialogAction(shell, viewer);
+		propertyDialogAction = new PropertyDialogAction(shellProvider, viewer);
 
 		// Importing/exporting.
 		importAction = new ImportResourcesAction(getCView().getSite().getWorkbenchWindow());

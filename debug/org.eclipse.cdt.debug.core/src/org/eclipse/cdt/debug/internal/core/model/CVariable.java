@@ -344,7 +344,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			fName = cdiVariableObject.getName();
 			createOriginal( cdiVariableObject );
 		}
-		fIsEnabled = !isBookkeepingEnabled();
+		fIsEnabled = ( parent instanceof AbstractCValue ) ? ((AbstractCValue)parent).getParentVariable().isEnabled() : !isBookkeepingEnabled();
 		getCDISession().getEventManager().addEventListener( this );
 	}
 

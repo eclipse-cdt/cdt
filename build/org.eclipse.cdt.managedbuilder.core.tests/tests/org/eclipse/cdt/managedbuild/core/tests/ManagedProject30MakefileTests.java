@@ -10,9 +10,7 @@
  **********************************************************************/
 
 /**********************************************************************
- * These tests are for a 2.1 style tool integration.  That is, the
- * tool integration does not use any 3.0 elements or attributes,
- * including InputType, OutputType, etc.
+ * These tests are for a 3.0 style tool integration.
  **********************************************************************/
 
 package org.eclipse.cdt.managedbuild.core.tests;
@@ -37,32 +35,33 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
-public class ManagedProject21MakefileTests extends TestCase {
+public class ManagedProject30MakefileTests extends TestCase {
 	public static final String MBS_TEMP_DIR = "MBSTemp";
 
 	static boolean pathVariableCreated = false;
 	
-	public ManagedProject21MakefileTests(String name) {
+	public ManagedProject30MakefileTests(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ManagedProject21MakefileTests.class.getName());
+		TestSuite suite = new TestSuite(ManagedProject30MakefileTests.class.getName());
 		
-		suite.addTest(new ManagedProject21MakefileTests("testSingleFileExe"));
-		suite.addTest(new ManagedProject21MakefileTests("testTwoFileSO"));
-		suite.addTest(new ManagedProject21MakefileTests("testMultiResConfig"));
-		suite.addTest(new ManagedProject21MakefileTests("testLinkedLib"));
+		suite.addTest(new ManagedProject30MakefileTests("test30SingleFileExe"));
+		suite.addTest(new ManagedProject30MakefileTests("test30TwoFileSO"));
+		suite.addTest(new ManagedProject30MakefileTests("test30MultiResConfig"));
+		suite.addTest(new ManagedProject30MakefileTests("test30LinkedLib"));
 		//  TODO: testLinkedFolder fails intermittently saying that it cannot find
 		//        the makefiles to compare.  This appears to be a test set issue,
 		//        rather than an MBS functionality issue
-		//suite.addTest(new ManagedProject21MakefileTests("testLinkedFolder"));
+		//suite.addTest(new ManagedProject30MakefileTests("test30LinkedFolder"));
+		suite.addTest(new ManagedProject30MakefileTests("test30CopyandDeploy"));
 		
 		return suite;
 	}
 
 	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
-		File testDir = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/" + projName));
+		File testDir = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/" + projName));
 		if(testDir == null) {
 			fail("Test project directory " + testDir.getName() + " is missing.");
 			return null;
@@ -206,9 +205,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 	}
 	
 	/* (non-Javadoc)
-	 * tests 2.1 style tool integration for a single file executable
+	 * tests 3.0 style tool integration for a single file executable
 	 */
-	public void testSingleFileExe(){
+	public void test30SingleFileExe(){
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
@@ -219,9 +218,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 	}
 	
 	/* (non-Javadoc)
-	 * tests 2.1 style tool integration for a two file SO
+	 * tests 3.0 style tool integration for a two file SO
 	 */
-	public void testTwoFileSO(){
+	public void test30TwoFileSO(){
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
@@ -232,9 +231,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 	}
 
 	/* (non-Javadoc)
-	 * tests 2.1 style tool integration for multiple source files & a resource configuration
+	 * tests 3.0 style tool integration for multiple source files & a resource configuration
 	 */
-	public void testMultiResConfig(){
+	public void test30MultiResConfig(){
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
@@ -248,9 +247,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 	}
 	
 	/* (non-Javadoc)
-	 * tests 2.1 style tool integration for linked files
+	 * tests 3.0 style tool integration for linked files
 	 */
-	public void testLinkedLib(){
+	public void test30LinkedLib(){
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
@@ -260,12 +259,12 @@ public class ManagedProject21MakefileTests extends TestCase {
 				 Path.fromOSString("f1.c"), 
 				 Path.fromOSString("f2.c"), 
 				 Path.fromOSString("test_ar.h")};
-		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/linkedLib/"));
+		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedLib/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
 		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpSubDir, linkedFiles);
 		try {
-			IProject[] projects = createProjects("linkedLib", null, "cdt.managedbuild.target.testgnu21.lib", true);
+			IProject[] projects = createProjects("linkedLib", null, "cdt.managedbuild.target.gnu30.lib", true);
 			//  There should be only one project.  Add our linked files to it.
 			IProject project = projects[0];
 			createFileLink(project, tmpDir, "f1.c", "f1.c");
@@ -277,9 +276,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 	}
 	
 	/* (non-Javadoc)
-	 * tests 2.1 style tool integration for a linked folder
+	 * tests 3.0 style tool integration for a linked folder
 	 */
-	public void testLinkedFolder(){
+	public void test30LinkedFolder(){
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
@@ -293,7 +292,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 				 Path.fromOSString("Benchmarks/objects.mk"), 
 				 Path.fromOSString("Benchmarks/subdir.mk"),
 				 Path.fromOSString("Benchmarks/sources.mk")}; 
-		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/linkedFolder/"));
+		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedFolder/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
 		IPath tmpDir = ManagedBuildTestHelper.copyFilesToTempDir(srcDir, tmpSubDir, linkedFiles);
@@ -303,9 +302,23 @@ public class ManagedProject21MakefileTests extends TestCase {
 		}
 		try {
 			IPath location = Path.fromOSString(MBS_TEMP_DIR);
-			IProject[] projects = createProjects("linkedFolder", location, "cdt.managedbuild.target.testgnu21.lib", false);
+			IProject[] projects = createProjects("linkedFolder", location, "cdt.managedbuild.target.gnu30.lib", false);
 			//  Build the project
 			buildProjects(projects, makefiles);
 		} finally {ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);}
+	}
+
+	/* (non-Javadoc)
+	 * tests 3.0 style tool integration with pre and post process steps added to typical compile & link
+	 */
+	public void test30CopyandDeploy(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk"), 
+				 Path.fromOSString("Functions/subdir.mk")};
+		IProject[] projects = createProjects("copyandDeploy", null, null, true);
+		buildProjects(projects, makefiles);
 	}
 }

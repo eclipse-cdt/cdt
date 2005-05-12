@@ -32,7 +32,6 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -244,10 +243,7 @@ public class ManagedBuildTestHelper {
 
 	static public StringBuffer readContentsStripLineEnds(IProject project, IPath path) {
 		StringBuffer buff = new StringBuffer();
-		IFile file = project.getFile(path);
-		IWorkspaceRoot root = project.getWorkspace().getRoot();
-		IPath fullPath = root.getLocation();
-		fullPath = fullPath.append(file.getFullPath());
+		IPath fullPath = project.getLocation().append(path);
 		try {
 			FileReader input = null;
 			try {
@@ -255,7 +251,7 @@ public class ManagedBuildTestHelper {
 			} catch (Exception e) {
 				Assert.fail("File " + fullPath.toString() + " could not be read.");
 			}
-			//InputStream input = file.getContents(true);
+			//InputStream input = file.getContents(true);   // A different way to read the file...
 			int c;
 			do {
 				c = input.read();
@@ -266,7 +262,7 @@ public class ManagedBuildTestHelper {
 			} while (c != -1);
 			input.close();
 		} catch (Exception e) {
-			Assert.fail("File " + file.toString() + " could not be read.");
+			Assert.fail("File " + fullPath.toString() + " could not be read.");
 		}
 		return buff;
 	}
@@ -362,13 +358,15 @@ public class ManagedBuildTestHelper {
 	}
 
 	static private void deleteDirectory(File dir) {
+		boolean b;
 		File[] toDelete = dir.listFiles();
 		for (int i=0; i<toDelete.length; i++) {
 			File fileToDelete = toDelete[i];
 			if (fileToDelete.isDirectory()) {
 				deleteDirectory(fileToDelete);
 			}
-			fileToDelete.delete();
+			b = fileToDelete.delete();
 		}
+		b = dir.delete();
 	}
 }

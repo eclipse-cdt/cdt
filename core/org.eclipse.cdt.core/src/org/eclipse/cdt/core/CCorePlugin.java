@@ -81,6 +81,8 @@ public class CCorePlugin extends Plugin {
 	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String PREF_INDEXER = "indexer"; //$NON-NLS-1$
 	public final static String DEFAULT_INDEXER_SIMPLE_ID = "originalsourceindexer"; //$NON-NLS-1$
+	public final static String NULL_INDEXER_SIMPLE_ID = "nullindexer"; //$NON-NLS-1$
+	public final static String NULL_INDEXER_UNIQUE_ID = PLUGIN_ID + "." + NULL_INDEXER_SIMPLE_ID ; //$NON-NLS-1$
 	public final static String DEFAULT_INDEXER_UNIQ_ID =  PLUGIN_ID + "." + DEFAULT_INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$

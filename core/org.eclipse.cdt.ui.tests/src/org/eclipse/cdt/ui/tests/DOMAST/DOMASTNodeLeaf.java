@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -322,6 +323,16 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	
 	public int getFiltersFlag() {
 		return filterFlag;
+	}
+	
+	public int relativeNodePosition( IASTNode n ){
+	    ASTNode astNode = (ASTNode) n;
+	    ASTNode thisNode = (ASTNode) getNode();
+	    if( thisNode.getOffset() > astNode.getOffset() )
+            return -1;
+        if( (thisNode.getOffset() + thisNode.getLength()) < (astNode.getOffset() + astNode.getLength()) )
+            return 1;
+	    return 0;
 	}
 	
 	private static class ASTPropertySource implements IPropertySource {

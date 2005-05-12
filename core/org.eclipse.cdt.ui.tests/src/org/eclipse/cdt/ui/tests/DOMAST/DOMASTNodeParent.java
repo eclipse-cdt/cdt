@@ -240,6 +240,22 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 		return null; // nothing found
 	}
 
+	public int relativeNodePosition( IASTNode n ){
+	    ASTNode astNode = (ASTNode) n;
+	    if( !cleanupedElements ){
+            cleanChildren();
+        }
+	    if( children.length > 0 ){
+	        ASTNode first = (ASTNode) children[0].getNode();
+	        if( first.getOffset() > astNode.getOffset() )
+	            return -1;
+	        ASTNode last = (ASTNode) children[ children.length - 1 ].getNode();
+	        if( (last.getOffset() + last.getLength()) < (astNode.getOffset() + astNode.getLength()) )
+	            return 1;
+	        return 0;
+	    }
+	    return super.relativeNodePosition( n );
+	}
 	/**
 	 * Returns the DOMASTNodeParent that corresponds to the IASTNode.  This is the DOMASTNodeParent
 	 * that represents the IASTNode in the DOM AST View.
@@ -250,50 +266,81 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 	public DOMASTNodeParent findTreeObject(IASTNode node, boolean useOffset) {
 		if (node == null) return null;
 		
-		IASTNode nodeToFind = node;
-		
 		// first check this node before checking children
 		if (equalNodes(node, this.getNode(), useOffset)) {
 			return this;
 		}
-		
-		// build the chain of nodes... and use it to search the tree for the DOMASTNodeParent that contains the node
-		IASTNode[] nodeChain = new IASTNode[DEFAULT_NODE_CHAIN_SIZE];
-		IASTNode topNode = node;
-		nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
-		while(topNode.getParent() != null && !(topNode.getParent() instanceof IASTTranslationUnit)) {
-			topNode = topNode.getParent();
+		if( !useOffset || node instanceof IASTPreprocessorStatement) {
+		    IASTNode nodeToFind = node;
+		    // build the chain of nodes... and use it to search the tree for the DOMASTNodeParent that contains the node
+			IASTNode[] nodeChain = new IASTNode[DEFAULT_NODE_CHAIN_SIZE];
+			IASTNode topNode = node;
 			nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
-		}
-		
-		// loop through the chain of nodes and use it to only search the necessary children required to find the node
-		DOMASTNodeLeaf[] childrenToSearch = children;
-		outerLoop: for(int i=nodeChain.length-1; i>=0; i--) {
-			if (nodeChain[i] != null) {
-				nodeToFind = nodeChain[i];
-				
-				for(int j=0; j<childrenToSearch.length; j++) {
-					if (childrenToSearch[j] instanceof DOMASTNodeParent) {
-						
-						if ( equalNodes(childrenToSearch[j].getNode(), node, useOffset) ) { 
-							return (DOMASTNodeParent)childrenToSearch[j];
-						}						
-						
-						if ( equalNodes(childrenToSearch[j].getNode(), nodeToFind, useOffset) ) {
-							childrenToSearch = ((DOMASTNodeParent)childrenToSearch[j]).getChildren(false);
-							continue outerLoop;
-						}
-						
-						// since the nodeChain doesn't include #includes, if an #include is encountered then search it's children
-						if (childrenToSearch[j].getNode() instanceof IASTPreprocessorIncludeStatement) {
-							DOMASTNodeParent foundParentInInclude = ((DOMASTNodeParent)childrenToSearch[j]).findTreeObject(node, useOffset);
-							if(foundParentInInclude != null) {
-								return foundParentInInclude;
+			while(topNode.getParent() != null && !(topNode.getParent() instanceof IASTTranslationUnit)) {
+				topNode = topNode.getParent();
+				nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
+			}
+			
+			// loop through the chain of nodes and use it to only search the necessary children required to find the node
+			DOMASTNodeLeaf[] childrenToSearch = children;
+			outerLoop: for(int i=nodeChain.length-1; i>=0; i--) {
+				if (nodeChain[i] != null) {
+					nodeToFind = nodeChain[i];
+					
+					for(int j=0; j<childrenToSearch.length; j++) {
+						if (childrenToSearch[j] instanceof DOMASTNodeParent) {
+							
+							if ( equalNodes(childrenToSearch[j].getNode(), node, useOffset) ) { 
+								return (DOMASTNodeParent)childrenToSearch[j];
+							}						
+							
+							if ( equalNodes(childrenToSearch[j].getNode(), nodeToFind, useOffset) ) {
+								childrenToSearch = ((DOMASTNodeParent)childrenToSearch[j]).getChildren(false);
+								continue outerLoop;
+							}
+							
+							// since the nodeChain doesn't include #includes, if an #include is encountered then search it's children
+							if (childrenToSearch[j].getNode() instanceof IASTPreprocessorIncludeStatement) {
+								DOMASTNodeParent foundParentInInclude = ((DOMASTNodeParent)childrenToSearch[j]).findTreeObject(node, useOffset);
+								if(foundParentInInclude != null) {
+									return foundParentInInclude;
+								}
 							}
 						}
 					}
 				}
 			}
+		} else {
+		    if( children.length == 0 )
+			    return null;
+		    if( !cleanupedElements ){
+		        cleanChildren();
+		    }
+			int a = 0, z = children.length - 1;
+			int idx = (z - a) / 2 ;
+			while( true ){
+			    int compare = children[ idx ].relativeNodePosition( node );
+			    if( compare == 0 ){
+			        if( children[idx] instanceof DOMASTNodeParent ){
+			            return ((DOMASTNodeParent)children[idx]).findTreeObject( node, useOffset );
+			        }
+			        return null; //??
+			    } else if( compare == -1 )
+			        z = idx;
+			    else
+			        a = idx;
+			    int diff = z - a;
+			    if( diff == 0 )
+			        return null;
+			    else if( diff == 1 )
+			        idx = ( idx == z ) ? a : z;
+			    else 
+			        idx = a + ( z - a ) / 2;
+			    if( z == a )
+			        return null;
+			    if( z - a == 1 && children[ a ].relativeNodePosition( node ) == 1 && children[ z ].relativeNodePosition( node ) == -1 )
+			        return null;
+			}   
 		}
 		
 		return null; // nothing found

@@ -20,16 +20,18 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -41,8 +43,7 @@ abstract public class BaseTestFramework extends TestCase {
     static protected IProject 				project;
     static protected ICProject				cproject;
     static protected FileManager 			fileManager;
-    static final 	 String 				sourceIndexerID = "org.eclipse.cdt.core.originalsourceindexer"; //$NON-NLS-1$
-    static protected SourceIndexer			sourceIndexer;
+	static protected boolean				indexDisabled=false;
     {
         if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
 			//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
@@ -72,25 +73,22 @@ abstract public class BaseTestFramework extends TestCase {
 			fileManager = new FileManager();
         }
 	}
-    
-    public void enableIndexing(){
-        if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
-            if( project != null )
-                try {
-                    project.setSessionProperty( SourceIndexer.activationKey, Boolean.TRUE );
-                } catch ( CoreException e ) { //boo
-                }
-        }
-    }
-    
+        
     public void disableIndexing(){
-        if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
-            if( project != null )
-                try {
-                    project.setSessionProperty( SourceIndexer.activationKey, Boolean.FALSE );
-                } catch ( CoreException e ) { //boo
-                }
-        }
+		if ( project != null) {
+			ICDescriptorOperation op = new ICDescriptorOperation() {
+
+				public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+						descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
+						descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,CCorePlugin.NULL_INDEXER_UNIQUE_ID);
+				}
+			};
+			try {
+				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, new NullProgressMonitor());
+				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
+				indexDisabled=true;
+			} catch (CoreException e) {}
+		}
     }
     
     public BaseTestFramework()

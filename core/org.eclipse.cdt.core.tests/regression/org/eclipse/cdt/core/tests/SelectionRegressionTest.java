@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest.FullParseCallback
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -102,8 +101,6 @@ public class SelectionRegressionTest extends BaseTestFramework {
 			   cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 			   project = cproject.getProject();
 			}
-			project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
-		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( true ) );
 		} catch ( CoreException e ) { //boo
 		}
 		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();

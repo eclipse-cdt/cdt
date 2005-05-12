@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
@@ -69,23 +70,26 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     
     protected void setUp() throws Exception {
         super.setUp();
+		
 		try{
 			if (project == null){
 			   cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 			   project = cproject.getProject();
 			}
-			project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
-		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( true ) );
 		} catch ( CoreException e ) { //boo
 		}
+		
 		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
 		typeCacheManager.setProcessTypeCacheEvents(false);
 		
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-        //indexManager.reset();
-        
-		sourceIndexer = (SourceIndexer) CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(project); 
-        sourceIndexer.addIndexChangeListener( this );
+		indexDisabled=false;
+		
+		ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(project);
+		if (indexer instanceof SourceIndexer){
+			  ((SourceIndexer)indexer).addIndexChangeListener( this );
+		}
+      
     }
     
     protected void tearDown() throws Exception {
@@ -93,7 +97,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
             return;
     
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-        sourceIndexer.removeIndexChangeListener( this );
+        //sourceIndexer.removeIndexChangeListener( this );
 		try{
 		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( false ) );
 			project.delete(true,true,new NullProgressMonitor());
@@ -136,10 +140,11 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         indexChanged = false;
         IFile file = super.importFile( fileName, contents );
 	
-        while( !indexChanged ){
-            Thread.sleep( 100 );
-        }
-       
+		if (!indexDisabled){
+	        while( !indexChanged ){
+	            Thread.sleep( 100 );
+	        }
+		}
 		return file;
 	}
     

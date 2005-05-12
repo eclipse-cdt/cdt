@@ -841,6 +841,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				if (celement instanceof IOpenable) {
 					try {
 						((IOpenable)celement).close();
+						// Make sure we clear the cache on the project too
+						if (!(celement instanceof ICProject)) {
+							celement.getCProject().close();
+						}
 					} catch (CModelException e) {
 						// ignore.
 					}

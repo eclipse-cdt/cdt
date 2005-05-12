@@ -1,3 +1,8 @@
+2005-05-12 Alain Magloire
+	For the per file container, make sure we clean the project info.
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* model/org/eclipse/cdt/core/model/IPathEntryContaienrExtension.java
+
 2005-05-10 Vladimir Hirsl
 	Fix for PR 94500: [Path Entry] Problem marker: Invalid project path: DISCOVERED_SCANNER_INFO
 	

@@ -1,3 +1,8 @@
+2005-05-12 Mikhail Khodjaiants
+	Bug 94905: Error examining structure contents in debugger.
+	The structure's elements should inherit the enablement flag from parents.
+	* CVariable.java
+
 2005-04-25 Mikhail Khodjaiants
 	Update the source search path of the underlyuing debugger when the source 
 	containers are changed.

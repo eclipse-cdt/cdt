@@ -65,7 +65,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			String parserID = ""; //$NON-NLS-1$
-			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
 			ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 			if (cext.length > 0) {
 				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
@@ -184,7 +184,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			try {
-				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
+				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj, false);
 				ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 				if (cext.length > 0) {
 					cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$

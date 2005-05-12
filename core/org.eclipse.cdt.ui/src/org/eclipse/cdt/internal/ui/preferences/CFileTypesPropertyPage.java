@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /*
  * The preference page used for displaying/editing CDT file
@@ -96,7 +96,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseProject.setSelection(custom);
 		fPrefsBlock.setEnabled(custom);
 	
-		WorkbenchHelp.setHelp( topPane, ICHelpContextIds.FILE_TYPES_STD_PAGE );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp( topPane, ICHelpContextIds.FILE_TYPES_STD_PAGE );
 		return topPane;
 	}
 	

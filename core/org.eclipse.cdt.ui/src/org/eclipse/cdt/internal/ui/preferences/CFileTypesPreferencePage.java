@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /*
  * The preference page used for displaying/editing CDT file
@@ -59,7 +59,7 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 		fResolver = getResolverModel().getResolver(); 
 		fPrefsBlock = new CFileTypesPreferenceBlock(fResolver);
 
-		WorkbenchHelp.setHelp( topPane, ICHelpContextIds.FILE_TYPES_PREF_PAGE );
+		PlatformUI.getWorkbench().getHelpSystem().setHelp( topPane, ICHelpContextIds.FILE_TYPES_PREF_PAGE );
 		return fPrefsBlock.createControl(topPane);
 	}
 	

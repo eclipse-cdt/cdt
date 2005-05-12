@@ -39,7 +39,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 
 /**
@@ -71,7 +71,7 @@ public class OpenAction extends SelectionDispatchAction {
 		setText(ActionMessages.getString("OpenAction.label")); //$NON-NLS-1$
 		setToolTipText(ActionMessages.getString("OpenAction.tooltip")); //$NON-NLS-1$
 		setDescription(ActionMessages.getString("OpenAction.description")); //$NON-NLS-1$		
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.OPEN_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.OPEN_ACTION);
 	}
 	
 	/**

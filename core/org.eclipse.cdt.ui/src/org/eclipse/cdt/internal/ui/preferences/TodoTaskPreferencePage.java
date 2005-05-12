@@ -20,7 +20,7 @@ import org.eclipse.jface.preference.PreferencePage;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -58,7 +58,7 @@ public class TodoTaskPreferencePage extends PreferencePage implements IWorkbench
 	public void createControl(Composite parent) {
 		// added for 1GEUGE6: ITPJUI:WIN2000 - Help is the same on all preference pages
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.TODO_TASK_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.TODO_TASK_PREFERENCE_PAGE);
 	}	
 
 	/*

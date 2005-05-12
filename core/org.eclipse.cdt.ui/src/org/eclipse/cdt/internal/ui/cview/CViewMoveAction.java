@@ -23,9 +23,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.MoveProjectAction;
 import org.eclipse.ui.actions.MoveResourceAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The ResourceNavigatorMoveAction is a resource move that aso updates the navigator
@@ -45,7 +45,7 @@ public class CViewMoveAction extends MoveResourceAction {
  */
 public CViewMoveAction(Shell shell, StructuredViewer structureViewer) {
 	super(shell);
-	WorkbenchHelp.setHelp(this, ICHelpContextIds.MOVE_ACTION);
+	PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.MOVE_ACTION);
 	this.viewer = structureViewer;
 	this.moveProjectAction = new MoveProjectAction(shell);
 }

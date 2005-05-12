@@ -14,8 +14,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetMessages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.Assert;
-
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Clears the selected working set in the action group's view.
@@ -31,7 +30,7 @@ public class ClearWorkingSetAction extends Action {
 		Assert.isNotNull(actionGroup);
 		setToolTipText(WorkingSetMessages.getString("ClearWorkingSetAction.toolTip")); //$NON-NLS-1$
 		setEnabled(actionGroup.getWorkingSet() != null);
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.CLEAR_WORKING_SET_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.CLEAR_WORKING_SET_ACTION);
 		fActionGroup= actionGroup;
 	}
 

@@ -20,7 +20,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Displays an IWorkingSetSelectionDialog and sets the selected 
@@ -39,7 +38,7 @@ public class SelectWorkingSetAction extends Action {
 		
 		fShell= shell;
 		fActionGroup= actionGroup;
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.SELECT_WORKING_SET_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.SELECT_WORKING_SET_ACTION);
 	}
 	
 	/*

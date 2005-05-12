@@ -19,8 +19,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.RenameResourceAction;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 
 /**
@@ -38,7 +38,7 @@ public class CViewRenameAction extends RenameResourceAction {
 	 */
 	public CViewRenameAction(Shell shell, TreeViewer treeViewer) {
 		super(shell, treeViewer.getTree());
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			this,
 			ICHelpContextIds.RENAME_ACTION);
 		this.viewer = treeViewer;

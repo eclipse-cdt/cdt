@@ -12,7 +12,7 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -26,9 +26,9 @@ public class GotoAnnotationAction extends TextEditorAction {
 		super(CEditorMessages.getResourceBundle(), prefix, null);
 		fForward= forward;
 		if (forward)
-			WorkbenchHelp.setHelp(this, ICHelpContextIds.GOTO_NEXT_ERROR_ACTION);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.GOTO_NEXT_ERROR_ACTION);
 		else
-			WorkbenchHelp.setHelp(this, ICHelpContextIds.GOTO_PREVIOUS_ERROR_ACTION);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.GOTO_PREVIOUS_ERROR_ACTION);
 	}
 	
 	public void run() {

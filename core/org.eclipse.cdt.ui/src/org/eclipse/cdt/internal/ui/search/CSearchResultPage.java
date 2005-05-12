@@ -47,7 +47,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -79,7 +79,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	
 	public void createControl(Composite parent) {
 		super.createControl( parent );
-		WorkbenchHelp.setHelp(parent, ICHelpContextIds.C_SEARCH_VIEW);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICHelpContextIds.C_SEARCH_VIEW);	
 	}
 	
 	/**

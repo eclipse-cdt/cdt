@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.actions;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This is an action template for actions that toggle whether
@@ -31,7 +31,7 @@ public abstract class AbstractToggleLinkingAction extends Action {
 		setDescription(ActionMessages.getString("ToggleLinkingAction.description")); //$NON-NLS-1$
 		setToolTipText(ActionMessages.getString("ToggleLinkingAction.tooltip")); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$		
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
 	}
 
 	/**

@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * 
@@ -101,7 +101,7 @@ public class CodeFormatterBlock {
 		((GridLayout) control.getLayout()).makeColumnsEqualWidth = false;
 		((GridLayout) control.getLayout()).marginWidth = 5;
 
-		WorkbenchHelp.setHelp(control, ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.CODEFORMATTER_PREFERENCE_PAGE);
 
 		ControlFactory.createEmptySpace(control, 2);
 

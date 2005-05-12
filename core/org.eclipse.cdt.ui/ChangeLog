@@ -1,4 +1,10 @@
 2005-05-12 Alain Magloire
+	Fix multiple warnings, the use of:
+	Workbench.setHelp() --> PlatformUI.getWorkbench().getHelpSystem().getHelp()
+	Use IShellProvider instead of shell.
+	* files too many to enumerate
+
+2005-05-12 Alain Magloire
 	Fix PR 93970
 	* src/org/eclipse/cdt/internal/ui/cview/SelectionTransferDragAdapter.java
 	* src/org/eclipse/cdt/internal/ui/cview/SelectionTransferDropAdapter.java

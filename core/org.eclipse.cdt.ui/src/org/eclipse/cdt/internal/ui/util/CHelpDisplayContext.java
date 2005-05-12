@@ -32,7 +32,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * 
@@ -49,7 +49,7 @@ public class CHelpDisplayContext implements IContext {
 			if (selected != null && selected.length() > 0) {
 				context= new CHelpDisplayContext(context, editor, selected);
 			}
-			WorkbenchHelp.displayHelp(context);
+			PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 		}
 	}
 	

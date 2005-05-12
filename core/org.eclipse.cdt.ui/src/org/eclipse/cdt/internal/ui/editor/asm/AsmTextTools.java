@@ -13,7 +13,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -161,7 +161,8 @@ public class AsmTextTools {
 		};
 		
 		//return new RuleBasedPartitioner(getPartitionScanner(), types);
-		return new DefaultPartitioner(getPartitionScanner(), types);
+		//return new DefaultPartitioner(getPartitionScanner(), types);
+		return new FastPartitioner(getPartitionScanner(), types);
 	}
 	
 	/**

@@ -47,7 +47,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class BinaryParserBlock extends AbstractBinaryParserPage {
 
@@ -181,7 +181,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		((GridData) (composite.getLayoutData())).horizontalAlignment = GridData.FILL_HORIZONTAL;
 		setControl(composite);
 
-		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.BINARY_PARSER_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.BINARY_PARSER_PAGE);
 
 		Composite listComposite = ControlFactory.createComposite(composite, 1);
 		LayoutUtil.doDefaultLayout(listComposite, new DialogField[]{binaryList}, true);

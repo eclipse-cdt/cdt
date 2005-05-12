@@ -23,8 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -51,7 +51,7 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 		composite.setLayout(new FillLayout());
 
 		optionPage.createControl(composite);
-		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_INDEXER_PROPERTIES);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INDEXER_PROPERTIES);	
 		initialize();
 		
 		return composite;

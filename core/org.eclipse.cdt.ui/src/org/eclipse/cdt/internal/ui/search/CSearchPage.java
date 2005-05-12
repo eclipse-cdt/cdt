@@ -66,7 +66,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -187,7 +186,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		setIndexerMessages();
 		
 		Dialog.applyDialogFont( result );
-		WorkbenchHelp.setHelp(result, ICHelpContextIds.C_SEARCH_PAGE);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(result, ICHelpContextIds.C_SEARCH_PAGE);	
 	}
 	
 	/**

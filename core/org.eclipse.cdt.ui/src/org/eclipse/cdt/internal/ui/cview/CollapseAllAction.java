@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.cview;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Collapse all nodes.
@@ -28,7 +28,7 @@ class CollapseAllAction extends Action {
 		setToolTipText(CViewMessages.getString("CollapseAllAction.tooltip")); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_COLLAPSE_ALL);
 		cview = part;
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.COLLAPSE_ALL_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.COLLAPSE_ALL_ACTION);
 	}
  
 	public void run() { 

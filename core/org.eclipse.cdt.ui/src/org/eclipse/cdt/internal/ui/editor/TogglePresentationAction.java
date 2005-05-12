@@ -21,7 +21,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.TextEditorAction;
@@ -44,7 +44,7 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SEGMENT_EDIT);
 		setToolTipText(CEditorMessages.getString("TogglePresentation.tooltip")); //$NON-NLS-1$
 		setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY);
-		WorkbenchHelp.setHelp(this,	ICHelpContextIds.TOGGLE_PRESENTATION_ACTION);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,	ICHelpContextIds.TOGGLE_PRESENTATION_ACTION);		
 		update();
 	}
 	

@@ -38,7 +38,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
@@ -256,7 +256,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
 
-		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.ERROR_PARSERS_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.ERROR_PARSERS_PAGE);
 
 		String[] buttonLabels = new String[]{
 		/* 0 */

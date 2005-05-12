@@ -11,7 +11,7 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 
 /**
@@ -28,7 +28,7 @@ public class MemberFilterAction extends Action {
 		fFilterActionGroup= actionGroup;
 		fFilterProperty= property;
 		
-		WorkbenchHelp.setHelp(this, contextHelpId);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, contextHelpId);
 
 		setChecked(initValue);
 	}

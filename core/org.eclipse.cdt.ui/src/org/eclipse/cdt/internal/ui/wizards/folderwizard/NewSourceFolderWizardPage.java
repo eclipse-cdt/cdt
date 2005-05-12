@@ -63,10 +63,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -207,7 +207,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 			
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		WorkbenchHelp.setHelp(composite, ICHelpContextIds.NEW_SRCFLDER_WIZARD_PAGE);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.NEW_SRCFLDER_WIZARD_PAGE);		
 	}
 	
 	/*

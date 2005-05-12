@@ -12,13 +12,13 @@ package org.eclipse.cdt.internal.ui.wizards;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class NewTypeDropDownAction extends AbstractWizardDropDownAction {
 
 	public NewTypeDropDownAction() {
 	    super();
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.OPEN_CLASS_WIZARD_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.OPEN_CLASS_WIZARD_ACTION);
 	}
 
 	protected IAction[] getWizardActions() {

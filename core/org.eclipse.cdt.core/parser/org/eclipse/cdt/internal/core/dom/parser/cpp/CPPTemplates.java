@@ -439,7 +439,11 @@ public class CPPTemplates {
 		
 		if( name.getParent() instanceof IASTName )
 			name = (IASTName) name.getParent();
-		ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) name.getParent();
+		IASTNode n = name.getParent();
+		if( n instanceof ICPPASTQualifiedName ){
+			n = n.getParent();
+		}
+		ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) n;
 		IType [] functionParameters = createTypeArray( fdtor.getParameters() );
 		
 		ICPPFunctionTemplate result = null;

@@ -988,6 +988,8 @@ public class CPPVisitor {
 			shouldVisitNames = true;
 			if( binding instanceof ILabel )
 				kind = KIND_LABEL;
+			else if( binding instanceof ICPPTemplateParameter )
+				kind = KIND_TEMPLATE_PARAMETER;
 			else if( binding instanceof ICompositeType || 
 					 binding instanceof ITypedef || 
 					 binding instanceof IEnumeration)
@@ -999,8 +1001,6 @@ public class CPPVisitor {
 			}
 			else if( binding instanceof ICPPUsingDeclaration )
 			    kind = KIND_COMPOSITE;
-			else if( binding instanceof ICPPTemplateParameter )
-				kind = KIND_TEMPLATE_PARAMETER;
 			else 
 				kind = KIND_OBJ_FN;
 		}

@@ -130,9 +130,9 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		// TODO Auto-generated method stub
-		return null;
+		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 
 	/* (non-Javadoc)
@@ -186,9 +186,8 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
-	public ICPPConstructor[] getConstructors() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
+	public ICPPConstructor[] getConstructors() {
+		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
 	/* (non-Javadoc)

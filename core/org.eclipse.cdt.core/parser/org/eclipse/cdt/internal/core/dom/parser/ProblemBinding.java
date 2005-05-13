@@ -86,11 +86,7 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
         }
 
-        IASTNodeLocation [] locs = node.getNodeLocations();
-        IASTFileLocation fileLoc = node.getTranslationUnit().flattenLocationsToFile( locs );
-        Object[] args = new Object[] { msg, fileLoc.getFileName(), new Integer(-1) }; //$NON-NLS-1$        
-        message = ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
-        return message;
+		return msg;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
@@ -116,8 +112,8 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
      */
-    public IASTNode getPhysicalNode() throws DOMException {
-        throw new DOMException( this );
+    public IASTNode getPhysicalNode() {
+        return getASTNode();
     }
 
     public Object clone(){
@@ -190,5 +186,21 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
     }
 
 	public void flushCache() {
+	}
+
+	public String getFileName() {
+		if( node != null )
+			return node.getContainingFilename();
+
+		return ""; //$NON-NLS-1$
+	}
+
+	public int getLineNumber() {
+		if( node != null ){
+			IASTNodeLocation [] locs = node.getNodeLocations();
+			IASTFileLocation fileLoc = node.getTranslationUnit().flattenLocationsToFile( locs );
+			return fileLoc.getStartingLineNumber();
+		}
+		return -1;
 	}
 }

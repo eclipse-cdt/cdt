@@ -38,6 +38,19 @@ public interface IProblemBinding extends IBinding, IScope, IType {
      * @return
      */
     public IASTNode getASTNode();
+	
+	/**
+	 * returns the file name this problem occured in if known.
+	 * @return
+	 */
+	public String getFileName();
+	
+	/**
+	 * returns the line number for this problem if known
+	 * @return
+	 */
+	public int getLineNumber();
+	
     /*
      * Parser Semantic Problems
      * All Semantic problems take a char[] as an argument

@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -27,8 +28,11 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -40,9 +44,7 @@ import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.internal.ui.search.CSearchQuery;
-import org.eclipse.cdt.internal.ui.search.CSearchResult;
-import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -88,8 +90,12 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
         NewSearchResultCollector collector = new NewSearchResultCollector(textResult, mainSearchPM);
         collector.aboutToStart();
         
-        Set matches = DOMSearchUtil.getMatchesFromSearchEngine(scope, searchName, limitTo);
-        if (matches != null && matches.size() > 0) {
+		// fix for 43128
+		Set matches=null;
+		if (!isLocal())
+			matches = DOMSearchUtil.getMatchesFromSearchEngine(scope, searchName, limitTo);
+		
+		if (matches != null && matches.size() > 0) {
             Iterator itr = matches.iterator();
             while(itr.hasNext()) {
                 Object next = itr.next();
@@ -137,6 +143,24 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
         collector.done();
         
         return new Status(IStatus.OK, CUIPlugin.getPluginId(), 0, BLANK_STRING, null); //$NON-NLS-1$	
+	}
+	
+	private boolean isLocal() {
+		IBinding binding = searchName.resolveBinding();
+		if (searchName instanceof CPPASTName) {
+			try {
+				if (binding instanceof ICPPBinding && !((ICPPBinding)binding).isGloballyQualified())
+					return true;
+			} catch (DOMException e) {}
+		} else {
+			try {
+				IScope nameScope = binding.getScope();
+				if (nameScope instanceof ICFunctionScope || nameScope.getPhysicalNode() instanceof IASTCompoundStatement)
+					return true;
+			} catch (DOMException e1) {}
+		}
+				
+		return false; // otherwise it's not local
 	}
 	
 	/**

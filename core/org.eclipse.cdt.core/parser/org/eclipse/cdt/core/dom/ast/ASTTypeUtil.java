@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
@@ -204,9 +205,9 @@ public class ASTTypeUtil {
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
 		} else if (type instanceof ICPPTemplateTypeParameter) {
-			try {
-				result.append(getType(((ICPPTemplateTypeParameter)type).getDefault()));
-			} catch (DOMException e) {}
+			result.append(((ICPPTemplateTypeParameter)type).getName());
+		} else if (type instanceof ICPPTemplateTemplateParameter) {
+			result.append(((ICPPTemplateTemplateParameter)type).getName());
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
 			result.append(SPACE);

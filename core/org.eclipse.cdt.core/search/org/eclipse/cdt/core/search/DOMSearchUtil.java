@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.parser.ParseError;
@@ -49,7 +48,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -351,15 +349,7 @@ public class DOMSearchUtil {
 		IBinding binding = searchName.resolveBinding();
 		names = getNames(tu, binding, limitTo);
 		
-		if (names == null || names.length == 0) { // try alternate strategies
-			// fix for 92632
-			if (binding instanceof ICPPTemplateInstance) {
-				if (((ICPPTemplateInstance)binding).getTemplateDefinition() != null) {
-					binding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
-					names = getNames(tu, binding, limitTo);
-				}
-			}
-			
+		if (names == null || names.length == 0) { // try alternate strategies		
 			// fix for 86829
 			try {
 				if (binding instanceof ICPPConstructor && binding.getScope() instanceof ICPPClassScope) {

@@ -83,7 +83,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -776,23 +775,24 @@ public class CPPSemantics {
         	objs = ArrayUtil.trim( Object.class, (Object[]) source );
         
         int size = map != null ? map.size() : objs.length;
-       
+		int resultInitialSize = resultMap.size();
         for( int i = 0; i < size; i ++ ) {
         	char [] key = ( map != null ) ? map.keyAt(i) 
         								  : ( objs[i] instanceof IBinding) ? ((IBinding)objs[i]).getNameCharArray() 
         								  								   : ((IASTName)objs[i]).toCharArray();
-        	if( !resultMap.containsKey( key ) ){
+        	int idx = resultMap.lookup( key );
+        	if( idx == -1 ){
 				resultMap.put( key, (map != null ) ? map.get( key ) : objs[i] );
-			} else if( !scoped ) {
+			} else if( !scoped || idx >= resultInitialSize ) {
 			    Object obj = resultMap.get( key );
 			    Object so = ( map != null ) ? map.get(key) : objs[i];
 			    if( obj instanceof Object [] ) {
-			        if( so instanceof IBinding )
+			        if( so instanceof IBinding || so instanceof IASTName )
 			            obj = ArrayUtil.append( Object.class, (Object[]) obj, so );
 			        else
 			            obj = ArrayUtil.addAll( Object.class, (Object[])obj, (Object[]) so );
 			    } else {
-			        if( so instanceof IBinding )
+			        if( so instanceof IBinding || so instanceof IASTName )
 			            obj = new Object [] { obj, so };
 			        else {
 			            Object [] temp = new Object [ ((Object[])so).length + 1 ];
@@ -800,6 +800,7 @@ public class CPPSemantics {
 			            obj = ArrayUtil.addAll( Object.class, temp, (Object[]) so );
 			        }
 			    } 
+				resultMap.put( key, obj );
 			}
         }
 
@@ -1675,8 +1676,8 @@ public class CPPSemantics {
 		        	       (type instanceof ICPPDelegate && ((ICPPDelegate)type).getBinding() == temp) )
 	        	{
 	        	    //ok, delegates are synonyms
-	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPClassTemplatePartialSpecialization &&
-						   ((ICPPClassTemplatePartialSpecialization)temp).getPrimaryClassTemplate() == type )
+	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPSpecialization &&
+						   ((ICPPSpecialization)temp).getSpecializedBinding() == type )
 				{
 					//ok, stay with the template, the specialization, if applicable, will come out during instantiation
 				} else if( type != temp ) {
@@ -2834,25 +2835,22 @@ public class CPPSemantics {
                 obj = map.get( key );
                 if( obj instanceof IBinding )
                     result = (IBinding[]) ArrayUtil.append( IBinding.class, result, obj );
-                else {
-                    Object item = null;
-                    if( obj instanceof Object[] ){
-                        Object[] objs = (Object[]) obj;
-                        if( objs.length > 1 && objs[1] != null )
-                            continue;
-                        item = objs[0];
-                    } else {
-                        item = obj;
-                    }
-                    
-                    if( item instanceof IBinding )
-                        result = (IBinding[]) ArrayUtil.append( IBinding.class, result, item );
-                    else {
-                        IBinding binding = ((IASTName) item).resolveBinding();
-                        if( binding != null && !(binding instanceof IProblemBinding))
-                            result = (IBinding[]) ArrayUtil.append( IBinding.class, result, binding );
-                    }
-                        
+                else if( obj instanceof IASTName ) {
+					IBinding binding = ((IASTName) obj).resolveBinding();
+                    if( binding != null && !(binding instanceof IProblemBinding))
+                        result = (IBinding[]) ArrayUtil.append( IBinding.class, result, binding );
+                } else if( obj instanceof Object [] ) {
+					Object[] objs = (Object[]) obj;
+					for (int j = 0; j < objs.length && objs[j] != null; j++) {
+						Object item = objs[j];
+						if( item instanceof IBinding )
+		                    result = (IBinding[]) ArrayUtil.append( IBinding.class, result, item );
+		                else if( item instanceof IASTName ) {
+							IBinding binding = ((IASTName) item).resolveBinding();
+		                    if( binding != null && !(binding instanceof IProblemBinding))
+		                        result = (IBinding[]) ArrayUtil.append( IBinding.class, result, binding );
+		                }
+					}                        
                 }
             }
         }

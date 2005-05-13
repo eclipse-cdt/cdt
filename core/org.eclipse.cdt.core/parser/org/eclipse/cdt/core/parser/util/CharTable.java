@@ -136,7 +136,7 @@ public class CharTable extends HashTable {
 	    
 	    return keyTable[ idx ];
 	}
-	protected int lookup(char[] buffer ){
+	public int lookup(char[] buffer ){
 		return lookup(buffer, 0, buffer.length);
 	}
 	

@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -119,8 +118,7 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() throws DOMException {
-		// TODO Auto-generated method stub
-		return 0;
+		return ((ICPPClassType)getSpecializedBinding()).getKey();
 	}
 
 	/* (non-Javadoc)
@@ -134,30 +132,6 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
-	 */
-	public String[] getQualifiedName() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
-	 */
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-	 */
-	public boolean isGloballyQualified() throws DOMException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone(){
@@ -166,31 +140,10 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
-	 */
-	public IASTNode[] getDeclarations() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
-	 */
-	public IASTNode getDefinition() {
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPClassType.CPPClassTypeDelegate( name, this );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
-	public void addDefinition(IASTNode node) {
 	}
 
     /* (non-Javadoc)

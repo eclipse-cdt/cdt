@@ -93,10 +93,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
@@ -115,7 +117,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -974,6 +978,7 @@ public class CPPVisitor {
 		private static final int KIND_TYPE   = 3;
 		private static final int KIND_NAMESPACE   = 4;
 		private static final int KIND_COMPOSITE = 5;
+		private static final int KIND_TEMPLATE_PARAMETER = 6;
 		
 		
 		public CollectDeclarationsAction( IBinding binding ){
@@ -994,6 +999,8 @@ public class CPPVisitor {
 			}
 			else if( binding instanceof ICPPUsingDeclaration )
 			    kind = KIND_COMPOSITE;
+			else if( binding instanceof ICPPTemplateParameter )
+				kind = KIND_TEMPLATE_PARAMETER;
 			else 
 				kind = KIND_OBJ_FN;
 		}
@@ -1006,6 +1013,18 @@ public class CPPVisitor {
 				prop = name.getParent().getPropertyInParent();
 			
 			switch( kind ){
+				case KIND_TEMPLATE_PARAMETER:
+					if( prop == ICPPASTSimpleTypeTemplateParameter.PARAMETER_NAME ||
+					    prop == ICPPASTTemplatedTypeTemplateParameter.PARAMETER_NAME )
+					{
+						break;
+					} else if( prop == IASTDeclarator.DECLARATOR_NAME ){
+						IASTNode d = name.getParent().getParent();
+						if( d.getPropertyInParent() == IASTParameterDeclaration.DECLARATOR ){
+							break;
+						}
+					}
+					return PROCESS_CONTINUE;
 				case KIND_LABEL:
 					if( prop == IASTLabelStatement.NAME )
 						break;
@@ -1149,7 +1168,8 @@ public class CPPVisitor {
 			}
 			else if( binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
-			} else if( binding instanceof ICPPUsingDeclaration )
+			} else if( binding instanceof ICPPUsingDeclaration ||
+					   binding instanceof ICPPTemplateParameter )
 			    kind = KIND_COMPOSITE;
 			else 
 				kind = KIND_OBJ_FN;
@@ -1200,7 +1220,8 @@ public class CPPVisitor {
 						prop == IASTFunctionCallExpression.FUNCTION_NAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
 						prop == IASTNamedTypeSpecifier.NAME ||
-						prop == ICPPASTConstructorChainInitializer.MEMBER_ID)
+						prop == ICPPASTConstructorChainInitializer.MEMBER_ID ||
+						prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT )
 					{
 						break;
 					}
@@ -1736,7 +1757,27 @@ public class CPPVisitor {
 	public static IASTName[] getDeclarations( IASTTranslationUnit tu, IBinding binding ){
 	    CollectDeclarationsAction action = new CollectDeclarationsAction( binding );
 	    tu.accept( action );
-	    return action.getDeclarations();
+	    
+		IASTName [] found = action.getDeclarations();
+		if( found.length == 0 && binding instanceof ICPPSpecialization && binding instanceof ICPPInternalBinding ){
+			IASTNode node = ((ICPPInternalBinding)binding).getDefinition();
+			if( node == null ){
+				IASTNode [] nds = ((ICPPInternalBinding)binding).getDeclarations();
+				if( nds != null && nds.length > 0 )
+					node = nds[0]; 
+			}
+			if( node != null ){
+				IASTName name = null;
+				if( node instanceof IASTDeclarator )
+					name = ((IASTDeclarator)node).getName();
+				else if( node instanceof IASTName )
+					name = (IASTName) node;
+				if( name != null )
+					found = new IASTName[] { name };
+			}
+		}
+		
+		return found;
 	}
 	
 	public static String [] getQualifiedName( IBinding binding ){

@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
  * @author aniefer
  */
 public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate implements
-		ICPPClassTemplatePartialSpecialization {
+		ICPPClassTemplatePartialSpecialization, ICPPSpecialization {
 
 	private IType [] arguments;
 	/**
@@ -98,5 +98,9 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 		addSpecialization( args, instance );
 		
 		return instance;
+	}
+
+	public IBinding getSpecializedBinding() {
+		return getPrimaryClassTemplate();
 	}
 }

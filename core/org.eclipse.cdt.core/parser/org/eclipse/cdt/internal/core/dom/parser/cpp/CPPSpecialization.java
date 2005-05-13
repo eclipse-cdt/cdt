@@ -95,27 +95,22 @@ public abstract class CPPSpecialization implements ICPPSpecialization, ICPPInter
 	}
 	
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return specialized.getName();
 	}
 	public char[] getNameCharArray() {
-		// TODO Auto-generated method stub
-		return null;
+		return specialized.getNameCharArray();
 	}
 	public IScope getScope() {
 		return scope;
 	}
-	public String[] getQualifiedName() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
+	public String[] getQualifiedName() {
+		return CPPVisitor.getQualifiedName( this );
 	}
-	public char[][] getQualifiedNameCharArray() throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
+	public char[][] getQualifiedNameCharArray() {
+		return CPPVisitor.getQualifiedNameCharArray( this );
 	}
 	public boolean isGloballyQualified() throws DOMException {
-		// TODO Auto-generated method stub
-		return false;
+		return ((ICPPInternalBinding)specialized).isGloballyQualified();
 	}
 
 }

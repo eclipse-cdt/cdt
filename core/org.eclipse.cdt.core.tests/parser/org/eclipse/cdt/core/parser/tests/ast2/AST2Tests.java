@@ -3112,4 +3112,18 @@ public class AST2Tests extends AST2BaseTest {
         }
         assertEquals( count, sum );
     }
+	
+	public void testBug94365() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "#define ONE(a, ...) int x\n"); //$NON-NLS-1$
+		buffer.append( "#define TWO(b, args...) int y\n"); //$NON-NLS-1$
+		buffer.append( "int main()\n"); //$NON-NLS-1$
+		buffer.append( "{\n"); //$NON-NLS-1$
+		buffer.append( "ONE(\"string\"); /* err */\n"); //$NON-NLS-1$
+		buffer.append( "TWO(\"string\"); /* err */\n"); //$NON-NLS-1$
+		buffer.append( "return 0;	\n"); //$NON-NLS-1$
+		buffer.append( "}\n"); //$NON-NLS-1$
+        
+		parse( buffer.toString(), ParserLanguage.C ); 
+	}
 }

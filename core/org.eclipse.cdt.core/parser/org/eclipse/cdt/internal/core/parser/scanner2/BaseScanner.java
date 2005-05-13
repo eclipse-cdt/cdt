@@ -3997,14 +3997,20 @@ abstract class BaseScanner implements IScanner {
             argmap.put(arglist[currarg], arg);
         }
 
-        int numArgs = arglist.length;
+        int numRequiredArgs = arglist.length;
         for (int i = 0; i < arglist.length; i++) {
             if (arglist[i] == null) {
-                numArgs = i;
+            	numRequiredArgs = i;
                 break;
             }
         }
-        if (argmap.size() < numArgs) {
+
+        /* Don't require a match for the vararg placeholder */
+        /* Workaround for bugzilla 94365 */
+        if (macro.hasGCCVarArgs()|| macro.hasVarArgs())
+        	numRequiredArgs--;
+ 
+        if (argmap.size() < numRequiredArgs) {
             handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR,
                     bufferPos[bufferStackPos], macro.name);
         }

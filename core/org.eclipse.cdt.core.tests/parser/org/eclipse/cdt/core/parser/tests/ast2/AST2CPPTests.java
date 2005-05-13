@@ -4023,5 +4023,22 @@ public class AST2CPPTests extends AST2BaseTest {
         assertFalse( col.getName(15).isDefinition() ); //g
         assertTrue( col.getName(18).isDefinition() ); //pf
     }
-    
+
+	public void testBug95200() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "int f(double);                    \n"); //$NON-NLS-1$
+		buffer.append( "int f(int);                       \n"); //$NON-NLS-1$
+		buffer.append( "int (&rfi)(int) = f;              \n"); //$NON-NLS-1$
+		buffer.append( "int (&rfd)(double) = f;           \n"); //$NON-NLS-1$
+
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPFunction f1 = (ICPPFunction) col.getName(0).resolveBinding();
+		ICPPFunction f2 = (ICPPFunction) col.getName(2).resolveBinding();
+		
+		assertSame( col.getName(6).resolveBinding(), f2 );
+		assertSame( col.getName(9).resolveBinding(), f1 );
+	}
 }

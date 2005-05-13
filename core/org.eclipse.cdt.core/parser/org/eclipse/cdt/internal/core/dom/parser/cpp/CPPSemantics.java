@@ -2181,7 +2181,10 @@ public class CPPSemantics {
         while( node != null ){
             prop = node.getPropertyInParent();
             //target is an object or reference being initialized
-            if( prop == IASTInitializerExpression.INITIALIZER_EXPRESSION ){
+			if( prop == IASTDeclarator.INITIALIZER ){
+				IASTDeclarator dtor = (IASTDeclarator) node.getParent();
+				return CPPVisitor.createType( dtor );
+			} else if( prop == IASTInitializerExpression.INITIALIZER_EXPRESSION ){
                 IASTInitializerExpression initExp = (IASTInitializerExpression) node.getParent();
                 IASTDeclarator dtor = (IASTDeclarator) initExp.getParent();
                 return CPPVisitor.createType( dtor );

@@ -1,3 +1,13 @@
+2005-05-13 Vladimir Hirsl
+	Files with empty scanner info are not indexed anymore.
+	Info problem marker is created for each such file.
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* src/org/eclipse/cdt/internal/core/CCorePluginResources.properties
+	
+	Fix for resolving header file name for #include "..." preprocessor statements.
+	(Should use both local and system include paths)
+	* parser/org/eclipse/cdt/internal/core/parser/scanner2/BaseScanner.java
+
 2005-05-12 Alain Magloire
 	For the per file container, make sure we clean the project info.
 	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java

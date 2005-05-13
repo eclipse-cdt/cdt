@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +19,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredInfoListener;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo;
 import org.eclipse.core.resources.IProject;
@@ -28,39 +26,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public class PerFileDiscoveredPathContainer extends AbstractDiscoveredPathContainer 
+public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer 
                                             implements IPathEntryContainerExtension {
-
-    static Map fgPathEntries;
 
     public PerFileDiscoveredPathContainer(IProject project) {
         super(project);
-        initialize();
-    }
-
-    private static void initialize() {
-        if (fgPathEntries == null) {
-            fgPathEntries = new HashMap(10);
-
-            IDiscoveredInfoListener listener = new IDiscoveredInfoListener() {
-
-                public void infoRemoved(IDiscoveredPathInfo info) {
-                    if (info != null && 
-                            info instanceof IPerFileDiscoveredPathInfo) {
-                        fgPathEntries.remove(info.getProject());
-                    }
-                }
-
-                public void infoChanged(IDiscoveredPathInfo info) {
-                    if (info != null && 
-                            info instanceof IPerFileDiscoveredPathInfo) {
-                        fgPathEntries.remove(info.getProject());
-                    }
-                }
-
-            };
-            MakeCorePlugin.getDefault().getDiscoveryManager().addDiscoveredInfoListener(listener);
-        }
     }
 
     /* (non-Javadoc)
@@ -110,13 +80,6 @@ public class PerFileDiscoveredPathContainer extends AbstractDiscoveredPathContai
             // 
         }
 		return (IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.internal.core.scannerconfig.AbstractDiscoveredPathContainer#getPathEntryMap()
-     */
-    protected Map getPathEntryMap() {
-        return fgPathEntries;
     }
 
 }

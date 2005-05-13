@@ -34,6 +34,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTIncl
 import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -76,22 +79,29 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     }
 
     protected void indexFile(IFile file) throws IOException {
-        // Add the name of the file to the index
-        output.addIndexedFile(file.getFullPath().toString());
-      
         int problems = indexer.indexProblemsEnabled(resourceFile.getProject());
         // enable inclusion problem markers
         problems |= SourceIndexer.INCLUSION_PROBLEMS_BIT;
         setProblemMarkersEnabled(problems);
         requestRemoveMarkers(resourceFile, null);
         
+        // do not index the file if there is no scanner info
+        if (isScannerInfoEmpty(resourceFile)) {
+            // generate info marker - file is not indexed
+            addInfoMarker(resourceFile, CCorePlugin.getResourceString("DOMIndexerMarker.EmptyScannerInfo")); //$NON-NLS-1$
+            return;
+        }
+        
+        // Add the name of the file to the index
+        output.addIndexedFile(file.getFullPath().toString());
+      
         //C or CPP?
         ParserLanguage language = CoreModel.hasCCNature(resourceFile.getProject()) ? 
                 ParserLanguage.CPP : ParserLanguage.C;
         IASTTranslationUnit tu = null;
 		long startTime = 0, parseTime = 0, endTime = 0;
 		String error = null;
-        try {    
+        try {
             if (AbstractIndexer.TIMING)
                 startTime = System.currentTimeMillis();
             
@@ -135,30 +145,30 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 throw (IOException) ex;
         }
         finally {
-	           if (AbstractIndexer.TIMING) {
-	                endTime = System.currentTimeMillis();
-					if (error != null) {
-						errorCount++;
-						System.out.print(error + ':' + resourceFile.getName() + ':');
-                        if (!errors.containsKey(error)) {
-                            errors.put(error, new Integer(0));
-                        }
-                        errors.put(error, new Integer(((Integer) errors.get(error)).intValue()+1)); 
-					}
-	                System.out.println("DOM Indexer - Total Parse Time for " + resourceFile.getName()  + ": " + (parseTime - startTime)); //$NON-NLS-1$ //$NON-NLS-2$
-	                System.out.println("DOM Indexer - Total Visit Time for " + resourceFile.getName()  + ": " + (endTime - parseTime)); //$NON-NLS-1$  //$NON-NLS-2$
-                    totalParseTime += parseTime - startTime;
-                    totalVisitTime += endTime - parseTime;
-	                long currentTime = endTime - startTime;
-	                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + currentTime); //$NON-NLS-1$  //$NON-NLS-2$
-	                long tempTotaltime = indexer.getTotalIndexTime() + currentTime;
-		            indexer.setTotalIndexTime(tempTotaltime);
-                    System.out.println("DOM Indexer - Overall Index Time: " + tempTotaltime + "(" + totalParseTime + ", " + totalVisitTime + ") " + errorCount + " errors"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	                System.out.flush();
-	            }
-	            if (AbstractIndexer.VERBOSE){
-	                AbstractIndexer.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString()); //$NON-NLS-1$
-	            }   
+           if (AbstractIndexer.TIMING) {
+                endTime = System.currentTimeMillis();
+				if (error != null) {
+					errorCount++;
+					System.out.print(error + ':' + resourceFile.getName() + ':');
+                    if (!errors.containsKey(error)) {
+                        errors.put(error, new Integer(0));
+                    }
+                    errors.put(error, new Integer(((Integer) errors.get(error)).intValue()+1)); 
+				}
+                System.out.println("DOM Indexer - Total Parse Time for " + resourceFile.getName()  + ": " + (parseTime - startTime)); //$NON-NLS-1$ //$NON-NLS-2$
+                System.out.println("DOM Indexer - Total Visit Time for " + resourceFile.getName()  + ": " + (endTime - parseTime)); //$NON-NLS-1$  //$NON-NLS-2$
+                totalParseTime += parseTime - startTime;
+                totalVisitTime += endTime - parseTime;
+                long currentTime = endTime - startTime;
+                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + currentTime); //$NON-NLS-1$  //$NON-NLS-2$
+                long tempTotaltime = indexer.getTotalIndexTime() + currentTime;
+	            indexer.setTotalIndexTime(tempTotaltime);
+                System.out.println("DOM Indexer - Overall Index Time: " + tempTotaltime + "(" + totalParseTime + ", " + totalVisitTime + ") " + errorCount + " errors"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                System.out.flush();
+            }
+            if (AbstractIndexer.VERBOSE){
+                AbstractIndexer.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString()); //$NON-NLS-1$
+            }   
             // if the user disable problem reporting since we last checked, don't report the collected problems
             if (areProblemMarkersEnabled()) {
                 reportProblems();
@@ -172,6 +182,46 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             }
             // Release all resources
         }
+    }
+
+    /**
+     * @param IFile
+     * @return boolean
+     */
+    private boolean isScannerInfoEmpty(IFile file) {
+        boolean rc = true;
+        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(file.getProject());
+        if (provider != null){
+            IScannerInfo scanInfo = provider.getScannerInformation(file);
+            if (scanInfo != null) {
+                if (!scanInfo.getDefinedSymbols().isEmpty() ||
+                        scanInfo.getIncludePaths().length > 0) {
+                    rc = false;
+                }
+                if (scanInfo instanceof IExtendedScannerInfo) {
+                    IExtendedScannerInfo extScanInfo = (IExtendedScannerInfo) scanInfo;
+                    if (extScanInfo.getLocalIncludePath().length > 0)
+                        rc = false;
+                    if (extScanInfo.getIncludeFiles().length > 0) {
+                        rc = false;
+                        for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
+                            String includeFile = extScanInfo.getIncludeFiles()[i];
+                            /* See if this file has been encountered before */
+                            indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(includeFile));
+                        }
+                    }
+                    if (extScanInfo.getMacroFiles().length > 0) {
+                        rc = false;
+                        for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
+                            String macrosFile = extScanInfo.getMacroFiles()[i];
+                            /* See if this file has been encountered before */
+                            indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(macrosFile));
+                        }
+                    }
+                }
+            }
+        }
+        return rc;
     }
 
     /**
@@ -362,6 +412,38 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
      */
     public boolean shouldRecordProblem(IProblemBinding problem) {
         return (getProblemMarkersEnabled() & SourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0;
+    }
+
+    /**
+     * @param file
+     * @param message
+     */
+    private void addInfoMarker(IFile file, String message) {
+        try {
+            IMarker[] markers = file.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_ZERO);
+        
+            boolean newProblem = true;
+           
+            if (markers.length > 0) {
+                IMarker tempMarker = null;
+                String tempMsgString = null;
+
+                for (int i=0; i<markers.length; i++) {
+                    tempMarker = markers[i];
+                    tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+                    if (tempMsgString.equalsIgnoreCase( message )) {
+                        newProblem = false;
+                        break;
+                    }
+                }
+            }
+  
+            if (newProblem){
+                IMarker marker = file.createMarker(ICModelMarker.INDEXER_MARKER);
+                marker.setAttribute(IMarker.MESSAGE, message); 
+                marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+            }
+        } catch (CoreException e) {}
     }
 
     /**

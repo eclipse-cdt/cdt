@@ -2865,8 +2865,11 @@ abstract class BaseScanner implements IScanner {
         // current directory
         
         String [] includePathsToUse = stdIncludePaths;
-        if( local && locIncludePaths != null && locIncludePaths.length > 0 )
-            includePathsToUse = locIncludePaths;
+        if( local && locIncludePaths != null && locIncludePaths.length > 0 ) {
+            includePathsToUse = new String[locIncludePaths.length + stdIncludePaths.length];
+            System.arraycopy(locIncludePaths, 0, includePathsToUse, 0, locIncludePaths.length);
+            System.arraycopy(stdIncludePaths, 0, includePathsToUse, locIncludePaths.length, stdIncludePaths.length);
+        }
         
         if (includePathsToUse != null ) {
             int startpos = 0;

@@ -8,53 +8,80 @@
  ******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredInfoListener;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
-public class DiscoveredPathContainer extends AbstractDiscoveredPathContainer {
-	static Map fgPathEntries;
+public class DiscoveredPathContainer implements IPathEntryContainer {
+    public static final IPath CONTAINER_ID = new Path("org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"); //$NON-NLS-1$
 
-	public DiscoveredPathContainer(IProject project) {
-		super(project);
-        initialize();
+    protected final IProject fProject;
+    private IPathEntry[] fPathEntries;
+
+    public DiscoveredPathContainer(IProject project) {
+        fProject = project;
+        fPathEntries = null;
+    }
+    
+//    public IPathEntry[] getPathEntries() {
+//        IPathEntry[] fPathEntries;
+//        try {
+//            fPathEntries = getPathEntries(getPathEntryMap());
+//        } catch (CoreException e) {
+//            MakeCorePlugin.log(e);
+//            return new IPathEntry[0];
+//        }
+//        return fPathEntries;
+//    }
+
+    public String getDescription() {
+        return MakeMessages.getString("DiscoveredContainer.description"); //$NON-NLS-1$
     }
 
-    private static void initialize() {
-        if (fgPathEntries == null) {
-            fgPathEntries = new HashMap(10);
+    public IPath getPath() {
+        return CONTAINER_ID;
+    }
 
-            IDiscoveredInfoListener listener = new IDiscoveredInfoListener() {
-
-                public void infoRemoved(IDiscoveredPathInfo info) {
-                    if (info != null && 
-                            info instanceof IPerProjectDiscoveredPathInfo) {
-                        fgPathEntries.remove(info.getProject());
-                    }
-                }
-
-                public void infoChanged(IDiscoveredPathInfo info) {
-                    if (info != null && 
-                            info instanceof IPerProjectDiscoveredPathInfo) {
-                        fgPathEntries.remove(info.getProject());
-                    }
-                }
-
-            };
-            MakeCorePlugin.getDefault().getDiscoveryManager().addDiscoveredInfoListener(listener);
+    public IPathEntry[] getPathEntries() {
+        if (fPathEntries == null) {
+            try {
+                fPathEntries = computeNewPathEntries();
+            }
+            catch (CoreException e) {
+                MakeCorePlugin.log(e);
+                return new IPathEntry[0];
+            }
         }
+        return fPathEntries;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.internal.core.scannerconfig.AbstractDiscoveredPathContainer#getPathEntryMap()
-     */
-    protected Map getPathEntryMap() {
-        return fgPathEntries;
+    private IPathEntry[] computeNewPathEntries() throws CoreException {
+        IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+        IPath[] includes = info.getIncludePaths();
+        Map syms = info.getSymbols();
+        List entries = new ArrayList(includes.length + syms.size());
+        for (int i = 0; i < includes.length; i++) {
+            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, includes[i], true)); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        Iterator iter = syms.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry entry = (Entry)iter.next();
+            entries.add(CoreModel.newMacroEntry(Path.EMPTY, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
+        }
+        return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
     }
 
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.IMatch;
@@ -142,6 +143,17 @@ public class OpenDefinitionAction extends SelectionParseAction implements
                     // step 2 starts here
                     IASTName[] domNames = DOMSearchUtil.getNamesFromDOM(searchName, ICSearchConstants.DEFINITIONS);
 
+                    // make sure the names are clean (fix for 95202)
+                    boolean modified=false;
+                    for(int i=0; i<domNames.length; i++) {
+                        if (domNames[i].toCharArray().length == 0) {
+                            domNames[i] = null;
+                            modified=true;
+                        }
+                    }
+                    if (modified)
+                        domNames = (IASTName[])ArrayUtil.removeNulls(IASTName.class, domNames);
+                    
                     if (domNames != null && domNames.length > 0 && domNames[0] != null) {
                         String fileName=null;
                         int start=0;

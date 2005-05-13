@@ -957,4 +957,32 @@ public class CPPSelectionTestsNoIndexer extends TestCase {
         assertEquals(((ASTNode)decl).getOffset(), 128);
         assertEquals(((ASTNode)decl).getLength(), 3);
 	}
+    
+    public void testBug95202() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct A { }; // implicitlydeclared A::operator=\n"); //$NON-NLS-1$
+        buffer.append("struct B : A {\n"); //$NON-NLS-1$
+        buffer.append("B& operator=(const B &);\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("B& B::operator=(const B& s) {\n"); //$NON-NLS-1$
+        buffer.append("this->B::operator=(s); // wellformed\n"); //$NON-NLS-1$
+        buffer.append("return *this;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        
+        String code = buffer.toString();
+        IFile file = importFile("testBug95202.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("s); // wellformed"); //$NON-NLS-1$
+        IASTNode def = testF2(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "s"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 117);
+        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals(((IASTName)def).toString(), "s"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 117);
+        assertEquals(((ASTNode)def).getLength(), 1);
+        
+    }
 }

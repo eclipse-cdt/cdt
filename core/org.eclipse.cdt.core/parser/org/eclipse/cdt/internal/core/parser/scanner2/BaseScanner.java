@@ -3732,6 +3732,25 @@ abstract class BaseScanner implements IScanner {
                     return argEnd;
                 }
                 break;
+            // fix for 95119
+            case '\'':
+                boolean escapedChar = false;
+                loop: while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
+                    switch (buffer[bufferPos[bufferStackPos]]) {
+                    case '\\':
+                        escapedChar = !escapedChar;
+                        continue;
+                    case '\'':
+                        if (escapedChar) {
+                            escapedChar = false;
+                            continue;
+                        }
+                        break loop;
+                    default:
+                       escapedChar = false;
+                    }
+                }
+                break;
             case '"':
                 boolean escaped = false;
                 loop: while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
@@ -3991,7 +4010,7 @@ abstract class BaseScanner implements IScanner {
                 argend = skipOverMacroArg();
 
             char[] arg = EMPTY_CHAR_ARRAY;
-            int arglen = argend - argstart + 1;
+            int arglen = argend - argstart + 1; // TODO Devin argend shouldn't be 65 it should be 55 for 95119
             if (arglen > 0) {
                 arg = new char[arglen];
                 System.arraycopy(buffer, argstart, arg, 0, arglen);

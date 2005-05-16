@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -3126,4 +3127,36 @@ public class AST2Tests extends AST2BaseTest {
         
 		parse( buffer.toString(), ParserLanguage.C ); 
 	}
+    
+    
+    public void testBug95119() throws Exception {
+            StringBuffer buff = new StringBuffer();
+            buff.append("#define MACRO(a)\n"); //$NON-NLS-1$
+            buff.append("void main() {\n"); //$NON-NLS-1$
+            buff.append("MACRO(\'\"\');\n"); //$NON-NLS-1$
+            buff.append("}\n"); //$NON-NLS-1$
+
+            IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C);
+            IASTDeclaration[] declarations = tu.getDeclarations();
+            assertEquals( declarations.length, 1 );
+            assertNotNull( declarations[0] );
+            assertTrue( declarations[0] instanceof IASTFunctionDefinition );
+            assertEquals( ((IASTFunctionDefinition)declarations[0]).getDeclarator().getName().toString(), "main");
+            assertTrue( ((IASTCompoundStatement)((IASTFunctionDefinition)declarations[0]).getBody()).getStatements()[0] instanceof IASTNullStatement );
+            
+            buff = new StringBuffer();
+            buff.append("#define MACRO(a)\n"); //$NON-NLS-1$
+            buff.append("void main() {\n"); //$NON-NLS-1$
+            buff.append("MACRO(\'X\');\n"); //$NON-NLS-1$
+            buff.append("}\n"); //$NON-NLS-1$
+
+            tu = parse(buff.toString(), ParserLanguage.C);
+            declarations = tu.getDeclarations();
+            assertEquals( declarations.length, 1 );
+            assertNotNull( declarations[0] );
+            assertTrue( declarations[0] instanceof IASTFunctionDefinition );
+            assertEquals( ((IASTFunctionDefinition)declarations[0]).getDeclarator().getName().toString(), "main");
+            assertTrue( ((IASTCompoundStatement)((IASTFunctionDefinition)declarations[0]).getBody()).getStatements()[0] instanceof IASTNullStatement );
+
+    }
 }

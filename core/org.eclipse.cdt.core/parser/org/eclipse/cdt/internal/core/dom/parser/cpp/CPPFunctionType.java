@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -54,10 +55,7 @@ public class CPPFunctionType implements ICPPFunctionType {
             } catch ( DOMException e ) {
                 return false;
             }
-            if( fps.length != parameters.length )
-                return false;
-            
-            try {
+			try {
                 //constructors & destructors have null return type
                 if( ( returnType == null ) ^ ( ft.getReturnType() == null ) )
                     return false;
@@ -66,10 +64,26 @@ public class CPPFunctionType implements ICPPFunctionType {
             } catch ( DOMException e1 ) {
                 return false;
             }
-            for( int i = 0; i < parameters.length; i++ ){
-                if( ! parameters[i].isSameType( fps[i] ) )
-                    return false;
-            }
+			
+			try {
+				if( parameters.length == 1 && fps.length == 0 ){
+					if( !(parameters[0] instanceof IBasicType) || ((IBasicType)parameters[0]).getType() != IBasicType.t_void )
+						return false;
+				} else if( fps.length == 1 && parameters.length == 0 ){
+					if( !(fps[0] instanceof IBasicType) || ((IBasicType)fps[0]).getType() != IBasicType.t_void )
+						return false;
+				} else if( parameters.length != fps.length ){
+	                return false;
+	            } else {
+					 for( int i = 0; i < parameters.length; i++ ){
+		                if( ! parameters[i].isSameType( fps[i] ) )
+		                    return false;
+		            }
+	            }
+			} catch (DOMException e ){
+				return false;
+			}
+           
             if( isConst != ft.isConst() || isVolatile != ft.isVolatile() )
                 return false;
                 

@@ -1035,10 +1035,15 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNotNull(ctors);
         assertEquals(ctors.length, 2);
 
-        assertEquals(ctors[0].getParameters().length, 0);
+        assertEquals(ctors[0].getParameters().length, 1);
+		
+		IType t = ctors[0].getParameters()[0].getType();
+		assertTrue( t instanceof IBasicType );
+		assertEquals( ((IBasicType)t).getType(), IBasicType.t_void );
+		
         assertEquals(ctors[1].getParameters().length, 1);
 
-        IType t = ctors[1].getParameters()[0].getType();
+        t = ctors[1].getParameters()[0].getType();
         assertTrue(t instanceof ICPPReferenceType);
         assertTrue(((ICPPReferenceType) t).getType() instanceof IQualifierType);
         IQualifierType qt = (IQualifierType) ((ICPPReferenceType) t).getType();
@@ -1062,7 +1067,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNotNull(ctors);
         assertEquals(ctors.length, 2);
 
-        assertEquals(ctors[0].getParameters().length, 0);
+        assertEquals(ctors[0].getParameters().length, 1);
         assertEquals(ctors[1].getParameters().length, 1);
 
         IType t = ctors[1].getParameters()[0].getType();
@@ -3637,10 +3642,8 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
 
-        ICPPConstructor ctor1 = (ICPPConstructor) col.getName(1)
-                .resolveBinding();
-        ICPPConstructor ctor = (ICPPConstructor) col.getName(11)
-                .resolveBinding();
+        ICPPConstructor ctor1 = (ICPPConstructor) col.getName(1).resolveBinding();
+        ICPPConstructor ctor = (ICPPConstructor) col.getName(11).resolveBinding();
         assertSame(ctor, ctor1);
     }
 
@@ -4040,5 +4043,29 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		assertSame( col.getName(6).resolveBinding(), f2 );
 		assertSame( col.getName(9).resolveBinding(), f1 );
+	}
+	
+	public void testBug95425() throws Exception {
+		IASTTranslationUnit tu = parse( "class A { A(); };", ParserLanguage.CPP ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(1).resolveBinding();
+		
+		ICPPConstructor [] ctors = A.getConstructors();
+		assertEquals( ctors.length, 2 );
+		assertSame( ctor, ctors[0] );
+		
+		tu = parse( "class A { A( void ); };", ParserLanguage.CPP ); //$NON-NLS-1$
+        col = new CPPNameCollector();
+        tu.accept(col);
+		
+		A = (ICPPClassType) col.getName(0).resolveBinding();
+		ctor = (ICPPConstructor) col.getName(1).resolveBinding();
+		
+		ctors = A.getConstructors();
+		assertEquals( ctors.length, 2 );
+		assertSame( ctor, ctors[0] );
 	}
 }

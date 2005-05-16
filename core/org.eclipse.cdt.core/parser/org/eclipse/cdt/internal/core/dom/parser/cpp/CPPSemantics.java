@@ -112,6 +112,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil.ArrayWrapper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -2673,11 +2674,19 @@ public class CPPSemantics {
 
 		IType s = getUltimateType( src, true );
 		IType t = getUltimateType( trg, true );
-				
-		if( s instanceof ICPPClassType ){
+			
+		IType sPrev = src;
+		while( sPrev instanceof ITypeContainer && ((ITypeContainer)sPrev).getType() != s )
+			sPrev = ((ITypeContainer)sPrev).getType();
+		
+		if( sPrev instanceof IPointerType && s instanceof ICPPClassType ){
+			IType tPrev = trg;
+			while( tPrev instanceof ITypeContainer && ((ITypeContainer)tPrev).getType() != t )
+				tPrev = ((ITypeContainer)tPrev).getType();
+			
 			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 			//converted to an rvalue of type "pointer to cv void"
-			if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void ){
+			if( tPrev instanceof IPointerType && t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void ){
 				cost.rank = Cost.CONVERSION_RANK;
 				cost.conversion = 1;
 				cost.detail = 2;
@@ -2685,7 +2694,7 @@ public class CPPSemantics {
 			}
 			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 			//to an rvalue of type "pointer to cv B", where B is a base class of D.
-			else if( t instanceof ICPPClassType ){
+			else if( tPrev instanceof IPointerType && t instanceof ICPPClassType ){
 				temp = hasBaseClass( (ICPPClassType)s, (ICPPClassType) t, true );
 				cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion = ( temp > -1 ) ? temp : 0;

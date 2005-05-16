@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -135,7 +136,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  * @author aniefer
  */
 public class CPPVisitor {
-
+	public static final String SIZE_T = "size_t"; //$NON-NLS-1$
+	
 	/**
 	 * @param name
 	 */
@@ -1722,6 +1724,17 @@ public class CPPVisitor {
 			return getExpressionType( exps[ exps.length - 1 ] );
 		} else if( expression instanceof ICPPASTTypeIdExpression ){
 		    ICPPASTTypeIdExpression typeidExp = (ICPPASTTypeIdExpression) expression;
+			if( typeidExp.getOperator() == IASTTypeIdExpression.op_sizeof ){
+				IScope scope = getContainingScope( typeidExp );
+				try {
+					IBinding [] bs = scope.find( "size_t" );//$NON-NLS-1$
+					if( bs.length > 0 && bs[0] instanceof IType ){
+						return (IType) bs[0];
+					}
+				} catch (DOMException e) {
+				}
+				return new CPPBasicType( IBasicType.t_int, CPPBasicType.IS_LONG | CPPBasicType.IS_UNSIGNED );
+			}
 		    return createType( typeidExp.getTypeId() );
 		}
 	    return null;

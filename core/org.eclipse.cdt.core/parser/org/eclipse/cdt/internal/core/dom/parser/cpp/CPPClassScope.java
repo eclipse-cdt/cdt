@@ -83,7 +83,9 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         char [] className = name.toCharArray();
                
         //default constructor: A()
-        ICPPMethod m = new CPPImplicitConstructor( this, className, IParameter.EMPTY_PARAMETER_ARRAY );
+		IType voidType = new CPPBasicType( IBasicType.t_void, 0 );
+		IParameter [] voidPs = new IParameter [] { new CPPParameter( voidType ) };
+        ICPPMethod m = new CPPImplicitConstructor( this, className, voidPs );
         implicits[0] = m;
 	    addBinding( m );
 	    
@@ -102,7 +104,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    
 	    //destructor: ~A()
 	    char [] dtorName = CharArrayUtils.concat( "~".toCharArray(), className );  //$NON-NLS-1$
-	    m = new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), IParameter.EMPTY_PARAMETER_ARRAY );
+	    m = new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), voidPs );
 	    implicits[3] = m;
 	    addBinding( m );
 	}

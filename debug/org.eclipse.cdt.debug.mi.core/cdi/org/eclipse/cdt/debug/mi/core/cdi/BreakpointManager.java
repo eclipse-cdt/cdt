@@ -186,6 +186,16 @@ public class BreakpointManager extends Manager {
 	 */
 	public void enableBreakpoint(Breakpoint breakpoint) throws CDIException {
 		Target target = (Target)breakpoint.getTarget();
+
+		// Check if the breakpoint is in the deffered list
+		List dList = (List)deferredMap.get(target);
+		if (dList != null) {
+			if (dList.contains(breakpoint)) {
+				breakpoint.setEnabled0(true);
+				return; // bail out here, our work is done.
+			}
+		}
+
 		List bList = (List)breakMap.get(target);
 		if (bList == null) {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$			
@@ -234,6 +244,16 @@ public class BreakpointManager extends Manager {
 	 */
 	public void disableBreakpoint(Breakpoint breakpoint) throws CDIException {
 		Target target = (Target)breakpoint.getTarget();
+		
+		// Check if the breakpoint is in the deffered list
+		List dList = (List)deferredMap.get(target);
+		if (dList != null) {
+			if (dList.contains(breakpoint)) {
+				breakpoint.setEnabled0(false);
+				return; // bail out here, our work is done.
+			}
+		}
+
 		List bList = (List)breakMap.get(target);
 		if (bList == null) {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$			
@@ -283,8 +303,18 @@ public class BreakpointManager extends Manager {
 	 * @param newCondition
 	 * @throws CDIException
 	 */
-	public void setCondition(ICDIBreakpoint breakpoint, ICDICondition newCondition) throws CDIException {
+	public void setCondition(Breakpoint breakpoint, ICDICondition newCondition) throws CDIException {
 		Target target = (Target)breakpoint.getTarget();
+
+		// Check if the breakpoint is in the deffered list
+		List dList = (List)deferredMap.get(target);
+		if (dList != null) {
+			if (dList.contains(breakpoint)) {
+				breakpoint.setCondition0(newCondition);
+				return; // bail out here, our work is done.
+			}
+		}
+
 		List bList = (List)breakMap.get(target);
 		if (bList == null) {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$			
@@ -293,32 +323,31 @@ public class BreakpointManager extends Manager {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 		}
 
-		Breakpoint bpt = (Breakpoint)breakpoint;
-		MIBreakpoint[] miBreakpoints = bpt.getMIBreakpoints();
+		MIBreakpoint[] miBreakpoints = breakpoint.getMIBreakpoints();
 		deleteMIBreakpoints(target, miBreakpoints);
-		ICDICondition oldCondition = bpt.getCondition();
+		ICDICondition oldCondition = breakpoint.getCondition();
 		boolean success = false;
 		try {
-			bpt.setCondition0(newCondition);
-			if (bpt instanceof Watchpoint)  {
-				setWatchpoint((Watchpoint)bpt);
+			breakpoint.setCondition0(newCondition);
+			if (breakpoint instanceof Watchpoint)  {
+				setWatchpoint((Watchpoint)breakpoint);
 			} else {
-				setLocationBreakpoint(bpt);
+				setLocationBreakpoint(breakpoint);
 			}
 			success = true;
 		} finally {
 			if (!success) {
-				bpt.setCondition0(oldCondition);
-				if (bpt instanceof Watchpoint) {
-					setWatchpoint((Watchpoint)bpt);
+				breakpoint.setCondition0(oldCondition);
+				if (breakpoint instanceof Watchpoint) {
+					setWatchpoint((Watchpoint)breakpoint);
 				} else {
-					setLocationBreakpoint(bpt);
+					setLocationBreakpoint(breakpoint);
 				}
 			}
 		}
 
 		// Fire a changed Event.
-		miBreakpoints = bpt.getMIBreakpoints();
+		miBreakpoints = breakpoint.getMIBreakpoints();
 		if (miBreakpoints != null && miBreakpoints.length > 0) {
 			MISession miSession = target.getMISession();
 			miSession.fireEvent(new MIBreakpointChangedEvent(miSession, miBreakpoints[0].getNumber()));

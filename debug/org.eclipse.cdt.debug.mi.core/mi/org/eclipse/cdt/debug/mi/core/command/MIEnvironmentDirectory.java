@@ -23,7 +23,7 @@ public class MIEnvironmentDirectory extends MICommand
 	public MIEnvironmentDirectory(boolean reset, String[] paths) {
 		super("-environment-directory", paths); //$NON-NLS-1$
 		if (reset) {
-			setOptions(new String[] {"-r"});
+			setOptions(new String[] {"-r"}); //$NON-NLS-1$
 		}
 	}
 

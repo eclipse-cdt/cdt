@@ -228,7 +228,7 @@ public class Checks {
 		if ((!wasEmpty) && result.isEmpty())
 			status.addFatalError(RefactoringCoreMessages.getString("Checks.all_excluded")); //$NON-NLS-1$
 		else if (result.isEmpty()){
-			status.addFatalError(RefactoringCoreMessages.getString("Checks.no_files"));
+			status.addFatalError(RefactoringCoreMessages.getString("Checks.no_files")); //$NON-NLS-1$
 		}
 		
 		return (SearchResultGroup[])result.toArray(new SearchResultGroup[result.size()]);

@@ -72,18 +72,18 @@ public interface ICIndexStorageConstants {
 			'I'  // FWD_UNION
 	};
 	
-	final static String[] typeConstantNames = { "", // not used
-		"Class",
-		"Struct",
-		"Union",
-		"Enum",
-		"Variable",
-		"Typedef",
-		"Derived",
-		"Friend",
-		"FWD Class",
-		"FWD Struct",
-		"FWD Union"
+	final static String[] typeConstantNames = { "", // not used //$NON-NLS-1$
+		"Class", //$NON-NLS-1$
+		"Struct", //$NON-NLS-1$
+		"Union", //$NON-NLS-1$
+		"Enum", //$NON-NLS-1$
+		"Variable", //$NON-NLS-1$
+		"Typedef", //$NON-NLS-1$
+		"Derived", //$NON-NLS-1$
+		"Friend", //$NON-NLS-1$
+		"FWD Class", //$NON-NLS-1$
+		"FWD Struct", //$NON-NLS-1$
+		"FWD Union" //$NON-NLS-1$
 };
 	final static char [][] accessSpecifiers = {
 		"".toCharArray(), 			// not used		   //$NON-NLS-1$

@@ -328,7 +328,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		link.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
 				String u = event.text;
-				System.out.println("Selection: " + u);
 				PreferencesUtil.createPreferenceDialogOn(getShell(), u, null, null);
 			}
 		});

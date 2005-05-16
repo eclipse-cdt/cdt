@@ -37,7 +37,7 @@ public class NM {
 		}
 
 		public String toString() {
-			return (name + "@" + Long.toHexString(address));
+			return (name + "@" + Long.toHexString(address)); //$NON-NLS-1$
 		}
 
 	}

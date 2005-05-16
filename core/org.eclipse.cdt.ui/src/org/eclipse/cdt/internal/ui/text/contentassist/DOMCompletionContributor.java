@@ -130,7 +130,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			if (function.takesVarArgs()) {
 				if (args.length() > 0)
 					args.append(',');
-				args.append(" ...");
+				args.append(" ..."); //$NON-NLS-1$
 			}
 			
 			IType returnType = function.getType().getReturnType();
@@ -182,7 +182,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			if (params != null)
 				for (int i = 0; i < params.length; ++i) {
 					if (i > 0)
-						args.append(", ");
+						args.append(", "); //$NON-NLS-1$
 					args.append(params[i].getParameter());
 				}
 			String argString = args.toString();
@@ -275,39 +275,39 @@ public class DOMCompletionContributor implements ICompletionContributor {
 	// These are the keywords we complete
 	// We only do the ones that are > 5 characters long
 	private static String [] keywords = {
-		"const_cast",
-		"continue",
-		"default",
-		"delete",
-		"double",
-		"dynamic_cast",
-		"explicit",
-		"export",
-		"extern",
-		"friend",
-		"inline",
-		"mutable",
-		"namespace",
-		"operator",
-		"private",
-		"protected",
-		"register",
-		"reinterpret_cast",
-		"return",
-		"signed",
-		"sizeof",
-		"static",
-		"static_cast",
-		"struct",
-		"switch",
-		"template",
-		"typedef",
-		"typeid",
-		"typename",
-		"unsigned",
-		"virtual",
-		"volatile",
-		"wchar_t"
+		"const_cast", //$NON-NLS-1$
+		"continue", //$NON-NLS-1$
+		"default", //$NON-NLS-1$
+		"delete", //$NON-NLS-1$
+		"double", //$NON-NLS-1$
+		"dynamic_cast", //$NON-NLS-1$
+		"explicit", //$NON-NLS-1$
+		"export", //$NON-NLS-1$
+		"extern", //$NON-NLS-1$
+		"friend", //$NON-NLS-1$
+		"inline", //$NON-NLS-1$
+		"mutable", //$NON-NLS-1$
+		"namespace", //$NON-NLS-1$
+		"operator", //$NON-NLS-1$
+		"private", //$NON-NLS-1$
+		"protected", //$NON-NLS-1$
+		"register", //$NON-NLS-1$
+		"reinterpret_cast", //$NON-NLS-1$
+		"return", //$NON-NLS-1$
+		"signed", //$NON-NLS-1$
+		"sizeof", //$NON-NLS-1$
+		"static", //$NON-NLS-1$
+		"static_cast", //$NON-NLS-1$
+		"struct", //$NON-NLS-1$
+		"switch", //$NON-NLS-1$
+		"template", //$NON-NLS-1$
+		"typedef", //$NON-NLS-1$
+		"typeid", //$NON-NLS-1$
+		"typename", //$NON-NLS-1$
+		"unsigned", //$NON-NLS-1$
+		"virtual", //$NON-NLS-1$
+		"volatile", //$NON-NLS-1$
+		"wchar_t" //$NON-NLS-1$
 	};
 
 }

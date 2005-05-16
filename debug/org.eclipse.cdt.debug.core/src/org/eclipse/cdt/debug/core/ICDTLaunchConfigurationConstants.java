@@ -72,7 +72,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a boolean specifiying whether
 	 * to connect a terminal to the processed stdin/stdout
 	 */
-	public static final String ATTR_USE_TERMINAL = CDT_LAUNCH_ID + ".use_terminal";
+	public static final String ATTR_USE_TERMINAL = CDT_LAUNCH_ID + ".use_terminal"; //$NON-NLS-1$
 
 	public static final boolean USE_TERMINAL_DEFAULT = true;
 

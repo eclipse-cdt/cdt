@@ -293,7 +293,6 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 			
 			int counter=0;
 			while (!deleted && counter<5){
-				System.out.println("Not deleted");
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {}

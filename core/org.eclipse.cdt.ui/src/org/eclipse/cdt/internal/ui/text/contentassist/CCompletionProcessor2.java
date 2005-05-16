@@ -43,9 +43,9 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	private String errorMessage;
 	
 	// Property names
-	private String assistPrefix = "CEditor.contentassist";
-	private String noCompletions = assistPrefix + ".noCompletions";
-	private String parseError = assistPrefix + ".parseError";
+	private String assistPrefix = "CEditor.contentassist"; //$NON-NLS-1$
+	private String noCompletions = assistPrefix + ".noCompletions"; //$NON-NLS-1$
+	private String parseError = assistPrefix + ".parseError"; //$NON-NLS-1$
 	
 	public CCompletionProcessor2(IEditorPart editor) {
 		this.editor = editor;

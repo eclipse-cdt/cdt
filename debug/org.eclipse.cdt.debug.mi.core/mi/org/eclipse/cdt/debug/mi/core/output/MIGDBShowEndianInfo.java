@@ -48,7 +48,7 @@ public class MIGDBShowEndianInfo extends MIInfo {
 
 	void parseLine(String str) {
 		if (str != null && str.length() > 0) {
-			littleEndian = (str.indexOf("little") != -1);
+			littleEndian = (str.indexOf("little") != -1); //$NON-NLS-1$
 		}
 	}
 

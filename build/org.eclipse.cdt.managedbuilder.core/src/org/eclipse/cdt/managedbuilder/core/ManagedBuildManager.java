@@ -1350,7 +1350,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				if (buildInfo.getManagedProject() == null ||
 					(!buildInfo.getManagedProject().isValid())) {
 					//  The load failed
-					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName()));
+					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 				}
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}

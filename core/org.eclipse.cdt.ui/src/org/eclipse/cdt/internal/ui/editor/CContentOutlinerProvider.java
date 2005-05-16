@@ -45,7 +45,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
     /** Property change listener. */
 	private IPropertyChangeListener fPropertyListener;    
     /** Filter for files to outline. */
-    private String filter = "*";
+    private String filter = "*"; //$NON-NLS-1$
 
     /**
      * Creates new content provider for dialog.

@@ -273,7 +273,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	 */
 	protected void resolveVariable() {
 		if(!linkTargetField.isEnabled()) {
-			resolvedPathLabelData.setText("");
+			resolvedPathLabelData.setText(""); //$NON-NLS-1$
 			return;
 		}
 			

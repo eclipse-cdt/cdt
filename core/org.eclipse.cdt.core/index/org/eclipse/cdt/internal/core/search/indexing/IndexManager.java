@@ -26,7 +26,6 @@ import org.eclipse.cdt.internal.core.index.sourceindexer.IndexRequest;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;

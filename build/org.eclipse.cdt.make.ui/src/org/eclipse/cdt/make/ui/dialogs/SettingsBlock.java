@@ -165,7 +165,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		if (fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, null) != null) {
 			StringBuffer cmd = new StringBuffer(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "")); //$NON-NLS-1$
 			if (!fBuildInfo.isDefaultBuildCmd()) {
-				String args = fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "");
+				String args = fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$ 
 				if (args != null && !args.equals("")) { //$NON-NLS-1$
 					cmd.append(" "); //$NON-NLS-1$
 					cmd.append(args);
@@ -247,7 +247,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		cleanButton.addSelectionListener(selectionAdapter);
 		cleanButton.setSelection(fBuildInfo.isCleanBuildEnabled());
 		targetClean = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		targetClean.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, ""));
+		targetClean.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "")); //$NON-NLS-1$
 		((GridData) (targetClean.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetClean.getLayoutData())).grabExcessHorizontalSpace = true;
 		addControlAccessibleListener(targetClean, MakeUIPlugin.getResourceString(MAKE_BUILD_CLEAN_TARGET));
@@ -356,7 +356,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 				}
 			}
 		});
-		buildLocation.setText(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, ""));
+		buildLocation.setText(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, "")); //$NON-NLS-1$
 		locationVariablesButton = addVariablesButton(group, buildLocation);
 	}
 

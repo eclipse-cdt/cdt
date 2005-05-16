@@ -166,7 +166,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	
 	private String getElementQualifiedName(ICElement element) throws CModelException{
 		if(!eligibleForRefactoring(element)){
-			return "";
+			return ""; //$NON-NLS-1$
 		} else {
 			StringBuffer name = new StringBuffer();
 			if(element instanceof IFunctionDeclaration){
@@ -182,7 +182,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				// add the whole signature
 				name.append(getElementQualifiedName(element.getParent()));
 				}
-				name.append("::");
+				name.append("::"); //$NON-NLS-1$
 				name.append(function.getSignature());
 			} else {
 				if (element instanceof IEnumerator) {
@@ -191,7 +191,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				}else {
 					name.append(getElementQualifiedName(element.getParent()));
 				}
-				name.append("::");
+				name.append("::"); //$NON-NLS-1$
 				name.append(element.getElementName());				
 			}
 			return name.toString();
@@ -712,7 +712,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		if(( returnType == null) || (returnType.length() == 0) )
 			return true;
 		
-		if(getCurrentElementName().startsWith("~"))
+		if(getCurrentElementName().startsWith("~")) //$NON-NLS-1$
 			return true;
 		
 		return false;

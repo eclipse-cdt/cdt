@@ -60,7 +60,7 @@ public class StorableEnvVar extends BuildEnvVar {
 		fOperation = opStringToInt(element.getAttribute(OPERATION));
 			
 		fDelimiter = element.getAttribute(DELIMITER);
-		if("".equals(fDelimiter))
+		if("".equals(fDelimiter)) //$NON-NLS-1$
 			fDelimiter = null;
 	}
 	

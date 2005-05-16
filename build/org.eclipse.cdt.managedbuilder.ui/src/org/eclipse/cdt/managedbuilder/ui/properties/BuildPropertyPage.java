@@ -321,7 +321,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		String [] namesAndDescriptions = new String[configurations.length /*+ 1*/];
 		for (int index = 0; index < configurations.length; ++index) {
 			String description = configurations[index].getDescription();
-			if ( (description == null) || (description.equals("")) )
+			if ( (description == null) || (description.equals("")) ) //$NON-NLS-1$
 				namesAndDescriptions[index] = configurations[index].getName();	//$NON-NLS-1$
 			else
 				namesAndDescriptions[index] = configurations[index].getName() + "( " + description + " )";	//$NON-NLS-1$	//$NON-NLS-2$

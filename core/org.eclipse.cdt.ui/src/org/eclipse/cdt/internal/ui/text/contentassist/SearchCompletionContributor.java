@@ -64,7 +64,7 @@ public class SearchCompletionContributor implements ICompletionContributor {
 				ICSearchScope scope = SearchEngine.createCSearchScope(projects, true);
 				
 				// Create the pattern
-				String prefix = new String(name.toCharArray()) + "*";
+				String prefix = new String(name.toCharArray()) + "*"; //$NON-NLS-1$
 				ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false);
 				
 				// Run the search
@@ -90,7 +90,7 @@ public class SearchCompletionContributor implements ICompletionContributor {
 		int repLength = completionNode.getLength();
 		int repOffset = offset - repLength;
 		Image image = CUIPlugin.getImageDescriptorRegistry().get(CElementImageProvider.getFunctionImageDescriptor());
-		String repString = name + "()";
+		String repString = name + "()"; //$NON-NLS-1$
 		CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, repString, 1, viewer);
 		proposal.setCursorPosition(repString.length() - 1);
 		proposals.add(proposal);

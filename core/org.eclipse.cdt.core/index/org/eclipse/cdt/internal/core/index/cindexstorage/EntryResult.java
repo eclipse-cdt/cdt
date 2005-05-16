@@ -68,13 +68,13 @@ public int hashCode(){
 }
 public String toString(){
 	StringBuffer buffer = new StringBuffer();
-	buffer.append("EntryResult: " + getName() + "\n\tmeta="); //$NON-NLS-1$
+	buffer.append("EntryResult: " + getName() + "\n\tmeta="); //$NON-NLS-1$ //$NON-NLS-2$
 	buffer.append(ICIndexStorageConstants.encodings[meta_type]);
 	if(meta_type == IIndex.TYPE) {
-		buffer.append(" type=");
+		buffer.append(" type="); //$NON-NLS-1$
 		buffer.append(ICIndexStorageConstants.typeConstantNames[kind]);
 	}
-	buffer.append(" Reference=");
+	buffer.append(" Reference="); //$NON-NLS-1$
 	buffer.append(ICIndexStorageConstants.encodingTypes[reftype]);
 	
 	buffer.append(", refs={"); //$NON-NLS-1$

@@ -16,12 +16,16 @@ package org.eclipse.cdt.ui.tests.regression;
 
 import java.io.StringWriter;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.cdt.core.tests.FailingTest;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
@@ -31,9 +35,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * @author aniefer
@@ -52,7 +53,14 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
     {
         super(name);
     }
-       
+	
+	protected void setUp() throws Exception {
+		//TEMPORARY: Disable Type Cache
+        super.setUp();
+		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
+		typeCacheManager.setProcessTypeCacheEvents(false);
+	}
+	
     private void disableContributions (){
         //disable the help books so we don't get proposals we weren't expecting
         final IProject proj = project;

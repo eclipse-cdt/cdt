@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
@@ -97,6 +98,10 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 		}
 
+		//TEMPORARY: Disable type cache
+		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
+		typeCacheManager.setProcessTypeCacheEvents(false);
+		
 		// use the new indexer
 		//IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	}

@@ -4068,4 +4068,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals( ctors.length, 2 );
 		assertSame( ctor, ctors[0] );
 	}
+	
+	public void testBug95461() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void f( char * );                 \n"); //$NON-NLS-1$
+		buffer.append("void g(){                         \n"); //$NON-NLS-1$
+		buffer.append("   char x[100];                   \n"); //$NON-NLS-1$
+		buffer.append("   f( x );                        \n"); //$NON-NLS-1$
+		buffer.append("}                                 \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPFunction f1 = (ICPPFunction) col.getName(0).resolveBinding();
+		assertSame( f1, col.getName(4).resolveBinding() );
+	}
 }

@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -2525,6 +2526,10 @@ public class CPPSemantics {
 	    {
 		    source = new CPPPointerType( source );
 	    }
+	    //4.2 Array-To-Pointer conversion
+		else if( target instanceof IPointerType && source instanceof IArrayType ){
+			source = new CPPPointerType( ((IArrayType)source).getType() );
+		}
 		
 		cost.source = source;
 		cost.target = target;

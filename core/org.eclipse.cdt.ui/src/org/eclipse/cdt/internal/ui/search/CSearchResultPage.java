@@ -17,7 +17,9 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
-import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.core.search.ILineLocatable;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.ExternalSearchFile;
@@ -34,6 +36,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -113,16 +117,52 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 			BasicSearchMatch searchMatch = ((CSearchMatch) match).getSearchMatch();
 			if (searchMatch.resource != null){
 				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.resource), false);
-				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), searchMatch.getOffsetType(), currentOffset, currentLength);
+				IMatchLocatable searchLocatable = searchMatch.locatable;
+				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), searchLocatable, currentOffset, currentLength);
 			}
 			else {
+				//Match is outside of the workspace
 				try {
 					IEditorInput input =EditorUtility.getEditorInput(new ExternalSearchFile(searchMatch.path, searchMatch));
 					IWorkbenchPage p= CUIPlugin.getActivePage();
 					IEditorPart editorPart= p.openEditor(input, "org.eclipse.cdt.ui.editor.ExternalSearchEditor"); //$NON-NLS-1$
 					if (editorPart instanceof ITextEditor) {
 						ITextEditor textEditor= (ITextEditor) editorPart;
-						textEditor.selectAndReveal(searchMatch.startOffset, searchMatch.endOffset - searchMatch.startOffset);
+						IMatchLocatable searchLocatable = searchMatch.locatable;
+						int startOffset=0;
+						int length=0;
+						if (searchLocatable instanceof IOffsetLocatable){
+						   startOffset = ((IOffsetLocatable)searchLocatable).getNameStartOffset();
+						   length = ((IOffsetLocatable)searchLocatable).getNameEndOffset() - startOffset;
+						} else if (searchLocatable instanceof ILineLocatable){
+							int tempstartLine = ((ILineLocatable)searchLocatable).getStartLine();
+							int tempendLine = ((ILineLocatable)searchLocatable).getEndLine();
+							
+							//Convert the given line number into an offset in order to be able to use
+							//the text editor to open 
+							IDocument doc =textEditor.getDocumentProvider().getDocument(input);
+							if (doc == null)
+								return;
+							
+							try {
+								startOffset = doc.getLineOffset(tempstartLine);
+								length=doc.getLineLength(tempstartLine);
+							} catch (BadLocationException e) {}
+							
+							//See if an end line number has been provided - if so
+							//use it to calculate the length of the reveal...
+							//Make sure that an end offset exists that is greater than 0
+							//and that is greater than the start line number
+							if (tempendLine>0 && tempendLine > tempstartLine){
+								int endOffset;
+								try {
+									endOffset = doc.getLineOffset(tempendLine);
+									length = endOffset - startOffset;
+								} catch (BadLocationException e) {}
+								
+							}
+						}
+						textEditor.selectAndReveal(startOffset,length);
 					}
 					
 				//TODO: Put in once we have marker support for External Translation Units
@@ -191,14 +231,14 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		setSortOrder(_currentSortOrder);
 	}
 	
-	private void showWithMarker(IEditorPart editor, IFile file,int offsetType, int offset, int length) throws PartInitException {
+	private void showWithMarker(IEditorPart editor, IFile file,IMatchLocatable searchLocatable, int offset, int length) throws PartInitException {
 		try {
 			IMarker marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap attributes= new HashMap(4);
-			if (offsetType==IIndex.OFFSET){
+			if (searchLocatable instanceof IOffsetLocatable){
 				attributes.put(IMarker.CHAR_START, new Integer(offset));
 				attributes.put(IMarker.CHAR_END, new Integer(offset + length));
-			} else if (offsetType == IIndex.LINE){
+			} else if (searchLocatable instanceof ILineLocatable){
 			   attributes.put(IMarker.LINE_NUMBER, new Integer(offset));	
 			}
 			marker.setAttributes(attributes);

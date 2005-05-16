@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		returnType  = basicMatch.returnType;
 		resource 	= basicMatch.resource;
 		path 		= basicMatch.path;
-		startOffset = basicMatch.startOffset;
-		endOffset 	= basicMatch.endOffset;
+		locatable 	= basicMatch.locatable;
 		referringElement = basicMatch.referringElement;
 	}
 	
@@ -53,9 +52,9 @@ public class BasicSearchMatch implements IMatch, Comparable {
 				hashBuffer.append( getLocation().toString() );
 			}
 			hashBuffer.append( HASH_SEPERATOR );
-			hashBuffer.append( startOffset );
+			hashBuffer.append( locatable instanceof IOffsetLocatable ? ((IOffsetLocatable)locatable).getNameStartOffset():((ILineLocatable)locatable).getStartLine());
 			hashBuffer.append( HASH_SEPERATOR ); 
-			hashBuffer.append( endOffset );
+			hashBuffer.append( locatable instanceof IOffsetLocatable ? ((IOffsetLocatable)locatable).getNameEndOffset(): ((ILineLocatable)locatable).getEndLine());
 			hashBuffer.append( HASH_SEPERATOR ); 
 			hashBuffer.append( type );
 			hashBuffer.append( HASH_SEPERATOR ); 
@@ -72,8 +71,27 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		}
 		BasicSearchMatch match = (BasicSearchMatch)obj;
 		
-		if( startOffset != match.getStartOffset() || endOffset != match.getEndOffset()  )
+		if ((locatable != null && match.locatable==null) ||
+			(locatable==null && match.locatable!=null)){
 			return false;
+		}
+		
+		if (locatable!=null && match.locatable !=null){
+			if  (!(locatable instanceof IOffsetLocatable && match.locatable instanceof IOffsetLocatable) ||
+				 !(locatable instanceof ILineLocatable && match.locatable instanceof ILineLocatable))
+				return false;
+		
+			if (locatable instanceof IOffsetLocatable){
+				if (((IOffsetLocatable)locatable).getNameStartOffset() != ((IOffsetLocatable)match.locatable).getNameStartOffset() ||
+					((IOffsetLocatable)locatable).getNameEndOffset() != ((IOffsetLocatable)match.locatable).getNameEndOffset())
+					return false;
+				
+			} else {
+				if (((ILineLocatable)locatable).getStartLine() != ((ILineLocatable)match.locatable).getStartLine())
+					return false;
+			}
+		}
+		
 		
 		if( type != match.getElementType() || visibility != match.getVisibility() )
 			return false;
@@ -121,8 +139,21 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		int result = getLocation().toString().compareTo( match.getLocation().toString() );
 		if( result != 0 ) return result;
 		
-		result = getStartOffset() - match.getStartOffset();
-		if( result != 0 ) return result;
+		
+		if (locatable instanceof IOffsetLocatable && match.getLocatable() instanceof IOffsetLocatable){
+			result = ((IOffsetLocatable)locatable).getNameStartOffset() - ((IOffsetLocatable)match.locatable).getNameStartOffset();
+			if( result != 0 ) return result;
+			
+			result = ((IOffsetLocatable)locatable).getNameEndOffset() - ((IOffsetLocatable)match.locatable).getNameEndOffset();
+			if( result != 0 ) return result;
+		}
+		else if (locatable instanceof ILineLocatable && match.getLocatable() instanceof ILineLocatable){
+			result = ((ILineLocatable)locatable).getStartLine() - ((ILineLocatable)match.locatable).getStartLine();
+			if( result != 0 ) return result;
+			
+			result = ((ILineLocatable)locatable).getEndLine() - ((ILineLocatable)match.locatable).getEndLine();
+			if( result != 0 ) return result;
+		}
 		
 		result = getName().compareTo( match.getName() );
 		if( result != 0 ) return result;
@@ -140,10 +171,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	
 	public IResource resource = null;
 	public IPath     path 	  = null;
-	
-	public int startOffset 	  = 0;
-	public int endOffset 	  = 0;
-	
+
 	public int type 		  = 0;
 	public int visibility 	  = 0;
 	
@@ -155,7 +183,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 
 	public IPath referringElement = null;
 	
-	public int offsetType;
+	public IMatchLocatable locatable = null;
 	
 	public int getElementType() {
 		return type;
@@ -193,14 +221,6 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		return referringElement;
 	}
 
-	public int getStartOffset() {
-		return startOffset;
-	}
-
-	public int getEndOffset() {
-		return endOffset;
-	}
-
 	public boolean isStatic() {
 		return isStatic;
 	}
@@ -216,13 +236,6 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	 */
 	public int getType() {
 		return type;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setEndOffset(int i) {
-		endOffset = i;
 	}
 
 	/**
@@ -266,14 +279,6 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	public void setReturnType(String string) {
 		returnType = string;
 	}
-
-	/**
-	 * @param i
-	 */
-	public void setStartOffset(int i) {
-		startOffset = i;
-	}
-
 	/**
 	 * @param i
 	 */
@@ -287,13 +292,9 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	public void setVisibility(int i) {
 		visibility = i;
 	}
-
-	public int getOffsetType() {
-		return offsetType;
-	}
-
-	public void setOffsetType(int offsetType) {
-		this.offsetType = offsetType;
+	
+	public IMatchLocatable getLocatable() {
+		return locatable;
 	}
 
 }

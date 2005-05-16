@@ -33,26 +33,9 @@ public interface IMatch {
 	IPath getLocation();
 
 	IPath getReferenceLocation();
-	/**
-	 * Returns the start offset for this match. Note that clients should use
-	 * getOffsetType to determine if this is a LINE or an OFFSET
-	 * @return start offset
-	 */
-	int getStartOffset();
-	/**
-	 * Returns the end offset for this match. Note that clients should use
-	 * getOffsetType to determine if this is a LINE or an OFFSET. The end offset
-	 * is meaningless for LINE offsets; instead use IDocument.getLineLength to
-	 * figure out the length of the line.
-	 * @return end offset
-	 */
-	int getEndOffset();
-	/**
-	 * Returns the type of offset either IIndex.LINE or IIndex.OFFSET
-	 * @return IIndex.LINE or IIndex.OFFSET
-	 */
-	public int getOffsetType();
-
+	
+	IMatchLocatable getLocatable();
+	
 	boolean isStatic();
 	boolean isConst();
 	boolean isVolatile();

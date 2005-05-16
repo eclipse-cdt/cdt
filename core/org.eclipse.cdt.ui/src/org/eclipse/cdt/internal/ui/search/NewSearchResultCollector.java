@@ -15,7 +15,10 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ILineLocatable;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -87,8 +90,23 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
 	 
       if (searchMatch.resource != null){
 		fMatchCount++;
-		int start = match.getStartOffset();
-		int end = match.getEndOffset();
+		int start =0;
+		int end = 0;
+		
+		IMatchLocatable locatable = match.getLocatable();
+		if (locatable instanceof IOffsetLocatable){
+			start = ((IOffsetLocatable)locatable).getNameStartOffset();
+			end = ((IOffsetLocatable)locatable).getNameEndOffset();
+		} else if (locatable instanceof ILineLocatable){
+			start = ((ILineLocatable)locatable).getStartLine();
+			//Not all line based indexers can provide an ending line; check
+			//to see if there is a value stored here
+			int tempEnd = ((ILineLocatable)locatable).getEndLine();
+			if (tempEnd > 0 && tempEnd > start){
+				end = tempEnd;
+			}
+		}
+
 		String classifier = PARENT + match.getParentName() + NAME + match.getName() + LOCATION + match.getLocation().toOSString() + ELEMENTTYPE + match.getElementType() + VISIBILITY  + match.getVisibility();
 		fSearch.addMatch(new CSearchMatch(classifier,start,end-start, match));
 		
@@ -96,8 +114,23 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
       }
       else {
     	fMatchCount++;
-		int start = match.getStartOffset();
-		int end = match.getEndOffset();
+		int start =0;
+		int end = 0;
+		
+		IMatchLocatable locatable = match.getLocatable();
+		if (locatable instanceof IOffsetLocatable){
+			start = ((IOffsetLocatable)locatable).getNameStartOffset();
+			end = ((IOffsetLocatable)locatable).getNameEndOffset();
+		} else if (locatable instanceof ILineLocatable){
+			start = ((ILineLocatable)locatable).getStartLine();
+			//Not all line based indexers can provide an ending line; check
+			//to see if there is a value stored here
+			int tempEnd = ((ILineLocatable)locatable).getEndLine();
+			if (tempEnd > 0 && tempEnd > start){
+				end = tempEnd;
+			}
+		}
+
 		String classifier = PARENT + match.getParentName() + NAME + match.getName() + LOCATION + match.getLocation().toOSString() + ELEMENTTYPE + match.getElementType() + VISIBILITY  + match.getVisibility();
 		fSearch.addMatch(new CSearchMatch(classifier,start,end-start, match));
 		

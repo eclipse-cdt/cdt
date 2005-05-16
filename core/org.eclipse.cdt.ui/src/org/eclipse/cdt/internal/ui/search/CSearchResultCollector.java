@@ -118,8 +118,8 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 			HashMap markerAttributes = new HashMap( 2 );
 			
 			//we can hang any other info we want off the marker
-			markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
-			markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );
+			/*markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
+			markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );*/
 			markerAttributes.put( IMATCH, searchMatch );
 		
 			marker.setAttributes( markerAttributes );
@@ -159,8 +159,8 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 				
 				HashMap markerAttributes = new HashMap( 2 );
 				
-				markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
-				markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );
+				/*markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
+				markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );*/
 				markerAttributes.put( IMATCH, searchMatch );
 	
 				marker.setAttributes( markerAttributes );
@@ -218,12 +218,12 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 	private static final String MATCHES   = CSearchMessages.getString("CSearchResultCollector.matches"); //$NON-NLS-1$
 	private static final String DONE      = CSearchMessages.getString("CSearchResultCollector.done"); //$NON-NLS-1$
 	
-	private IProgressMonitor 	_monitor;
-	private CSearchOperation 	_operation;
-	private ISearchResultView 	_view;
-	private IGroupByKeyComputer _computer;
-	private int					_matchCount;
-	private CSearchQuery 		_query;
+	private IProgressMonitor 	  _monitor;
+	private CSearchOperation 	  _operation;
+	private ISearchResultView     _view;
+	private IGroupByKeyComputer   _computer;
+	private int					  _matchCount;
+	private CSearchQuery 		  _query;
 
 	/**
 	 * @param query

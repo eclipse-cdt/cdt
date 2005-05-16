@@ -24,7 +24,10 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.ILineLocatable;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.codemanipulation.StubUtility;
@@ -84,7 +87,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				ICElement curr = copy.getElement(expression);
 				if (curr == null) {
 					// Try with the indexer
-					source = findMatches(expression);
+					source = findMatches(expression, textViewer);
 				} else {
 					source= ((ISourceReference) curr).getSource();
 				}
@@ -152,7 +155,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		return source.substring(i);
 	}
 
-	private String findMatches(String name) {
+	private String findMatches(String name, ITextViewer textViewer) {
 		IEditorPart editor = getEditor();
 		if (editor != null) {
 			IEditorInput input= editor.getEditorInput();
@@ -191,8 +194,33 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 							ICElement celement = CoreModel.getDefault().create(resource);
 							if (celement instanceof ITranslationUnit) {	
 								ITranslationUnit unit = (ITranslationUnit)celement;
-								int startOffset = matches[0].getStartOffset();
-								int length = matches[0].getEndOffset() - startOffset;
+								//Check offset type
+								IMatchLocatable searchLocatable = matches[0].getLocatable();
+								int startOffset=0;
+								int length=0;
+								if (searchLocatable instanceof IOffsetLocatable){
+									   startOffset = ((IOffsetLocatable)searchLocatable).getNameStartOffset();
+									   length = ((IOffsetLocatable)searchLocatable).getNameEndOffset() - startOffset;
+									} else if (searchLocatable instanceof ILineLocatable){
+										int tempstartOffset = ((ILineLocatable)searchLocatable).getStartLine();
+										IDocument doc =textViewer.getDocument();
+										try {
+											startOffset = doc.getLineOffset(tempstartOffset);
+											length=doc.getLineLength(tempstartOffset);
+										} catch (BadLocationException e) {}
+										
+										//Check to see if an end offset is provided
+										int tempendOffset = ((ILineLocatable)searchLocatable).getEndLine();
+										//Make sure that there is a real value for the end line
+										if (tempendOffset>0 && tempendOffset>tempstartOffset){
+											try {
+												int endOffset = doc.getLineOffset(tempendOffset);
+												length=endOffset - startOffset;
+											} catch (BadLocationException e) {}		
+										}
+										
+								}
+								
 								return unit.getBuffer().getText(startOffset, length);
 							}
 						}

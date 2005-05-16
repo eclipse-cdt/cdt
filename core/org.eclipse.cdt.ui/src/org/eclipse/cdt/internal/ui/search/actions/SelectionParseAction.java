@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -611,12 +610,6 @@ public class SelectionParseAction extends Action {
     }
     protected Shell getShell() {
         return fEditor.getSite().getShell();
-    }
-    
-    
-    protected void open( IMatch element ) throws CModelException, PartInitException
-    {
-        open( element.getResource(), element.getStartOffset(), element.getEndOffset() - element.getStartOffset() );
     }
     
     /**

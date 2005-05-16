@@ -84,9 +84,8 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 			result.resource = (IResource) fileResource;
 		else if( fileResource instanceof IPath )
 			result.path = (IPath) fileResource;
-			
-		result.startOffset = start;
-		result.endOffset = end;
+		
+		result.locatable = new OffsetLocatable(start,end);
 		result.parentName = ""; //$NON-NLS-1$
 		result.referringElement = referringElement;
 		

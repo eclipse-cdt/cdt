@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
@@ -152,7 +153,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         Iterator i = matches.iterator();
         while( i.hasNext() ){
             IMatch match = (IMatch) i.next();
-            if( match.getStartOffset() == offset && match.getLocation().equals( file.getLocation() ) )
+            if( ((IOffsetLocatable)match.getLocatable()).getNameStartOffset() == offset && match.getLocation().equals( file.getLocation() ) )
                 return; //match
         }
         fail( "Match at offset " + offset + " in \"" + file.getLocation() + "\" not found." );    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$

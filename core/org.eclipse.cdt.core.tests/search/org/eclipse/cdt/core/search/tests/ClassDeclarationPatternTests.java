@@ -16,9 +16,11 @@ package org.eclipse.cdt.core.search.tests;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.IOffsetDuple;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
@@ -115,8 +117,8 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		IMatch match2 = (IMatch)iter2.next();
 		
 		//assertTrue( match.path.equals( match2.path ) );
-		assertEquals( match.getStartOffset(), match2.getStartOffset() );
-		assertEquals( match.getEndOffset(), match2.getEndOffset() );
+		assertEquals( ((IOffsetLocatable) match.getLocatable()).getNameStartOffset(), ((IOffsetLocatable) match2.getLocatable()).getNameStartOffset() );
+		assertEquals( ((IOffsetLocatable) match.getLocatable()).getNameEndOffset() , ((IOffsetLocatable) match2.getLocatable()).getNameEndOffset() );
 	}
 	
 	public void testWildcardQualification() {

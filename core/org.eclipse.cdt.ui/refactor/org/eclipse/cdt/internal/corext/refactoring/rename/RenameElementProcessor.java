@@ -41,6 +41,9 @@ import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.ILineLocatable;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.corext.Assert;
@@ -401,7 +404,17 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			for (int j= 0; j < results.length; j++){
 				BasicSearchMatch searchResult= results[j];
 				int oldNameLength = getCurrentElementNameLength();
-				int offset= searchResult.getEndOffset() - oldNameLength;
+				IMatchLocatable locatable =searchResult.getLocatable();
+				//Refactoring will only work with offsets, so any matches
+				//returning lines shall be skipped
+				int endOffset=0;
+				if (locatable instanceof IOffsetLocatable){
+					endOffset=((IOffsetLocatable)locatable).getNameEndOffset();
+				} else if (locatable instanceof ILineLocatable){
+					endOffset=((ILineLocatable)locatable).getEndLine();
+				}
+				
+				int offset= endOffset - oldNameLength;
 				manager.get(wc).addTextEdit(name, 
 						new ReplaceEdit(offset, oldNameLength, fNewElementName));
 			}
@@ -712,7 +725,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		if(( returnType == null) || (returnType.length() == 0) )
 			return true;
 		
-		if(getCurrentElementName().startsWith("~")) //$NON-NLS-1$
+		if(getCurrentElementName().startsWith("~"))
 			return true;
 		
 		return false;

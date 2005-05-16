@@ -137,7 +137,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
     	String[] args = {"--excmd=number", //$NON-NLS-1$
 		        "--format=2", //$NON-NLS-1$
 				"--sort=no",  //$NON-NLS-1$
-				"--fields=aiKlmnsz", //$NON-NLS-1$
+				"--fields=aiKlmnsSz", //$NON-NLS-1$
 				"--c-types=cdefgmnpstuvx", //$NON-NLS-1$
 				"--c++-types=cdefgmnpstuvx", //$NON-NLS-1$
 				"--languages=c,c++", //$NON-NLS-1$

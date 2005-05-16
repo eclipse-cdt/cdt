@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -141,7 +142,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 		IMatch match2 = (IMatch) matches.iterator().next();
 
-		assertTrue( match1.getStartOffset() == match2.getStartOffset() );
+		assertTrue( ((IOffsetLocatable)match1.getLocatable()).getNameStartOffset() == ((IOffsetLocatable)match2.getLocatable()).getNameStartOffset() );
 		
 		pattern = SearchEngine.createSearchPattern( "operator \\*=", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
@@ -155,7 +156,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 		match2 = (IMatch) matches.iterator().next();
 
-		assertTrue( match1.getStartOffset() != match2.getStartOffset() );
+		assertTrue( ((IOffsetLocatable)match1.getLocatable()).getNameStartOffset() != ((IOffsetLocatable)match2.getLocatable()).getNameStartOffset() );
 		
 		pattern = SearchEngine.createSearchPattern( "operator *", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );

@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.LineLocatable;
+import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
@@ -161,12 +163,11 @@ public class FieldDeclarationPattern extends CSearchPattern {
 				//Offsets can either be LINE or OFFSET 
 				int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
 				if (offsetType==Index.LINE){
-					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
-					match.offsetType = Index.LINE;
+					match.locatable = new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0);
 				}else if (offsetType==Index.OFFSET){
-					match.startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
-					match.endOffset= match.startOffset + offsetLengths[i][j];
-					match.offsetType=Index.OFFSET;
+					int startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
+					int endOffset= startOffset + offsetLengths[i][j];
+					match.locatable = new OffsetLocatable(startOffset, endOffset);
 				}
 				match.parentName = ""; //$NON-NLS-1$
 				if (searchFor ==  FIELD){

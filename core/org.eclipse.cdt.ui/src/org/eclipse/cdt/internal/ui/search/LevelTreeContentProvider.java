@@ -20,7 +20,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IOffsetDuple;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.cdt.core.search.ILineLocatable;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -68,11 +72,19 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 		
 		if (child instanceof CSearchMatch){ 
 			BasicSearchMatch tempMatch = ((CSearchMatch) child).getSearchMatch();
+			IMatchLocatable locatable = tempMatch.getLocatable();
+			int startOffset =0;
+			if (locatable instanceof IOffsetLocatable){
+				startOffset = ((IOffsetLocatable)locatable).getNameStartOffset();
+			} else if (locatable instanceof ILineLocatable){
+				startOffset = ((ILineLocatable)locatable).getStartLine();
+			}
+			
 			ICElement cTransUnit = CCorePlugin.getDefault().getCoreModel().create(tempMatch.getResource());
 			
 			if (cTransUnit instanceof ITranslationUnit){
 				try {
-					child = ((ITranslationUnit) cTransUnit).getElementAtOffset(tempMatch.startOffset);
+					child = ((ITranslationUnit) cTransUnit).getElementAtOffset(startOffset);
 				} catch (CModelException e) {}
 			}
 			if( child == null ){

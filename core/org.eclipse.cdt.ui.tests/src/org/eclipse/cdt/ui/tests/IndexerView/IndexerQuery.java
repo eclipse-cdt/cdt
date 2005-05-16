@@ -15,7 +15,11 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.LineLocatable;
+import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
@@ -193,15 +197,20 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
             result.resource = (IResource) fileResource;
         else if( fileResource instanceof IPath )
             result.path = (IPath) fileResource;
-            
-        result.startOffset = start;
-        result.endOffset = end;
+         
+		IMatchLocatable locatable=null;
+		if (offsetType == IIndex.LINE)
+		{
+			locatable = new LineLocatable(start,end);
+		}
+		else if (offsetType == IIndex.OFFSET){
+			locatable = new OffsetLocatable(start,end);
+		}
+        result.locatable = locatable;
         result.parentName = BLANK_STRING; //$NON-NLS-1$
         result.referringElement = referringElement;
         
         result.name = name;
-    
-		result.offsetType = offsetType;
 		
         result.type = ICElement.C_FIELD; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
         result.visibility = ICElement.CPP_PUBLIC; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo

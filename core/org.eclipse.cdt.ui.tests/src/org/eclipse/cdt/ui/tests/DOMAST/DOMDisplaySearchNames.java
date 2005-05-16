@@ -34,6 +34,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
+import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
@@ -126,8 +128,9 @@ public class DOMDisplaySearchNames extends CSearchQuery implements ISearchQuery 
 		else if( fileResource instanceof IPath )
 			result.path = (IPath) fileResource;
 			
-		result.startOffset = start;
-		result.endOffset = end;
+		IOffsetLocatable locatable = new OffsetLocatable(start,end);
+		result.locatable = locatable;
+		
 		result.parentName = BLANK_STRING; //$NON-NLS-1$
 		result.referringElement = referringElement;
 		

@@ -429,6 +429,9 @@ public class SelectionParseAction extends Action {
                 case '(': {
                     if (possibleEnd > 0)
                         actualEnd = possibleEnd;
+                    
+                    index++;
+                    
                     break;
                 }   
                 case ']':

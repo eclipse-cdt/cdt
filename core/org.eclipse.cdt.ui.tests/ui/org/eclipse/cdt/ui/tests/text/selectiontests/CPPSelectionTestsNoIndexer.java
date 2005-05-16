@@ -359,6 +359,30 @@ public class CPPSelectionTestsNoIndexer extends TestCase {
         assertEquals(((ASTNode)def).getLength(), 7);
     }
     
+	public void testBug95224() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write( "class A{\n"); //$NON-NLS-1$
+	    writer.write( "A();\n"); //$NON-NLS-1$
+	    writer.write( "A(const A&); // open definition on A finds class A\n"); //$NON-NLS-1$
+	    writer.write( "~A(); // open definition on A finds nothing\n"); //$NON-NLS-1$
+	    writer.write( "};\n"); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		IFile file = importFile("testBug95224.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("A(); // open definition "); //$NON-NLS-1$
+        IASTNode def = testF2(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "~A"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 65);
+        assertEquals(((ASTNode)decl).getLength(), 2);
+        assertEquals(((IASTName)def).toString(), "A"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 6);
+        assertEquals(((ASTNode)def).getLength(), 1);
+	}
+	
 	public void testBasicTemplateInstance() throws Exception{
 	    Writer writer = new StringWriter();
 	    writer.write( "namespace N{                               \n"); //$NON-NLS-1$
@@ -901,6 +925,53 @@ public class CPPSelectionTestsNoIndexer extends TestCase {
         assertEquals(((ASTNode)def).getLength(), 1);
 	}
 	
+	public void testBug95225() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class Overflow {\n"); //$NON-NLS-1$
+        buffer.append("public:\n"); //$NON-NLS-1$
+        buffer.append("Overflow(char,double,double);\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("void f(double x)\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("throw Overflow('+',x,3.45e107);\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        buffer.append("int foo() {\n"); //$NON-NLS-1$
+        buffer.append("try {\n"); //$NON-NLS-1$
+        buffer.append("f(1.2);\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        buffer.append("catch(Overflow& oo) {\n"); //$NON-NLS-1$
+        buffer.append("				// handle exceptions of type Overflow here\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+		
+        String code = buffer.toString();
+        IFile file = importFile("testBug95225.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("rflow('+',x,3.45e107);"); //$NON-NLS-1$
+        IASTNode def = testF2(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "Overflow"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 25);
+        assertEquals(((ASTNode)decl).getLength(), 8);
+        assertEquals(((IASTName)def).toString(), "Overflow"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 6);
+        assertEquals(((ASTNode)def).getLength(), 8);
+        
+		offset = code.indexOf("x,3.45e107);"); //$NON-NLS-1$
+        def = testF2(file, offset);
+        decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 72);
+        assertEquals(((ASTNode)decl).getLength(), 1);
+        assertEquals(((IASTName)def).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 72);
+        assertEquals(((ASTNode)def).getLength(), 1);
+    }
+	
 	public void testNoDefinitions() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("extern int a1; // declares a\n"); //$NON-NLS-1$
@@ -984,5 +1055,27 @@ public class CPPSelectionTestsNoIndexer extends TestCase {
         assertEquals(((ASTNode)def).getOffset(), 117);
         assertEquals(((ASTNode)def).getLength(), 1);
         
+    }
+    
+    public void testBug95229() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct A {\n"); //$NON-NLS-1$
+        buffer.append("operator short(); // F3 on operator causes an infinite loop\n"); //$NON-NLS-1$
+        buffer.append("} a;\n"); //$NON-NLS-1$
+        buffer.append("int f(int);\n"); //$NON-NLS-1$
+        buffer.append("int f(float);\n"); //$NON-NLS-1$
+        buffer.append("int i = f(a); // Calls f(int), because short -> int is\n"); //$NON-NLS-1$
+                
+        String code = buffer.toString();
+        IFile file = importFile("testBug95229.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("rator short(); // F3"); //$NON-NLS-1$
+        IASTNode def = testF2(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertNull(def);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "operator short"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 11);
+        assertEquals(((ASTNode)decl).getLength(), 14);
     }
 }

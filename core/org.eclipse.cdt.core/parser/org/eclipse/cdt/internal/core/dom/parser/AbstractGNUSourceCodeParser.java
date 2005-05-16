@@ -1528,7 +1528,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             final IASTDeclarator[] declarators = ((IASTSimpleDeclaration) ds.getDeclaration()).getDeclarators();
             if( declarators.length == 0 || 
                 ( declarators.length == 1 && 
-                        ( declarators[0].getName().toString() == null && declarators[0].getNestedDeclarator() == null ) ) )  
+                        ( declarators[0].getName().toCharArray().length == 0 && declarators[0].getNestedDeclarator() == null ) ) )  
             {
                 backup(mark);
                 while (true) {

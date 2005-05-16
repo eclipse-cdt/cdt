@@ -729,8 +729,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         int o = throwExpression != null ? calculateEndOffset(throwExpression)
                 : throwToken.getEndOffset();
         return buildUnaryExpression(ICPPASTUnaryExpression.op_throw,
-                throwExpression, throwToken.getOffset(), o
-                        - throwToken.getOffset());
+                throwExpression, throwToken.getOffset(), o); // fix for 95225
     }
 
     /**
@@ -943,7 +942,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     - startingOffset);
         }
         if (declarator != null) {
-            if (declarator.getName().toString() != null) {
+            if (declarator.getName().toCharArray().length > 0) {
                 backup(mark);
                 throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
                         declarator)

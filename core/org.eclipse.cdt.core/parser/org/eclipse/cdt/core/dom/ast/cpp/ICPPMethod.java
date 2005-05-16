@@ -24,4 +24,11 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * @throws DOMException
 	 */
 	public boolean isVirtual() throws DOMException;
+	
+	/**
+	 * is this a destructor
+	 * 
+	 * returns true if its name starts with '~' 
+	 */
+	public boolean isDestructor() throws DOMException;
 }

@@ -24,6 +24,7 @@ public class CPPASTName extends CPPASTNode implements IASTName {
     private char[] name;
 
     private static final char[] EMPTY_CHAR_ARRAY = {};
+	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
 
     private IBinding binding = null;
 
@@ -72,7 +73,7 @@ public class CPPASTName extends CPPASTNode implements IASTName {
      */
     public String toString() {
         if (name == EMPTY_CHAR_ARRAY)
-            return null;
+            return EMPTY_STRING;
         return new String(name);
     }
 

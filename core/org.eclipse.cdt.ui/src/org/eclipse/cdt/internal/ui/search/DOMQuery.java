@@ -148,9 +148,9 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	
 	private boolean isLocal() {
 		IBinding binding = searchName.resolveBinding();
-		if (searchName instanceof CPPASTName) {
+		if (binding instanceof ICPPBinding) {
 			try {
-				if (binding instanceof ICPPBinding && !((ICPPBinding)binding).isGloballyQualified())
+				if (!((ICPPBinding)binding).isGloballyQualified())
 					return true;
 			} catch (DOMException e) {}
 		} else {

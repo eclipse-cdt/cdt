@@ -20,17 +20,10 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ParseError;
@@ -40,8 +33,6 @@ import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
@@ -84,42 +75,7 @@ public abstract class FindAction extends SelectionParseAction {
      * @return
      */
 	 public static CSearchQuery createDOMSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope, ICSearchResultCollector collector ){
-		 	StringBuffer buffer = new StringBuffer();
-			buffer.append("::"); //$NON-NLS-1$
-			if (name instanceof CPPASTName && name.getParent() instanceof CPPASTQualifiedName) {
-				IASTName[] names = ((CPPASTQualifiedName)name.getParent()).getNames();
-				for(int i=0; i<names.length; i++) {
-					if (i != 0) buffer.append("::"); //$NON-NLS-1$
-					buffer.append(names[i].toString());
-				}
-			} else {
-				buffer.append(name.toString());
-			}
-			
-		 	if( name.resolveBinding() instanceof IFunction ){
-				try {
-					IBinding binding = name.resolveBinding();
-					IFunctionType type = ((IFunction)binding).getType();
-					
-					buffer.append("("); //$NON-NLS-1$
-					if (binding instanceof ICExternalBinding) {
-						buffer.append("..."); //$NON-NLS-1$
-					} else {
-						IType[] parms = type.getParameterTypes();
-						for( int i = 0; i < parms.length; i++ ){
-							if( i != 0 )
-								buffer.append(", "); //$NON-NLS-1$
-							buffer.append(ASTTypeUtil.getType(parms[i]));
-						}
-					}
-					buffer.append(")"); //$NON-NLS-1$
-				} catch (DOMException e) {
-					buffer = new StringBuffer();
-					buffer.append(name.toString());
-				}
-		 	}
-		 	
-			return new DOMQuery(buffer.toString(), name, limitTo, scope, collector);
+		 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope, collector);
 	 }
 	 
      /**

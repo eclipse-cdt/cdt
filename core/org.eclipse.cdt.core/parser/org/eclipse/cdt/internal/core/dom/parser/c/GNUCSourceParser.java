@@ -1209,7 +1209,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             backup(mark);
             throwBacktrack(bt);
         }
-        if (declarator == null || declarator.getName().toString() != null) //$NON-NLS-1$
+        if (declarator == null || declarator.getName().toCharArray().length > 0) //$NON-NLS-1$
         {
             backup(mark);
             throwBacktrack(startingOffset, figureEndOffset(declSpecifier,

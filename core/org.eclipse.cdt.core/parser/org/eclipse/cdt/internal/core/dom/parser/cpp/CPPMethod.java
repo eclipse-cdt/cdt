@@ -47,6 +47,17 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         public boolean isVirtual() throws DOMException {
             return ((ICPPMethod)getBinding()).isVirtual();
         }
+        
+       	/* (non-Javadoc)
+	     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
+    	 */
+		public boolean isDestructor() throws DOMException {
+			char[] name = getNameCharArray();
+			if (name.length > 1 && name[0] == '~')
+				return true;
+			
+			return false;
+		}
     }
     
     public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
@@ -67,6 +78,17 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         public boolean isVirtual() throws DOMException {
             throw new DOMException( this );
         }
+
+		/* (non-Javadoc)
+    	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
+	     */
+		public boolean isDestructor() throws DOMException {
+			char[] name = getNameCharArray();
+			if (name.length > 1 && name[0] == '~')
+				return true;
+			
+			return false;
+		}
     }
     
 	public CPPMethod( ICPPASTFunctionDeclarator declarator ){
@@ -224,4 +246,15 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     public boolean isMutable() {
         return hasStorageClass( this, ICPPASTDeclSpecifier.sc_mutable );
     }
+
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
+     */
+	public boolean isDestructor() throws DOMException {
+		char[] name = getNameCharArray();
+		if (name.length > 1 && name[0] == '~')
+			return true;
+		
+		return false;
+	}
 }

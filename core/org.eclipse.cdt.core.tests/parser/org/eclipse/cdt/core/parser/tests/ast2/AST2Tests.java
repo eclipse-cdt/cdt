@@ -246,7 +246,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTName name_struct = type.getName();
 		assertTrue( name_struct.isDeclaration() );
 		assertFalse( name_struct.isReference() );
-        assertNull("", name_struct.toString()); //$NON-NLS-1$
+        assertEquals("", name_struct.toString()); //$NON-NLS-1$
         // member - x
         IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) type
                 .getMembers()[0];
@@ -1377,7 +1377,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(d.getDeclarators().length, 1);
         IASTStandardFunctionDeclarator f = (IASTStandardFunctionDeclarator) d
                 .getDeclarators()[0];
-        assertNull(f.getName().toString());
+        assertEquals(f.getName().toString(), "");
         assertNotNull(f.getNestedDeclarator());
         assertEquals(f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
         assertTrue(f.getPointerOperators().length == 0);
@@ -1394,7 +1394,7 @@ public class AST2Tests extends AST2BaseTest {
         d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
         assertEquals(d.getDeclarators().length, 1);
         f = (IASTStandardFunctionDeclarator) d.getDeclarators()[0];
-        assertNull(f.getName().toString());
+        assertEquals(f.getName().toString(), "");
         assertNotNull(f.getNestedDeclarator());
         assertEquals(f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
     }

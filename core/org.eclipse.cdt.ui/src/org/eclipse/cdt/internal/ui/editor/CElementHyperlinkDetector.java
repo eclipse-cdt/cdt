@@ -66,14 +66,27 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector{
 	private IRegion selectWord(IDocument document, int anchor) {
 		//TODO: Modify this to work with qualified name
 		
+        // fix for 95219, return null if the mouse is pointing to a non-java identifier part
+        try {
+            if (!Character.isJavaIdentifierPart(document.getChar(anchor))) {
+                return null;
+            }
+        } catch (BadLocationException e) { return null; }
+
+        boolean isNumber=false;
 		try {		
 			int offset= anchor;
 			char c;
+            char oldC='a'; // assume this is the first character
 			
 			while (offset >= 0) {
 				c= document.getChar(offset);
-				if (!Character.isJavaIdentifierPart(c))
-					break;
+                if (!Character.isJavaIdentifierPart(c)) {
+                    if (Character.isDigit(oldC)) // if the first character is a digit, then assume the word is a number, i.e. 1e13, 0xFF, 123
+                        isNumber=true;
+                    break;
+                }
+                oldC = c;
 				--offset;
 			}
 			
@@ -94,13 +107,19 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector{
 			if (start == end)
 				return new Region(start, 0);
 
-			String selWord = null;
+			// don't select numbers only i.e. 0x1, 1e13, 1234
+            if (isNumber) return null;
+            
+            String selWord = null;
 			String slas = document.get(start,1);
+			
+			// TODO more need to be added to this list as they are discovered
 			if (slas.equals("\n") || //$NON-NLS-1$
 					slas.equals("\t") || //$NON-NLS-1$
 					slas.equals(" ") || //$NON-NLS-1$
 					slas.equals(">") || //$NON-NLS-1$
-					slas.equals("."))	 //$NON-NLS-1$
+					slas.equals(".") || //$NON-NLS-1$
+                    slas.equals("("))	 //$NON-NLS-1$
 			{
 				
 				selWord =document.get(start+1, end - start - 1);

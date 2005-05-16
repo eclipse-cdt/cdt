@@ -53,4 +53,15 @@ public class CPPMethodTemplateSpecialization extends
 		return 0;
 	}
 
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
+     */
+	public boolean isDestructor() throws DOMException {
+		char[] name = getNameCharArray();
+		if (name.length > 1 && name[0] == '~')
+			return true;
+		
+		return false;
+	}
+
 }

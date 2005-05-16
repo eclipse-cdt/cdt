@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -29,11 +30,15 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -48,6 +53,8 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -77,7 +84,7 @@ public class DOMSearchUtil {
         SearchEngine engine = new SearchEngine();
         BasicSearchResultCollector results = new BasicSearchResultCollector();
             
-        ICSearchPattern pattern = createPattern(searchName.resolveBinding(), limitTo, true);
+        ICSearchPattern pattern = createPattern(searchName, limitTo, true);
             
         try {
             engine.search(CCorePlugin.getWorkspace(), pattern, scope, results, false);
@@ -88,7 +95,8 @@ public class DOMSearchUtil {
         return results.getSearchResults();
     }
     
-    private static CSearchPattern createPattern( IBinding binding, LimitTo limitTo, boolean caseSensitive) {
+    private static CSearchPattern createPattern( IASTName searchName, LimitTo limitTo, boolean caseSensitive) {
+		IBinding binding = searchName.resolveBinding();
 		if (binding == null)
 			return null;
 		
@@ -131,7 +139,7 @@ public class DOMSearchUtil {
             searchFor = ICSearchConstants.UNKNOWN_SEARCH_FOR;
         }
         
-        return CSearchPattern.createPattern(binding.getName(), searchFor, limitTo, ICSearchConstants.EXACT_MATCH, caseSensitive);
+        return CSearchPattern.createPattern(DOMSearchUtil.getSearchPattern(searchName), searchFor, limitTo, ICSearchConstants.EXACT_MATCH, caseSensitive);
     }
     
     private static SearchFor createSearchFor( IBinding binding ) {
@@ -350,9 +358,10 @@ public class DOMSearchUtil {
 		names = getNames(tu, binding, limitTo);
 		
 		if (names == null || names.length == 0) { // try alternate strategies		
-			// fix for 86829
 			try {
-				if (binding instanceof ICPPConstructor && binding.getScope() instanceof ICPPClassScope) {
+				// fix for 86829, 95224
+				if ((binding instanceof ICPPConstructor || (binding instanceof ICPPMethod && ((ICPPMethod)binding).isDestructor())) 
+						&& binding.getScope() instanceof ICPPClassScope) {
 					binding =  ((ICPPClassScope)binding.getScope()).getClassType();
 					names = getNames(tu, binding, limitTo);
 				}
@@ -425,6 +434,13 @@ public class DOMSearchUtil {
         public int size() { return nameList.size(); } 
     }
     
+	/**
+	 * Returns the ParserLanguage corresponding to the IPath and IProject.  Returns ParserLanguage.CPP if the file type is a header.
+	 * 
+	 * @param path
+	 * @param project
+	 * @return
+	 */
     public static ParserLanguage getLanguage( IPath path, IProject project )
     {    
         ICFileType type = CCorePlugin.getDefault().getFileType(project, path.lastSegment());
@@ -438,4 +454,72 @@ public class DOMSearchUtil {
             return ParserLanguage.C;
         return ParserLanguage.CPP;
     }
+	
+	/**
+	 * Generates a search pattern String based on the IASTName passed as a parameter.
+	 * 
+	 * Used to generate a string to present to the user as well as a string used by
+	 * the SearchEngine to parse for qualified names and parameters.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static String getSearchPattern(IASTName name) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("::"); //$NON-NLS-1$
+        
+        String[] namespaces = null;
+        
+        IASTNode parent = name.getParent();
+        while(!(parent instanceof IASTTranslationUnit) && parent != null) {
+            if (parent instanceof ICPPASTNamespaceDefinition) {
+                namespaces = (String[])ArrayUtil.append(String.class, namespaces, ((ICPPASTNamespaceDefinition)parent).getName().toString());
+            }
+            parent = parent.getParent();
+        }
+        
+        if (namespaces != null && namespaces.length > 0) {
+            for( int i=namespaces.length-1; i>=0; i-- ) {
+                if (namespaces[i] != null) {
+                    buffer.append(namespaces[i]);
+                    buffer.append("::"); //$NON-NLS-1$
+                }
+            }
+        }
+        
+		if (name instanceof CPPASTName && name.getParent() instanceof CPPASTQualifiedName) {
+			IASTName[] names = ((CPPASTQualifiedName)name.getParent()).getNames();
+			for(int i=0; i<names.length; i++) {
+				if (i != 0) buffer.append("::"); //$NON-NLS-1$
+				buffer.append(names[i].toString());
+			}
+		} else {
+			buffer.append(name.toString());
+		}
+		
+	 	if( name.resolveBinding() instanceof IFunction ){
+			try {
+				IBinding binding = name.resolveBinding();
+				IFunctionType type = ((IFunction)binding).getType();
+				
+				buffer.append("("); //$NON-NLS-1$
+				if (binding instanceof ICExternalBinding) {
+					buffer.append("..."); //$NON-NLS-1$
+				} else {
+					IType[] parms = type.getParameterTypes();
+					for( int i = 0; i < parms.length; i++ ){
+						if( i != 0 )
+							buffer.append(", "); //$NON-NLS-1$
+						buffer.append(ASTTypeUtil.getType(parms[i]));
+					}
+				}
+				buffer.append(")"); //$NON-NLS-1$
+			} catch (DOMException e) {
+				buffer = new StringBuffer();
+				buffer.append(name.toString());
+			}
+	 	}
+
+		return buffer.toString();
+	}
 }

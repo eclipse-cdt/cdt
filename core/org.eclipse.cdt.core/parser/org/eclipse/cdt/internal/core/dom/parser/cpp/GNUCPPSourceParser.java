@@ -159,8 +159,6 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
  */
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
-    private static final String COMPL = "~"; //$NON-NLS-1$
-
     private static final String CONST_CAST = "const_cast"; //$NON-NLS-1$
 
     private static final String REINTERPRET_CAST = "reinterpret_cast"; //$NON-NLS-1$
@@ -544,13 +542,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON) {
                 try {
                     nameDuple = name();
-                    if( nameDuple.length() == 1 )
-                    {
+                    if (nameDuple.length() == 1) {
                         backup(mark);
                         return;
                     }
-                    if( nameDuple.getLastToken().getType() != IToken.tCOLONCOLON )
-                    {
+                    if (nameDuple.getLastToken().getType() != IToken.tCOLONCOLON) {
                         backup(mark);
                         return;
                     }
@@ -945,10 +941,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclarator declarator = null;
 
         try {
-            declSpecifier = declSpecifierSeq(true, true, true);
+            declSpecifier = declSpecifierSeq(true, true);
             if (LT(1) != IToken.tEOC)
                 declarator = declarator(
-                        SimpleDeclarationStrategy.TRY_CONSTRUCTOR, forNewExpression);
+                        SimpleDeclarationStrategy.TRY_FUNCTION,
+                        forNewExpression);
         } catch (BacktrackException bt) {
             backup(mark);
             throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
@@ -1926,8 +1923,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IParserLogService log, ICPPParserExtensionConfiguration config) {
         super(scanner, log, mode, config.supportStatementsInExpressions(),
                 config.supportTypeofUnaryExpressions(), config
-                        .supportAlignOfUnaryExpression(), config.
-                        supportKnRC(), config.supportGCCOtherBuiltinSymbols());
+                        .supportAlignOfUnaryExpression(), config.supportKnRC(),
+                config.supportGCCOtherBuiltinSymbols());
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
@@ -2430,51 +2427,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTDeclaration simpleDeclarationStrategyUnion()
             throws EndOfFileException, BacktrackException {
         simpleDeclarationMark = mark();
-        IASTProblem firstFailure = null;
-        IASTProblem secondFailure = null;
         try {
             IASTDeclaration d = simpleDeclaration(
-                    SimpleDeclarationStrategy.TRY_CONSTRUCTOR, false);
+                    SimpleDeclarationStrategy.TRY_FUNCTION, false);
             throwAwayMarksForInitializerClause();
             return d;
         } catch (BacktrackException bt) {
             if (simpleDeclarationMark == null)
                 throwBacktrack(bt);
-            firstFailure = bt.getProblem();
             // did not work
             backup(simpleDeclarationMark);
 
-            try {
-                IASTDeclaration d = simpleDeclaration(
-                        SimpleDeclarationStrategy.TRY_FUNCTION, false);
-                throwAwayMarksForInitializerClause();
-                return d;
-            } catch (BacktrackException bt2) {
-                if (simpleDeclarationMark == null) {
-                    if (firstFailure != null && (bt2.getProblem() == null))
-                        throwBacktrack(firstFailure);
-                    else
-                        throwBacktrack(bt2);
-                }
-
-                secondFailure = bt2.getProblem();
-                backup(simpleDeclarationMark);
-                throwAwayMarksForInitializerClause();
-                try {
-                    return simpleDeclaration(
-                            SimpleDeclarationStrategy.TRY_VARIABLE, false);
-                } catch (BacktrackException b3) {
-                    backup(simpleDeclarationMark); // TODO - necessary?
-
-                    if (firstFailure != null)
-                        throwBacktrack(firstFailure);
-                    else if (secondFailure != null)
-                        throwBacktrack(secondFailure);
-                    else
-                        throwBacktrack(b3);
-                    return null;
-                }
-            }
+            IASTDeclaration d = simpleDeclaration(
+                     SimpleDeclarationStrategy.TRY_VARIABLE, false);
+            throwAwayMarksForInitializerClause();
+            return d;
 
         }
     }
@@ -2758,8 +2725,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(firstOffset, firstToken.getLength());
         firstToken = null; // necessary for scalability
 
-        ICPPASTDeclSpecifier declSpec = declSpecifierSeq(false,
-                strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, false);
+        ICPPASTDeclSpecifier declSpec = declSpecifierSeq(false, false);
         IASTDeclarator[] declarators = new IASTDeclarator[2];
         if (LT(1) != IToken.tSEMI && LT(1) != IToken.tEOC) {
             declarators = (IASTDeclarator[]) ArrayUtil
@@ -3023,7 +2989,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected ICPPASTParameterDeclaration parameterDeclaration()
             throws BacktrackException, EndOfFileException {
         IToken current = LA(1);
-        IASTDeclSpecifier declSpec = declSpecifierSeq(true, false, false);
+        IASTDeclSpecifier declSpec = declSpecifierSeq(true, false);
         IASTDeclarator declarator = null;
         if (LT(1) != IToken.tSEMI)
             declarator = initDeclarator(SimpleDeclarationStrategy.TRY_FUNCTION);
@@ -3055,83 +3021,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
-     * @param flags
-     *            input flags that are used to make our decision
-     * @return whether or not this looks like a constructor (true or false)
-     * @throws EndOfFileException
-     *             we could encounter EOF while looking ahead
-     */
-    protected boolean lookAheadForConstructorOrOperator(Flags flags)
-            throws EndOfFileException {
-        if (flags.isForParameterDeclaration())
-            return false;
-        if (LT(2) == IToken.tLPAREN && flags.isForConstructor())
-            return true;
-
-        IToken mark = mark();
-        IASTName name = null;
-        try {
-            name = consumeTemplatedOperatorName();
-        } catch (BacktrackException e) {
-            backup(mark);
-            return false;
-        } catch (EndOfFileException eof) {
-            backup(mark);
-            return false;
-        }
-
-        if (name == null) {
-            backup(mark);
-            return false;
-        }
-
-        // constructor/conversion must be an ICPPASTQualifiedName (i.e. can't be
-        // defined for the global scope)
-        if (name instanceof ICPPASTQualifiedName) {
-            IASTName[] segments = ((ICPPASTQualifiedName) name).getNames();
-
-            int len = segments.length;
-            if (len >= 2) {
-                if (segments[0].toString().length() == 0) {
-                    backup(mark);
-                    return false;
-                }
-
-                if (((ICPPASTQualifiedName) name).isConversionOrOperator()) { // conversion
-                    // or
-                    // operator
-                    backup(mark);
-                    return true;
-                }
-
-                if (segments[len - 1].toString().equals(
-                        segments[len - 2].toString())) { // constructor
-                    backup(mark);
-                    return true;
-                }
-
-                StringBuffer destructorName = new StringBuffer();
-                destructorName.append(COMPL);
-                destructorName.append(segments[len - 2]);
-                if (segments[len - 1].toString().equals(
-                        destructorName.toString())) { // destructor
-                    backup(mark);
-                    return true;
-                }
-            } else {
-                backup(mark);
-                return false;
-            }
-        } else {
-            backup(mark);
-            return false;
-        }
-
-        backup(mark);
-        return false;
-    }
-
-    /**
      * This function parses a declaration specifier sequence, as according to
      * the ANSI C++ spec. declSpecifier : "auto" | "register" | "static" |
      * "extern" | "mutable" | "inline" | "virtual" | "explicit" | "char" |
@@ -3141,22 +3030,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * enumSpecifier Notes: - folded in storageClassSpecifier, typeSpecifier,
      * functionSpecifier - folded elaboratedTypeSpecifier into classSpecifier
      * and enumSpecifier - find template names in name
+     * 
      * @param parm
      *            Is this for a parameter declaration (true) or simple
      *            declaration (false)
-     * @param tryConstructor
-     *            true for constructor, false for pointer to function strategy
-     * @param forTypeId TODO
-     * 
+     * @param forTypeId
+     *            TODO
      * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
     protected ICPPASTDeclSpecifier declSpecifierSeq(boolean parm,
-            boolean tryConstructor, boolean forTypeId) throws BacktrackException,
-            EndOfFileException {
+            boolean forTypeId) throws BacktrackException, EndOfFileException {
         IToken firstToken = LA(1);
-        Flags flags = new Flags(parm, tryConstructor, forTypeId );
+        Flags flags = new Flags(parm, false, forTypeId);
         IToken last = null;
 
         boolean isInline = false, isVirtual = false, isExplicit = false, isFriend = false;
@@ -3318,14 +3205,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tCOLONCOLON:
             case IToken.tIDENTIFIER:
             case IToken.tCOMPLETION:
-                // TODO - Kludgy way to handle constructors/destructors
                 if (flags.haveEncounteredRawType())
                     break declSpecifiers;
 
                 if (flags.haveEncounteredTypename())
-                    break declSpecifiers;
-
-                if (lookAheadForConstructorOrOperator(flags))
                     break declSpecifiers;
 
                 if (lookAheadForDeclarator(flags))
@@ -3548,9 +3431,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTElaboratedTypeSpecifier();
     }
 
-    protected IASTDeclarator initDeclarator() throws EndOfFileException, BacktrackException {
-        return initDeclarator( SimpleDeclarationStrategy.TRY_FUNCTION );
+    protected IASTDeclarator initDeclarator() throws EndOfFileException,
+            BacktrackException {
+        return initDeclarator(SimpleDeclarationStrategy.TRY_FUNCTION);
     }
+
     /**
      * Parses the initDeclarator construct of the ANSI C++ spec. initDeclarator :
      * declarator ("=" initializerClause | "(" expressionList ")")?
@@ -3698,18 +3583,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * (constantExpression)? "]" | "(" declarator")" | directDeclarator "("
      * parameterDeclarationClause ")" (oldKRParameterDeclaration)* declaratorId :
      * name
+     * 
      * @param forNewTypeId
      *            TODO
      * @param container
      *            IParserCallback object that represents the owner declaration.
-     * 
      * @return declarator that this parsing produced.
      * @throws BacktrackException
      *             request a backtrack
      */
     protected IASTDeclarator declarator(SimpleDeclarationStrategy strategy,
-            boolean forNewTypeId)
-            throws EndOfFileException, BacktrackException {
+            boolean forNewTypeId) throws EndOfFileException, BacktrackException {
 
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -3760,33 +3644,33 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 switch (LT(1)) {
                 case IToken.tLPAREN:
 
-//                    boolean failed = false;
-//
-//                    // temporary fix for initializer/function declaration
-//                    // ambiguity
-//                    if (!LA(2).looksLikeExpression()
-//                            && strategy != SimpleDeclarationStrategy.TRY_VARIABLE) {
-//                        if (LT(2) == IToken.tIDENTIFIER) {
-//                            IToken newMark = mark();
-//                            consume(IToken.tLPAREN);
-//                            try {
-//                                name();
-//                                // TODO - we need to lookup/resolve this name
-//                                // see if its a type ...
-//                                // if it is a type, failed = false
-//                                // else failed = true
-//                                failed = false;
-//                            } catch (BacktrackException b) {
-//                                failed = true;
-//                            }
-//
-//                            backup(newMark);
-//                        }
-//                    }
+                    // boolean failed = false;
+                    //
+                    // // temporary fix for initializer/function declaration
+                    // // ambiguity
+                    // if (!LA(2).looksLikeExpression()
+                    // && strategy != SimpleDeclarationStrategy.TRY_VARIABLE) {
+                    // if (LT(2) == IToken.tIDENTIFIER) {
+                    // IToken newMark = mark();
+                    // consume(IToken.tLPAREN);
+                    // try {
+                    // name();
+                    // // TODO - we need to lookup/resolve this name
+                    // // see if its a type ...
+                    // // if it is a type, failed = false
+                    // // else failed = true
+                    // failed = false;
+                    // } catch (BacktrackException b) {
+                    // failed = true;
+                    // }
+                    //
+                    // backup(newMark);
+                    // }
+                    // }
                     if ((!LA(2).looksLikeExpression()
                             && strategy != SimpleDeclarationStrategy.TRY_VARIABLE
-//                            && !failed 
-                            && !forNewTypeId)) {
+                    // && !failed
+                    && !forNewTypeId)) {
                         // parameterDeclarationClause
                         isFunction = true;
                         // TODO need to create a temporary scope object here
@@ -4501,15 +4385,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         try {
             translationUnit = createTranslationUnit();
 
-			// add built-in names to the scope
-			if (supportGCCOtherBuiltinSymbols) {
-				IScope tuScope = translationUnit.getScope();
-				
-				IBinding[] bindings = new GCCBuiltinSymbolProvider(translationUnit.getScope(), ParserLanguage.CPP).getBuiltinBindings();
-				for(int i=0; i<bindings.length; i++) {
-					tuScope.addBinding(bindings[i]);
-				}
-			}
+            // add built-in names to the scope
+            if (supportGCCOtherBuiltinSymbols) {
+                IScope tuScope = translationUnit.getScope();
+
+                IBinding[] bindings = new GCCBuiltinSymbolProvider(
+                        translationUnit.getScope(), ParserLanguage.CPP)
+                        .getBuiltinBindings();
+                for (int i = 0; i < bindings.length; i++) {
+                    tuScope.addBinding(bindings[i]);
+                }
+            }
         } catch (Exception e2) {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;
@@ -5095,7 +4981,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws EndOfFileException
      * @throws BacktrackException
      */
-    protected IASTStatement parseIfStatement() throws EndOfFileException, BacktrackException {
+    protected IASTStatement parseIfStatement() throws EndOfFileException,
+            BacktrackException {
         ICPPASTIfStatement result = null;
         ICPPASTIfStatement if_statement = null;
         int start = LA(1).getOffset();
@@ -5104,24 +4991,27 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tLPAREN);
             IASTNode condition = null;
             try {
-                condition = cppStyleCondition(); //TODO should be while condition
-    			if (LT(1) == IToken.tEOC) {
-    				// Completing in the condition
-    				ICPPASTIfStatement new_if = createIfStatement();
-                    if( condition instanceof IASTExpression )
-                        new_if.setConditionExpression((IASTExpression) condition);
-                    else if( condition instanceof IASTDeclaration )
-                        new_if.setConditionDeclaration((IASTDeclaration) condition);
-    				condition.setParent(new_if);
-    				condition.setPropertyInParent(IASTIfStatement.CONDITION);
-    				
-    				if (if_statement != null) {
+                condition = cppStyleCondition(); // TODO should be while
+                                                    // condition
+                if (LT(1) == IToken.tEOC) {
+                    // Completing in the condition
+                    ICPPASTIfStatement new_if = createIfStatement();
+                    if (condition instanceof IASTExpression)
+                        new_if
+                                .setConditionExpression((IASTExpression) condition);
+                    else if (condition instanceof IASTDeclaration)
+                        new_if
+                                .setConditionDeclaration((IASTDeclaration) condition);
+                    condition.setParent(new_if);
+                    condition.setPropertyInParent(IASTIfStatement.CONDITION);
+
+                    if (if_statement != null) {
                         if_statement.setElseClause(new_if);
                         new_if.setParent(if_statement);
                         new_if.setPropertyInParent(IASTIfStatement.ELSE);
-    				}
-    				return result != null ? result : new_if; 
-    			}
+                    }
+                    return result != null ? result : new_if;
+                }
                 consume(IToken.tRPAREN);
             } catch (BacktrackException b) {
                 IASTProblem p = failParse(b);
@@ -5132,24 +5022,32 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 p.setParent(ps);
                 p.setPropertyInParent(IASTProblemHolder.PROBLEM);
                 condition = ps;
-                if( LT(1) == IToken.tRPAREN )
-                	consume();
-                else if( LT(2) == IToken.tRPAREN )
-                {
-                	consume();
-                	consume();
-                }
-                else
-                	failParseWithErrorHandling();
+                if (LT(1) == IToken.tRPAREN)
+                    consume();
+                else if (LT(2) == IToken.tRPAREN) {
+                    consume();
+                    consume();
+                } else
+                    failParseWithErrorHandling();
             }
-    
+
             IASTStatement thenClause = statement();
-    
+
             ICPPASTIfStatement new_if_statement = createIfStatement();
             ((ASTNode) new_if_statement).setOffset(so);
-            if( condition != null && condition instanceof IASTExpression ) // shouldn't be possible but failure in condition() makes it so
+            if (condition != null && condition instanceof IASTExpression) // shouldn't
+                                                                            // be
+                                                                            // possible
+                                                                            // but
+                                                                            // failure
+                                                                            // in
+                                                                            // condition()
+                                                                            // makes
+                                                                            // it
+                                                                            // so
             {
-                new_if_statement.setConditionExpression((IASTExpression) condition);
+                new_if_statement
+                        .setConditionExpression((IASTExpression) condition);
                 condition.setParent(new_if_statement);
                 condition.setPropertyInParent(IASTIfStatement.CONDITION);
             }
@@ -5165,7 +5063,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 consume(IToken.t_else);
                 if (LT(1) == IToken.t_if) {
                     // an else if, don't recurse, just loop and do another if
-    
+
                     if (if_statement != null) {
                         if_statement.setElseClause(new_if_statement);
                         new_if_statement.setParent(if_statement);
@@ -5179,7 +5077,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         result = if_statement;
                     if (result == null)
                         result = new_if_statement;
-    
+
                     if_statement = new_if_statement;
                     continue if_loop;
                 }
@@ -5202,7 +5100,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     if_statement = new_if_statement;
                 }
             } else {
-            	if( thenClause != null )
+                if (thenClause != null)
                     ((ASTNode) new_if_statement)
                             .setLength(calculateEndOffset(thenClause) - start);
                 if (if_statement != null) {
@@ -5217,14 +5115,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     result = if_statement;
                 if (result == null)
                     result = new_if_statement;
-    
+
                 if_statement = new_if_statement;
             }
             break if_loop;
         }
-    
+
         reconcileLengths(result);
         return result;
     }
 
+    protected boolean checkTokenVsDeclarator(IToken la, IASTDeclarator d) {
+        switch (la.getType()) {
+        case IToken.tCOLON:
+        case IToken.t_try:
+            return true;
+        default:
+            return super.checkTokenVsDeclarator(la, d);
+        }
+    }
 }

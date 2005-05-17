@@ -145,8 +145,10 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 								return;
 							
 							try {
-								startOffset = doc.getLineOffset(tempstartLine);
-								length=doc.getLineLength(tempstartLine);
+//								NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
+								//resolver doesn't take this into account and is still 0 based
+								startOffset = doc.getLineOffset(tempstartLine-1);
+								length=doc.getLineLength(tempstartLine-1);
 							} catch (BadLocationException e) {}
 							
 							//See if an end line number has been provided - if so
@@ -156,7 +158,8 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 							if (tempendLine>0 && tempendLine > tempstartLine){
 								int endOffset;
 								try {
-									endOffset = doc.getLineOffset(tempendLine);
+									//See NOTE above
+									endOffset = doc.getLineOffset(tempendLine-1);
 									length = endOffset - startOffset;
 								} catch (BadLocationException e) {}
 								

@@ -27,10 +27,8 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ILineLocatable;
 import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.core.search.IMatchLocatable;
-import org.eclipse.cdt.core.search.IOffsetLocatable;
+import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -43,8 +41,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class OpenDeclarationsAction extends SelectionParseAction implements IUpdate {
@@ -161,8 +157,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
                         
                         if (fileName != null) {
                             storage.setFileName(fileName);
-                            storage.setLength(end - start);
-                            storage.setOffset(start);
+							storage.setLocatable(new OffsetLocatable(start,end));
                             storage.setResource(ParserUtil.getResourceForFilename( fileName ));
                         } else {
                             operationNotAvailable(CSEARCH_OPERATION_NO_DECLARATION_MESSAGE);
@@ -180,34 +175,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 								if (match instanceof IMatch) {
 									IMatch theMatch = (IMatch)match;
 									storage.setFileName(theMatch.getLocation().toOSString());
-									IMatchLocatable searchLocatable = theMatch.getLocatable();
-									int startOffset=0;
-									int length=0;
-									if (searchLocatable instanceof IOffsetLocatable){
-										   startOffset = ((IOffsetLocatable)searchLocatable).getNameStartOffset();
-										   length = ((IOffsetLocatable)searchLocatable).getNameEndOffset() - startOffset;
-										} else if (searchLocatable instanceof ILineLocatable){
-											int tempstartOffset = ((ILineLocatable)searchLocatable).getStartLine();
-											
-											IDocument doc =fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
-											try {
-												startOffset = doc.getLineOffset(tempstartOffset);
-												length=doc.getLineLength(tempstartOffset);
-											} catch (BadLocationException e) {}			
-											
-											//Check to see if an end offset is provided
-											int tempendOffset = ((ILineLocatable)searchLocatable).getEndLine();
-											//Make sure that there is a real value for the end line
-											if (tempendOffset>0 && tempendOffset>tempstartOffset){
-												try {
-													int endOffset = doc.getLineOffset(tempendOffset);
-													length=endOffset - startOffset;
-												} catch (BadLocationException e) {}		
-											}
-											
-									}
-									storage.setLength(length);
-									storage.setOffset(startOffset);
+									storage.setLocatable(theMatch.getLocatable());
                                     storage.setResource(ParserUtil.getResourceForFilename(theMatch.getLocation().toOSString()));
 									break;
 								}
@@ -243,19 +211,17 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 	 		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
 	 		progressMonitor.run(true, true, runnable);
 	 		
-			int nameOffset = storage.getOffset();
-			int nameLength = storage.getLength();
 			if( storage.getResource() != null )
 	 		{
                 clearStatusLine();
-				open( storage.getResource(), nameOffset,  nameLength );
+				open( storage.getResource(), storage.getLocatable() );
 	 			return;
 	 		}
 			String fileName = storage.getFileName();
 			
  			if (fileName != null){
                 clearStatusLine();
-	 			open( fileName, nameOffset, nameLength);
+	 			open( fileName, storage.getLocatable());
  			}
 
 		} catch(Exception x) {

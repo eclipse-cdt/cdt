@@ -205,8 +205,10 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 										int tempstartOffset = ((ILineLocatable)searchLocatable).getStartLine();
 										IDocument doc =textViewer.getDocument();
 										try {
-											startOffset = doc.getLineOffset(tempstartOffset);
-											length=doc.getLineLength(tempstartOffset);
+											//NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
+											//resolver doesn't take this into account and is still 0 based
+											startOffset = doc.getLineOffset(tempstartOffset-1);
+											length=doc.getLineLength(tempstartOffset-1);
 										} catch (BadLocationException e) {}
 										
 										//Check to see if an end offset is provided
@@ -214,7 +216,8 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 										//Make sure that there is a real value for the end line
 										if (tempendOffset>0 && tempendOffset>tempstartOffset){
 											try {
-												int endOffset = doc.getLineOffset(tempendOffset);
+												//See NOTE above
+												int endOffset = doc.getLineOffset(tempendOffset-1);
 												length=endOffset - startOffset;
 											} catch (BadLocationException e) {}		
 										}
@@ -225,11 +228,8 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 							}
 						}
 					}
-				}catch (InterruptedException e) {
-					//
-				} catch (CModelException e) {
-					//
-				}
+				}catch (InterruptedException e) {} 
+				 catch (CModelException e) {}
 			}
 		}
 		return null;

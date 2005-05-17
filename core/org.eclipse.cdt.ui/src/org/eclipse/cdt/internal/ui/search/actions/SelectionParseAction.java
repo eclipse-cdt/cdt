@@ -32,6 +32,9 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.core.search.ILineLocatable;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -553,9 +556,8 @@ public class SelectionParseAction extends Action {
     {
         private IResource resource;
         private String fileName;
-        private int offset=0;
-        private int length=0;
-
+		private IMatchLocatable locatable;
+		
         public final String getFileName() {
             return fileName;
         }
@@ -564,20 +566,14 @@ public class SelectionParseAction extends Action {
         public final IResource getResource() {
             return resource;
         }
-        public int getLength() {
-            return length;
-        }
-        public int getOffset() {
-            return offset;
-        }
+	    public final IMatchLocatable getLocatable() {
+	        return locatable;
+	    }
         public void setFileName(String fileName) {
             this.fileName = fileName;
         }
-        public void setLength(int length) {
-            this.length = length;
-        }
-        public void setOffset(int offset) {
-            this.offset = offset;
+        public void setLocatable(IMatchLocatable locatable) {
+            this.locatable = locatable;
         }
         public void setResource(IResource resource) {
             this.resource = resource;
@@ -589,25 +585,25 @@ public class SelectionParseAction extends Action {
      * @param string
      * @param i
      */
-    protected boolean open(String filename, int offset, int length) throws PartInitException, CModelException {
+    protected boolean open(String filename, IMatchLocatable locatable) throws PartInitException, CModelException {
         IPath path = new Path( filename );
         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
         if( file != null )
         {
-            open( file, offset, length );
+            open( file, locatable );
             return true;
         }
 
         ICProject cproject = CoreModel.getDefault().getCModel().getCProject( projectName );
         ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
         if (unit != null) {
-            setSelectionAtOffset( EditorUtility.openInEditor(unit), offset, length );
+            setSelectionAtOffset( EditorUtility.openInEditor(unit), locatable );
             return true;
         }
         
         FileStorage storage = new FileStorage(null, path);
         IEditorPart part = EditorUtility.openInEditor(storage);
-        setSelectionAtOffset(part, offset, length);
+        setSelectionAtOffset(part, locatable);
         return true;
         
     }
@@ -618,9 +614,9 @@ public class SelectionParseAction extends Action {
     /**
      * Opens the editor on the given element and subsequently selects it.
      */
-    protected void open( IResource resource, int offset, int length ) throws CModelException, PartInitException {
+    protected void open( IResource resource, IMatchLocatable locatable ) throws CModelException, PartInitException {
         IEditorPart part= EditorUtility.openInEditor(resource);
-        setSelectionAtOffset(part, offset, length);
+        setSelectionAtOffset(part, locatable);
     }
                         
     /**
@@ -628,11 +624,40 @@ public class SelectionParseAction extends Action {
      * @param offset
      * @param length TODO
      */
-    protected void setSelectionAtOffset(IEditorPart part, int offset, int length) {
+    protected void setSelectionAtOffset(IEditorPart part, IMatchLocatable locatable) {
         if( part instanceof AbstractTextEditor )
         {
+			int startOffset=0;
+			int length=0;
+		
+			if (locatable instanceof IOffsetLocatable){
+			    startOffset = ((IOffsetLocatable)locatable).getNameStartOffset();
+			    length = ((IOffsetLocatable)locatable).getNameEndOffset() - startOffset;
+			} else if (locatable instanceof ILineLocatable){
+				int tempstartOffset = ((ILineLocatable)locatable).getStartLine();
+				
+				IDocument doc =  ((AbstractTextEditor) part).getDocumentProvider().getDocument(part.getEditorInput());;
+				try {
+					//NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
+					//resolver doesn't take this into account and is still 0 based
+					startOffset = doc.getLineOffset(tempstartOffset-1);
+					length=doc.getLineLength(tempstartOffset-1);
+				} catch (BadLocationException e) {}			
+				
+				//Check to see if an end offset is provided
+				int tempendOffset = ((ILineLocatable)locatable).getEndLine();
+				//Make sure that there is a real value for the end line
+				if (tempendOffset>0 && tempendOffset>tempstartOffset){
+					try {
+						//See NOTE above
+						int endOffset = doc.getLineOffset(tempendOffset-1);
+						length=endOffset - startOffset;
+					} catch (BadLocationException e) {}		
+				}
+					
+			}
             try {
-            ((AbstractTextEditor) part).selectAndReveal(offset, length);
+            ((AbstractTextEditor) part).selectAndReveal(startOffset, length);
             } catch (Exception e) {}
         }
     }
@@ -677,5 +702,5 @@ public class SelectionParseAction extends Action {
      public void update() {
              setEnabled(getSelectedStringFromEditor() != null);
      }
-    
+	     
 }

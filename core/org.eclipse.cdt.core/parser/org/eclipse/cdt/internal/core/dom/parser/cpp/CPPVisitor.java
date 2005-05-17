@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -1736,6 +1737,15 @@ public class CPPVisitor {
 				return new CPPBasicType( IBasicType.t_int, CPPBasicType.IS_LONG | CPPBasicType.IS_UNSIGNED );
 			}
 		    return createType( typeidExp.getTypeId() );
+		} else if( expression instanceof IASTArraySubscriptExpression ){
+			IType t = getExpressionType( ((IASTArraySubscriptExpression) expression).getArrayExpression() );
+			try {
+				if( t instanceof IPointerType )
+					return ((IPointerType)t).getType();
+				else if( t instanceof IArrayType )
+					return ((IArrayType)t).getType();
+			} catch( DOMException e ){
+			}
 		}
 	    return null;
 	}

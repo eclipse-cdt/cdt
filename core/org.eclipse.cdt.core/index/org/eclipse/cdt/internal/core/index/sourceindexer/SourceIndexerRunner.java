@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
@@ -86,7 +87,6 @@ import org.eclipse.core.runtime.Path;
  * - Unions
  */
 public class SourceIndexerRunner extends AbstractIndexer {
-	IFile resourceFile;
 	private SourceIndexer indexer;
 	
 	/**
@@ -191,13 +191,6 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer#getResourceFile()
-	 */
-	public IFile getResourceFile() {
-		return resourceFile;
-	}
-
 	/**
 	 * @param fullPath
 	 * @param path
@@ -206,16 +199,17 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		return indexer.haveEncounteredHeader(fullPath, path);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object, java.lang.Object)
-     */
-    protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location) {
-        if (problem instanceof IProblem) {
-            IProblem iProblem = (IProblem) problem;
-            
+	protected class AddMarkerProblem extends Problem {
+        private IProblem problem;
+        public AddMarkerProblem(IResource file, IResource orig, IProblem problem) {
+            super(file, orig);
+            this.problem = problem;
+        }
+
+		public void run() {
             try {
                //we only ever add index markers on the file, so DEPTH_ZERO is far enough
-               IMarker[] markers = tempFile.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+               IMarker[] markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
                
                boolean newProblem = true;
                
@@ -228,8 +222,8 @@ public class SourceIndexerRunner extends AbstractIndexer {
                        tempMarker = markers[i];
                        tempInt = (Integer) tempMarker.getAttribute(IMarker.LINE_NUMBER);
                        tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
-                       if (tempInt != null && tempInt.intValue()==iProblem.getSourceLineNumber() &&
-                           tempMsgString.equalsIgnoreCase( INDEXER_MARKER_PREFIX + iProblem.getMessage())) 
+                       if (tempInt != null && tempInt.intValue() == problem.getSourceLineNumber() &&
+                           tempMsgString.equalsIgnoreCase( INDEXER_MARKER_PREFIX + problem.getMessage())) 
                        {
                            newProblem = false;
                            break;
@@ -238,24 +232,23 @@ public class SourceIndexerRunner extends AbstractIndexer {
                }
                
                if (newProblem) {
-                   IMarker marker = tempFile.createMarker(ICModelMarker.INDEXER_MARKER);
-                   int start = iProblem.getSourceStart();
-                   int end = iProblem.getSourceEnd();
+                   IMarker marker = resource.createMarker(ICModelMarker.INDEXER_MARKER);
+                   int start = problem.getSourceStart();
+                   int end = problem.getSourceEnd();
                    if (end <= start)
                        end = start + 1;
-                   marker.setAttribute(IMarker.LOCATION, iProblem.getSourceLineNumber());
-                   marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + iProblem.getMessage());
+                   marker.setAttribute(IMarker.LOCATION, problem.getSourceLineNumber());
+                   marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + problem.getMessage());
                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                   marker.setAttribute(IMarker.LINE_NUMBER, iProblem.getSourceLineNumber());
+                   marker.setAttribute(IMarker.LINE_NUMBER, problem.getSourceLineNumber());
                    marker.setAttribute(IMarker.CHAR_START, start);
                    marker.setAttribute(IMarker.CHAR_END, end); 
                    marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString() );
                }
-               
             } catch (CoreException e) {
                 // You need to handle the cases where attribute value is rejected
             }
-        }
+		}
     }
 
     public void addClassSpecifier(IASTClassSpecifier classSpecification, int fileNumber){
@@ -647,4 +640,17 @@ public class SourceIndexerRunner extends AbstractIndexer {
         int BOGUS_ENTRY = 1;
         this.output.addIncludeRef(fileNumber, incName,1,1, IIndex.OFFSET);
     }
+
+	public void generateMarkerProblem(IFile tempFile, IFile originator, IProblem problem) {
+        Problem tempProblem = new AddMarkerProblem(tempFile, originator, problem);
+        if (getProblemsMap().containsKey(tempFile)) {
+            List list = (List) getProblemsMap().get(tempFile);
+            list.add(tempProblem);
+        } else {
+            List list = new ArrayList();
+            list.add(new RemoveMarkerProblem(tempFile, originator));  //remove existing markers
+            list.add(tempProblem);
+			getProblemsMap().put(tempFile, list);
+        }
+	}
 }

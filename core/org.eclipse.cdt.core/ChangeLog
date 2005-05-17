@@ -1,3 +1,15 @@
+2005-05-17 Vladimir Hirsl
+	Fixed problem marker updating for files that are not indexed due to
+	empty scanner info. Some refactoring of problem marker generation code.
+	
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRequestor.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRunner.java
+
 2005-05-13 Vladimir Hirsl
 	Files with empty scanner info are not indexed anymore.
 	Info problem marker is created for each such file.

@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Path;
  * @author Bogdan Gheorghe
  */
 public class CTagsIndexerRunner extends AbstractIndexer {
-	IFile resourceFile;
 	private CTagsIndexer indexer;
     /**
      * @param resource
@@ -41,13 +40,6 @@ public class CTagsIndexerRunner extends AbstractIndexer {
     public CTagsIndexerRunner(IFile resource, CTagsIndexer indexer) {
         this.resourceFile = resource;
         this.indexer = indexer;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#getResourceFile()
-     */
-    public IFile getResourceFile() {
-        return resourceFile;
     }
 
     /* (non-Javadoc)

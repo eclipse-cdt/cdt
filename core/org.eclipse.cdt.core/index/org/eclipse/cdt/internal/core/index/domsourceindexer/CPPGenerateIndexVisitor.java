@@ -92,7 +92,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)) {
             // Get the location
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(problem);
-            indexer.processProblem(problem, loc);
+            indexer.processProblem(problem.getMessage(), loc);
         }
         return super.visit(problem);
     }
@@ -109,7 +109,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
                 // Get the location
                 IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
-                indexer.processProblem(name, loc);
+                indexer.processProblem(problem.getMessage(), loc);
             }
             return;
         }

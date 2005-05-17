@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,7 +25,6 @@ import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -57,7 +57,6 @@ import org.eclipse.core.runtime.Path;
  */
 public class DOMSourceIndexerRunner extends AbstractIndexer {
 
-    private IFile resourceFile;
     private SourceIndexer indexer;
     // timing & errors
     static int totalParseTime = 0;
@@ -68,10 +67,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     public DOMSourceIndexerRunner(IFile resource, SourceIndexer indexer) {
         this.resourceFile = resource;
         this.indexer = indexer;
-    }
-
-    public IFile getResourceFile() {
-        return resourceFile;
     }
 
     public void setFileTypes(String[] fileTypes) {
@@ -89,6 +84,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         if (isScannerInfoEmpty(resourceFile)) {
             // generate info marker - file is not indexed
             addInfoMarker(resourceFile, CCorePlugin.getResourceString("DOMIndexerMarker.EmptyScannerInfo")); //$NON-NLS-1$
+            if (areProblemMarkersEnabled()) {
+                reportProblems();
+            }
             return;
         }
         
@@ -303,7 +301,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             if (areProblemMarkersEnabled() && shouldRecordProblem(problem)) {
                 // Get the location
                 IASTFileLocation loc = IndexEncoderUtil.getFileLocation(problem);
-                processProblem(problem, loc);
+                processProblem(problem.getMessage(), loc);
             }
         }
     }
@@ -311,81 +309,88 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     /**
      * @param name
      */
-    public void processProblem(IASTNode node, IASTFileLocation loc) {
+    public void processProblem(String message, IASTFileLocation loc) {
         IFile tempFile = resourceFile;
         //If we are in an include file, get the include file
         if (loc != null) {
             String fileName = loc.getFileName();
             tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
             if (tempFile != null) {
-                generateMarkerProblem(tempFile, resourceFile, node, loc);
+                generateMarkerProblem(tempFile, resourceFile, message, loc);
             }
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object, java.lang.Object)
-     */
-    protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location) {
-        String errorMessage = ""; //$NON-NLS-1$
-       
-        if (problem instanceof IASTProblem) {
-            IASTProblem astProblem = (IASTProblem) problem;
-            errorMessage = astProblem.getMessage();
+	private void generateMarkerProblem(IFile tempFile, IFile originator, String message, IASTFileLocation loc) {
+        Problem tempProblem = new AddMarkerProblem(tempFile, originator, message, loc);
+        if (getProblemsMap().containsKey(tempFile)) {
+            List list = (List) getProblemsMap().get(tempFile);
+            list.add(tempProblem);
+        } else {
+            List list = new ArrayList();
+            list.add(new RemoveMarkerProblem(tempFile, resourceFile));  //remove existing markers
+            list.add(tempProblem);
+			getProblemsMap().put(tempFile, list);
         }
-        else if (problem instanceof IASTName) { // semantic error specified in IProblemBinding
-            IASTName name = (IASTName) problem;
-            if (name.resolveBinding() instanceof IProblemBinding) {
-                IProblemBinding problemBinding = (IProblemBinding) name.resolveBinding(); 
-                errorMessage = problemBinding.getMessage();
-            }
-        }
-        if (location != null && location instanceof IASTFileLocation) {
-            IASTFileLocation fileLoc = (IASTFileLocation) location;
-            try {
-                //we only ever add index markers on the file, so DEPTH_ZERO is far enough
-                IMarker[] markers = tempFile.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
-                
-                boolean newProblem = true;
-                
-                if (markers.length > 0) {
-                    IMarker tempMarker = null;
-                    int nameStart = -1; 
-                    int nameLen = -1;
-                    String tempMsgString = null;
-                    
-                    for (int i=0; i<markers.length; i++) {
-                        tempMarker = markers[i];
-                        nameStart = ((Integer) tempMarker.getAttribute(IMarker.CHAR_START)).intValue();
-                        nameLen = ((Integer) tempMarker.getAttribute(IMarker.CHAR_END)).intValue() - nameStart;
-                        tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
-                        if (nameStart != -1 && 
-                                nameStart == fileLoc.getNodeOffset() &&
-                                nameLen == fileLoc.getNodeLength() &&
-                                tempMsgString.equalsIgnoreCase(INDEXER_MARKER_PREFIX + errorMessage)) {
-                            newProblem = false;
-                            break;
-                        }
-                    }
-                }
-                if (newProblem) {
-                    IMarker marker = tempFile.createMarker(ICModelMarker.INDEXER_MARKER);
-                    int start = fileLoc.getNodeOffset();
-                    int end = start + fileLoc.getNodeLength();
-                    marker.setAttribute(IMarker.LOCATION, fileLoc.getStartingLineNumber());
-                    marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + errorMessage);
-                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                    marker.setAttribute(IMarker.LINE_NUMBER, fileLoc.getStartingLineNumber());
-                    marker.setAttribute(IMarker.CHAR_START, start);
-                    marker.setAttribute(IMarker.CHAR_END, end); 
-                    marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString());
-                }
-                
-            } catch (CoreException e) {
-                // You need to handle the cases where attribute value is rejected
-            }
-        }
-    }
+	}
+
+	class AddMarkerProblem extends Problem {
+		private String message;
+        private IASTFileLocation location;
+		public AddMarkerProblem(IResource resource, IResource originator, String message, IASTFileLocation location) {
+			super(resource, originator);
+			this.message = message;
+			this.location = location;
+		}
+
+		public void run() {
+	        if (location != null) {
+	            try {
+	                //we only ever add index markers on the file, so DEPTH_ZERO is far enough
+	                IMarker[] markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+	                
+	                boolean newProblem = true;
+	                
+	                if (markers.length > 0) {
+	                    IMarker tempMarker = null;
+	                    int nameStart = -1; 
+	                    int nameLen = -1;
+	                    String tempMsgString = null;
+	                    
+	                    for (int i=0; i<markers.length; i++) {
+	                        tempMarker = markers[i];
+	                        nameStart = ((Integer) tempMarker.getAttribute(IMarker.CHAR_START)).intValue();
+	                        nameLen = ((Integer) tempMarker.getAttribute(IMarker.CHAR_END)).intValue() - nameStart;
+	                        tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+	                        if (nameStart != -1 && 
+	                                nameStart == location.getNodeOffset() &&
+	                                nameLen == location.getNodeLength() &&
+	                                tempMsgString.equalsIgnoreCase(INDEXER_MARKER_PREFIX + message)) {
+	                            newProblem = false;
+	                            break;
+	                        }
+	                    }
+	                }
+	                if (newProblem) {
+	                    IMarker marker = resource.createMarker(ICModelMarker.INDEXER_MARKER);
+	                    int start = location.getNodeOffset();
+	                    int end = start + location.getNodeLength();
+	                    marker.setAttribute(IMarker.LOCATION, location.getStartingLineNumber());
+	                    marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + message);
+	                    marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+	                    marker.setAttribute(IMarker.LINE_NUMBER, location.getStartingLineNumber());
+	                    marker.setAttribute(IMarker.CHAR_START, start);
+	                    marker.setAttribute(IMarker.CHAR_END, end); 
+	                    marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString());
+	                }
+	                
+	            } catch (CoreException e) {
+	                // You need to handle the cases where attribute value is rejected
+	            }
+	        }
+		}
+		
+	}
 
     public boolean shouldRecordProblem(IASTProblem problem) {
         boolean preprocessor = (getProblemMarkersEnabled() & SourceIndexer.PREPROCESSOR_PROBLEMS_BIT ) != 0;
@@ -412,38 +417,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
      */
     public boolean shouldRecordProblem(IProblemBinding problem) {
         return (getProblemMarkersEnabled() & SourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0;
-    }
-
-    /**
-     * @param file
-     * @param message
-     */
-    private void addInfoMarker(IFile file, String message) {
-        try {
-            IMarker[] markers = file.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_ZERO);
-        
-            boolean newProblem = true;
-           
-            if (markers.length > 0) {
-                IMarker tempMarker = null;
-                String tempMsgString = null;
-
-                for (int i=0; i<markers.length; i++) {
-                    tempMarker = markers[i];
-                    tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
-                    if (tempMsgString.equalsIgnoreCase( message )) {
-                        newProblem = false;
-                        break;
-                    }
-                }
-            }
-  
-            if (newProblem){
-                IMarker marker = file.createMarker(ICModelMarker.INDEXER_MARKER);
-                marker.setAttribute(IMarker.MESSAGE, message); 
-                marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-            }
-        } catch (CoreException e) {}
     }
 
     /**

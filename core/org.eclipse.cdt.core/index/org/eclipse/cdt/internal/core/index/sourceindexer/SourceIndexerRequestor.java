@@ -116,7 +116,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 			}
 			
 			if( tempFile != null ){
-                indexer.generateMarkerProblem(tempFile, resourceFile, problem, null);
+                indexer.generateMarkerProblem(tempFile, resourceFile, problem);
 			}
 		}
 		

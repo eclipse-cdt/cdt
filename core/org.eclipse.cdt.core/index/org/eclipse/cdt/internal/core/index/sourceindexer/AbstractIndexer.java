@@ -50,6 +50,7 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
 	protected static final String INDEXER_MARKER_PREFIX = Util.bind("indexerMarker.prefix" ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
     protected static final String INDEXER_MARKER_ORIGINATOR =  ICModelMarker.INDEXER_MARKER + ".originator";  //$NON-NLS-1$
     private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
+	protected IFile resourceFile;
 	
 	public AbstractIndexer() {
 		super();
@@ -64,10 +65,10 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
 	}
 	    
 	  
-	/**
-	 * Returns the file types being indexed.
-	 */
-	public abstract IFile getResourceFile();
+	public Map getProblemsMap() {
+		return problemsMap;
+	}
+
 	/**
 	 * @see IIndexer#index(IFile document, IIndexerOutput output)
 	 */
@@ -77,6 +78,7 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
 	} 
 	
 	protected abstract void indexFile(IFile file) throws IOException;
+	
 	/**
 	 * @param fileToBeIndexed
 	 * @see IIndexer#shouldIndex(IFile file)
@@ -97,51 +99,107 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
 		return false;
 	}
 
-    abstract private class Problem {
-        public IFile file;
-        public IFile originator;
-        public Problem( IFile file, IFile orig ){
-            this.file = file;
-            this.originator = orig;
+    protected abstract class Problem {
+        public IResource resource;
+        public IResource originator;
+        public Problem (IResource resource, IResource originator) {
+            this.resource = resource;
+            this.originator = originator;
         }
-        
-        abstract public boolean isAddProblem();
-        abstract public Object getProblem();
-        abstract public Object getLocation();
+		/**
+		 * Method to actually add/remove problem markers 
+		 */
+		abstract public void run();
     }
 
-    private class AddMarkerProblem extends Problem {
-        private Object problem;
-        private Object location;
-        public AddMarkerProblem(IFile file, IFile orig, Object problem, Object location) {
-            super( file, orig );
-            this.problem = problem;
-            this.location = location;
-        }
-        public boolean isAddProblem(){
-            return true;
-        }
-        public Object getProblem(){
-            return problem;
-        }
-        public Object getLocation() {
-            return location;
+	protected class FileInfoMarker extends Problem {
+		private String message;
+		public FileInfoMarker(IResource resource, IResource originator, String message) {
+			super(resource, originator);
+			this.message = message;
+		}
+
+		public void run() {
+	        try {
+	            IMarker[] markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_ZERO);
+	        
+	            boolean newProblem = true;
+	           
+	            if (markers.length > 0) {
+	                IMarker tempMarker = null;
+	                String tempMsgString = null;
+
+	                for (int i=0; i<markers.length; i++) {
+	                    tempMarker = markers[i];
+	                    tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+	                    if (tempMsgString.equalsIgnoreCase( message )) {
+	                        newProblem = false;
+	                        break;
+	                    }
+	                }
+	            }
+	  
+	            if (newProblem){
+	                IMarker marker = resource.createMarker(ICModelMarker.INDEXER_MARKER);
+	                marker.setAttribute(IMarker.MESSAGE, message); 
+	                marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+	            }
+	        } catch (CoreException e) {}
+		}
+		
+	}
+    /**
+     * @param file
+     * @param message
+     */
+    protected void addInfoMarker(IFile tempFile, String message) {
+        Problem tempProblem = new FileInfoMarker(tempFile, tempFile, message);
+        if (getProblemsMap().containsKey(tempFile)) {
+            List list = (List) getProblemsMap().get(tempFile);
+            list.add(tempProblem);
+        } else {
+            List list = new ArrayList();
+            list.add(new RemoveMarkerProblem(tempFile, getResourceFile()));  //remove existing markers
+            list.add(tempProblem);
+			getProblemsMap().put(tempFile, list);
         }
     }
 
-    private class RemoveMarkerProblem extends Problem {
+    protected class RemoveMarkerProblem extends Problem {
         public RemoveMarkerProblem(IFile file, IFile orig) {
             super(file, orig);
         }
-        public boolean isAddProblem() {
-            return false;
-        }
-        public Object getProblem() {
-            return null;
-        }
-        public Object getLocation() {
-            return null;
-        }
+
+		public void run() {
+	        if (originator == null) {
+	            //remove all markers
+	            try {
+	                resource.deleteMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
+	            } catch (CoreException e) {
+	            }
+	            return;
+	        }
+	        // else remove only those markers with matching originator
+	        IMarker[] markers;
+	        try {
+	            markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
+	        } catch (CoreException e1) {
+	            return;
+	        }
+	        String origPath = originator.getFullPath().toString();
+	        IMarker mark = null;
+	        String orig = null;
+	        for (int i = 0; i < markers.length; i++) {
+	            mark = markers[ i ];
+	            try {
+	                orig = (String) mark.getAttribute(INDEXER_MARKER_ORIGINATOR);
+	                if( orig != null && orig.equals(origPath )) {
+	                    mark.delete();
+	                }
+	            } catch (CoreException e) {
+	            }
+	        }
+		}
     }
 
     // Problem markers ******************************
@@ -161,24 +219,7 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
         this.problemMarkersEnabled = value;
     }
     
-    /**
-     * @param tempFile - not null
-     * @param resourceFile
-     * @param problem
-     * @param location
-     */
-    public void generateMarkerProblem(IFile tempFile, IFile resourceFile, Object problem, Object location) {
-        Problem tempProblem = new AddMarkerProblem(tempFile, resourceFile, problem, location);
-        if (problemsMap.containsKey(tempFile)) {
-            List list = (List) problemsMap.get(tempFile);
-            list.add(tempProblem);
-        } else {
-            List list = new ArrayList();
-            list.add(new RemoveMarkerProblem(tempFile, resourceFile));  //remove existing markers
-            list.add(tempProblem);
-            problemsMap.put(tempFile, list);
-        }
-    }
+//    abstract public void generateMarkerProblem(Problem problem);
 
     public void requestRemoveMarkers(IFile resource, IFile originator ){
         if (!areProblemMarkersEnabled())
@@ -264,47 +305,17 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
         Iterator i = problemsList.iterator();
         while (i.hasNext()) {
             Problem prob = (Problem) i.next();
-            if (prob.isAddProblem()) {
-                addMarkers(prob.file, prob.originator, prob.getProblem(), prob.getLocation());
-            } else {
-                removeMarkers(prob.file, prob.originator);
-            }
+			prob.run();
         }
     }
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 
-    abstract protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location);
-    
-    public void removeMarkers(IFile resource, IFile originator) {
-        if (originator == null) {
-            //remove all markers
-            try {
-                resource.deleteMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
-            } catch (CoreException e) {
-            }
-            return;
-        }
-        // else remove only those markers with matching originator
-        IMarker[] markers;
-        try {
-            markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
-        } catch (CoreException e1) {
-            return;
-        }
-        String origPath = originator.getFullPath().toString();
-        IMarker mark = null;
-        String orig = null;
-        for (int i = 0; i < markers.length; i++) {
-            mark = markers[ i ];
-            try {
-                orig = (String) mark.getAttribute(INDEXER_MARKER_ORIGINATOR);
-                if( orig != null && orig.equals(origPath )) {
-                    mark.delete();
-                }
-            } catch (CoreException e) {
-            }
-        }
-    }
-    
+	public IFile getResourceFile() {
+	    return resourceFile;
+	}
 
 }
 

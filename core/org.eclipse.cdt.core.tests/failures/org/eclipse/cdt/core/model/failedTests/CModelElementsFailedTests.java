@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -49,7 +50,7 @@ public class CModelElementsFailedTests extends TestCase {
 		
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		String pluginRoot = CTestPlugin.getDefault().find(new Path("/")).getFile();
 	
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h");

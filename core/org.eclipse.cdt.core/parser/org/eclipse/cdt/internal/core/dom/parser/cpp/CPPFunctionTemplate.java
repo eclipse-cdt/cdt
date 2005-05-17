@@ -289,7 +289,12 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateDefinition#deferredInstance(org.eclipse.cdt.core.dom.ast.IType[])
 	 */
 	public ICPPSpecialization deferredInstance(IType[] arguments) {
-		return new CPPDeferredFunctionInstance( this, arguments );
+		ICPPSpecialization instance = getInstance( arguments );
+		if( instance == null ){
+			instance = new CPPDeferredFunctionInstance( this, arguments );
+			addSpecialization( arguments, instance );
+		}
+		return instance;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()

@@ -1553,4 +1553,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( type.isSameType( p.getType() ) );
 	}
 	
+	public void testDeferredFunctionTemplates() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class T > void f( T );               \n"); //$NON-NLS-1$
+		buffer.append("template <class T > void g( T t ){             \n"); //$NON-NLS-1$
+		buffer.append("   f( t );                                     \n"); //$NON-NLS-1$
+		buffer.append("}                                              \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPFunctionTemplate f = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
+		ICPPFunction f2 = (ICPPFunction) col.getName(8).resolveBinding();
+		assertTrue( f2 instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)f2).getTemplateDefinition(), f );
+	}
+	
 }

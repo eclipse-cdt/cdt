@@ -56,7 +56,8 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
 	 */
 	public CPPTypedef(IASTName name) {
 		this.declarations = new IASTName[] { name };
-		name.setBinding( this );
+        if (name != null)
+            name.setBinding( this );
 	}
 
     /* (non-Javadoc)

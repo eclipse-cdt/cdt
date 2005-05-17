@@ -728,13 +728,13 @@ public class CVisitor {
 			    }
 		        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 			} else if( parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) parent).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
-				binding = new CTypeDef( name );
+				binding = new CTypedef( name );
 			else
 				binding = new CFunction( (IASTFunctionDeclarator) declarator );
 		} else if( parent instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-				binding = new CTypeDef( name );
+				binding = new CTypedef( name );
 			} else {
 			    IType t1 = null, t2 = null;
 			    if( binding != null ) {
@@ -1069,6 +1069,9 @@ public class CVisitor {
                 }
 			    if( binding != null )
 			        return binding;
+			} else if (!prefix && scope != null  && scope.getParent() == null && scope.getBinding( name, false ) != null) {
+				binding = scope.getBinding( name, false );
+				return binding;
 			} else {
 			
 				Object result = null;

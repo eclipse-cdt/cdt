@@ -203,4 +203,8 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
 		}
 		return -1;
 	}
+
+	public void addBinding(IBinding binding) throws DOMException {
+		throw new DOMException( this );
+	}
 }

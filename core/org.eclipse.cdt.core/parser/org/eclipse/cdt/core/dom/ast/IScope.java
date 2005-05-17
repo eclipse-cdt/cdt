@@ -86,6 +86,15 @@ public interface IScope {
 	 */
 	public IBinding getBinding(IASTName name, boolean resolve)
 			throws DOMException;
+	
+	/**
+	 * This adds an IBinding to the scope.  It is primarily used by the parser to add
+	 * implicit IBindings to the scope (such as GCC built-in functions).
+	 * 
+	 * @param binding
+	 * @throws DOMException
+	 */
+	public void addBinding(IBinding binding) throws DOMException;
 
 	/**
 	 * Set whether or not all the names in this scope have been cached

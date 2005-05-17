@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
@@ -325,5 +326,53 @@ public class AST2BaseTest extends TestCase {
 	
 	protected void isParameterTypeEqual(IFunctionType fType, String str) {
 		assertEquals(str, ASTTypeUtil.getParameterTypeString(fType));
+	}
+	
+	static protected class CNameResolver extends CASTVisitor {
+		{
+			shouldVisitNames = true;
+		}
+		public int numProblemBindings=0;
+		public int numNullBindings=0;
+		public List nameList = new ArrayList();
+		public int visit( IASTName name ){
+			nameList.add( name );
+			IBinding binding = name.resolveBinding();
+			if (binding instanceof IProblemBinding)
+				numProblemBindings++;
+			if (binding == null)
+				numNullBindings++;
+			return PROCESS_CONTINUE;
+		}
+		public IASTName getName( int idx ){
+			if( idx < 0 || idx >= nameList.size() )
+				return null;
+			return (IASTName) nameList.get( idx );
+		}
+		public int size() { return nameList.size(); } 
+	}
+	
+	static protected class CPPNameResolver extends CPPASTVisitor {
+		{
+			shouldVisitNames = true;
+		}
+		public int numProblemBindings=0;
+		public int numNullBindings=0;
+		public List nameList = new ArrayList();
+		public int visit( IASTName name ){
+			nameList.add( name );
+			IBinding binding = name.resolveBinding();
+			if (binding instanceof IProblemBinding)
+				numProblemBindings++;
+			if (binding == null)
+				numNullBindings++;
+			return PROCESS_CONTINUE;
+		}
+		public IASTName getName( int idx ){
+			if( idx < 0 || idx >= nameList.size() )
+				return null;
+			return (IASTName) nameList.get( idx );
+		}
+		public int size() { return nameList.size(); } 
 	}
 }

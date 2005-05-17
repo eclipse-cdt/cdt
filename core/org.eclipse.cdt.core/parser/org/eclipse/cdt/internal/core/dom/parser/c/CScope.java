@@ -204,4 +204,16 @@ public class CScope implements ICScope {
 		bindings[1].clear();
 		isFullyCached = false;
 	}
+
+	public void addBinding(IBinding binding) {
+		int type = NAMESPACE_TYPE_OTHER;
+        if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
+            type = NAMESPACE_TYPE_TAG;
+        }
+            
+        if( bindings[type] == CharArrayObjectMap.EMPTY_MAP )
+           bindings[type] = new CharArrayObjectMap(2);
+        
+		bindings[type].put(binding.getNameCharArray(), binding);
+	}
 }

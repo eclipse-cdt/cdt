@@ -15,149 +15,55 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author aniefer
  */
-public class CPPImplicitMethod extends CPPMethod {
-
-    private char [] implicitName = null;
-    private IParameter [] parameters = null;
-    private IType returnType = null;
-    private ICPPClassScope scope = null;
+public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod {
     
     public CPPImplicitMethod( ICPPClassScope scope, char[] name, IType returnType, IParameter[] params ) {
-        super( null );
-        this.implicitName = name;
-        this.parameters = params;
-        this.returnType = returnType;
-        this.scope = scope;
+        super( name, scope, returnType, params, false );
     }
    
-	/**
-     * @param cs
-     * @param ps
-     */
- 
-    public IParameter [] getParameters() {
-        return parameters;
-    }
-    
-    public IFunctionType getType() {
-    	if( type == null ){
-    		IASTDeclaration primary = null;
-			try {
-				primary = getPrimaryDeclaration();
-			} catch (DOMException e) {
-			}
-			if( primary != null ){
-				type = super.getType();
-			} else {
-				type = CPPVisitor.createImplicitFunctionType( returnType, parameters );
-			}
-    	}
-    	
-        return type;
-    }
-
-	public String getName() {
-        return String.valueOf( implicitName );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
-	public char[] getNameCharArray() {
-        return implicitName;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
-	public IScope getScope() {
-		return scope;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
-	 */
-	public IScope getFunctionScope() {
-	    return null;
-	}
-	
 	public int getVisibility() throws DOMException {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl == null ) {
 		    //12.1-5, 12.8-10 Implicitl constructors and assignment operators are public
 		    return ICPPASTVisiblityLabel.v_public;
 		} 
-		return super.getVisibility();
-    }
-	
-	public IBinding resolveParameter( IASTParameterDeclaration param ){
-    	IASTName name = param.getDeclarator().getName();
-    	IParameter binding = (IParameter) name.getBinding();
-    	if( binding != null )
-    		return binding;
 		
-    	//get the index in the parameter list
-    	ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) param.getParent();
-    	IASTParameterDeclaration [] ps = fdtor.getParameters();
-    	int i = 0;
-    	for( ; i < ps.length; i++ ){
-    		if( param == ps[i] )
-    			break;
-    	}
-    	
-    	//set the binding for the corresponding parameter in all known defns and decls
-    	binding = parameters[i];
-    	IASTParameterDeclaration temp = null;
-    	if( definition != null ){
-    		temp = definition.getParameters()[i];
-    		IASTName n = temp.getDeclarator().getName();
-    		n.setBinding( binding );
-    		((CPPParameter)binding).addDeclaration( n );
-    	}
-    	if( declarations != null ){
-    		for( int j = 0; j < declarations.length; j++ ){
-    			temp = declarations[j].getParameters()[i];
-    			IASTName n = temp.getDeclarator().getName();
-        		n.setBinding( binding );
-        		((CPPParameter)binding).addDeclaration( n );
-    		}
-    	}
-    	return binding;
+        IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
+        IASTDeclaration [] members = cls.getMembers();
+        ICPPASTVisiblityLabel vis = null;
+        for( int i = 0; i < members.length; i++ ){
+            if( members[i] instanceof ICPPASTVisiblityLabel )
+                vis = (ICPPASTVisiblityLabel) members[i];
+            else if( members[i] == decl )
+                break;
+        }
+        if( vis != null ){
+            return vis.getVisibility();
+        } else if( cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class ){
+            return ICPPASTVisiblityLabel.v_private;
+        } 
+        return ICPPASTVisiblityLabel.v_public;
     }
-   
-	protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
-		if( parameters != null ){
-			IASTParameterDeclaration [] nps = fdtor.getParameters();
-			if( nps.length != parameters.length )
-			    return;
-
-			for( int i = 0; i < nps.length; i++ ){
-			    IASTName name = nps[i].getDeclarator().getName(); 
-			    name.setBinding( parameters[i] );
-			    ((CPPParameter)parameters[i]).addDeclaration( name );
-			}
-		}
-	}
 	
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
@@ -169,10 +75,10 @@ public class CPPImplicitMethod extends CPPMethod {
 			}
 		}
 		
-		IFunctionType ftype = CPPVisitor.createImplicitFunctionType( returnType, parameters );
+		IFunctionType ftype = getType();
 		IType [] params = ftype.getParameterTypes();
 		
-		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) scope.getPhysicalNode();
+		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) getScope().getPhysicalNode();
 		IASTDeclaration [] members = compSpec.getMembers();
 		for( int i = 0; i < members.length; i++ ){
 			IASTDeclarator dtor = null;
@@ -195,7 +101,7 @@ public class CPPImplicitMethod extends CPPMethod {
 			while( dtor != null ){
 				IASTName name = dtor.getName();
 				if( dtor instanceof ICPPASTFunctionDeclarator &&
-					CharArrayUtils.equals( name.toCharArray(), implicitName ) )
+					CharArrayUtils.equals( name.toCharArray(), getNameCharArray() ) )
 				{
 					IFunctionType t = (IFunctionType) CPPVisitor.createType( dtor );
 					IType [] ps = t.getParameterTypes();
@@ -220,5 +126,16 @@ public class CPPImplicitMethod extends CPPMethod {
 			}
 		}
 		return null;
+	}
+
+    public boolean isVirtual() {
+        return false;
+    }
+
+	public boolean isDestructor() {
+		char [] n = getNameCharArray();
+		if( n != null && n.length > 0 )
+			return n[0] == '~';
+		return false;
 	}
 }

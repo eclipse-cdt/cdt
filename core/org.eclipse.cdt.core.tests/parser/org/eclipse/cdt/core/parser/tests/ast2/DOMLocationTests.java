@@ -185,7 +185,7 @@ public class DOMLocationTests extends AST2BaseTest {
 
     public void testBug83664() throws Exception {
         String code = "int foo(x) int x; {\n 	return x;\n   }\n"; //$NON-NLS-1$
-        IASTTranslationUnit tu = parse(code, ParserLanguage.C);
+        IASTTranslationUnit tu = parse(code, ParserLanguage.C, true);
         IASTDeclaration[] declarations = tu.getDeclarations();
         assertEquals(declarations.length, 1);
         IASTFunctionDefinition definition = (IASTFunctionDefinition) declarations[0];

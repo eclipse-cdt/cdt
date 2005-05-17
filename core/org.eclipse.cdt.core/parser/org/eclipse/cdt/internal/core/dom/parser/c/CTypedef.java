@@ -24,11 +24,11 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CTypeDef implements ITypedef, ITypeContainer {
+public class CTypedef implements ITypedef, ITypeContainer {
 	private final IASTName name; 
 	private IType type = null;
 	
-	public CTypeDef( IASTName name ){
+	public CTypedef( IASTName name ){
 		this.name = name;
 	}
 	

@@ -773,8 +773,12 @@ public class CPPSemantics {
         Object [] objs = null;
         if( source instanceof CharArrayObjectMap )
         	map = (CharArrayObjectMap) source;
-        else 
-        	objs = ArrayUtil.trim( Object.class, (Object[]) source );
+        else{
+			if (source instanceof Object[])
+				objs = ArrayUtil.trim( Object.class, (Object[]) source );
+			else 
+				objs = new Object[]{ source };
+		} 
         
         int size = map != null ? map.size() : objs.length;
 		int resultInitialSize = resultMap.size();
@@ -831,6 +835,11 @@ public class CPPSemantics {
 						mergeResults( data, binding, true );	
 					}
 				} else {
+					if (!data.prefixLookup && data.astName != null ) {
+						IBinding b = scope.getBinding( data.astName, false );
+						if (b instanceof CPPImplicitFunction || b instanceof CPPImplicitTypedef)
+							mergeResults( data, b, true );
+					}
 				    mergeResults( data, lookupInScope( data, scope, blockItem ), true );
 				}
 

@@ -1014,6 +1014,12 @@ public class ASTSignatureUtil {
 			case IASTBinaryExpression.op_notequals:
 				opString = String.valueOf(Keywords.cpNOTEQUAL);
 				break;
+            case IGPPASTBinaryExpression.op_max:
+                opString = String.valueOf(Keywords.cpMAX);
+                break;
+            case IGPPASTBinaryExpression.op_min:
+                opString = String.valueOf(Keywords.cpMIN);
+                break;
 		}
 		
 		return opString;

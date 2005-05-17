@@ -43,6 +43,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTestSuite( AST2CSpecTest.class );
 		suite.addTestSuite( AST2CSpecFailingTest.class );
 		suite.addTestSuite( DOMSelectionParseTest.class );
+		suite.addTestSuite( GCCCompleteParseExtensionsTest.class );
 		suite.addTest( CompletionTestSuite.suite() );
 		return suite;
 	}	

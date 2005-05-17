@@ -171,12 +171,15 @@ public class AST2SpecBaseTest extends TestCase {
 			shouldVisitNames = true;
 		}
 		public int numProblemBindings=0;
+		public int numNullBindings=0;
 		public List nameList = new ArrayList();
 		public int visit( IASTName name ){
 			nameList.add( name );
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding)
 				numProblemBindings++;
+			if (binding == null)
+				numNullBindings++;
 			return PROCESS_CONTINUE;
 		}
 		public IASTName getName( int idx ){
@@ -192,12 +195,15 @@ public class AST2SpecBaseTest extends TestCase {
 			shouldVisitNames = true;
 		}
 		public int numProblemBindings=0;
+		public int numNullBindings=0;
 		public List nameList = new ArrayList();
 		public int visit( IASTName name ){
 			nameList.add( name );
 			IBinding binding = name.resolveBinding();
 			if (binding instanceof IProblemBinding)
 				numProblemBindings++;
+			if (binding == null)
+				numNullBindings++;
 			return PROCESS_CONTINUE;
 		}
 		public IASTName getName( int idx ){

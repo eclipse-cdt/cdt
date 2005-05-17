@@ -173,10 +173,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	 */
 	public void test3_2s4() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		 buffer.append("struct X; // declare X as a struct type\n"); //$NON-NLS-1$
-		 buffer.append("struct X* x1; // use X in pointer formation\n"); //$NON-NLS-1$
-		 buffer.append("X* x2; // use X in pointer formation\n"); //$NON-NLS-1$
-		parseCandCPP(buffer.toString(), true, 0);
+		buffer.append("struct X; // declare X as a struct type\n"); //$NON-NLS-1$
+		buffer.append("struct X* x1; // use X in pointer formation\n"); //$NON-NLS-1$
+		buffer.append("X* x2; // use X in pointer formation\n"); //$NON-NLS-1$
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
 	/**

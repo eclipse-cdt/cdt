@@ -84,17 +84,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final boolean supportTypeOfUnaries;
 
     protected final boolean supportAlignOfUnaries;
+	
+	protected final boolean supportKnRC;
+	
+	protected final boolean supportGCCOtherBuiltinSymbols; 
 
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
             boolean supportStatementsInExpressions,
-            boolean supportTypeOfUnaries, boolean supportAlignOfUnaries) {
+            boolean supportTypeOfUnaries, boolean supportAlignOfUnaries,
+            boolean supportKnRC, boolean supportGCCOtherBuiltinSymbols) {
         this.scanner = scanner;
         this.log = logService;
         this.mode = parserMode;
         this.supportStatementsInExpressions = supportStatementsInExpressions;
         this.supportTypeOfUnaries = supportTypeOfUnaries;
         this.supportAlignOfUnaries = supportAlignOfUnaries;
+		this.supportKnRC = supportKnRC;
+		this.supportGCCOtherBuiltinSymbols = supportGCCOtherBuiltinSymbols;
     }
 
     protected boolean parsePassed = true;

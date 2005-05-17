@@ -73,6 +73,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
@@ -95,12 +97,14 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParseError;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
+import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
@@ -129,7 +133,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         super(scanner, logService, parserMode, config
                 .supportStatementsInExpressions(), config
                 .supportTypeofUnaryExpressions(), config
-                .supportAlignOfUnaryExpression());
+                .supportAlignOfUnaryExpression(), config
+                .supportKnRC(), config.supportGCCOtherBuiltinSymbols());
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
     }
 
@@ -565,6 +570,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     protected void translationUnit() {
         try {
             translationUnit = createTranslationUnit();
+
+			// add built-in names to the scope
+			if (supportGCCOtherBuiltinSymbols) {
+				IScope tuScope = translationUnit.getScope();
+				
+				IBinding[] bindings = new GCCBuiltinSymbolProvider(translationUnit.getScope(), ParserLanguage.C).getBuiltinBindings();
+				for(int i=0; i<bindings.length; i++) {
+					tuScope.addBinding(bindings[i]);
+				}
+			}
         } catch (Exception e2) {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;
@@ -1786,8 +1801,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     // count the number of K&R C parameters (0 K&R C parameters
                     // essentially means it's not K&R C)
                     numKnRCParms = countKnRCParms();
-
-                    if (numKnRCParms > 0) { // KnR C parameters were found so
+					
+                    if (supportKnRC && numKnRCParms > 0) { // KnR C parameters were found so
                         // handle the declarator accordingly
                         parmNames = new IASTName[numKnRCParms];
                         parmDeclarations = new IASTDeclaration[numKnRCParms];

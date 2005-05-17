@@ -119,4 +119,8 @@ public class CPPUnknownScope implements ICPPScope {
     public void flushCache() {
     }
 
+	public void addBinding(IBinding aBinding) {
+		// do nothing, this is part of template magic and not a normal scope
+	}
+
 }

@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 
@@ -127,22 +126,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        addConstructor( binding );
 	        return;
 	    }
-		if( bindings == null )
-			bindings = new CharArrayObjectMap(1);
-		char [] c = binding.getNameCharArray();
-		Object o = bindings.get( c );
-		if( o != null ){
-		    if( o instanceof ObjectSet ){
-		        ((ObjectSet)o).put( binding );
-		    } else {
-		        ObjectSet set = new ObjectSet(2);
-		        set.put( o );
-		        set.put( binding );
-		        bindings.put( c, set );
-		    }
-		} else {
-		    bindings.put( c, binding );
-		}
+        super.addBinding(binding);
 	}
 
 	public void addName(IASTName name) {

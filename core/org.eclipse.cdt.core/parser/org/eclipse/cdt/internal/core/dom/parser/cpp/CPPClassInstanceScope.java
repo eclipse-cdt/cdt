@@ -242,4 +242,23 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 			bindings.clear();
 		isFullyCached = false;
 	}
+
+	public void addBinding(IBinding binding) {
+        if( bindings == null )
+            bindings = new CharArrayObjectMap(1);
+        char [] c = binding.getNameCharArray();
+        Object o = bindings.get( c );
+        if( o != null ){
+            if( o instanceof ObjectSet ){
+                ((ObjectSet)o).put( binding );
+            } else {
+                ObjectSet set = new ObjectSet(2);
+                set.put( o );
+                set.put( binding );
+                bindings.put( c, set );
+            }
+        } else {
+            bindings.put( c, binding );
+        }
+	}
 }

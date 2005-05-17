@@ -76,6 +76,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
@@ -134,11 +136,13 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
+import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
@@ -1922,7 +1926,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IParserLogService log, ICPPParserExtensionConfiguration config) {
         super(scanner, log, mode, config.supportStatementsInExpressions(),
                 config.supportTypeofUnaryExpressions(), config
-                        .supportAlignOfUnaryExpression());
+                        .supportAlignOfUnaryExpression(), config.
+                        supportKnRC(), config.supportGCCOtherBuiltinSymbols());
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
@@ -4495,6 +4500,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected void translationUnit() {
         try {
             translationUnit = createTranslationUnit();
+
+			// add built-in names to the scope
+			if (supportGCCOtherBuiltinSymbols) {
+				IScope tuScope = translationUnit.getScope();
+				
+				IBinding[] bindings = new GCCBuiltinSymbolProvider(translationUnit.getScope(), ParserLanguage.CPP).getBuiltinBindings();
+				for(int i=0; i<bindings.length; i++) {
+					tuScope.addBinding(bindings[i]);
+				}
+			}
         } catch (Exception e2) {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;

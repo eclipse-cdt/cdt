@@ -4220,4 +4220,18 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPField bar = (ICPPField) col.getName(1).resolveBinding();
         assertSame( bar, col.getName(6).resolveBinding() );
     }
+	public void testBug95419() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("int strcmp( const char * );          \n"); //$NON-NLS-1$
+		buffer.append("void f( const char * const * argv ){ \n"); //$NON-NLS-1$
+		buffer.append("   strcmp( *argv );                  \n"); //$NON-NLS-1$
+		buffer.append("}                                    \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPFunction strcmp = (ICPPFunction) col.getName(0).resolveBinding();
+		assertSame( strcmp, col.getName(4).resolveBinding() );
+	}
 }

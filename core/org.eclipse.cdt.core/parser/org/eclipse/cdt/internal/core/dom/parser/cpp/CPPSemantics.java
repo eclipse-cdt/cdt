@@ -2531,6 +2531,25 @@ public class CPPSemantics {
 			source = new CPPPointerType( ((IArrayType)source).getType() );
 		}
 		
+		//4.1 if T is a non-class type, the type of the rvalue is the cv-unqualified version of T
+		if( source instanceof IQualifierType ){
+			IType t = ((IQualifierType)source).getType();
+			while( t instanceof ITypedef )
+				t = ((ITypedef)t).getType();
+			if( !(t instanceof ICPPClassType) ){
+				source = t;
+			}
+		} else if( source instanceof IPointerType && 
+				   ( ((IPointerType)source).isConst() || ((IPointerType)source).isVolatile() ) )
+		{
+			IType t = ((IPointerType)source).getType();
+			while( t instanceof ITypedef )
+				t = ((ITypedef)t).getType();
+			if( !(t instanceof ICPPClassType) ){
+				source = new CPPPointerType( t );
+			}
+		}
+		
 		cost.source = source;
 		cost.target = target;
 		

@@ -31,6 +31,11 @@ public class AllManagedBuildTests {
 		junit.textui.TestRunner.run(AllManagedBuildTests.suite());
 	}
 	public static Test suite() {
+		//  May/2005 Turning off all indexing for now because the "original" indexer causes hangs... 
+		CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.NULL_INDEXER_UNIQUE_ID);
+		//  We could enable this later...
+		//CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, "org.eclipse.cdt.core.domsourceindexer");
+
 		TestSuite suite = new TestSuite(
 				"Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$

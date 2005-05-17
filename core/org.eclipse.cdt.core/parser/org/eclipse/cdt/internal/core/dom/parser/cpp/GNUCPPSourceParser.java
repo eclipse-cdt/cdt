@@ -540,6 +540,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON) {
                 try {
                     nameDuple = name();
+                    if( nameDuple.length() == 1 )
+                    {
+                        backup(mark);
+                        return;
+                    }
+                    if( nameDuple.getLastToken().getType() != IToken.tCOLONCOLON )
+                    {
+                        backup(mark);
+                        return;
+                    }
                     last = nameDuple.getLastToken();
                 } catch (BacktrackException bt) {
                     backup(mark);
@@ -931,7 +941,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclarator declarator = null;
 
         try {
-            declSpecifier = declSpecifierSeq(true, true);
+            declSpecifier = declSpecifierSeq(true, true, true);
             if (LT(1) != IToken.tEOC)
                 declarator = declarator(
                         SimpleDeclarationStrategy.TRY_CONSTRUCTOR, forNewExpression);
@@ -2744,7 +2754,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         firstToken = null; // necessary for scalability
 
         ICPPASTDeclSpecifier declSpec = declSpecifierSeq(false,
-                strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR);
+                strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, false);
         IASTDeclarator[] declarators = new IASTDeclarator[2];
         if (LT(1) != IToken.tSEMI && LT(1) != IToken.tEOC) {
             declarators = (IASTDeclarator[]) ArrayUtil
@@ -3008,7 +3018,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected ICPPASTParameterDeclaration parameterDeclaration()
             throws BacktrackException, EndOfFileException {
         IToken current = LA(1);
-        IASTDeclSpecifier declSpec = declSpecifierSeq(true, false);
+        IASTDeclSpecifier declSpec = declSpecifierSeq(true, false, false);
         IASTDeclarator declarator = null;
         if (LT(1) != IToken.tSEMI)
             declarator = initDeclarator(SimpleDeclarationStrategy.TRY_FUNCTION);
@@ -3126,21 +3136,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * enumSpecifier Notes: - folded in storageClassSpecifier, typeSpecifier,
      * functionSpecifier - folded elaboratedTypeSpecifier into classSpecifier
      * and enumSpecifier - find template names in name
-     * 
      * @param parm
      *            Is this for a parameter declaration (true) or simple
      *            declaration (false)
      * @param tryConstructor
      *            true for constructor, false for pointer to function strategy
+     * @param forTypeId TODO
+     * 
      * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
     protected ICPPASTDeclSpecifier declSpecifierSeq(boolean parm,
-            boolean tryConstructor) throws BacktrackException,
+            boolean tryConstructor, boolean forTypeId) throws BacktrackException,
             EndOfFileException {
         IToken firstToken = LA(1);
-        Flags flags = new Flags(parm, tryConstructor);
+        Flags flags = new Flags(parm, tryConstructor, forTypeId );
         IToken last = null;
 
         boolean isInline = false, isVirtual = false, isExplicit = false, isFriend = false;
@@ -3306,7 +3317,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (flags.haveEncounteredRawType())
                     break declSpecifiers;
 
-                if (parm && flags.haveEncounteredTypename())
+                if (flags.haveEncounteredTypename())
                     break declSpecifiers;
 
                 if (lookAheadForConstructorOrOperator(flags))
@@ -3532,6 +3543,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return new CPPASTElaboratedTypeSpecifier();
     }
 
+    protected IASTDeclarator initDeclarator() throws EndOfFileException, BacktrackException {
+        return initDeclarator( SimpleDeclarationStrategy.TRY_FUNCTION );
+    }
     /**
      * Parses the initDeclarator construct of the ANSI C++ spec. initDeclarator :
      * declarator ("=" initializerClause | "(" expressionList ")")?
@@ -3920,10 +3934,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
                 break;
             }
-            if (LA(1).getType() != IToken.tIDENTIFIER)
-                break;
 
-        } while (true);
+        } while (false);
 
         IASTDeclarator d = null;
         if (isFunction) {

@@ -6095,7 +6095,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("friend class X;\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("class X : A::B { // illformed:\n"); //$NON-NLS-1$
-		buffer.append("A::B cannot be accessed\n"); //$NON-NLS-1$
+		buffer.append("//A::B cannot be accessed\n"); //$NON-NLS-1$
 		buffer.append("// in the baseclause for X\n"); //$NON-NLS-1$
 		buffer.append("A::B mx; // OK: A::B used to declare member of X\n"); //$NON-NLS-1$
 		buffer.append("class Y : A::B { // OK: A::B used to declare member of X\n"); //$NON-NLS-1$
@@ -9981,7 +9981,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("void f() {\n"); //$NON-NLS-1$
 		buffer.append("g(1); //calls g(double)\n"); //$NON-NLS-1$
 		buffer.append("h++; //illformed:\n"); //$NON-NLS-1$
-		buffer.append("cannot increment function;\n"); //$NON-NLS-1$
+		buffer.append("// cannot increment function;\n"); //$NON-NLS-1$
 		buffer.append("// this could be diagnosed either here or\n"); //$NON-NLS-1$
 		buffer.append("// at the point of instantiation\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
@@ -12442,5 +12442,74 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
         parse(buffer.toString(), ParserLanguage.CPP, false, 0);
     }
     
-    
+    /**
+     [--Start Example(CPP 11.3-2):
+    class A {
+    public:
+    int z;
+    int z1;
+    };
+    class B : public A {
+    int a;
+    public:
+    int b, c;
+    int bf();
+    protected:
+    int x;
+    int y;
+    };
+    class D : private B {
+    int d;
+    public:
+    B::c; //adjust access to B::c
+    B::z; //adjust access to A::z
+    A::z1; //adjust access to A::z1
+    int e;
+    int df();
+    protected:
+    B::x; //adjust access to B::x
+    int g;
+    };
+    class X : public D {
+    int xf();
+    };
+    int ef(D&);
+    int ff(X&);
+     --End Example]
+     */
+    public void test11_3s2() throws Exception { //bug 92793
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A {\n"); //$NON-NLS-1$
+        buffer.append("public:\n"); //$NON-NLS-1$
+        buffer.append("int z;\n"); //$NON-NLS-1$
+        buffer.append("int z1;\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("class B : public A {\n"); //$NON-NLS-1$
+        buffer.append("int a;\n"); //$NON-NLS-1$
+        buffer.append("public:\n"); //$NON-NLS-1$
+        buffer.append("int b, c;\n"); //$NON-NLS-1$
+        buffer.append("int bf();\n"); //$NON-NLS-1$
+        buffer.append("protected:\n"); //$NON-NLS-1$
+        buffer.append("int x;\n"); //$NON-NLS-1$
+        buffer.append("int y;\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("class D : private B {\n"); //$NON-NLS-1$
+        buffer.append("int d;\n"); //$NON-NLS-1$
+        buffer.append("public:\n"); //$NON-NLS-1$
+        buffer.append("B::c; //adjust access to B::c\n"); //$NON-NLS-1$
+        buffer.append("B::z; //adjust access to A::z\n"); //$NON-NLS-1$
+        buffer.append("A::z1; //adjust access to A::z1\n"); //$NON-NLS-1$
+        buffer.append("int e;\n"); //$NON-NLS-1$
+        buffer.append("int df();\n"); //$NON-NLS-1$
+        buffer.append("protected:\n"); //$NON-NLS-1$
+        buffer.append("B::x; //adjust access to B::x\n"); //$NON-NLS-1$
+        buffer.append("int g;\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("class X : public D {\n"); //$NON-NLS-1$
+        buffer.append("int xf();\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("int ef(D&);\n"); //$NON-NLS-1$
+        buffer.append("int ff(X&);\n"); //$NON-NLS-1$
+        parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+    }   
 }

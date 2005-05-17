@@ -42,7 +42,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 		ASTCompletionNode node = getGPPCompletionNode(code.toString());
 		IASTName[] names = node.getNames();
 		// There are three names, one as an expression, one that isn't connected, one as a declaration
-		assertEquals(3, names.length);
+		assertEquals(4, names.length);
 		// The expression points to our functions
 		IBinding[] bindings = names[0].resolvePrefix();
 		// There should be two since they both start with fu
@@ -79,9 +79,9 @@ public class BasicCompletionTest extends CompletionTestBase {
 		// C++
 		ASTCompletionNode node = getGPPCompletionNode(code.toString());
 		IASTName[] names = node.getNames();
-		assertEquals(2, names.length);
+		assertEquals(3, names.length);
 		assertNull(names[0].getTranslationUnit());
-		IBinding[] bindings = names[1].resolvePrefix();
+		IBinding[] bindings = names[2].resolvePrefix();
 		assertEquals(1, bindings.length);
 		assertEquals("blah", ((ITypedef)bindings[0]).getName());
 		

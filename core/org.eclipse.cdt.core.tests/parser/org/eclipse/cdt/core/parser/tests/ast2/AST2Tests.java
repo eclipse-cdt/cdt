@@ -75,9 +75,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
@@ -160,7 +157,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTName name_ref_y = ref_y.getName();
         assertEquals("y", name_ref_y.toString()); //$NON-NLS-1$
 
-        //BINDINGS
+        // BINDINGS
         // resolve the binding to get the variable object
         IVariable var_x = (IVariable) name_x.resolveBinding();
         assertEquals(globalScope, var_x.getScope());
@@ -203,24 +200,32 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_y);
 
-//        // test clearBindings
-//        assertNotNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-//        assertNotNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-//        assertNotNull(((ICScope) body_f.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray())); //$NON-NLS-1$
-//        assertNotNull(((ICScope) body_f.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
-//        CVisitor.clearBindings(tu);
-//        assertNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-//        assertNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-//        assertNull(((ICScope) body_f.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray())); //$NON-NLS-1$
-//        assertNull(((ICScope) body_f.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
+        // // test clearBindings
+        // assertNotNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNotNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNotNull(((ICScope) body_f.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNotNull(((ICScope) body_f.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()));
+        // //$NON-NLS-1$
+        // CVisitor.clearBindings(tu);
+        // assertNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNull(((ICScope) body_f.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("z").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNull(((ICScope) body_f.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray()));
+        // //$NON-NLS-1$
     }
 
     public void testSimpleStruct() throws Exception {
@@ -244,8 +249,8 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(IASTDeclSpecifier.sc_typedef, type.getStorageClass());
         // this an anonymous struct
         IASTName name_struct = type.getName();
-		assertTrue( name_struct.isDeclaration() );
-		assertFalse( name_struct.isReference() );
+        assertTrue(name_struct.isDeclaration());
+        assertFalse(name_struct.isReference());
         assertEquals("", name_struct.toString()); //$NON-NLS-1$
         // member - x
         IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) type
@@ -298,7 +303,7 @@ public class AST2Tests extends AST2BaseTest {
                 .getOperand2();
         assertEquals("5", lit_5.toString()); //$NON-NLS-1$
 
-        //Logical Bindings In Test
+        // Logical Bindings In Test
         ICompositeType type_struct = (ICompositeType) name_struct
                 .resolveBinding();
         ITypedef typedef_S = (ITypedef) name_S.resolveBinding();
@@ -453,7 +458,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        //struct A;
+        // struct A;
         IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu
                 .getDeclarations()[0];
         IASTElaboratedTypeSpecifier compTypeSpec = (IASTElaboratedTypeSpecifier) decl1
@@ -461,14 +466,14 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(0, decl1.getDeclarators().length);
         IASTName nameA1 = compTypeSpec.getName();
 
-        //void f() {
+        // void f() {
         IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu
                 .getDeclarations()[1];
         IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef
                 .getBody();
         assertEquals(2, compoundStatement.getStatements().length);
 
-        //   struct A;
+        // struct A;
         IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement
                 .getStatements()[0];
         IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) declStatement
@@ -477,7 +482,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(0, decl2.getDeclarators().length);
         IASTName nameA2 = compTypeSpec.getName();
 
-        //   struct A * a;
+        // struct A * a;
         declStatement = (IASTDeclarationStatement) compoundStatement
                 .getStatements()[1];
         IASTSimpleDeclaration decl3 = (IASTSimpleDeclaration) declStatement
@@ -489,7 +494,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(1, dtor.getPointerOperators().length);
         assertTrue(dtor.getPointerOperators()[0] instanceof ICASTPointer);
 
-        //bindings
+        // bindings
         ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
         ICompositeType str2 = (ICompositeType) nameA2.resolveBinding();
         IVariable var = (IVariable) namea.resolveBinding();
@@ -536,7 +541,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        //struct A;
+        // struct A;
         IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu
                 .getDeclarations()[0];
         IASTElaboratedTypeSpecifier compTypeSpec = (IASTElaboratedTypeSpecifier) decl1
@@ -544,14 +549,14 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(0, decl1.getDeclarators().length);
         IASTName nameA1 = compTypeSpec.getName();
 
-        //void f() {
+        // void f() {
         IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu
                 .getDeclarations()[1];
         IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef
                 .getBody();
         assertEquals(1, compoundStatement.getStatements().length);
 
-        //   struct A * a;
+        // struct A * a;
         IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement
                 .getStatements()[0];
         IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) declStatement
@@ -563,7 +568,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(1, dtor.getPointerOperators().length);
         assertTrue(dtor.getPointerOperators()[0] instanceof ICASTPointer);
 
-        //bindings
+        // bindings
         ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
         ICompositeType str2 = (ICompositeType) nameA2.resolveBinding();
         IVariable var = (IVariable) namea.resolveBinding();
@@ -603,7 +608,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        //struct A;
+        // struct A;
         IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu
                 .getDeclarations()[0];
         IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) decl1
@@ -611,7 +616,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(0, decl1.getDeclarators().length);
         IASTName name_A1 = elabTypeSpec.getName();
 
-        //struct A * a;
+        // struct A * a;
         IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) tu
                 .getDeclarations()[1];
         elabTypeSpec = (IASTElaboratedTypeSpecifier) decl2.getDeclSpecifier();
@@ -621,27 +626,27 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(1, dtor.getPointerOperators().length);
         assertTrue(dtor.getPointerOperators()[0] instanceof ICASTPointer);
 
-        //struct A {
+        // struct A {
         IASTSimpleDeclaration decl3 = (IASTSimpleDeclaration) tu
                 .getDeclarations()[2];
         ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) decl3
                 .getDeclSpecifier();
         IASTName name_Adef = compTypeSpec.getName();
 
-        //   int i;
+        // int i;
         IASTSimpleDeclaration decl4 = (IASTSimpleDeclaration) compTypeSpec
                 .getMembers()[0];
         dtor = decl4.getDeclarators()[0];
         IASTName name_i = dtor.getName();
 
-        //void f() {
+        // void f() {
         IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu
                 .getDeclarations()[3];
         IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef
                 .getBody();
         assertEquals(1, compoundStatement.getStatements().length);
 
-        //   a->i;
+        // a->i;
         IASTExpressionStatement exprstmt = (IASTExpressionStatement) compoundStatement
                 .getStatements()[0];
         IASTFieldReference fieldref = (IASTFieldReference) exprstmt
@@ -650,7 +655,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTName name_aref = id_a.getName();
         IASTName name_iref = fieldref.getFieldName();
 
-        //bindings
+        // bindings
         IVariable var_a1 = (IVariable) name_aref.resolveBinding();
         IVariable var_i1 = (IVariable) name_iref.resolveBinding();
         IPointerType structA_1pointer = (IPointerType) var_a1.getType();
@@ -772,23 +777,31 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(decls.length, 1);
         assertEquals(decls[0], declaration2.getDeclarators()[0].getName());
 
-//        assertNotNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray())); //$NON-NLS-1$
-//        assertNotNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-//        assertNotNull(((ICScope) compound.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-//        assertNotNull(((ICScope) compound.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray())); //$NON-NLS-1$
-//        CVisitor.clearBindings(tu);
-//        assertNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray())); //$NON-NLS-1$
-//        assertNull(((ICScope) tu.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray())); //$NON-NLS-1$
-//        assertNull(((ICScope) compound.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray())); //$NON-NLS-1$
-//        assertNull(((ICScope) compound.getScope()).getBinding(
-//                ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray())); //$NON-NLS-1$
+        // assertNotNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNotNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNotNull(((ICScope) compound.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNotNull(((ICScope) compound.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()));
+        // //$NON-NLS-1$
+        // CVisitor.clearBindings(tu);
+        // assertNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_TAG, new String("x").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNull(((ICScope) tu.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNull(((ICScope) compound.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()));
+        // //$NON-NLS-1$
+        // assertNull(((ICScope) compound.getScope()).getBinding(
+        // ICScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()));
+        // //$NON-NLS-1$
     }
 
     public void testFunctionParameters() throws Exception {
@@ -800,29 +813,29 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        //void f(
+        // void f(
         IASTSimpleDeclaration f_decl = (IASTSimpleDeclaration) tu
                 .getDeclarations()[0];
         IASTStandardFunctionDeclarator dtor = (IASTStandardFunctionDeclarator) f_decl
                 .getDeclarators()[0];
         IASTName f_name1 = dtor.getName();
-        //        int a );
+        // int a );
         IASTParameterDeclaration param1 = dtor.getParameters()[0];
         IASTDeclarator paramDtor = param1.getDeclarator();
         IASTName name_param1 = paramDtor.getName();
 
-        //void f(
+        // void f(
         IASTFunctionDefinition f_defn = (IASTFunctionDefinition) tu
                 .getDeclarations()[1];
         assertTrue(f_defn.getDeclarator() instanceof IASTStandardFunctionDeclarator);
         dtor = (IASTStandardFunctionDeclarator) f_defn.getDeclarator();
         IASTName f_name2 = dtor.getName();
-        //        int b );
+        // int b );
         IASTParameterDeclaration param2 = dtor.getParameters()[0];
         paramDtor = param2.getDeclarator();
         IASTName name_param2 = paramDtor.getName();
 
-        //   b;
+        // b;
         IASTCompoundStatement compound = (IASTCompoundStatement) f_defn
                 .getBody();
         IASTExpressionStatement expStatement = (IASTExpressionStatement) compound
@@ -831,7 +844,7 @@ public class AST2Tests extends AST2BaseTest {
                 .getExpression();
         IASTName name_param3 = idexp.getName();
 
-        //bindings
+        // bindings
         IParameter param_1 = (IParameter) name_param3.resolveBinding();
         IParameter param_2 = (IParameter) name_param2.resolveBinding();
         IParameter param_3 = (IParameter) name_param1.resolveBinding();
@@ -932,18 +945,18 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        //void f();
+        // void f();
         IASTSimpleDeclaration fdecl = (IASTSimpleDeclaration) tu
                 .getDeclarations()[0];
         IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) fdecl
                 .getDeclarators()[0];
         IASTName name_f = fdtor.getName();
 
-        //void g() {
+        // void g() {
         IASTFunctionDefinition gdef = (IASTFunctionDefinition) tu
                 .getDeclarations()[1];
 
-        //   f();
+        // f();
         IASTCompoundStatement compound = (IASTCompoundStatement) gdef.getBody();
         IASTExpressionStatement expStatement = (IASTExpressionStatement) compound
                 .getStatements()[0];
@@ -954,14 +967,14 @@ public class AST2Tests extends AST2BaseTest {
         IASTName name_fcall = fcall_id.getName();
         assertNull(fcall.getParameterExpression());
 
-        //void f() {}
+        // void f() {}
         IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu
                 .getDeclarations()[2];
         assertTrue(fdef.getDeclarator() instanceof IASTStandardFunctionDeclarator);
         fdtor = (IASTStandardFunctionDeclarator) fdef.getDeclarator();
         IASTName name_fdef = fdtor.getName();
 
-        //bindings
+        // bindings
         IFunction function_1 = (IFunction) name_fcall.resolveBinding();
         IFunction function_2 = (IFunction) name_f.resolveBinding();
         IFunction function_3 = (IFunction) name_fdef.resolveBinding();
@@ -1002,41 +1015,41 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
-        //void f() {
+        // void f() {
         IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu
                 .getDeclarations()[0];
         IASTCompoundStatement compound = (IASTCompoundStatement) fdef.getBody();
 
-        //   for(
+        // for(
         IASTForStatement for_stmt = (IASTForStatement) compound.getStatements()[0];
-        //        int i = 0;
+        // int i = 0;
         assertNull(for_stmt.getInitExpression());
         IASTSimpleDeclaration initDecl = (IASTSimpleDeclaration) for_stmt
                 .getInitDeclaration();
         IASTDeclarator dtor = initDecl.getDeclarators()[0];
         IASTName name_i = dtor.getName();
-        //                   i < 5;
+        // i < 5;
         IASTBinaryExpression exp = (IASTBinaryExpression) for_stmt
                 .getCondition();
         IASTIdExpression id_i = (IASTIdExpression) exp.getOperand1();
         IASTName name_i2 = id_i.getName();
         IASTLiteralExpression lit_5 = (IASTLiteralExpression) exp.getOperand2();
         assertEquals(IASTLiteralExpression.lk_integer_constant, lit_5.getKind());
-        //                           i++ ) {
+        // i++ ) {
         IASTUnaryExpression un = (IASTUnaryExpression) for_stmt
                 .getIterationExpression();
         IASTIdExpression id_i2 = (IASTIdExpression) un.getOperand();
         IASTName name_i3 = id_i2.getName();
         assertEquals(IASTUnaryExpression.op_postFixIncr, un.getOperator());
 
-        //      i;
+        // i;
         compound = (IASTCompoundStatement) for_stmt.getBody();
         IASTExpressionStatement exprSt = (IASTExpressionStatement) compound
                 .getStatements()[0];
         IASTIdExpression id_i3 = (IASTIdExpression) exprSt.getExpression();
         IASTName name_i4 = id_i3.getName();
 
-        //bindings
+        // bindings
         IVariable var_1 = (IVariable) name_i4.resolveBinding();
         IVariable var_2 = (IVariable) name_i.resolveBinding();
         IVariable var_3 = (IVariable) name_i2.resolveBinding();
@@ -1142,7 +1155,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
 
         CNameCollector collector = new CNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 3);
         IFunction function = (IFunction) collector.getName(0).resolveBinding();
@@ -1388,56 +1401,6 @@ public class AST2Tests extends AST2BaseTest {
                 .resolveBinding());
         assertEquals(decls.length, 1);
         assertEquals(decls[0], f.getNestedDeclarator().getName());
-
-        tu = parse("int (*pfi)();", ParserLanguage.CPP); //$NON-NLS-1$
-        assertEquals(tu.getDeclarations().length, 1);
-        d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-        assertEquals(d.getDeclarators().length, 1);
-        f = (IASTStandardFunctionDeclarator) d.getDeclarators()[0];
-        assertEquals(f.getName().toString(), "");
-        assertNotNull(f.getNestedDeclarator());
-        assertEquals(f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
-    }
-
-    public void testBasicPointerToMember() throws Exception {
-        StringBuffer buffer = new StringBuffer("class X {\n"); //$NON-NLS-1$
-        buffer.append("  public:\n"); //$NON-NLS-1$
-        buffer.append("  void f(int);\n"); //$NON-NLS-1$
-        buffer.append("  int a;\n"); //$NON-NLS-1$
-        buffer.append("};\n"); //$NON-NLS-1$
-        buffer.append("int X:: * pmi = &X::a;\n"); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        assertEquals(tu.getDeclarations().length, 2);
-        IASTSimpleDeclaration p2m = (IASTSimpleDeclaration) tu
-                .getDeclarations()[1];
-        IASTDeclarator d = p2m.getDeclarators()[0];
-        ICPPASTPointerToMember po = (ICPPASTPointerToMember) d
-                .getPointerOperators()[0];
-        assertEquals(po.getName().toString(), "X::"); //$NON-NLS-1$
-    }
-
-    public void testAmbiguity() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("class A { };\n"); //$NON-NLS-1$
-        buffer.append("int f() { \n"); //$NON-NLS-1$
-        buffer.append("  A * b = 0;\n"); //$NON-NLS-1$
-        buffer.append("  A & c = 0;\n"); //$NON-NLS-1$
-        buffer.append("}"); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        IASTSimpleDeclaration A = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-        IASTFunctionDefinition f = (IASTFunctionDefinition) tu
-                .getDeclarations()[1];
-        IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
-        for (int i = 0; i < 2; ++i) {
-            IASTDeclarationStatement ds = (IASTDeclarationStatement) body
-                    .getStatements()[i];
-            String s1 = ((IASTNamedTypeSpecifier) ((IASTSimpleDeclaration) ds
-                    .getDeclaration()).getDeclSpecifier()).getName().toString();
-            String s2 = ((IASTCompositeTypeSpecifier) A.getDeclSpecifier())
-                    .getName().toString();
-            assertEquals(s1, s2);
-        }
-
     }
 
     public void testBasicTypes() throws Exception {
@@ -1712,7 +1675,7 @@ public class AST2Tests extends AST2BaseTest {
                 .getDeclSpecifier();
         ICompositeType A = (ICompositeType) elabSpec.getName().resolveBinding();
         IASTName name_A1 = elabSpec.getName();
-		assertTrue( name_A1.isDeclaration() );
+        assertTrue(name_A1.isDeclaration());
 
         decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
         IFunction f = (IFunction) decl.getDeclarators()[0].getName()
@@ -1756,7 +1719,7 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(t_f_params[0] instanceof IBasicType);
         assertTrue(t_f_params[1] instanceof IBasicType);
 
-        //g is a pointer to a function that returns void and has 1 parameter
+        // g is a pointer to a function that returns void and has 1 parameter
         // struct A *
         IType t_g = g.getType();
         assertTrue(t_g instanceof IPointerType);
@@ -1770,8 +1733,8 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue(t_g_func_p1 instanceof IPointerType);
         assertSame(((IPointerType) t_g_func_p1).getType(), A);
 
-        //h is a pointer to a function that returns a pointer to a function
-        //the returned pointer to function returns void and takes 1 parameter
+        // h is a pointer to a function that returns a pointer to a function
+        // the returned pointer to function returns void and takes 1 parameter
         // int
         // the *h function takes 1 parameter struct A**
         IType t_h = h.getType();
@@ -1879,11 +1842,12 @@ public class AST2Tests extends AST2BaseTest {
                 .getInitializer()).getInitializers();
         IASTName name_y2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers1[0])
                 .getDesignators()[0]).getName();
-		
-		// test bug 87649
-		assertEquals(((ASTNode)(ICASTDesignatedInitializer) initializers1[0]).getLength(), 7);
-		
-		IASTName name_x2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers1[1])
+
+        // test bug 87649
+        assertEquals(((ASTNode) (ICASTDesignatedInitializer) initializers1[0])
+                .getLength(), 7);
+
+        IASTName name_x2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers1[1])
                 .getDesignators()[0]).getName();
 
         IASTSimpleDeclaration point = (IASTSimpleDeclaration) ((IASTDeclarationStatement) statements[1])
@@ -2513,7 +2477,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         IVariable a = (IVariable) col.getName(1).resolveBinding();
         assertNotNull(a);
@@ -2534,7 +2498,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         IVariable a = (IVariable) col.getName(1).resolveBinding();
         IFunction g = (IFunction) col.getName(2).resolveBinding();
@@ -2557,7 +2521,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 9);
         IField x = (IField) col.getName(1).resolveBinding();
@@ -2579,7 +2543,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 6);
         IEnumerator one = (IEnumerator) col.getName(1).resolveBinding();
@@ -2602,17 +2566,19 @@ public class AST2Tests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         IASTIfStatement if_statement = (IASTIfStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
                 .getDeclarations()[0]).getBody()).getStatements()[0];
-        assertEquals(((IASTBinaryExpression) if_statement.getConditionExpression())
-                .getOperator(), IASTBinaryExpression.op_equals);
+        assertEquals(((IASTBinaryExpression) if_statement
+                .getConditionExpression()).getOperator(),
+                IASTBinaryExpression.op_equals);
         IASTIfStatement second_if_statement = (IASTIfStatement) if_statement
                 .getElseClause();
-        assertEquals(
-                ((IASTBinaryExpression) second_if_statement.getConditionExpression())
-                        .getOperator(), IASTBinaryExpression.op_lessThan);
+        assertEquals(((IASTBinaryExpression) second_if_statement
+                .getConditionExpression()).getOperator(),
+                IASTBinaryExpression.op_lessThan);
         IASTIfStatement third_if_statement = (IASTIfStatement) second_if_statement
                 .getElseClause();
-        assertEquals(((IASTBinaryExpression) third_if_statement.getConditionExpression())
-                .getOperator(), IASTBinaryExpression.op_greaterThan);
+        assertEquals(((IASTBinaryExpression) third_if_statement
+                .getConditionExpression()).getOperator(),
+                IASTBinaryExpression.op_greaterThan);
     }
 
     public void testBug84090_LabelReferences() throws Exception {
@@ -2626,7 +2592,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
         ILabel end = (ILabel) col.getName(1).resolveBinding();
@@ -2643,7 +2609,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector collector = new CNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 5);
         IEnumeration col = (IEnumeration) collector.getName(0).resolveBinding();
@@ -2657,7 +2623,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(
                 "struct s { int a; } ss = { .a = 1 }; \n", ParserLanguage.C); //$NON-NLS-1$
         CNameCollector collector = new CNameCollector();
-        tu.accept( collector);
+        tu.accept(collector);
 
         assertEquals(collector.size(), 4);
         IField a = (IField) collector.getName(1).resolveBinding();
@@ -2683,7 +2649,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
         IEnumeration e = (IEnumeration) col.getName(0).resolveBinding();
@@ -2703,7 +2669,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
         IVariable p = (IVariable) col.getName(1).resolveBinding();
@@ -2724,7 +2690,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
 
@@ -2755,7 +2721,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 7);
 
@@ -2775,7 +2741,7 @@ public class AST2Tests extends AST2BaseTest {
     public void testBug84266_2() throws Exception {
         IASTTranslationUnit tu = parse("struct s f(void);", ParserLanguage.C); //$NON-NLS-1$
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
 
@@ -2784,7 +2750,7 @@ public class AST2Tests extends AST2BaseTest {
 
         tu = parse("struct s f(void){}", ParserLanguage.C); //$NON-NLS-1$
         col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 3);
 
@@ -2804,7 +2770,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 6);
 
@@ -2831,7 +2797,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 11);
 
@@ -2860,7 +2826,7 @@ public class AST2Tests extends AST2BaseTest {
 
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
+        tu.accept(col);
 
         assertEquals(col.size(), 13);
 
@@ -2894,269 +2860,223 @@ public class AST2Tests extends AST2BaseTest {
 
     }
 
-    public void testBug84696() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("struct A {\n int a; \n};\n"); //$NON-NLS-1$
-        buffer.append("struct B: virtual A { };\n"); //$NON-NLS-1$
-        buffer.append("struct C: B { };\n"); //$NON-NLS-1$
-        buffer.append("struct D: B { };\n"); //$NON-NLS-1$
-        buffer.append("struct E: public C, public D { };\n"); //$NON-NLS-1$
-        buffer.append("struct F: public A { };\n"); //$NON-NLS-1$
-        buffer.append("void f() {\n"); //$NON-NLS-1$
-        buffer.append("E e;\n"); //$NON-NLS-1$
-        buffer.append("e.B::a = 0;\n"); //$NON-NLS-1$
-        buffer.append("F f;\n"); //$NON-NLS-1$
-        buffer.append("f.A::a = 1;\n}\n"); //$NON-NLS-1$
-
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        CPPNameCollector col = new CPPNameCollector();
-        tu.accept( col);
-
-        assertEquals(col.size(), 26);
-
-        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
-        ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
-
-        assertNotNull(A);
-        assertNotNull(B);
-
-        assertInstances(col, A, 4);
-        assertInstances(col, B, 4);
-    }
+  
 
     public void testBug85049() throws Exception {
         StringBuffer buffer = new StringBuffer("typedef int B;\n"); //$NON-NLS-1$
         buffer.append("void g() {\n"); //$NON-NLS-1$
         buffer.append("B * bp;  //1\n"); //$NON-NLS-1$
         buffer.append("}\n"); //$NON-NLS-1$
-        IASTTranslationUnit t = parse(buffer.toString(), ParserLanguage.C );
+        IASTTranslationUnit t = parse(buffer.toString(), ParserLanguage.C);
         IASTFunctionDefinition g = (IASTFunctionDefinition) t.getDeclarations()[1];
         IASTCompoundStatement body = (IASTCompoundStatement) g.getBody();
         final IASTStatement statement = body.getStatements()[0];
         assertTrue(statement instanceof IASTDeclarationStatement);
-        IASTSimpleDeclaration bp = (IASTSimpleDeclaration) ((IASTDeclarationStatement)statement).getDeclaration();
-        assertTrue( bp.getDeclarators()[0].getName().resolveBinding() instanceof IVariable );
-        
-    }
-
-    public void testBug84466() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("struct B {};\n"); //$NON-NLS-1$
-        buffer.append("struct D : B {};\n"); //$NON-NLS-1$
-        buffer.append("void foo(D* dp)\n{\n"); //$NON-NLS-1$
-        buffer.append("B* bp = dynamic_cast<B*>(dp);\n}\n"); //$NON-NLS-1$
-
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
-        ICPPASTCastExpression dynamic_cast = (ICPPASTCastExpression) ((IASTInitializerExpression) ((IASTSimpleDeclaration) ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
-                .getDeclarations()[2]).getBody()).getStatements()[0])
-                .getDeclaration()).getDeclarators()[0].getInitializer())
-                .getExpression();
-
-        assertEquals(dynamic_cast.getOperator(),
-                ICPPASTCastExpression.op_dynamic_cast);
+        IASTSimpleDeclaration bp = (IASTSimpleDeclaration) ((IASTDeclarationStatement) statement)
+                .getDeclaration();
+        assertTrue(bp.getDeclarators()[0].getName().resolveBinding() instanceof IVariable);
 
     }
-    
+
+
+
     public void testBug86766() throws Exception {
-        IASTTranslationUnit tu = parse("char foo; void foo(){}", ParserLanguage.C); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(
+                "char foo; void foo(){}", ParserLanguage.C); //$NON-NLS-1$
         CNameCollector col = new CNameCollector();
-        tu.accept( col);
-        
+        tu.accept(col);
+
         IVariable foo = (IVariable) col.getName(0).resolveBinding();
-        IProblemBinding prob = (IProblemBinding) col.getName(1).resolveBinding();
-        assertEquals( prob.getID(), IProblemBinding.SEMANTIC_INVALID_OVERLOAD );
-        assertNotNull( foo );
+        IProblemBinding prob = (IProblemBinding) col.getName(1)
+                .resolveBinding();
+        assertEquals(prob.getID(), IProblemBinding.SEMANTIC_INVALID_OVERLOAD);
+        assertNotNull(foo);
     }
-    
-    public void testBug88338_CPP() throws Exception {
-    	IASTTranslationUnit tu = parse( "struct A; struct A* a;", ParserLanguage.CPP ); //$NON-NLS-1$
-    	CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	assertTrue( col.getName(0).isDeclaration() );
-    	assertFalse( col.getName(0).isReference() );
-    	assertTrue( col.getName(1).isReference() );
-    	assertFalse( col.getName(1).isDeclaration() );
-    	
-    	tu = parse( "struct A* a;", ParserLanguage.CPP ); //$NON-NLS-1$
-    	col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	assertTrue( col.getName(0).isDeclaration() );
-    	assertFalse( col.getName(0).isReference() );
 
-    }
-    
+
+
     public void testBug88338_C() throws Exception {
-    	IASTTranslationUnit tu = parse( "struct A; struct A* a;", ParserLanguage.C ); //$NON-NLS-1$
-    	CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	assertTrue( col.getName(0).isDeclaration() );
-    	assertFalse( col.getName(0).isReference() );
-    	assertTrue( col.getName(1).isReference() );
-    	assertFalse( col.getName(1).isDeclaration() );
-    	
-    	tu = parse( "struct A* a; struct A;", ParserLanguage.C ); //$NON-NLS-1$
-    	col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	col.getName(2).resolveBinding();
-    	
-    	assertTrue( col.getName(0).isDeclaration() );
-    	assertFalse( col.getName(0).isReference() );
+        IASTTranslationUnit tu = parse(
+                "struct A; struct A* a;", ParserLanguage.C); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
 
-    	assertTrue( col.getName(2).isDeclaration() );
-    	assertFalse( col.getName(2).isReference() );
+        assertTrue(col.getName(0).isDeclaration());
+        assertFalse(col.getName(0).isReference());
+        assertTrue(col.getName(1).isReference());
+        assertFalse(col.getName(1).isDeclaration());
+
+        tu = parse("struct A* a; struct A;", ParserLanguage.C); //$NON-NLS-1$
+        col = new CPPNameCollector();
+        tu.accept(col);
+
+        col.getName(2).resolveBinding();
+
+        assertTrue(col.getName(0).isDeclaration());
+        assertFalse(col.getName(0).isReference());
+
+        assertTrue(col.getName(2).isDeclaration());
+        assertFalse(col.getName(2).isReference());
     }
-    
+
     public void test88460() throws Exception {
-    	IASTTranslationUnit tu = parse( "void f();", ParserLanguage.C ); //$NON-NLS-1$
-    	CNameCollector col = new CNameCollector();
-    	tu.accept( col );
-    	
-    	IFunction f = (IFunction) col.getName(0).resolveBinding();
-    	assertFalse( f.isStatic() );
-    }
-    
-    public void testBug90253() throws Exception {
-        IASTTranslationUnit tu = parse( "void f(int par) { int v1; };", ParserLanguage.C ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse("void f();", ParserLanguage.C); //$NON-NLS-1$
         CNameCollector col = new CNameCollector();
-        tu.accept( col );
-        
+        tu.accept(col);
+
+        IFunction f = (IFunction) col.getName(0).resolveBinding();
+        assertFalse(f.isStatic());
+    }
+
+    public void testBug90253() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "void f(int par) { int v1; };", ParserLanguage.C); //$NON-NLS-1$
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+
         IFunction f = (IFunction) col.getName(0).resolveBinding();
         IParameter p = (IParameter) col.getName(1).resolveBinding();
         IVariable v1 = (IVariable) col.getName(2).resolveBinding();
-        
+
         IScope scope = f.getFunctionScope();
-        
-        IBinding [] bs = scope.find( "par" ); //$NON-NLS-1$
-        assertEquals( bs.length, 1 );
-        assertSame( bs[0], p );
-        
-        bs = scope.find( "v1" ); //$NON-NLS-1$
-        assertEquals( bs.length, 1 );
-        assertSame( bs[0], v1 );
+
+        IBinding[] bs = scope.find("par"); //$NON-NLS-1$
+        assertEquals(bs.length, 1);
+        assertSame(bs[0], p);
+
+        bs = scope.find("v1"); //$NON-NLS-1$
+        assertEquals(bs.length, 1);
+        assertSame(bs[0], v1);
     }
-    
+
     public void testFind() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "struct S {};                \n"); //$NON-NLS-1$
-        buffer.append( "int S;                      \n"); //$NON-NLS-1$
-        buffer.append( "void f( ) {                 \n"); //$NON-NLS-1$
-        buffer.append( "   int S;                   \n"); //$NON-NLS-1$
-        buffer.append( "   {                        \n"); //$NON-NLS-1$
-        buffer.append( "      S :  ;                \n"); //$NON-NLS-1$
-        buffer.append( "   }                        \n"); //$NON-NLS-1$
-        buffer.append( "}                           \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); 
+        buffer.append("struct S {};                \n"); //$NON-NLS-1$
+        buffer.append("int S;                      \n"); //$NON-NLS-1$
+        buffer.append("void f( ) {                 \n"); //$NON-NLS-1$
+        buffer.append("   int S;                   \n"); //$NON-NLS-1$
+        buffer.append("   {                        \n"); //$NON-NLS-1$
+        buffer.append("      S :  ;                \n"); //$NON-NLS-1$
+        buffer.append("   }                        \n"); //$NON-NLS-1$
+        buffer.append("}                           \n"); //$NON-NLS-1$
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
         CNameCollector col = new CNameCollector();
-        tu.accept( col );
-        
+        tu.accept(col);
+
         ICompositeType S1 = (ICompositeType) col.getName(0).resolveBinding();
         IVariable S2 = (IVariable) col.getName(1).resolveBinding();
         IFunction f = (IFunction) col.getName(2).resolveBinding();
         IVariable S3 = (IVariable) col.getName(3).resolveBinding();
         ILabel S4 = (ILabel) col.getName(4).resolveBinding();
-        
+
         IScope scope = f.getFunctionScope();
-        
-        IBinding [] bs = scope.find( "S" ); //$NON-NLS-1$
-        
-        assertNotNull( S2 );
-        assertEquals( bs.length, 3 );
-        assertSame( bs[0], S3 );
-        assertSame( bs[1], S1 );
-        assertSame( bs[2], S4 );
+
+        IBinding[] bs = scope.find("S"); //$NON-NLS-1$
+
+        assertNotNull(S2);
+        assertEquals(bs.length, 3);
+        assertSame(bs[0], S3);
+        assertSame(bs[1], S1);
+        assertSame(bs[2], S4);
     }
-	
-	public void test92791() throws Exception {
-		IASTTranslationUnit tu = parse( "void f() { int x, y; x * y; }", ParserLanguage.C );  //$NON-NLS-1$
+
+    public void test92791() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "void f() { int x, y; x * y; }", ParserLanguage.C); //$NON-NLS-1$
         CNameCollector col = new CNameCollector();
-        tu.accept( col );
-		for( int i = 0; i < col.size(); ++i )
-            assertFalse( col.getName( i ).resolveBinding() instanceof IProblemBinding );
-		
-		tu = parse( "void f() { typedef int x; int y; x * y; }", ParserLanguage.C );  //$NON-NLS-1$
+        tu.accept(col);
+        for (int i = 0; i < col.size(); ++i)
+            assertFalse(col.getName(i).resolveBinding() instanceof IProblemBinding);
+
+        tu = parse(
+                "void f() { typedef int x; int y; x * y; }", ParserLanguage.C); //$NON-NLS-1$
         col = new CNameCollector();
-        tu.accept( col );
-        for( int i = 0; i < col.size(); ++i )
-            assertFalse( col.getName( i ).resolveBinding() instanceof IProblemBinding );
-		
-	}
-    
-    public void testBug85786() throws Exception {
-        IASTTranslationUnit tu = parse( "void f( int ); void foo () { void * p = &f; ( (void (*) (int)) p ) ( 1 ); }", ParserLanguage.C ); //$NON-NLS-1$
-        CNameCollector nameResolver = new CNameCollector();
-        tu.accept( nameResolver );
-        assertNoProblemBindings( nameResolver );
+        tu.accept(col);
+        for (int i = 0; i < col.size(); ++i)
+            assertFalse(col.getName(i).resolveBinding() instanceof IProblemBinding);
+
     }
-    
+
+    public void testBug85786() throws Exception {
+        IASTTranslationUnit tu = parse(
+                "void f( int ); void foo () { void * p = &f; ( (void (*) (int)) p ) ( 1 ); }", ParserLanguage.C); //$NON-NLS-1$
+        CNameCollector nameResolver = new CNameCollector();
+        tu.accept(nameResolver);
+        assertNoProblemBindings(nameResolver);
+    }
+
     protected void assertNoProblemBindings(CNameCollector col) {
         Iterator i = col.nameList.iterator();
-        while( i.hasNext() )
-        {
+        while (i.hasNext()) {
             IASTName n = (IASTName) i.next();
-            assertFalse( n.resolveBinding() instanceof IProblemBinding );
+            assertFalse(n.resolveBinding() instanceof IProblemBinding);
         }
     }
-    
-    protected void assertProblemBindings(CNameCollector col, int count ) {
+
+    protected void assertProblemBindings(CNameCollector col, int count) {
         Iterator i = col.nameList.iterator();
         int sum = 0;
-        while( i.hasNext() )
-        {
+        while (i.hasNext()) {
             IASTName n = (IASTName) i.next();
-            if( n.getBinding() instanceof IProblemBinding )
+            if (n.getBinding() instanceof IProblemBinding)
                 ++sum;
         }
-        assertEquals( count, sum );
+        assertEquals(count, sum);
     }
-	
-	public void testBug94365() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append( "#define ONE(a, ...) int x\n"); //$NON-NLS-1$
-		buffer.append( "#define TWO(b, args...) int y\n"); //$NON-NLS-1$
-		buffer.append( "int main()\n"); //$NON-NLS-1$
-		buffer.append( "{\n"); //$NON-NLS-1$
-		buffer.append( "ONE(\"string\"); /* err */\n"); //$NON-NLS-1$
-		buffer.append( "TWO(\"string\"); /* err */\n"); //$NON-NLS-1$
-		buffer.append( "return 0;	\n"); //$NON-NLS-1$
-		buffer.append( "}\n"); //$NON-NLS-1$
-        
-		parse( buffer.toString(), ParserLanguage.C ); 
-	}
-    
-    
+
+    public void testBug94365() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("#define ONE(a, ...) int x\n"); //$NON-NLS-1$
+        buffer.append("#define TWO(b, args...) int y\n"); //$NON-NLS-1$
+        buffer.append("int main()\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("ONE(\"string\"); /* err */\n"); //$NON-NLS-1$
+        buffer.append("TWO(\"string\"); /* err */\n"); //$NON-NLS-1$
+        buffer.append("return 0;	\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+
+        parse(buffer.toString(), ParserLanguage.C);
+    }
+
     public void testBug95119() throws Exception {
-            StringBuffer buff = new StringBuffer();
-            buff.append("#define MACRO(a)\n"); //$NON-NLS-1$
-            buff.append("void main() {\n"); //$NON-NLS-1$
-            buff.append("MACRO(\'\"\');\n"); //$NON-NLS-1$
-            buff.append("}\n"); //$NON-NLS-1$
+        StringBuffer buff = new StringBuffer();
+        buff.append("#define MACRO(a)\n"); //$NON-NLS-1$
+        buff.append("void main() {\n"); //$NON-NLS-1$
+        buff.append("MACRO(\'\"\');\n"); //$NON-NLS-1$
+        buff.append("}\n"); //$NON-NLS-1$
 
-            IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C);
-            IASTDeclaration[] declarations = tu.getDeclarations();
-            assertEquals( declarations.length, 1 );
-            assertNotNull( declarations[0] );
-            assertTrue( declarations[0] instanceof IASTFunctionDefinition );
-            assertEquals( ((IASTFunctionDefinition)declarations[0]).getDeclarator().getName().toString(), "main");
-            assertTrue( ((IASTCompoundStatement)((IASTFunctionDefinition)declarations[0]).getBody()).getStatements()[0] instanceof IASTNullStatement );
-            
-            buff = new StringBuffer();
-            buff.append("#define MACRO(a)\n"); //$NON-NLS-1$
-            buff.append("void main() {\n"); //$NON-NLS-1$
-            buff.append("MACRO(\'X\');\n"); //$NON-NLS-1$
-            buff.append("}\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C);
+        IASTDeclaration[] declarations = tu.getDeclarations();
+        assertEquals(declarations.length, 1);
+        assertNotNull(declarations[0]);
+        assertTrue(declarations[0] instanceof IASTFunctionDefinition);
+        assertEquals(((IASTFunctionDefinition) declarations[0]).getDeclarator()
+                .getName().toString(), "main");
+        assertTrue(((IASTCompoundStatement) ((IASTFunctionDefinition) declarations[0])
+                .getBody()).getStatements()[0] instanceof IASTNullStatement);
 
-            tu = parse(buff.toString(), ParserLanguage.C);
-            declarations = tu.getDeclarations();
-            assertEquals( declarations.length, 1 );
-            assertNotNull( declarations[0] );
-            assertTrue( declarations[0] instanceof IASTFunctionDefinition );
-            assertEquals( ((IASTFunctionDefinition)declarations[0]).getDeclarator().getName().toString(), "main");
-            assertTrue( ((IASTCompoundStatement)((IASTFunctionDefinition)declarations[0]).getBody()).getStatements()[0] instanceof IASTNullStatement );
+        buff = new StringBuffer();
+        buff.append("#define MACRO(a)\n"); //$NON-NLS-1$
+        buff.append("void main() {\n"); //$NON-NLS-1$
+        buff.append("MACRO(\'X\');\n"); //$NON-NLS-1$
+        buff.append("}\n"); //$NON-NLS-1$
 
+        tu = parse(buff.toString(), ParserLanguage.C);
+        declarations = tu.getDeclarations();
+        assertEquals(declarations.length, 1);
+        assertNotNull(declarations[0]);
+        assertTrue(declarations[0] instanceof IASTFunctionDefinition);
+        assertEquals(((IASTFunctionDefinition) declarations[0]).getDeclarator()
+                .getName().toString(), "main");
+        assertTrue(((IASTCompoundStatement) ((IASTFunctionDefinition) declarations[0])
+                .getBody()).getStatements()[0] instanceof IASTNullStatement);
+    }
+
+    public void testBug81739() throws Exception {
+        StringBuffer buffer = new StringBuffer("typedef long _TYPE;\n"); //$NON-NLS-1$
+        buffer.append("typedef _TYPE TYPE;\n"); //$NON-NLS-1$
+        buffer.append("int function(TYPE (* pfv)(int parm));\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
     }
 }

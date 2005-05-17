@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -1037,18 +1038,83 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return compoundStatement();
     }
 
+    protected abstract IASTDeclarator initDeclarator() throws EndOfFileException,
+    BacktrackException;
     /**
      * @param flags
      *            input flags that are used to make our decision
      * @return whether or not this looks like a a declarator follows
+     * @throws  
      * @throws EndOfFileException
      *             we could encounter EOF while looking ahead
      */
-    protected boolean lookAheadForDeclarator(Flags flags)
-            throws EndOfFileException {
-        return flags.haveEncounteredTypename()
-                && ((LT(2) != IToken.tIDENTIFIER || (LT(3) != IToken.tLPAREN && LT(3) != IToken.tASSIGN)) && !LA(
-                        2).isPointer());
+    protected boolean lookAheadForDeclarator(Flags flags) 
+    {
+        if( flags.typeId ) return false;
+        IToken mark = null;
+        try
+        {
+            mark = mark();
+        }
+        catch( EndOfFileException eof )
+        {
+            return false;
+        }
+        try
+        {
+            IASTDeclarator d = initDeclarator();
+            IToken la = LA(1);
+            backup( mark );
+            if( la == null || la.getType() == IToken.tEOC )
+                return false;
+            final ASTNode n = ((ASTNode)d);
+            final int length = n.getLength();
+            final int offset = n.getOffset();
+            if( length == 0 )
+                return false;
+            if( flags.parm )
+            {
+                ASTNode name = (ASTNode)d.getName();
+                if( name.getOffset() == offset && name.getLength() == length )
+                    return false;
+                if( d.getInitializer() != null )
+                {
+                    ASTNode init = (ASTNode) d.getInitializer();
+                    if( name.getOffset() == offset && n.getOffset() + n.getLength() == init.getOffset() + init.getLength() )
+                        return false;
+                }
+                
+                switch( la.getType() )
+                {
+                case IToken.tCOMMA:
+                case IToken.tRPAREN:
+                    return true;
+                default:
+                    return false;
+                }
+            }
+
+            switch( la.getType() )
+            {
+                case IToken.tCOMMA:
+                case IToken.tLBRACE:
+                    return true;
+                case IToken.tSEMI:
+                    if( d instanceof IASTFieldDeclarator )
+                        return false;
+                    return true;
+                default:
+                    return false;
+            }               
+        }
+        catch( BacktrackException bte )
+        {
+            backup( mark );
+            return false;
+        } catch (EndOfFileException e) {
+            backup( mark );
+            return false;
+        }
     }
 
     public static class Flags {
@@ -1058,19 +1124,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         private boolean encounteredRawType = false;
 
         // have we encountered a raw type yet?
-        private final boolean parm;
+        boolean parm = false;
 
         // is this for a simpleDeclaration or parameterDeclaration?
-        private final boolean constructor;
+        boolean constructor = false;
+        boolean typeId = false;
 
         // are we attempting the constructor strategy?
-        public Flags(boolean parm, boolean c) {
+        public Flags(boolean parm, boolean c, boolean t) {
             this.parm = parm;
             constructor = c;
+            typeId =t;
         }
 
-        public Flags(boolean parm) {
-            this(parm, false);
+        public Flags(boolean parm, boolean typeId ) {
+            this(parm, false, typeId );
         }
 
         /**

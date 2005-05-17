@@ -868,16 +868,16 @@ public class QuickParser2Tests extends TestCase {
         parse(code.toString(), false);
     }
 
-    public void testBug36247() throws Exception {
-        Writer code = new StringWriter();
-        code.write("class A {\n"); //$NON-NLS-1$
-        code.write("INLINE_DEF int f ();\n"); //$NON-NLS-1$
-        code.write("INLINE_DEF A   g ();"); //$NON-NLS-1$
-        code.write("INLINE_DEF A * h ();"); //$NON-NLS-1$
-        code.write("INLINE_DEF A & unlock( void );"); //$NON-NLS-1$
-        code.write("};"); //$NON-NLS-1$
-        parse(code.toString());
-    }
+//    public void testBug36247() throws Exception {
+//        Writer code = new StringWriter();
+//        code.write("class A {\n"); //$NON-NLS-1$
+//        code.write("INLINE_DEF int f ();\n"); //$NON-NLS-1$
+//        code.write("INLINE_DEF A   g ();"); //$NON-NLS-1$
+//        code.write("INLINE_DEF A * h ();"); //$NON-NLS-1$
+//        code.write("INLINE_DEF A & unlock( void );"); //$NON-NLS-1$
+//        code.write("};"); //$NON-NLS-1$
+//        parse(code.toString());
+//    }
 
     public void testStruct() throws Exception {
         StringWriter writer = new StringWriter();

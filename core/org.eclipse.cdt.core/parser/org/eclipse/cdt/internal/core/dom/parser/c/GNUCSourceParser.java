@@ -442,7 +442,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         firstToken = null; // necessary for scalability
 
-        IASTDeclSpecifier declSpec = declSpecifierSeq(false);
+        IASTDeclSpecifier declSpec = declSpecifierSeq(false, false);
 
         IASTDeclarator [] declarators = new IASTDeclarator[2];
         if (LT(1) != IToken.tSEMI) {
@@ -1203,7 +1203,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclarator declarator = null;
 
         try {
-            declSpecifier = declSpecifierSeq(false);
+            declSpecifier = declSpecifierSeq(false, true);
             declarator = declarator();
         } catch (BacktrackException bt) {
             backup(mark);
@@ -1304,9 +1304,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTPointer();
     }
 
-    protected IASTDeclSpecifier declSpecifierSeq(boolean parm)
+    protected IASTDeclSpecifier declSpecifierSeq(boolean parm, boolean forTypeId)
             throws BacktrackException, EndOfFileException {
-        Flags flags = new Flags(parm);
+        Flags flags = new Flags(parm,forTypeId);
 
         int startingOffset = LA(1).getOffset();
         int storageClass = IASTDeclSpecifier.sc_unspecified;
@@ -1319,7 +1319,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTElaboratedTypeSpecifier elabSpec = null;
         IASTEnumerationSpecifier enumSpec = null;
         IASTExpression typeofExpression = null;
-        boolean isTypedef = false;
         IToken last = null;
 
         declSpecifiers: for (;;) {
@@ -1342,7 +1341,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 last = consume();
                 break;
             case IToken.t_typedef:
-                isTypedef = true;
                 storageClass = IASTDeclSpecifier.sc_typedef;
                 last = consume();
                 break;
@@ -1438,19 +1436,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (flags.haveEncounteredRawType()) {
                     break declSpecifiers;
                 }
-                if (parm && flags.haveEncounteredTypename()) {
+                if (flags.haveEncounteredTypename()) {
                     break declSpecifiers;
                 }
                 if (lookAheadForDeclarator(flags)) {
-                    break declSpecifiers;
-                }
-                switch (LT(2)) {
-                case IToken.tLPAREN:
-                    if (isTypedef)
-                        break;
-                case IToken.tSEMI:
-                case IToken.tASSIGN:
-                    // TODO more
                     break declSpecifiers;
                 }
 
@@ -1930,10 +1919,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 }
                 break;
             }
-            if (LA(1).getType() != IToken.tIDENTIFIER)
-                break;
 
-        } while (true);
+        } while (false);
 
         IASTDeclarator d = null;
         if (numKnRCParms > 0) {
@@ -2165,7 +2152,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throws BacktrackException, EndOfFileException {
         IToken current = LA(1);
         int startingOffset = current.getOffset();
-        IASTDeclSpecifier declSpec = declSpecifierSeq(true);
+        IASTDeclSpecifier declSpec = declSpecifierSeq(true, false);
 
         IASTDeclarator declarator = null;
         if (LT(1) != IToken.tSEMI)

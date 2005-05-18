@@ -55,6 +55,10 @@ public class CDebugAdapter implements ICDIDebugger {
 	 */
 	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		if (exe == null) {
+			abort(InternalDebugCoreMessages.getString("CDebugAdapter.Program_file_not_specified"), null, //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+		}
 		IFile[] exeFile = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(exe.getPath());
 		if (exeFile.length == 0) {
 			abort(InternalDebugCoreMessages.getString("CDebugAdapter.0"), null, -1); //$NON-NLS-1$

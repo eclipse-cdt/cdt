@@ -2646,6 +2646,21 @@ public class CPPSemantics {
 			IQualifierType qs = (IQualifierType) s, qt = (IQualifierType) t;
 			if( qs.isConst() && !qt.isConst() || qs.isVolatile() && !qt.isVolatile() )
 				canConvert = false;
+		} else if( constInEveryCV2k && !canConvert ){
+			canConvert = true;
+			int i = 1;
+			for( IType type = s; canConvert == true && i == 1; type = t, i++  ){
+				while( type instanceof ITypeContainer ){
+					if( type instanceof IQualifierType )
+						canConvert = false;
+					else if( type instanceof IPointerType ){
+						canConvert = !((IPointerType)type).isConst() && !((IPointerType)type).isVolatile();
+					}
+					if( !canConvert )
+						break;
+					type = ((ITypeContainer)type).getType();
+				}
+			}
 		}
 
 		if( canConvert == true ){
@@ -2718,7 +2733,18 @@ public class CPPSemantics {
 			sPrev = next;
 		}
 
-		if( sPrev instanceof IPointerType && s instanceof ICPPClassType ){
+		if( src instanceof IBasicType && trg instanceof IPointerType ){
+			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
+			IASTExpression exp = ((IBasicType)src).getValue();
+			if( exp instanceof IASTLiteralExpression && 
+			    ((IASTLiteralExpression)exp).getKind() == IASTLiteralExpression.lk_integer_constant  )
+			{
+				if( Integer.decode( exp.toString() ).intValue() == 0 ){
+					cost.rank = Cost.CONVERSION_RANK;
+					cost.conversion = 1;
+				}
+			}
+		} else if( sPrev instanceof IPointerType && s instanceof ICPPClassType ){
 			IType tPrev = trg;
 			while( tPrev instanceof ITypeContainer ){
 				IType next = ((ITypeContainer)tPrev).getType();
@@ -2749,6 +2775,10 @@ public class CPPSemantics {
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 			cost.rank = Cost.CONVERSION_RANK;
 			cost.conversion = 1;	
+		} else if( t instanceof IBasicType && ((IBasicType)t).getType() == ICPPBasicType.t_bool && s instanceof IPointerType ){
+			//4.12 pointer or pointer to member type can be converted to an rvalue of type bool
+			cost.rank = Cost.CONVERSION_RANK;
+			cost.conversion = 1;
 		} else if( s instanceof ICPPPointerToMemberType && t instanceof ICPPPointerToMemberType ){
 		    //4.11-2 An rvalue of type "pointer to member of B of type cv T", where B is a class type, 
 			//can be converted to an rvalue of type "pointer to member of D of type cv T" where D is a
@@ -2761,7 +2791,7 @@ public class CPPSemantics {
 				cost.conversion = ( temp > -1 ) ? temp : 0;
 				cost.detail = 1;
 		    }
-		}		
+		}
 	}
 	
 	static private void derivedToBaseConversion( Cost cost ) throws DOMException {

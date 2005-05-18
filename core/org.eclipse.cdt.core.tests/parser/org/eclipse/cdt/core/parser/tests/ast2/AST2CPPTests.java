@@ -4307,4 +4307,41 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPMethod op = (ICPPMethod) col.getName(2).resolveBinding();
 		assertSame( op, col.getName(6).resolveBinding() );
 	}
+	
+	public void testBug95734() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("int str( const char * );               \n"); //$NON-NLS-1$
+		buffer.append("void f(){                              \n"); //$NON-NLS-1$
+		buffer.append("   str( 0 );                           \n"); //$NON-NLS-1$
+		buffer.append("   str( 00 );  str( 0x0 );             \n"); //$NON-NLS-1$
+		buffer.append("}                                      \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPFunction str = (ICPPFunction) col.getName(0).resolveBinding();
+		assertSame( str, col.getName(3).resolveBinding() );
+		assertSame( str, col.getName(4).resolveBinding() );
+		assertSame( str, col.getName(5).resolveBinding() );
+	}
+	
+	public void testBug95734_2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("int str( bool );                       \n"); //$NON-NLS-1$
+		buffer.append("enum { ONE };                          \n"); //$NON-NLS-1$
+		buffer.append("void f( char * p ){                    \n"); //$NON-NLS-1$
+		buffer.append("   str( 1.2 );                         \n"); //$NON-NLS-1$
+		buffer.append("   str( ONE );  str( p );              \n"); //$NON-NLS-1$
+		buffer.append("}                                      \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPFunction str = (ICPPFunction) col.getName(0).resolveBinding();
+		assertSame( str, col.getName(6).resolveBinding() );
+		assertSame( str, col.getName(7).resolveBinding() );
+		assertSame( str, col.getName(9).resolveBinding() );
+	}
 }

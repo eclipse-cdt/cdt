@@ -3852,7 +3852,8 @@ abstract class BaseScanner implements IScanner {
         int limit = bufferLimit[bufferStackPos];
         int pos = ++bufferPos[bufferStackPos];
 
-        if (pos < limit && buffer[pos] == '\n')
+        if ((pos < limit && buffer[pos] == '\n') ||
+				(pos+1 < limit && buffer[pos] == '\r' && buffer[pos+1] == '\n'))
             return;
 
         boolean escaped = false;

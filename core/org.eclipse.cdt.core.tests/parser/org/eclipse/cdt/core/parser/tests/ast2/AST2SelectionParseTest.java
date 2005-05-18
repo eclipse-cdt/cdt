@@ -1509,4 +1509,21 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
 	}
+	
+	public void testBug87179() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#define ONE 1\r\n"); //$NON-NLS-1$
+		buffer.append("#ifdef ONE\r\n"); //$NON-NLS-1$
+		buffer.append("int x=0;\r\n"); //$NON-NLS-1$
+		buffer.append("#else\r\n"); //$NON-NLS-1$
+		buffer.append("char c='c';\r\n"); //$NON-NLS-1$
+		buffer.append("#endif\r\n"); //$NON-NLS-1$
+		
+		String code = buffer.toString();
+		int offset1 = code.indexOf( "#ifdef ONE" ); //$NON-NLS-1$
+		int length = "#ifdef ONE".length(); //$NON-NLS-1$
+		IASTNode node = parse( code, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+	}
 }

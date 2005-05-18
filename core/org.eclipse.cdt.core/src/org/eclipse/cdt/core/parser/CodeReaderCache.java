@@ -79,27 +79,27 @@ public class CodeReaderCache implements ICodeReaderCache {
 			}
 			
 			protected IStatus run(IProgressMonitor monitor) {
-				String key = null;
-				
 				if (event.getSource() instanceof IWorkspace && event.getDelta() != null) {
-					IResourceDelta[] projects = event.getDelta().getAffectedChildren();
-					for(int i=0; i<projects.length; i++) {
-						if (projects[i].getResource().getType() == IResource.PROJECT) {
-							IResourceDelta[] files = projects[i].getAffectedChildren();
-							for(int j=0; j<files.length; j++) {
-								if (files[j].getResource() instanceof IFile && ((IFile)files[j].getResource()).getLocation() != null) {
-									key = ((IFile)files[j].getResource()).getLocation().toOSString();
-								}
-							}
-						}
-					}
+					removeKeys(event.getDelta().getAffectedChildren());
 				}
-				
-				if (key != null && cache1 != null)
-					cache1.remove(key);
 				
 				return Status.OK_STATUS;
 			}
+            
+            private void removeKeys(IResourceDelta[] deltas) {
+                for(int j=0; j<deltas.length; j++) {
+                    if (deltas[j].getResource().getType() == IResource.PROJECT || deltas[j].getResource().getType() == IResource.FOLDER) {
+                        removeKeys(deltas[j].getAffectedChildren());
+                    } else if (deltas[j].getResource() instanceof IFile && ((IFile)deltas[j].getResource()).getLocation() != null) {
+                        removeKey(((IFile)deltas[j].getResource()).getLocation().toOSString());
+                    }
+                }
+            }
+            
+            private void removeKey(String key) {
+                if (key != null && cache1 != null)
+                    cache1.remove(key);
+            }
 			
 		}
 		

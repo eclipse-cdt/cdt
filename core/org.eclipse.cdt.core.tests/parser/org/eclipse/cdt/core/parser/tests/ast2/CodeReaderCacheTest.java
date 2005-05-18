@@ -132,6 +132,44 @@ public class CodeReaderCacheTest extends CDOMBaseTest {
 		
 		job.cancel();
 	}
+    
+    public void testResourceChangedNestedPathUpdate() {
+        boolean hasPassed = false;
+        StringBuffer code = new StringBuffer();
+        code.append("int x;"); //$NON-NLS-1$
+        ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
+        
+        IFile file = null;
+        
+        try {
+            importFolder("test");
+            file = importFile("test/test.c", code.toString()); //$NON-NLS-1$
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // start a new job that repeatedly updates the file...
+        UpdateFileJob job = new UpdateFileJob("updater", file, "test/test.c", code.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+        job.schedule();
+        
+        while(!hasPassed) {
+            if (file != null) {
+                parse(file);
+            }
+            
+            try {
+                Thread.sleep(1000); // give the updater thread some time to update the resource
+                file = job.getFile();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
+            if (cache.getCurrentSpace() == 0) // item was properly removed by the updater thread 
+                hasPassed = true;
+        }
+        
+        job.cancel();
+    }
 	
 	// THIS MUST BE RUN LAST IN THIS TEST
 	public void testClearCache() {

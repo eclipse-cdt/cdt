@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -125,6 +126,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
@@ -817,6 +819,8 @@ public class CPPVisitor {
 		    return ((ICPPASTFunctionDeclarator)fdef.getDeclarator()).getFunctionScope();
 		}
 		
+		if( scope == null )
+			return getContainingScope( parent );
 		return scope;
 	}
 	
@@ -1527,8 +1531,12 @@ public class CPPVisitor {
 					   ( spec.isUnsigned() ? CPPBasicType.IS_SHORT : 0 );
 			if( spec instanceof IGPPASTSimpleDeclSpecifier ){
 				IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) spec;
-				bits |= ( gspec.isLongLong() ? GPPBasicType.IS_LONGLONG : 0 );
-				type = new GPPBasicType( spec.getType(), bits, getExpressionType(gspec.getTypeofExpression()) );
+				if( gspec.getTypeofExpression() != null ){
+					type = getExpressionType( gspec.getTypeofExpression() );
+				} else {
+					bits |= ( gspec.isLongLong() ? GPPBasicType.IS_LONGLONG : 0 );
+					type = new GPPBasicType( spec.getType(), bits, getExpressionType(gspec.getTypeofExpression()) );
+				}
 			} else {
 			    type = new CPPBasicType( spec.getType(), bits );
 			}
@@ -1776,6 +1784,14 @@ public class CPPVisitor {
 				else if( t instanceof IArrayType )
 					return ((IArrayType)t).getType();
 			} catch( DOMException e ){
+			}
+		} else if( expression instanceof IGNUASTCompoundStatementExpression ){
+			IASTCompoundStatement compound = ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement();
+			IASTStatement [] statements = compound.getStatements();
+			if( statements.length > 0 ){
+				IASTStatement st = statements[ statements.length - 1 ];
+				if( st instanceof IASTExpressionStatement )
+					return getExpressionType( ((IASTExpressionStatement)st).getExpression() );
 			}
 		}
 	    return null;

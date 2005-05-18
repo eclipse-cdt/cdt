@@ -225,10 +225,7 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
         writer.write( "         z;                      \n" ); //$NON-NLS-1$
         writer.write( "       }) zoot;                  \n" ); //$NON-NLS-1$
         
-        try {
-            parseGPP( writer.toString() ); // TODO Devin raised bug 93980
-            assertFalse(true);
-        } catch (Exception e) {}
+        parseGPP( writer.toString() ); // TODO Devin raised bug 93980
     }
     
     public void testBug75401() throws Exception

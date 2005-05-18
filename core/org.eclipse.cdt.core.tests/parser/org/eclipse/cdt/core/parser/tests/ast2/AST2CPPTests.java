@@ -4234,4 +4234,41 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPFunction strcmp = (ICPPFunction) col.getName(0).resolveBinding();
 		assertSame( strcmp, col.getName(4).resolveBinding() );
 	}
+	
+	public void testBug95673() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class Other;                            \n"); //$NON-NLS-1$
+		buffer.append("class Base {                            \n"); //$NON-NLS-1$
+		buffer.append("   public: Base( Other * );             \n"); //$NON-NLS-1$
+		buffer.append("};                                      \n"); //$NON-NLS-1$
+		buffer.append("class Sub : public Base {               \n"); //$NON-NLS-1$
+		buffer.append("   public: Sub( Other * );              \n"); //$NON-NLS-1$
+		buffer.append("};                                      \n"); //$NON-NLS-1$
+		buffer.append("Sub::Sub( Other * b ) : Base(b) {}      \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
+		assertSame( ctor, col.getName(15).resolveBinding() );
+	}
+	
+	public void testBug95768() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void mem( void *, const void * );                       \n"); //$NON-NLS-1$
+		buffer.append("void f() {                                              \n"); //$NON-NLS-1$
+		buffer.append("   char *x;  int offset;                                \n"); //$NON-NLS-1$
+		buffer.append("   mem( x, \"FUNC\" );                                  \n"); //$NON-NLS-1$
+		buffer.append("   mem( x + offset, \"FUNC2\" );                        \n"); //$NON-NLS-1$
+		buffer.append("}                                                       \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPFunction mem = (ICPPFunction) col.getName(0).resolveBinding();
+		assertSame( mem, col.getName(6).resolveBinding() );
+		assertSame( mem, col.getName(8).resolveBinding() );
+	}
 }

@@ -2438,28 +2438,30 @@ public class CPPSemantics {
 		//conversion operators
 		if( s instanceof ICPPInternalClassType ){
 			ICPPMethod [] ops = ((ICPPInternalClassType)s).getConversionOperators();
-			Cost [] costs = null;
-			for (int i = 0; i < ops.length; i++) {
-				cost = checkStandardConversionSequence( ops[i].getType().getReturnType(), target );
-				if( cost.rank != Cost.NO_MATCH_RANK )
-					costs = (Cost[]) ArrayUtil.append( Cost.class, costs, cost );
-			}
-			if( costs != null ){
-				Cost best = costs[0];
-				boolean bestIsBest = true;
-				int bestIdx = 0;
-				for (int i = 1; i < costs.length && costs[i] != null; i++) {
-					int comp = best.compare( costs[i] );
-					if( comp == 0 )
-						bestIsBest = false;
-					else if( comp > 0 ){
-						best = costs[ bestIdx = i ];
-						bestIsBest = true;
-					}
+			if( ops.length > 0 && !(ops[0] instanceof IProblemBinding) ){
+				Cost [] costs = null;
+				for (int i = 0; i < ops.length; i++) {
+					cost = checkStandardConversionSequence( ops[i].getType().getReturnType(), target );
+					if( cost.rank != Cost.NO_MATCH_RANK )
+						costs = (Cost[]) ArrayUtil.append( Cost.class, costs, cost );
 				}
-				if( bestIsBest ){
-					conversion = ops[ bestIdx ]; 
-					conversionCost = best;
+				if( costs != null ){
+					Cost best = costs[0];
+					boolean bestIsBest = true;
+					int bestIdx = 0;
+					for (int i = 1; i < costs.length && costs[i] != null; i++) {
+						int comp = best.compare( costs[i] );
+						if( comp == 0 )
+							bestIsBest = false;
+						else if( comp > 0 ){
+							best = costs[ bestIdx = i ];
+							bestIsBest = true;
+						}
+					}
+					if( bestIsBest ){
+						conversion = ops[ bestIdx ]; 
+						conversionCost = best;
+					}
 				}
 			}
 		}

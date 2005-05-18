@@ -1674,22 +1674,47 @@ public class CPPVisitor {
 	        }
 	    } else if( expression instanceof IASTBinaryExpression ){
 	        IASTBinaryExpression binary = (IASTBinaryExpression) expression;
-	        IType type = getExpressionType( ((IASTBinaryExpression) expression).getOperand2() );
-	        if( binary.getOperator() == ICPPASTBinaryExpression.op_pmarrow ||
-	            binary.getOperator() == ICPPASTBinaryExpression.op_pmdot )
-	        {
-	            if( type instanceof ICPPPointerToMemberType ){
-	                try {
-                        return ((ICPPPointerToMemberType)type).getType();
-                    } catch ( DOMException e ) {
-                        return e.getProblem();
-                    }
-	            }
-	            return new ProblemBinding( binary, IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0] );
-	        } else if( type instanceof CPPBasicType ){
-	        	((CPPBasicType)type).setValue( expression );
+	        int op = binary.getOperator();
+			IType result = null;
+			switch( op ){
+				case IASTBinaryExpression.op_lessEqual:
+				case IASTBinaryExpression.op_lessThan:
+				case IASTBinaryExpression.op_greaterEqual:
+				case IASTBinaryExpression.op_greaterThan:
+				case IASTBinaryExpression.op_logicalAnd:
+				case IASTBinaryExpression.op_logicalOr:
+					result = new CPPBasicType( ICPPBasicType.t_bool, 0 );
+					break;
+				case IASTBinaryExpression.op_plus:
+				case IASTBinaryExpression.op_minus:
+					IType t = getExpressionType( ((IASTBinaryExpression) expression).getOperand1() );
+					if( t instanceof IPointerType )
+						result = t;
+					else{
+						result = getExpressionType( ((IASTBinaryExpression) expression).getOperand2() );
+					}
+					break;
+				case ICPPASTBinaryExpression.op_pmarrow:
+				case ICPPASTBinaryExpression.op_pmdot:
+					IType type = getExpressionType( ((IASTBinaryExpression) expression).getOperand2() );
+					if( type instanceof ICPPPointerToMemberType ){
+		                try {
+	                        result = ((ICPPPointerToMemberType)type).getType();
+	                    } catch ( DOMException e ) {
+	                        result = e.getProblem();
+	                    }
+		            } else {
+						result = new ProblemBinding( binary, IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0] ); 
+		            }
+					break;
+				default:
+					result = getExpressionType( ((IASTBinaryExpression) expression).getOperand1() );
+			}
+
+	        if( result instanceof CPPBasicType ){
+	        	((CPPBasicType)result).setValue( expression );
 	        }
-	        return type;
+	        return result;
 	    }
 	    else if( expression instanceof IASTUnaryExpression )
 	    {
@@ -1728,7 +1753,7 @@ public class CPPVisitor {
 			if( typeidExp.getOperator() == IASTTypeIdExpression.op_sizeof ){
 				IScope scope = getContainingScope( typeidExp );
 				try {
-					IBinding [] bs = scope.find( "size_t" );//$NON-NLS-1$
+					IBinding [] bs = scope.find( SIZE_T );
 					if( bs.length > 0 && bs[0] instanceof IType ){
 						return (IType) bs[0];
 					}

@@ -1683,6 +1683,8 @@ public class CPPVisitor {
 				case IASTBinaryExpression.op_greaterThan:
 				case IASTBinaryExpression.op_logicalAnd:
 				case IASTBinaryExpression.op_logicalOr:
+				case IASTBinaryExpression.op_equals:
+				case IASTBinaryExpression.op_notequals:
 					result = new CPPBasicType( ICPPBasicType.t_bool, 0 );
 					break;
 				case IASTBinaryExpression.op_plus:

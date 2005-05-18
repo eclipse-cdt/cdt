@@ -2711,13 +2711,21 @@ public class CPPSemantics {
 		IType t = getUltimateType( trg, true );
 			
 		IType sPrev = src;
-		while( sPrev instanceof ITypeContainer && ((ITypeContainer)sPrev).getType() != s )
-			sPrev = ((ITypeContainer)sPrev).getType();
-		
+		while( sPrev instanceof ITypeContainer ){
+			IType next = ((ITypeContainer)sPrev).getType();
+			if( next == s || (next instanceof IQualifierType && ((IQualifierType)next).getType() == s ) )
+				break;
+			sPrev = next;
+		}
+
 		if( sPrev instanceof IPointerType && s instanceof ICPPClassType ){
 			IType tPrev = trg;
-			while( tPrev instanceof ITypeContainer && ((ITypeContainer)tPrev).getType() != t )
-				tPrev = ((ITypeContainer)tPrev).getType();
+			while( tPrev instanceof ITypeContainer ){
+				IType next = ((ITypeContainer)tPrev).getType();
+				if( next == t || (next instanceof IQualifierType && ((IQualifierType)next).getType() == t ) )
+					break;
+				tPrev = next;
+			}
 			
 			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 			//converted to an rvalue of type "pointer to cv void"

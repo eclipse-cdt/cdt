@@ -4271,4 +4271,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( mem, col.getName(6).resolveBinding() );
 		assertSame( mem, col.getName(8).resolveBinding() );
 	}
+	
+	public void testBug95741() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void trace( const void * );                     \n"); //$NON-NLS-1$
+		buffer.append("class Foo {                                     \n"); //$NON-NLS-1$
+		buffer.append("   public: int import();                        \n"); //$NON-NLS-1$
+		buffer.append("};                                              \n"); //$NON-NLS-1$
+		buffer.append("int Foo::import(){                              \n"); //$NON-NLS-1$
+		buffer.append("   trace( this );                               \n"); //$NON-NLS-1$
+		buffer.append("}                                               \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+		ICPPFunction trace = (ICPPFunction) col.getName(0).resolveBinding();
+		assertSame( trace, col.getName(7).resolveBinding() );
+	}
 }

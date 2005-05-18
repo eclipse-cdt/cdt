@@ -1,3 +1,16 @@
+2005-05-18 David Inglis
+	Fixed bug 39581 & part of 46746
+	
+	* AbstractCLaunchDelegate.java
+	* LocalAttachLauchDelegate.java
+	* LocalRunLaunchDelegate.java
+	* LocalAttachLaunchDelegate.java
+	* LocalAttachLaunchConfigurationTabGroup.java
+	* LocalRunLaunchConfigurationTabGroup.java
+	+ CMainAttachTab.java
+	* CMainTab.java
+	
+	
 2005-05-09 Mikhail Khodjaiants
 	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
 	Removed the old source lookup related classes and interfaces.

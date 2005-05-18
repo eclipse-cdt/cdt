@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -122,26 +120,32 @@ public class CCommandDSC {
 		return commandAsString.trim();
 	}
 	
-	public IPath[] getImacrosFile() {
+	/**
+	 * @return list of strings
+	 */
+	public List getImacrosFile() {
 		List imacrosFiles = new ArrayList();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = (KVStringPair)i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())) {
-				imacrosFiles.add(new Path(optionPair.getValue()));
+				imacrosFiles.add(optionPair.getValue());
 			}
 		}
-		return (IPath[]) imacrosFiles.toArray(new IPath[imacrosFiles.size()]);
+		return imacrosFiles;
 	}
 	
-	public IPath[] getIncludeFile() {
+	/**
+	 * @return list of strings
+	 */
+	public List getIncludeFile() {
 		List includeFiles = new ArrayList();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = (KVStringPair)i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString())) {
-				includeFiles.add(new Path(optionPair.getValue()));
+				includeFiles.add(optionPair.getValue());
 			}
 		}
-		return (IPath[]) includeFiles.toArray(new IPath[includeFiles.size()]);
+		return includeFiles;
 	}
 	
 //	public List getFilesList() {
@@ -167,7 +171,7 @@ public class CCommandDSC {
 	}
 
     /**
-     * @return Returns the includes.
+     * @return Returns the includes as strings.
      */
     public List getIncludes() {
         return includes;
@@ -179,13 +183,13 @@ public class CCommandDSC {
         this.includes = includes;
     }
     /**
-     * @return Returns the quote include paths (for #include "...")
+     * @return Returns the quote include paths as strings (for #include "...")
      */
     public List getQuoteIncludes() {
         return quoteIncludes;
     }
     /**
-     * @param includes. Quaote include paths (for #include "...")
+     * @param includes. Quote include paths (for #include "...")
      */
     public void setQuoteIncludes(List includes) {
         quoteIncludes = includes;

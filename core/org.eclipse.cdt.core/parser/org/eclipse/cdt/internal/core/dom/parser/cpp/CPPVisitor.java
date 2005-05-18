@@ -1396,6 +1396,10 @@ public class CPPVisitor {
 	    }
 	     
 	    IASTName name = fnDtor.getName();
+		if( name instanceof ICPPASTQualifiedName ){
+			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+			name = ns[ ns.length - 1 ];
+		}
 	    if( name instanceof ICPPASTConversionName ){
 	    	returnType = createType( ((ICPPASTConversionName)name).getTypeId() );
 	    } else {

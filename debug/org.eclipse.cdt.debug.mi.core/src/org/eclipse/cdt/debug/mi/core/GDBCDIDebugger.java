@@ -132,7 +132,8 @@ public class GDBCDIDebugger implements ICDIDebugger {
 			int pid = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
 			File cwd = getProjectPath(config).toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), pid, null, cwd, gdbinit, monitor);
+			File exeFile = exe != null ? exe.getPath().toFile() : null;
+			session = MIPlugin.getDefault().createCSession(gdb, exeFile, pid, null, cwd, gdbinit, monitor);
 			initializeLibraries(config, session);
 			return session;
 		} catch (Exception e) {

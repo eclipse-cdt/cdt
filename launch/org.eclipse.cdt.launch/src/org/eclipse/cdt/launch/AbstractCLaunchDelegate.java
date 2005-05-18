@@ -368,9 +368,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
 		IPath programPath = getProgramPath(config);
-		if (programPath == null) {
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+		if (programPath == null || programPath.isEmpty()) {
+			return null;
 		}
 		if (!programPath.isAbsolute()) {
 			IFile wsProgramPath = cproject.getProject().getFile(programPath);
@@ -745,7 +744,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		} catch (IOException e) {
 		}
 		Throwable exception = new FileNotFoundException(LaunchMessages.getFormattedString(
-				"AbstractCLaunchDelegate.PROGRAM_PATH_not_binary", exePath.toOSString())); //$NON-NLS-1$
+				"AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable", exePath.toOSString())); //$NON-NLS-1$
 		int code = ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY;
 		MultiStatus status = new MultiStatus(getPluginID(), code, LaunchMessages
 				.getString("AbstractCLaunchDelegate.Program_is_not_a_recongnized_executable"), exception); //$NON-NLS-1$

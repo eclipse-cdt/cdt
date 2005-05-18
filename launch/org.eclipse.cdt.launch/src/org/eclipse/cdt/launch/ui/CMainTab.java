@@ -8,10 +8,14 @@
  **************************************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
@@ -27,13 +31,11 @@ import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.pty.PTY;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -52,14 +54,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * A launch configuration tab that displays and edits project and main type name launch
@@ -90,12 +89,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 	private String filterPlatform = EMPTY_STRING;
 
-	
-
 	public CMainTab() {
 		this(false);
 	}
-	
+
 	public CMainTab(boolean terminalOption) {
 		fWantsTerminalOption = terminalOption;
 	}
@@ -108,9 +105,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		
+
 		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
-		
+
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
 
@@ -118,7 +115,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		createProjectGroup(comp, 1);
 		createExeFileGroup(comp, 1);
 		createVerticalSpacer(comp, 1);
-		if (wantsTerminalOption() /*&& ProcessFactory.supportesTerminal()*/) {
+		if (wantsTerminalOption() /* && ProcessFactory.supportesTerminal() */) {
 			createTerminalOption(comp, 1);
 		}
 		LaunchUIPlugin.setDialogShell(parent.getShell());
@@ -209,7 +206,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected boolean wantsTerminalOption() {
 		return fWantsTerminalOption;
 	}
-	
+
 	protected void createTerminalOption(Composite parent, int colSpan) {
 		Composite mainComp = new Composite(parent, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
@@ -242,7 +239,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		updateProgramFromConfig(config);
 		updateTerminalFromConfig(config);
 	}
-	
+
 	protected void updateTerminalFromConfig(ILaunchConfiguration config) {
 		if (fTerminalButton != null) {
 			boolean useTerminal = true;
@@ -305,7 +302,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
-					IBinary bin = (IBinary) element;
+					IBinary bin = (IBinary)element;
 					StringBuffer name = new StringBuffer();
 					name.append(bin.getPath().lastSegment());
 					return name.toString();
@@ -314,13 +311,13 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 
 			public Image getImage(Object element) {
-				if (!(element instanceof ICElement)) {
+				if (! (element instanceof ICElement)) {
 					return super.getImage(element);
 				}
-				ICElement celement = (ICElement) element;
+				ICElement celement = (ICElement)element;
 
 				if (celement.getElementType() == ICElement.C_BINARY) {
-					IBinary belement = (IBinary) celement;
+					IBinary belement = (IBinary)celement;
 					if (belement.isExecutable()) {
 						Image image = super.getImage(element);
 						Point size = new Point(image.getBounds().width, image.getBounds().height);
@@ -337,7 +334,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
-					IBinary bin = (IBinary) element;
+					IBinary bin = (IBinary)element;
 					StringBuffer name = new StringBuffer();
 					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be")); //$NON-NLS-1$ //$NON-NLS-2$
 					name.append(" - "); //$NON-NLS-1$
@@ -355,9 +352,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		dialog.setUpperListLabel(LaunchMessages.getString("Launch.common.BinariesColon")); //$NON-NLS-1$
 		dialog.setLowerListLabel(LaunchMessages.getString("Launch.common.QualifierColon")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
-		//dialog.set
+		// dialog.set
 		if (dialog.open() == Window.OK) {
-			IBinary binary = (IBinary) dialog.getFirstResult();
+			IBinary binary = (IBinary)dialog.getFirstResult();
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
 
@@ -375,53 +372,12 @@ public class CMainTab extends CLaunchConfigurationTab {
 					LaunchMessages.getString("CMainTab.Enter_project_before_browsing_for_program")); //$NON-NLS-1$
 			return;
 		}
-
-		ElementTreeSelectionDialog dialog;
-		WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
-		WorkbenchContentProvider contentProvider = new WorkbenchContentProvider();
-		dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, contentProvider);
-		dialog.setTitle(LaunchMessages.getString("CMainTab.Program_selection")); //$NON-NLS-1$
-		dialog.setMessage(LaunchMessages.getFormattedString(
-				"CMainTab.Choose_program_to_run_from_NAME", cproject.getResource().getName())); //$NON-NLS-1$
-		dialog.setBlockOnOpen(true);
-		dialog.setAllowMultiple(false);
-		dialog.setInput(cproject.getResource());
-		dialog.setValidator(new ISelectionStatusValidator() {
-
-			public IStatus validate(Object[] selection) {
-				if (selection.length == 0 || !(selection[0] instanceof IFile)) {
-					return new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), 1, LaunchMessages
-							.getString("CMainTab.Selection_must_be_file"), null); //$NON-NLS-1$
-				}
-				try {
-					ICElement celement = cproject.findElement(((IFile) selection[0]).getProjectRelativePath());
-					if (celement == null
-							|| (celement.getElementType() != ICElement.C_BINARY && celement.getElementType() != ICElement.C_ARCHIVE)) {
-						return new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), 1, LaunchMessages
-								.getString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
-					}
-
-					return new Status(IStatus.OK, LaunchUIPlugin.getUniqueIdentifier(), IStatus.OK, celement.getResource()
-							.getName(), null);
-				} catch (Exception ex) {
-					return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchMessages
-							.getString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
-				}
-			}
-		});
-
-		if (dialog.open() == Window.CANCEL) {
-			return;
+		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
+		fileDialog.setFileName(fProgText.getText());
+		String text= fileDialog.open();
+		if (text != null) {
+			fProgText.setText(text);
 		}
-
-		Object[] results = dialog.getResult();
-
-		try {
-			fProgText.setText(((IResource) results[0]).getProjectRelativePath().toString());
-		} catch (Exception ex) {
-			/* Make sure it is a file */
-		}
-
 	}
 
 	/**
@@ -449,7 +405,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 		});
 
-		return (IBinary[]) ret[0];
+		return (IBinary[])ret[0];
 	}
 
 	/**
@@ -483,10 +439,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 			ICProject cProject = getCProject();
 			if (cProject != null) {
-				dialog.setInitialSelections(new Object[] { cProject});
+				dialog.setInitialSelections(new Object[]{cProject});
 			}
 			if (dialog.open() == Window.OK) {
-				return (ICProject) dialog.getFirstResult();
+				return (ICProject)dialog.getFirstResult();
 			}
 		} catch (CModelException e) {
 			LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$			
@@ -504,7 +460,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;
 			try {
-				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource(), false);
+				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject)cproject[i].getResource(), false);
 				if (cdesciptor != null) {
 					String projectPlatform = cdesciptor.getPlatform();
 					if (filterPlatform.equals("*") //$NON-NLS-1$
@@ -519,7 +475,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				list.add(cproject[i]);
 			}
 		}
-		return (ICProject[]) list.toArray(new ICProject[list.size()]);
+		return (ICProject[])list.toArray(new ICProject[list.size()]);
 	}
 
 	/**
@@ -554,6 +510,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 			return false;
 		}
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+		if (!project.isOpen()) {
+			setErrorMessage(LaunchMessages.getString("CMainTab.Project_must_be_opened")); //$NON-NLS-1$
+			return false;
+		}
 
 		name = fProgText.getText().trim();
 		if (name.length() == 0) {
@@ -564,17 +524,61 @@ public class CMainTab extends CLaunchConfigurationTab {
 			setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 			return false;
 		}
-		if (!project.isOpen()) {
-			setErrorMessage(LaunchMessages.getString("CMainTab.Project_must_be_opened")); //$NON-NLS-1$
+		IPath exePath = new Path(name);
+		if (!exePath.isAbsolute()) {
+			if (!project.getFile(name).exists()) {
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+				return false;
+			}
+			exePath = project.getFile(name).getLocation();
+		} else {
+			if (!exePath.toFile().exists()) {
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+				return false;
+			}
+		}
+		try {
+			if (!isBinary(project, exePath)) {
+				setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
+				return false;
+			}
+		} catch (CoreException e) {
+			LaunchUIPlugin.log(e);
+			setErrorMessage(e.getLocalizedMessage());
 			return false;
 		}
-		if (!project.getFile(name).exists()) {
-			setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-			return false;
-		}
+		
 		return true;
 	}
 
+	/**
+	 * @param project
+	 * @param exePath
+	 * @return
+	 * @throws CoreException
+	 */
+	protected boolean isBinary(IProject project, IPath exePath) throws CoreException {
+		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
+		for (int i = 0; i < parserRef.length; i++) {
+			try {
+				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
+				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+				if (exe != null) {
+					return true;
+				}
+			} catch (ClassCastException e) {
+			} catch (IOException e) {
+			}
+		}
+		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
+		try {
+			IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+			return exe != null;
+		} catch (ClassCastException e) {
+		} catch (IOException e) {
+		}
+		return false;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -608,7 +612,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected void initializeProgramName(ICElement cElement, ILaunchConfigurationWorkingCopy config) {
 		IBinary binary = null;
 		if (cElement instanceof ICProject) {
-			IBinary[] bins = getBinaryFiles((ICProject) cElement);
+			IBinary[] bins = getBinaryFiles((ICProject)cElement);
 			if (bins != null && bins.length == 1) {
 				binary = bins[0];
 			}

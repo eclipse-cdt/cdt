@@ -44,6 +44,7 @@ import org.eclipse.debug.core.model.IProcess;
 public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		IBinaryObject exeFile = null;
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -56,7 +57,9 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked(1);
 			IPath exePath = verifyProgramPath(config);
 			ICProject project = verifyCProject(config);
-			IBinaryObject exeFile = verifyBinary(project, exePath);
+			if (exePath != null) {
+				exeFile = verifyBinary(project, exePath);
+			}
 			String arguments[] = getProgramArgumentsArray(config);
 
 			// set the default source locator if required

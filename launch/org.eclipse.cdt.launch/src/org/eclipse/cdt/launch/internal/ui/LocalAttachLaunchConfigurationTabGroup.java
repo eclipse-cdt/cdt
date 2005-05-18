@@ -11,7 +11,7 @@
 package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.launch.ui.CDebuggerTab;
-import org.eclipse.cdt.launch.ui.CMainTab;
+import org.eclipse.cdt.launch.ui.CMainAttachTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -25,7 +25,7 @@ public class LocalAttachLaunchConfigurationTabGroup extends AbstractLaunchConfig
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode)  {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new CMainTab(),
+			new CMainAttachTab(),
 			new CDebuggerTab(true),
 			new SourceLookupTab(),
 			new CommonTab()

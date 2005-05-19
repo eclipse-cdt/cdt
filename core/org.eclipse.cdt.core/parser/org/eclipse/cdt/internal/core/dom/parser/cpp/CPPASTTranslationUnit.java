@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
@@ -56,7 +57,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeExce
  * @author jcamelon
  */
 public class CPPASTTranslationUnit extends CPPASTNode implements
-        ICPPASTTranslationUnit, IRequiresLocationInformation {
+        ICPPASTTranslationUnit, IRequiresLocationInformation, IASTAmbiguityParent {
     private IASTDeclaration[] decls = new IASTDeclaration[32];
 
     private ICPPNamespace binding = null;
@@ -487,4 +488,17 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 		return resolver.getContainingFilename( offset );
 	}
     
+    public void replace(IASTNode child, IASTNode other) {
+        if( decls == null ) return;
+        for( int i = 0; i < decls.length; ++i )
+        {
+           if( decls[i] == null ) continue;
+           if( decls[i] == child )
+           {
+               other.setParent( child.getParent() );
+               other.setPropertyInParent( child.getPropertyInParent() );
+               decls[i] = (IASTDeclaration) other;
+           }
+        }
+    }
 }

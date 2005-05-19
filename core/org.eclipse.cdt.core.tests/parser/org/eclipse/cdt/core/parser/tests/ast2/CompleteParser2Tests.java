@@ -19,7 +19,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -832,21 +834,21 @@ public class CompleteParser2Tests extends TestCase {
 
 	public void testBug41520() throws Exception 
 	{
-		/*IASTTranslationUnit tu =*/ parse( "const int x = 666; const int y( x );"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "const int x = 666; const int y( x );"); //$NON-NLS-1$
 		
-//		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
-//		IASTDeclarator dtor = decl.getDeclarators()[0];
-//		assertFalse( dtor instanceof IASTFunctionDeclarator );
-//		assertNotNull( dtor.getInitializer() );
-//		
-//		CPPNameCollector col = new CPPNameCollector();
-// 		tu.accept( col );
-// 		
-// 		assertEquals( col.size(), 3 );
-// 		IVariable x = (IVariable) col.getName(0).resolveBinding();
-// 		IVariable y = (IVariable) col.getName(1).resolveBinding();
-// 		assertNotNull(y);
-// 		assertInstances( col, x, 2 );
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+		IASTDeclarator dtor = decl.getDeclarators()[0];
+		assertFalse( dtor instanceof IASTFunctionDeclarator );
+		assertNotNull( dtor.getInitializer() );
+		
+		CPPNameCollector col = new CPPNameCollector();
+ 		tu.accept( col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable y = (IVariable) col.getName(1).resolveBinding();
+ 		assertNotNull(y);
+ 		assertInstances( col, x, 2 );
 	}
 	
 	public void testNewXReferences() throws Exception

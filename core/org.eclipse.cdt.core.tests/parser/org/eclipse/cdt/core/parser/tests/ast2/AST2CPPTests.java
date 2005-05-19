@@ -3340,10 +3340,10 @@ public class AST2CPPTests extends AST2BaseTest {
 
     public void testBug90498_1() throws Exception {
         IASTTranslationUnit tu = parse(
-                "typedef INT ( FOO ) (INT);", ParserLanguage.CPP); //$NON-NLS-1$
+                "typedef int INT;\ntypedef INT ( FOO ) (INT);", ParserLanguage.CPP); //$NON-NLS-1$
 
         IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu
-                .getDeclarations()[0];
+                .getDeclarations()[1];
         IASTDeclSpecifier declSpec = decl.getDeclSpecifier();
         assertTrue(declSpec instanceof ICPPASTNamedTypeSpecifier);
         assertEquals(((ICPPASTNamedTypeSpecifier) declSpec).getName()
@@ -4344,4 +4344,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( str, col.getName(7).resolveBinding() );
 		assertSame( str, col.getName(9).resolveBinding() );
 	}
+    
+    public void testBug94779() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void f( int t ){\n" );
+        buffer.append( "int s ( t );\n" );
+        buffer.append( "}\n" );
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        IASTDeclarationStatement ds = (IASTDeclarationStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[0];
+        IASTDeclarator d = ((IASTSimpleDeclaration)ds.getDeclaration()).getDeclarators()[0];
+        assertTrue( d.getName().resolveBinding() instanceof IVariable );
+    }
 }

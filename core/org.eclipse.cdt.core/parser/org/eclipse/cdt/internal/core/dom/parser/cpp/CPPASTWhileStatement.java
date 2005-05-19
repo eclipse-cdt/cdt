@@ -96,6 +96,12 @@ public class CPPASTWhileStatement extends CPPASTNode implements
             other.setParent( child.getParent() );
             condition  = (IASTExpression) other;
         }
+        if( condition2 == child )
+        {
+            other.setParent( child.getParent() );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            condition2 = (IASTDeclaration) other;
+        }
     }
 
 }

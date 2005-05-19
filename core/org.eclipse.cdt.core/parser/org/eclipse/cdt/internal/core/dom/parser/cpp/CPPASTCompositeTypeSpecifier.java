@@ -13,15 +13,17 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
-        implements ICPPASTCompositeTypeSpecifier {
+        implements ICPPASTCompositeTypeSpecifier, IASTAmbiguityParent {
 
     private int k;
     private IASTName n;
@@ -139,4 +141,18 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 			return r_definition;
 		return r_unclear;
 	}
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( declarations == null ) return;
+        for( int i = 0; i < declarations.length; ++i )
+        {
+           if( declarations[i] == null ) continue;
+           if( declarations[i] == child )
+           {
+               other.setParent( child.getParent() );
+               other.setPropertyInParent( child.getPropertyInParent() );
+               declarations[i] = (IASTDeclaration) other;
+           }
+        }
+    }
 }

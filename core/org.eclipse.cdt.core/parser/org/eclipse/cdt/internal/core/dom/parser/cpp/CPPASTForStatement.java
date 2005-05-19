@@ -152,5 +152,12 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, 
             other.setParent( child.getParent() );
             initialExpression  = (IASTExpression) other;
         }
+        if( initDeclaration == child )
+        {
+            other.setParent( child.getParent() );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            initDeclaration = (IASTDeclaration) other;
+        }
+
     }
 }

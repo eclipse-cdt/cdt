@@ -225,27 +225,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 8.5-2):
-	int f(int);
-	int a = 2;
-	int b = f(a);
-	int c(b);
-	 --End Example]
-	 */
-	public void test8_5s2()  { // TODO raised bug 90641
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("int f(int);\n"); //$NON-NLS-1$
-		buffer.append("int a = 2;\n"); //$NON-NLS-1$
-		buffer.append("int b = f(a);\n"); //$NON-NLS-1$
-		buffer.append("int c(b);\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 8.5.2-1):
 	char msg[] = "Syntax error on line %s\n";
 	 --End Example]

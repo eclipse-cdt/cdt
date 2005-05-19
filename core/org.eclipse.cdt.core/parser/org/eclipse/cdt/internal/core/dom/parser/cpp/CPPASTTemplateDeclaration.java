@@ -12,16 +12,18 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTTemplateDeclaration extends CPPASTNode implements
-        ICPPASTTemplateDeclaration {
+        ICPPASTTemplateDeclaration, IASTAmbiguityParent {
 
     private boolean exported;
     private IASTDeclaration declaration;
@@ -97,4 +99,13 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
 			templateScope = new CPPTemplateScope( this );
 		return templateScope;
 	}
+    
+    public void replace(IASTNode child, IASTNode other) {
+        if( declaration == child )
+        {
+            other.setParent( child.getParent() );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            declaration = (IASTDeclaration) other;
+        }
+    }
 }

@@ -46,34 +46,6 @@ public abstract class CASTAmbiguity extends CASTNode  {
     }
     
     
-    /**
-     * @param names
-     * @param j
-     * @throws DOMException
-     */
-    protected void clearCache(IASTName[] names, int j) {
-        IScope scope = CPPVisitor.getContainingScope( names[j] );
-        try {
-            scope.flushCache();
-        } catch (DOMException e) {
-        }
-    }
-
-    /**
-     * @param visitor
-     * @param nodes
-     * @param bestIndex
-     * @return
-     */
-    protected boolean reduceAmbiguity(ASTVisitor visitor, IASTNode[] nodes, int bestIndex) {
-        IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
-        IASTNode s = nodes[bestIndex];
-        owner.replace(this, nodes[bestIndex]);
-        if (!s.accept(visitor))
-            return false;
-        return true;
-   }
-    
     protected abstract IASTNode [] getNodes();
     
     public boolean accept(ASTVisitor visitor) {
@@ -83,6 +55,7 @@ public abstract class CASTAmbiguity extends CASTNode  {
         for( int i = 0; i < nodez.length; ++i )
         {
             IASTNode s = nodez[i];
+            s.accept(visitor);
             CASTNameCollector resolver = new CASTNameCollector();
             s.accept( resolver );
             IASTName [] names  = resolver.getNames();
@@ -93,7 +66,11 @@ public abstract class CASTAmbiguity extends CASTNode  {
                     IBinding b = names[j].resolveBinding();
                     if( b == null || b instanceof IProblemBinding )
                         ++issues[i];
-                    clearCache(names, j);
+                    IScope scope = CPPVisitor.getContainingScope( names[j] );
+                    try {
+                        scope.flushCache();
+                    } catch (DOMException e) {
+                    }
                 }
                 catch( Throwable t )
                 {
@@ -112,7 +89,9 @@ public abstract class CASTAmbiguity extends CASTNode  {
             }
         }
 
-        return reduceAmbiguity(visitor, nodez, bestIndex);
+        IASTAmbiguityParent owner = (IASTAmbiguityParent) getParent();
+        owner.replace(this, nodez[bestIndex]);
+        return true;
     }
 
 }

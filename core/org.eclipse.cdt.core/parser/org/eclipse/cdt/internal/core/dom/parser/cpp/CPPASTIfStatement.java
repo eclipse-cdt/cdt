@@ -98,6 +98,12 @@ public class CPPASTIfStatement extends CPPASTNode implements ICPPASTIfStatement,
             other.setPropertyInParent( child.getPropertyInParent() );
             elseClause = (IASTStatement) other;            
         }
+        if( condDecl == child )
+        {
+            other.setParent( child.getParent() );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            condDecl = (IASTDeclaration) other;
+        }
     }
 
     public IASTDeclaration getConditionDeclaration() {

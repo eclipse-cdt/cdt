@@ -139,18 +139,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
     }
 
-    /**
-     * @param d
-     */
-    protected void throwAwayMarksForInitializerClause() {
-        simpleDeclarationMark = null;
-    }
-
     protected IASTInitializer optionalCInitializer() throws EndOfFileException,
             BacktrackException {
         if (LT(1) == IToken.tASSIGN) {
             consume(IToken.tASSIGN);
-            throwAwayMarksForInitializerClause();
             return cInitializerClause(Collections.EMPTY_LIST);
         }
         return null;

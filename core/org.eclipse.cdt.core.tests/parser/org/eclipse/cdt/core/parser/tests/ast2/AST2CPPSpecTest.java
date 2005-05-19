@@ -12511,5 +12511,23 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
         buffer.append("int ef(D&);\n"); //$NON-NLS-1$
         buffer.append("int ff(X&);\n"); //$NON-NLS-1$
         parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-    }   
+    }
+    
+    /**
+     [--Start Example(CPP 8.5-2):
+    int f(int);
+    int a = 2;
+    int b = f(a);
+    int c(b);
+     --End Example]
+     * @throws ParserException 
+     */
+    public void test8_5s2() throws ParserException  { // 90641
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int f(int);\n"); //$NON-NLS-1$
+        buffer.append("int a = 2;\n"); //$NON-NLS-1$
+        buffer.append("int b = f(a);\n"); //$NON-NLS-1$
+        buffer.append("int c(b);\n"); //$NON-NLS-1$
+        parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+    }
 }

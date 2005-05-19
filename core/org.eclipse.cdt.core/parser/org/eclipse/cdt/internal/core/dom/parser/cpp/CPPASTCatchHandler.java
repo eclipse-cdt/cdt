@@ -89,5 +89,12 @@ public class CPPASTCatchHandler extends CPPASTNode implements
             other.setParent( child.getParent() );
             body = (IASTStatement) other;
         }
+        if( declaration == child )
+        {
+            other.setParent( child.getParent() );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            declaration = (IASTDeclaration) other;
+        }
+
     }
 }

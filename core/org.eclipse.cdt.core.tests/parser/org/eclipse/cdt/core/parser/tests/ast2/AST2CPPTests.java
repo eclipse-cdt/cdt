@@ -4355,4 +4355,23 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTDeclarator d = ((IASTSimpleDeclaration)ds.getDeclaration()).getDeclarators()[0];
         assertTrue( d.getName().resolveBinding() instanceof IVariable );
     }
+    	
+	public void testBug95714() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("typedef struct xs {           \n"); //$NON-NLS-1$
+		buffer.append("   int state;                 \n"); //$NON-NLS-1$
+		buffer.append("} xs;                         \n"); //$NON-NLS-1$
+		buffer.append("void f( xs *ci ) {            \n"); //$NON-NLS-1$
+		buffer.append("   ci->state;                 \n"); //$NON-NLS-1$
+		buffer.append("   (ci - 1)->state;           \n"); //$NON-NLS-1$
+		buffer.append("}                             \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPField state = (ICPPField) col.getName(1).resolveBinding();
+        assertSame( state, col.getName(7).resolveBinding() );
+        assertSame( state, col.getName(9).resolveBinding() );
+	}
 }

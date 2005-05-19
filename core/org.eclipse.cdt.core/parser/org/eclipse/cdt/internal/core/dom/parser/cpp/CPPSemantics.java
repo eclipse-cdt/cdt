@@ -1691,7 +1691,7 @@ public class CPPSemantics {
 						   ((ICPPSpecialization)temp).getSpecializedBinding() == type )
 				{
 					//ok, stay with the template, the specialization, if applicable, will come out during instantiation
-				} else if( type != temp ) {
+				} else if( type != temp && !((IType)type).isSameType( (IType) temp )) {
 	                return new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	            }
 	        } else if( temp instanceof IFunction ){

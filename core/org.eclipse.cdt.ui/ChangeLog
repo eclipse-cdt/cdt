@@ -1,3 +1,7 @@
+2005-05-18 David Inglis
+	Fixed bug # 95556
+	* src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java
+	
 2005-05-12 Alain Magloire
 	Fix multiple warnings, the use of:
 	Workbench.setHelp() --> PlatformUI.getWorkbench().getHelpSystem().getHelp()

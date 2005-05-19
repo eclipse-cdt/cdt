@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -68,10 +68,10 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 	Preferences fPrefs;
 	String fBuilderID;
-	IMakeBuilderInfo fBuildInfo;
+	IMakeCommonBuildInfo fBuildInfo;
 	protected TableViewer environmentTable;
 	protected String[] envTableColumnHeaders = {MakeUIPlugin.getResourceString("MakeEnvironmentBlock.0"), MakeUIPlugin.getResourceString("MakeEnvironmentBlock.1")}; //$NON-NLS-1$ //$NON-NLS-2$
-	protected ColumnLayoutData[] envTableColumnLayouts = {new ColumnWeightData(50), new ColumnWeightData(50)};
+	protected ColumnLayoutData[] envTableColumnLayouts = {new ColumnPixelData(150), new ColumnPixelData(250)};
 
 	private static final String NAME_LABEL = MakeUIPlugin.getResourceString("MakeEnvironmentBlock.2"); //$NON-NLS-1$
 	private static final String VALUE_LABEL = MakeUIPlugin.getResourceString("MakeEnvironmentBlock.3"); //$NON-NLS-1$
@@ -166,7 +166,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		public Object[] getElements(Object inputElement) {
 			EnvironmentVariable[] elements = new EnvironmentVariable[0];
-			IMakeBuilderInfo info = (IMakeBuilderInfo)inputElement;
+			IMakeCommonBuildInfo info = (IMakeCommonBuildInfo)inputElement;
 			Map m = info.getEnvironment();
 			if (m != null && !m.isEmpty()) {
 				elements = new EnvironmentVariable[m.size()];
@@ -266,7 +266,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(MakeUIPlugin.getResourceString("SettingsBlock.monitor.applyingSettings"), 1); //$NON-NLS-1$
-				IMakeBuilderInfo info = null;
+				IMakeCommonBuildInfo info = null;
 				if (getContainer().getProject() != null) {
 					try {
 						info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
@@ -303,7 +303,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 * 
 	 * @param configuration
 	 */
-	protected void updateEnvironment(IMakeBuilderInfo info) {
+	protected void updateEnvironment(IMakeCommonBuildInfo info) {
 		environmentTable.setInput(info);
 	}
 
@@ -313,7 +313,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 			return;
 		}
 
-		IMakeBuilderInfo info;
+		IMakeCommonBuildInfo info;
 		if (getContainer().getProject() != null) {
 			info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);
 		} else {

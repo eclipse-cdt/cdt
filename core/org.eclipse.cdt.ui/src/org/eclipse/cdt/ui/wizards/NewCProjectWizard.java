@@ -243,7 +243,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	protected boolean invokeRunnable(IRunnableWithProgress runnable) {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(runnable);
 		try {
-			getContainer().run(false, true, op);
+			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
 			Shell shell= getShell();
 			String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$

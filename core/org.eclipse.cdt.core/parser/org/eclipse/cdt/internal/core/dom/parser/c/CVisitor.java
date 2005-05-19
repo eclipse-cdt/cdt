@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -26,6 +27,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -34,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -46,8 +50,10 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -77,7 +83,9 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -425,7 +433,7 @@ public class CVisitor {
 	
 	protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	protected static final ASTNodeProperty STRING_LOOKUP_TAGS_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_TAGS_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
-	
+	private static final String SIZE_T = "size_t"; //$NON-NLS-1$
 	//lookup bits
 	private static final int COMPLETE 			= 0;		
 	private static final int CURRENT_SCOPE 		= 1;
@@ -609,7 +617,7 @@ public class CVisitor {
 		return null;
 	}
 	
-	private static IType getExpressionType( IASTExpression expression ) {
+	public static IType getExpressionType( IASTExpression expression ) {
 	    try{ 
 		    if( expression instanceof IASTIdExpression ){
 		        IBinding binding = ((IASTIdExpression)expression).getName().resolveBinding();
@@ -639,7 +647,112 @@ public class CVisitor {
 		            return new CPointerType( type );
 		        }
 		        return type;
-		    }
+		    } else if( expression instanceof IASTLiteralExpression ){
+		    	switch( ((IASTLiteralExpression) expression).getKind() ){
+		    		case IASTLiteralExpression.lk_char_constant:
+		    			return new CBasicType( IBasicType.t_char, 0, expression );
+		    		case IASTLiteralExpression.lk_float_constant:
+		    			return new CBasicType( IBasicType.t_float, 0, expression );
+		    		case IASTLiteralExpression.lk_integer_constant:
+		    			return new CBasicType( IBasicType.t_int, 0, expression );
+		    		case IASTLiteralExpression.lk_string_literal:
+		    			IType type = new CBasicType( IBasicType.t_char, 0, expression );
+		    			type = new CQualifierType( type, true, false, false );
+		    			return new CPointerType( type );
+		    	}
+	    	} else if( expression instanceof IASTBinaryExpression ){
+		        IASTBinaryExpression binary = (IASTBinaryExpression) expression;
+		        int op = binary.getOperator();
+				IType result = null;
+				switch( op ){
+					case IASTBinaryExpression.op_lessEqual:
+					case IASTBinaryExpression.op_lessThan:
+					case IASTBinaryExpression.op_greaterEqual:
+					case IASTBinaryExpression.op_greaterThan:
+					case IASTBinaryExpression.op_logicalAnd:
+					case IASTBinaryExpression.op_logicalOr:
+					case IASTBinaryExpression.op_equals:
+					case IASTBinaryExpression.op_notequals:
+						result = new CBasicType( IBasicType.t_int, 0 );
+						break;
+					case IASTBinaryExpression.op_plus:
+					case IASTBinaryExpression.op_minus:
+						IType t = getExpressionType( ((IASTBinaryExpression) expression).getOperand1() );
+						if( t instanceof IPointerType )
+							result = t;
+						else{
+							result = getExpressionType( ((IASTBinaryExpression) expression).getOperand2() );
+						}
+						break;
+					default:
+						result = getExpressionType( ((IASTBinaryExpression) expression).getOperand1() );
+				}
+	
+		        if( result instanceof CBasicType ){
+		        	((CBasicType)result).setValue( expression );
+		        }
+		        return result;
+		    } else if( expression instanceof IASTUnaryExpression ) {
+				int op = ((IASTUnaryExpression)expression).getOperator(); 
+				if( op == IASTUnaryExpression.op_sizeof ){
+					IScope scope = getContainingScope( expression );
+					IBinding [] bs = scope.find( SIZE_T );
+					if( bs.length > 0 && bs[0] instanceof IType ){
+						return (IType) bs[0];
+					}
+					return new CBasicType( IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED, expression );	
+				}
+				IType type = getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+				
+				if( op == IASTUnaryExpression.op_star && (type instanceof IPointerType || type instanceof IArrayType) ){
+				    try {
+						return ((ITypeContainer)type).getType();
+					} catch (DOMException e) {
+						return e.getProblem();
+					}
+				} else if( op == IASTUnaryExpression.op_amper ){
+				    return new CPointerType( type );
+				} else if ( type instanceof CBasicType ){
+					((CBasicType)type).setValue( expression );
+				}
+				return type;
+		    }  else if( expression instanceof IASTFieldReference ){
+				IBinding binding = (IBinding) findBinding( (IASTFieldReference) expression, false );
+			    if( binding instanceof IVariable )
+                    return ((IVariable)binding).getType();
+                else if( binding instanceof IFunction )
+				    return ((IFunction)binding).getType();
+                else if( binding instanceof IEnumerator )
+                	return ((IEnumerator)binding).getType();
+			} else if( expression instanceof IASTExpressionList ){
+				IASTExpression [] exps = ((IASTExpressionList)expression).getExpressions();
+				return getExpressionType( exps[ exps.length - 1 ] );
+			} else if( expression instanceof IASTTypeIdExpression ){
+			    IASTTypeIdExpression typeidExp = (IASTTypeIdExpression) expression;
+				if( typeidExp.getOperator() == IASTTypeIdExpression.op_sizeof ){
+					IScope scope = getContainingScope( typeidExp );
+					IBinding [] bs = scope.find( SIZE_T );
+					if( bs.length > 0 && bs[0] instanceof IType ){
+						return (IType) bs[0];
+					}
+					return new CBasicType( IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED );
+				}
+			    return createType( typeidExp.getTypeId().getAbstractDeclarator() );
+			} else if( expression instanceof IASTArraySubscriptExpression ){
+				IType t = getExpressionType( ((IASTArraySubscriptExpression) expression).getArrayExpression() );
+				if( t instanceof IPointerType )
+					return ((IPointerType)t).getType();
+				else if( t instanceof IArrayType )
+					return ((IArrayType)t).getType();
+			} else if( expression instanceof IGNUASTCompoundStatementExpression ){
+				IASTCompoundStatement compound = ((IGNUASTCompoundStatementExpression)expression).getCompoundStatement();
+				IASTStatement [] statements = compound.getStatements();
+				if( statements.length > 0 ){
+					IASTStatement st = statements[ statements.length - 1 ];
+					if( st instanceof IASTExpressionStatement )
+						return getExpressionType( ((IASTExpressionStatement)st).getExpression() );
+				}
+			}
 	    } catch( DOMException e ){
 	        return e.getProblem();
 	    }
@@ -1443,7 +1556,7 @@ public class CVisitor {
 		if( isParameter && node.getParent().getParent() instanceof IASTFunctionDefinition ){
 		    type = createBaseType( declSpec );
 		} else {
-		    type = createType( declSpec );
+		    type = createType( (ICASTDeclSpecifier) declSpec );
 		}
 		
 		type = createType( type, declarator );
@@ -1504,7 +1617,12 @@ public class CVisitor {
 	 * @return the base IType
 	 */
 	public static IType createBaseType( IASTDeclSpecifier declSpec ) {
-		if (declSpec instanceof ICASTSimpleDeclSpecifier) {
+		if( declSpec instanceof IGCCASTSimpleDeclSpecifier ){
+			IASTExpression exp = ((IGCCASTSimpleDeclSpecifier)declSpec).getTypeofExpression();
+			if( exp != null )
+				return getExpressionType( exp );
+			return new CBasicType( (ICASTSimpleDeclSpecifier) declSpec );
+		} else if (declSpec instanceof ICASTSimpleDeclSpecifier) {
 		    return new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
 		} 
 		IBinding binding = null;
@@ -1525,9 +1643,10 @@ public class CVisitor {
 		return new ProblemBinding( name, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray() );
 	}
 
-	public static IType createType( IASTDeclSpecifier declSpec ) {
-	    if (declSpec.isConst() || declSpec.isVolatile() || (declSpec instanceof ICASTDeclSpecifier && ((ICASTDeclSpecifier)declSpec).isRestrict()))
+	public static IType createType( ICASTDeclSpecifier declSpec ) {
+	    if (declSpec.isConst() || declSpec.isVolatile() || declSpec.isRestrict()) {
 			return new CQualifierType(declSpec);
+		}
 	    
 	    return createBaseType( declSpec );
 	}

@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -27,16 +26,28 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  */
 public class CQualifierType implements ICQualifierType, ITypeContainer {
 
-	IASTDeclSpecifier declSpec = null;
-	IType type = null;
+	private boolean isConst;
+	private boolean isVolatile;
+	private boolean isRestrict;
+	private IType type = null;
 
 	/**
 	 * CQualifierType has an IBasicType to keep track of the basic type information.
 	 * 
 	 * @param type the CQualifierType's IBasicType
 	 */
-	public CQualifierType(IASTDeclSpecifier declSpec) {
-		this.declSpec = declSpec;
+	public CQualifierType(ICASTDeclSpecifier declSpec) {
+		this.type = resolveType( declSpec );
+		this.isConst = declSpec.isConst();
+		this.isVolatile = declSpec.isVolatile();
+		this.isRestrict = declSpec.isRestrict();
+	}
+	
+	public CQualifierType( IType type, boolean isConst, boolean isVolatile, boolean isRestrict ){
+		this.type = type;
+		this.isConst = isConst;
+		this.isVolatile = isVolatile;
+		this.isRestrict = isRestrict;
 	}
 	
 	public boolean isSameType( IType obj ){
@@ -64,48 +75,47 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isConst()
 	 */
 	public boolean isConst() {
-		if (declSpec == null) return false;
-		return declSpec.isConst();
+		return isConst;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isVolatile()
 	 */
 	public boolean isVolatile() {
-		if (declSpec == null) return false;
-		return declSpec.isVolatile();
+		return isVolatile;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICQualifierType#isRestrict()
 	 */
 	public boolean isRestrict() {
-		if (declSpec == null) return false;
-		return (declSpec instanceof ICASTDeclSpecifier && ((ICASTDeclSpecifier)declSpec).isRestrict()); 
+		return isRestrict; 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#getType()
 	 */
-	public IType getType() {
-		if (type == null) {
-			if( declSpec instanceof ICASTTypedefNameSpecifier ){
-				ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
-				type = (IType) nameSpec.getName().resolveBinding();			
-			} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
-				IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
-				type = (IType) elabTypeSpec.getName().resolveBinding();
-			} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
-				IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
-				type = (IType) compTypeSpec.getName().resolveBinding();
-			} else {
-			    type = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
-			}
+	private IType resolveType( ICASTDeclSpecifier declSpec ) {
+		IType t = null;
+		if( declSpec instanceof ICASTTypedefNameSpecifier ){
+			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
+			t = (IType) nameSpec.getName().resolveBinding();			
+		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
+			t = (IType) elabTypeSpec.getName().resolveBinding();
+		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
+			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
+			t = (IType) compTypeSpec.getName().resolveBinding();
+		} else {
+		    t = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
 		}
 		
-		return type;
+		return t;
 	}
 	
+	public IType getType(){
+		return type;
+	}
 	public void setType( IType t ){
 	    type = t;
 	}

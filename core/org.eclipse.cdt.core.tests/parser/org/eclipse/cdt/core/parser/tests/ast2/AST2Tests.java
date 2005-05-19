@@ -3079,4 +3079,23 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append("int function(TYPE (* pfv)(int parm));\n"); //$NON-NLS-1$
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
     }
+	
+	public void testBug93980() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("int foo();                 \n"); //$NON-NLS-1$
+		buffer.append("typeof({ int x = foo();    \n"); //$NON-NLS-1$
+		buffer.append("         x; }) zoot;       \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+		
+		IFunction foo = (IFunction) col.getName(0).resolveBinding();
+		assertSame( foo, col.getName(2).resolveBinding() );
+		
+		IVariable zoot = (IVariable) col.getName(4).resolveBinding();
+		IType t = zoot.getType();
+		assertTrue( t instanceof IBasicType );
+		assertEquals( ((IBasicType)t).getType(), IBasicType.t_int );
+	}
 }

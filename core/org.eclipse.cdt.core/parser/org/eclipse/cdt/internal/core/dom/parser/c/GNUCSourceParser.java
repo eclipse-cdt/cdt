@@ -91,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -1551,7 +1552,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             name.setPropertyInParent(IASTNamedTypeSpecifier.NAME);
             return declSpec;
         }
-        ICASTSimpleDeclSpecifier declSpec = createSimpleTypeSpecifier();
+        ICASTSimpleDeclSpecifier declSpec = null;
+		if (typeofExpression != null) {
+			declSpec = createGCCSimpleTypeSpecifier();
+            ((IGCCASTSimpleDeclSpecifier) declSpec)
+                    .setTypeofExpression(typeofExpression);
+            typeofExpression.setParent(declSpec);
+            typeofExpression
+                    .setPropertyInParent(IGCCASTSimpleDeclSpecifier.TYPEOF_EXPRESSION);
+        } else {
+			declSpec = createSimpleTypeSpecifier();
+        }
+		
         declSpec.setConst(isConst);
         declSpec.setRestrict(isRestrict);
         declSpec.setVolatile(isVolatile);
@@ -1564,8 +1576,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         declSpec.setUnsigned(isUnsigned);
         declSpec.setSigned(isSigned);
         declSpec.setShort(isShort);
-        ((ASTNode) declSpec).setOffsetAndLength(startingOffset,
-                (last != null) ? last.getEndOffset() - startingOffset : 0);
+		if( typeofExpression != null && last == null ){
+			((ASTNode)declSpec).setOffsetAndLength( (ASTNode)typeofExpression );
+		} else {
+	        ((ASTNode) declSpec).setOffsetAndLength(startingOffset,
+	                (last != null) ? last.getEndOffset() - startingOffset : 0);
+		}
         return declSpec;
     }
 
@@ -1576,6 +1592,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTSimpleDeclSpecifier();
     }
 
+	protected IGCCASTSimpleDeclSpecifier createGCCSimpleTypeSpecifier() {
+		return new GCCASTSimpleDeclSpecifier();
+	}
+	
     /**
      * @return
      */

@@ -20,8 +20,15 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
  * @author dsteffle
  */
 public class CBasicType implements ICBasicType {
+	static public final int IS_LONG = 1;
+	static public final int IS_LONGLONG = 1 << 1;
+	static public final int IS_SHORT    = 1 << 2;
+	static public final int IS_SIGNED   = 1 << 3;
+	static public final int IS_UNSIGNED = 1 << 4;
 	
-	private ICASTSimpleDeclSpecifier sds = null;
+	private int type = 0;
+	private int qualifiers = 0;
+	private IASTExpression value = null;
 	
 	/**
 	 * keep a reference to the declaration specifier so that duplicate information isn't generated.
@@ -29,46 +36,62 @@ public class CBasicType implements ICBasicType {
 	 * @param sds the simple declaration specifier
 	 */
 	public CBasicType(ICASTSimpleDeclSpecifier sds) {
-		this.sds = sds;
+		this.type = sds.getType();
+		this.qualifiers = ( sds.isLong()    ? CBasicType.IS_LONG  : 0 ) |
+		   				  ( sds.isShort()   ? CBasicType.IS_SHORT : 0 ) |
+		   				  ( sds.isSigned()  ? CBasicType.IS_SIGNED: 0 ) |
+		   				  ( sds.isUnsigned()? CBasicType.IS_UNSIGNED : 0 ) |
+						  ( sds.isUnsigned()? CBasicType.IS_LONGLONG : 0 );
+	}
+	
+	public CBasicType( int type, int qualifiers ){
+		this.type = type;
+		this.qualifiers = qualifiers;
+	}
+	
+	public CBasicType( int type, int qualifiers, IASTExpression value ){
+		this.type = type;
+		this.qualifiers = qualifiers;
+		this.value = value;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#getType()
 	 */
 	public int getType() {
-		return sds.getType();
+		return type;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#isSigned()
 	 */
 	public boolean isSigned() {
-		return sds.isSigned();
+		return ( qualifiers & IS_SIGNED) != 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#isUnsigned()
 	 */
 	public boolean isUnsigned() {
-		return sds.isUnsigned();
+		return ( qualifiers & IS_UNSIGNED) != 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#isShort()
 	 */
 	public boolean isShort() {
-		return sds.isShort();
+		return ( qualifiers & IS_SHORT) != 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#isLong()
 	 */
 	public boolean isLong() {
-		return sds.isLong();
+		return ( qualifiers & IS_LONG) != 0;
 	}
 
 	public boolean isLongLong() {
-		return sds.isLongLong();
+		return ( qualifiers & IS_LONGLONG) != 0;
 	}
 
 	public boolean isSameType(IType obj) {
@@ -103,7 +126,10 @@ public class CBasicType implements ICBasicType {
 	 * @see org.eclipse.cdt.core.dom.ast.IBasicType#getValue()
 	 */
 	public IASTExpression getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return value;
+	}
+	
+	public void setValue( IASTExpression expression ){
+		this.value = expression;
 	}
 }

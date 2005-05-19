@@ -3335,9 +3335,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         } else
             simpleDeclSpec = createSimpleDeclSpecifier();
 
-        int l = last != null ? last.getEndOffset() - firstToken.getOffset() : 0;
-        ((ASTNode) simpleDeclSpec)
-                .setOffsetAndLength(firstToken.getOffset(), l);
+		if( last == null && typeofExpression != null ){
+			((ASTNode) simpleDeclSpec).setOffsetAndLength((ASTNode) typeofExpression);
+		} else {
+	        int l = last != null ? last.getEndOffset() - firstToken.getOffset() : 0;
+	        ((ASTNode) simpleDeclSpec)
+	                .setOffsetAndLength(firstToken.getOffset(), l);
+		}
         simpleDeclSpec.setConst(isConst);
         simpleDeclSpec.setVolatile(isVolatile);
         if (simpleDeclSpec instanceof IGPPASTDeclSpecifier)

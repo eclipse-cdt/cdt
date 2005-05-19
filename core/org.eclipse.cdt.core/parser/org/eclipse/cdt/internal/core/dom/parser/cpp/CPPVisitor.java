@@ -1528,7 +1528,7 @@ public class CPPVisitor {
 			int bits = ( spec.isLong()     ? CPPBasicType.IS_LONG  : 0 ) |
 					   ( spec.isShort()    ? CPPBasicType.IS_SHORT : 0 ) |
 					   ( spec.isSigned()   ? CPPBasicType.IS_SIGNED: 0 ) |
-					   ( spec.isUnsigned() ? CPPBasicType.IS_SHORT : 0 );
+					   ( spec.isUnsigned() ? CPPBasicType.IS_UNSIGNED : 0 );
 			if( spec instanceof IGPPASTSimpleDeclSpecifier ){
 				IGPPASTSimpleDeclSpecifier gspec = (IGPPASTSimpleDeclSpecifier) spec;
 				if( gspec.getTypeofExpression() != null ){
@@ -1732,8 +1732,20 @@ public class CPPVisitor {
 	    }
 	    else if( expression instanceof IASTUnaryExpression )
 	    {
+			int op = ((IASTUnaryExpression)expression).getOperator();
+			if( op == IASTTypeIdExpression.op_sizeof ){
+				IScope scope = getContainingScope( expression );
+				try {
+					IBinding [] bs = scope.find( SIZE_T );
+					if( bs.length > 0 && bs[0] instanceof IType ){
+						return (IType) bs[0];
+					}
+				} catch (DOMException e) {
+				}
+				return new CPPBasicType( IBasicType.t_int, CPPBasicType.IS_LONG | CPPBasicType.IS_UNSIGNED );
+			}
+			
 			IType type = getExpressionType(((IASTUnaryExpression)expression).getOperand() );
-			int op = ((IASTUnaryExpression)expression).getOperator(); 
 			if( op == IASTUnaryExpression.op_star && (type instanceof IPointerType || type instanceof IArrayType) ){
 			    try {
 					return ((ITypeContainer)type).getType();

@@ -3,3 +3,7 @@ Release CDT-3.0
 	* All the MakefileEditor text preference settings are now common with the text editors.
 	  To access use Window --> Preferences --> General --> Editors --> Text Editors
 
+	* New Environment variable support for builder.
+		
+	* Can now filter folders which do not have make target in Make Target view.
+

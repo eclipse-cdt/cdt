@@ -238,24 +238,21 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
 	 */
 	public String[] getQualifiedName() {
-		// TODO Auto-generated method stub
-		return null;
+		return CPPVisitor.getQualifiedName( this );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
 	 */
 	public char[][] getQualifiedNameCharArray() {
-		// TODO Auto-generated method stub
-		return null;
+		return CPPVisitor.getQualifiedNameCharArray( this );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
 	 */
 	public boolean isGloballyQualified() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)

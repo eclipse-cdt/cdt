@@ -1867,6 +1867,9 @@ public class CPPVisitor {
 	    try {
             ICPPScope scope = (ICPPScope) binding.getScope();
             while( scope != null ){
+            	if( scope instanceof ICPPTemplateScope )
+            		scope = (ICPPScope) scope.getParent();
+            	
             	IASTName n = scope.getScopeName();
             	if( n == null )
             		break;
@@ -1894,6 +1897,9 @@ public class CPPVisitor {
 	    try {
             ICPPScope scope = (ICPPScope) binding.getScope();
             while( scope != null ){
+            	if( scope instanceof ICPPTemplateScope )
+            		scope = (ICPPScope) scope.getParent();
+            	
             	IASTName n = scope.getScopeName();
             	if( n == null )
             		break;

@@ -18,12 +18,14 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildOptionSettingsPage;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildSettingsPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolSettingsPage;
@@ -290,11 +292,11 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		if (currentSettingsPage == null) {
 			if ( this.element instanceof IProject) {
-				currentSettingsPage = new BuildToolSettingsPage(parent.getSelectedConfiguration(), tool);
+				currentSettingsPage = new BuildToolSettingsPage(parent.getSelectedConfiguration(), tool, obtainMacroProvider());
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(parent);
 			} else if(this.element instanceof IFile) {
-				currentSettingsPage = new BuildToolSettingsPage(resParent.getCurrentResourceConfig(), tool);
+				currentSettingsPage = new BuildToolSettingsPage(resParent.getCurrentResourceConfig(), tool, obtainMacroProvider());
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(resParent);
 			}
@@ -366,6 +368,12 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 
 	public void updateValues() {
 		setValues();	
+	}
+
+	public void setVisible(boolean visible){
+		// Update the field editor that displays all the build options
+		if(visible && currentSettingsPage instanceof BuildToolSettingsPage)
+			((BuildToolSettingsPage)currentSettingsPage).updateAllOptionField();
 	}
 
 	protected void setValues() {
@@ -695,4 +703,31 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns the build macro provider to be used for macro resolution
+	 * In case the "Build Macros" tab is available, returns the BuildMacroProvider
+	 * supplied by that tab. 
+	 * Unlike the default provider, that provider also contains
+	 * the user-modified macros that are not applied yet
+	 * If the "Build Macros" tab is not available, returns the default BuildMacroProvider
+	 */
+	protected BuildMacroProvider obtainMacroProvider(){
+		ICOptionContainer container = getContainer();
+		ManagedBuildOptionBlock optionBlock = null;
+		if(container instanceof BuildPropertyPage){
+			BuildPropertyPage page = (BuildPropertyPage)container;
+			optionBlock = page.getOptionBlock();
+		} else if(container instanceof BuildPreferencePage){
+			BuildPreferencePage page = (BuildPreferencePage)container;
+			optionBlock = page.getOptionBlock();
+		}
+		if(optionBlock != null){
+			MacrosSetBlock block = optionBlock.getMacrosBlock();
+			if(block != null)
+				return block.getBuildMacroProvider();
 }
+		return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+	}
+}
+

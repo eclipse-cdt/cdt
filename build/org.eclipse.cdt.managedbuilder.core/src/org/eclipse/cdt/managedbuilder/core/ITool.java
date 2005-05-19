@@ -44,6 +44,7 @@ public interface ITool extends IBuildObject {
 	public static final String ANNOUNCEMENT = "announcement";	//$NON-NLS-1$
 	public static final String TOOL_ELEMENT_NAME = "tool";	//$NON-NLS-1$
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
+	public static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	
 	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId";				//$NON-NLS-1$
@@ -629,19 +630,70 @@ public interface ITool extends IBuildObject {
 	/**
 	 * Returns an array of command line arguments that have been specified for
 	 * the tool.
+	 * The flags contain build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the flags contain all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the flags contain
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
+	 * 
 	 * @return String[]
 	 * @throws BuildException
+	 * 
+	 * @deprecated - use getToolCommandFlags instead
 	 */
 	public String[] getCommandFlags() throws BuildException;
 	
 	/**
 	 * Returns the command line arguments that have been specified for
 	 * the tool.
+	 * The string contains build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the string contains
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
 	 * 
 	 * @return String
+	 * 
+	 * @deprecated - use getToolCommandFlagsString instead
 	 */
 	public String getToolFlags() throws BuildException ;
 	
+	/**
+	 * Returns an array of command line arguments that have been specified for
+	 * the tool.
+	 * The flags contain build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the flags contain all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the flags contain
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
+	 * 
+	 * @param inputFileLocation
+	 * @param outputFileLocation
+	 * @return
+	 * @throws BuildException
+	 */
+	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation) throws BuildException;
+	
+	/**
+	 * Returns the command line arguments that have been specified for
+	 * the tool.
+	 * The string contains build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the string contains
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
+	 * 
+	 * @param inputFileLocation
+	 * @param outputFileLocation
+	 * @return
+	 * @throws BuildException
+	 */
+	public String getToolCommandFlagsString(IPath inputFileLocation, IPath outputFileLocation) throws BuildException;
+
 	/**
 	 * Options are organized into categories for UI purposes.
 	 * These categories are organized into a tree.  This is the root

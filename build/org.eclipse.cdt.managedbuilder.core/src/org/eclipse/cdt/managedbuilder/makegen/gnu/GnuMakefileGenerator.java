@@ -15,36 +15,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import java.util.List;
-import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.IOutputType;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
+import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
+import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
-import org.eclipse.cdt.managedbuilder.makegen.gnu.IManagedBuildGnuToolInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -305,6 +308,32 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buildTargetName = info.getBuildArtifactName();
 		// Get its extension
 		buildTargetExt = info.getBuildArtifactExtension();
+		
+		try{
+			//try to resolve the build macros in the target extension
+			buildTargetExt = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+					buildTargetExt,
+					"", //$NON-NLS-1$
+					" ", //$NON-NLS-1$
+					IBuildMacroProvider.CONTEXT_CONFIGURATION,
+					info.getDefaultConfiguration());
+		} catch (BuildMacroException e){
+		}
+		
+		try{
+			//try to resolve the build macros in the target name
+			String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+					buildTargetName,
+					"", //$NON-NLS-1$
+					" ", //$NON-NLS-1$
+					IBuildMacroProvider.CONTEXT_CONFIGURATION,
+					info.getDefaultConfiguration());
+			if((resolved = resolved.trim()).length() > 0)
+				buildTargetName = resolved;
+		} catch (BuildMacroException e){
+		}
+
+		
 		if (buildTargetExt == null) {
 			buildTargetExt = new String();
 		}
@@ -1086,16 +1115,39 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private StringBuffer addTargets(List outputVarsAdditionsList, boolean rebuild) {
 		StringBuffer buffer = new StringBuffer();
 
+		IConfiguration config = info.getDefaultConfiguration();
+
 		// Assemble the information needed to generate the targets
 		String prebuildStep = info.getPrebuildStep();
-		prebuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
+		try{
+			//try to resolve the build macros in the prebuild step
+			prebuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+					prebuildStep,
+					EMPTY_STRING,
+					WHITESPACE,
+					IBuildMacroProvider.CONTEXT_CONFIGURATION,
+					config);
+		} catch (BuildMacroException e){
+		}
+		prebuildStep = prebuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
+
 		String postbuildStep = info.getPostbuildStep();
-		postbuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
+		try{
+			//try to resolve the build macros in the postbuild step
+			postbuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+					postbuildStep,
+					EMPTY_STRING,
+					WHITESPACE,
+					IBuildMacroProvider.CONTEXT_CONFIGURATION,
+					config);
+				
+		} catch (BuildMacroException e){
+		}
+		postbuildStep = postbuildStep.trim(); // Remove leading and trailing whitespace (and control characters)
 		String preannouncebuildStep = info.getPreannouncebuildStep();
 		String postannouncebuildStep = info.getPostannouncebuildStep();
 		String targets = rebuild ? "clean all" : "all"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		IConfiguration config = info.getDefaultConfiguration();
 		ITool targetTool = config.getTargetTool();
 		if (targetTool == null) {
 			targetTool = info.getToolFromOutputExtension(buildTargetExt);
@@ -1188,6 +1240,31 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						// Extract the build artifact to add to the dependency list
 						String depTarget = depInfo.getBuildArtifactName();
 						String depExt = depInfo.getBuildArtifactExtension();
+						
+						try{
+							//try to resolve the build macros in the artifact extension
+							depExt = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+									depExt,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_CONFIGURATION,
+									info.getDefaultConfiguration());
+						} catch (BuildMacroException e){
+						}
+						
+						try{
+							//try to resolve the build macros in the artifact name
+							String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+									depTarget,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_CONFIGURATION,
+									info.getDefaultConfiguration());
+							if((resolved = resolved.trim()).length() > 0)
+								depTarget = resolved;
+						} catch (BuildMacroException e){
+						}
+
 						String depPrefix = depInfo.getOutputPrefix(depExt);
 						if (depInfo.needsRebuild()) {
 							depTargets = "clean all"; //$NON-NLS-1$
@@ -1420,26 +1497,39 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// Get the command line for this tool invocation
 		String[] flags;
 		try { 
-			flags = tool.getCommandFlags();
+			flags = tool.getToolCommandFlags(null,null);
 		} catch( BuildException ex ) {
 			// TODO  report error
 			flags = EMPTY_STRING_ARRAY;
 		}
+		String command = tool.getToolCommand();
+		try{
+			//try to resolve the build macros in the tool command
+			String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(command,
+					EMPTY_STRING,
+					WHITESPACE,
+					IBuildMacroProvider.CONTEXT_FILE,
+					new FileContextData(null,null,null,info.getDefaultConfiguration().getToolChain()));
+			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+				command = resolvedCommand;
+				
+		} catch (BuildMacroException e){
+		}
 		String[] cmdInputs = (String[])inputs.toArray(new String[inputs.size()]);
 		IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
-		IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, tool.getToolCommand(), 
+		IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, command, 
 				flags, outflag, outputPrefix, primaryOutputs, cmdInputs, tool.getCommandLinePattern() );
 		// The command to build
 		String buildCmd = null;
 		if( cmdLInfo == null ) {
 			String toolFlags;
 			try { 
-				toolFlags = tool.getToolFlags();
+				toolFlags = tool.getToolCommandFlagsString(null,null);
 			} catch( BuildException ex ) {
 				// TODO report error
 				toolFlags = EMPTY_STRING;
 			}
-			buildCmd = tool.getToolCommand() + WHITESPACE + toolFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + primaryOutputs + WHITESPACE + IN_MACRO;
+			buildCmd = command + WHITESPACE + toolFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + primaryOutputs + WHITESPACE + IN_MACRO;
 		}
 		else buildCmd = cmdLInfo.getCommandLine();
 		buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
@@ -1816,7 +1906,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		
 		String resourceName = getFileName(resource);
 		String inputExtension = resource.getFileExtension();
-		String cmd = info.getToolForSource(inputExtension);
+//		String cmd = info.getToolForSource(inputExtension);
 		String outputExtension = info.getOutputExtension(inputExtension);
 		String outflag = null;
 		String outputPrefix = null;
@@ -1862,6 +1952,26 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			tool = info.getToolFromInputExtension(inputExtension);
 		}
 		
+		//optput file location needed for the file-specific build macros
+		IPath outputLocation = project.getLocation().append(getBuildWorkingDir()).append(relativePath + resourceName + OptDotExt);
+		//the separate rule is needed for the resource in case the explicit file-specific macros
+		//are referenced
+		boolean fileExplicitMacrosReferenced = MacroResolver.getReferencedExplitFileMacros(tool).length > 0 ||
+			MacroResolver.getReferencedExplitFileMacros(tool.getToolCommand(),IBuildMacroProvider.CONTEXT_FILE, new FileContextData(resourceLocation,outputLocation,null,config.getToolChain())).length > 0;
+		//get and resolve command
+		String cmd = tool.getToolCommand();
+		try{
+			String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
+					EMPTY_STRING,
+					WHITESPACE,
+					IBuildMacroProvider.CONTEXT_FILE,
+					new FileContextData(resourceLocation,outputLocation,null,info.getDefaultConfiguration().getToolChain()));
+			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+				cmd = resolvedCommand;
+				
+		} catch (BuildMacroException e){
+		}
+
 		// figure out path to use to resource
 		String primaryOutputName = EMPTY_STRING;
 		String primaryDependencyName = EMPTY_STRING;
@@ -1880,7 +1990,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			
 			// The rule and command to add to the makefile
 			String home = (generatedSource)? DOT : ROOT;
-			if( resConfig != null) {
+			if( resConfig != null || fileExplicitMacrosReferenced) {
 				// Need a hardcoded rule, not a pattern rule
 				primaryOutputName = resourcePath + resourceName + OptDotExt;
 				primaryDependencyName = home + SEPARATOR + resourcePath + resourceName + DOT + inputExtension;
@@ -1924,14 +2034,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		IManagedCommandLineInfo cmdLInfo = null;
 		Vector inputs = new Vector(); 
 		inputs.add(IN_MACRO);
-		if( resConfig != null) {
+		if( resConfig != null || fileExplicitMacrosReferenced) {
 			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
 			outflag = tool.getOutputFlag();
 			outputPrefix = tool.getOutputPrefix();
-			cmd = tool.getToolCommand();
 			String[] flags = null;
 			try { 
-				flags = tool.getCommandFlags();
+				flags = tool.getToolCommandFlags(resourceLocation,outputLocation);
 			} catch( BuildException ex ) {
 				// TODO add some routines to catch this
 				flags = EMPTY_STRING_ARRAY;
@@ -1954,7 +2063,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
 			String buildFlags = EMPTY_STRING;
 			try {
-				buildFlags = tool.getToolFlags();
+				buildFlags = tool.getToolCommandFlagsString(resourceLocation,outputLocation);
 			} catch (BuildException e) {
 			}
 			outflag = info.getOutputFlag(outputExtension);
@@ -1967,8 +2076,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				inputs.add(addlDepPaths[i].toString());
 			}
 			// Call the command line generator
-			cmdLInfo = info.generateCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
-					OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]) );
+			cmdLInfo = info.generateToolCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
+					OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]), resourceLocation, outputLocation );
 			// The command to build
 			String buildCmd = null;
 			if( cmdLInfo == null ) buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + 
@@ -2404,8 +2513,34 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		//  Initialize the tool info array and the done state
 		for (int i=0; i<buildTools.length; i++) {
 			if ((buildTools[i] == targetTool)) {
+				String ext = info.getBuildArtifactExtension();
+				//try to resolve the build macros in the artifact extension
+				try{
+					ext = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+							ext,
+							"", //$NON-NLS-1$
+							" ", //$NON-NLS-1$
+							IBuildMacroProvider.CONTEXT_CONFIGURATION,
+							info.getDefaultConfiguration());
+				} catch (BuildMacroException e){
+				}
+				
+				String name = info.getBuildArtifactName();
+				//try to resolve the build macros in the artifact name
+				try{
+					String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+							name,
+							"", //$NON-NLS-1$
+							" ", //$NON-NLS-1$
+							IBuildMacroProvider.CONTEXT_CONFIGURATION,
+							info.getDefaultConfiguration());
+					if((resolved = resolved.trim()).length() > 0)
+						name = resolved;
+				} catch (BuildMacroException e){
+				}
+
 				gnuToolInfos[i] = new ManagedBuildGnuToolInfo(project, buildTools[i], true, 
-						info.getBuildArtifactName(), info.getBuildArtifactExtension()); 
+						name, ext); 
 			} else {
 				gnuToolInfos[i] = new ManagedBuildGnuToolInfo(project, buildTools[i], false, null, null);				
 			}

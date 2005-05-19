@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -298,7 +299,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			
 			// For each tool element child of the tool-chain that is the child of 
 			// the selected configuration element, create a tool element child of 
-			// the cloned configuration’s tool-chain element that specifies the 
+			// the cloned configuration's tool-chain element that specifies the 
 			// original tool element as its superClass.
 			Iterator iter = superChain.getToolList().listIterator();
 			while (iter.hasNext()) {
@@ -1355,4 +1356,16 @@ public class Configuration extends BuildObject implements IConfiguration {
 			return toolChain.getEnvironmentVariableSupplier();
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getBuildMacroSupplier()
+	 */
+	public IConfigurationBuildMacroSupplier getBuildMacroSupplier(){
+		IToolChain toolChain = getToolChain();
+		if(toolChain != null)
+			return toolChain.getBuildMacroSupplier();
+		return null;
+		
+	}
+
 }

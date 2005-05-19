@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -14,12 +14,13 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
+import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -28,11 +29,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -41,7 +37,12 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class BuildSettingsBlock extends AbstractCOptionPage {
 
@@ -56,6 +57,8 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	private static final String OUTPUT_GROUP = LABEL + ".output.group";	//$NON-NLS-1$
 	private static final String OUTPUT_EXT = LABEL + ".output.extension";	//$NON-NLS-1$
 	private static final String OUTPUT_NAME = LABEL + ".output.name";	//$NON-NLS-1$
+	private static final String MACROS_GROUP = LABEL + ".macros.group";	//$NON-NLS-1$
+	private static final String PACROS_EXPAND_BTN = LABEL + ".macros.expand";	//$NON-NLS-1$
 
 	private static final String EMPTY_STRING = new String();
 	
@@ -66,6 +69,8 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	protected Text buildArtifactName;
 	protected Button makeCommandDefault;
 	protected Text makeCommandEntry;
+	protected Button buildMacrosExpand;
+	protected Group buildMacrosExpandGroup;
 
 	/*
 	 * Bookeeping variables
@@ -110,6 +115,9 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	
 		// Create the make command group area
 		createMakeCommandGroup(comp);
+		
+		// Create the build macros usage configuration area
+		createExpandMacrosGroup(comp);
 	}
 
 	/* (non-Javadoc)
@@ -217,6 +225,34 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		makeCommandEntry.addModifyListener(widgetModified);
 	}
 
+	/* (non-Javadoc)
+	 * Creates the group containing the check-box that allow user to specify 
+	 * whether the environment variable macros should be expanded or kept in the makefile
+	 * @param parent
+	 */
+	private void createExpandMacrosGroup(Composite parent) {
+		buildMacrosExpandGroup = new Group(parent, SWT.NONE);
+		buildMacrosExpandGroup.setFont(parent.getFont());
+		buildMacrosExpandGroup.setText(ManagedBuilderUIMessages.getResourceString(MACROS_GROUP));
+		buildMacrosExpandGroup.setLayout(new GridLayout(1, true));
+		buildMacrosExpandGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buildMacrosExpand = new Button(buildMacrosExpandGroup, SWT.CHECK | SWT.LEFT);
+		buildMacrosExpand.setFont(buildMacrosExpandGroup.getFont());
+		buildMacrosExpand.setText(ManagedBuilderUIMessages.getResourceString(PACROS_EXPAND_BTN));
+		buildMacrosExpand.setBackground(buildMacrosExpandGroup.getBackground());
+		buildMacrosExpand.setForeground(buildMacrosExpandGroup.getForeground());
+		buildMacrosExpand.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				setDirty(true);
+			}
+		});
+		buildMacrosExpand.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				buildMacrosExpand = null;
+			}
+		});
+	}
+	
 	protected void initializeValues() {
 		setValues();
 	}
@@ -240,6 +276,14 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		}
 		makeCommandEntry.setText(makeCommand);
 		
+		BuildMacroProvider provider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+		if(!provider.canKeepMacrosInBuildfile(this.parent.getSelectedConfiguration()))
+			buildMacrosExpandGroup.setVisible(false);
+		else {
+			buildMacrosExpandGroup.setVisible(true);
+			buildMacrosExpand.setSelection(provider.areMacrosExpandedInBuildfile(parent.getSelectedConfiguration()));
+		}
+
 		setDirty(false);
 	}
 
@@ -274,8 +318,11 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		ManagedBuildManager.setDefaultConfiguration(parent.getProject(), parent.getSelectedConfiguration());
 		ManagedBuildManager.saveBuildInfo(parent.getProject(), false);
 		
-		setValues();
+		//set the expand macros state to false
+		BuildMacroProvider provider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+		provider.expandMacrosInBuildfile(config,false);
 		
+		setValues();
 		makeCommandDefault.setSelection(true);
 		makeCommandEntry.setEditable(false);	
 		
@@ -341,6 +388,10 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 			selectedConfiguration.setBuildCommand(makeCommandOnly);
 			selectedConfiguration.setBuildArguments(makeArguments);
 		}
+		
+		BuildMacroProvider provider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+		if(provider.canKeepMacrosInBuildfile(this.parent.getSelectedConfiguration()))
+			provider.expandMacrosInBuildfile(selectedConfiguration,buildMacrosExpand.getSelection());
 		
 		setDirty(false);
 	}

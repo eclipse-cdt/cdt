@@ -17,11 +17,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
@@ -33,12 +36,27 @@ import org.eclipse.cdt.managedbuilder.internal.envvar.EnvVarOperationProcessor;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.envvar.UserDefinedEnvironmentSupplier;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.EclipseVariablesMacroSupplier;
+import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
+import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.variables.IDynamicVariable;
+import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -140,6 +158,9 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	private ListDialogField fEditableList;
 	//non-editable list that holds all variables other than user-defined ones
 	private ListDialogField fNonEditableList;
+	//the set of names of the incorrestly defined variables
+	private Set fIncorrectlyDefinedVariablesNames = new HashSet();
+
 	
 	/*
 	 * widgets
@@ -148,6 +169,8 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	private Button fShowParentButton;
 	//parent composite
 	private Composite fParent;
+	//status label
+	private Label fStatusLabel;
 	
 	private class SystemContextInfo extends DefaultContextInfo{
 		protected SystemContextInfo(Object context){
@@ -349,7 +372,16 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	     */
 	    public Color getForeground(Object element){
+			IBuildEnvironmentVariable var = (IBuildEnvironmentVariable)element;
+			boolean incorrect = false;
+			String name = var.getName();
+			if(fUser || getUserVariable(name) == null)
+				incorrect = fIncorrectlyDefinedVariablesNames.contains(name);
+			
+			if(incorrect)
+				return JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR);
 			return null;
+
 	    }
 
 
@@ -361,6 +393,33 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	    }
 	}
 
+	private class EnvVarUIMacroSubstitutor extends DefaultMacroSubstitutor{
+		public EnvVarUIMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter) {
+			super(contextInfo, inexistentMacroValue, listDelimiter);
+		}
+		
+		public EnvVarUIMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
+			super(contextType, contextData, inexistentMacroValue, listDelimiter);
+		}
+
+		protected ResolvedMacro resolveMacro(IBuildMacro macro) throws BuildMacroException{
+			if(macro instanceof EclipseVariablesMacroSupplier.EclipseVarMacro){
+				EclipseVariablesMacroSupplier.EclipseVarMacro eclipseVarMacro = 
+					(EclipseVariablesMacroSupplier.EclipseVarMacro)macro;
+				IStringVariable var = eclipseVarMacro.getVariable();
+				String value = null;
+				if(var instanceof IDynamicVariable){
+					value = "dynamic<" + var.getName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					value = macro.getStringValue();
+				}
+				return new ResolvedMacro(macro.getName(),value);
+			}
+			return super.resolveMacro(macro);
+		}
+	}
+
+	
 	/*
 	 * constructor
 	 */
@@ -672,18 +731,8 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			fUserSupplier = (UserDefinedEnvironmentSupplier)suppliers[0];
 		}
 
-		try{
 			fSystemContextInfo = new SystemContextInfo(context);
-		}catch(Exception e){
-			fSystemContextInfo = null;
-		}
-		
-		try{
 			fCurrentContextInfo = new CurrentContextInfo(context);
-		}catch(Exception e){
-			fCurrentContextInfo = null;
-		}
-
 	}
 	
 	public void setParentContextInfo(IContextInfo info){
@@ -726,6 +775,38 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 * updates both user- and sytem- variables tables.
 	 */
 	public void updateValues(){
+		if(fCurrentContextInfo == null)
+			return;
+		try{
+			Object context = fCurrentContextInfo.getContext();
+			int contextType = 0;
+			Object contextData = null;
+			if(context instanceof IConfiguration){
+				contextType = IBuildMacroProvider.CONTEXT_CONFIGURATION;
+				contextData = context;
+			} else if(context instanceof IManagedProject) {
+				contextType = IBuildMacroProvider.CONTEXT_PROJECT;
+				contextData = context;
+			} else if(context instanceof IWorkspace){
+				contextType = IBuildMacroProvider.CONTEXT_WORKSPACE;
+				contextData = context;
+			} else {
+				contextType = IBuildMacroProvider.CONTEXT_ECLIPSEENV;
+				contextData = null;
+			}
+		
+			BuildMacroProvider macroProvider = obtainMacroProvider();
+			if(macroProvider != null){
+				IMacroContextInfo macroContextInfo = macroProvider.getMacroContextInfo(contextType,contextData);
+				if(macroContextInfo != null){
+					EnvVarUIMacroSubstitutor substitutor = new EnvVarUIMacroSubstitutor(macroContextInfo, null, " "); //$NON-NLS-2$
+					MacroResolver.checkIntegrity(macroContextInfo,substitutor);
+				}
+			}
+			updateState(null);
+		} catch (BuildMacroException e){
+			updateState(e);
+		}
 		updateUserVariables();
 		updateSystemVariables();
 	}
@@ -817,6 +898,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		FormLayout layout= new FormLayout();
 		FormData fd;
 		Control buttonsControl = null;
+		Control listControl = null;
 		
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(layout);
@@ -829,7 +911,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			fd.left = new FormAttachment(0,0);
 			nameLabel.setLayoutData(fd);
 
-			Control listControl= fEditableList.getListControl(composite);
+			listControl= fEditableList.getListControl(composite);
 			fEditableList.getTableViewer().getTable().addKeyListener(new KeyListener(){
 				public void keyPressed(KeyEvent e){
 					if(e.keyCode == SWT.DEL)
@@ -852,7 +934,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			fd.top = new FormAttachment(nameLabel,0);
 			fd.left = new FormAttachment(0,0);
 			fd.right = new FormAttachment(buttonsControl,-5);
-			fd.bottom = new FormAttachment(50,0);
+			fd.bottom = new FormAttachment(50,-15);
 			listControl.setLayoutData(fd);
 
 		}
@@ -862,12 +944,20 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		nameLabel.setText(ManagedBuilderUIMessages.getResourceString(SYSTEM_VAR));
 		fd = new FormData();
 		if(fEditableList != null)
-			fd.top = new FormAttachment(50,2);
+			fd.top = new FormAttachment(listControl,2);
 		else
 			fd.top = new FormAttachment(0,2);
 		fd.left = new FormAttachment(0,0);
 		nameLabel.setLayoutData(fd);
 		
+		fStatusLabel = new Label(composite, SWT.LEFT);
+		fStatusLabel.setFont(composite.getFont());
+		fStatusLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR));
+		fd = new FormData();
+		fd.bottom = new FormAttachment(100,-10);
+		fd.left = new FormAttachment(0,10);
+		fd.right = new FormAttachment(100,-10);
+		fStatusLabel.setLayoutData(fd);
 
 		if(fShowParentViewCheckBox){
 			// Create a "show parent levels" button 
@@ -876,7 +966,8 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			fShowParentButton.setText(ManagedBuilderUIMessages.getResourceString(BUTTON_CHECK_SHOW_PARENT));
 			fd = new FormData();
 			fd.left = new FormAttachment(0,0);
-			fd.bottom = new FormAttachment(100,0);
+//			fd.bottom = new FormAttachment(100,0);
+			fd.bottom = new FormAttachment(fStatusLabel,-10);
 			fShowParentButton.setLayoutData(fd);
 			fShowParentButton.setSelection(fShowParentVariables);
 			fShowParentButton.addSelectionListener(new SelectionAdapter() {
@@ -887,7 +978,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			});
 		}
 		
-		Control listControl= fNonEditableList.getListControl(composite);
+		listControl= fNonEditableList.getListControl(composite);
 		fd = new FormData();
 		fd.top = new FormAttachment(nameLabel,0);
 		fd.left = new FormAttachment(0,0);
@@ -898,7 +989,8 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		if(fShowParentButton != null)
 			fd.bottom = new FormAttachment(fShowParentButton,-2);
 		else
-			fd.bottom = new FormAttachment(100,0);
+//			fd.bottom = new FormAttachment(100,0);
+			fd.bottom = new FormAttachment(fStatusLabel,-10);
 
 		listControl.setLayoutData(fd);
 
@@ -974,4 +1066,50 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		}
 		return filtered;
 	}
+	
+	private void updateState(BuildMacroException e){
+		ICOptionContainer container = getContainer();
+		fIncorrectlyDefinedVariablesNames.clear();
+		
+		if(e != null){
+			fStatusLabel.setText(e.getMessage());
+			fStatusLabel.setVisible(true);
+			IBuildMacroStatus statuses[] = e.getMacroStatuses();
+			for(int i = 0; i < statuses.length; i++){
+				String name = statuses[i].getMacroName();
+				if(name != null)
+					fIncorrectlyDefinedVariablesNames.add(name);
+			}
+		}
+		else{
+			fStatusLabel.setVisible(false);
+		}
+	}
+	
+	/**
+	 * Returns the build macro provider to be used for macro resolution
+	 * In case the "Build Macros" tab is available, returns the BuildMacroProvider
+	 * supplied by that tab. 
+	 * Unlike the default provider, that provider also contains
+	 * the user-modified macros that are not applied yet
+	 * If the "Build Macros" tab is not available, returns the default BuildMacroProvider
+	 */
+	protected BuildMacroProvider obtainMacroProvider(){
+		ICOptionContainer container = getContainer();
+		ManagedBuildOptionBlock optionBlock = null;
+		if(container instanceof BuildPropertyPage){
+			BuildPropertyPage page = (BuildPropertyPage)container;
+			optionBlock = page.getOptionBlock();
+		} else if(container instanceof BuildPreferencePage){
+			BuildPreferencePage page = (BuildPreferencePage)container;
+			optionBlock = page.getOptionBlock();
+		}
+		if(optionBlock != null){
+			MacrosSetBlock block = optionBlock.getMacrosBlock();
+			if(block != null)
+				return block.getBuildMacroProvider();
+		}
+		return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+	}
+
 }

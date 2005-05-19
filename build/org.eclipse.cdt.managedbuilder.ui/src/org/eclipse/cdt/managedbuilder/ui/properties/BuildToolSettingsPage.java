@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
@@ -27,7 +28,17 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
+import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
+import org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
+import org.eclipse.cdt.managedbuilder.internal.macros.MbsMacroSupplier;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.graphics.Point;
 
@@ -40,6 +51,8 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
 	// Whitespace character
 	private static final String WHITESPACE = " "; //$NON-NLS-1$
+	// Empty String
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	// field editor that displays all the build options for a particular tool
 	private MultiLineTextFieldEditor allOptionFieldEditor;
 	// all build options preference store id
@@ -55,7 +68,48 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	
 	private boolean isItResourceConfigPage;
 
-	public BuildToolSettingsPage(IConfiguration configuration, ITool tool) {
+	//the build macro provider to be used for macro resolution
+	private BuildMacroProvider fProvider;
+	
+	//macro substitutor used in the macro resolution in UI
+	//resolves all macros except for the option-specific macros 
+	//and the explicit file macros
+	public class UIMacroSubstitutor extends DefaultMacroSubstitutor {
+		private BuildMacroProvider fProvider;
+		
+		public UIMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter, BuildMacroProvider provider){
+			super(contextType,contextData,inexistentMacroValue,listDelimiter);
+			fProvider = provider;
+		}
+
+		public UIMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
+			super(contextInfo,inexistentMacroValue,listDelimiter);
+		}
+		
+		protected IMacroContextInfo getMacroContextInfo(int contextType, Object contextData){
+			if(fProvider != null)
+				return fProvider.getMacroContextInfo(contextType,contextData);
+			return super.getMacroContextInfo();
+		}
+
+		
+		protected ResolvedMacro resolveMacro(IBuildMacro macro) throws BuildMacroException{
+			if(macro instanceof MbsMacroSupplier.FileContextMacro){
+				MbsMacroSupplier.FileContextMacro fileMacro = (MbsMacroSupplier.FileContextMacro)macro;
+				if(fileMacro.isExplicit()){
+					String name = macro.getName();
+					return new ResolvedMacro(name,MacroResolver.createMacroReference(name));
+				}
+			} else if (macro instanceof MbsMacroSupplier.OptionMacro) {
+				String name = macro.getName();
+				return new ResolvedMacro(name,MacroResolver.createMacroReference(name));
+			}
+			return super.resolveMacro(macro);
+		}
+
+	}
+
+	public BuildToolSettingsPage(IConfiguration configuration, ITool tool, BuildMacroProvider provider) {
 		// Cache the configuration and tool this page is for
 		super(configuration);
 		this.tool = tool;
@@ -63,8 +117,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		stringOptionsMap = new HashMap();
 		userObjsMap = new HashMap();
 		isItResourceConfigPage = false;
+		fProvider = provider;
 	}
-	public BuildToolSettingsPage(IResourceConfiguration resConfig, ITool tool) {
+	public BuildToolSettingsPage(IResourceConfiguration resConfig, ITool tool, BuildMacroProvider provider) {
 		// Cache the configuration and tool this page is for
 		super(resConfig);
 		this.tool = tool;
@@ -72,6 +127,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		stringOptionsMap = new HashMap();
 		userObjsMap = new HashMap();
 		isItResourceConfigPage = true;
+		fProvider = provider;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#computeSize()
@@ -199,9 +255,12 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		IOption[] options = tool.getOptions();
 		String listStr = ""; //$NON-NLS-1$
 		String[] listVal = null;
+		IBuildObject parent = configuration != null ? (IBuildObject)configuration.getToolChain() : (IBuildObject)resConfig;
+		IMacroSubstitutor macroSubstitutor = new UIMacroSubstitutor(0,null,EMPTY_STRING,WHITESPACE,fProvider); 
 		for (int k = 0; k < options.length; k++) {
 			IOption option = options[k];
 			buf.setLength( 0 );
+			try{
 			switch (option.getValueType()) {
 				case IOption.BOOLEAN :
 					String boolCmd;
@@ -230,7 +289,8 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					String val = getToolSettingsPreferenceStore().getString(option.getId());
 					// add this string option value to the list
 					stringOptionsMap.put(option, val);
-					if (val.length() > 0) {
+						macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(null,null,option,parent));
+						if (val.length() > 0 && (val = MacroResolver.resolveToString(val,macroSubstitutor)).length() > 0) {
 					    buf.append(evaluateCommand( strCmd, val ));
 					}
 					break;
@@ -243,9 +303,11 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					listStr = getToolSettingsPreferenceStore().getString(option.getId());
 					if (cmd == null)
 						userObjsMap.put(option, listStr);
-					listVal = BuildToolsSettingsStore.parseString(listStr);
+						macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(null,null,option,parent));
+						listVal = MacroResolver.resolveStringListValues(BuildToolsSettingsStore.parseString(listStr),macroSubstitutor,true);
 					for (int j = 0; j < listVal.length; j++) {
 						String temp = listVal[j];
+							if(temp.length() > 0)
 						buf.append( evaluateCommand( cmd, temp ) + ITool.WHITE_SPACE);
 					}
 					break;
@@ -253,6 +315,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					break;
 			}
 			if( buf.toString().trim().length() > 0 ) flags.add( buf.toString().trim() );
+			} catch (BuildMacroException e) {
+				
+			}
 		}
 		
 		String outputName = "temp";		//$NON-NLS-1$
@@ -260,8 +325,16 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		    outputName += tool.getDefaultInputExtension();
 		}
 		String[] f = new String[ flags.size() ];
+		String cmd = tool.getToolCommand();
+		try{
+			macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(null,null,null,parent));
+			String resolved = MacroResolver.resolveToString(cmd,macroSubstitutor);
+			if ((resolved = resolved.trim()).length() > 0)
+				cmd = resolved;
+		} catch (BuildMacroException e) {
+		}
 		IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
-        IManagedCommandLineInfo info = gen.generateCommandLineInfo( tool, tool.getToolCommand(), (String[])flags.toArray( f ), 
+        IManagedCommandLineInfo info = gen.generateCommandLineInfo( tool, cmd, (String[])flags.toArray( f ), 
                 tool.getOutputFlag(), tool.getOutputPrefix(), outputName, new String[0], tool.getCommandLinePattern() );
 		return info.getFlags();
 	}
@@ -575,8 +648,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	 */
 	public void updateAllOptionField() {
 		try {
-			if (getToolFlags() != null) {
-				getToolSettingsPreferenceStore().setValue(allOptionsId, getToolFlags());
+			String flags = getToolFlags();
+			if (flags != null) {
+				getToolSettingsPreferenceStore().setValue(allOptionsId, flags);
 				allOptionFieldEditor.load();
 			}
 		} catch (BuildException e) {

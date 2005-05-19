@@ -113,6 +113,11 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	    }
 	}	
 
+	public ManagedBuildOptionBlock getOptionBlock(){
+		return fOptionBlock;
+	}
+
+
 	protected Control createContents(Composite parent)  {
 		// Create the container we return to the property page editor
 		Composite composite = new Composite(parent, SWT.NULL);

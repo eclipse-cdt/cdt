@@ -49,21 +49,23 @@ import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionCategory;
-import org.eclipse.cdt.managedbuilder.internal.core.ProjectType;
-import org.eclipse.cdt.managedbuilder.internal.core.InputType;
 import org.eclipse.cdt.managedbuilder.internal.core.OutputType;
+import org.eclipse.cdt.managedbuilder.internal.core.ProjectType;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.TargetPlatform;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -2048,4 +2050,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IEnvironmentVariableProvider getEnvironmentVariableProvider(){
 		return EnvironmentVariableProvider.getDefault();
 	}
+
+	/**
+	 * Returns the instance of the Build Macro Provider
+	 * 
+	 * @return IBuildMacroProvider
+	 */
+	public static IBuildMacroProvider getBuildMacroProvider(){
+		return BuildMacroProvider.getDefault();
+	}
+
 }

@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 public interface IConfigurationEnvironmentVariableSupplier{
 	/**
 	 *
-	 * @param variableName the variable mane
+	 * @param variableName the variable name
 	 * @param configuration configuration
 	 * @param provider the instance of the environment variable provider to be used for querying the
 	 * environment variables from within the supplier. The supplier should use this provider to obtain

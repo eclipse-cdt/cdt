@@ -21,14 +21,16 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
-import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.internal.macros.StorableMacros;
+import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -64,11 +66,15 @@ public class ToolChain extends BuildObject implements IToolChain {
 	private IManagedIsToolChainSupported managedIsToolChainSupported = null;
 	private IConfigurationElement environmentVariableSupplierElement = null;
 	private IConfigurationEnvironmentVariableSupplier environmentVariableSupplier = null;
+	private IConfigurationElement buildMacroSupplierElement = null;
+	private IConfigurationBuildMacroSupplier buildMacroSupplier = null;
 
 	//  Miscellaneous
 	private boolean isExtensionToolChain = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
+	//holds the user-defined macros
+	private StorableMacros userDefinedMacros;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -181,6 +187,9 @@ public class ToolChain extends BuildObject implements IToolChain {
 					// TODO: report error
 				}
 				builder = new Builder(this, (Element)configElement);
+			}else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
+				//load user-defined macros
+				userDefinedMacros = new StorableMacros((Element)configElement);
 			}
 		}
 	}
@@ -233,6 +242,9 @@ public class ToolChain extends BuildObject implements IToolChain {
 
 		environmentVariableSupplierElement = toolChain.environmentVariableSupplierElement;
 		environmentVariableSupplier = toolChain.environmentVariableSupplier;
+
+		buildMacroSupplierElement = toolChain.buildMacroSupplierElement;
+		buildMacroSupplier = toolChain.buildMacroSupplier;
 
 		//  Clone the children
 		if (toolChain.builder != null) {
@@ -363,6 +375,13 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if(environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement){
 			environmentVariableSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
+
+		// Get the configurationMacroSupplier configuration element
+		String buildMacroSupplier = element.getAttribute(CONFIGURATION_MACRO_SUPPLIER); 
+		if(buildMacroSupplier != null && element instanceof DefaultManagedConfigElement){
+			buildMacroSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		}
+
 	}
 	
 	/* (non-Javadoc)
@@ -564,6 +583,20 @@ public class ToolChain extends BuildObject implements IToolChain {
 		//       an IConfigurationElement is needed to load it!
 		if(environmentVariableSupplierElement != null) {
 			//  TODO:  issue warning?
+		}
+
+
+		// Note: buildMacroSupplier cannot be specified in a project file because
+		//       an IConfigurationElement is needed to load it!
+		if(buildMacroSupplierElement != null) {
+			//  TODO:  issue warning?
+		}
+
+		//serialize user-defined macros
+		if(userDefinedMacros != null){
+			Element macrosElement = doc.createElement(StorableMacros.MACROS_ELEMENT_NAME);
+			element.appendChild(macrosElement);
+			userDefinedMacros.serialize(doc,macrosElement);
 		}
 
 		// I am clean now
@@ -1085,6 +1118,10 @@ public class ToolChain extends BuildObject implements IToolChain {
 		// If I need saving, just say yes
 		if (isDirty) return true;
 		
+		//check whether the tool-chain - specific macros are dirty
+		if(userDefinedMacros != null && userDefinedMacros.isDirty())
+			return true;
+			
 		// Otherwise see if any tools need saving
 		Iterator iter = getToolList().listIterator();
 		while (iter.hasNext()) {
@@ -1221,32 +1258,32 @@ public class ToolChain extends BuildObject implements IToolChain {
 		return;
 	}
 
-	private IManagedIsToolChainSupported getIsToolChainSupported(){
-		if(managedIsToolChainSupported == null && managedIsToolChainSupportedElement != null){
-			try{
-				if(managedIsToolChainSupportedElement.getAttribute(IS_TOOL_CHAIN_SUPPORTED) != null)
-					managedIsToolChainSupported = 
-						(IManagedIsToolChainSupported)managedIsToolChainSupportedElement.createExecutableExtension(IS_TOOL_CHAIN_SUPPORTED);
-				
-			}
-			catch(CoreException e){
+	private IConfigurationElement getIsToolChainSupportedElement(){
+		if (managedIsToolChainSupportedElement == null) {
+			if (superClass != null && superClass instanceof ToolChain) {
+				return ((ToolChain)superClass).getIsToolChainSupportedElement();
 			}
 		}
-		return managedIsToolChainSupported;
+		return managedIsToolChainSupportedElement;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#isSupported()
 	 */
 	public boolean isSupported(){
-		IManagedIsToolChainSupported isSupported = getIsToolChainSupported();
-		if(isSupported != null){
-			//TODO: pass the version to the "isSupported" method
-			return isSupported.isSupported(this,null,null);
+		if (managedIsToolChainSupported  == null) {
+			IConfigurationElement element = getIsToolChainSupportedElement();
+			if (element != null) {
+				try {
+					if (element.getAttribute(IS_TOOL_CHAIN_SUPPORTED) != null) {
+						managedIsToolChainSupported = (IManagedIsToolChainSupported) element.createExecutableExtension(IS_TOOL_CHAIN_SUPPORTED);
+					}
+				} catch (CoreException e) {}
+			}
 		}
-		else if(superClass != null)
-			return superClass.isSupported();
-		else
+		
+		if(managedIsToolChainSupported != null)
+			return managedIsToolChainSupported.isSupported(this,null,null);
 			return true;
 	}
 
@@ -1283,5 +1320,53 @@ public class ToolChain extends BuildObject implements IToolChain {
 		}
 		return null;
 	}
+
+	/*
+	 * this method is called by the UserDefinedMacroSupplier to obtain user-defined
+	 * macros available for this tool-chain
+	 */
+	public StorableMacros getUserDefinedMacros(){
+		if(isExtensionToolChain)
+			return null;
+		
+		if(userDefinedMacros == null)
+			userDefinedMacros = new StorableMacros();
+		return userDefinedMacros;
+	}
+	
+	/**
+	 * Returns the plugin.xml element of the configurationMacroSupplier extension or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getBuildMacroSupplierElement(){
+		if (buildMacroSupplierElement == null) {
+			if (superClass != null && superClass instanceof ToolChain) {
+				return ((ToolChain)superClass).getBuildMacroSupplierElement();
+			}
+		}
+		return buildMacroSupplierElement;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getBuildMacroSupplier()
+	 */
+	public IConfigurationBuildMacroSupplier getBuildMacroSupplier(){
+		if (buildMacroSupplier != null) {
+			return buildMacroSupplier;
+		}
+		IConfigurationElement element = getBuildMacroSupplierElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(CONFIGURATION_MACRO_SUPPLIER) != null) {
+					buildMacroSupplier = (IConfigurationBuildMacroSupplier) element.createExecutableExtension(CONFIGURATION_MACRO_SUPPLIER);
+					return buildMacroSupplier;
+				}
+			} catch (CoreException e) {}
+		}
+		return null;
+	}
+
 
 }

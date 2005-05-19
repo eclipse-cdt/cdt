@@ -79,7 +79,7 @@ public class EnvironmentVariableProvider implements
 
 	}
 
-	EnvironmentVariableProvider(){
+	protected EnvironmentVariableProvider(){
 		
 	}
 

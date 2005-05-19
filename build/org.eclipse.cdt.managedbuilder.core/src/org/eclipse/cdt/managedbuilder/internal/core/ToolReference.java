@@ -815,6 +815,21 @@ public class ToolReference implements IToolReference {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getToolCommandFlags(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
+	 */
+	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation) throws BuildException{
+		return getCommandFlags();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getToolCommandFlagsString(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
+	 */
+	public String getToolCommandFlagsString(IPath inputFileLocation, IPath outputFileLocation) throws BuildException{
+		return getToolFlags();
+		
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

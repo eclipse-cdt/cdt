@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
 
 /**
  * This class represents project-types in the managed build system.
@@ -25,7 +26,7 @@ import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier
  * sharing of configurations. If you have defined a project type that 
  * should not be selected by the user, but is a root for other project 
  * types, it may be declared abstract by setting the isAbstract attribute
- * to ‘true’. Abstract project types do not appear in the UI. You must 
+ * to 'true'. Abstract project types do not appear in the UI. You must 
  * provide a unique identifier for the project type in the id attribute. 
  * Children of the abstract project type will have the same configurations
  * that the abstract project type has, unless they are explicitly named
@@ -48,6 +49,7 @@ public interface IProjectType extends IBuildObject {
 	public static final String IS_TEST = "isTest";							//$NON-NLS-1$
 	public static final String CONFIGURATION_NAME_PROVIDER = "configurationNameProvider";  //$NON-NLS-1$
 	public static final String PROJECT_ENVIRONMENT_SUPPLIER = "projectEnvironmentSupplier";			//$NON-NLS-1$
+	public static final String PROJECT_MACRO_SUPPLIER = "projectMacroSupplier";			//$NON-NLS-1$
 	
 	/**
 	 * Creates a configuration for this project-type populated with the tools
@@ -154,4 +156,12 @@ public interface IProjectType extends IBuildObject {
 	 * @return IProjectEnvironmentVariableSupplier
 	 */
 	public IProjectEnvironmentVariableSupplier getEnvironmentVariableSupplier();
+
+	/**
+	 * Returns the tool-integrator provided implementation of the project build macro supplier
+	 * or <code>null</code> if none. 
+	 *  
+	 * @return IProjectBuildMacroSupplier
+	 */
+	public IProjectBuildMacroSupplier getBuildMacroSupplier();
 }

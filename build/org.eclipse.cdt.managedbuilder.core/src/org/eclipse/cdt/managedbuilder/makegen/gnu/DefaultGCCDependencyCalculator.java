@@ -17,6 +17,10 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IContainer;
@@ -112,9 +116,22 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		if( resConfig != null) {
 			ITool[] tools = resConfig.getTools(); 
 			String cmd = tools[0].getToolCommand();
+			//try to resolve the build macros in the tool command
+			try{
+				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
+						"", //$NON-NLS-1$
+						" ", //$NON-NLS-1$
+						IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(resource.getLocation(),null,null,info.getDefaultConfiguration().getToolChain()));
+				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+					cmd = resolvedCommand;
+					
+			} catch (BuildMacroException e){
+			}
+
 			String[] toolFlags = null;
 			try { 
-				toolFlags = tools[0].getCommandFlags();
+				toolFlags = tools[0].getToolCommandFlags(resource.getLocation(),null);
 			} catch( BuildException ex ) {
 				// TODO add some routines to catch this
 				toolFlags = EMPTY_STRING_ARRAY;
@@ -133,10 +150,23 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			buildCmd = cmdLInfo.getCommandLine();
 		} else {
 			String cmd = info.getToolForSource(inputExtension);
-			String buildFlags = "-MM -MG -P -w " + info.getFlagsForSource(inputExtension); //$NON-NLS-1$
+			//try to resolve the build macros in the tool command
+			try{
+				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
+						"", //$NON-NLS-1$
+						" ", //$NON-NLS-1$
+						IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(resource.getLocation(),null,null,info.getDefaultConfiguration().getToolChain()));
+				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+					cmd = resolvedCommand;
+					
+			} catch (BuildMacroException e){
+			}
+
+			String buildFlags = "-MM -MG -P -w " + info.getToolFlagsForSource(inputExtension, resource.getLocation(), null); //$NON-NLS-1$
 			String[] flags = buildFlags.split( "\\s" ); //$NON-NLS-1$
-			cmdLInfo = info.generateCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
-					outputFile, inputs );
+			cmdLInfo = info.generateToolCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
+					outputFile, inputs, resource.getLocation(), null);
 			// The command to build
 			if( cmdLInfo == null ) buildCmd = 
 				cmd + 

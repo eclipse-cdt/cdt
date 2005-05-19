@@ -18,7 +18,7 @@ public interface IEnvironmentVariableSupplier {
 	
 	/**
 	 *
-	 * @param name the variable mane
+	 * @param name the variable name
 	 * @param context the context
 	 * @return the reference to the IBuildEnvironmentVariable interface representing 
 	 * the variable of a given name

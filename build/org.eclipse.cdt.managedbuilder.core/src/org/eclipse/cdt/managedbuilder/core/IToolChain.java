@@ -11,11 +11,12 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 
 
 /**
  * This interface represents a tool-integrator-defined, ordered set of tools 
- * that transform the project’s input into the project’s outputs.  A 
+ * that transform the project's input into the project's outputs.  A 
  * tool-chain can be defined as part of a configuration, or as an 
  * independent specification that is referenced in a separate configuration
  * via the toolChain superclass attribute.
@@ -24,7 +25,7 @@ import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSu
  * the tools used in the tool-chain.  The toolChain contains one child of 
  * type targetPlatform.  This defines the architecture/os combination where
  * the outputs of the project can be deployed.  The toolChain contains one 
- * child of type builder.  This defines the “build” or “make” utility that
+ * child of type builder.  This defines the "build" or "make" utility that
  * is used to drive the transformation of the inputs into outputs.
  * 
  * @since 2.1
@@ -40,6 +41,7 @@ public interface IToolChain extends IBuildObject {
 	public static final String SECONDARY_OUTPUTS = "secondaryOutputs";	//$NON-NLS-1$
 	public static final String IS_TOOL_CHAIN_SUPPORTED = "isToolChainSupported";			//$NON-NLS-1$
 	public static final String CONFIGURATION_ENVIRONMENT_SUPPLIER = "configurationEnvironmentSupplier";			//$NON-NLS-1$
+	public static final String CONFIGURATION_MACRO_SUPPLIER = "configurationMacroSupplier";			//$NON-NLS-1$
 	
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_CONFIG_PROFILE_ID = "scannerConfigDiscoveryProfileId"; //$NON-NLS-1$
@@ -352,4 +354,12 @@ public interface IToolChain extends IBuildObject {
 	 * @return IConfigurationEnvironmentVariableSupplier
 	 */
 	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier();
+	
+	/**
+	 * Returns the tool-integrator provided implementation of the configuration build macro supplier
+	 * or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationBuildMacroSupplier
+	 */
+	public IConfigurationBuildMacroSupplier getBuildMacroSupplier();
 }

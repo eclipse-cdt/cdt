@@ -10,11 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
+import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
  * This class represents the utility that drives the build process 
- * (typically, but not necessarily, a variant of “make”).  It defines 
+ * (typically, but not necessarily, a variant of "make").  It defines 
  * the command needed to invoke the build utility in the command attribute.
  * Any special flags that need to be passed to the builder are defined 
  * in the arguments attribute.  The builder can specify the error parser(s)
@@ -31,6 +33,12 @@ public interface IBuilder extends IBuildObject {
 	
 	public static final String VERSIONS_SUPPORTED = "versionsSupported";	//$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId";			//$NON-NLS-1$
+	
+	public static final String VARIABLE_FORMAT = "variableFormat";			//$NON-NLS-1$
+	public static final String IS_VARIABLE_CASE_SENSITIVE = "isVariableCaseSensitive";			//$NON-NLS-1$
+	public static final String RESERVED_MACRO_NAMES = "reservedMacroNames";			//$NON-NLS-1$
+	public static final String RESERVED_MACRO_NAME_SUPPLIER = "reservedMacroNameSupplier";			//$NON-NLS-1$
+	
 	
 	
 	/**
@@ -192,4 +200,40 @@ public interface IBuilder extends IBuildObject {
 	 */
 	public void setConvertToId(String convertToId);
 
+	/**
+	 * Returns the IFileContextBuildMacroValues interface reference that specifies
+	 * the file-context macro-values provided by the tool-integrator
+	 * 
+	 * @return IFileContextBuildMacroValues
+	 */
+	public IFileContextBuildMacroValues getFileContextBuildMacroValues();
+	
+	/**
+	 * Returns String representing the build variable pattern to be used while makefile generation
+	 * 
+	 * @return String
+	 */
+	public String getBuilderVariablePattern();
+	
+	/**
+	 * Returns whether the builder supports case sensitive variables or not
+	 * 
+	 * @return boolean
+	 */
+	public boolean isVariableCaseSensitive();
+	
+	/**
+	 * Returns an array of Strings representing the patterns of the builder/buildfile-generator 
+	 * reserved variables
+	 * 
+	 * @return String[]
+	 */
+	public String[] getReservedMacroNames();
+	
+	/**
+	 * Returns the tool-integrator defined implementation of the IReservedMacroNameSupplier
+	 * to be used for detecting the builder/buildfile-generator reserved variables
+	 * @return IReservedMacroNameSupplier
+	 */
+	public IReservedMacroNameSupplier getReservedMacroNameSupplier(); 
 }

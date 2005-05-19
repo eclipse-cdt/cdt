@@ -22,17 +22,23 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildfileMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
+import org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor;
+import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.CoreException;
@@ -2160,12 +2166,35 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandFlags()
 	 */
 	public String[] getCommandFlags() throws BuildException {
+		return getToolCommandFlags(null,null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolFlags()
+	 */
+	public String getToolFlags() throws BuildException {
+		return getToolCommandFlagsString(null,null);
+	}
+	
+	/**
+	 * this method used internaly by the Tool to obtain the command flags with the build macros resolved,
+	 * but could be also used by other MBS components to adjust the tool flags resolution 
+	 * behavior by passing the method some custom macro substitutor
+	 *  
+	 * @param inputFileLocation
+	 * @param outputFileLocation
+	 * @param macroSubstitutor
+	 * @return
+	 * @throws BuildException
+	 */
+	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation, IMacroSubstitutor macroSubstitutor) throws BuildException{
 		IOption[] opts = getOptions();
 		ArrayList flags = new ArrayList();
 		StringBuffer sb = new StringBuffer();
 		for (int index = 0; index < opts.length; index++) {
 			IOption option = opts[index];
 			sb.setLength( 0 );
+			try{
 			switch (option.getValueType()) {
 			case IOption.BOOLEAN :
 				String boolCmd;
@@ -2190,54 +2219,79 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			case IOption.STRING :
 				String strCmd = option.getCommand();
 				String val = option.getStringValue();
-				if (val.length() > 0) {
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
+					if (val.length() > 0 && (val = MacroResolver.resolveToString(val,macroSubstitutor)).length() > 0) {
 					sb.append( evaluateCommand( strCmd, val ) );
 				}
 				break;
 				
 			case IOption.STRING_LIST :
 				String listCmd = option.getCommand();
-				String[] list = option.getStringListValue();
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
+					String[] list = MacroResolver.resolveStringListValues(option.getStringListValue(),macroSubstitutor,true);
+					if(list != null){
 				for (int j = 0; j < list.length; j++) {
 					String temp = list[j];
+							if(temp.length() > 0)
 					sb.append( evaluateCommand( listCmd, temp ) + WHITE_SPACE );
 				}
+					}
 				break;
 				
 			case IOption.INCLUDE_PATH :
 				String incCmd = option.getCommand();
-				String[] paths = option.getIncludePaths();
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
+					String[] paths = MacroResolver.resolveStringListValues(option.getIncludePaths(),macroSubstitutor,true);
+					if(paths != null){
 				for (int j = 0; j < paths.length; j++) {
 					String temp = paths[j];
+							if(temp.length() > 0)
 					sb.append( evaluateCommand( incCmd, temp ) + WHITE_SPACE);
 				}
+					}
 				break;
 
 			case IOption.PREPROCESSOR_SYMBOLS :
 				String defCmd = option.getCommand();
-				String[] symbols = option.getDefinedSymbols();
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
+					String[] symbols = MacroResolver.resolveStringListValues(option.getDefinedSymbols(),macroSubstitutor,true);
+					if(symbols != null){
 				for (int j = 0; j < symbols.length; j++) {
 					String temp = symbols[j];
+							if(temp.length() > 0)
 					sb.append( evaluateCommand( defCmd, temp ) + WHITE_SPACE);
 				}
+					}
 				break;
 
 			default :
 				break;
 			}
+				
 			if( sb.toString().trim().length() > 0 ) flags.add( sb.toString().trim() );
+			} catch (BuildMacroException e) {
+				
+			}
 		}
 		String[] f = new String[ flags.size() ];
 		return (String[])flags.toArray( f );
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolFlags()
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getToolCommandFlags(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
 	 */
-	public String getToolFlags() throws BuildException {
+	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation) throws BuildException{
+		IMacroSubstitutor macroSubstitutor = new BuildfileMacroSubstitutor(null,EMPTY_STRING,WHITE_SPACE);
+		return getToolCommandFlags(inputFileLocation, outputFileLocation, macroSubstitutor );
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getToolCommandFlagsString(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
+	 */
+	public String getToolCommandFlagsString(IPath inputFileLocation, IPath outputFileLocation) throws BuildException{
 		// Get all of the optionList
 		StringBuffer buf = new StringBuffer();
-		String[] flags = getCommandFlags();
+		String[] flags = getToolCommandFlags(inputFileLocation,outputFileLocation);
 		for (int index = 0; index < flags.length; index++) {
 			if( flags[ index ] != null ) { 
 				buf.append( flags[ index ] + WHITE_SPACE );

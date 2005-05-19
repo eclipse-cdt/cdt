@@ -8,19 +8,27 @@
  * Contributors: 
  * Intel Corporation - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin;
+package org.eclipse.cdt.managedbuilder.macros;
 
-import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+/**
+ * 
+ * @since 3.0
+ */
+public interface IFileContextBuildMacroValues {
+	public static final String PREFIX = "macro";	//$NON-NLS-1$
+	public static final String SUFFIX = "Value";	//$NON-NLS-1$
 
-public class IsGnuCygwinToolChainSupported implements
-		IManagedIsToolChainSupported {
+	/**
+	 *
+	 * @return the array if strings representing the names of file context macros supported 
+	 * by the builder
+	 */
+	String[] getSupportedMacros();
 
-	public boolean isSupported(IToolChain toolChain,
-			PluginVersionIdentifier version, String instance) {
-		// TODO implement
-		return true;
-	}
+	/**
+	 *
+	 * @return the file context macro value for the given macro name 
+	 */
+	String getMacroValue(String macroName);
 
 }

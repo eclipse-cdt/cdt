@@ -36,6 +36,7 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 	private ErrorParserBlock errParserBlock;
 	private BinaryParserBlock binaryParserBlock;
 	private EnvironmentSetBlock environmentBlock;
+	private MacrosSetBlock macrosBlock;
 	private Object element;
 	
 	/**
@@ -77,10 +78,12 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			addTab(errParserBlock = new ErrorParserBlock());
 			addTab(binaryParserBlock = new BinaryParserBlock());
 			addTab(environmentBlock = new EnvironmentSetBlock((BuildPropertyPage) fParent));
+			addTab(macrosBlock = new MacrosSetBlock((BuildPropertyPage) fParent));
 		} else if (element instanceof IFile) {
 			addTab(toolsSettingsBlock = new ToolsSettingsBlock((ResourceBuildPropertyPage) fParent, element));
 		} else if (element instanceof IWorkspace) {
 			addTab(environmentBlock = new EnvironmentSetBlock((BuildPreferencePage) fParent));
+			addTab(macrosBlock = new MacrosSetBlock((BuildPreferencePage) fParent));
 		}
 	}
 
@@ -106,6 +109,10 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 	
 	public EnvironmentSetBlock getEnvironmentBlock() {
 		return environmentBlock;
+	}
+	
+	public MacrosSetBlock getMacrosBlock() {
+		return macrosBlock;
 	}
 	
 	public Control createContents(Composite parent, Object element) {
@@ -144,6 +151,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		}
 		if(getEnvironmentBlock()!= null) {
 		}
+		if(getMacrosBlock()!= null) {
+		}
 	}
 
 	public void updateValues() {
@@ -166,14 +175,18 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			}
 			if(getCurrentPage() instanceof EnvironmentSetBlock) {
 				((EnvironmentSetBlock)getCurrentPage()).updateValues();
+			}else if(getCurrentPage() instanceof MacrosSetBlock) {
+				((MacrosSetBlock)getCurrentPage()).updateValues();
 			}
 		} else if( element instanceof IFile) {
 			if (getToolsSettingsBlock() != null) {
 				getToolsSettingsBlock().updateValues();
 			}
 		} else if(element instanceof IWorkspace) {
-			if(getEnvironmentBlock() != null) {
-				getEnvironmentBlock().updateValues();
+			if(getCurrentPage() instanceof EnvironmentSetBlock) {
+				((EnvironmentSetBlock)getCurrentPage()).updateValues();
+			}else if(getCurrentPage() instanceof MacrosSetBlock) {
+				((MacrosSetBlock)getCurrentPage()).updateValues();
 			}
 		}
 	}
@@ -197,16 +210,21 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 				// TODO
 				//getBinaryParserBlock().setValues();
 			}
-			if(getEnvironmentBlock() != null) {
-				getEnvironmentBlock().updateValues();
+
+			if(getCurrentPage() instanceof EnvironmentSetBlock) {
+				((EnvironmentSetBlock)getCurrentPage()).updateValues();
+			}else if(getCurrentPage() instanceof MacrosSetBlock) {
+				((MacrosSetBlock)getCurrentPage()).updateValues();
 			}
 		} else  if (element instanceof IFile) {
 			if (getToolsSettingsBlock() != null) {
 				getToolsSettingsBlock().updateValues();
 			}
 		} else if (element instanceof IWorkspace) {
-			if(getEnvironmentBlock() != null) {
-				getEnvironmentBlock().updateValues();
+			if(getCurrentPage() instanceof EnvironmentSetBlock) {
+				((EnvironmentSetBlock)getCurrentPage()).updateValues();
+			}else if(getCurrentPage() instanceof MacrosSetBlock) {
+				((MacrosSetBlock)getCurrentPage()).updateValues();
 			}
 		}
 	}
@@ -232,12 +250,17 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			}
 			if(getEnvironmentBlock()!= null) {
 			}
+			if(getMacrosBlock()!= null) {
+			}
+
 		} else  if (element instanceof IFile) {
 			if (getToolsSettingsBlock()!= null) {
 				getToolsSettingsBlock().removeValues(id);
 			}
 		} else if (element instanceof IWorkspace) {
 			if(getEnvironmentBlock()!= null) {
+			}
+			if(getMacrosBlock()!= null) {
 			}
 		}
 	}
@@ -263,12 +286,18 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if(getCurrentPage() instanceof EnvironmentSetBlock) {
 				return null;
 			}
+			if(getCurrentPage() instanceof MacrosSetBlock) {
+				return null;
+			}
 		} else if( element instanceof IFile) {
 			if (getCurrentPage() instanceof ToolsSettingsBlock) {
 				return toolsSettingsBlock.getPreferenceStore();
 			}
 		} else if (element instanceof IWorkspace) {
-			if(getEnvironmentBlock()!= null) {
+			if(getCurrentPage() instanceof EnvironmentSetBlock) {
+				return null;
+			}
+			if(getCurrentPage() instanceof MacrosSetBlock) {
 				return null;
 			}
 		}
@@ -292,6 +321,10 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 				if(tab instanceof EnvironmentSetBlock){
 					((BuildPropertyPage)fParent).enableConfigSelection(
 							((EnvironmentSetBlock)tab).isConfigSelectionAllowed());
+				} 
+				else if(tab instanceof MacrosSetBlock){
+					((BuildPropertyPage)fParent).enableConfigSelection(
+							((MacrosSetBlock)tab).isConfigSelectionAllowed());
 				} 
 				else
 				((BuildPropertyPage)fParent).enableConfigSelection(true);
@@ -321,6 +354,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			    //TODO  ManagedBuildSystem needs its own binary parser block
 			} else if(tab instanceof EnvironmentSetBlock) {
 				((EnvironmentSetBlock)tab).setModified(b);
+			} else if(tab instanceof MacrosSetBlock) {
+				((MacrosSetBlock)tab).setModified(b);
 			}
 		}
 	}
@@ -344,7 +379,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			} else if (tab instanceof BinaryParserBlock) {
 			    //TODO  ManagedBuildSystem needs its own binary parser block
 			} else if(tab instanceof EnvironmentSetBlock) {
-				return ((EnvironmentSetBlock)tab).isModified();
+				if (((EnvironmentSetBlock)tab).isModified()) return true;
+			} else if(tab instanceof MacrosSetBlock) {
+				if (((MacrosSetBlock)tab).isModified()) return true;
 			}
 			
 		}

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
@@ -452,4 +453,13 @@ public interface IConfiguration extends IBuildObject {
 	 * @return IConfigurationEnvironmentVariableSupplier 
 	 */	
 	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier();
+	
+	/**
+	 * Returns the tool-integrator provided implementation of the configuration build macro supplier
+	 * or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationBuildMacroSupplier
+	 */
+	public IConfigurationBuildMacroSupplier getBuildMacroSupplier();
+
 }

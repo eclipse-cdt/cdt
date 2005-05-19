@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.cdt.make.core"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.core.variables"/>
    </requires>
 
 

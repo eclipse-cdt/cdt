@@ -31,6 +31,8 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -75,10 +77,35 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		public ResourceDeltaVisitor(IManagedBuildInfo info) {
 			buildInfo = info;
 			String ext = buildInfo.getBuildArtifactExtension();
+			//try to resolve build macros in the build artifact extension
+			try{
+				ext = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+						ext,
+						"", //$NON-NLS-1$
+						" ", //$NON-NLS-1$
+						IBuildMacroProvider.CONTEXT_CONFIGURATION,
+						info.getDefaultConfiguration());
+			} catch (BuildMacroException e){
+			}
+			
+			String name = buildInfo.getBuildArtifactName();
+			//try to resolve build macros in the build artifact name
+			try{
+				String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+						name,
+						"", //$NON-NLS-1$
+						" ", //$NON-NLS-1$
+						IBuildMacroProvider.CONTEXT_CONFIGURATION,
+						info.getDefaultConfiguration());
+				if((resolved = resolved.trim()).length() > 0)
+					name = resolved;
+			} catch (BuildMacroException e){
+			}
+
 			if (ext.length() > 0) {
-				buildGoalName = buildInfo.getOutputPrefix(ext) + buildInfo.getBuildArtifactName() + "." + ext;	//$NON-NLS-1$
+				buildGoalName = buildInfo.getOutputPrefix(ext) + name + "." + ext;	//$NON-NLS-1$
 			} else {
-				buildGoalName = buildInfo.getBuildArtifactName();
+				buildGoalName = name;
 			}
 			reservedNames = Arrays.asList(new String[]{".cdtbuild", ".cdtproject", ".project"});	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
@@ -558,7 +585,21 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 
 			// Flag to the user that make is about to be called
-			IPath makeCommand = new Path(info.getBuildCommand()); 
+			String makeCmd = info.getBuildCommand();
+			//try to resolve the build macros in the builder command
+			try{
+				String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+						makeCmd,
+						"", //$NON-NLS-1$
+						" ", //$NON-NLS-1$
+						IBuildMacroProvider.CONTEXT_CONFIGURATION,
+						info.getDefaultConfiguration());
+				if((resolved = resolved.trim()).length() > 0)
+					makeCmd = resolved;
+			} catch (BuildMacroException e){
+			}
+
+			IPath makeCommand = new Path(makeCmd); 
 			if (makeCommand != null) {
 				String[] msgs = new String[2];
 				msgs[0] = makeCommand.toString();
@@ -609,11 +650,17 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	
 				// Set the environmennt
 				IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true);
+				IBuildMacroProvider macroProvier = ManagedBuildManager.getBuildMacroProvider();
 				String[] env = null;
 				ArrayList envList = new ArrayList();
 				if (variables != null) {
 					for(int i = 0; i < variables.length; i++){
+						//resolve the build macros in environment variables
+						try{
+							envList.add(variables[i].getName() + "=" + macroProvier.resolveValue(variables[i].getValue(),""," ",IBuildMacroProvider.CONTEXT_CONFIGURATION,cfg));	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						}catch(BuildMacroException e){
 						envList.add(variables[i].getName() + "=" + variables[i].getValue());	//$NON-NLS-1$
+					}
 					}
 					env = (String[]) envList.toArray(new String[envList.size()]);
 				}
@@ -637,6 +684,16 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 				String[] makeTargets;
 				String prebuildStep = info.getPrebuildStep();
+				//try to resolve the build macros in the prebuildStep
+				try{
+					prebuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+							prebuildStep,
+							"", //$NON-NLS-1$
+							" ", //$NON-NLS-1$
+							IBuildMacroProvider.CONTEXT_CONFIGURATION,
+							cfg);
+				} catch (BuildMacroException e){
+				}
 				boolean prebuildStepPresent = (prebuildStep.length() > 0);
 				Process proc = null;
 				boolean isuptodate = false;

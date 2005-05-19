@@ -138,6 +138,10 @@ public class BuildPreferencePage extends PreferencePage
         super.performDefaults();
     }
 
+	public ManagedBuildOptionBlock getOptionBlock(){
+		return fOptionBlock;
+	}
+
 	
 	/*
 	 * apply settings

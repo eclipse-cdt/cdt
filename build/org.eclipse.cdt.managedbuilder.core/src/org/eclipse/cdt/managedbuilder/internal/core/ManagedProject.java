@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.StorableMacros;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -49,6 +50,8 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	private boolean isDirty = false;
 	private boolean isValid = true;
 	private boolean resolved = true;
+	//holds the user-defined macros
+	private StorableMacros userDefinedMacros;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -103,7 +106,11 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 				Node configElement = configElements.item(i);
 				if (configElement.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
 					Configuration config = new Configuration(this, (Element)configElement);
+				}else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
+					//load user-defined macros
+					userDefinedMacros = new StorableMacros((Element)configElement);
 				}
+
 			}
 		} else {
 			setValid(false);
@@ -168,6 +175,13 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 			config.serialize(doc, configElement);
 		}
 		
+		//serialize user-defined macros
+		if(userDefinedMacros != null){
+			Element macrosElement = doc.createElement(StorableMacros.MACROS_ELEMENT_NAME);
+			element.appendChild(macrosElement);
+			userDefinedMacros.serialize(doc,macrosElement);
+		}
+
 		// I am clean now
 		isDirty = false;
 	}
@@ -380,6 +394,11 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		// If I need saving, just say yes
 		if (isDirty) return true;
 		
+		//check whether the project - specific macros are dirty
+		if(userDefinedMacros != null && userDefinedMacros.isDirty())
+			return true;
+
+		
 		// Otherwise see if any configurations need saving
 		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
@@ -419,6 +438,16 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	public void setValid(boolean isValid) {
 		//  TODO:  In the future, children could also have a "valid" state...
 		this.isValid = isValid;
+	}
+
+	/*
+	 * this method is called by the UserDefinedMacroSupplier to obtain user-defined
+	 * macros available for this managed project
+	 */
+	public StorableMacros getUserDefinedMacros(){
+		if(userDefinedMacros == null)
+			userDefinedMacros = new StorableMacros();
+		return userDefinedMacros;
 	}
 
 }

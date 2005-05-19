@@ -43,7 +43,10 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -337,13 +340,20 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getFlagsForSource(java.lang.String)
 	 */
 	public String getFlagsForSource(String extension) {
+		return getToolFlagsForSource(extension,null,null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getToolFlagsForSource(java.lang.String, org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
+	 */
+	public String getToolFlagsForSource(String extension, IPath inputLocation, IPath outputLocation){
 		// Get all the tools for the current config
 		ITool[] tools = getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool != null && tool.buildsFileType(extension)) {
 				try {
-					return tool.getToolFlags();
+					return tool.getToolCommandFlagsString(inputLocation,outputLocation);
 				} catch (BuildException e) {
 					return null;
 				}
@@ -356,6 +366,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getFlagsForConfiguration(java.lang.String)
 	 */
 	public String getFlagsForConfiguration(String extension) {
+		return getToolFlagsForConfiguration(extension, null, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getToolFlagsForConfiguration(java.lang.String, org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
+	 */
+	public String getToolFlagsForConfiguration(String extension, IPath inputLocation, IPath outputLocation){
 		// Treat null extensions as an empty string
 		String ext = extension == null ? new String() : extension;
 		
@@ -365,7 +382,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			ITool tool = tools[index];
 			if (tool.producesFileType(ext)) {
 				try {
-					return tool.getToolFlags();
+					return tool.getToolCommandFlagsString(inputLocation,outputLocation);
 				} catch (BuildException e) {
 					return null;
 				}
@@ -723,12 +740,35 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public IManagedCommandLineInfo generateCommandLineInfo(
 			String sourceExtension, String[] flags, String outputFlag,
 			String outputPrefix, String outputName, String[] inputResources) {
+		return generateToolCommandLineInfo( sourceExtension, flags, 
+				outputFlag, outputPrefix, outputName, inputResources, null, null );
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#generateToolCommandLineInfo(java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String[], org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
+	 */
+	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation ){
 		ITool[] tools = getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.buildsFileType(sourceExtension)) {
+				String cmd = tool.getToolCommand();
+				//try to resolve the build macros in the tool command
+				try{
+					String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
+							"", //$NON-NLS-1$
+							" ", //$NON-NLS-1$
+							IBuildMacroProvider.CONTEXT_FILE,
+							new FileContextData(inputLocation,outputLocation,null,getDefaultConfiguration().getToolChain()));
+					if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+						cmd = resolvedCommand;
+						
+				} catch (BuildMacroException e){
+				}
+
 				IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
-				return gen.generateCommandLineInfo( tool, tool.getToolCommand(), 
+				return gen.generateCommandLineInfo( tool, cmd, 
 						flags, outputFlag, outputPrefix, outputName, inputResources, 
 						tool.getCommandLinePattern() );
 			}

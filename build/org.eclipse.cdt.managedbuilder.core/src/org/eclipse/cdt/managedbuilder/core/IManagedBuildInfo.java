@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.core;
 import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.core.runtime.IPath;
 
 /*
  *  There is a ManagedBuildInfo per CDT managed build project.  Here are
@@ -55,6 +56,14 @@ public interface IManagedBuildInfo {
 
 	/**
 	 * Returns <code>IManagedCommandLineInfo</code> for source with extension
+	 * The command line info contains values with
+	 * build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * command line info contains values contain all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the command line info contains values contain
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved
+	 *  
 	 * @param sourceExtension - source extension
 	 * @param flags - build flags
 	 * @param outputFlag - output flag for build tool
@@ -62,9 +71,34 @@ public interface IManagedBuildInfo {
 	 * @param outputName
 	 * @param inputResources
 	 * @return IManagedCommandLineInfo
+	 * 
+	 * @deprecated - use generateToolCommandLineInfo instead
 	 */
 	public IManagedCommandLineInfo generateCommandLineInfo( String sourceExtension, String[] flags, 
 			String outputFlag, String outputPrefix, String outputName, String[] inputResources );
+
+	/**
+	 * Returns <code>IManagedCommandLineInfo</code> for source with extension
+	 * The command line info contains values with
+	 * build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * command line info contains values contain all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the command line info contains values contain
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved
+	 * 
+	 * @param sourceExtension
+	 * @param flags
+	 * @param outputFlag
+	 * @param outputPrefix
+	 * @param outputName
+	 * @param inputResources
+	 * @param inputLocation
+	 * @param outputLocation
+	 * @return
+	 */
+	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation );
 
 	/**
 	 * Answers a <code>String</code> containing the arguments to be passed to make. 
@@ -164,21 +198,73 @@ public interface IManagedBuildInfo {
 	 * Returns a <code>String</code> containing the flags, including 
 	 * those overridden by the user, for the tool in the configuration
 	 * defined by the argument.
+	 * The string contains build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the string contains
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
 	 * 
 	 * @param extension
 	 * @return
+	 * 
+	 * @deprecated - use getToolFlagsForConfiguration
 	 */
 	public String getFlagsForConfiguration(String extension);
 	
 	/**
 	 * Returns a <code>String</code> containing the flags, including 
+	 * those overridden by the user, for the tool in the configuration
+	 * defined by the argument.
+	 * The string contains build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the string contains
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
+	 * 
+	 * @param extension
+	 * @param inputLocation
+	 * @param outputLocation
+	 * @return
+	 */
+	public String getToolFlagsForConfiguration(String extension, IPath inputLocation, IPath outputLocation);
+
+	/**
+	 * Returns a <code>String</code> containing the flags, including 
 	 * those overridden by the user, for the tool that handles the 
 	 * type of source file defined by the argument.
+	 * The string contains build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the string contains
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
 	 * 
 	 * @param extension
 	 * @return
+	 * 
+	 * @deprecated - use getToolFlagsForSource
 	 */
 	public String getFlagsForSource(String extension);
+
+	/**
+	 * Returns a <code>String</code> containing the flags, including 
+	 * those overridden by the user, for the tool that handles the 
+	 * type of source file defined by the argument.
+	 * The string contains build macros resolved to the makefile format.
+	 * That is if a user has chosen to expand all macros in the buildfile,
+	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * chosen to keep the environment build macros unresolved, the string contains
+	 * the environment macro references converted to the buildfile variable format,
+	 * all other macro references are resolved 
+	 * 
+	 * @param extension
+	 * @param inputLocation
+	 * @param outputLocation
+	 * @return
+	 */
+	public String getToolFlagsForSource(String extension, IPath inputLocation, IPath outputLocation);
 
 	/**
 	 * Answers the libraries the project links in.

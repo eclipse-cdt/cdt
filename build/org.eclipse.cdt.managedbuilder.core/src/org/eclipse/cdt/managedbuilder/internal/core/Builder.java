@@ -15,11 +15,15 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.macros.FileContextBuildMacroValues;
+import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
+import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,6 +46,12 @@ public class Builder extends BuildObject implements IBuilder {
 	private IConfigurationElement buildFileGeneratorElement;
 	private String versionsSupported;
 	private String convertToId;
+	private FileContextBuildMacroValues fileContextBuildMacroValues;
+	private String builderVariablePattern;
+	private Boolean isVariableCaseSensitive;
+	private String[] reservedMacroNames;
+	private IReservedMacroNameSupplier reservedMacroNameSupplier;
+	private IConfigurationElement reservedMacroNameSupplierElement;
 	
 	//  Miscellaneous
 	private boolean isExtensionBuilder = false;
@@ -152,6 +162,22 @@ public class Builder extends BuildObject implements IBuilder {
 		}
 		buildFileGeneratorElement = builder.buildFileGeneratorElement; 
 		
+		if(builder.fileContextBuildMacroValues != null){
+			fileContextBuildMacroValues = (FileContextBuildMacroValues)builder.fileContextBuildMacroValues.clone();
+			fileContextBuildMacroValues.setBuilder(this);
+		}
+		
+		builderVariablePattern = builder.builderVariablePattern;
+		
+		if(builder.isVariableCaseSensitive != null)
+			isVariableCaseSensitive = new Boolean(builder.isVariableCaseSensitive.booleanValue());
+
+		if(builder.reservedMacroNames != null)
+			reservedMacroNames = (String[])builder.reservedMacroNames.clone();
+
+		reservedMacroNameSupplierElement = builder.reservedMacroNameSupplierElement;
+		reservedMacroNameSupplier = builder.reservedMacroNameSupplier;
+
 		setDirty(true);
 	}
 
@@ -186,6 +212,26 @@ public class Builder extends BuildObject implements IBuilder {
 		// Get the 'convertToId' attribute
 		convertToId = element.getAttribute(CONVERT_TO_ID);
 
+		// get the 'variableFormat' attribute
+		builderVariablePattern = element.getAttribute(VARIABLE_FORMAT);
+		
+		// get the 'isVariableCaseSensitive' attribute
+		String isCS = element.getAttribute(IS_VARIABLE_CASE_SENSITIVE);
+		if(isCS != null)
+			isVariableCaseSensitive = new Boolean("true".equals(isCS)); //$NON-NLS-1$
+
+		// get the reserved macro names
+		String reservedNames = element.getAttribute(RESERVED_MACRO_NAMES);
+		if(reservedNames != null)
+			reservedMacroNames = reservedNames.split(","); //$NON-NLS-1$
+
+		// Get the reservedMacroNameSupplier configuration element
+		String reservedMacroNameSupplier = element.getAttribute(RESERVED_MACRO_NAME_SUPPLIER); 
+		if(reservedMacroNameSupplier != null && element instanceof DefaultManagedConfigElement){
+			reservedMacroNameSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		}
+
+
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
@@ -206,6 +252,9 @@ public class Builder extends BuildObject implements IBuilder {
 		if (buildfileGenerator != null && element instanceof DefaultManagedConfigElement) {
 			buildFileGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		}
+		
+		//load the File Context Build Macro Values
+		fileContextBuildMacroValues = new FileContextBuildMacroValues(this,element);
 	}
 	
 	/* (non-Javadoc)
@@ -618,4 +667,58 @@ public class Builder extends BuildObject implements IBuilder {
 		return;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getFileContextBuildMacroValues()
+	 */
+	public IFileContextBuildMacroValues getFileContextBuildMacroValues(){
+		if(fileContextBuildMacroValues == null && superClass != null)
+			return superClass.getFileContextBuildMacroValues();
+		return fileContextBuildMacroValues;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getBuilderVariablePattern()
+	 */
+	public String getBuilderVariablePattern(){
+		if(builderVariablePattern == null && superClass != null)
+			return superClass.getBuilderVariablePattern();
+		return builderVariablePattern;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#isVariableCaseSensitive()
+	 */
+	public boolean isVariableCaseSensitive(){
+		if(isVariableCaseSensitive == null){
+			if(superClass != null)
+				return superClass.isVariableCaseSensitive();
+			return true;
+		}
+		return isVariableCaseSensitive.booleanValue();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getReservedMacroNames()
+	 */
+	public String[] getReservedMacroNames(){
+		if(reservedMacroNames == null && superClass != null)
+			return superClass.getReservedMacroNames();
+		return reservedMacroNames;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getReservedMacroNameSupplier()
+	 */
+	public IReservedMacroNameSupplier getReservedMacroNameSupplier(){
+		if(reservedMacroNameSupplier == null && reservedMacroNameSupplierElement != null){
+			try{
+				reservedMacroNameSupplier = (IReservedMacroNameSupplier)reservedMacroNameSupplierElement.createExecutableExtension(RESERVED_MACRO_NAME_SUPPLIER);
+			}catch(CoreException e){
+			}
+		}
+		if(reservedMacroNameSupplier == null && superClass != null)
+			return superClass.getReservedMacroNameSupplier();
+		return reservedMacroNameSupplier;
+	}
+
 }

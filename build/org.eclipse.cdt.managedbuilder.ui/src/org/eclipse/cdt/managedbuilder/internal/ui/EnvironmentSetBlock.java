@@ -11,6 +11,10 @@
 package org.eclipse.cdt.managedbuilder.internal.ui;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.envvar.DefaultContextInfo;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
@@ -26,16 +30,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 
 /**
- * displays the tab-folder. Each tab of the tab-folder
- * contains the EnvironmentBlock representinf the environment
- * for the given context
- * Whe used in the BuildPropertyPage the tab-folder contains the following tabs:
+ * When used in the BuildPropertyPage the displays the tab-folder that contains the following tabs:
  * 1. a tab containing configuration-specific variables
  * 2. a tab containing project-specific variables
  * 
- * otherwise the tab-folder contains the following tabs:
- * 1. a tab containing workspace-specific variables
- * 2. a tab containing eclipse process environment variables
+ * Otherwise displays a single EnvironmentBlock that contains
+ * the workspace-specific and eclipse process environment variables
  *
  */
 public class EnvironmentSetBlock extends AbstractCOptionPage {
@@ -58,6 +58,46 @@ public class EnvironmentSetBlock extends AbstractCOptionPage {
 	private EnvironmentBlock fEnvBlock;
 	
 	private ICOptionContainer fParentContainer;
+
+	private UIEnvVarProvider fEnvProvider = null;
+	
+	private class UIEnvVarContextInfo extends DefaultContextInfo{
+		public UIEnvVarContextInfo(Object context){
+			super(context);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getNext()
+		 */
+		public IContextInfo getNext(){
+			IContextInfo info = super.getNext();
+			if(info != null){
+				EnvironmentBlock blocks[] = getAllBlocks();
+				for(int i = 0; i < blocks.length; i++){
+					if(blocks[i].getContext() == info.getContext())
+						return blocks[i].getContextInfo();
+				}
+				return new UIEnvVarContextInfo(info.getContext());
+			}
+			return null;
+		}
+	}
+
+	/*
+	 * The EnvironmentVariableProvider to be used in UI
+	 * Unlike the default provider, this provider also contains
+	 * the user-modified variables that are not applied yet
+	 */
+	private class UIEnvVarProvider extends EnvironmentVariableProvider{
+		protected IContextInfo getContextInfo(Object context){
+			EnvironmentBlock blocks[] = getAllBlocks();
+			for(int i = 0; i < blocks.length; i++){
+				if(blocks[i].getContext() == context)
+					return blocks[i].getContextInfo();
+			}
+			return new UIEnvVarContextInfo(context);
+		}
+	}
 
 	private class EnvironmentTabFolder extends TabFolderOptionBlock{
 		private EnvironmentBlock fFolderTabs[];
@@ -260,4 +300,16 @@ public class EnvironmentSetBlock extends AbstractCOptionPage {
 		else if(fEnvBlock != null)
 			fEnvBlock.setContext(ResourcesPlugin.getWorkspace());
 	}
+	
+	/*
+	 * returns the EnvironmentVariableProvider to be used in UI
+	 * Unlike the default provider, the returned provider also contains
+	 * the user-modified variables that are not applied yet
+	 */
+	public IEnvironmentVariableProvider getEnvironmentVariableProvider(){
+		if(fEnvProvider == null)
+			fEnvProvider = new UIEnvVarProvider();
+		return fEnvProvider;
+	}
+	
 }

@@ -21,9 +21,10 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 
 public class ProjectType extends BuildObject implements IProjectType {
 	
@@ -46,6 +47,8 @@ public class ProjectType extends BuildObject implements IProjectType {
 
 	private IConfigurationElement environmentVariableSupplierElement = null;
 	private IProjectEnvironmentVariableSupplier environmentVariableSupplier = null;
+	private IConfigurationElement buildMacroSupplierElement = null;
+	private IProjectBuildMacroSupplier buildMacroSupplier = null;
 
 	//  Miscellaneous
 	private boolean resolved = true;
@@ -159,6 +162,13 @@ public class ProjectType extends BuildObject implements IProjectType {
 		if(environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement){
 			environmentVariableSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
+
+		// Get the buildMacroSupplier configuration element
+		String buildMacroSupplier = element.getAttribute(PROJECT_MACRO_SUPPLIER); 
+		if(buildMacroSupplier != null && element instanceof DefaultManagedConfigElement){
+			buildMacroSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
+		}
+
 	}
 
 	/*
@@ -458,6 +468,40 @@ public class ProjectType extends BuildObject implements IProjectType {
 				if (element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER) != null) {
 					environmentVariableSupplier = (IProjectEnvironmentVariableSupplier) element.createExecutableExtension(PROJECT_ENVIRONMENT_SUPPLIER);
 					return environmentVariableSupplier;
+				}
+			} catch (CoreException e) {}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the plugin.xml element of the projectMacroSupplier extension or <code>null</code> if none. 
+	 *  
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getBuildMacroSupplierElement(){
+		if (buildMacroSupplierElement == null) {
+			if (superClass != null && superClass instanceof ProjectType) {
+				return ((ProjectType)superClass).getBuildMacroSupplierElement();
+			}
+		}
+		return buildMacroSupplierElement;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IProjectType#getBuildMacroSupplier()
+	 */
+	public IProjectBuildMacroSupplier getBuildMacroSupplier(){
+		if (buildMacroSupplier != null) {
+			return buildMacroSupplier;
+		}
+		IConfigurationElement element = getBuildMacroSupplierElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(PROJECT_MACRO_SUPPLIER) != null) {
+					buildMacroSupplier = (IProjectBuildMacroSupplier) element.createExecutableExtension(PROJECT_MACRO_SUPPLIER);
+					return buildMacroSupplier;
 				}
 			} catch (CoreException e) {}
 		}

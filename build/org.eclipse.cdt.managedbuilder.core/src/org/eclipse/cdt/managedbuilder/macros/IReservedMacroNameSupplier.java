@@ -8,20 +8,21 @@
  * Contributors: 
  * Intel Corporation - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.managedbuilder.toolchain.gnu.cygwin;
+package org.eclipse.cdt.managedbuilder.macros;
 
-import org.eclipse.cdt.managedbuilder.core.IBuildPathResolver;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 
-public class CygwinPathResolver implements IBuildPathResolver {
+/**
+ * This interface is to be implemented by the tool-integrator to specify to the MBS
+ * the reserved builder variable names
+ *  
+ * @since 3.0
+ */
+public interface IReservedMacroNameSupplier{
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuildPathResolver#resolveBuildPaths(int, java.lang.String, java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration)
+	/**
+	 * @return true if the given macro name is reserved by the builder or the makefile generator
 	 */
-	public String[] resolveBuildPaths(int pathType, String variableName,
-			String variableValue, IConfiguration configuration) {
-		// TODO implement
-		return new String[0];
-	}
-
+	boolean isReservedName(String macroName, IConfiguration configuration);
 }
+

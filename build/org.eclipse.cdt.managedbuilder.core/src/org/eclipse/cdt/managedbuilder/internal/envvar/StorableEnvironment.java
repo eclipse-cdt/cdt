@@ -29,7 +29,8 @@ import org.w3c.dom.NodeList;
  * 
  * @since 3.0
  *
- */public class StorableEnvironment {
+ */
+public class StorableEnvironment {
 	public static final String ENVIRONMENT_ELEMENT_NAME = "environment"; //$NON-NLS-1$
 	private Map fVariables;
 	private boolean fIsDirty = false;
@@ -183,13 +184,15 @@ import org.w3c.dom.NodeList;
 		return var;
 	}
 	
-	public void deleteAll(){
+	public boolean deleteAll(){
 		Map map = getMap();
 		if(map.size() > 0){
 			fIsDirty = true;
 			fIsChanged = true;
+			map.clear();
+			return true;
 		}
 		
-		map.clear();
+		return false;
 	}
 }

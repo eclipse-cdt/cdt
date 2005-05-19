@@ -280,7 +280,7 @@ public class UserDefinedEnvironmentSupplier extends
 		if(env == null)
 			return;
 
-		env.deleteAll();
+		if(env.deleteAll())
 		setRebuildStateForContext(context);
 	}
 	

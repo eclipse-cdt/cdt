@@ -110,7 +110,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 
 	protected static class Project extends TemplateVariableResolver {
 		public Project() {
-			super("enclosing_project", TemplateMessages.getString("CContextType.variable.description.project")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("enclosing_project", TemplateMessages.getString("CContextType.variable.description.enclosing.project")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		public String resolve(TemplateContext context) {
 			ITranslationUnit unit= ((CContext) context).getTranslationUnit();

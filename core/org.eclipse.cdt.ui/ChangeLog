@@ -1,3 +1,8 @@
+2005-05-19 Alain Magloire
+	Fixed PR 95943
+	* src/org/elcipse/cdt/internla/corext/template/c/TemplateMessages.properties
+	* src/org/elcipse/cdt/internla/corext/template/c/TranslationUnitContextType.java
+
 2005-05-18 David Inglis
 	Fixed bug # 95556
 	* src/org/eclipse/cdt/ui/wizards/NewCProjectWizard.java

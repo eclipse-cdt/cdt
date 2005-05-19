@@ -1,3 +1,15 @@
+2005-05-19 Vladimir Hirsl
+	Final fix for 95641: [Scanner Config] Per file scanner info not available for header files 
+	and not compiled source files.
+	For include files and source files that are not compiled per file discovered scanner info
+	defaults to project's discovered scanner info.
+	A new method is added to CoreModel to determine if per resource scanner info is empty.
+	This method will take into account effective per file discovered scanner info.
+
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/core/model/IPathEntryContainerExtension.java
+	
 2005-05-17 Vladimir Hirsl
 	Fixed problem marker updating for files that are not indexed due to
 	empty scanner info. Some refactoring of problem marker generation code.

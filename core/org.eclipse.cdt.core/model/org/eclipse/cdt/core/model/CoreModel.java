@@ -1085,5 +1085,59 @@ public class CoreModel {
 		return manager.getIndexManager();
 	}
 	
+	/**
+	 * The method returns whether scanner information for a resource is empty or not.
+	 * <p>
+	 * Although this looks like IScannerInfoProvider method, eventually this interface
+	 * will be deprecated and the service will be moved to CoreModel.
+	 * </p>
+	 * 
+	 * @param resource
+	 * @since 3.0
+	 */
+
+	public static boolean isScannerInformationEmpty(IResource resource) {
+		final int PATH_ENTRY_MASK = IPathEntry.CDT_INCLUDE | IPathEntry.CDT_MACRO |
+									IPathEntry.CDT_INCLUDE_FILE | IPathEntry.CDT_MACRO_FILE;
+		boolean rc = true;
+		IPath resPath = resource.getFullPath();
+		IProject project = resource.getProject();
+		
+		ICProject cProject = CoreModel.getDefault().create(project);
+		if (cProject != null) {
+			try {
+				IPathEntry[] resolvedPE = CoreModel.getRawPathEntries(cProject);
+				for (int i = 0; i < resolvedPE.length; i++) {
+					IPathEntry pe = resolvedPE[i];
+					// first check all containers
+					if (pe.getEntryKind() == IPathEntry.CDT_CONTAINER) {
+						IPathEntryContainer peContainer = CoreModel.getPathEntryContainer(
+								pe.getPath(), cProject);
+						if (peContainer instanceof IPathEntryContainerExtension) {
+							IPathEntryContainerExtension contExt = (IPathEntryContainerExtension) peContainer;
+							if (!contExt.isEmpty(resPath)) {
+								rc = false;
+								break;
+							}
+						}
+						else if (peContainer.getPathEntries().length > 0) {
+							rc = false;
+							break;
+						}
+					}
+					// then the user specified scanner info
+					else if ((pe.getEntryKind() & PATH_ENTRY_MASK) != 0) {
+						IPath affectedPath = pe.getPath();
+						if (affectedPath.isPrefixOf(resource.getFullPath())) {
+							rc = false;
+							break;
+						}
+					}
+				}
+			} catch (CModelException e) {
+			} 
+		}
+		return rc;
+	}
 
 }

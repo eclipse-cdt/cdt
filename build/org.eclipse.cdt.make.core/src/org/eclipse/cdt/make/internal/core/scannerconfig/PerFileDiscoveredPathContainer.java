@@ -82,4 +82,20 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
 		return (IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]);
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#isEmpty(org.eclipse.core.runtime.IPath)
+	 */
+	public boolean isEmpty(IPath path) {
+        IDiscoveredPathInfo info;
+		try {
+			info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+	        if (info instanceof IPerFileDiscoveredPathInfo) {
+	            IPerFileDiscoveredPathInfo filePathInfo = (IPerFileDiscoveredPathInfo) info;
+	            return filePathInfo.isEmpty(path);
+	        }
+		} catch (CoreException e) {
+		}
+		return false;
+	}
+
 }

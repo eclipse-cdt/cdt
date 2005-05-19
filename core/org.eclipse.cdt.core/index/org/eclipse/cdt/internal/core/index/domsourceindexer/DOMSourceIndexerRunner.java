@@ -188,37 +188,30 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
      */
     private boolean isScannerInfoEmpty(IFile file) {
         boolean rc = true;
-        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(file.getProject());
-        if (provider != null){
-            IScannerInfo scanInfo = provider.getScannerInformation(file);
-            if (scanInfo != null) {
-                if (!scanInfo.getDefinedSymbols().isEmpty() ||
-                        scanInfo.getIncludePaths().length > 0) {
-                    rc = false;
-                }
-                if (scanInfo instanceof IExtendedScannerInfo) {
-                    IExtendedScannerInfo extScanInfo = (IExtendedScannerInfo) scanInfo;
-                    if (extScanInfo.getLocalIncludePath().length > 0)
-                        rc = false;
+    	if (!CoreModel.isScannerInformationEmpty(file)) {
+			rc = false;
+	        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(file.getProject());
+	        if (provider != null) {
+	            IScannerInfo scanInfo = provider.getScannerInformation(file);
+	            if (scanInfo != null && scanInfo instanceof IExtendedScannerInfo) {
+	            	IExtendedScannerInfo extScanInfo = (IExtendedScannerInfo) scanInfo;
                     if (extScanInfo.getIncludeFiles().length > 0) {
-                        rc = false;
-                        for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
-                            String includeFile = extScanInfo.getIncludeFiles()[i];
-                            /* See if this file has been encountered before */
-                            indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(includeFile));
-                        }
+                    	for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
+                    		String includeFile = extScanInfo.getIncludeFiles()[i];
+                    		/* See if this file has been encountered before */
+                    		indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(includeFile));
+                    	}
                     }
                     if (extScanInfo.getMacroFiles().length > 0) {
-                        rc = false;
-                        for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
-                            String macrosFile = extScanInfo.getMacroFiles()[i];
-                            /* See if this file has been encountered before */
-                            indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(macrosFile));
-                        }
+                    	for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
+                    		String macrosFile = extScanInfo.getMacroFiles()[i];
+                    		/* See if this file has been encountered before */
+                    		indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(macrosFile));
+                    	}
                     }
-                }
-            }
-        }
+	            }
+	        }
+		}
         return rc;
     }
 

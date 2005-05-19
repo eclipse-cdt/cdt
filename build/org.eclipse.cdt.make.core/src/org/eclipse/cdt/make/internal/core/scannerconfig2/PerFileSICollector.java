@@ -149,6 +149,13 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
     	IPath[] includeFiles;
     	IPath[] macrosFiles;
     	Map definedSymbols;
+		public boolean isEmpty() {
+			return (includePaths.length == 0 &&
+					quoteIncludePaths.length == 0 &&
+					includeFiles.length == 0 &&
+					macrosFiles.length == 0 &&
+					definedSymbols.size() == 0);
+		}
     }
     
     public static final String COLLECTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".PerFileSICollector"; //$NON-NLS-1$
@@ -675,6 +682,23 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
         public IDiscoveredScannerInfoSerializable getSerializable() {
             return sid;
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#isEmpty(org.eclipse.core.runtime.IPath)
+		 */
+		public boolean isEmpty(IPath path) {
+			boolean rc = true;
+			IResource resource = project.getWorkspace().getRoot().findMember(path);
+			if (resource != null) {
+				if (resource instanceof IFile) {
+					rc = (getCommand((IFile)resource) == null);
+				}
+				else if (resource instanceof IProject) {
+					rc = (psi == null || psi.isEmpty()); 
+				}
+			}
+			return rc;
+		}
 
     }
 

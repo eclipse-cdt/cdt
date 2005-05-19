@@ -65,6 +65,10 @@ public interface IDiscoveredPathManager {
          * Get macro files (gcc option -imacros) for the specific path (file)
          */
         IPath[] getMacroFiles(IPath path);
+		/**
+		 * Returns if there is any discovered scanner info for the path
+		 */
+		boolean isEmpty(IPath path);
     }
     
     interface IDiscoveredScannerInfoSerializable {

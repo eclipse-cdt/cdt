@@ -650,6 +650,20 @@
                   class="org.eclipse.cdt.debug.core.model.ICVariable">
             </selection>
          </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddRegisterGroupActionDelegate"
+               helpContextId="add_register_group_action_context"
+               id="org.eclipse.cdt.debug.ui.addRegisterGroupAction"
+               label="%AddRegisterGroupAction.label"
+               menubarPath="additions"
+               style="push"
+               tooltip="%AddRegisterGroupAction.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated"/>
+            </enablement>
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="#DisassemblyViewContext"
@@ -712,6 +726,19 @@
             </enablement>
          </action>
       </viewerContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.cdt.debug.ui.RegisterGroupActions"
+            objectClass="org.eclipse.debug.core.model.IRegisterGroup">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.RemoveRegisterGroupActionDelegate"
+               enablesFor="+"
+               helpContextId="remove_register_group_action_context"
+               id="org.eclipse.cdt.debug.ui.removeRegisterGroupAction"
+               label="%RemoveRegisterGroupAction.label"
+               menubarPath="additions"
+               tooltip="%RemoveRegisterGroupAction.tooltip"/>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

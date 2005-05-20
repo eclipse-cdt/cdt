@@ -1,3 +1,14 @@
+2005-05-20 Mikhail Khodjaiants
+	Bug 94139: User-defined register groups.
+	UI to add/remove user-defined groups.
+	* ICDebugHelpContextIds.java
+	* ActionMessages.properties
+	+ AddRegisterGroupActionDelegate.java
+	+ RegisterGroupDialog.java
+	+ RemoveRegisterGroupActionDelegate.java
+	* plugin.properties
+	* plugin.xml
+
 2005-05-09 Mikhail Khodjaiants
 	Bug 80175: Replace the CDT source lookup by the source lookup provided by Eclipse platform.
 	Removed unused images.

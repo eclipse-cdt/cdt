@@ -1574,7 +1574,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				allDeps.add(deps[j]);
 			}
 			//  2.  From InputTypes that other than the primary input type
-			if (!type.getPrimaryInput()) {
+			if (type != getPrimaryInputType()) {
 				if (type.getOptionId() != null) {
 					IOption option = getOptionBySuperClassId(type.getOptionId());
 					if (option != null) {
@@ -1619,7 +1619,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				allRes.add(res[j]);
 			}
 			//  2.  From InputTypes that other than the primary input type
-			if (!type.getPrimaryInput()) {
+			if (type != getPrimaryInputType()) {
 				String var = type.getBuildVariable();
 				if (var != null && var.length() > 0) {
 					allRes.add(Path.fromOSString("$(" + type.getBuildVariable() + ")"));   //$NON-NLS-1$ //$NON-NLS-2$

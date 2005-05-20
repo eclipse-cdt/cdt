@@ -10,8 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -97,8 +99,12 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 			return null;
 		
 		Map map = new HashMap();
+		IMacroContextInfo infos[] = includeParentContexts ? 
+				getAllMacroContextInfos(contextInfo) :
+					new IMacroContextInfo[]{contextInfo};
 		
-		do{
+		for(int k = infos.length - 1; k >= 0; k--){
+			contextInfo = infos[k];
 			IBuildMacroSupplier suppliers[] = contextInfo.getSuppliers();
 			if(suppliers != null){
 				for(int i = suppliers.length - 1; i >= 0; i--){
@@ -110,11 +116,30 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 					}
 				}
 			}
-		}while(includeParentContexts && (contextInfo = contextInfo.getNext()) != null);
+		}
 		
 		Collection values = map.values();
 		return (IBuildMacro[])values.toArray(new IBuildMacro[values.size()]);
 	}
+	
+	/*
+	 * returns an array of the IMacroContextInfo that holds the context informations
+	 * starting from the one passed to this method and including all subsequent parents
+	 */
+	private static IMacroContextInfo[] getAllMacroContextInfos(IMacroContextInfo contextInfo){
+		if(contextInfo == null)
+			return null;
+			
+		List list = new ArrayList();
+	
+		list.add(contextInfo);
+			
+		while((contextInfo = contextInfo.getNext()) != null)
+			list.add(contextInfo);
+		
+		return (IMacroContextInfo[])list.toArray(new IMacroContextInfo[list.size()]);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#getSuppliers(int, java.lang.Object)

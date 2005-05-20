@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.cdt.managedbuilder.ui.tests"
+   name="Managed Build UI Tests Plug-in"
+   version="3.0.0"
+   provider-name="eclipse.org"
+   class="org.eclipse.cdt.managedbuilder.ui.tests.testplugin.TestsPlugin">
+
+   <runtime>
+      <library name="tests.jar"/>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
+      <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
+      <import plugin="org.eclipse.cdt.core"/>
+   </requires>
+   <extension
+         point="org.eclipse.cdt.managedbuilder.ui.newWizardPages">
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage"/>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage">
+         <nature  natureID="A"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage">
+         <nature  natureID="B"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage">
+         <toolchain  toolchainID="C"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage">
+         <projectType  projectTypeID="D"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage">
+         <projectType  projectTypeID="E"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage">
+         <toolchain toolchainID="F"/>
+      </wizardPage>
+   </extension>
+
+</plugin>

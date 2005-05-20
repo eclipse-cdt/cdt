@@ -456,7 +456,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param object
 	 * @return
 	 */
-	private static LinkedList scanForParameters( String paramString ) {
+	public static LinkedList scanForParameters( String paramString ) {
 		LinkedList list = new LinkedList();
 		
 		if( paramString == null || paramString.equals("") ) //$NON-NLS-1$

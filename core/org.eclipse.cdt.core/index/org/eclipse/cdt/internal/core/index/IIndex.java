@@ -59,7 +59,25 @@ public interface IIndex {
     final static int DECLARATION = 1;
     final static int REFERENCE = 2;
     final static int DEFINITION = 3;
-    
+	
+	
+	// modifiers
+	final static int privateAccessSpecifier = 1;
+	final static int publicAccessSpecifier = 2;
+	final static int protectedAccessSpecifier = 4;
+	final static int constQualifier = 8;
+	final static int volatileQualifier = 16;
+	final static int staticSpecifier = 32;
+	final static int externSpecifier = 64;
+	final static int inlineSpecifier = 128;
+	final static int virtualSpecifier = 256;
+	final static int pureVirtualSpecifier = 512;
+	final static int explicitSpecifier = 1024;
+	final static int autoSpecifier = 2048;
+	final static int registerSpecifier = 4096;
+	final static int mutableSpecifier = 8192;
+	
+	
 	   /**
 		 * Adds the given file to the index.
 		 */

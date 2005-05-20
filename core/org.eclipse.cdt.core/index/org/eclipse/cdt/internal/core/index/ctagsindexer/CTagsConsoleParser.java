@@ -28,6 +28,7 @@ public class CTagsConsoleParser implements IConsoleParser {
 	final static String INHERITS = "inherits"; //$NON-NLS-1$
 	final static String ACCESS = "access"; //$NON-NLS-1$
 	final static String IMPLEMENTATION = "implementation"; //$NON-NLS-1$
+	final static String SIGNATURE = "signature"; //$NON-NLS-1$
 	
 	final static String CLASS = "class"; //$NON-NLS-1$
     final static String MACRO = "macro"; //$NON-NLS-1$
@@ -41,7 +42,7 @@ public class CTagsConsoleParser implements IConsoleParser {
     final static String TYPEDEF = "typedef"; //$NON-NLS-1$
     final static String UNION = "union"; //$NON-NLS-1$
     final static String VARIABLE = "variable"; //$NON-NLS-1$
-    final static String EXTERNALVAR = ""; //$NON-NLS-1$
+    final static String EXTERNALVAR = "externvar"; //$NON-NLS-1$
    
     private CTagsIndexerRunner indexer;
 

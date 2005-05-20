@@ -74,6 +74,8 @@ public interface IIndexerOutput {
 	public void addFwd_UnionDecl(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	public void addFwd_UnionRef(int indexedFileNumber, char [][] name, int offset, int offsetLength, int offsetType);
 	
+	public void addIndexEntry(IIndexEntry indexEntry);
+	
 	public IndexedFileEntry  getIndexedFile(String path); 
 	public IndexedFileEntry  addIndexedFile(String path);
 	//For Dep Tree

@@ -11,10 +11,16 @@
 package org.eclipse.cdt.internal.core.index.ctagsindexer;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.core.index.FunctionEntry;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.NamedEntry;
+import org.eclipse.cdt.internal.core.index.TypeEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
+import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 
 
 class CTagEntry{
@@ -121,31 +127,150 @@ class CTagEntry{
 		char[][] fullName = getQualifiedName();
 	
 		if (kind.equals(CTagsConsoleParser.CLASS)){
-    		output.addClassDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_CLASS,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			typeEntry.setBaseTypes(getInherits());
+			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.MACRO)){
-    		output.addMacroDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			NamedEntry namedEntry = new NamedEntry(IIndex.MACRO, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
+			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			namedEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.ENUMERATOR)){
-    		output.addEnumtorDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			NamedEntry namedEntry = new NamedEntry(IIndex.ENUMTOR, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
+			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			namedEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.FUNCTION)){
-    		output.addFunctionDefn(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			//Both methods and functions are reported back as functions - methods can be distinguished
+			//from functions by the presence of a class field in the type entry
+			String isMethod = (String) tagExtensionField.get(CTagsConsoleParser.CLASS);
+			if (isMethod != null){
+				//method
+				FunctionEntry funEntry = new FunctionEntry(IIndex.METHOD, IIndex.DEFINITION,fullName,getModifiers(),fileNum);
+				funEntry.setSignature(getFunctionSignature());
+				funEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+				funEntry.serialize(output);
+			} else {
+				//function
+				FunctionEntry funEntry = new FunctionEntry(IIndex.FUNCTION, IIndex.DEFINITION,fullName,getModifiers(), fileNum);
+				funEntry.setSignature(getFunctionSignature());
+				funEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+				funEntry.serialize(output);
+			}
     	} else if (kind.equals(CTagsConsoleParser.ENUM)){
-    		output.addEnumDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_ENUM ,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.MEMBER)){
     		output.addFieldDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			NamedEntry namedEntry = new NamedEntry(IIndex.FIELD, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
+			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			namedEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.NAMESPACE)){
-    		output.addNamespaceDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			NamedEntry namedEntry = new NamedEntry(IIndex.NAMESPACE, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
+			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			namedEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.PROTOTYPE)){
-    		output.addFunctionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			//Both methods and functions are reported back as functions - methods can be distinguished
+			//from functions by the presence of a class field in the type entry
+			String isMethod = (String) tagExtensionField.get(CTagsConsoleParser.CLASS);
+			if (isMethod != null){
+				//method
+				FunctionEntry funEntry = new FunctionEntry(IIndex.METHOD, IIndex.DECLARATION,fullName,getModifiers(), fileNum);
+				funEntry.setSignature(getFunctionSignature());
+				funEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+				funEntry.serialize(output);
+			} else {
+				//function
+				FunctionEntry funEntry = new FunctionEntry(IIndex.FUNCTION, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
+				funEntry.setSignature(getFunctionSignature());
+				funEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+				funEntry.serialize(output);
+			}
     	} else if (kind.equals(CTagsConsoleParser.STRUCT)){
-    		output.addStructDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_STRUCT,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			typeEntry.setBaseTypes(getInherits());
+			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.TYPEDEF)){
-    		output.addTypedefDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_TYPEDEF,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.UNION)){
-    		output.addUnionDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_UNION,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.VARIABLE)){
-    		output.addVariableDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_VAR,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.EXTERNALVAR)){
-    	
+			//Have to specifically set external bit flag in modifier;
+			int modifiers = getModifiers();
+			modifiers |= 1 << 6;
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_VAR,IIndex.DECLARATION, fullName, modifiers, fileNum);
+			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			typeEntry.serialize(output);
     	}
+	}
+
+	private char[][] getFunctionSignature() {
+		String signature =  (String) tagExtensionField.get(CTagsConsoleParser.SIGNATURE);
+		
+		LinkedList list = CSearchPattern.scanForParameters(signature);
+		char [][] parameters = new char [0][];
+		parameters = (char[][])list.toArray( parameters );
+		
+		return parameters;
+	}
+
+	private int getModifiers() {
+		
+		int modifier=0;  
+		
+		//Check access modifier
+		String access = (String) tagExtensionField.get(CTagsConsoleParser.ACCESS);
+		
+		if (access != null){
+			for (int i=0; i<ICIndexStorageConstants.allSpecifiers.length; i++){
+				if (access.equals(ICIndexStorageConstants.allSpecifiers[i])){
+					int tempNum = 1 << i;
+					modifier |= tempNum;
+					break;
+				}
+			}
+		}
+		
+		//Check implementation modifier
+		String implementation=(String) tagExtensionField.get(CTagsConsoleParser.IMPLEMENTATION);
+		
+		if (implementation != null){
+			for (int i=0; i<ICIndexStorageConstants.allSpecifiers.length; i++){
+				if (implementation.equals(ICIndexStorageConstants.allSpecifiers[i])){
+					int tempNum = 1 << i;
+					modifier |= tempNum;
+				}
+			}
+		}
+		
+		return modifier;
+	}
+	
+	private char[][] getInherits() {
+		
+		//Check inherits modifier
+		String access = (String) tagExtensionField.get(CTagsConsoleParser.INHERITS);
+		
+		if (access != null){
+			StringTokenizer tokenizer = new StringTokenizer(access, ","); //$NON-NLS-1$
+			LinkedList list = new LinkedList();
+			while (tokenizer.hasMoreTokens()){
+				list.add(tokenizer.nextToken().toCharArray());
+			}
+			char[][] inherits = new char[0][];
+			inherits = (char [][]) list.toArray(inherits);
+			return inherits;
+		}
+		
+		return null; 
 	}
 }

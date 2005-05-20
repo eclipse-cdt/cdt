@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.cindexstorage;
 
+import org.eclipse.cdt.internal.core.index.IFunctionEntry;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.IIndexEntry;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.INamedEntry;
+import org.eclipse.cdt.internal.core.index.ITypeEntry;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 
 /**
@@ -322,6 +326,61 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 	         
 	     return result;
 	 }
+
+	public void addIndexEntry(IIndexEntry indexEntry) {
+		
+		if (indexEntry == null)
+			return;
+		
+	  if (indexEntry instanceof ITypeEntry){
+			ITypeEntry typeEntry = (ITypeEntry) indexEntry;
+			int indexedFileNumber=typeEntry.getFileNumber();
+			int meta_type = typeEntry.getMetaKind();
+			int type_kind = typeEntry.getTypeKind();
+			int entryType = typeEntry.getEntryType();
+			int modifiers = typeEntry.getModifiers();
+			
+			char[][]name=typeEntry.getFullName();
+			
+			int nameOffset=typeEntry.getNameOffset();
+			int nameOffsetLength=typeEntry.getNameLength();
+			int nameOffsetType=typeEntry.getNameOffsetType();
+			
+			int elementOffset=typeEntry.getElementOffset();
+			int elementOffsetLength=typeEntry.getElementLength();
+			int elementOffsetType=typeEntry.getElementOffsetType();
+			
+			addRef(indexedFileNumber,  name, ICIndexStorageConstants.typeConstants[type_kind], entryType, nameOffset,nameOffsetLength, nameOffsetType);
+			
+		} else if (indexEntry instanceof IFunctionEntry) {
+			IFunctionEntry functionEntry = (IFunctionEntry) indexEntry;
+			int indexedFileNumber=functionEntry.getFileNumber();
+			int meta_type = functionEntry.getMetaKind();
+			int entryType = functionEntry.getEntryType();
+			int modifiers = functionEntry.getModifiers();
+			char[][] sig=functionEntry.getSignature();
+			char[][]name=functionEntry.getFullName();
+			int nameOffset=functionEntry.getNameOffset();
+			int nameOffsetLength=functionEntry.getNameLength();
+			int nameOffsetType=functionEntry.getNameOffsetType();
+			addRef(indexedFileNumber, name, meta_type, entryType, nameOffset,nameOffsetLength, nameOffsetType);
+		} 	
+		else if (indexEntry instanceof INamedEntry){
+			INamedEntry nameEntry = (INamedEntry) indexEntry;
+			int indexedFileNumber=nameEntry.getFileNumber();
+			int meta_type = nameEntry.getMetaKind();
+			int entryType = nameEntry.getEntryType();
+			int modifiers = nameEntry.getModifiers();
+			char[][]name=nameEntry.getFullName();
+			int nameOffset=nameEntry.getNameOffset();
+			int nameOffsetLength=nameEntry.getNameLength();
+			int nameOffsetType=nameEntry.getNameOffsetType();
+			int elementOffset=nameEntry.getElementOffset();
+			int elementOffsetLength=nameEntry.getElementLength();
+			int elementOffsetType=nameEntry.getElementOffsetType();
+			addRef(indexedFileNumber,  name, meta_type, entryType, nameOffset,nameOffsetLength, nameOffsetType);
+		}
+	}
 	
 //	   public static final char[] encodeEntry(char[][] elementName, int entryType, int encodeType) {
 //	        // Temporarily

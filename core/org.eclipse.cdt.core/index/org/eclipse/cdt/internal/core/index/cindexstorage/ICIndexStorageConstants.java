@@ -85,34 +85,24 @@ public interface ICIndexStorageConstants {
 		"FWD Struct", //$NON-NLS-1$
 		"FWD Union" //$NON-NLS-1$
 };
-	final static char [][] accessSpecifiers = {
-		"".toCharArray(), 			// not used		   //$NON-NLS-1$
-		"private".toCharArray(), 	// private         //$NON-NLS-1$
-		"protected".toCharArray(), 	// protected       //$NON-NLS-1$
-		"public".toCharArray() 		// public          //$NON-NLS-1$
+	
+	final static String[] allSpecifiers = {
+		"private", 		// private        //$NON-NLS-1$
+		"public", 		// public         //$NON-NLS-1$
+		"protected", 	// protected      //$NON-NLS-1$
+		"const", 		// const          //$NON-NLS-1$
+		"volatile", 	// volatile       //$NON-NLS-1$
+		"static", 		// static         //$NON-NLS-1$
+		"extern", 		// extern         //$NON-NLS-1$
+		"inline", 		// inline         //$NON-NLS-1$
+		"virtual", 		// virtual        //$NON-NLS-1$
+		"pure virtual", // pure virtual   //$NON-NLS-1$
+		"explicit", 	// explicit       //$NON-NLS-1$
+		"auto", 		// auto           //$NON-NLS-1$
+		"register",	 	// register       //$NON-NLS-1$
+		"mutable" 		// mutable        //$NON-NLS-1$
 	};
 	
-	final static char [][] cvQualifiers = {
-		"".toCharArray(), 			// not used		  //$NON-NLS-1$
-		"const".toCharArray(), 		// const          //$NON-NLS-1$
-		"volatile".toCharArray(), 	// volatile       //$NON-NLS-1$
-	};
-	
-	final static char [][] storageClassSpecifiers = {
-		"".toCharArray(), 			// not used		  //$NON-NLS-1$
-		"auto".toCharArray(), 		// auto          //$NON-NLS-1$
-		"register".toCharArray(), 	// register       //$NON-NLS-1$
-		"static".toCharArray(), 	// static          //$NON-NLS-1$
-		"extern".toCharArray(), 	// extern       //$NON-NLS-1$
-		"mutable".toCharArray(), 	// mutable          //$NON-NLS-1$
-	};
-	
-	final static char [][] functionSpecifiers = {
-		"".toCharArray(), 			// not used		   //$NON-NLS-1$
-		"inline".toCharArray(), 	// inline          //$NON-NLS-1$
-		"virtual".toCharArray(), 	// virtual         //$NON-NLS-1$
-		"explicit".toCharArray(), 	// explicit        //$NON-NLS-1$
-	};
 
 	
 }

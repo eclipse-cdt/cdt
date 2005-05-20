@@ -11,9 +11,27 @@
 
 package org.eclipse.cdt.internal.core.index;
 
+public class NamedEntry extends CIndexStorageEntry implements INamedEntry {
+	
+	char[][] fullName;
+	int modifiers;
+	
+	public NamedEntry(int meta_kind, int entry_type,  char[][] fullName, int modifiers, int fileNumber){
+		super(meta_kind, entry_type, fileNumber);
+		this.fullName = fullName;
+		this.modifiers = modifiers;
+	}
+	
+	public char[][] getFullName(){
+		return fullName;
+	}
+	
+	public int getModifiers(){
+		return modifiers;
+	}
+	
+	public void serialize(IIndexerOutput output) {
+		output.addIndexEntry(this);
+	}
 
-public interface IFunctionEntry extends INamedEntry  {
-	
-    public char[][] getSignature();
-	
 }

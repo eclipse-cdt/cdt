@@ -11,9 +11,27 @@
 
 package org.eclipse.cdt.internal.core.index;
 
+public class FunctionEntry extends NamedEntry implements IFunctionEntry {
 
-public interface IFunctionEntry extends INamedEntry  {
 	
-    public char[][] getSignature();
+	char[][] signature;
+		
+	public FunctionEntry(int metakind, int entry_type, char[][] fullName, int modifiers,int fileNumber){
+		super(metakind,entry_type,fullName, modifiers, fileNumber);
+	}
 	
+	public void setSignature(char[][] signature) {
+		this.signature = signature;
+	}
+
+	public char[][] getSignature() {
+		return signature;
+
+	}
+
+	public void serialize(IIndexerOutput output) {
+		output.addIndexEntry(this);
+	}
+
+
 }

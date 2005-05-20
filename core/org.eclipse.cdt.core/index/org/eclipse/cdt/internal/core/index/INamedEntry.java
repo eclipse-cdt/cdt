@@ -11,9 +11,13 @@
 
 package org.eclipse.cdt.internal.core.index;
 
-
-public interface IFunctionEntry extends INamedEntry  {
-	
-    public char[][] getSignature();
-	
+public interface INamedEntry extends IIndexEntry, ICIndexStorageEntry  {
+	/**
+	 * @return Returns the fully qualified name of this entry
+	 */
+	public char[][] getFullName();
+	/**
+	 * @return Returns the modifier bit field
+	 */
+	public int getModifiers();
 }

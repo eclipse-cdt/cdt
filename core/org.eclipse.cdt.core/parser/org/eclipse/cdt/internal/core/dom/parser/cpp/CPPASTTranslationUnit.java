@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -31,9 +32,13 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
@@ -41,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -50,6 +56,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
+import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
 
@@ -100,11 +107,61 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getScope()
      */
     public IScope getScope() {
-        if (scope == null)
+        if (scope == null) {
             scope = new CPPNamespaceScope(this);
+			addBuiltinOperators(scope);
+        }
+		
         return scope;
     }
+	
+	private void addBuiltinOperators(IScope theScope) {
+        // void
+        IType cpp_void = new CPPBasicType(IBasicType.t_void, 0);
+        // void *
+        IType cpp_void_p = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), false, false), new GPPASTPointer());
+        // size_t // assumed: unsigned long int
+        IType cpp_size_t = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG & CPPBasicType.IS_UNSIGNED);
 
+		// void * operator new (std::size_t);
+        IBinding temp = null;
+        IType[] newParms = new IType[1];
+        newParms[0] = cpp_size_t;
+        IFunctionType newFunctionType = new CPPFunctionType(cpp_void_p, newParms);
+        IParameter[] newTheParms = new IParameter[1];
+        newTheParms[0] = new CPPBuiltinParameter(newParms[0]);
+        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_NEW, theScope, newFunctionType, newTheParms, false);
+        try {
+			theScope.addBinding(temp);
+        } catch (DOMException de) {}
+		
+		// void * operator new[] (std::size_t);
+		temp = null;
+        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_NEW_ARRAY, theScope, newFunctionType, newTheParms, false);
+        try {
+			theScope.addBinding(temp);
+        } catch (DOMException de) {}
+		
+		// void operator delete(void*);
+        temp = null;
+        IType[] deleteParms = new IType[1];
+        deleteParms[0] = cpp_size_t;
+        IFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms);
+        IParameter[] deleteTheParms = new IParameter[1];
+        deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);
+        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_DELETE, theScope, deleteFunctionType, deleteTheParms, false);
+        try {
+			theScope.addBinding(temp);
+        } catch (DOMException de) {}
+		
+		// void operator delete[](void*);
+		temp = null;
+        temp = new CPPImplicitFunction(ICPPASTOperatorName.OPERATOR_DELETE_ARRAY, theScope, deleteFunctionType, deleteTheParms, false);
+        try {
+			theScope.addBinding(temp);
+        } catch (DOMException de) {}
+	}
+	
     /*
      * (non-Javadoc)
      * 

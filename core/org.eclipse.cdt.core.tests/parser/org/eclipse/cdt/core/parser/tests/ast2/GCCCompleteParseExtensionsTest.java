@@ -288,5 +288,88 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
             assertFalse(true);
         } catch (Exception e) {}
 	}
+    
+	public void testBug95635() throws Exception{
+        StringWriter writer = new StringWriter();
+        writer.write("void f(){                         \n");//$NON-NLS-1$
+        writer.write("    char a[10];                   \n"); //$NON-NLS-1$
+        writer.write("    __builtin_va_list b;          \n"); //$NON-NLS-1$
+        writer.write("    __builtin_abort();            \n");//$NON-NLS-1$
+        writer.write("    __builtin_exit(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin__Exit(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin__exit(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_conj(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_conjf(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_conjl(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_creal(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_crealf(1);          \n");//$NON-NLS-1$
+        writer.write("    __builtin_creall(1);          \n");//$NON-NLS-1$
+        writer.write("    __builtin_cimag(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_cimagf(1);          \n");//$NON-NLS-1$
+        writer.write("    __builtin_cimagl(1);          \n");//$NON-NLS-1$
+        writer.write("    __builtin_imaxabs(1);         \n");//$NON-NLS-1$
+        writer.write("    __builtin_llabs(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_vscanf(\"\",b);\n");//$NON-NLS-1$
+        writer.write("    __builtin_vsnprintf(a, 1, \"\", b); \n");//$NON-NLS-1$
+        writer.write("    __builtin_vsscanf(\"\", \"\", b);\n");//$NON-NLS-1$
+        writer.write("    __builtin_cosf(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_cosl(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_expf(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_expl(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_fabsf(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_fabsl(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_logf(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_logl(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_sinf(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_sinl(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_sqrtf(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_sqrtl(1);           \n");//$NON-NLS-1$
+        writer.write("    __builtin_abs(1);             \n");//$NON-NLS-1$
+        writer.write("    __builtin_cos(1);             \n");//$NON-NLS-1$
+        writer.write("    __builtin_exp(1);             \n");//$NON-NLS-1$
+        writer.write("    __builtin_fabs(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_fprintf((void*)0, \"\");\n");//$NON-NLS-1$
+        writer.write("    __builtin_fputs(\"\", (void*)0);\n");//$NON-NLS-1$
+        writer.write("    __builtin_labs(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_log(1);             \n");//$NON-NLS-1$
+        writer.write("    __builtin_memcmp((void*)0, (void*)0, 1);\n");//$NON-NLS-1$
+        writer.write("    __builtin_memcpy((void*)0,(void*)0, 1);\n");//$NON-NLS-1$
+        writer.write("    __builtin_memset((void*)0, 1, 1);\n");//$NON-NLS-1$
+        writer.write("    __builtin_printf(\"\");       \n");//$NON-NLS-1$
+        writer.write("    __builtin_putchar(1);         \n");//$NON-NLS-1$
+        writer.write("    __builtin_puts(\"\");            \n");//$NON-NLS-1$
+        writer.write("    __builtin_scanf(\"\");        \n");//$NON-NLS-1$
+        writer.write("    __builtin_sin(1);             \n");//$NON-NLS-1$
+        writer.write("    __builtin_snprintf(a, 1, \"\");\n");//$NON-NLS-1$
+        writer.write("    __builtin_sprintf(a, \"\");\n");//$NON-NLS-1$
+        writer.write("    __builtin_sqrt(1);            \n");//$NON-NLS-1$
+        writer.write("    __builtin_sscanf(\"\", \"\"); \n");//$NON-NLS-1$1
+        writer.write("    __builtin_strcat(a, \"\"); \n");//$NON-NLS-1$
+        writer.write("    __builtin_strchr(\"\", 1); \n");//$NON-NLS-1$
+        writer.write("    __builtin_strcmp(\"\", \"\"); \n");//$NON-NLS-1$
+        writer.write("    __builtin_strcpy(a, \"\"); \n");//$NON-NLS-1$
+        writer.write("    __builtin_strcspn(\"\", \"\");\n");//$NON-NLS-1$
+        writer.write("    __builtin_strlen(\"\");       \n");//$NON-NLS-1$
+        writer.write("    __builtin_strncat(a, \"\", 1);\n");//$NON-NLS-1$
+        writer.write("    __builtin_strncmp(\"\", \"\", 1);\n");//$NON-NLS-1$
+        writer.write("    __builtin_strncpy(a, \"\", 1);\n");//$NON-NLS-1$
+        writer.write("    __builtin_strpbrk(\"\", \"\");\n");//$NON-NLS-1$
+        writer.write("    __builtin_strrchr(\"\", 1);   \n");//$NON-NLS-1$
+        writer.write("    __builtin_strspn(\"\", \"\"); \n");//$NON-NLS-1$
+        writer.write("    __builtin_strstr(\"\", \"\"); \n");//$NON-NLS-1$
+        writer.write("    __builtin_strstr(\"\", \"\"); \n");//$NON-NLS-1$
+        writer.write("    __builtin_vprintf(a, b);\n");//$NON-NLS-1$
+        writer.write("    __builtin_vsprintf(a, 1, \"\", b);    \n");//$NON-NLS-1$
+        writer.write("    __builtin_isgreater(1,1);      \n");//$NON-NLS-1$
+        writer.write("    __builtin_isgreaterequal(1,1);\n");//$NON-NLS-1$
+        writer.write("    __builtin_isless(1,1);        \n");//$NON-NLS-1$
+        writer.write("    __builtin_islessequal(1,1);   \n");//$NON-NLS-1$
+        writer.write("    __builtin_islessgreater(1,1); \n");//$NON-NLS-1$
+        writer.write("    __builtin_isunordered(1,1);   \n");//$NON-NLS-1$
+        writer.write("}                                 \n"); //$NON-NLS-1$
+        
+        parseGCC( writer.toString() );
+        parseGPP( writer.toString() );
+    }
 	
 }

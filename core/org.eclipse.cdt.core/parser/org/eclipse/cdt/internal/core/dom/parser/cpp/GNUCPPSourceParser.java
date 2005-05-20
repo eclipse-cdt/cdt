@@ -4370,7 +4370,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // least
             // one of these
         }
-        while (LT(1) == IToken.t_catch) {
+		
+		int nextToken = LT(1);
+        while (nextToken == IToken.t_catch) {
             int startOffset = consume(IToken.t_catch).getOffset();
             consume(IToken.tLPAREN);
             boolean isEllipsis = false;
@@ -4411,6 +4413,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         .setPropertyInParent(ICPPASTCatchHandler.CATCH_BODY);
             }
             collection.add(handler);
+			
+			try {
+				nextToken = LT(1);
+			} catch (EndOfFileException eofe) {
+				// if EOF is reached, then return here and let it be encountered elsewhere 
+				// (i.e. try/catch won't be added to the declaration if the exception is thrown here)
+				return; 
+			}
         }
     }
 

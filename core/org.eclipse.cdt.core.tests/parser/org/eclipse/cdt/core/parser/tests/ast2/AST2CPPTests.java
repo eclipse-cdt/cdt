@@ -4345,6 +4345,36 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( str, col.getName(9).resolveBinding() );
 	}
     
+    public void testBug95786() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("void f() {\n"); //$NON-NLS-1$
+        buffer.append("char * value;\n"); //$NON-NLS-1$
+        buffer.append("::operator delete(value);\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        assertFalse( col.getName(2).resolveBinding() instanceof IProblemBinding);
+    }
+    
+    public void testBug86868() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int foo()\n"); //$NON-NLS-1$
+        buffer.append("try\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("// function body\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        buffer.append("catch (...)\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        assertEquals(tu.getDeclarations().length, 1);
+    }
+    
     public void testBug94779() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append( "void f( int t ){\n" );

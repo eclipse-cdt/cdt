@@ -4011,7 +4011,7 @@ abstract class BaseScanner implements IScanner {
                 argend = skipOverMacroArg();
 
             char[] arg = EMPTY_CHAR_ARRAY;
-            int arglen = argend - argstart + 1; // TODO Devin argend shouldn't be 65 it should be 55 for 95119
+            int arglen = argend - argstart + 1;
             if (arglen > 0) {
                 arg = new char[arglen];
                 System.arraycopy(buffer, argstart, arg, 0, arglen);

@@ -49,7 +49,7 @@ public abstract class AddFileToIndex extends IndexRequest {
 			
 			/* See if this file has been encountered before */
 			if (type.isHeader() &&
-				indexer.haveEncounteredHeader(resourceProject.getFullPath(),resource.getLocation()))
+				indexer.haveEncounteredHeader(resourceProject.getFullPath(),resource.getLocation(), true))
 				return true;
 		}
 		/* ensure no concurrent write access to index */

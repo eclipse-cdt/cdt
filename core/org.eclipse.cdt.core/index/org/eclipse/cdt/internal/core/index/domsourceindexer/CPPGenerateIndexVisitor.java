@@ -102,7 +102,11 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
      * @throws DOMException 
      */
     private void processName(IASTName name) throws DOMException {
-        IBinding binding = name.resolveBinding();
+        // Quick check to see if the name is in an already indexed external header file
+		if (IndexEncoderUtil.nodeInVisitedExternalHeader(name, indexer.getIndexer())) 
+			return;
+
+		IBinding binding = name.resolveBinding();
         // check for IProblemBinding
         if (binding instanceof IProblemBinding) {
             IProblemBinding problem = (IProblemBinding) binding;
@@ -114,7 +118,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             return;
         }
         
-        // Get the location
+		// Get the location
         IASTFileLocation loc = IndexEncoderUtil.getFileLocation(name);
         if (loc != null) {
             //Check to see if this reference actually occurs in the file being indexed

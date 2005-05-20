@@ -152,14 +152,11 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	}
 	
 	/**
-	 * Returns the index for a given project, according to the following algorithm:
-	 * - if index is already in memory: answers this one back
-	 * - if (reuseExistingFile) then read it and return this index and record it in memory
-	 * - if (createIfMissing) then create a new empty index and record it in memory
+	 * 
 	 * 
 	 * Warning: Does not check whether index is consistent (not being used)
 	 */
-	public synchronized boolean haveEncounteredHeader(IPath projectPath, IPath filePath) {
+	public synchronized boolean haveEncounteredHeader(IPath projectPath, IPath filePath, boolean add) {
 		SimpleLookupTable headerTable = indexStorage.getEncounteredHeaders(); 
 		
 		// Path is already canonical per construction
@@ -173,7 +170,9 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 		if (headers.containsKey(filePath.toOSString()))
 			return true;
 		
-		headers.put(filePath.toOSString());
+		if (add) {
+			headers.put(filePath.toOSString());
+		}
 		
 		return false;
 	}

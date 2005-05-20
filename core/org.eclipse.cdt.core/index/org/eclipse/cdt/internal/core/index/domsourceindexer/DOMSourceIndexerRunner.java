@@ -64,10 +64,17 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     static int errorCount = 0;
     static Map errors = new HashMap();
 
-    public DOMSourceIndexerRunner(IFile resource, SourceIndexer indexer) {
+	public DOMSourceIndexerRunner(IFile resource, SourceIndexer indexer) {
         this.resourceFile = resource;
         this.indexer = indexer;
     }
+
+    /**
+	 * @return Returns the indexer.
+	 */
+	public SourceIndexer getIndexer() {
+		return indexer;
+	}
 
     public void setFileTypes(String[] fileTypes) {
         // TODO Auto-generated method stub
@@ -199,14 +206,14 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                     	for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
                     		String includeFile = extScanInfo.getIncludeFiles()[i];
                     		/* See if this file has been encountered before */
-                    		indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(includeFile));
+                    		indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(includeFile), true);
                     	}
                     }
                     if (extScanInfo.getMacroFiles().length > 0) {
                     	for (int i = 0; i < extScanInfo.getIncludeFiles().length; i++) {
                     		String macrosFile = extScanInfo.getMacroFiles()[i];
                     		/* See if this file has been encountered before */
-                    		indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(macrosFile));
+                    		indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(macrosFile), true);
                     	}
                     }
 	            }
@@ -233,6 +240,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     private void processNestedInclusions(int fileNumber, IASTInclusionNode[] inclusions, IASTInclusionNode parent) {
         for (int i = 0; i < inclusions.length; i++) {
             IASTInclusionNode inclusion = inclusions[i];
+            // Quick check to see if the name is in an already indexed external header file
+    		if (IndexEncoderUtil.nodeInVisitedExternalHeader(inclusion.getIncludeDirective(), getIndexer())) 
+    			return;
+
             String include = inclusion.getIncludeDirective().getPath();
 
             if (areProblemMarkersEnabled()) {
@@ -257,7 +268,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 					IIndex.OFFSET);
             
             /* See if this file has been encountered before */
-            indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(include));
+            indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(include), true);
 
             // recurse
             processNestedInclusions(fileNumber, inclusion.getNestedInclusions(), inclusion);
@@ -270,7 +281,11 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     private void processMacroDefinitions(IASTPreprocessorMacroDefinition[] macroDefinitions) {
         for (int i = 0; i < macroDefinitions.length; i++) {
             IASTName macro = macroDefinitions[i].getName();
-            // Get the location
+            // Quick check to see if the macro is in an already indexed external header file
+    		if (IndexEncoderUtil.nodeInVisitedExternalHeader(macro, getIndexer())) 
+    			continue;
+    		
+           // Get the location
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(macro);
             int fileNumber = IndexEncoderUtil.calculateIndexFlags(this, loc);
             IndexerOutputWrapper.addNameDecl(getOutput(),
@@ -290,6 +305,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     private void processPreprocessorProblems(IASTProblem[] preprocessorProblems) {
         for (int i = 0; i < preprocessorProblems.length; i++) {
             IASTProblem problem = preprocessorProblems[i];
+            // Quick check to see if the macro is in an already indexed external header file
+    		if (IndexEncoderUtil.nodeInVisitedExternalHeader(problem, getIndexer())) 
+    			continue;
 
             if (areProblemMarkersEnabled() && shouldRecordProblem(problem)) {
                 // Get the location

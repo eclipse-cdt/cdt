@@ -1,3 +1,14 @@
+2005-05-20 Vladimir Hirsl
+	Indexer performance improvement: indexing nodes from external include files only once.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexEncoderUtil.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddFileToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRunner.java
+
 2005-05-19 Vladimir Hirsl
 	Final fix for 95641: [Scanner Config] Per file scanner info not available for header files 
 	and not compiled source files.

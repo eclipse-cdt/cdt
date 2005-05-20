@@ -196,7 +196,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
 	 * @param path
 	 */
 	public boolean haveEncounteredHeader(IPath fullPath, Path path) {
-		return indexer.haveEncounteredHeader(fullPath, path);
+		return indexer.haveEncounteredHeader(fullPath, path, true);
 	}
 
 	protected class AddMarkerProblem extends Problem {

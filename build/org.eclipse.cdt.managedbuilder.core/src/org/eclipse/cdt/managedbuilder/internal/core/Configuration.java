@@ -67,41 +67,13 @@ public class Configuration extends BuildObject implements IConfiguration {
     private String postbuildStep; 
     private String preannouncebuildStep; 
     private String postannouncebuildStep;   
+	private String description;
 	//  Miscellaneous
 	private boolean isExtensionConfig = false;
 	private boolean isDirty = false;
 	private boolean rebuildNeeded = false;
 	private boolean resolved = true;
 
-	private String description;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getDescription()
-	 */
-	public String getDescription() {
-		if (description == null) {
-			// If I have a parent, ask it
-			if (parent != null) {
-				return parent.getDescription();
-			} else {
-				// I'm it
-				return EMPTY_STRING;
-			}
-		} else {
-			return description;
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setDescription(java.lang.String)
-	 */
-	public void setDescription(String description) {
-		 if (description == null && this.description == null) return; 
-	        if (this.description == null || description == null || !description.equals(this.description)) { 
-				this.description = description; 
-	            isDirty = true; 
-	        }       
-	}
 	
 	/*
 	 *  C O N S T R U C T O R S
@@ -1007,6 +979,23 @@ public class Configuration extends BuildObject implements IConfiguration {
 			return cleanCommand;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getDescription()
+	 */
+	public String getDescription() {
+		if (description == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getDescription();
+			} else {
+				// I'm it
+				return EMPTY_STRING;
+			}
+		} else {
+			return description;
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1103,6 +1092,17 @@ public class Configuration extends BuildObject implements IConfiguration {
 			cleanCommand = command;
 			isDirty = true;
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setDescription(java.lang.String)
+	 */
+	public void setDescription(String description) {
+		 if (description == null && this.description == null) return; 
+	        if (this.description == null || description == null || !description.equals(this.description)) { 
+				this.description = description; 
+	            isDirty = true; 
+	        }       
 	}
 
 	/* (non-Javadoc)

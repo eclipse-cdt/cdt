@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.managedbuilder.ui" id="newWizardPages" name="Custom Wizard Pages for MBS New Project Wizards"/>
+      </appInfo>
+      <documentation>
+         This extension point allows for the specification of pages to the New Managed C/C++ wizards.  Via this extension point, the developer may specify one or more wizard pages to add to the wizard, and optionally only add these pages if certain conditions on the project type, project toolchain, and project nature are met.  The developer may also specify a Java class which performs any operations pursuant to the state of the wizard when the user clicks Finish.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <documentation>
+            Extensions to this extension point must contain at least one wizardPage child element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="wizardPage" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="wizardPage">
+      <annotation>
+         <documentation>
+            Each instance of this element defines an additional page which is added to the New Project wizard.  Pages are added after the default pages provided by MBS.  Pages are added in the order they are discovered.
+
+Note that the IWizardPage interface allows a page to specify programmatically and dynamically at runtime what its previous and next pages are.  This element does not trump that behaviour, but rather just specifies the order in which the pages are added to the wizard (and hence the order in which the pages appear if they do not override the previous and next page methods).
+
+Wizard pages as GUI elements by themselves are really not all that useful.  More than likely if someone is defining their own wizard pages it’s because they need some additional operations to happen upon project creation in addition to the stock behaviour of creating a basic project, and they want to use their new wizard pages to provide a front end to these operations.
+
+As such, along with a specification of the GUI wizard page, ISVs may specify a runnable operation that will be executed in the wizard’s doRunEpilogue() method.  These contributions will all be executed in the order that the wizard pages were added to the wizard.  Not all pages need have such a contribution however, as ISVs may need to perform all the operations associated with their pages as a group.  In cases such as this the ISV can define an operation for one of the pages and it can pull data from any of the other pages as required.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="nature" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="toolchain" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="projectType" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="ID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the page which will be used to reference the page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pageClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specifies the Java class which implements the added page.  This class must implement the org.eclipse.jface.wizard.IWizardPage interface.
+
+For convenience, there is an org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPage abstract class which provides a default implementation of the getNextPage() and getPreviousPage() members that orders pages in the order they are discovered by the wizard.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="operationClass" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the Java class which implements the operations associated with this page.  The class must implement the java.lang.Runnable interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="nature">
+      <annotation>
+         <documentation>
+            This optional child element of wizardPage specifies the project nature(s) for which the additional pages should apply.   One instance of this element is provided per nature supported.
+
+ This would for example allow one to add pages to the New Managed C Project wizard but not the New Managed C++ project wizard, or other hypothetical natures that might be supported by MBS in the future (e.g. someday there might be a Fortran nature).
+If no natureID elements are specified, then it is assumed that the page potentially applies to all project natures, although it may still be excluded based on project type or toolchain.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="natureID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique ID of a nature (org.eclipse.core.resources.natures) for which this page should appear.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="toolchain">
+      <annotation>
+         <documentation>
+            This is an optional child element of wizardPage which specifies a toolchain for which the additional pages should apply.  One instance of this element is provided per toolchain supported by the page.
+
+If no toolchain elements are specified, then it is assumed that the page potentially applies to all toolchains, although it may still be excluded based on project type or project nature.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="toolchainID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique ID of a toolchain for which this page should appear.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="versionsSupported" type="string">
+            <annotation>
+               <documentation>
+                  A comma separated list of specific versions of the toolchain that are supported by the page.  If not specified, it is assumed that this page supports the toolchain regardless of version.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="projectType">
+      <annotation>
+         <documentation>
+            This is an optional child element of wizardPage which specifies a projectType for which the additional pages should apply.  One instance of this element is provided per toolchain supported by the page.
+
+If no projectType elements are specified, then it is assumed that the page potentially applies to all projectTypes, although it may still be excluded based on toolchain or nature.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="projectTypeID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique ID of a projectType for which this page should appear.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;extension
+         point=&quot;org.eclipse.cdt.managedbuilder.ui.newWizardPages&quot;&gt;
+      &lt;wizardPage
+            ID=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage&quot;
+            pageClass=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage&quot;/&gt;
+      &lt;wizardPage
+            ID=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage&quot;
+            pageClass=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage&quot;&gt;
+         &lt;nature  natureID=&quot;A&quot;/&gt;
+      &lt;/wizardPage&gt;
+      &lt;wizardPage
+            ID=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage&quot;
+            pageClass=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage&quot;&gt;
+         &lt;nature  natureID=&quot;B&quot;/&gt;
+      &lt;/wizardPage&gt;
+      &lt;wizardPage
+            ID=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage&quot;
+            pageClass=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage&quot;&gt;
+         &lt;toolchain  toolchainID=&quot;C&quot;/&gt;
+      &lt;/wizardPage&gt;
+      &lt;wizardPage
+            ID=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage&quot;
+            pageClass=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage&quot;&gt;
+         &lt;projectType  projectTypeID=&quot;D&quot;/&gt;
+      &lt;/wizardPage&gt;
+      &lt;wizardPage
+            ID=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage&quot;
+            pageClass=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage&quot;&gt;
+         &lt;projectType  projectTypeID=&quot;E&quot;/&gt;
+      &lt;/wizardPage&gt;
+      &lt;wizardPage
+            ID=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage&quot;
+            pageClass=&quot;org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage&quot;&gt;
+         &lt;toolchain toolchainID=&quot;F&quot;/&gt;
+      &lt;/wizardPage&gt;
+   &lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         None
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         None.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2005 Texas Instruments Incorporated and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+      </documentation>
+   </annotation>
+
+</schema>

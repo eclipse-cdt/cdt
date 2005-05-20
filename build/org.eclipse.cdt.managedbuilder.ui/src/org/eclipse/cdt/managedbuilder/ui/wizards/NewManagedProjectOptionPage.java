@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -26,10 +26,12 @@ import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.wizard.IWizardPage;
 
 public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 	
-
+	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.projectOptionsPage"; //$NON-NLS-1$
+	
 	public class ManagedWizardOptionBlock extends ManagedProjectOptionBlock {
 		
 		NewManagedProjectOptionPage parent;
@@ -125,6 +127,11 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 	
 	public void setupHelpContextIds(){
 		optionBlock.setupHelpContextIds();
+	}
+	
+	public IWizardPage getNextPage()
+	{
+		return MBSCustomPageManager.getNextPage(PAGE_ID); // get first custom page, if any
 	}
 	
 }

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 
 	public NewManagedProjectWizard() {
 		this(ManagedBuilderUIMessages.getResourceString(WZ_TITLE), ManagedBuilderUIMessages.getResourceString(WZ_DESC));
+		
 	}
 
 	public NewManagedProjectWizard(String title, String description) {
@@ -83,6 +84,16 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		optionPage.setTitle(ManagedBuilderUIMessages.getResourceString(OPTIONS_TITLE));
 		optionPage.setDescription(ManagedBuilderUIMessages.getResourceString(OPTIONS_DESC));
 		addPage(optionPage);
+		
+		// add custom pages
+		MBSCustomPageManager.init();
+		
+		// add stock pages
+		// TODO: MBSCustomPageManager.addStockPage(fMainPage, NewCProjectWizardPage.PAGE_ID);
+		MBSCustomPageManager.addStockPage(fMainPage, "org.eclipse.cdt.ui.wizard.basicPage");
+		MBSCustomPageManager.addStockPage(projectConfigurationPage, CProjectPlatformPage.PAGE_ID);
+		MBSCustomPageManager.addStockPage(optionPage, NewManagedProjectOptionPage.PAGE_ID);
+		
 	}
 	
 	public void createPageControls(Composite pageContainer) {
@@ -216,6 +227,17 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		if (initResult.getCode() != IStatus.OK) {
 			// At this point, I can live with a failure
 			ManagedBuilderUIPlugin.log(initResult);
+		}
+		
+		// execute any operations specified by custom pages
+		Runnable operations[] = MBSCustomPageManager.getOperations();
+		
+		if(operations != null)
+		{
+			for(int k = 0; k < operations.length; k++)
+			{
+				operations[k].run();
+			}
 		}
 	}
 

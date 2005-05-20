@@ -23,6 +23,7 @@
       <import plugin="org.eclipse.core.variables"/>
    </requires>
 
+   <extension-point id="newWizardPages" name="Custom MBS New Wizard Pages" schema="schema/newWizardPages.exsd"/>
 
    <extension
          point="org.eclipse.ui.newWizards">

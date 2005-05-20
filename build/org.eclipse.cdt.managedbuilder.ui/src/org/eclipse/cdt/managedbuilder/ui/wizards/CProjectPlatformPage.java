@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -64,7 +66,12 @@ public class CProjectPlatformPage extends WizardPage {
 	private static final String TARGET_TIP = TIP + ".platform"; //$NON-NLS-1$
 	private static final String FORCEDCONFIG_TIP = TIP + ".forcedconfigs"; //$NON-NLS-1$
 	
-
+	// support for exporting data to custom wizard pages
+	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.platformPage"; //$NON-NLS-1$
+	public static final String PROJECT_TYPE = "projectType"; //$NON-NLS-1$
+	public static final String TOOLCHAIN = "toolchain"; //$NON-NLS-1$
+	public static final String NATURE = "nature"; //$NON-NLS-1$
+	
 	protected NewManagedProjectWizard parentWizard;
 	protected Combo platformSelection;
 	private ArrayList selectedConfigurations;
@@ -261,6 +268,22 @@ public class CProjectPlatformPage extends WizardPage {
 		// Get the selections from the table viewer
 		selectedConfigurations.clear();
 		selectedConfigurations.addAll(Arrays.asList(tableViewer.getCheckedElements()));
+		
+		// support for publishing the toolchains for the selected configs so that custom wizard
+		// pages will know which toolchains have been selected
+		
+		// get the toolchains from the selected configs and put them into a set
+		Set toolchainSet = new LinkedHashSet();
+		for(int k = 0; k < selectedConfigurations.size(); k++)
+		{
+			IConfiguration config = (IConfiguration) selectedConfigurations.get(k);
+			IToolChain toolchain = config.getToolChain();
+			toolchainSet.add(toolchain);
+		}
+		
+		// publish the set of selected toolchains with the custom page manager
+		MBSCustomPageManager.addPageProperty(PAGE_ID, TOOLCHAIN, toolchainSet);
+		
 		setPageComplete(validatePage());
 	}
 
@@ -281,6 +304,9 @@ public class CProjectPlatformPage extends WizardPage {
 			if (selectedProjectType != (IProjectType) projectTypes.get(index)) {
 				selectedProjectType = (IProjectType) projectTypes.get(index);
 				parentWizard.updateProjectTypeProperties();
+				
+				// publish which project type has been chosen with the custom wizard page manager
+				MBSCustomPageManager.addPageProperty(PAGE_ID, PROJECT_TYPE, selectedProjectType.getId());
 			}
 		}
 		populateConfigurations(false);

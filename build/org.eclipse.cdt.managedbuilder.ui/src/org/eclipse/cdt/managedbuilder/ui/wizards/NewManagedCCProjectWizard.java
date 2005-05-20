@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002, 2005 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -12,11 +12,14 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * **********************************************************************/
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.wizard.IWizardPage;
 
 public class NewManagedCCProjectWizard extends NewManagedProjectWizard {
 	private static final String WZ_TITLE = "MngCCWizard.title";	//$NON-NLS-1$
@@ -27,15 +30,41 @@ public class NewManagedCCProjectWizard extends NewManagedProjectWizard {
 	
 	public NewManagedCCProjectWizard() {
 		this(ManagedBuilderUIMessages.getResourceString(WZ_TITLE), ManagedBuilderUIMessages.getResourceString(WZ_DESC));
+
 	}
 
 	public NewManagedCCProjectWizard(String title, String desc) {
 		super(title, desc);
+
 	}
 
 	public void addPages() {
 		// Add the default page for all new managed projects 
 		super.addPages();
+
+		// support for custom wizard pages
+		// publish our nature with the page manager
+		MBSCustomPageManager.addPageProperty(CProjectPlatformPage.PAGE_ID, CProjectPlatformPage.NATURE, CCProjectNature.CC_NATURE_ID);
+		
+		// load all pages specified via extensions
+		try
+		{
+			MBSCustomPageManager.loadExtensions();
+		}
+		catch (BuildException e)
+		{
+			e.printStackTrace();
+		}
+		
+		IWizardPage[] customPages = MBSCustomPageManager.getCustomPages();
+		
+		if (customPages != null)
+		{
+			for (int k = 0; k < customPages.length; k++)
+			{
+				addPage(customPages[k]);
+			}
+		}
 	}
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {

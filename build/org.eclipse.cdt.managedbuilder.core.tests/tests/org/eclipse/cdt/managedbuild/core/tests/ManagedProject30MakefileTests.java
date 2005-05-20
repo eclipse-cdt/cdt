@@ -56,6 +56,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		//        rather than an MBS functionality issue
 		//suite.addTest(new ManagedProject30MakefileTests("test30LinkedFolder"));
 		suite.addTest(new ManagedProject30MakefileTests("test30CopyandDeploy"));
+		suite.addTest(new ManagedProject30MakefileTests("test30_1"));
 		
 		return suite;
 	}
@@ -319,6 +320,19 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("subdir.mk"), 
 				 Path.fromOSString("Functions/subdir.mk")};
 		IProject[] projects = createProjects("copyandDeploy", null, null, true);
+		buildProjects(projects, makefiles);
+	}
+
+	/* (non-Javadoc)
+	 * tests 3.0 style tool integration with pre and post process steps added to typical compile & link
+	 */
+	public void test30_1(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		IProject[] projects = createProjects("test30_1", null, null, true);
 		buildProjects(projects, makefiles);
 	}
 }

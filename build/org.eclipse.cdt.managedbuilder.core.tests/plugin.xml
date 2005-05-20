@@ -1859,6 +1859,7 @@
          <outputType
 			outputs=""
             buildVariable="EXECUTABLES"
+            nameProvider="org.eclipse.cdt.managedbuilder.testplugin.TestLinkerNameProvider"
             id="cdt.managedbuild.tool.testgnu30.c.linker.output">
          </outputType>
       </tool>
@@ -3119,7 +3120,7 @@
          <configuration
                name="TheConfig"
                id="test30_1.gnu.so.config"
-               artifactExtension="so.1.2.3"
+               artifactExtension="so.4.5.6"
                cleanCommand="rm -rf"
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser">
                <toolChain
@@ -3127,7 +3128,7 @@
                       osList="all"
                       name="ToolChain for test30_1"
                       scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
-                      targetTool="cdt.managedbuild.tool30.deploy.x.c"
+                      targetTool="test30_1.gnu.so.deploy"
                       secondaryOutputs="test30_1.gnu.so.cjpeg.output"
                       id="test30_1.gnu.so.toolchain">
 		          <targetPlatform
@@ -3201,6 +3202,7 @@
 			      		name="Strip object file"
 			      		command="strip"
 			            outputFlag="-o"
+			            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
 			      		id="test30_1.gnu.so.strip">
 					 <optionCategory
 						  name="Misc"
@@ -3213,6 +3215,7 @@
 						  id="test30_1.gnu.so.strip.misc.other"
 						  valueType="string">
 					 </option>
+					 <!--  The following buildVariable should be ignored because a pattern rule is generated -->
 			         <inputType
 			            id="test30_1.gnu.so.strip.input"
 			            buildVariable="OBJS"
@@ -3229,6 +3232,7 @@
 			      		name="Convert to jpeg"
 			      		command="cjpeg"
 			            outputFlag="-outfile"
+			            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
 			      		id="test30_1.gnu.so.cjpeg">
 					 <optionCategory
 						  name="Misc"

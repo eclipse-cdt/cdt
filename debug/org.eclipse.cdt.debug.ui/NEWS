@@ -1,5 +1,7 @@
 Release CDT-3.0
 
+	* Moved to the Platform Source Lookup framework (bug 80175)
+	
 	* Modules View (former Shared Libraries view) (bug 82264)
 		- replaced Shared Libraries view by Modules view
 		- added detail pane to the view

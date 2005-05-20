@@ -95,6 +95,12 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_STOP_AT_MAIN = CDT_LAUNCH_ID + ".DEBUGGER_STOP_AT_MAIN"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. The value is a String specifying 
+	 * the register groups memento.
+	 */
+	public static final String ATTR_DEBUGGER_REGISTER_GROUPS = CDT_LAUNCH_ID + ".DEBUGGER_REGISTER_GROUPS"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. The value is an int specifying the
 	 * process id to attach to if the ATTR_DEBUGGER_START_MODE is
 	 * DEBUGGER_MODE_ATTACH. A non existant value or -1 for this entry indicates

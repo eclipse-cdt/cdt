@@ -1,3 +1,19 @@
+2005-05-20 Mikhail Khodjaiants
+	Bug 94139: User-defined register groups.
+	Added API and group serialization.
+	* ICDTLaunchConfigurationConstants.java
+	- ICRegisterManager.java
+	* ICDebugTarget.java
+	+ IPersistableRegisterGroup.java
+	+ IRegisterDescriptor.java
+	* CRegisterManager.java
+	* InternalDebugCoreMessages.properties
+	* CDebugTarget.java
+	* CoreModelMessages.properties
+	* CRegister.java
+	+ CRegisterDescriptor.java
+	* CRegisterGroup.java
+
 2005-05-12 Mikhail Khodjaiants
 	Bug 94905: Error examining structure contents in debugger.
 	The structure's elements should inherit the enablement flag from parents.

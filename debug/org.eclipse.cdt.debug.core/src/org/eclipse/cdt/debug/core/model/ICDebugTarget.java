@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IRegisterGroup;
 
 /**
  * C/C++ extension of <code>IDebugTarget</code>.
@@ -90,4 +91,33 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * @throws DebugException if this method fails. Reasons include:
 	 */
 	public void loadSymbolsForAllModules() throws DebugException;
+
+	/**
+	 * Returns the list of descriptors of the target registers
+	 * 
+	 * @return the list register descriptors
+	 * @throws DebugException if this method fails. Reasons include:
+	 * 
+	 * @since 3.0
+	 */
+	public IRegisterDescriptor[] getRegisterDescriptors() throws DebugException;
+
+	/**
+	 * Adds a new user-defined register group to this target
+	 * 
+	 * @param name the group name
+	 * @param descriptors the list of registers to be grouped
+	 * 
+	 * @since 3.0
+	 */
+	public void addUserDefinedRegisterGroup( String name, IRegisterDescriptor[]  descriptors );
+
+	/**
+	 * Removes the given register group from the target
+	 * 
+	 * @param group a group to be removed
+	 * 
+	 * @since 3.0
+	 */
+	public void removeRegisterGroups( IRegisterGroup[] groups );
 }

@@ -25,7 +25,6 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
-import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -76,6 +75,7 @@ import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
+import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
@@ -827,7 +827,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return getBreakpointManager();
 		if ( adapter.equals( CSignalManager.class ) )
 			return getSignalManager();
-		if ( adapter.equals( ICRegisterManager.class ) )
+		if ( adapter.equals( CRegisterManager.class ) )
 			return getRegisterManager();
 		if ( adapter.equals( ICGlobalVariableManager.class ) )
 			return getGlobalVariableManager();
@@ -998,6 +998,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		disposeGlobalVariableManager();
 		disposeModuleManager();
 		disposeSignalManager();
+		saveRegisterGroups();
 		disposeRegisterManager();
 		disposeDisassembly();
 		disposeSourceManager();
@@ -1448,6 +1449,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		fSignalManager.dispose();
 	}
 
+	protected void saveRegisterGroups() {
+		fRegisterManager.save();
+	}
+
 	protected void disposeRegisterManager() {
 		fRegisterManager.dispose();
 	}
@@ -1870,5 +1875,26 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getRegisterDescriptors()
+	 */
+	public IRegisterDescriptor[] getRegisterDescriptors() throws DebugException {
+		return getRegisterManager().getAllRegisterDescriptors();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#addUserDefinedRegisterGroup(java.lang.String, org.eclipse.cdt.debug.core.model.IRegisterDescriptor[])
+	 */
+	public void addUserDefinedRegisterGroup( String name, IRegisterDescriptor[] descriptors ) {
+		getRegisterManager().addRegisterGroup( name, descriptors );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#removeRegisterGroups(org.eclipse.debug.core.model.IRegisterGroup[])
+	 */
+	public void removeRegisterGroups( IRegisterGroup[] groups ) {
+		getRegisterManager().removeRegisterGroups( groups );
 	}
 }

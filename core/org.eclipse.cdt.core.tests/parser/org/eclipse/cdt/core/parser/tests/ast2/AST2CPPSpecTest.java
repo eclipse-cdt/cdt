@@ -12524,10 +12524,12 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
      */
     public void test8_5s2() throws ParserException  { // 90641
         StringBuffer buffer = new StringBuffer();
+        buffer.append( "int z() { ");
         buffer.append("int f(int);\n"); //$NON-NLS-1$
         buffer.append("int a = 2;\n"); //$NON-NLS-1$
         buffer.append("int b = f(a);\n"); //$NON-NLS-1$
         buffer.append("int c(b);\n"); //$NON-NLS-1$
+        buffer.append( "}"); 
         parse(buffer.toString(), ParserLanguage.CPP, true, 0);
     }
 }

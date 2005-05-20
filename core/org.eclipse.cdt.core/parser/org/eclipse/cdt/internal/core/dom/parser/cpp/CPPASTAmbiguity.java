@@ -25,9 +25,10 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 public abstract class CPPASTAmbiguity extends CPPASTNode {
 
+//    private static final boolean debugging = false;
+
     protected static class CPPASTNameCollector extends CPPASTVisitor {
         private IASTName[] names = new IASTName[2];
-
         {
             shouldVisitNames = true;
         }
@@ -46,6 +47,8 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
 
     public boolean accept(ASTVisitor visitor) {
         IASTNode[] nodez = getNodes();
+//        if( debugging  ) 
+//            printNode();
         int[] issues = new int[nodez.length];
         Arrays.fill(issues, 0);
         for (int i = 0; i < nodez.length; ++i) {
@@ -83,5 +86,15 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
         owner.replace(this, nodez[bestIndex]);
         return true;
     }
+
+//    protected void printNode() {
+//        System.out.println( "Ambiguity " + getClass().getName() + ": ");
+//        IASTNode [] nodes = getNodes();
+//        for( int i = 0; i < nodes.length; ++i )
+//        {
+//            System.out.print( "\t" + i + " : " );
+//            System.out.println( ASTSignatureUtil.getNodeSignature(nodes[i]) );
+//        }
+//    }
 
 }

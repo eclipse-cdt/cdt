@@ -77,6 +77,26 @@ public class ASTSignatureUtil {
 			return getSignature((IASTDeclSpecifier)node);
 		if (node instanceof IASTTypeId)
 			return getSignature((IASTTypeId)node);
+        if( node instanceof IASTSimpleDeclaration )
+        {
+            IASTSimpleDeclaration decl = (IASTSimpleDeclaration) node;
+            StringBuffer buffer = new StringBuffer( getSignature( decl.getDeclSpecifier()));
+            
+            IASTDeclarator [] declarators = decl.getDeclarators();
+            for( int i = 0; i < declarators.length; ++i )
+            {
+                buffer.append( SPACE );
+                buffer.append( getSignature( declarators[i] ));
+                if( declarators[i].getInitializer() != null && declarators[i].getInitializer() instanceof ICPPASTConstructorInitializer )
+                    buffer.append( getInitializerString( declarators[i].getInitializer() ));
+            }
+            buffer.append( ";"); //$NON-NLS-1$
+            return buffer.toString();
+        }
+        if( node instanceof IASTExpression )
+        {
+            return getExpressionString( (IASTExpression) node );
+        }
 		
 		return EMPTY_STRING;
 	}
@@ -256,7 +276,9 @@ public class ASTSignatureUtil {
 			result.append(Keywords.cpASSIGN);
 			result.append(getInitializerString(((ICASTDesignatedInitializer)init).getOperandInitializer()));
 		} else if (init instanceof ICPPASTConstructorInitializer) {
-			
+			result.append( "("); //$NON-NLS-1$
+            result.append( getExpressionString( ((ICPPASTConstructorInitializer)init).getExpression() ));
+            result.append( ")"); //$NON-NLS-1$
 		}
 		
 		return result.toString();

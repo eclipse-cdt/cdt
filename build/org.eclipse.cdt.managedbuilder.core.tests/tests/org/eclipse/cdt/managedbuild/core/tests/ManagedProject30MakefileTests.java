@@ -134,6 +134,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		if(projects == null || projects.length == 0)
 			return;
 				
+		boolean succeeded = true;
 		for(int i = 0; i < projects.length; i++){
 			IProject curProject = projects[i];
 			
@@ -160,14 +161,16 @@ public class ManagedProject30MakefileTests extends TestCase {
 					if (i == 0) {
 						String configName = info.getDefaultConfiguration().getName();
 						IPath buildDir = Path.fromOSString(configName);
-						ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
+						succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
 					}
 				}
 			}
 		}
 		
-		for(int i = 0; i < projects.length; i++)
-			ManagedBuildTestHelper.removeProject(projects[i].getName());
+		if (succeeded) {	//  Otherwise leave the projects around for comparison
+			for(int i = 0; i < projects.length; i++)
+				ManagedBuildTestHelper.removeProject(projects[i].getName());
+		}
 	}
 
 	private void createPathVariable(IPath tmpDir) {

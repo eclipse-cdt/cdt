@@ -224,7 +224,7 @@ public class ManagedBuildTestHelper {
 			Assert.fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
 	}
 	
-	static public void compareBenchmarks(IProject project, IPath testDir, IPath[] files) {
+	static public boolean compareBenchmarks(IProject project, IPath testDir, IPath[] files) {
 		try {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (Exception e) {
@@ -239,6 +239,7 @@ public class ManagedBuildTestHelper {
 				Assert.fail("File " + testFile.lastSegment() + " does not match its benchmark.");
 			} 
 		}
+		return true;
 	}
 
 	static public StringBuffer readContentsStripLineEnds(IProject project, IPath path) {

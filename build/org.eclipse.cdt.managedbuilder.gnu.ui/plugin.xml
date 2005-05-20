@@ -488,6 +488,7 @@
             name="%ToolName.linker.macosx.c"
             outputFlag="-o"
             command="gcc"
+            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             id="cdt.managedbuild.tool.macosx.c.linker">
          <envVarBuildPath 
          	pathType="buildpathLibrary"
@@ -624,6 +625,7 @@
             name="%ToolName.linker.macosx.cpp"
             outputFlag="-o"
             command="g++"
+            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             id="cdt.managedbuild.tool.macosx.cpp.linker">
          <envVarBuildPath 
          	pathType="buildpathLibrary"

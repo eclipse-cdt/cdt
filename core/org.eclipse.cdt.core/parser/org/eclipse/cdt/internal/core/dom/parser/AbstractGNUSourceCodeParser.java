@@ -398,6 +398,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throw backtrack;
     }
 
+    protected IToken simpleDeclarationMark;
 
     private static final IASTNode[] EMPTY_NODE_ARRAY = new IASTNode[0];
 
@@ -493,6 +494,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         errorHandling();
     }
 
+    /**
+     */
+    protected void throwAwayMarksForInitializerClause() {
+        simpleDeclarationMark = null;
+    }
 
     /**
      * @return TODO
@@ -1582,32 +1588,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
 
             return expressionStatement;
-        }
-
-        if (ds.getDeclaration() instanceof IASTAmbiguousDeclaration )
-        {
-            IASTAmbiguousDeclaration amb = (IASTAmbiguousDeclaration) ds.getDeclaration();
-            IASTDeclaration [] ambDs = amb.getDeclarations();
-            int ambCount = 0;
-            for( int i = 0; i < ambDs.length; ++i )
-            {
-                if (ambDs[i] instanceof IASTSimpleDeclaration
-                        && ((IASTSimpleDeclaration) ambDs[i])
-                                .getDeclSpecifier() instanceof IASTSimpleDeclSpecifier
-                        && ((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration) ambDs[i]).getDeclSpecifier()).getType() == IASTSimpleDeclSpecifier.t_unspecified) {
-                    ++ambCount;
-                }
-            }
-            if ( ambCount == ambDs.length )
-            {
-                backup(mark);
-                while (true) {
-                    if (consume() == lastTokenOfExpression)
-                        break;
-                }
-
-                return expressionStatement;
-            }
         }
 
         if (ds.getDeclaration() instanceof IASTSimpleDeclaration

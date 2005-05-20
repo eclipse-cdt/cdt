@@ -143,7 +143,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
@@ -171,8 +170,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
 
     private ScopeStack templateIdScopes = new ScopeStack();
-
-    private int templateCount = 0;
 
     protected CPPASTTranslationUnit translationUnit;
 
@@ -946,7 +943,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         try {
             declSpecifier = declSpecifierSeq(true, true);
             if (LT(1) != IToken.tEOC)
-                declarator = declarator(SimpleDeclarationStrategy.TRY_FUNCTION,
+                declarator = declarator(
+                        SimpleDeclarationStrategy.TRY_FUNCTION,
                         forNewExpression);
         } catch (BacktrackException bt) {
             backup(mark);
@@ -2125,7 +2123,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IToken firstToken = null;
         boolean exported = false;
         boolean encounteredExtraMod = false;
-        ++templateCount;
         if (LT(1) == IToken.t_export) {
             exported = true;
             firstToken = consume(IToken.t_export);
@@ -2169,18 +2166,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 templateInstantiation = temp;
             } else
                 templateInstantiation = createTemplateInstantiation();
-            try {
-                IASTDeclaration d = declaration();
-                ((ASTNode) templateInstantiation).setOffsetAndLength(firstToken
-                        .getOffset(), calculateEndOffset(d)
-                        - firstToken.getOffset());
-                templateInstantiation.setDeclaration(d);
-                d.setParent(templateInstantiation);
-                d
-                        .setPropertyInParent(ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION);
-            } finally {
-                --templateCount;
-            }
+            IASTDeclaration d = declaration();
+            ((ASTNode) templateInstantiation).setOffsetAndLength(firstToken
+                    .getOffset(), calculateEndOffset(d)
+                    - firstToken.getOffset());
+            templateInstantiation.setDeclaration(d);
+            d.setParent(templateInstantiation);
+            d
+                    .setPropertyInParent(ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION);
             return templateInstantiation;
         }
         consume(IToken.tLT);
@@ -2189,46 +2182,34 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tGT);
 
             ICPPASTTemplateSpecialization templateSpecialization = createTemplateSpecialization();
-            try {
-                IASTDeclaration d = declaration();
-                ((ASTNode) templateSpecialization).setOffsetAndLength(
-                        firstToken.getOffset(), calculateEndOffset(d)
-                                - firstToken.getOffset());
-                templateSpecialization.setDeclaration(d);
-                d.setParent(templateSpecialization);
-                d
-                        .setPropertyInParent(ICPPASTTemplateSpecialization.OWNED_DECLARATION);
-            } finally {
-                --templateCount;
-            }
-
+            IASTDeclaration d = declaration();
+            ((ASTNode) templateSpecialization).setOffsetAndLength(firstToken
+                    .getOffset(), calculateEndOffset(d)
+                    - firstToken.getOffset());
+            templateSpecialization.setDeclaration(d);
+            d.setParent(templateSpecialization);
+            d
+                    .setPropertyInParent(ICPPASTTemplateSpecialization.OWNED_DECLARATION);
             return templateSpecialization;
         }
 
         try {
             List parms = templateParameterList();
             consume(IToken.tGT);
+            IASTDeclaration d = declaration();
             ICPPASTTemplateDeclaration templateDecl = createTemplateDeclaration();
-            try
-            {
-                IASTDeclaration d = declaration();
-                ((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(),
-                        calculateEndOffset(d) - firstToken.getOffset());
-                templateDecl.setExported(exported);
-                templateDecl.setDeclaration(d);
-                d.setParent(templateDecl);
-                d.setPropertyInParent(ICPPASTTemplateDeclaration.OWNED_DECLARATION);
-                for (int i = 0; i < parms.size(); ++i) {
-                    ICPPASTTemplateParameter parm = (ICPPASTTemplateParameter) parms
-                            .get(i);
-                    templateDecl.addTemplateParamter(parm);
-                    parm.setParent(templateDecl);
-                    parm.setPropertyInParent(ICPPASTTemplateDeclaration.PARAMETER);
-                }
-            }
-            finally
-            {
-                --templateCount;
+            ((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(),
+                    calculateEndOffset(d) - firstToken.getOffset());
+            templateDecl.setExported(exported);
+            templateDecl.setDeclaration(d);
+            d.setParent(templateDecl);
+            d.setPropertyInParent(ICPPASTTemplateDeclaration.OWNED_DECLARATION);
+            for (int i = 0; i < parms.size(); ++i) {
+                ICPPASTTemplateParameter parm = (ICPPASTTemplateParameter) parms
+                        .get(i);
+                templateDecl.addTemplateParamter(parm);
+                parm.setParent(templateDecl);
+                parm.setPropertyInParent(ICPPASTTemplateDeclaration.PARAMETER);
             }
 
             return templateDecl;
@@ -2445,93 +2426,24 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     protected IASTDeclaration simpleDeclarationStrategyUnion()
             throws EndOfFileException, BacktrackException {
-        IToken simpleDeclarationMark = mark();
-        IASTDeclaration d1 = null, d2 = null;
-        IToken after = null;
+        simpleDeclarationMark = mark();
         try {
-            d1 = simpleDeclaration(SimpleDeclarationStrategy.TRY_FUNCTION,
-                    false);
-            try {
-                after = LA(1);
-            } catch (EndOfFileException eof) {
-                after = null;
-            }
+            IASTDeclaration d = simpleDeclaration(
+                    SimpleDeclarationStrategy.TRY_FUNCTION, false);
+            throwAwayMarksForInitializerClause();
+            return d;
         } catch (BacktrackException bt) {
-            d1 = null;
+            if (simpleDeclarationMark == null)
+                throwBacktrack(bt);
+            // did not work
+            backup(simpleDeclarationMark);
+
+            IASTDeclaration d = simpleDeclaration(
+                     SimpleDeclarationStrategy.TRY_VARIABLE, false);
+            throwAwayMarksForInitializerClause();
+            return d;
+
         }
-        if (d1 != null) {
-            if( templateCount != 0 )
-                return d1;
-            if (d1 instanceof IASTFunctionDefinition)
-                return d1;
-            if (d1 instanceof IASTSimpleDeclaration) {
-                IASTSimpleDeclaration sd = (IASTSimpleDeclaration) d1;
-                if( sd.getDeclSpecifier() instanceof ICPPASTDeclSpecifier &&
-                        ((ICPPASTDeclSpecifier)sd.getDeclSpecifier()).isFriend() )
-                    return d1;
-                if (sd.getDeclarators().length != 1)
-                    return d1;
-                if (sd.getDeclarators()[0] instanceof IASTStandardFunctionDeclarator) {
-                    IASTStandardFunctionDeclarator fd = (IASTStandardFunctionDeclarator) sd
-                            .getDeclarators()[0];
-                    if (sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef)
-                        return d1;
-                    IASTParameterDeclaration[] parms = fd.getParameters();
-                    for (int i = 0; i < parms.length; ++i) {
-                        if (!(parms[i].getDeclSpecifier() instanceof IASTNamedTypeSpecifier))
-                            return d1;
-                        if (((ASTNode) parms[i].getDeclarator().getName())
-                                .getLength() > 0)
-                            return d1;
-                        IASTDeclarator d = parms[i].getDeclarator();
-                        while (d.getNestedDeclarator() != null)
-                            d = d.getNestedDeclarator();
-                        if (((ASTNode) d.getName()).getLength() > 0)
-                            return d1;
-                    }
-                } else
-                    return d1;
-            }
-        }
-
-        // did not work
-        backup(simpleDeclarationMark);
-
-        try {
-            d2 = simpleDeclaration(SimpleDeclarationStrategy.TRY_VARIABLE,
-                    false);
-            if (after != null && after != LA(1)) {
-                backup(after);
-                return d1;
-            }
-        } catch (BacktrackException be) {
-            d2 = null;
-            if (d1 == null)
-                throwBacktrack(be);
-        }
-
-        if (d2 == null && d1 != null) {
-            backup(after);
-            return d1;
-        }
-
-        if (d1 == null && d2 != null)
-            return d2;
-
-        IASTAmbiguousDeclaration result = createAmbiguousDeclaration();
-        ((CPPASTNode) result).setOffsetAndLength((ASTNode) d1);
-        result.addDeclaration(d1);
-        d1.setParent(result);
-        d1.setPropertyInParent(IASTAmbiguousDeclaration.SUBDECLARATION);
-        result.addDeclaration(d2);
-        d2.setParent(result);
-        d2.setPropertyInParent(IASTAmbiguousDeclaration.SUBDECLARATION);
-        return result;
-
-    }
-
-    protected IASTAmbiguousDeclaration createAmbiguousDeclaration() {
-        return new CPPASTAmbiguousDeclaration();
     }
 
     /**
@@ -3563,6 +3475,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         if (LT(1) == IToken.tASSIGN) {
             consume(IToken.tASSIGN);
+            throwAwayMarksForInitializerClause();
             try {
                 return initializerClause();
             } catch (EndOfFileException eof) {
@@ -5083,7 +4996,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             IASTNode condition = null;
             try {
                 condition = cppStyleCondition(); // TODO should be while
-                // condition
+                                                    // condition
                 if (LT(1) == IToken.tEOC) {
                     // Completing in the condition
                     ICPPASTIfStatement new_if = createIfStatement();
@@ -5127,15 +5040,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             ICPPASTIfStatement new_if_statement = createIfStatement();
             ((ASTNode) new_if_statement).setOffset(so);
             if (condition != null && condition instanceof IASTExpression) // shouldn't
-            // be
-            // possible
-            // but
-            // failure
-            // in
-            // condition()
-            // makes
-            // it
-            // so
+                                                                            // be
+                                                                            // possible
+                                                                            // but
+                                                                            // failure
+                                                                            // in
+                                                                            // condition()
+                                                                            // makes
+                                                                            // it
+                                                                            // so
             {
                 new_if_statement
                         .setConditionExpression((IASTExpression) condition);

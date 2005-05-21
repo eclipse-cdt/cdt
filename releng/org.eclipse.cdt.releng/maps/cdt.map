@@ -2,12 +2,14 @@
 
 plugin@org.eclipse.cdt.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core
 plugin@org.eclipse.cdt.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui
+plugin@org.eclipse.cdt.refactoring=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.refactoring
 
 plugin@org.eclipse.cdt.make.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.core
 plugin@org.eclipse.cdt.make.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.ui
 
 plugin@org.eclipse.cdt.managedbuilder.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core
 plugin@org.eclipse.cdt.managedbuilder.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui
+plugin@org.eclipse.cdt.managedbuilder.gnu.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.gnu.ui
 
 plugin@org.eclipse.cdt.debug.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.core
 plugin@org.eclipse.cdt.debug.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui
@@ -40,7 +42,10 @@ fragment@org.eclipse.cdt.core.win32=HEAD,:pserver:anonymous@dev.eclipse.org:/hom
 
 plugin@org.eclipse.cdt.core.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.tests
 plugin@org.eclipse.cdt.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui.tests
+plugin@org.eclipse.cdt.refactoring.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.refactoring.tests
 plugin@org.eclipse.cdt.debug.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui.tests
+plugin@org.eclipse.cdt.managedbuilder.core.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core.tests
+plugin@org.eclipse.cdt.managedbuilder.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui.tests
 plugin@org.eclipse.cdt.testing=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing
 plugin@org.eclipse.test=HEAD,:pserver:anonymous@dev.eclipse.org:/home/eclipse,
 fragment@org.eclipse.ant.optional.junit=HEAD,:pserver:anonymous@dev.eclipse.org:/home/eclipse,

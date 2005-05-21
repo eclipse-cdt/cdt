@@ -203,4 +203,16 @@
          version="3.0.0"
          fragment="true"/>
 
+   <plugin
+         id="org.eclipse.cdt.managedbuilder.gnu.ui"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.refactoring"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"/>
+
 </feature>

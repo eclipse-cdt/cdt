@@ -71,4 +71,22 @@
          install-size="0"
          version="3.1.0"/>
 
+   <plugin
+         id="org.eclipse.cdt.managedbuilder.core.tests"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.managedbuilder.ui.tests"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.refactoring.tests"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"/>
+
 </feature>

@@ -10,17 +10,59 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.gnu.cygwin;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 public class IsGnuCygwinToolChainSupported implements
 		IManagedIsToolChainSupported {
+	
+	static final String[] CHECKED_NAMES = {"gcc ", "binutils ", "make "};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
+	static boolean suppChecked = false;
+	static boolean toolchainIsSupported = false; 
+
+	/*
+	 * returns support status
+	 */
 	public boolean isSupported(IToolChain toolChain,
 			PluginVersionIdentifier version, String instance) {
-		// TODO implement
-		return true;
-	}
+		
+		if (suppChecked) return toolchainIsSupported;
+		suppChecked = true;
 
+		String etcCygwin = CygwinPathResolver.getEtcPath();
+		if (etcCygwin != null) {
+			File file = new File(etcCygwin + "/setup/installed.db"); //$NON-NLS-1$
+			BufferedReader data;
+			try {
+				data = new BufferedReader(new FileReader(file));
+			} catch (FileNotFoundException e) { return false; }
+			
+			// all required package names should be found 
+			boolean[] found = new boolean[CHECKED_NAMES.length];
+			try {
+				String s;			
+				while ((s = data.readLine()) != null ) {
+					for (int j = 0; j < CHECKED_NAMES.length; j++) {
+						if (s.startsWith(CHECKED_NAMES[j])) {found[j] = true;}
+					}
+				}	
+				toolchainIsSupported = true;
+				for (int j = 0; j < CHECKED_NAMES.length; j++) {
+					toolchainIsSupported &= found[j]; 
+				}
+				data.close();
+			} catch (IOException e) {
+				//TODO: log
+			}
+		}
+		return toolchainIsSupported;
+	}	
 }

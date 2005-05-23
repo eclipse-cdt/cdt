@@ -799,8 +799,15 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			if(macroProvider != null){
 				IMacroContextInfo macroContextInfo = macroProvider.getMacroContextInfo(contextType,contextData);
 				if(macroContextInfo != null){
-					EnvVarUIMacroSubstitutor substitutor = new EnvVarUIMacroSubstitutor(macroContextInfo, null, " "); //$NON-NLS-2$
-					MacroResolver.checkIntegrity(macroContextInfo,substitutor);
+					EnvironmentVariableProvider provider = (EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider();
+					EnvVarCollector v = provider.getVariables(fCurrentContextInfo,true);
+					if(v != null){
+						EnvVarUIMacroSubstitutor substitutor = new EnvVarUIMacroSubstitutor(macroContextInfo, null, " "); //$NON-NLS-2$
+						IBuildEnvironmentVariable vars[] = v.toArray(false);
+						for(int i = 0; i < vars.length; i++){
+							MacroResolver.checkMacros(vars[i].getValue(), substitutor);
+						}
+					}
 				}
 			}
 			updateState(null);

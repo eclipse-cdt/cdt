@@ -3274,6 +3274,104 @@
          </configuration>
       </projectType>           
       
+	  <!-- Test tools and project types for testing multiple input types,
+	       multiple output types, and input & output options
+	       tar -cf  &  tar -tf -->
+      
+      <projectType      
+            isAbstract="false"     
+            isTest="false"
+            name="test30_2"
+            id="test30_2.tar">
+         <configuration
+               name="X"
+               id="test30_2.tar.config"
+               artifactExtension="log"
+               cleanCommand="rm -rf"
+			   errorParsers="">
+               <toolChain
+                      name="ToolChain for test30_2"
+                      targetTool="test30_2.tar.list"
+                      id="test30_2.tar.toolchain">
+				  <builder
+		              id="test30_2.tar.builder"
+		              name="Builder for test30_2"
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		     	  </builder>               
+			      <tool
+			      		name="tar-create"
+			      		command="tar"
+			      		commandLinePattern="${COMMAND} ${FLAGS} ${INPUTS}"
+			      		id="test30_2.tar-create">
+					 <optionCategory
+						  name="Options"
+						  id="test30_2.tar-create.category">
+					 </optionCategory>
+					 <option
+						  defaultValue="-cf"
+						  name="All Flags"
+						  category="test30_2.tar-create.category"
+						  id="test30_2.tar-create.other"
+						  valueType="string">
+					 </option>
+					 <option
+					 	  defaultValue="new.tar"
+					 	  name="Tar Filename"
+						  category="test30_2.tar-create.category"
+						  id="test30_2.tar-create.filename"
+						  valueType="string">
+					 </option>
+			         <inputType
+			            id="test30_2.tar-create.input1"
+			            name="All cpp files"
+			            multipleOfType="true"
+			            sourceContentType="org.eclipse.cdt.core.cxxSource">
+			         </inputType>
+			         <inputType
+			            id="test30_2.tar-create.input2"
+			            name="All asm files"
+			            multipleOfType="true"
+			            sourceContentType="org.eclipse.cdt.core.asmSource">
+			         </inputType>
+			         <outputType
+			            id="test30_2.tar-create.outputtar"
+			            name="Tar file"
+			            outputs="tar"
+			            buildVariable="TAROUT"
+						option="test30_2.tar-create.filename">
+			         </outputType>
+			      </tool>   
+			      <tool
+			      		name="tar-list"
+			      		command="tar"
+			      		commandLinePattern="${COMMAND} ${FLAGS} ${INPUTS} &gt; ${OUTPUT}"
+			      		id="test30_2.tar-list">
+					 <optionCategory
+						  name="Options"
+						  id="test30_2.tar-list.category">
+					 </optionCategory>
+					 <option
+						  defaultValue="-tf"
+						  name="All Flags"
+						  category="test30_2.tar-list.category"
+						  id="test30_2.tar-list.other"
+						  valueType="string">
+					 </option>
+			         <inputType
+			            id="test30_2.tar-list.input1"
+			            buildVariable="TAROUT"
+			            sources="tar">
+			         </inputType>
+			         <outputType
+			            id="test30_2.tar-list.outputlog"
+			            name="Log file"
+			            outputs="log">
+			         </outputType>
+			      </tool>   
+			  </toolChain>
+         </configuration>
+      </projectType>           
+      
    </extension>
 
 </plugin>

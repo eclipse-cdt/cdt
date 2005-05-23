@@ -56,7 +56,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 		//        rather than an MBS functionality issue
 		//suite.addTest(new ManagedProject30MakefileTests("test30LinkedFolder"));
 		suite.addTest(new ManagedProject30MakefileTests("test30CopyandDeploy"));
+		suite.addTest(new ManagedProject30MakefileTests("test30DeleteFile"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_1"));
+		suite.addTest(new ManagedProject30MakefileTests("test30_2"));
 		
 		return suite;
 	}
@@ -145,7 +147,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 			assertTrue(isCompatible);
 			
 			if(isCompatible){
-				// Build the project in order to generate the maekfiles 
+				// Build the project in order to generate the makefiles 
 				try{
 					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
 				}
@@ -325,6 +327,32 @@ public class ManagedProject30MakefileTests extends TestCase {
 		IProject[] projects = createProjects("copyandDeploy", null, null, true);
 		buildProjects(projects, makefiles);
 	}
+	
+	/* (non-Javadoc)
+	 * tests 3.0 style tool integration in the context of deleting a file, to see if the proper behavior
+	 * occurs in the managedbuild system
+	 */
+	public void test30DeleteFile(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("subdir.mk"),
+				 Path.fromOSString("sources.mk")}; 		
+
+		IProject[] projects = createProjects("deleteFile", null, null, true);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		ArrayList resourceList = new ArrayList(1);
+		IProject project = projects[0];
+		IFile projfile = project.getFile("filetobedeleted.cxx");
+		resourceList.add(projfile);
+		IResource[] fileResource = (IResource[])resourceList.toArray(new IResource[resourceList.size()]);
+		try {
+		    workspace.delete(fileResource, false, null);
+		}  catch (Exception e) {fail("could not delete file in project " + project.getName());}
+		try {
+			buildProjects(projects, makefiles);
+		} finally {};
+	}
 
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration with pre and post process steps added to typical compile & link
@@ -336,6 +364,20 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("sources.mk"), 
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("test30_1", null, null, true);
+		buildProjects(projects, makefiles);
+	}
+
+	/* (non-Javadoc)
+	 * tests 3.0 style tool integration with multiple input types use Eclipse content types
+	 */
+	public void test30_2(){
+		IPath[] makefiles = {
+				 Path.fromOSString("new.log"), 
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		IProject[] projects = createProjects("test30_2", null, null, true);
 		buildProjects(projects, makefiles);
 	}
 }

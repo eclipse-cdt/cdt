@@ -74,7 +74,11 @@ public class ManagedCommandLineGenerator implements
 			int start =  0;
 			int stop = 0;
 			while( (start = commandLinePattern.indexOf( VAR_FIRST_CHAR, start )) >= 0 ) {
-				if( commandLinePattern.charAt( start + 1 ) != VAR_SECOND_CHAR  ) continue;
+				if( commandLinePattern.charAt( start + 1 ) != VAR_SECOND_CHAR  ) {
+					sb.append(VAR_FIRST_CHAR);
+					start++;
+					continue;
+				}
 				if( start > stop ) {
 					sb.append( commandLinePattern.substring(stop, start) );
 				}

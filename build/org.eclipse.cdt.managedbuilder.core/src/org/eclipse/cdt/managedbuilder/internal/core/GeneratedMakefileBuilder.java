@@ -68,7 +68,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		private String buildGoalName;
 		private IManagedBuildInfo buildInfo;
-		private boolean buildNeeded = true;
+		private boolean incrBuildNeeded = false;
+		private boolean fullBuildNeeded = false;
 		private List reservedNames;
 		
 		/**
@@ -103,7 +104,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 
 			if (ext.length() > 0) {
-				buildGoalName = buildInfo.getOutputPrefix(ext) + name + "." + ext;	//$NON-NLS-1$
+				buildGoalName = buildInfo.getOutputPrefix(ext) + name + IManagedBuilderMakefileGenerator.DOT + ext;
 			} else {
 				buildGoalName = name;
 			}
@@ -135,10 +136,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			return reservedNames.contains(resource.getName()); 
 		}
 
-		public boolean shouldBuild() {
-			return buildNeeded;
+		public boolean shouldBuildIncr() {
+			return incrBuildNeeded;
 		}
 		
+		public boolean shouldBuildFull() {
+			return fullBuildNeeded;
+		}
+
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			// If the project has changed, then a build is needed and we can stop
@@ -151,28 +156,53 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					} else {
 						String name = changedResource.getName();
 						String ext = changedResource.getFileExtension();
-						// There are some things we don't care about and some we do
-						if (name.equals(buildGoalName)) {
-							buildNeeded = true;
-							break;
-						} else if (resource.isDerived()) {
-							buildNeeded |= false;
-						} else if (isGeneratedResource(changedResource)) {
-							buildNeeded |= false;
-						} else if (buildInfo.buildsFileType(ext) || buildInfo.isHeaderFile(ext)) {
-							// We do care and there is no point checking anythings else
-							buildNeeded = true;
-							break;
-						} else if (isProjectFile(changedResource)) {
-							buildNeeded |= false;
-						} else {
-							buildNeeded = true;
-						}
+						
+						if ((!name.equals(buildGoalName) &&
+							// TODO:  Also need to check for secondary outputs
+							(changedResource.isDerived() || 
+							(isProjectFile(changedResource)) ||
+							(isGeneratedResource(changedResource))))) {
+						     // The resource that changed has attributes which make it uninteresting, 
+							 // so don't do anything
+						    ;							
+					    } 
+						else {
+							//  TODO:  Should we do extra checks here to determine if a build is really needed,
+							//         or do you just do exclusion checks like above?
+							//         We could check for:
+							//         o  The build goal name
+							//         o  A secondary output
+							//         o  An input file to a tool:
+							//            o  Has an extension of a source file used by a tool
+							//            o  Has an extension of a header file used by a tool
+							//            o  Has the name of an input file specified in an InputType via:
+							//               o  An Option
+							//               o  An AdditionalInput
+							//
+							//if (resourceName.equals(buildGoalName) || 
+							//	(buildInfo.buildsFileType(ext) || buildInfo.isHeaderFile(ext))) {
+							
+								// We need to do an incremental build, at least
+								incrBuildNeeded = true;
+								if (kids[index].getKind() == IResourceDelta.REMOVED) {
+									// If a meaningful resource was removed, then force a full build
+									// This is required because an incremental build will trigger make to
+									// do nothing for a missing source, since the state after the file 
+									// removal is uptodate, as far as make is concerned
+									// A full build will clean, and ultimately trigger a relink without
+									// the object generated from the deleted source, which is what we want
+									fullBuildNeeded = true;
+									// There is no point in checking anything else since we have
+									// decided to do a full build anyway
+									break;
+								}
+								
+							//}
+						} 
 					}
 				}
 				return false;
 			}
-
 			return true;
 		}
 	}
@@ -275,7 +305,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 			else {
 				delta.accept(visitor);
-				if (visitor.shouldBuild()) {
+				if (visitor.shouldBuildFull()) {
+					outputTrace(getProject().getName(), "Incremental build requested, full build needed");	//$NON-NLS-1$
+					fullBuild(info, generator, monitor);						
+				} else if (visitor.shouldBuildIncr()) {
 					outputTrace(getProject().getName(), "Incremental build requested");	//$NON-NLS-1$
 					incrementalBuild(delta, info, generator, monitor);
 				}

@@ -718,19 +718,7 @@ public class InputType extends BuildObject implements IInputType {
 			if (superClass != null) {
 				return superClass.getBuildVariable();
 			} else {
-				if (getMultipleOfType()) {
-					//  Use default name
-					String name = getName();
-					if (name == null || name.length() == 0) {
-						name = getId();
-					}
-					String defaultName = name.toUpperCase();
-					defaultName = defaultName.replaceAll("\\W", "_");  //$NON-NLS-1$  //$NON-NLS-2$
-					defaultName += "_INPUTS";	//$NON-NLS-1$ 
-					return defaultName;
-				} else {
-					return EMPTY_STRING;
-				}
+				return EMPTY_STRING;
 			}
 		}
 		return buildVariable;

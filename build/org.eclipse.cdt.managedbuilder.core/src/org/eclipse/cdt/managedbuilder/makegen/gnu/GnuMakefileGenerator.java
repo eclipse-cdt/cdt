@@ -20,6 +20,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;	// Note: We use LinkedHashMap instead of HashMap 
+								// only to keep the generation of makefiles constant
+								// for our test set.  Make itself doesn't care 
+								// about the order.
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -275,7 +279,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	// Maps of macro names (String) to values (List)
     private HashMap buildSrcVars = new HashMap();
 	private HashMap buildOutVars = new HashMap();
-	private HashMap topBuildOutVars = new HashMap();
+	private LinkedHashMap topBuildOutVars = new LinkedHashMap();
 
 	public GnuMakefileGenerator() {
 		super();
@@ -1582,22 +1586,24 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		for (int i=0; i<outTypes.length; i++) {
 			String[] outExts = outTypes[i].getOutputExtensions();
 			String outVariable = outTypes[i].getBuildVariable();
-			for (int j=0; j<outExts.length; j++) {
-				for (int k=0; k<buildTools.length; k++) {
-					ITool tool = buildTools[k];
-					if (!buildToolsUsed[k]) {
-						// Also has to match build variables if specified
-						IInputType inType = tool.getInputType(outExts[j]);
-						if (inType != null) {
-							String inVariable = inType.getBuildVariable();
-							if ((outVariable == null && inVariable == null) ||
-							    (outVariable != null && inVariable != null &&
-								 outVariable.equals(inVariable))) {
-								if (addRuleForTool(buildTools[k], buffer, false, null, null, 
-										outputVarsAdditionsList, null, false)) {
-									buildToolsUsed[k] = true;
-									// Look for tools that consume the output
-									generateRulesForConsumers(buildTools[k], outputVarsAdditionsList, buffer);
+			if (outExts != null) {
+				for (int j=0; j<outExts.length; j++) {
+					for (int k=0; k<buildTools.length; k++) {
+						ITool tool = buildTools[k];
+						if (!buildToolsUsed[k]) {
+							// Also has to match build variables if specified
+							IInputType inType = tool.getInputType(outExts[j]);
+							if (inType != null) {
+								String inVariable = inType.getBuildVariable();
+								if ((outVariable == null && inVariable == null) ||
+								    (outVariable != null && inVariable != null &&
+									 outVariable.equals(inVariable))) {
+									if (addRuleForTool(buildTools[k], buffer, false, null, null, 
+											outputVarsAdditionsList, null, false)) {
+										buildToolsUsed[k] = true;
+										// Look for tools that consume the output
+										generateRulesForConsumers(buildTools[k], outputVarsAdditionsList, buffer);
+									}
 								}
 							}
 						}
@@ -1759,7 +1765,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  		
  		// For build macros in the configuration, create a map which will map them  
 		// to a string which holds its list of sources.
-  		HashMap buildVarToRuleStringMap = new HashMap();
+  		LinkedHashMap buildVarToRuleStringMap = new LinkedHashMap();
  		
  		// Add statements that add the source files in this folder, 
 		// and generated source files, and generated dependency files 
@@ -1817,7 +1823,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @param varName  the build variable to add this invocation's outputs to
 	 *                   if <code>null</code>, use the file extension to find the name
 	 */
-	protected void addFragmentMakefileEntriesForSource (HashMap buildVarToRuleStringMap, StringBuffer ruleBuffer, 
+	protected void addFragmentMakefileEntriesForSource (LinkedHashMap buildVarToRuleStringMap, StringBuffer ruleBuffer, 
 			IFolder folder, String relativePath, IResource resource, String varName, boolean generatedSource) {
 		//  Determine which tool, if any, builds files with this extension
 		String ext = resource.getFileExtension();
@@ -1848,8 +1854,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				addMacroAdditionFile(buildVarToRuleStringMap, varName, relativePath, resource, generatedSource); 
 				
 				//  Generate the rule to build this source file
+				IInputType primaryInputType = tool.getPrimaryInputType();
 				IInputType inputType = tool.getInputType(ext);
-				if ((inputType != null && !inputType.getMultipleOfType()) ||
+				if ((primaryInputType != null && !primaryInputType.getMultipleOfType()) ||
 					(inputType == null && !(tool == info.getToolFromOutputExtension(buildTargetExt))))	{
 					
 					// Try to add the rule for the file
@@ -2530,7 +2537,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 	C_SRCS += \
 	 * 	${addprefix $(ROOT)/, \
 	 */
-	protected void addMacroAdditionPrefix(HashMap map, String macroName, String relativePath, boolean addPrefix) {
+	protected void addMacroAdditionPrefix(LinkedHashMap map, String macroName, String relativePath, boolean addPrefix) {
 		// there is no entry in the map, so create a buffer for this macro
 		StringBuffer tempBuffer = new StringBuffer();
 		tempBuffer.append(macroName + WHITESPACE + MACRO_ADDITION_PREFIX_SUFFIX);
@@ -2600,7 +2607,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	/* (non-Javadoc)
 	 * Write all macro addition entries in a map to the buffer
 	 */
-	protected StringBuffer writeAdditionMacros(HashMap map) {
+	protected StringBuffer writeAdditionMacros(LinkedHashMap map) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_VARS) + NEWLINE);
@@ -2710,7 +2717,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		
 		//  Initialize the build output variable to file additions map
-		HashMap map = getTopBuildOutputVars();
+		LinkedHashMap map = getTopBuildOutputVars();
 		Iterator iterator = buildOutVars.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry)iterator.next();
@@ -2832,7 +2839,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 
 	 * @return HashMap
 	 */
-	public HashMap getTopBuildOutputVars() {
+	public LinkedHashMap getTopBuildOutputVars() {
 		return topBuildOutVars;
 	}
 	

@@ -220,24 +220,30 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							// Calculate myEnumeratedInputs using the file extensions and the resources in the project
 							// Note:  This is only correct for tools with multipleOfType == true, but for other tools
 							//        it gives us an input resource for generating default names
-							String[] exts = tool.getAllInputExtensions();
+							// Determine the set of source input macros to use
+					 		HashSet handledInputExtensions = new HashSet();
+							String[] exts = type.getSourceExtensions();
 							if (projResources != null) {
 								for (int j=0; j<projResources.length; j++) {
-									if (projResources[i].getType() == IResource.FILE) {
-										String fileExt = projResources[i].getFileExtension();
+									if (projResources[j].getType() == IResource.FILE) {
+										String fileExt = projResources[j].getFileExtension();
 										for (int k=0; k<exts.length; k++) {
 											if (fileExt.equals(exts[k])) {
 												//  TODO - is project relative correct?
 												if (!useFileExts) {
-													myCommandInputs.add(projResources[i].getProjectRelativePath());
-													if (primaryInput) {
-														myCommandDependencies.add(0, projResources[i].getProjectRelativePath());
-													} else {
-														myCommandDependencies.add(projResources[i].getProjectRelativePath());
-													}
+													if(!handledInputExtensions.contains(fileExt)) {
+									 					handledInputExtensions.add(fileExt);
+									 					String buildMacro = "$(" + makeGen.getSourceMacroName(fileExt).toString() + ")";	//$NON-NLS-1$ //$NON-NLS-2$
+														myCommandInputs.add(buildMacro);
+														if (primaryInput) {
+															myCommandDependencies.add(0, buildMacro);
+														} else {
+															myCommandDependencies.add(buildMacro);
+														}
+									 				}
 												}
 												if (type.getMultipleOfType() || myEnumeratedInputs.size() == 0) {
-													myEnumeratedInputs.add(projResources[i].getProjectRelativePath());
+													myEnumeratedInputs.add(projResources[j].getProjectRelativePath().toString());
 												}
 												break;
 											}
@@ -559,7 +565,6 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		if (inTypes != null && inTypes.length > 0) {
 			for (int i=0; i<inTypes.length; i++) {
 				IInputType type = inTypes[i];
-				String variable = type.getBuildVariable();
 				
 				IManagedDependencyGenerator depGen = type.getDependencyGenerator();
 				if (depGen != null) {

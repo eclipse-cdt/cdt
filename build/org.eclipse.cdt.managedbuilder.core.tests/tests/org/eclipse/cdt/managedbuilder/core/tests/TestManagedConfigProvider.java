@@ -8,7 +8,7 @@
  * Contributors: 
  * TimeSys Corporation - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.managedbuild.core.tests;
+package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.util.Iterator;
 import java.util.Properties;

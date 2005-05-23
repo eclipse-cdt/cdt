@@ -8,7 +8,7 @@
  * Contributors: 
  * Intel Corporation - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.managedbuild.core.tests;
+package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;

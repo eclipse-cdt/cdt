@@ -11,13 +11,13 @@
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.managedbuild.core.tests.ManagedBuildCoreTests;
-import org.eclipse.cdt.managedbuild.core.tests.ManagedBuildCoreTests20;
-import org.eclipse.cdt.managedbuild.core.tests.ManagedCommandLineGeneratorTest;
-import org.eclipse.cdt.managedbuild.core.tests.ManagedProjectUpdateTests;
-import org.eclipse.cdt.managedbuild.core.tests.ResourceBuildCoreTests;
-import org.eclipse.cdt.managedbuild.core.tests.ManagedProject21MakefileTests;
-import org.eclipse.cdt.managedbuild.core.tests.ManagedProject30MakefileTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedCommandLineGeneratorTest;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedProjectUpdateTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

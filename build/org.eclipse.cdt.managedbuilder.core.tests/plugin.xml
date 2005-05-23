@@ -325,7 +325,7 @@
       </target>
       <dynamicElementProvider
             name="Test Target Provider"
-            class="org.eclipse.cdt.managedbuild.core.tests.TestManagedConfigProvider">
+            class="org.eclipse.cdt.managedbuilder.core.tests.TestManagedConfigProvider">
       </dynamicElementProvider>
       <target
             isTest="true"
@@ -1674,7 +1674,7 @@
 				  <tool
 					  id="cdt.managedbuild.test.java.attrs.tool"
 					  superClass="cdt.managedbuild.tool.testgnu.c.compiler"
-					  commandLineGenerator="org.eclipse.cdt.managedbuild.core.tests.ManagedBuildCommandLineGenerator">
+					  commandLineGenerator="org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCommandLineGenerator">
 				      <option
 						  id="testgnu.c.compiler.option.preprocessor.def.symbols.test"
 						  superClass="testgnu.c.compiler.option.preprocessor.def.symbols">
@@ -1691,7 +1691,7 @@
 		              name="Test Builder"
 		              command="makeMe"
 		              arguments="-k"
-		              buildfileGenerator="org.eclipse.cdt.managedbuild.core.tests.BuildFileGenerator">
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.core.tests.BuildFileGenerator">
 		     	  </builder>               
                </toolChain>                 
          </configuration>
@@ -3276,7 +3276,7 @@
       
 	  <!-- Test tools and project types for testing multiple input types,
 	       multiple output types, and input & output options
-	       tar -cf  &  tar -tf -->
+	       tar -cf, tar -tf, & cat -->
       
       <projectType      
             isAbstract="false"     
@@ -3291,7 +3291,7 @@
 			   errorParsers="">
                <toolChain
                       name="ToolChain for test30_2"
-                      targetTool="test30_2.tar.list"
+                      targetTool="test30_2.cat"
                       id="test30_2.tar.toolchain">
 				  <builder
 		              id="test30_2.tar.builder"
@@ -3345,6 +3345,7 @@
 			      		name="tar-list"
 			      		command="tar"
 			      		commandLinePattern="${COMMAND} ${FLAGS} ${INPUTS} &gt; ${OUTPUT}"
+		 	            commandLineGenerator="org.eclipse.cdt.managedbuilder.core.tests.Test30_2_CommandLineGenerator"
 			      		id="test30_2.tar-list">
 					 <optionCategory
 						  name="Options"
@@ -3357,6 +3358,13 @@
 						  id="test30_2.tar-list.other"
 						  valueType="string">
 					 </option>
+					 <option
+						  defaultValue="new.log"
+						  name="Log File Name"
+						  category="test30_2.tar-list.category"
+						  id="test30_2.tar-list.filename"
+						  valueType="string">
+					 </option>
 			         <inputType
 			            id="test30_2.tar-list.input1"
 			            buildVariable="TAROUT"
@@ -3365,9 +3373,27 @@
 			         <outputType
 			            id="test30_2.tar-list.outputlog"
 			            name="Log file"
-			            outputs="log">
+			            outputs="log"
+			            buildVariable="LOGFILE"
+			            option="test30_2.tar-list.filename">
 			         </outputType>
 			      </tool>   
+			      <tool
+			      		name="cat"
+			      		command="cat"
+			      		commandLinePattern="${COMMAND} ${INPUTS}"
+			      		id="test30_2.cat">
+			         <inputType
+			            id="test30_2.cat.input"
+			            buildVariable="LOGFILE"
+			            sources="log">
+			         </inputType>
+			         <outputType
+			            id="test30_2.cat.output"
+			            name="Terminal (dummy output)"
+			            outputs="tmp">
+			         </outputType>
+			      </tool>
 			  </toolChain>
          </configuration>
       </projectType>           

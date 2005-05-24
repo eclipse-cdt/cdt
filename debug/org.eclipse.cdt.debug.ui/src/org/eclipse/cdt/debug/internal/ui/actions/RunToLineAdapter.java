@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -36,6 +35,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
@@ -126,8 +126,49 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public boolean canRunToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
-		if ( part instanceof DisassemblyView || part instanceof ITextEditor )
-			return target instanceof IDebugElement && ((IDebugElement)target).getModelIdentifier().equals( CDIDebugModel.getPluginIdentifier() );
+		if ( target instanceof IAdaptable ) {			
+			if ( part instanceof IEditorPart ) {
+				IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
+				if ( runToLine == null )
+					return false;
+				IEditorPart editorPart = (IEditorPart)part;
+				IEditorInput input = editorPart.getEditorInput();
+				if ( input == null ) {
+					return false;
+				}
+				if ( !(editorPart instanceof ITextEditor) ) {
+					return false;
+				}
+				ITextEditor textEditor = (ITextEditor)editorPart;
+				IDocument document = textEditor.getDocumentProvider().getDocument( input );
+				if ( document == null ) {
+					return false;
+				}
+				String fileName;
+				try {
+					fileName = getFileName( input );
+				}
+				catch( CoreException e ) {
+					return false;
+				}
+				ITextSelection textSelection = (ITextSelection)selection;
+				int lineNumber = textSelection.getStartLine() + 1;
+				return runToLine.canRunToLine( fileName, lineNumber );
+			}
+			if ( part instanceof DisassemblyView ) {
+				IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
+				if ( runToAddress == null )
+					return false;
+				IEditorInput input = ((DisassemblyView)part).getInput();
+				if ( !(input instanceof DisassemblyEditorInput) ) {
+					return false;
+				}
+				ITextSelection textSelection = (ITextSelection)selection;
+				int lineNumber = textSelection.getStartLine() + 1;
+				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+				return runToAddress.canRunToAddress( address );
+			}
+		}
 		return false;
 	}
 

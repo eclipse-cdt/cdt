@@ -1,3 +1,8 @@
+2005-05-24 Mikhail Khodjaiants
+	Bug 88558: run-to-line not thread oriented.
+	The "Run to Line" action should be enabled on stack frames and threads, not on targets.
+	* RunToLineAdapter.java
+
 2005-05-20 Mikhail Khodjaiants
 	Bug 94139: User-defined register groups.
 	UI to add/remove user-defined groups.

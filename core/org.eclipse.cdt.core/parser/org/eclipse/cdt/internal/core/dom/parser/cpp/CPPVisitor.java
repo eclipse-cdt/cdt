@@ -762,6 +762,12 @@ public class CPPVisitor {
 				}
 				if( i > 0 ){
 					IBinding binding = names[i - 1].resolveBinding();
+					while( binding instanceof ITypedef ){
+						IType t = ((ITypedef)binding).getType();
+						if( t instanceof IBinding )
+							binding = (IBinding) t;
+						else break;
+					}
 					if( binding instanceof ICPPClassType ){
 						return ((ICPPClassType)binding).getCompositeScope();
 					} else if( binding instanceof ICPPNamespace ){

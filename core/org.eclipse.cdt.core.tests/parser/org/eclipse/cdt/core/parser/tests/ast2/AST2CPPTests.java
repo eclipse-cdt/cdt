@@ -4404,4 +4404,22 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( state, col.getName(7).resolveBinding() );
         assertSame( state, col.getName(9).resolveBinding() );
 	}
+	
+	public void testTypedefQualified() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class _A {                         \n"); //$NON-NLS-1$
+		buffer.append("   static int i;                   \n"); //$NON-NLS-1$
+		buffer.append("};                                 \n"); //$NON-NLS-1$
+		buffer.append("typedef _A A;                      \n"); //$NON-NLS-1$
+		buffer.append("void f(){                          \n"); //$NON-NLS-1$
+		buffer.append("   A::i++;                         \n"); //$NON-NLS-1$
+		buffer.append("}                                  \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPField i = (ICPPField) col.getName(1).resolveBinding();
+        assertSame( i, col.getName(7).resolveBinding() );
+	}
 }

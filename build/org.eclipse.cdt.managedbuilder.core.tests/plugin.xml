@@ -3255,6 +3255,7 @@
 			         </inputType>
 			         <outputType
 			            id="test30_1.gnu.so.cjpeg.output"
+			            primaryInputType="test30_1.gnu.so.cjpeg.input"
 			            outputs="jpeg">
 			         </outputType>
 			      </tool>   
@@ -3325,6 +3326,7 @@
 			            id="test30_2.tar-create.input1"
 			            name="All cpp files"
 			            multipleOfType="true"
+			            primaryInput="true"
 			            sourceContentType="org.eclipse.cdt.core.cxxSource">
 			         </inputType>
 			         <inputType
@@ -3338,6 +3340,7 @@
 			            name="Tar file"
 			            outputs="tar"
 			            buildVariable="TAROUT"
+			            primaryOutput="true"
 						option="test30_2.tar-create.filename">
 			         </outputType>
 			      </tool>   

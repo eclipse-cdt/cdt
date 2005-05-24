@@ -18,7 +18,7 @@ import org.eclipse.debug.core.model.IValue;
 /**
  * C/C++ specific extension of <code>IStackFrame</code>.
  */
-public interface ICStackFrame extends IStackFrame, ICDebugElement {
+public interface ICStackFrame extends IRunToLine, IRunToAddress, IJumpToLine, IJumpToAddress, IStackFrame, ICDebugElement {
 
 	/**
 	 * Returns the address of this stack frame.

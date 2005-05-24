@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -20,11 +21,13 @@ import java.util.List;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -36,6 +39,7 @@ import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -460,16 +464,16 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public Object getAdapter( Class adapter ) {
 		if ( adapter == IRunToLine.class ) {
-			return getDebugTarget().getAdapter( adapter );
+			return this;
 		}
 		if ( adapter == IRunToAddress.class ) {
-			return getDebugTarget().getAdapter( adapter );
+			return this;
 		}
 		if ( adapter == IJumpToLine.class ) {
-			return getDebugTarget().getAdapter( adapter );
+			return this;
 		}
 		if ( adapter == IJumpToAddress.class ) {
-			return getDebugTarget().getAdapter( adapter );
+			return this;
 		}
 		if ( adapter == CStackFrame.class ) {
 			return this;
@@ -766,5 +770,141 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 
 	private synchronized void setDisposed( boolean isDisposed ) {
 		fIsDisposed = isDisposed;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(org.eclipse.core.resources.IFile, int)
+	 */
+	public boolean canRunToLine( IFile file, int lineNumber ) {
+		return getThread().canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(org.eclipse.core.resources.IFile, int, boolean)
+	 */
+	public void runToLine( IFile file, int lineNumber, boolean skipBreakpoints ) throws DebugException {
+		if ( !canRunToLine( file, lineNumber ) )
+			return;
+		runToLine( file.getLocation().lastSegment(), lineNumber, skipBreakpoints );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(java.lang.String, int)
+	 */
+	public boolean canRunToLine( String fileName, int lineNumber ) {
+		return getThread().canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(java.lang.String, int, boolean)
+	 */
+	public void runToLine( String fileName, int lineNumber, boolean skipBreakpoints ) throws DebugException {
+		if ( !canRunToLine( fileName, lineNumber ) )
+			return;
+		if ( skipBreakpoints ) {
+			((CDebugTarget)getDebugTarget()).skipBreakpoints( true );
+		}
+		ICDILocation location = getCDITarget().createLineLocation( fileName, lineNumber );
+		try {
+			getCDIThread().stepUntil( location );
+		}
+		catch( CDIException e ) {
+			if ( skipBreakpoints ) {
+				((CDebugTarget)getDebugTarget()).skipBreakpoints( false );
+			}
+			targetRequestFailed( e.getMessage(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#canRunToAddress(org.eclipse.cdt.core.IAddress)
+	 */
+	public boolean canRunToAddress( IAddress address ) {
+		return getThread().canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#runToAddress(org.eclipse.cdt.core.IAddress, boolean)
+	 */
+	public void runToAddress( IAddress address, boolean skipBreakpoints ) throws DebugException {
+		if ( !canRunToAddress( address ) )
+			return;
+		if ( skipBreakpoints ) {
+			((CDebugTarget)getDebugTarget()).skipBreakpoints( true );
+		}
+		ICDILocation location = getCDITarget().createAddressLocation( new BigInteger( address.toString() ) );
+		try {
+			getCDIThread().stepUntil( location );
+		}
+		catch( CDIException e ) {
+			if ( skipBreakpoints ) {
+				((CDebugTarget)getDebugTarget()).skipBreakpoints( false );
+			}
+			targetRequestFailed( e.getMessage(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(org.eclipse.core.resources.IFile, int)
+	 */
+	public boolean canJumpToLine( IFile file, int lineNumber ) {
+		return getThread().canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(org.eclipse.core.resources.IFile, int)
+	 */
+	public void jumpToLine( IFile file, int lineNumber ) throws DebugException {
+		if ( !canJumpToLine( file, lineNumber ) )
+			return;
+		jumpToLine( file.getLocation().lastSegment(), lineNumber );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(java.lang.String, int)
+	 */
+	public boolean canJumpToLine( String fileName, int lineNumber ) {
+		return getThread().canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(java.lang.String, int)
+	 */
+	public void jumpToLine( String fileName, int lineNumber ) throws DebugException {
+		if ( !canJumpToLine( fileName, lineNumber ) )
+			return;
+		ICDILocation location = getCDITarget().createLineLocation( fileName, lineNumber );
+		try {
+			getCDIThread().resume( location );
+		}
+		catch( CDIException e ) {
+			targetRequestFailed( e.getMessage(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#canJumpToAddress(org.eclipse.cdt.core.IAddress)
+	 */
+	public boolean canJumpToAddress( IAddress address ) {
+		return getThread().canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#jumpToAddress(org.eclipse.cdt.core.IAddress)
+	 */
+	public void jumpToAddress( IAddress address ) throws DebugException {
+		if ( !canJumpToAddress( address ) )
+			return;
+		ICDILocation location = getCDITarget().createAddressLocation( new BigInteger( address.toString() ) );
+		try {
+			getCDIThread().resume( location );
+		}
+		catch( CDIException e ) {
+			targetRequestFailed( e.getMessage(), e );
+		}
+	}
+
+	private ICDIThread getCDIThread() {
+		return ((CThread)getThread()).getCDIThread();
 	}
 }

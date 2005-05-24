@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -73,11 +72,7 @@ import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
-import org.eclipse.cdt.debug.core.model.IJumpToAddress;
-import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
-import org.eclipse.cdt.debug.core.model.IRunToAddress;
-import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
@@ -813,14 +808,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return this;
 		if ( adapter.equals( IExecFileInfo.class ) )
 			return this;
-		if ( adapter.equals( IRunToLine.class ) )
-			return this;
-		if ( adapter.equals( IRunToAddress.class ) )
-			return this;
-		if ( adapter.equals( IJumpToLine.class ) )
-			return this;
-		if ( adapter.equals( IJumpToAddress.class ) )
-			return this;
 		if ( adapter.equals( IBreakpointTarget.class ) )
 			return this;
 		if ( adapter.equals( CBreakpointManager.class ) )
@@ -1303,52 +1290,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(java.lang.String, int)
-	 */
-	public boolean canRunToLine( String fileName, int lineNumber ) {
-		// check if supports run to line
-		return canResume();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(java.lang.String, int, boolean)
-	 */
-	public void runToLine( String fileName, int lineNumber, boolean skipBreakpoints ) throws DebugException {
-		if ( !canRunToLine( fileName, lineNumber ) )
-			return;
-		if ( skipBreakpoints ) {
-			getBreakpointManager().skipBreakpoints( true );
-		}
-		ICDILocation location = getCDITarget().createLineLocation( fileName, lineNumber );
-		try {
-			getCDITarget().stepUntil( location );
-		}
-		catch( CDIException e ) {
-			if ( skipBreakpoints ) {
-				getBreakpointManager().skipBreakpoints( false );
-			}
-			targetRequestFailed( e.getMessage(), e );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(org.eclipse.core.resources.IFile, int)
-	 */
-	public boolean canRunToLine( IFile file, int lineNumber ) {
-		// check if supports run to line
-		return canResume();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(org.eclipse.core.resources.IFile, int, boolean)
-	 */
-	public void runToLine( IFile file, int lineNumber, boolean skipBreakpoints ) throws DebugException {
-		if ( !canRunToLine( file, lineNumber ) )
-			return;
-		runToLine( file.getLocation().lastSegment(), lineNumber, skipBreakpoints );
-	}
-
 	protected IThread getCurrentThread() throws DebugException {
 		IThread[] threads = getThreads();
 		for( int i = 0; i < threads.length; ++i ) {
@@ -1466,35 +1407,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#canRunToAddress(org.eclipse.cdt.core.IAddress)
-	 */
-	public boolean canRunToAddress( IAddress address ) {
-		// for now
-		return canResume();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#runToAddress(org.eclipse.cdt.core.IAddress, boolean)
-	 */
-	public void runToAddress( IAddress address, boolean skipBreakpoints ) throws DebugException {
-		if ( !canRunToAddress( address ) )
-			return;
-		if ( skipBreakpoints ) {
-			getBreakpointManager().skipBreakpoints( true );
-		}
-		ICDILocation location = getCDITarget().createAddressLocation( new BigInteger( address.toString() ) );
-		try {
-			getCDITarget().stepUntil( location );
-		}
-		catch( CDIException e ) {
-			if ( skipBreakpoints ) {
-				getBreakpointManager().skipBreakpoints( false );
-			}
-			targetRequestFailed( e.getMessage(), e );
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
 	 */
 	public boolean canResumeWithoutSignal() {
@@ -1514,69 +1426,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 		catch( CDIException e ) {
 			restoreOldState();
-			targetRequestFailed( e.getMessage(), e );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(org.eclipse.core.resources.IFile, int)
-	 */
-	public boolean canJumpToLine( IFile file, int lineNumber ) {
-		// check if supports jump to line
-		return canResume();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(org.eclipse.core.resources.IFile, int)
-	 */
-	public void jumpToLine( IFile file, int lineNumber ) throws DebugException {
-		if ( !canJumpToLine( file, lineNumber ) )
-			return;
-		jumpToLine( file.getLocation().lastSegment(), lineNumber );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(java.lang.String, int)
-	 */
-	public boolean canJumpToLine( String fileName, int lineNumber ) {
-		// check if supports jump to line
-		return canResume();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(java.lang.String, int)
-	 */
-	public void jumpToLine( String fileName, int lineNumber ) throws DebugException {
-		if ( !canJumpToLine( fileName, lineNumber ) )
-			return;
-		ICDILocation location = getCDITarget().createLineLocation( fileName, lineNumber );
-		try {
-			getCDITarget().resume( location );
-		}
-		catch( CDIException e ) {
-			targetRequestFailed( e.getMessage(), e );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#canJumpToAddress(org.eclipse.cdt.core.IAddress)
-	 */
-	public boolean canJumpToAddress( IAddress address ) {
-		// check if supports jump to address
-		return canResume();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#jumpToAddress(org.eclipse.cdt.core.IAddress)
-	 */
-	public void jumpToAddress( IAddress address ) throws DebugException {
-		if ( !canJumpToAddress( address ) )
-			return;
-		ICDILocation location = getCDITarget().createAddressLocation( new BigInteger( address.toString() ) );
-		try {
-			getCDITarget().resume( location );
-		}
-		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}
@@ -1896,5 +1745,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 */
 	public void removeRegisterGroups( IRegisterGroup[] groups ) {
 		getRegisterManager().removeRegisterGroups( groups );
+	}
+
+	protected void skipBreakpoints( boolean enabled ) {
+		getBreakpointManager().skipBreakpoints( enabled );
 	}
 }

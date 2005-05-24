@@ -1,3 +1,12 @@
+2005-05-24 Mikhail Khodjaiants
+	Bug 88558: run-to-line not thread oriented.
+	The IRunTo* and IJumpTo* interfaces moved to ICStackFrame.
+	* ICDebugTarget.java
+	* ICStackFrame.java
+	* CDebugTarget.java
+	* CStackFrame.java
+	* CThread.java
+
 2005-05-20 Mikhail Khodjaiants
 	Bug 94139: User-defined register groups.
 	Added API and group serialization.

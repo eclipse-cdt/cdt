@@ -38,8 +38,11 @@ import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
+import org.eclipse.cdt.debug.core.model.IJumpToAddress;
+import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
+import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
@@ -779,8 +782,17 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter( Class adapter ) {
-		if ( adapter.equals( IRunToLine.class ) )
-			return this;
+		if ( adapter.equals( IRunToLine.class ) || 
+			 adapter.equals( IRunToAddress.class ) ||
+			 adapter.equals( IJumpToLine.class ) || 
+			 adapter.equals( IJumpToAddress.class ) ) {
+			try {
+				return (ICStackFrame)getTopStackFrame();
+			}
+			catch( DebugException e ) {
+				// do nothing
+			}
+		}
 		if ( adapter.equals( CDebugElementState.class ) )
 			return this;
 		if ( adapter == ICStackFrame.class ) {

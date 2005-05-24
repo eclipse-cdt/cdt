@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others. All rights
+ * Copyright (c) 2000, 2005 QNX Software Systems and others. All rights
  * reserved. This program and the accompanying materials are made available
  * under the terms of the Common Public License v1.0 which accompanies this
  * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -517,15 +517,25 @@ public class SettingsBlock extends AbstractCOptionPage {
 			argumentVariablesButton.setEnabled(true);
 			stopOnErrorButton.setEnabled(false);
 		}
+		
 		defButton.setSelection(info.isDefaultBuildCmd());
+		
 		autoButton.setSelection(info.isAutoBuildEnable());
+		autoVariableButton.setEnabled(info.isAutoBuildEnable());
+		targetAuto.setEnabled(info.isAutoBuildEnable());
 		targetAuto.setText(info.getAutoBuildTarget());
 		incrButton.setSelection(info.isIncrementalBuildEnabled());
+		incrVariableButton.setEnabled(info.isIncrementalBuildEnabled());
 		targetIncr.setText(info.getIncrementalBuildTarget());
+		targetIncr.setEnabled(info.isIncrementalBuildEnabled());
 		fullButton.setSelection(info.isFullBuildEnabled());
+		fullVariableButton.setEnabled(info.isFullBuildEnabled());
 		targetFull.setText(info.getFullBuildTarget());
+		targetFull.setEnabled(info.isFullBuildEnabled());
 		cleanButton.setSelection(info.isCleanBuildEnabled());
+		cleanVariableButton.setEnabled(info.isCleanBuildEnabled());
 		targetClean.setText(info.getCleanBuildTarget());
+		targetClean.setEnabled(info.isCleanBuildEnabled());
 	}
 
 	boolean isStopOnError() {

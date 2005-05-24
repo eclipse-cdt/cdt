@@ -3281,7 +3281,7 @@
       
       <projectType      
             isAbstract="false"     
-            isTest="false"
+            isTest="true"
             name="test30_2"
             id="test30_2.tar">
          <configuration

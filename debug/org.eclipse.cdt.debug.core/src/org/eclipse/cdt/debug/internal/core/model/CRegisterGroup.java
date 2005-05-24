@@ -83,9 +83,6 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 			fRegisters = new IRegister[fRegisterDescriptors.length];
 			for( int i = 0; i < fRegisters.length; ++i ) {
 				fRegisters[i] = new CRegister( this, fRegisterDescriptors[i] );
-				if ( ((CRegister)fRegisters[i]).isEnabled() ) {
-					((CRegister)fRegisters[i]).setEnabled( isEnabled() );
-				}
 			}
 		}
 		return fRegisters;

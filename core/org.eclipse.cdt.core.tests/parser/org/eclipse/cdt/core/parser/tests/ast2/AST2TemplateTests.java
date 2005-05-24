@@ -1570,4 +1570,23 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( ((ICPPTemplateInstance)f2).getTemplateDefinition(), f );
 	}
 	
+	public void testRelaxationForTemplateInheritance() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template < class T > class A {};                          \n"); //$NON-NLS-1$
+		buffer.append("template < class T > class B {                            \n"); //$NON-NLS-1$
+		buffer.append("   void init( A<T> * );                                   \n"); //$NON-NLS-1$
+		buffer.append("};                                                        \n"); //$NON-NLS-1$
+		buffer.append("template < class T > class C : public B<T> {              \n"); //$NON-NLS-1$
+		buffer.append("   C( A<T> * a ) {                                        \n"); //$NON-NLS-1$
+		buffer.append("      init( a );                                          \n"); //$NON-NLS-1$
+		buffer.append("   }                                                      \n"); //$NON-NLS-1$
+		buffer.append("};                                                        \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPMethod init = (ICPPMethod) col.getName(4).resolveBinding();
+		assertSame( init, col.getName(19).resolveBinding() );
+	}
 }

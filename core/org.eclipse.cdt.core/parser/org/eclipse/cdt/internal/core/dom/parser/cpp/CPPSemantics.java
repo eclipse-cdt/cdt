@@ -2844,7 +2844,10 @@ public class CPPSemantics {
 			parent = bases[i].getBaseClass();
 			boolean isVisible = ( wrapper.getVisibility() == ICPPBase.v_public);
 
-			if( parent == clsBase ){
+			if( parent.isSameType( clsBase ) || 
+				(clsBase instanceof ICPPSpecialization &&  //allow some flexibility with templates 
+				 ((IType)((ICPPSpecialization)clsBase).getSpecializedBinding()).isSameType( parent ) ) )
+			{
 				if( needVisibility && !isVisible )
 					return -1;
 				return 1;

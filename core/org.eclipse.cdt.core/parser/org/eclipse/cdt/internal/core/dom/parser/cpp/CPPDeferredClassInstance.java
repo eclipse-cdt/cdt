@@ -45,14 +45,14 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
-	public ICPPBase[] getBases() {
-		return ICPPBase.EMPTY_BASE_ARRAY;
+	public ICPPBase[] getBases() throws DOMException {
+		return ((ICPPClassType) classTemplate).getBases();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -60,7 +60,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(java.lang.String)
 	 */
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -68,7 +68,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
 	 */
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -76,7 +76,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
 	 */
-	public ICPPMethod[] getMethods() throws DOMException {
+	public ICPPMethod[] getMethods() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -84,7 +84,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
 	 */
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -92,7 +92,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
 	 */
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -100,14 +100,14 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
 	 */
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -124,8 +124,7 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() throws DOMException {
-		// TODO Auto-generated method stub
-		return 0;
+		return ((ICPPClassType)classTemplate).getKey();
 	}
 
 	/* (non-Javadoc)
@@ -165,7 +164,17 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
 	 */
 	public boolean isSameType(IType type) {
-		// TODO Auto-generated method stub
-		return type == this;
+		if( type == this )
+			return true;
+		
+		//allow some fuzziness here.
+		if( !(type instanceof CPPDeferredClassInstance ) )
+			return false;
+				
+		ICPPClassTemplate typeClass = (ICPPClassTemplate) ((CPPDeferredClassInstance)type).getSpecializedBinding();
+		if( typeClass != classTemplate )
+			return false;
+		
+		return true;
 	}
 }

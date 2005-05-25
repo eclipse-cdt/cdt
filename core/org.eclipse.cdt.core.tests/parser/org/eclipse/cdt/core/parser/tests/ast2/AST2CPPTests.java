@@ -4452,4 +4452,36 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept(col);
         assertNoProblemBindings( col );
     }
+    
+	public void testBug96655() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void copy( void * );                   \n"); //$NON-NLS-1$
+		buffer.append("typedef struct {} A;                   \n"); //$NON-NLS-1$
+		buffer.append("void f( A * a ) {                      \n"); //$NON-NLS-1$
+		buffer.append("   copy( a );                          \n"); //$NON-NLS-1$
+		buffer.append("}                                      \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPFunction copy = (ICPPFunction) col.getName(0).resolveBinding();
+        assertSame( copy, col.getName(7).resolveBinding() );
+	}
+	
+	public void testNewExpressionType() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct A {};                      \n"); //$NON-NLS-1$
+		buffer.append("void copy( A * );                 \n"); //$NON-NLS-1$
+		buffer.append("void f( ) {                       \n"); //$NON-NLS-1$
+		buffer.append("   copy( new A() );               \n"); //$NON-NLS-1$
+		buffer.append("}                                 \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPFunction copy = (ICPPFunction) col.getName(1).resolveBinding();
+        assertSame( copy, col.getName(5).resolveBinding() );
+	}
 }

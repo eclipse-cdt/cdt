@@ -1654,6 +1654,7 @@ abstract class BaseScanner implements IScanner {
             int pos = bufferPos[bufferStackPos];
 
             switch (buffer[pos]) {
+            case '\r':
             case '\n':
                 continue;
 

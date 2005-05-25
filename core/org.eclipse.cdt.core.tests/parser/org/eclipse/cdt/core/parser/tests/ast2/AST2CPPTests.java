@@ -4468,6 +4468,10 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPFunction copy = (ICPPFunction) col.getName(0).resolveBinding();
         assertSame( copy, col.getName(7).resolveBinding() );
 	}
+
+	public void testBug96678() throws Exception {
+		IASTTranslationUnit tu = parse( "int x; // comment \r\n", ParserLanguage.CPP, false, true ); //$NON-NLS-1$
+	}
 	
 	public void testNewExpressionType() throws Exception {
 		StringBuffer buffer = new StringBuffer();

@@ -2583,6 +2583,9 @@ abstract class BaseScanner implements IScanner {
                         handleCompletionOnExpression(CharArrayUtils.extract(
                                 buffer, start, len));
                     branchState(BRANCH_IF);
+                    
+                    processIf(pos, pos + start + len, true); // fix 86870, process IF before skipping the condition and only process it once
+                    
                     if (expressionEvaluator.evaluate(buffer, start, len,
                             definitions,
                             getLineNumber(bufferPos[bufferStackPos]),
@@ -2590,9 +2593,7 @@ abstract class BaseScanner implements IScanner {
                         skipOverConditionalCode(true);
                         if (isLimitReached())
                             handleInvalidCompletion();
-                        processIf(pos, bufferPos[bufferStackPos], true);
                     }
-                    processIf(pos, bufferPos[bufferStackPos], false);
                     return;
                 case ppElse:
                 case ppElif:
@@ -3406,11 +3407,11 @@ abstract class BaseScanner implements IScanner {
                                 skipToNewLine();
                                 if (checkelse && nesting == 0) {
                                     processElse(startPos,
-                                            bufferPos[bufferStackPos] + 1, true);
+                                            bufferPos[bufferStackPos], true);
                                     return;
                                 }
                                 processElse(startPos,
-                                        bufferPos[bufferStackPos] + 1, false);
+                                        bufferPos[bufferStackPos], false);
                             } else {
                                 //problem, ignore this one.
                                 handleProblem(
@@ -3435,16 +3436,16 @@ abstract class BaseScanner implements IScanner {
                                                     definitions,
                                                     getLineNumber(bufferPos[bufferStackPos]),
                                                     getCurrentFilename()) != 0) {
-                                        // condition passed, we're good
-                                        processElsif(start,
+										// condition passed, we're good
+                                        processElsif(startPos,
                                                 bufferPos[bufferStackPos], true);
                                         return;
                                     }
-                                    processElsif(start,
+                                    processElsif(startPos,
                                             bufferPos[bufferStackPos], false);
                                 } else {
                                     skipToNewLine();
-                                    processElsif(start,
+                                    processElsif(startPos,
                                             bufferPos[bufferStackPos], false);
                                 }
                             } else {
@@ -3890,7 +3891,7 @@ abstract class BaseScanner implements IScanner {
                     break;
                 } else if (!escaped && bufferPos[bufferStackPos] < limit
                         && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
-                    bufferPos[bufferStackPos]++;
+//                    bufferPos[bufferStackPos]++;  // Do not want to skip past the \r
                     return;
                 }
                 break;

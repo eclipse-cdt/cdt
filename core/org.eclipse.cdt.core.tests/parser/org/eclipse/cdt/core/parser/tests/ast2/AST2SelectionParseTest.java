@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author dsteffle
@@ -1510,6 +1511,54 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertTrue(name.resolveBinding() instanceof IVariable);
 	}
 	
+	public void testBug86870() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#if VERSION == 1\r\n"); //$NON-NLS-1$
+		buffer.append("#define INCFILE \"vers1.h\"\r\n"); //$NON-NLS-1$
+		buffer.append("#elif VERSION == 2\r\n"); //$NON-NLS-1$
+		buffer.append("#define INCFILE \"vers2.h\" /* and so on */\r\n"); //$NON-NLS-1$
+		buffer.append("#else\r\n"); //$NON-NLS-1$
+		buffer.append("#define INCFILE \"versN.h\"\r\n"); //$NON-NLS-1$
+		buffer.append("#endif\r\n"); //$NON-NLS-1$
+		
+		String code = buffer.toString();
+		int offset1 = code.indexOf( "#if VERSION == 1" ); //$NON-NLS-1$
+		int length = "#if VERSION == 1".length(); //$NON-NLS-1$
+		IASTNode node = parse( code, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+		assertEquals( ((ASTNode)node).getLength(), length);
+		
+		offset1 = code.indexOf( "#elif VERSION == 2" ); //$NON-NLS-1$
+		length = "#elif VERSION == 2".length(); //$NON-NLS-1$
+		node = parse( code, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+		assertEquals( ((ASTNode)node).getLength(), length);
+		
+		offset1 = code.indexOf( "#else" ); //$NON-NLS-1$
+		length = "#else".length(); //$NON-NLS-1$
+		node = parse( code, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+		assertEquals( ((ASTNode)node).getLength(), length);
+
+		offset1 = code.indexOf( "#define INCFILE \"versN.h\"" ); //$NON-NLS-1$
+		length = "#define INCFILE \"versN.h\"".length(); //$NON-NLS-1$
+		node = parse( code, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+		assertEquals( ((ASTNode)node).getLength(), length);
+		
+		offset1 = code.indexOf( "INCFILE \"versN.h\"" ); //$NON-NLS-1$
+		length = "INCFILE".length(); //$NON-NLS-1$
+		node = parse( code, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+		assertEquals( ((ASTNode)node).getLength(), length);
+		
+		offset1 = code.indexOf( "#endif" ); //$NON-NLS-1$
+		length = "#endif".length(); //$NON-NLS-1$
+		node = parse( code, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+		assertEquals( ((ASTNode)node).getLength(), length);
+	}
+		
 	public void testBug87179() throws Exception
 	{
 		StringBuffer buffer = new StringBuffer();

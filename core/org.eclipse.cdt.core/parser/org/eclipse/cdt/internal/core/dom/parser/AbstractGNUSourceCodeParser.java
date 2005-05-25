@@ -1045,77 +1045,101 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     /**
      * @param flags
      *            input flags that are used to make our decision
-     * @return whether or not this looks like a a declarator follows
+     * @throws FoundDeclaratorException 
      * @throws
      * @throws EndOfFileException
      *             we could encounter EOF while looking ahead
      */
-    protected boolean lookAheadForDeclarator(Flags flags) {
+    protected void lookAheadForDeclarator(Flags flags) throws FoundDeclaratorException {
         if (flags.typeId)
-            return false;
+            return;
         IToken mark = null;
         try {
             mark = mark();
         } catch (EndOfFileException eof) {
-            return false;
+            return;
+        }
+        try
+        {
+            if( LT(1) == IToken.tIDENTIFIER && LT(2) == IToken.tIDENTIFIER )
+                return;
+        }
+        catch( EndOfFileException eof )
+        {
+            backup( mark );
+            return;
         }
         try {
             IASTDeclarator d = initDeclarator();
             IToken la = LA(1);
             backup(mark);
             if (la == null || la.getType() == IToken.tEOC)
-                return false;
+                return;
             final ASTNode n = ((ASTNode) d);
             final int length = n.getLength();
             final int offset = n.getOffset();
             if (length == 0)
-                return false;
+                return;
             if (flags.parm) {
                 ASTNode name = (ASTNode) d.getName();
                 if (name.getOffset() == offset && name.getLength() == length)
-                    return false;
+                    return;
                 if (d.getInitializer() != null) {
                     ASTNode init = (ASTNode) d.getInitializer();
                     if (name.getOffset() == offset
                             && n.getOffset() + n.getLength() == init
                                     .getOffset()
                                     + init.getLength())
-                        return false;
+                        return;
                 }
 
                 switch (la.getType()) {
                 case IToken.tCOMMA:
                 case IToken.tRPAREN:
-                    return true;
+                    throw new FoundDeclaratorException( d, la );
                 default:
-                    return false;
+                    return;
                 }
             }
 
-            return checkTokenVsDeclarator(la, d);
+            checkTokenVsDeclarator(la, d);
+            return;
         } catch (BacktrackException bte) {
             backup(mark);
-            return false;
+            return;
         } catch (EndOfFileException e) {
             backup(mark);
-            return false;
+            return;
         }
     }
 
-    protected boolean checkTokenVsDeclarator(IToken la, IASTDeclarator d) {
+    protected void checkTokenVsDeclarator(IToken la, IASTDeclarator d) throws FoundDeclaratorException {
         switch (la.getType()) {
         case IToken.tCOMMA:
         case IToken.tLBRACE:
-            return true;
+            throw new FoundDeclaratorException( d, la );
         case IToken.tSEMI:
             if (d instanceof IASTFieldDeclarator)
-                return false;
-            return true;
+                return;
+            throw new FoundDeclaratorException( d, la );
         default:
-            return false;
+            return;
         }
     }
 
+    public static class FoundDeclaratorException extends Exception
+    {
+        public final IASTDeclarator declarator;
+        public final IToken currToken;
+        public IASTDeclSpecifier declSpec;
+        
+        public FoundDeclaratorException( IASTDeclarator d, IToken t )
+        {
+            this.declarator = d;
+            this.currToken =t;
+        }
+    }
+    
     public static class Flags {
         private boolean encounteredTypename = false;
 

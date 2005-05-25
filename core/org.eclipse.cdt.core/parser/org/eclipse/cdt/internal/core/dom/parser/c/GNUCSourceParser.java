@@ -440,11 +440,22 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         firstToken = null; // necessary for scalability
 
-        IASTDeclSpecifier declSpec = declSpecifierSeq(false, false);
-
+        IASTDeclSpecifier declSpec;
         IASTDeclarator [] declarators = new IASTDeclarator[2];
+        boolean skipAhead = false;
+        try {
+            declSpec = declSpecifierSeq(false, false);
+        } catch (FoundDeclaratorException e) {
+            skipAhead = true;
+            declSpec = e.declSpec;
+            declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, e.declarator );
+            backup( e.currToken );
+        }
+
+        
         if (LT(1) != IToken.tSEMI) {
-            declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, initDeclarator());
+            if( ! skipAhead )
+                declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, initDeclarator());
 
             while (LT(1) == IToken.tCOMMA) {
                 consume(IToken.tCOMMA);
@@ -1211,7 +1222,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclarator declarator = null;
 
         try {
-            declSpecifier = declSpecifierSeq(false, true);
+            try
+            {
+                declSpecifier = declSpecifierSeq(false, true);
+            } catch (FoundDeclaratorException  e) {
+                throwBacktrack( e.currToken );
+            }
             declarator = declarator();
         } catch (BacktrackException bt) {
             backup(mark);
@@ -1313,7 +1329,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     protected IASTDeclSpecifier declSpecifierSeq(boolean parm, boolean forTypeId)
-            throws BacktrackException, EndOfFileException {
+            throws BacktrackException, EndOfFileException, FoundDeclaratorException {
         Flags flags = new Flags(parm,forTypeId);
 
         int startingOffset = LA(1).getOffset();
@@ -1447,10 +1463,43 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (flags.haveEncounteredTypename()) {
                     break declSpecifiers;
                 }
-                if (lookAheadForDeclarator(flags)) {
-                    break declSpecifiers;
-                }
+                
+                try {
+                        lookAheadForDeclarator(flags);
+                    } catch (FoundDeclaratorException e) {
+                        ICASTSimpleDeclSpecifier declSpec = null;
+                        if (typeofExpression != null) {
+                            declSpec = createGCCSimpleTypeSpecifier();
+                            ((IGCCASTSimpleDeclSpecifier) declSpec)
+                                    .setTypeofExpression(typeofExpression);
+                            typeofExpression.setParent(declSpec);
+                            typeofExpression
+                                    .setPropertyInParent(IGCCASTSimpleDeclSpecifier.TYPEOF_EXPRESSION);
+                        } else {
+                            declSpec = createSimpleTypeSpecifier();
+                        }
+                        
+                        declSpec.setConst(isConst);
+                        declSpec.setRestrict(isRestrict);
+                        declSpec.setVolatile(isVolatile);
+                        declSpec.setInline(isInline);
+                        declSpec.setStorageClass(storageClass);
 
+                        declSpec.setType(simpleType);
+                        declSpec.setLong(isLong);
+                        declSpec.setLongLong(isLongLong);
+                        declSpec.setUnsigned(isUnsigned);
+                        declSpec.setSigned(isSigned);
+                        declSpec.setShort(isShort);
+                        if( typeofExpression != null && last == null ){
+                            ((ASTNode)declSpec).setOffsetAndLength( (ASTNode)typeofExpression );
+                        } else {
+                            ((ASTNode) declSpec).setOffsetAndLength(startingOffset,
+                                    (last != null) ? last.getEndOffset() - startingOffset : 0);
+                        }
+                        e.declSpec = declSpec;
+                        throw e;
+                    }
                 identifier = identifier();
                 last = identifier;
                 isIdentifier = true;
@@ -1746,20 +1795,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         IASTDeclarator d = declarator();
 
-        try {
-            // astFactory.constructExpressions(constructInitializers);
-            IASTInitializer i = optionalCInitializer();
-            if (i != null) {
-                d.setInitializer(i);
-                i.setParent(d);
-                i.setPropertyInParent(IASTDeclarator.INITIALIZER);
+        IASTInitializer i = optionalCInitializer();
+        if (i != null) {
+            d.setInitializer(i);
+            i.setParent(d);
+            i.setPropertyInParent(IASTDeclarator.INITIALIZER);
                 ((ASTNode) d).setLength(calculateEndOffset(i)
                         - ((ASTNode) d).getOffset());
-            }
-            return d;
-        } finally {
-            // astFactory.constructExpressions(true);
         }
+        return d;
     }
 
     protected IASTDeclarator declarator() throws EndOfFileException,
@@ -2179,7 +2223,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throws BacktrackException, EndOfFileException {
         IToken current = LA(1);
         int startingOffset = current.getOffset();
-        IASTDeclSpecifier declSpec = declSpecifierSeq(true, false);
+        
+        IASTDeclSpecifier declSpec = null;
+        try
+        {
+            declSpec = declSpecifierSeq(true, false);
+        }
+        catch( FoundDeclaratorException fd )
+        {
+            declSpec = fd.declSpec;
+        }
 
         IASTDeclarator declarator = null;
         if (LT(1) != IToken.tSEMI)

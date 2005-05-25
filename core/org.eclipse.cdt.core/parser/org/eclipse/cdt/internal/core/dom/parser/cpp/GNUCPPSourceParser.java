@@ -944,7 +944,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclarator declarator = null;
 
         try {
-            declSpecifier = declSpecifierSeq(true, true);
+            try {
+                declSpecifier = declSpecifierSeq(true, true);
+            } 
+            catch (FoundDeclaratorException e) {
+                throwBacktrack( mark );
+            }
             if (LT(1) != IToken.tEOC)
                 declarator = declarator(SimpleDeclarationStrategy.TRY_FUNCTION,
                         forNewExpression);
@@ -2821,12 +2826,25 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(firstOffset, firstToken.getLength());
         firstToken = null; // necessary for scalability
 
-        ICPPASTDeclSpecifier declSpec = declSpecifierSeq(false, false);
+        IASTDeclSpecifier declSpec;
         IASTDeclarator[] declarators = new IASTDeclarator[2];
-        if (LT(1) != IToken.tSEMI && LT(1) != IToken.tEOC) {
+        boolean tryAgain = false;
+        try {
+            declSpec = declSpecifierSeq(false, false);
+        } catch (FoundDeclaratorException e) {
+            tryAgain = true;
+            declSpec = e.declSpec;
             declarators = (IASTDeclarator[]) ArrayUtil
-                    .append(IASTDeclarator.class, declarators,
-                            initDeclarator(strategy));
+            .append(IASTDeclarator.class, declarators,
+                    e.declarator);
+            backup( e.currToken );
+        }
+        
+        if (LT(1) != IToken.tSEMI && LT(1) != IToken.tEOC) {
+            if( !tryAgain )
+                declarators = (IASTDeclarator[]) ArrayUtil
+                        .append(IASTDeclarator.class, declarators,
+                                initDeclarator(strategy));
             while (LT(1) == IToken.tCOMMA) {
                 consume(IToken.tCOMMA);
                 declarators = (IASTDeclarator[]) ArrayUtil.append(
@@ -3085,7 +3103,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected ICPPASTParameterDeclaration parameterDeclaration()
             throws BacktrackException, EndOfFileException {
         IToken current = LA(1);
-        IASTDeclSpecifier declSpec = declSpecifierSeq(true, false);
+        IASTDeclSpecifier declSpec = null;
+        try {
+            declSpec = declSpecifierSeq(true, false);
+        } catch (FoundDeclaratorException e) {
+            throwBacktrack( e.currToken );
+        }
         IASTDeclarator declarator = null;
         if (LT(1) != IToken.tSEMI)
             declarator = initDeclarator(SimpleDeclarationStrategy.TRY_FUNCTION);
@@ -3135,9 +3158,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return TODO
      * @throws BacktrackException
      *             request a backtrack
+     * @throws FoundDeclaratorException 
      */
     protected ICPPASTDeclSpecifier declSpecifierSeq(boolean parm,
-            boolean forTypeId) throws BacktrackException, EndOfFileException {
+            boolean forTypeId) throws BacktrackException, EndOfFileException, FoundDeclaratorException {
         IToken firstToken = LA(1);
         Flags flags = new Flags(parm, false, forTypeId);
         IToken last = null;
@@ -3307,8 +3331,54 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (flags.haveEncounteredTypename())
                     break declSpecifiers;
 
-                if (lookAheadForDeclarator(flags))
-                    break declSpecifiers;
+                try
+                {
+                    lookAheadForDeclarator(flags);
+                }
+                catch( FoundDeclaratorException fde )
+                {
+                    ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;
+                    if (isLongLong || typeofExpression != null) {
+                        simpleDeclSpec = createGPPSimpleDeclSpecifier();
+                        ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec)
+                                .setLongLong(isLongLong);
+                        if (typeofExpression != null) {
+                            ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec)
+                                    .setTypeofExpression(typeofExpression);
+                            typeofExpression.setParent(simpleDeclSpec);
+                            typeofExpression
+                                    .setPropertyInParent(IGPPASTSimpleDeclSpecifier.TYPEOF_EXPRESSION);
+                        }
+                    } else
+                        simpleDeclSpec = createSimpleDeclSpecifier();
+
+                    if( last == null && typeofExpression != null ){
+                        ((ASTNode) simpleDeclSpec).setOffsetAndLength((ASTNode) typeofExpression);
+                    } else {
+                        int l = last != null ? last.getEndOffset() - firstToken.getOffset() : 0;
+                        ((ASTNode) simpleDeclSpec)
+                                .setOffsetAndLength(firstToken.getOffset(), l);
+                    }
+                    simpleDeclSpec.setConst(isConst);
+                    simpleDeclSpec.setVolatile(isVolatile);
+                    if (simpleDeclSpec instanceof IGPPASTDeclSpecifier)
+                        ((IGPPASTDeclSpecifier) simpleDeclSpec).setRestrict(isRestrict);
+
+                    simpleDeclSpec.setFriend(isFriend);
+                    simpleDeclSpec.setInline(isInline);
+                    simpleDeclSpec.setStorageClass(storageClass);
+                    simpleDeclSpec.setVirtual(isVirtual);
+                    simpleDeclSpec.setExplicit(isExplicit);
+
+                    simpleDeclSpec.setType(simpleType);
+                    simpleDeclSpec.setLong(isLong);
+                    simpleDeclSpec.setShort(isShort);
+                    simpleDeclSpec.setUnsigned(isUnsigned);
+                    simpleDeclSpec.setSigned(isSigned);
+                    fde.declSpec = simpleDeclSpec;
+                    throw fde;
+                    
+                }
 
                 duple = name();
                 last = duple.getLastToken();
@@ -3561,7 +3631,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             ((ASTNode) d).setLength(calculateEndOffset(initializer)
                     - ((ASTNode) d).getOffset());
         }
-
         return d;
     }
 
@@ -3745,34 +3814,39 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             for (;;) {
                 switch (LT(1)) {
                 case IToken.tLPAREN:
+                    IToken markityMark = mark();
+                    boolean success = false;
+                    try
+                    {
+                        consume( IToken.tLPAREN );
+                        expression();
+                        consume( IToken.tRPAREN );
+                        success = true;
+                        backup( markityMark );
+                    }
+                    catch( BacktrackException bte )
+                    {
+                        backup( markityMark );
+                    }
+                    catch( EndOfFileException eof )
+                    {
+                        backup( markityMark );
+                    }
+                    if( success )
+                    {
+                        switch( LT(1) )
+                        {
+                        case IToken.tSEMI:
+                        case IToken.tCOMMA:
+                            break overallLoop;
+                        }
+                    }
 
-                    // boolean failed = false;
-                    //
-                    // // temporary fix for initializer/function declaration
-                    // // ambiguity
-                    // if (!LA(2).looksLikeExpression()
-                    // && strategy != SimpleDeclarationStrategy.TRY_VARIABLE) {
-                    // if (LT(2) == IToken.tIDENTIFIER) {
-                    // IToken newMark = mark();
-                    // consume(IToken.tLPAREN);
-                    // try {
-                    // name();
-                    // // TODO - we need to lookup/resolve this name
-                    // // see if its a type ...
-                    // // if it is a type, failed = false
-                    // // else failed = true
-                    // failed = false;
-                    // } catch (BacktrackException b) {
-                    // failed = true;
-                    // }
-                    //
-                    // backup(newMark);
-                    // }
-                    // }
-                    if ((!LA(2).looksLikeExpression()
-                            && strategy != SimpleDeclarationStrategy.TRY_VARIABLE
-                    // && !failed
-                    && !forNewTypeId)) {
+                    if( strategy == SimpleDeclarationStrategy.TRY_VARIABLE )
+                        break overallLoop;
+
+                    
+                    if (!LA(2).looksLikeExpression()&& !forNewTypeId) {
                         // parameterDeclarationClause
                         isFunction = true;
                         // TODO need to create a temporary scope object here
@@ -5239,13 +5313,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
-    protected boolean checkTokenVsDeclarator(IToken la, IASTDeclarator d) {
+    protected void checkTokenVsDeclarator(IToken la, IASTDeclarator d) throws FoundDeclaratorException {
         switch (la.getType()) {
         case IToken.tCOLON:
         case IToken.t_try:
-            return true;
+            throw new FoundDeclaratorException( d, la );
         default:
-            return super.checkTokenVsDeclarator(la, d);
+            super.checkTokenVsDeclarator(la, d);
         }
     }
     

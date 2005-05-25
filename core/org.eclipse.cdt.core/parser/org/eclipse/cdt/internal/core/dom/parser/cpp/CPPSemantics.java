@@ -2737,7 +2737,10 @@ public class CPPSemantics {
 		IType sPrev = src;
 		while( sPrev instanceof ITypeContainer ){
 			IType next = ((ITypeContainer)sPrev).getType();
-			if( next == s || (next instanceof IQualifierType && ((IQualifierType)next).getType() == s ) )
+			while( next instanceof IQualifierType || next instanceof ITypedef ){
+				next = ((ITypeContainer)next).getType();
+			}
+			if( next == s )
 				break;
 			sPrev = next;
 		}
@@ -2757,7 +2760,10 @@ public class CPPSemantics {
 			IType tPrev = trg;
 			while( tPrev instanceof ITypeContainer ){
 				IType next = ((ITypeContainer)tPrev).getType();
-				if( next == t || (next instanceof IQualifierType && ((IQualifierType)next).getType() == t ) )
+				while( next instanceof IQualifierType || next instanceof ITypedef ){
+					next = ((ITypeContainer)next).getType();
+				}
+				if( next == t )
 					break;
 				tPrev = next;
 			}

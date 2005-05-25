@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
@@ -83,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -91,6 +93,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -1552,7 +1555,15 @@ public class CPPVisitor {
 			IBinding binding = name.resolveBinding();
 			if( binding instanceof IType )
 				type = (IType) binding;
-			else if( binding instanceof ICPPTemplateNonTypeParameter ){
+			else if( binding instanceof ICPPConstructor ){
+				try {
+					ICPPClassScope scope = (ICPPClassScope) binding.getScope();
+					type = scope.getClassType();
+					type = new CPPPointerType( type );
+				} catch (DOMException e) {
+					type = e.getProblem();
+				}
+			} else if( binding instanceof ICPPTemplateNonTypeParameter ){
 				//TODO workaround... is there anything better? 
 				try {
 					type = ((ICPPTemplateNonTypeParameter)binding).getType();
@@ -1817,6 +1828,22 @@ public class CPPVisitor {
 				if( st instanceof IASTExpressionStatement )
 					return getExpressionType( ((IASTExpressionStatement)st).getExpression() );
 			}
+		} else if( expression instanceof IASTConditionalExpression ){
+			IASTConditionalExpression conditional = (IASTConditionalExpression) expression;
+			IType t2 = getExpressionType( conditional.getPositiveResultExpression() );
+			IType t3 = getExpressionType( conditional.getNegativeResultExpression() );
+			if( t3 instanceof IPointerType || t2 == null )
+				return t3;
+			return t2;
+		} else if( expression instanceof ICPPASTDeleteExpression ){
+			return CPPSemantics.VOID_TYPE;
+		} else if( expression instanceof ICPPASTTypenameExpression ){
+			IBinding binding = ((ICPPASTTypenameExpression)expression).getName().resolveBinding();
+			if( binding instanceof IType )
+				return (IType) binding;
+		} else if( expression instanceof ICPPASTNewExpression ) {
+			ICPPASTNewExpression newExp = (ICPPASTNewExpression) expression;
+			return createType( newExp.getTypeId() );
 		}
 	    return null;
 	}

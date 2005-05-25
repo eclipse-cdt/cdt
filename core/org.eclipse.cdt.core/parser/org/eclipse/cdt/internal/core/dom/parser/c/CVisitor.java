@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
@@ -752,6 +753,13 @@ public class CVisitor {
 					if( st instanceof IASTExpressionStatement )
 						return getExpressionType( ((IASTExpressionStatement)st).getExpression() );
 				}
+			} else if( expression instanceof IASTConditionalExpression ){
+				IASTConditionalExpression conditional = (IASTConditionalExpression) expression;
+				IType t2 = getExpressionType( conditional.getPositiveResultExpression() );
+				IType t3 = getExpressionType( conditional.getNegativeResultExpression() );
+				if( t3 instanceof IPointerType || t2 == null )
+					return t3;
+				return t2;
 			}
 	    } catch( DOMException e ){
 	        return e.getProblem();

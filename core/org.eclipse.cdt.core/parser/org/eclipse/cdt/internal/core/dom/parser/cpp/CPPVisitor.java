@@ -119,6 +119,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -1759,7 +1760,12 @@ public class CPPVisitor {
 					return e.getProblem();
 				}
 			} else if( op == IASTUnaryExpression.op_amper ){
-			    return new CPPPointerType( type );
+				if( type instanceof ICPPReferenceType )
+					try {
+						return new CPPPointerType( ((ICPPReferenceType)type).getType() );
+					} catch (DOMException e) {
+					}
+				return new CPPPointerType( type );
 			} else if ( type instanceof CPPBasicType ){
 				((CPPBasicType)type).setValue( expression );
 			}

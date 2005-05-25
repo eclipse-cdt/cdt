@@ -103,6 +103,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -373,6 +375,7 @@ public class CPPSemantics {
 		public static final int DERIVED_TO_BASE_CONVERSION = 3;
 		public static final int USERDEFINED_CONVERSION_RANK = 4;
 		public static final int ELLIPSIS_CONVERSION = 5;
+		public static final int FUZZY_TEMPLATE_PARAMETERS = 6;
 
 		public int compare( Cost cost ) throws DOMException{
 			int result = 0;
@@ -1783,7 +1786,7 @@ public class CPPSemantics {
 		Object [] fParams = data.functionParameters;
 		int numParameters = ( fParams != null ) ? fParams.length : 0;		
 		int num;	
-			
+		boolean def = data.forDefinition();	
 		//Trim the list down to the set of viable functions
 		IFunction function = null;
 		int size = functions.length;
@@ -1794,7 +1797,7 @@ public class CPPSemantics {
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
 			if( num == numParameters ){
-				if( data.forDefinition() && !isMatchingFunctionDeclaration( function, data ) ){
+				if( def && !isMatchingFunctionDeclaration( function, data ) ){
 					functions[i] = null;
 				}
 				continue;
@@ -1805,6 +1808,12 @@ public class CPPSemantics {
 			    IType t = param.getType();
 			    if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void )
 			        continue;
+			}
+			
+			if( def ){
+				//if this is for a definition, we had to match the number of parameters.
+				functions[i] = null;
+				continue;
 			}
 			
 			//A candidate function having fewer than m parameters is viable only if it has an 
@@ -1822,7 +1831,6 @@ public class CPPSemantics {
 			    for( int j = num - 1; j >= numParameters; j-- ){
 					if( ((ICPPParameter)params[j]).getDefaultValue() == null ){
 					    functions[i] = null;
-						size--;
 						break;
 					}
 				}
@@ -2025,17 +2033,15 @@ public class CPPSemantics {
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
 					cost = checkStandardConversionSequence( source, target );
-					if( !data.forDefinition() ){
-						//12.3-4 At most one user-defined conversion is implicitly applied to
-						//a single value.  (also prevents infinite loop)				
-						if( cost.rank == Cost.NO_MATCH_RANK && !data.forUserDefinedConversion ){
-							temp = checkUserDefinedConversionSequence( source, target );
-							if( temp != null ){
-								cost = temp;
-							}
+					//12.3-4 At most one user-defined conversion is implicitly applied to
+					//a single value.  (also prevents infinite loop)				
+					if( (cost.rank == Cost.NO_MATCH_RANK || cost.rank == Cost.FUZZY_TEMPLATE_PARAMETERS ) && 
+						!data.forUserDefinedConversion )
+					{
+						temp = checkUserDefinedConversionSequence( source, target );
+						if( temp != null ){
+							cost = temp;
 						}
-					} else {
-					    cost.rank = Cost.NO_MATCH_RANK;
 					}
 				}
 				
@@ -2400,6 +2406,9 @@ public class CPPSemantics {
 		
 		derivedToBaseConversion( cost );
 		
+		if( cost.rank == -1 ){
+			relaxTemplateParameters( cost );
+		}
 		return cost;	
 	}
 	
@@ -2805,6 +2814,16 @@ public class CPPSemantics {
 				cost.rank = Cost.DERIVED_TO_BASE_CONVERSION;
 				cost.conversion = temp;
 			}	
+		}
+	}
+	static private void relaxTemplateParameters( Cost cost ){
+		IType s = getUltimateType( cost.source, false );
+		IType t = getUltimateType( cost.target, false );
+		
+		if( (s instanceof ICPPTemplateTypeParameter && t instanceof ICPPTemplateTypeParameter) ||
+			(s instanceof ICPPTemplateTemplateParameter && t instanceof ICPPTemplateTemplateParameter ) )
+		{
+			cost.rank = Cost.FUZZY_TEMPLATE_PARAMETERS;
 		}
 	}
 

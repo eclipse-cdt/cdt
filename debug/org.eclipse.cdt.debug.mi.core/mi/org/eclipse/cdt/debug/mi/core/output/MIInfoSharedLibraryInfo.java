@@ -21,6 +21,10 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 	MIShared[] shared;
 	boolean isUnixFormat = true;
 	boolean hasProcessHeader = false;
+	
+	// HP-UX shared library view
+	private boolean isHPUXFormat;
+	static String mergestr=null;
 
 	public MIInfoSharedLibraryInfo(MIOutput out) {
 		super(out);
@@ -55,9 +59,27 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 		if (!hasProcessHeader) {
 			// Process the header and choose a type.
 			if (str.startsWith("DLL")) { //$NON-NLS-1$
+				// Cygwin info shared
 				isUnixFormat = false;
+			} else if(str.startsWith("Shared Object Libraries")) { //$NON-NLS-1$
+				// HP-UX shared library view
+				isHPUXFormat = true;				
 			}
 			hasProcessHeader = true;
+		} else if (isHPUXFormat) {
+			// FIX : HP-UX shared library view
+			if(str.startsWith("0x")) { //$NON-NLS-1$
+               //merging...
+				mergestr +=" "+str; //$NON-NLS-1$
+				parseHPUXShared(mergestr, aList);
+				return;
+			} else if(str.startsWith("tstart")) { //$NON-NLS-1$
+				return;
+			} else {
+               // new shareed library entry...;
+				mergestr = new String(str);
+				return;
+			}
 		} else if (isUnixFormat) {
 			parseUnixShared(str, aList);
 		} else {
@@ -110,6 +132,44 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 			}
 		}
 	}
+
+	// FIX : HP-UX shared library view
+	void parseHPUXShared(String str, List aList) {
+		if (str.length() > 0) {
+			// Pass the header
+			int index = -1;
+			String from = ""; //$NON-NLS-1$
+			String to = ""; //$NON-NLS-1$
+			boolean syms = false;
+			String name = ""; //$NON-NLS-1$
+
+			for (int i = 0;(index = str.indexOf(' ')) != -1 || i < 3; i++) 
+			{
+				if (index == -1) {
+					index = 0;
+				}
+
+				String sub = str.substring(0,index).trim();
+				str= str.substring(index).trim();
+				switch (i) {
+					case 0 :
+						name = sub;
+						break;
+					case 2 : // second column is "To"
+							to = sub;
+						break;
+					case 1 : // first column is "From"
+							from = sub;
+						break;
+				}
+			}
+			syms=true;
+			if (name.length() > 0) {
+				MIShared s = new MIShared(from, to, syms, name);
+				aList.add(s);
+			}
+		}
+	} // end fo fix
 
 	void parseWinShared(String str, List aList) {
 		String from = ""; //$NON-NLS-1$

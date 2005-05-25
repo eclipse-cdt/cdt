@@ -1,3 +1,7 @@
+2005-05-25 Alain Magloire
+	Fix PR 95705
+	* mi/org/eclipse/cdt/debug/mi/core/output/MIInfoSharedLibraryInfo.java
+
 2005-05-16 Alain Magloire
 	Fix PR 91975
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java

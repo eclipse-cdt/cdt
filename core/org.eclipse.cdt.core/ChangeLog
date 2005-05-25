@@ -1,3 +1,9 @@
+2005-05-25 David Inglis
+	
+	CModel performance improvement: only need to test project existance and nature for ICElement.exists()
+	
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+
 2005-05-20 Vladimir Hirsl
 	Indexer performance improvement: indexing nodes from external include files only once.
 	

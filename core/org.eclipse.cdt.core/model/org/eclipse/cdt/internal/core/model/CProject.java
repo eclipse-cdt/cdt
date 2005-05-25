@@ -657,7 +657,7 @@ public class CProject extends Openable implements ICProject {
 		if (!isCProject()) {
 			return false;
 		}
-		return super.exists();
+		return true;
 	}
 
 	/* (non-Javadoc)

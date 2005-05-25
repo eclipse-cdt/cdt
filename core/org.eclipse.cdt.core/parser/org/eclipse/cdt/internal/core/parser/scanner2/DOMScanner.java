@@ -42,13 +42,15 @@ public class DOMScanner extends BaseScanner {
         public final char[] pt;
 
         public final int o;
+        public final int eo;
 
         /**
          *  
          */
-        public DOMInclusion(char[] path, int offset) {
+        public DOMInclusion(char[] path, int offset, int endOffset) {
             this.pt = path;
             this.o = offset;
+            this.eo = endOffset;
         }
     }
 
@@ -135,7 +137,7 @@ public class DOMScanner extends BaseScanner {
             char[] filenamePath, boolean local, int startOffset,
             int startingLineNumber, int nameOffset, int nameEndOffset,
             int nameLine, int endOffset, int endLine, boolean isForced) {
-        return new DOMInclusion(filenamePath, resolveOffset(startOffset));
+        return new DOMInclusion(filenamePath, resolveOffset(startOffset), resolveOffset(endOffset));
     }
 
     /*
@@ -196,8 +198,7 @@ public class DOMScanner extends BaseScanner {
             if( ! isCircularInclusion( (InclusionData) data ))
             {
                 DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
-                locationMap.startInclusion(((InclusionData) data).reader, inc.o,
-                        resolveOffset(getCurrentOffset()));
+                locationMap.startInclusion(((InclusionData) data).reader, inc.o, inc.eo);
                 bufferDelta[bufferStackPos + 1] = 0;
             }
         }

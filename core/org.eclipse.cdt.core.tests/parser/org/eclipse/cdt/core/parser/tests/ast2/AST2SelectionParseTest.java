@@ -38,11 +38,17 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.core.resources.IFile;
 
 /**
  * @author dsteffle
  */
 public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
+
+	public AST2SelectionParseTest(String name) {
+		super(name, AST2SelectionParseTest.class);
+	}
+
 	public void testBaseCase_VariableReference() throws Exception
 	{
 		String code = "void f() { int x; x=3; }"; //$NON-NLS-1$
@@ -1575,4 +1581,15 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		IASTNode node = parse( code, ParserLanguage.C, offset1, length );
 		assertNotNull(node);
 	}
+	
+	public void testBug86126() throws Exception {
+		importFile("foo.h", "int x;\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		String code = "#include \"foo.h\"\r\n"; //$NON-NLS-1$
+		IFile file = importFile("blah.c", code);
+		int offset1 = code.indexOf( "#include \"foo.h\"" ); //$NON-NLS-1$
+		int length = "#include \"foo.h\"".length(); //$NON-NLS-1$
+		IASTNode node = parse( file, ParserLanguage.C, offset1, length );
+		assertNotNull(node);
+	}
+
 }

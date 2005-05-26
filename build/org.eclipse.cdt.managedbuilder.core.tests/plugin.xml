@@ -2283,11 +2283,12 @@
 			  valueType="string">
 		  </option>
 		  <option
-			  defaultValue="false"
-			  name="MBS30Opt.Posix.Verbose"
+	          applicabilityCalculator="org.eclipse.cdt.managedbuilder.core.tests.AlwaysOnApplicabilityCalculator"
 			  category="gnu.c.compiler.category30.other"
 			  command="-v"
+    	      defaultValue="true"
 			  id="gnu.c.compiler.option30.misc.verbose"
+        	  name="MBS30Opt.Posix.Verbose"
 			  valueType="boolean">
 		  </option>
 		  <option
@@ -2298,6 +2299,16 @@
 			  id="gnu.c.compiler.option30.misc.ansi"
 			  valueType="boolean">
 		  </option>
+		  <option
+	          applicabilityCalculator="org.eclipse.cdt.managedbuilder.core.tests.AlwaysOffApplicabilityCalculator"
+        	  defaultValue="true"
+        	  name="MBS30Opt.Posix.FakeOption"
+			  category="gnu.c.compiler.category30.other"
+    	      command="-fake"
+	          id="gnu.c.compiler.option30.misc.FakeOption"
+    	      isAbstract="false"
+   		      valueType="boolean">
+   		  </option>
           <inputType
 		      sources="c"
 			  dependencyExtensions="h"

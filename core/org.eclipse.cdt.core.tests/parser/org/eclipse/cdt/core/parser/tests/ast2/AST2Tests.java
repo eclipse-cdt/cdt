@@ -3006,6 +3006,19 @@ public class AST2Tests extends AST2BaseTest {
         assertNoProblemBindings(nameResolver);
     }
 
+    public void testBug95720() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void func() {\n" );
+        buffer.append( "    int i=0;\n" );
+        buffer.append( "i= i&0x00ff;\n" );
+        buffer.append( "i= (i)&0x00ff;\n" );
+        buffer.append( "}\n" );
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        CNameCollector nameResolver = new CNameCollector();
+        tu.accept(nameResolver);
+        assertNoProblemBindings(nameResolver);        
+    }
+    
     protected void assertNoProblemBindings(CNameCollector col) {
         Iterator i = col.nameList.iterator();
         while (i.hasNext()) {

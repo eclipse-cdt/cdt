@@ -3796,6 +3796,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     finalOffset = consume(IToken.tRPAREN).getEndOffset();
                 } catch (BacktrackException bte) {
                     backup(mark);
+                    innerDecl = null;
                 }
                 declaratorName = createName();
             } else {

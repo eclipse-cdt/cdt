@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -100,6 +101,15 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
 
+    public void testBug95424() throws Exception {
+        IASTTranslationUnit tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, true, true );
+        tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, false, true );
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
+        IASTExpressionStatement es = (IASTExpressionStatement) cs.getStatements()[0];
+        assertTrue( es.getExpression() instanceof IASTFunctionCallExpression );
+    }
+    
     public void testSimpleClass() throws Exception {
         StringBuffer buffer = new StringBuffer("class A { } a;"); //$NON-NLS-1$
 

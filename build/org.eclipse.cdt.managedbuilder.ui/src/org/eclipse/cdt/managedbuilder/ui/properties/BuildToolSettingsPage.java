@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -260,6 +261,11 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		for (int k = 0; k < options.length; k++) {
 			IOption option = options[k];
 			buf.setLength( 0 );
+
+			// check to see if the option has an applicability calculator
+			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(tool)) {
+			
 			try{
 			switch (option.getValueType()) {
 				case IOption.BOOLEAN :
@@ -313,10 +319,13 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					break;
 				default :
 					break;
+	
 			}
 			if( buf.toString().trim().length() > 0 ) flags.add( buf.toString().trim() );
 			} catch (BuildMacroException e) {
 				
+			}
+			
 			}
 		}
 		

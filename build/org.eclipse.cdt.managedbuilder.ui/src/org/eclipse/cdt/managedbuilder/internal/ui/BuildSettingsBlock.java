@@ -377,7 +377,17 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 			if (builder.isExtensionElement()) {
 				IToolChain tc = selectedConfiguration.getToolChain();
 				int nnn = ManagedBuildManager.getRandomNumber();
-				String subId = builder.getId() + "." + nnn;		//$NON-NLS-1$
+				String subId;
+				String tmpId;
+				String version;
+				
+				tmpId = builder.getId();
+				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+				if ( version != null) {   // If the 'tmpId' contains version information
+					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					subId = tmpId + "." + nnn;		//$NON-NLS-1$
+				}
 				String name = builder.getName() + "." + selectedConfiguration.getName(); 	//$NON-NLS-1$
 				tc.createBuilder(builder, subId, name, false);
 			}

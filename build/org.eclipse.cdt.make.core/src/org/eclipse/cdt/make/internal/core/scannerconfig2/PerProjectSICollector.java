@@ -252,7 +252,7 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
             addedIncludes = addItemsWithOrder(sumDiscoveredIncludes, discoveredIncludes, true);
 
             // try to translate cygpaths to absolute paths
-			List finalSumIncludes = CygpathTranslator.translateIncludePaths(sumDiscoveredIncludes);
+			List finalSumIncludes = CygpathTranslator.translateIncludePaths(project, sumDiscoveredIncludes);
 			
 			// Step 2. Get project's scanner config
 			LinkedHashMap persistedIncludes = discPathInfo.getIncludeMap();

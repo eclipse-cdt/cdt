@@ -37,7 +37,7 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
             List symbols = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
             
     		// This method will be called by the parser each time there is a new value
-            List translatedIncludes = CygpathTranslator.translateIncludePaths(includes);
+            List translatedIncludes = CygpathTranslator.translateIncludePaths(project, includes);
     		Iterator pathIter = translatedIncludes.listIterator();
     		while (pathIter.hasNext()) {
     			String convertedPath = (String) pathIter.next();

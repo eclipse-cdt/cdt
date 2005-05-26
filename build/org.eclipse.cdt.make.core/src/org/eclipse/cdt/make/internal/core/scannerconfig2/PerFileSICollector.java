@@ -258,7 +258,7 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
             List siItem = (List) scannerInfo.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
             cmd.setSymbols(siItem);
             siItem = (List) scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);
-            cmd.setIncludes(CygpathTranslator.translateIncludePaths(siItem));
+            cmd.setIncludes(CygpathTranslator.translateIncludePaths(project, siItem));
             siItem = (List) scannerInfo.get(ScannerInfoTypes.QUOTE_INCLUDE_PATHS);
             cmd.setQuoteIncludes(siItem);
             

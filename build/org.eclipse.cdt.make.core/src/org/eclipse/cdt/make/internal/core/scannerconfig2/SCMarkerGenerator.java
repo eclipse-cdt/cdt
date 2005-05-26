@@ -10,11 +10,15 @@
  ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -67,6 +71,34 @@ public class SCMarkerGenerator implements IMarkerGenerator {
         }
     }
 
+    public void removeMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
+        IWorkspace workspace = file.getWorkspace();
+        // remove specific marker
+        try {
+            IMarker[] markers = file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
+            if (markers != null) {
+                List exactMarkers = new ArrayList();
+                for (int i = 0; i < markers.length; i++) {
+                    IMarker marker = markers[i];
+                    int location = ((Integer) marker.getAttribute(IMarker.LOCATION)).intValue();
+                    String error = (String) marker.getAttribute(IMarker.MESSAGE);
+                    int sev = ((Integer) marker.getAttribute(IMarker.SEVERITY)).intValue();
+                    if (location == lineNumber &&
+                            errorDesc.equals(error) &&
+                            sev == severity) {
+                        exactMarkers.add(marker);
+                    }
+                }
+                if (exactMarkers.size() > 0) {
+                    workspace.deleteMarkers((IMarker[]) exactMarkers.toArray(new IMarker[exactMarkers.size()]));
+                }
+            }
+        }
+        catch (CoreException e) {
+            CCorePlugin.log(e.getStatus());
+        }
+    }
+    
     int mapMarkerSeverity(int severity) {
         switch (severity) {
             case SEVERITY_ERROR_BUILD :

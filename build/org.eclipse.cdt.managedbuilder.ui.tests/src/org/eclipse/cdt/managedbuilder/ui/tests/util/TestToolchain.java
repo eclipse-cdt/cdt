@@ -19,8 +19,24 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 public class TestToolchain implements IToolChain {
+
+	public String getManagedBuildRevision() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public PluginVersionIdentifier getVersion() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setVersion(PluginVersionIdentifier version) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public IConfigurationBuildMacroSupplier getBuildMacroSupplier() {
 		// TODO Auto-generated method stub

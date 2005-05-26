@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,14 +59,16 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * @param parent  The IConfiguration parent of this resource configuration
 	 * @param element The resource configuration definition from the manifest file 
 	 *                or a dynamic element provider
+	 * @param managedBuildRevision
 	 */
-	public ResourceConfiguration(IConfiguration parent, IManagedConfigElement element) {
+	public ResourceConfiguration(IConfiguration parent, IManagedConfigElement element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionResourceConfig = true;
 		
 		// setup for resolving
 		resolved = false;
 
+		setManagedBuildRevision(managedBuildRevision);
 		loadFromManifest(element);
 		
 		// Hook me up to the Managed Build Manager
@@ -74,7 +77,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		// Load the tool children
 		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
 		for (int n = 0; n < tools.length; ++n) {
-			Tool toolChild = new Tool(this, tools[n]);
+			Tool toolChild = new Tool(this, tools[n], getManagedBuildRevision());
 			toolList.add(toolChild);
 		}
 	}
@@ -85,11 +88,13 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	 * 
 	 * @param parent The <code>IConfiguration</code> the resource configuration will be added to. 
 	 * @param element The XML element that contains the resource configuration settings.
+	 * @param managedBuildRevision
 	 */
-	public ResourceConfiguration(IConfiguration parent, Element element) {
+	public ResourceConfiguration(IConfiguration parent, Element element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionResourceConfig = false;
 		
+		setManagedBuildRevision(managedBuildRevision);
 		// Initialize from the XML attributes
 		loadFromProject(element);
 
@@ -98,7 +103,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		for (int i = 0; i < configElements.getLength(); ++i) {
 			Node configElement = configElements.item(i);
 			if (configElement.getNodeName().equals(ITool.TOOL_ELEMENT_NAME)) {
-				Tool tool = new Tool((IBuildObject)this, (Element)configElement);
+				Tool tool = new Tool((IBuildObject)this, (Element)configElement, getManagedBuildRevision());
 				addTool(tool);
 			}
 		}
@@ -109,6 +114,9 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	
 		setId(id);
 		setName(resourceName);
+		
+		if ( parent != null)
+			setManagedBuildRevision(parent.getManagedBuildRevision());
 		
 		resPath = path;
 		isDirty = false;
@@ -128,6 +136,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		this.parent = parent;
 		isExtensionResourceConfig = false;
 
+		setManagedBuildRevision(cloneConfig.getManagedBuildRevision());
+		
 		//  Copy the remaining attributes
 		if (cloneConfig.resPath != null) {
 			resPath = new String(cloneConfig.resPath);
@@ -143,14 +153,24 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				Tool toolChild = (Tool) iter.next();
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
+				String tmpId;
 				String subName;
+				String version;
+				
 				if (toolChild.getSuperClass() != null) {
-					subId = toolChild.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+					tmpId = toolChild.getSuperClass().getId();
 					subName = toolChild.getSuperClass().getName();
 				} else {
-					subId = toolChild.getId() + "." + nnn;		//$NON-NLS-1$
+					tmpId = toolChild.getId();
 					subName = toolChild.getName();
+				}				
+				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+				if ( version != null) {   // If the 'tmpId' contains version information
+					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					subId = tmpId + "." + nnn;		//$NON-NLS-1$
 				}
+				
 				//  The superclass for the cloned tool is not the same as the one from the tool being cloned.
 				//  The superclasses reside in different configurations. 
 				ITool toolSuperClass = null;
@@ -620,4 +640,22 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	public IResource getOwner() {
 		return getParent().getOwner();
 	}
+	
+	
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( getParent() != null) {
+				return getParent().getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
+	}
+
 }

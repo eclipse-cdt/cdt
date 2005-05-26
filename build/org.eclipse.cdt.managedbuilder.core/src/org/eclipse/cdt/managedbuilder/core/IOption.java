@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public interface IOption extends IBuildObject {
 	public static final String IS_DEFAULT = "isDefault"; //$NON-NLS-1$
 	public static final String LIST_VALUE = "listOptionValue"; //$NON-NLS-1$
 	public static final String RESOURCE_FILTER = "resourceFilter"; //$NON-NLS-1$
+	public static final String APPLICABILITY_CALCULATOR = "applicabilityCalculator"; //$NON-NLS-1$
 	public static final String TYPE_BOOL = "boolean"; //$NON-NLS-1$
 	public static final String TYPE_ENUM = "enumerated"; //$NON-NLS-1$
 	public static final String TYPE_INC_PATH = "includePath"; //$NON-NLS-1$
@@ -124,6 +125,12 @@ public interface IOption extends IBuildObject {
 	 * @param int
 	 */
 	public void setResourceFilter(int filter);
+	
+	/**
+	 * @return an instance of the class that calculates whether the option is visible,
+	 * enabled, and used in command line generation
+	 */
+	public IOptionApplicability getApplicabilityCalculator();
 	
 	/**
 	 * Answers an array of strings containing the built-in values 

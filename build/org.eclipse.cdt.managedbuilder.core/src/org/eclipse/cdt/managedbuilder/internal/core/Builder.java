@@ -66,18 +66,22 @@ public class Builder extends BuildObject implements IBuilder {
 	 * This constructor is called to create a builder defined by an extension point in 
 	 * a plugin manifest file, or returned by a dynamic element provider
 	 * 
-	 * @param parent  The IToolChain parent of this builder, or <code>null</code> if
-	 *                defined at the top level
-	 * @param element The builder definition from the manifest file or a dynamic element
-	 *                provider
+	 * @param parent  				The IToolChain parent of this builder, or <code>null</code> if
+	 *                				defined at the top level
+	 * @param element 				The builder definition from the manifest file or a dynamic element
+	 *                				provider
+	 * @param managedBuildRevision 	The fileVersion of Managed Buid System                 
 	 */
-	public Builder(IToolChain parent, IManagedConfigElement element) {
+	public Builder(IToolChain parent, IManagedConfigElement element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionBuilder = true;
 		
 		// setup for resolving
 		resolved = false;
 
+		// Set the managedBuildRevision
+		setManagedBuildRevision(managedBuildRevision);
+		
 		loadFromManifest(element);
 		
 		// Hook me up to the Managed Build Manager
@@ -97,11 +101,14 @@ public class Builder extends BuildObject implements IBuilder {
 	public Builder(ToolChain parent, IBuilder superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
 		this.superClass = superClass;
+		setManagedBuildRevision(parent.getManagedBuildRevision());
 		if (this.superClass != null) {
 			superClassId = this.superClass.getId();
 		}
 		setId(Id);
 		setName(name);
+		setVersion(getVersionFromId());
+		
 		isExtensionBuilder = isExtensionElement;
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
@@ -117,10 +124,14 @@ public class Builder extends BuildObject implements IBuilder {
 	 * 
 	 * @param parent The <code>IToolChain</code> the Builder will be added to. 
 	 * @param element The XML element that contains the Builder settings.
+	 * @param managedBuildRevision 	The fileVersion of Managed Buid System
 	 */
-	public Builder(IToolChain parent, Element element) {
+	public Builder(IToolChain parent, Element element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionBuilder = false;
+		
+		// Set the managedBuildRevision
+		setManagedBuildRevision(managedBuildRevision);
 		
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -142,9 +153,20 @@ public class Builder extends BuildObject implements IBuilder {
 		}
 		setId(Id);
 		setName(name);
+		
+		// Set the managedBuildRevision & the version
+		setManagedBuildRevision(builder.getManagedBuildRevision());
+		setVersion(getVersionFromId());
+
 		isExtensionBuilder = false;
 		
 		//  Copy the remaining attributes
+		if(builder.versionsSupported != null) {
+			versionsSupported = new String(builder.versionsSupported);
+		}
+		if(builder.convertToId != null) {
+			convertToId = new String(builder.convertToId);
+		}
 		if (builder.unusedChildren != null) {
 			unusedChildren = new String(builder.unusedChildren);
 		}
@@ -199,6 +221,9 @@ public class Builder extends BuildObject implements IBuilder {
 		
 		// Get the name
 		setName(element.getAttribute(IBuildObject.NAME));
+		
+		// Set the version after extracting from 'id' attribute
+		setVersion(getVersionFromId());
 		
 		// superClass
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
@@ -273,6 +298,9 @@ public class Builder extends BuildObject implements IBuilder {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
 		
+		// Set the version after extracting from 'id' attribute
+		setVersion(getVersionFromId());
+
 		// superClass
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
 		if (superClassId != null && superClassId.length() > 0) {
@@ -720,5 +748,4 @@ public class Builder extends BuildObject implements IBuilder {
 			return superClass.getReservedMacroNameSupplier();
 		return reservedMacroNameSupplier;
 	}
-
 }

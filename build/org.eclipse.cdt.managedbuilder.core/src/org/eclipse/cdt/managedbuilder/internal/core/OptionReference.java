@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -688,6 +690,15 @@ public class OptionReference implements IOption {
 		return FILTER_ALL;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculator()
+	 */
+	public IOptionApplicability getApplicabilityCalculator() {
+		return option.getApplicabilityCalculator();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setResourceFilter(int)
 	 */
@@ -720,5 +731,17 @@ public class OptionReference implements IOption {
 	 */
 	public void setCommandFalse(String cmd) {
 	}
+
+	public PluginVersionIdentifier getVersion() {
+		return option.getVersion();
+	}
+
+	public void setVersion(PluginVersionIdentifier version) {
+		option.setVersion(version);
+	}
+
+	public String getManagedBuildRevision() {
+		return option.getManagedBuildRevision();
+	}	
 	
 }

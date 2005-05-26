@@ -21,12 +21,16 @@ import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,11 +62,12 @@ public class Option extends BuildObject implements IOption {
 	private Integer valueType;
 	private Boolean isAbstract;
 	private Integer resourceFilter;
+	private IConfigurationElement applicabilityCalculatorElement = null;
+	private IOptionApplicability applicabilityCalculator = null;
 	//  Miscellaneous
 	private boolean isExtensionOption = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
-
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -211,7 +216,10 @@ public class Option extends BuildObject implements IOption {
 					break;
 			}
 		}
+
 		category = option.category;
+		applicabilityCalculatorElement = option.applicabilityCalculatorElement;
+		applicabilityCalculator = option.applicabilityCalculator;
 
         setDirty(true);
 	}
@@ -284,6 +292,14 @@ public class Option extends BuildObject implements IOption {
 		} else if (resFilterStr.equals(PROJECT)) {
 			resourceFilter = new Integer(FILTER_PROJECT);
 		}
+		
+		// get the applicability calculator, if any
+		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR); 
+		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
+			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		}
+		
+		
 	}
 	
 	/* (non-Javadoc)
@@ -670,6 +686,12 @@ public class Option extends BuildObject implements IOption {
 			}
 			element.setAttribute(RESOURCE_FILTER, str);
 		}
+
+		// Note: applicability calculator cannot be specified in a project file because
+		//       an IConfigurationElement is needed to load it!
+		if (applicabilityCalculatorElement != null) {
+			//  TODO:  issue warning?
+		}
 		
 		// I am clean now
 		isDirty = false;
@@ -761,6 +783,45 @@ public class Option extends BuildObject implements IOption {
 		return resourceFilter.intValue();
 	}
 
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculatorElement()
+	 */
+	public IConfigurationElement getApplicabilityCalculatorElement() {
+		if (applicabilityCalculatorElement == null) {
+			if (superClass != null) {
+				return ((Option)superClass).getApplicabilityCalculatorElement();
+			}
+		}
+		return applicabilityCalculatorElement;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculator()
+	 */
+	public IOptionApplicability getApplicabilityCalculator() {
+		if (applicabilityCalculator != null) {
+			return applicabilityCalculator;
+		}
+
+		IConfigurationElement element = getApplicabilityCalculatorElement();
+		if (element != null) {
+			try {
+				if (element.getAttribute(APPLICABILITY_CALCULATOR) != null) {
+					applicabilityCalculator = (IOptionApplicability) element
+							.createExecutableExtension(APPLICABILITY_CALCULATOR);
+					return applicabilityCalculator;
+				}
+			} catch (CoreException e) {
+			}
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getBuiltIns()
 	 */
@@ -1419,6 +1480,34 @@ public class Option extends BuildObject implements IOption {
 				// TODO: report error
 			}
 		}
+	}
+	 
+	/**
+	 * @return Returns the managedBuildRevision.
+	 */
+	public String getManagedBuildRevision() {
+		if ( managedBuildRevision == null) {
+			if ( getParent() != null) {
+				return getParent().getManagedBuildRevision();
+			}
+		}
+		return managedBuildRevision;
+	}
+
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( getParent() != null) {
+				return getParent().getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
 	}
 
 }

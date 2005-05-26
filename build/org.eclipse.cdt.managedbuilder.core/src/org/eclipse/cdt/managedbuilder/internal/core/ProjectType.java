@@ -26,6 +26,8 @@ import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
+import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
+
 public class ProjectType extends BuildObject implements IProjectType {
 	
 	private static final String EMPTY_STRING = new String();
@@ -52,7 +54,7 @@ public class ProjectType extends BuildObject implements IProjectType {
 
 	//  Miscellaneous
 	private boolean resolved = true;
-
+	
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -62,11 +64,14 @@ public class ProjectType extends BuildObject implements IProjectType {
 	 * a plugin manifest file.
 	 * 
 	 * @param element
+	 * @param managedBuildRevision
 	 */
-	public ProjectType(IManagedConfigElement element) {
+	public ProjectType(IManagedConfigElement element, String managedBuildRevision) {
 		// setup for resolving
 		resolved = false;
 
+		setManagedBuildRevision(managedBuildRevision);
+		
 		loadFromManifest(element);
 		
 		// Hook me up to the Managed Build Manager
@@ -82,14 +87,14 @@ public class ProjectType extends BuildObject implements IProjectType {
 			// Tool Integrator provided 'ConfigurationNameProvider' class
 			// to get configuration names dynamically based architecture, os, toolchain version etc.
 			for (int n = 0; n < configs.length; ++n) {
-				Configuration config = new Configuration(this, configs[n]);
+				Configuration config = new Configuration(this, configs[n], managedBuildRevision);
 				String newConfigName = configurationNameProvder.getNewConfigurationName(config, usedConfigNames);
 				config.setName(newConfigName);
 				usedConfigNames[n] = newConfigName;
 			}
 		} else {
 			for (int n = 0; n < configs.length; ++n) {
-				Configuration config = new Configuration(this, configs[n]);
+				Configuration config = new Configuration(this, configs[n], managedBuildRevision);
 			}
 		}
 	}
@@ -102,7 +107,7 @@ public class ProjectType extends BuildObject implements IProjectType {
 	 * @param String The id for the new project type
 	 * @param String The name for the new project type
 	 */
-	public ProjectType(ProjectType superClass, String Id, String name) {
+	public ProjectType(ProjectType superClass, String Id, String name, String managedBuildRevision) {
 		// setup for resolving
 		resolved = false;
 
@@ -112,6 +117,10 @@ public class ProjectType extends BuildObject implements IProjectType {
 		}
 		setId(Id);
 		setName(name);
+		
+		setManagedBuildRevision(managedBuildRevision);
+		setVersion(getVersionFromId());
+		
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionProjectType(this);
 	}
@@ -133,6 +142,9 @@ public class ProjectType extends BuildObject implements IProjectType {
 		
 		// Get the name
 		setName(element.getAttribute(NAME));
+		
+		// version
+		setVersion(getVersionFromId());
 		
 		// superClass
 		superClassId = element.getAttribute(SUPERCLASS);
@@ -473,7 +485,7 @@ public class ProjectType extends BuildObject implements IProjectType {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the plugin.xml element of the projectMacroSupplier extension or <code>null</code> if none. 
 	 *  

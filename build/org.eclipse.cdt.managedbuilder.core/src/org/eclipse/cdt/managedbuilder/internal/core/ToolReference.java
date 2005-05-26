@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -440,6 +442,12 @@ public class ToolReference implements IToolReference {
 		IOption[] opts = getOptions();
 		for (int index = 0; index < opts.length; index++) {
 			IOption option = opts[index];
+			
+			// check to see if the option has an applicability calculator
+			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
+			
+			if (applicabilityCalculator == null
+					|| applicabilityCalculator.isOptionUsedInCommandLine(getTool())) {
 			switch (option.getValueType()) {
 				case IOption.BOOLEAN :
 					String boolCmd;
@@ -502,6 +510,7 @@ public class ToolReference implements IToolReference {
 					break;
 			}
 
+		}
 		}
 
 		return buf.toString().trim();
@@ -811,7 +820,7 @@ public class ToolReference implements IToolReference {
 	 */
 	public String[] getCommandFlags() throws BuildException {
 		if( parent == null ) return null;
-		return parent.getCommandFlags();
+		return parent.getToolCommandFlags(null, null);
 	}
 	
 	/* (non-Javadoc)
@@ -1172,6 +1181,18 @@ public class ToolReference implements IToolReference {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getEnvVarBuildPaths()
 	 */
 	public IEnvVarBuildPath[] getEnvVarBuildPaths(){
+		return null;
+	}
+
+	public PluginVersionIdentifier getVersion() {
+		return null;
+	}
+
+	public void setVersion(PluginVersionIdentifier version) {
+		// TODO Auto-generated method stub
+	}
+
+	public String getManagedBuildRevision() {
 		return null;
 	}
 }

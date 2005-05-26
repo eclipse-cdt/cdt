@@ -34,6 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,14 +71,18 @@ public class Target extends BuildObject implements ITarget {
 	 * a plugin manifest file.
 	 * 
 	 * @param element
+	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public Target(IManagedConfigElement element) {
+	public Target(IManagedConfigElement element, String managedBuildRevision) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		resolved = false;
 		
 		// id
 		setId(element.getAttribute(ID));
+		
+		// managedBuildRevision
+		setManagedBuildRevision(managedBuildRevision);
 		
 		// hook me up
 		ManagedBuildManager.addExtensionTarget(this);
@@ -133,7 +138,7 @@ public class Target extends BuildObject implements ITarget {
 			}
 		}
 
-		// Load any tool references we might have
+		// Load any tool references we might have 
 		IManagedConfigElement[] toolRefs = element.getChildren(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 		for (int k = 0; k < toolRefs.length; ++k) {
 			new ToolReference(this, toolRefs[k]);
@@ -141,7 +146,7 @@ public class Target extends BuildObject implements ITarget {
 		// Then load any tools defined for the target
 		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
 		for (int m = 0; m < tools.length; ++m) {
-			ITool newTool =  new Tool(this, tools[m]);
+			ITool newTool =  new Tool(this, tools[m], managedBuildRevision);
 			// Add this tool to the target, as this is not done in the constructor
 			this.addTool(newTool);
 		}
@@ -177,6 +182,9 @@ public class Target extends BuildObject implements ITarget {
 		int id = ManagedBuildManager.getRandomNumber();
 		setId(owner.getName() + "." + parent.getId() + "." + id);		 //$NON-NLS-1$ //$NON-NLS-2$
 		setName(parent.getName());
+		
+		setManagedBuildRevision(parent.getManagedBuildRevision());
+		
 		setArtifactName(parent.getArtifactName());
 		this.binaryParserId = parent.getBinaryParserId();
 		this.errorParserIds = parent.getErrorParserIds();
@@ -959,7 +967,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#convertToProjectType()
 	 */
-	public void convertToProjectType() {
+	public void convertToProjectType(String managedBuildRevision) {
 		// Create a ProjectType + Configuration + Toolchain + Builder + TargetPlatform 
 		// from the Target
 		
@@ -969,11 +977,11 @@ public class Target extends BuildObject implements ITarget {
 		if (parent != null) {
 			parentProj = parent.getCreatedProjectType();
 			if (parentProj == null) {
-				parent.convertToProjectType();
+				parent.convertToProjectType(managedBuildRevision);
 				parentProj = parent.getCreatedProjectType();
 			}
 		}
-		ProjectType projectType = new ProjectType(parentProj, getId(), getName());
+		ProjectType projectType = new ProjectType(parentProj, getId(), getName(), managedBuildRevision);
 		createdProjectType = projectType;
 		// Set the project type attributes
 		projectType.setIsAbstract(isAbstract);
@@ -1144,6 +1152,22 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public ProjectType getCreatedProjectType() {
 		return createdProjectType;
+	}
+
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( getParent() != null) {
+				return getParent().getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
 	}
 
 }

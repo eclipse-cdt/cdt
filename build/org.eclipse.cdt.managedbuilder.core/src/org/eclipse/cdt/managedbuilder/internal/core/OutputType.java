@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -826,4 +827,31 @@ public class OutputType extends BuildObject implements IOutputType {
 		}
 	}
 	
+	/**
+	 * @return Returns the managedBuildRevision.
+	 */
+	public String getManagedBuildRevision() {
+		if ( managedBuildRevision == null) {
+			if ( getParent() != null) {
+				return getParent().getManagedBuildRevision();
+			}
+		}
+		return managedBuildRevision;
+	}
+
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( getParent() != null) {
+				return getParent().getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
+	}
 }

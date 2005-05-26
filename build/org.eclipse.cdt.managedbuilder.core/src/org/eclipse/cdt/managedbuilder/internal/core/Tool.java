@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -117,13 +118,17 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * manifest. 
 	 * 
 	 * @param element The element containing the information about the tool.
+	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public Tool(IManagedConfigElement element) {
+	public Tool(IManagedConfigElement element, String managedBuildRevision) {
 		isExtensionTool = true;
 		
 		// setup for resolving
 		resolved = false;
 
+		// Set the managedBuildRevision
+		setManagedBuildRevision(managedBuildRevision);
+		
 		loadFromManifest(element);
 
 		// hook me up
@@ -160,9 +165,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @param parent  The parent of this tool.  This can be a ToolChain or a
 	 *                ResourceConfiguration.
 	 * @param element The element containing the information about the tool.
+	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public Tool(IBuildObject parent, IManagedConfigElement element) {
-		this(element);
+	public Tool(IBuildObject parent, IManagedConfigElement element, String managedBuildRevision) {
+		this(element, managedBuildRevision);
 		this.parent = parent;
 	}
 
@@ -179,11 +185,15 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public Tool(ToolChain parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
 		this.superClass = superClass;
+		setManagedBuildRevision(parent.getManagedBuildRevision());
 		if (this.superClass != null) {
 			superClassId = this.superClass.getId();
 		}
+		
 		setId(Id);
 		setName(name);
+		setVersion(getVersionFromId());
+		
 		isExtensionTool = isExtensionElement;
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
@@ -207,11 +217,14 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public Tool(ResourceConfiguration parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
 		this.superClass = superClass;
+		setManagedBuildRevision(parent.getManagedBuildRevision());
 		if (this.superClass != null) {
 			superClassId = this.superClass.getId();
 		}
 		setId(Id);
 		setName(name);
+		setVersion(getVersionFromId());
+		
 		isExtensionTool = isExtensionElement;
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
@@ -228,10 +241,14 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @param parent The <code>IToolChain</code> or <code>IResourceConfiguration</code>
 	 *               the tool will be added to. 
 	 * @param element The XML element that contains the tool settings.
+	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public Tool(IBuildObject parent, Element element) {
+	public Tool(IBuildObject parent, Element element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionTool = false;
+		
+		// Set the managedBuildRevsion
+		setManagedBuildRevision(managedBuildRevision);
 		
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -277,9 +294,20 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		}
 		setId(Id);
 		setName(name);
+		
+		// Set the managedBuildRevision & the version
+		setManagedBuildRevision(tool.getManagedBuildRevision());
+		setVersion(getVersionFromId());
+		
 		isExtensionTool = false;
 		
 		//  Copy the remaining attributes
+		if(tool.versionsSupported != null) {
+			versionsSupported = new String(tool.versionsSupported);
+		}
+		if(tool.convertToId != null) {
+			convertToId = new String(tool.convertToId);
+		}
 		if (tool.unusedChildren != null) {
 			unusedChildren = new String(tool.unusedChildren);
 		}
@@ -407,6 +435,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		
 		// name
 		setName(element.getAttribute(ITool.NAME));
+
+		// version
+		setVersion(getVersionFromId());
 		
 		// superClass
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
@@ -519,6 +550,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (element.hasAttribute(IBuildObject.NAME)) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
+
+		// version
+		setVersion(getVersionFromId());
 		
 		// superClass
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
@@ -2187,90 +2221,102 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @return
 	 * @throws BuildException
 	 */
-	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation, IMacroSubstitutor macroSubstitutor) throws BuildException{
+	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation,
+				IMacroSubstitutor macroSubstitutor) throws BuildException {
 		IOption[] opts = getOptions();
 		ArrayList flags = new ArrayList();
 		StringBuffer sb = new StringBuffer();
 		for (int index = 0; index < opts.length; index++) {
 			IOption option = opts[index];
 			sb.setLength( 0 );
-			try{
-			switch (option.getValueType()) {
-			case IOption.BOOLEAN :
-				String boolCmd;
-				if (option.getBooleanValue()) {
-					boolCmd = option.getCommand();
-				} else {
-					// Note: getCommandFalse is new with CDT 2.0
-					boolCmd = option.getCommandFalse();
-				}
-				if (boolCmd != null && boolCmd.length() > 0) {
-					sb.append(boolCmd);
-				}
-				break;
-			
-			case IOption.ENUMERATED :
-				String enumVal = option.getEnumCommand(option.getSelectedEnum());
-				if (enumVal.length() > 0) {
-					sb.append(enumVal);
-				}
-				break;
-			
-			case IOption.STRING :
-				String strCmd = option.getCommand();
-				String val = option.getStringValue();
-					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
-					if (val.length() > 0 && (val = MacroResolver.resolveToString(val,macroSubstitutor)).length() > 0) {
-					sb.append( evaluateCommand( strCmd, val ) );
-				}
-				break;
+
+			// check to see if the option has an applicability calculator
+			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(this)) {
+				try{
+				switch (option.getValueType()) {
+				case IOption.BOOLEAN :
+					String boolCmd;
+					if (option.getBooleanValue()) {
+						boolCmd = option.getCommand();
+					} else {
+						// Note: getCommandFalse is new with CDT 2.0
+						boolCmd = option.getCommandFalse();
+					}
+					if (boolCmd != null && boolCmd.length() > 0) {
+						sb.append(boolCmd);
+					}
+					break;
 				
-			case IOption.STRING_LIST :
-				String listCmd = option.getCommand();
-					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
-					String[] list = MacroResolver.resolveStringListValues(option.getStringListValue(),macroSubstitutor,true);
+				case IOption.ENUMERATED :
+					String enumVal = option.getEnumCommand(option.getSelectedEnum());
+					if (enumVal.length() > 0) {
+						sb.append(enumVal);
+					}
+					break;
+				
+				case IOption.STRING :
+					String strCmd = option.getCommand();
+					String val = option.getStringValue();
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+					if (val.length() > 0
+						&& (val = MacroResolver.resolveToString(val, macroSubstitutor)).length() > 0) {
+						sb.append( evaluateCommand( strCmd, val ) );
+					}
+					break;
+					
+				case IOption.STRING_LIST :
+					String listCmd = option.getCommand();
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+					String[] list = MacroResolver.resolveStringListValues(option.getStringListValue(), macroSubstitutor, true);
 					if(list != null){
-				for (int j = 0; j < list.length; j++) {
-					String temp = list[j];
+						for (int j = 0; j < list.length; j++) {
+							String temp = list[j];
 							if(temp.length() > 0)
-					sb.append( evaluateCommand( listCmd, temp ) + WHITE_SPACE );
-				}
+								sb.append( evaluateCommand( listCmd, temp ) + WHITE_SPACE );
+						}
 					}
-				break;
-				
-			case IOption.INCLUDE_PATH :
-				String incCmd = option.getCommand();
-					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
-					String[] paths = MacroResolver.resolveStringListValues(option.getIncludePaths(),macroSubstitutor,true);
+					break;
+					
+				case IOption.INCLUDE_PATH :
+					String incCmd = option.getCommand();
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+					String[] paths = MacroResolver.resolveStringListValues(option.getIncludePaths(), macroSubstitutor, true);
 					if(paths != null){
-				for (int j = 0; j < paths.length; j++) {
-					String temp = paths[j];
+						for (int j = 0; j < paths.length; j++) {
+							String temp = paths[j];
 							if(temp.length() > 0)
-					sb.append( evaluateCommand( incCmd, temp ) + WHITE_SPACE);
-				}
+								sb.append( evaluateCommand( incCmd, temp ) + WHITE_SPACE);
+						}
 					}
-				break;
-
-			case IOption.PREPROCESSOR_SYMBOLS :
-				String defCmd = option.getCommand();
-					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(inputFileLocation,outputFileLocation,option,getParent()));
-					String[] symbols = MacroResolver.resolveStringListValues(option.getDefinedSymbols(),macroSubstitutor,true);
+					break;
+	
+				case IOption.PREPROCESSOR_SYMBOLS :
+					String defCmd = option.getCommand();
+					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+					String[] symbols = MacroResolver.resolveStringListValues(option.getDefinedSymbols(), macroSubstitutor, true);
 					if(symbols != null){
-				for (int j = 0; j < symbols.length; j++) {
-					String temp = symbols[j];
+						for (int j = 0; j < symbols.length; j++) {
+							String temp = symbols[j];
 							if(temp.length() > 0)
-					sb.append( evaluateCommand( defCmd, temp ) + WHITE_SPACE);
-				}
+								sb.append( evaluateCommand( defCmd, temp ) + WHITE_SPACE);
+						}
 					}
-				break;
-
-			default :
-				break;
-			}
-				
-			if( sb.toString().trim().length() > 0 ) flags.add( sb.toString().trim() );
-			} catch (BuildMacroException e) {
-				
+					break;
+	
+				default :
+					break;
+				}
+					
+				if (sb.toString().trim().length() > 0)
+					flags.add(sb.toString().trim());
+				} catch (BuildMacroException e) {
+					
+				}
 			}
 		}
 		String[] f = new String[ flags.size() ];

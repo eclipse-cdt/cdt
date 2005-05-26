@@ -21,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+// import org.eclipse.core.runtime.PluginVersionIdentifier;  // uncomment this line after 'parent' is available
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -316,5 +317,35 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 				((OptionCategory)owner).addChildCategory(this);
 		}
 	}
+
+	// Uncomment this code after the 'parent' is available
+	/**
+	 * @return Returns the managedBuildRevision.
+	 *
+	public String getManagedBuildRevision() {
+		if ( managedBuildRevision == null) {
+			if ( getParent() != null) {
+				return getParent().getManagedBuildRevision();
+			}
+		}
+		return managedBuildRevision;
+	}
+
+	/**
+	 * @return Returns the version.
+	 *
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( getParent() != null) {
+				return getParent().getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
+	}
+*/
 
 }

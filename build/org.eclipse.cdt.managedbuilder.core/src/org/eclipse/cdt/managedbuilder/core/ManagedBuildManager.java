@@ -1342,7 +1342,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
 			if (nodes.getLength() > 0) {
 				Node node = nodes.item(0);
-				buildInfo = new ManagedBuildInfo(project, (Element)node);
+				buildInfo = new ManagedBuildInfo(project, (Element)node, fileVersion);
 				if (fileVersion != null) {
 					buildInfo.setVersion(fileVersion);
 				}
@@ -1424,7 +1424,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						//  reflects the content and structure of the extension section within the 
 						//  declaring plug-in's manifest (plugin.xml) file. 
 						IConfigurationElement[] elements = extension.getConfigurationElements();
-						loadConfigElements(DefaultManagedConfigElement.convertArray(elements));
+						String revision = null;
+						
+						// Get the managedBuildRevsion of the extension.
+						for (int j = 0; j < elements.length; j++) {
+							IConfigurationElement element = elements[j];
+							
+							if( element.getName().equals(REVISION_ELEMENT_NAME) ) {	
+								revision = element.getAttribute(VERSION_ELEMENT_NAME);
+								break;
+							}
+						}
+						
+						// Get the value of 'ManagedBuilRevision' attribute
+						loadConfigElements(DefaultManagedConfigElement.convertArray(elements), revision);
 					}
 				}
 				// Then call resolve.
@@ -1541,6 +1554,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID_V2);
 		if( extensionPoint != null) {
 			IExtension[] extensions = extensionPoint.getExtensions();
+			String revision = null;
+			
 			if (extensions != null) {
 				if (extensions.length > 0) {
 					
@@ -1554,8 +1569,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 							//The version of the Plug-in is greater than what the manager thinks it understands
 							throw new BuildException(ManagedMakeMessages.getResourceString(MANIFEST_VERSION_ERROR));
 						}			
-						IConfigurationElement[] elements = extension.getConfigurationElements();
-						loadConfigElementsV2(DefaultManagedConfigElement.convertArray(elements));
+						IConfigurationElement[] elements = extension.getConfigurationElements();					
+						
+						// Get the managedBuildRevsion of the extension.
+						for (int j = 0; j < elements.length; j++) {
+							IConfigurationElement element = elements[j];
+							if(element.getName().equals(REVISION_ELEMENT_NAME)) {
+								revision = element.getAttribute(VERSION_ELEMENT_NAME);		
+								break;
+							}
+						}
+						// If the "fileVersion" attribute is missing, then default revision is "1.2.0"
+						if (revision == null)
+							revision = "1.2.0"; 	//$NON-NLS-1$
+						loadConfigElementsV2(DefaultManagedConfigElement.convertArray(elements), revision);
 					}
 					// Resolve references
 					Iterator targetIter = getExtensionTargetMap().values().iterator();
@@ -1586,7 +1613,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 							Target target = (Target)targetIter.next();
 							//  Check to see if it has already been converted - if not, do it
 							if (target.getCreatedProjectType() == null) {
-								target.convertToProjectType();
+								target.convertToProjectType(revision);
 							}
 						} catch (Exception ex) {
 							// TODO: log
@@ -1625,23 +1652,23 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 
-	private static void loadConfigElements(IManagedConfigElement[] elements) {
+	private static void loadConfigElements(IManagedConfigElement[] elements, String revision) {
 		for (int toolIndex = 0; toolIndex < elements.length; ++toolIndex) {
 			try {
 				IManagedConfigElement element = elements[toolIndex];
 				// Load the top level elements, which in turn load their children
 				if (element.getName().equals(IProjectType.PROJECTTYPE_ELEMENT_NAME)) {
-					new ProjectType(element);
+					new ProjectType(element, revision);
 				} else if (element.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-					new Configuration((ProjectType)null, element);
+					new Configuration((ProjectType)null, element, revision);
 				} else if (element.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
-					new ToolChain((Configuration)null, element);
+					new ToolChain((Configuration)null, element, revision);
 				} else if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
-					new Tool((ProjectType)null, element);
+					new Tool((ProjectType)null, element, revision);
 				} else if (element.getName().equals(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME)) {
-					new TargetPlatform((ToolChain)null, element);
+					new TargetPlatform((ToolChain)null, element, revision);
 				} else if (element.getName().equals(IBuilder.BUILDER_ELEMENT_NAME)) {
-					new Builder((ToolChain)null, element);
+					new Builder((ToolChain)null, element, revision);
 				} else if (element.getName().equals(IManagedConfigElementProvider.ELEMENT_NAME)) {
 					// don't allow nested config providers.
 					if (element instanceof DefaultManagedConfigElement) {
@@ -1649,7 +1676,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						IManagedConfigElementProvider provider = createConfigProvider(
 								(DefaultManagedConfigElement)element);
 						providedConfigs = provider.getConfigElements();
-						loadConfigElements(providedConfigs);	// This must use the current build model
+						loadConfigElements(providedConfigs, revision);	// This must use the current build model
 					}
 				} else {
 					// TODO: Report an error (log?)
@@ -1661,15 +1688,15 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 
-	private static void loadConfigElementsV2(IManagedConfigElement[] elements) {
+	private static void loadConfigElementsV2(IManagedConfigElement[] elements, String revision) {
 		for (int toolIndex = 0; toolIndex < elements.length; ++toolIndex) {
 			try {
 				IManagedConfigElement element = elements[toolIndex];
 				// Load the top level elements, which in turn load their children
 				if (element.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
-					new Tool(element);
+					new Tool(element, revision);
 				} else if (element.getName().equals(ITarget.TARGET_ELEMENT_NAME)) {
-					new Target(element);
+					new Target(element,revision);
 				} else if (element.getName().equals(IManagedConfigElementProvider.ELEMENT_NAME)) {
 					// don't allow nested config providers.
 					if (element instanceof DefaultManagedConfigElement) {
@@ -1677,7 +1704,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						IManagedConfigElementProvider provider = createConfigProvider(
 								(DefaultManagedConfigElement)element);
 						providedConfigs = provider.getConfigElements();
-						loadConfigElementsV2(providedConfigs);	// This must use the 2.0 build model
+						loadConfigElementsV2(providedConfigs, revision);	// This must use the 2.0 build model
 					}
 				}
 			} catch (Exception ex) {
@@ -2050,6 +2077,54 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IEnvironmentVariableProvider getEnvironmentVariableProvider(){
 		return EnvironmentVariableProvider.getDefault();
 	}
+	
+	/**
+	 * Returns the version, if 'id' contains a valid version
+	 * Returns null if 'id' does not contain a valid version 
+	 * Returns null if 'id' does not contain a version
+	 * 
+	 * @param idAndVersion
+	 * @return String
+	 */
+	
+	public static String getVersionFromIdAndVersion(String idAndVersion) {
+				
+//		 Get the index of the separator '_' in tool id.
+		int index = idAndVersion.lastIndexOf('_');
+
+		//Validate the version number if exists.		
+		if ( index != -1) {
+			// Get the version number from tool id.
+			String version = idAndVersion.substring(index+1);
+			IStatus status = PluginVersionIdentifier.validateVersion(version);
+			
+			// If there is a valid version then return 'version'
+			if ( status.isOK())
+				return version;
+		}
+		// If there is no version information or not a valid version, return null
+		return null;
+	}
+	
+	/**
+	 * If the input to this function contains 'id & a valid version', it returns only the 'id' part
+	 * Otherwise it returns the received input back.
+	 * 
+	 * @param idAndVersion
+	 * @return String
+	 */
+	public static String getIdFromIdAndVersion(String idAndVersion) {
+		// If there is a valid version return only 'id' part
+		if ( getVersionFromIdAndVersion(idAndVersion) != null) {
+			// Get the index of the separator '_' in tool id.
+			int index = idAndVersion.lastIndexOf('_');
+			return idAndVersion.substring(0,index);
+		}
+		else {
+			// if there is no version or no valid version
+			return idAndVersion;
+		}
+	}
 
 	/**
 	 * Returns the instance of the Build Macro Provider
@@ -2059,5 +2134,4 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IBuildMacroProvider getBuildMacroProvider(){
 		return BuildMacroProvider.getDefault();
 	}
-
 }

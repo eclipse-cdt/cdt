@@ -291,9 +291,9 @@ public interface ITarget extends IBuildObject {
 	/**
 	 * Converts a CDT V2.0 target into a ProjectType + Configuration + Toolchain +
 	 * Builder + TargetPlatform.
-	 *
+	 * @param managedBuildRevision
 	 */
-	public void convertToProjectType();
+	public void convertToProjectType(String managedBuildRevision);
 
 	/**
 	 * Returns the <code>ProjectType</code> that this Target has been converted to,

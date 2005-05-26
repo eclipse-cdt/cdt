@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,14 +57,16 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 *                defined at the top level
 	 * @param element The TargetPlatform definition from the manifest file or a dynamic element
 	 *                provider
+	 *  @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public TargetPlatform(IToolChain parent, IManagedConfigElement element) {
+	public TargetPlatform(IToolChain parent, IManagedConfigElement element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionTargetPlatform = true;
 		
 		// setup for resolving
 		resolved = false;
-
+		
+		setManagedBuildRevision(managedBuildRevision);
 		loadFromManifest(element);
 		
 		// Hook me up to the Managed Build Manager
@@ -83,11 +86,13 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	public TargetPlatform(ToolChain parent, ITargetPlatform superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
 		this.superClass = superClass;
+		setManagedBuildRevision(parent.getManagedBuildRevision());
 		if (this.superClass != null) {
 			superClassId = this.superClass.getId();
 		}
 		setId(Id);
 		setName(name);
+		
 		isExtensionTargetPlatform = isExtensionElement;
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
@@ -103,11 +108,13 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 * 
 	 * @param parent The <code>IToolChain</code> the TargetPlatform will be added to. 
 	 * @param element The XML element that contains the TargetPlatform settings.
+	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public TargetPlatform(IToolChain parent, Element element) {
+	public TargetPlatform(IToolChain parent, Element element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionTargetPlatform = false;
 		
+		setManagedBuildRevision(managedBuildRevision);
 		// Initialize from the XML attributes
 		loadFromProject(element);
 	}
@@ -129,6 +136,9 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		setId(Id);
 		setName(name);
 		isExtensionTargetPlatform = false;
+			
+		if ( targetPlatform != null)
+			setManagedBuildRevision(targetPlatform.getManagedBuildRevision());
 		
 		//  Copy the remaining attributes
 		if (targetPlatform.unusedChildren != null) {
@@ -582,4 +592,20 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 	}
 	
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( getParent() != null) {
+				return getParent().getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
+	}
+
 }

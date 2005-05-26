@@ -256,6 +256,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private static final String POSTBUILD = "post-build"; //$NON-NLS-1$ 
 	private static final String SECONDARY_OUTPUTS = "secondary-outputs"; //$NON-NLS-1$ 
 	
+	// Enumerations
+	public static final int 
+			PROJECT_RELATIVE = 1,
+			PROJECT_SUBDIR_RELATIVE = 2,
+			ABSOLUTE = 3;
+	
 	// Local variables needed by generator
 	private String buildTargetName;
 	private String buildTargetExt;
@@ -1838,12 +1844,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					varName = getSourceMacroName(ext).toString();
 					//  Add the resource to the list of all resources associated with a variable.
 					List varList = (List)buildSrcVars.get(varName);
-					varList.add(resource.getFullPath());
+					//  Since we don't know how these files will be used, we store them using a "location"
+					//  path rather than a relative path
+					varList.add(resource.getLocation());
 				} else {
 					//  Add the resource to the list of all resources associated with a variable.
 					List varList = (List)buildOutVars.get(varName);
 					if (varList != null) {
-						varList.add(resource.getFullPath());
+						//  Since we don't know how these files will be used, we store them using a "location"
+						//  path rather than a relative path
+						varList.add(resource.getLocation());
 					}
 				}
 				if (!buildVarToRuleStringMap.containsKey(varName)) {
@@ -2796,14 +2806,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	/* (non-javadoc)
-	 * Returns the list of files associated with the build variable
+	 * Returns the (String) list of files associated with the build variable
 	 * 
 	 * @param variable  the variable name
+	 * @param locationType  the format in which we want the filenames returned
+	 * @param directory  project relative directory path used with locationType == DIRECTORY_RELATIVE 
 	 * @param getAll  only return the list if all tools that are going to contrubute to this
 	 *                variable have done so.
 	 * @return List
 	 */
-	public List getBuildVariableList(String variable, boolean getAll) {
+	public List getBuildVariableList(String variable, int locationType, IPath directory, boolean getAll) {
 		boolean done = true;
 		for (int i=0; i<gnuToolInfos.length; i++) {
 			if (!gnuToolInfos[i].areOutputVariablesCalculated()) {
@@ -2812,7 +2824,33 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		}
 		if (!done && getAll) return null;
 		List list = (List)buildSrcVars.get(variable);
-		return (list != null) ? list : (List)buildOutVars.get(variable);
+		if (list == null) {
+			list = (List)buildOutVars.get(variable);
+		}
+
+		List fileList = null;
+		if (list != null) {
+			//  Convert the items in the list to the location-type wanted by the caller,
+			//  and to a string list
+			IPath dirLocation = null;
+			if (locationType != ABSOLUTE) {
+				dirLocation = project.getLocation();
+				if (locationType == PROJECT_SUBDIR_RELATIVE) {
+					dirLocation = dirLocation.append(directory);
+				}
+			}
+			for (int i=0; i<list.size(); i++) {
+				IPath path = (IPath)list.get(i);
+				if (locationType != ABSOLUTE) {
+					if (dirLocation.isPrefixOf(path)) {
+						path = path.removeFirstSegments(dirLocation.matchingFirstSegments(path));
+					}
+				}
+				fileList.add(path.toString());
+			}
+		}
+		
+		return fileList;
 	}
 
 	/* (non-javadoc)

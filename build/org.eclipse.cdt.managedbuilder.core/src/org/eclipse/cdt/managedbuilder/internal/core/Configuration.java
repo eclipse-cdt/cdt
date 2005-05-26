@@ -42,6 +42,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -84,13 +85,16 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * 
 	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
 	 * @param element The element from the manifest that contains the configuration information.
+	 * @param managedBuildRevision 
 	 */
-	public Configuration(ProjectType projectType, IManagedConfigElement element) {
+	public Configuration(ProjectType projectType, IManagedConfigElement element, String managedBuildRevision) {
 		this.projectType = projectType;
 		isExtensionConfig = true;
 		
 		// setup for resolving
 		resolved = false;
+		
+		setManagedBuildRevision(managedBuildRevision);
 		
 		// Initialize from the XML attributes
 		loadFromManifest(element);
@@ -108,9 +112,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		for (int l = 0; l < configElements.length; ++l) {
 			IManagedConfigElement configElement = configElements[l];
 			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
-				toolChain = new ToolChain(this, configElement);
+				toolChain = new ToolChain(this, configElement, managedBuildRevision);
 			}else if (configElement.getName().equals(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME)) {
-				ResourceConfiguration resConfig = new ResourceConfiguration(this, configElement);
+				ResourceConfiguration resConfig = new ResourceConfiguration(this, configElement, managedBuildRevision);
 				addResourceConfiguration(resConfig);
 			}
 		}
@@ -145,7 +149,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		// Hook me up to the ProjectType
 		if (projectType != null) {
-			projectType.addConfiguration(this);
+			projectType.addConfiguration(this);			
+			// set managedBuildRevision
+			setManagedBuildRevision(projectType.getManagedBuildRevision());
 		}
 	}
 
@@ -170,6 +176,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Hook me up to the ProjectType
 		if (projectType != null) {
 			projectType.addConfiguration(this);
+			setManagedBuildRevision(projectType.getManagedBuildRevision());
 		}
 	}
 
@@ -179,10 +186,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * 
 	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
 	 * @param element The XML element that contains the configuration settings.
+	 * 
 	 */
-	public Configuration(ManagedProject managedProject, Element element) {
+	public Configuration(ManagedProject managedProject, Element element, String managedBuildRevision) {
 		this.managedProject = managedProject;
 		isExtensionConfig = false;
+		
+		setManagedBuildRevision(managedBuildRevision);
 		
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -194,9 +204,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 		for (int i = 0; i < configElements.getLength(); ++i) {
 			Node configElement = configElements.item(i);
 			if (configElement.getNodeName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
-				toolChain = new ToolChain(this, (Element)configElement);
+				toolChain = new ToolChain(this, (Element)configElement, managedBuildRevision);
 			}else if (configElement.getNodeName().equals(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME)) {
-				ResourceConfiguration resConfig = new ResourceConfiguration(this, (Element)configElement);
+				ResourceConfiguration resConfig = new ResourceConfiguration(this, (Element)configElement, managedBuildRevision);
 				addResourceConfiguration(resConfig);
 			}
 		}
@@ -216,10 +226,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 		this.managedProject = managedProject;
 		isExtensionConfig = false;
 
+		// set managedBuildRevision
+		setManagedBuildRevision(cloneConfig.getManagedBuildRevision());
+		
 		// If this contructor is called to clone an existing 
 		// configuration, the parent of the cloning config should be stored. 
 		parent = cloneConfig.getParent() == null ? cloneConfig : cloneConfig.getParent();
-
+	
 		//  Copy the remaining attributes
 		projectType = cloneConfig.projectType;
 		if (cloneConfig.artifactName != null) {
@@ -251,22 +264,37 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Tool Chain
 		int nnn = ManagedBuildManager.getRandomNumber();
 		String subId;
+		String tmpId;
 		String subName;
 		if (cloneConfig.parent != null) {
-			subId = cloneConfig.parent.getToolChain().getId() + "." + nnn;		//$NON-NLS-1$
-			subName = cloneConfig.parent.getToolChain().getName(); 	//$NON-NLS-1$
+			tmpId = cloneConfig.parent.getToolChain().getId();
+			subName = cloneConfig.parent.getToolChain().getName();
+			
 		} else {
-			subId = cloneConfig.getToolChain().getId() + "." + nnn;		//$NON-NLS-1$
-			subName = cloneConfig.getToolChain().getName(); 	//$NON-NLS-1$
+			tmpId = cloneConfig.getToolChain().getId();	
+			subName = cloneConfig.getToolChain().getName();
 		}
-		
+
+		String version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+		if ( version != null) {			// If the 'tmpId' contains version information
+			subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			subId = tmpId + "." + nnn;		//$NON-NLS-1$
+		}
+
 		if (cloneTools) {
 		    toolChain = new ToolChain(this, subId, subName, (ToolChain)cloneConfig.getToolChain());
 		} else {
 			// Add a tool-chain element that specifies as its superClass the 
 			// tool-chain that is the child of the configuration.
 			ToolChain superChain = (ToolChain)cloneConfig.getToolChain();
-			subId = superChain.getId() + "." + nnn; //$NON-NLS-1$
+			tmpId = superChain.getId();
+			version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+			if ( version != null) {		// If the 'tmpId' contains version information
+				subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				subId = tmpId + "." + nnn;		//$NON-NLS-1$
+			}
 			IToolChain newChain = createToolChain(superChain, subId, superChain.getName(), false);
 			
 			// For each tool element child of the tool-chain that is the child of 
@@ -277,7 +305,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 			while (iter.hasNext()) {
 			    Tool toolChild = (Tool) iter.next();
 				nnn = ManagedBuildManager.getRandomNumber();
-				subId = toolChild.getId() + "." + nnn; //$NON-NLS-1$
+				tmpId = toolChild.getId();
+				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+				if ( version != null) {   // If the 'tmpId' contains version information
+					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					subId = tmpId + "." + nnn;		//$NON-NLS-1$
+				}
 				newChain.createTool(toolChild, subId, toolChild.getName(), false);
 			}
 		}
@@ -1355,6 +1389,24 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(toolChain != null)
 			return toolChain.getEnvironmentVariableSupplier();
 		return null;
+	}
+
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( projectType != null) {
+				projectType.getVersion();
+			} else if ( managedProject != null) {
+				return managedProject.getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
 	}
 	
 	/* (non-Javadoc)

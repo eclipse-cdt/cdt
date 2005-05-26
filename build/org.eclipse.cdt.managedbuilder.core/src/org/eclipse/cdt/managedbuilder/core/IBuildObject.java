@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+
 public interface IBuildObject {
 	// Schema element names
 	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String NAME = "name"; //$NON-NLS-1$
-
+	
 	public String getId();
 	public String getName();
-	
+	public PluginVersionIdentifier getVersion();
+	public void setVersion(PluginVersionIdentifier version);
+	public String getManagedBuildRevision();
 }

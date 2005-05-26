@@ -118,6 +118,16 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="configurationNameProvider" type="string">
+            <annotation>
+               <documentation>
+                  Contains the name of a class that implements an interface with a method for returning a default name for a configuration
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -233,6 +243,13 @@
             <annotation>
                <documentation>
                   Specifies the string to be displayed when the post-build command step is run.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the description of the configuration that will be displayed to the user while creating a project and managing configurations
                </documentation>
             </annotation>
          </attribute>
@@ -356,6 +373,20 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="versionsSupported" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a comma delimited list of versions of this tool-chain that can be loaded without invoking a converter.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="convertToId" type="string">
+            <annotation>
+               <documentation>
+                  The identifier of a tool-chain, that tool-chains loaded using this definition should be converted to. MBS will invoke a proper converter.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -560,6 +591,20 @@
             <annotation>
                <documentation>
                   Specifies a string that is written to the build output prior to each invocation of the tool.  The default value is “Invoking tool-name (tool-id)…”
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="versionsSupported" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a comma delimited list of versions of this tool that can be loaded without invoking a converter.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="convertToId" type="string">
+            <annotation>
+               <documentation>
+                  The identifier of a tool, that tools loaded using this definition should be converted to. MBS will invoke a proper converter.
                </documentation>
             </annotation>
          </attribute>
@@ -1035,6 +1080,16 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="applicabilityCalculator" type="string">
+            <annotation>
+               <documentation>
+                  Optional class which is used to determine dynamically at runtime whether the option is visible, enabled, and used in command line generation.  This class must impelment the IOptionApplicability interface.  If no calculator is specified then the option is always visible, enabled, and used in command line generation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IOptionApplicability"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -1219,7 +1274,6 @@ If this attribute is not specified, MBS will assume that there are no reserved m
                   Represents the InputFileName macro value. The macro specifies the input file name. The input file has the following meaning:
 1.	If a tool does not accept building multiple files of the primary input type with one tool invocation, the input file is the file of the primary input type being built.
 2.	If a tool accepts building multiple files of the primary input type with one tool invocation the input file is undefined and the macros representing the input file contain information about one of the inputs of the primary input type being built.
-
                </documentation>
             </annotation>
          </attribute>
@@ -1257,7 +1311,6 @@ If this attribute is not specified, MBS will assume that there are no reserved m
                   Represents the OutputFileName macro value. The macro specifies the output file name. The output file has the following meaning:
 1.	If a tool is not capable of producing multiple files of the primary output type with one tool invocation the output file is the file of the primary output type that is built with a given tool invocation.
 2.	If a tool is capable of producing multiple files of the primary output type with one tool invocation the output file is undefined and the macros representing the output file contain information about one of the files of the primary output type that are built with a given tool invocation.
-
                </documentation>
             </annotation>
          </attribute>
@@ -1286,6 +1339,20 @@ If this attribute is not specified, MBS will assume that there are no reserved m
             <annotation>
                <documentation>
                   Represents the OutputDirRelPath macro value. The macro specifies the output file directory path relative to the current builder directory.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="versionsSupported" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a comma delimited list of versions of this builder that can be loaded without invoking a converter.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="convertToId" type="string">
+            <annotation>
+               <documentation>
+                  The identifier of a builder, that builders loaded using this definition should be converted to. MBS will invoke a proper converter.
                </documentation>
             </annotation>
          </attribute>

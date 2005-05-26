@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -122,6 +123,7 @@ public class InputType extends BuildObject implements IInputType {
 		}
 		setId(Id);
 		setName(name);
+			
 		isExtensionInputType = isExtensionElement;
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
@@ -137,6 +139,7 @@ public class InputType extends BuildObject implements IInputType {
 	 * 
 	 * @param parent The <code>ITool</code> the InputType will be added to. 
 	 * @param element The XML element that contains the InputType settings.
+	 * 
 	 */
 	public InputType(ITool parent, Element element) {
 		this.parent = parent;
@@ -177,6 +180,7 @@ public class InputType extends BuildObject implements IInputType {
 		}
 		setId(Id);
 		setName(name);
+			
 		isExtensionInputType = false;
 		
 		//  Copy the remaining attributes
@@ -1094,4 +1098,31 @@ public class InputType extends BuildObject implements IInputType {
 		}
 	}
 
+	/**
+	 * @return Returns the managedBuildRevision.
+	 */
+	public String getManagedBuildRevision() {
+		if ( managedBuildRevision == null) {
+			if ( getParent() != null) {
+				return getParent().getManagedBuildRevision();
+			}
+		}
+		return managedBuildRevision;
+	}
+
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+		if ( version == null) {
+			if ( getParent() != null) {
+				return getParent().getVersion();
+			}
+		}
+		return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
+	}
 }

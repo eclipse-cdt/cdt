@@ -200,7 +200,8 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 						// If there is an output variable with the same name, get
 						// the files associated with it.
-						List outMacroList = makeGen.getBuildVariableList(variable, true);
+						List outMacroList = makeGen.getBuildVariableList(variable, GnuMakefileGenerator.PROJECT_SUBDIR_RELATIVE,
+								makeGen.getBuildWorkingDir(), true);
 						if (outMacroList != null) {
 							myEnumeratedInputs.addAll(outMacroList);
 						} else {
@@ -229,7 +230,6 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										String fileExt = projResources[j].getFileExtension();
 										for (int k=0; k<exts.length; k++) {
 											if (fileExt.equals(exts[k])) {
-												//  TODO - is project relative correct?
 												if (!useFileExts) {
 													if(!handledInputExtensions.contains(fileExt)) {
 									 					handledInputExtensions.add(fileExt);
@@ -243,7 +243,13 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 									 				}
 												}
 												if (type.getMultipleOfType() || myEnumeratedInputs.size() == 0) {
-													myEnumeratedInputs.add(projResources[j].getProjectRelativePath().toString());
+													//  Return a path that is relative to the build directory
+													IPath resPath = projResources[j].getLocation();
+													IPath bldLocation = project.getLocation().append(makeGen.getBuildWorkingDir());
+													if (bldLocation.isPrefixOf(resPath)) {
+														resPath = resPath.removeFirstSegments(bldLocation.matchingFirstSegments(resPath));
+													}
+													myEnumeratedInputs.add(resPath.toString());
 												}
 												break;
 											}

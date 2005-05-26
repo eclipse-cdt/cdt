@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,6 +84,8 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		setId(owner.getName() + "." + projectType.getId() + "." + id);		 //$NON-NLS-1$ //$NON-NLS-2$
 		setName(projectType.getName());
 
+		setManagedBuildRevision(projectType.getManagedBuildRevision());
+		
 		// Hook me up
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner);
 		buildInfo.setManagedProject(this);
@@ -94,9 +97,12 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * 
 	 * @param buildInfo
 	 * @param element
+	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
-	public ManagedProject(ManagedBuildInfo buildInfo, Element element) {
+	public ManagedProject(ManagedBuildInfo buildInfo, Element element, String managedBuildRevision) {
 		this(buildInfo.getOwner());
+		
+		setManagedBuildRevision(managedBuildRevision);
 		
 		// Initialize from the XML attributes
 		if (loadFromProject(element)) {
@@ -105,7 +111,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 			for (int i = 0; i < configElements.getLength(); ++i) {
 				Node configElement = configElements.item(i);
 				if (configElement.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-					Configuration config = new Configuration(this, (Element)configElement);
+					Configuration config = new Configuration(this, (Element)configElement, managedBuildRevision);
 				}else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
 					//load user-defined macros
 					userDefinedMacros = new StorableMacros((Element)configElement);
@@ -438,6 +444,22 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	public void setValid(boolean isValid) {
 		//  TODO:  In the future, children could also have a "valid" state...
 		this.isValid = isValid;
+	}
+
+	/**
+	 * @return Returns the version.
+	 */
+	public PluginVersionIdentifier getVersion() {
+			if (version == null) {
+				if ( getProjectType() != null) {
+					return getProjectType().getVersion();
+				}
+			}
+			return version;
+	}
+	
+	public void setVersion(PluginVersionIdentifier version) {
+		// Do nothing
 	}
 
 	/*

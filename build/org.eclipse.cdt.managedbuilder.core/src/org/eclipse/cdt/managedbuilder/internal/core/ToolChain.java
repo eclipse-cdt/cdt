@@ -88,14 +88,18 @@ public class ToolChain extends BuildObject implements IToolChain {
 	 *                defined at the top level
 	 * @param element The tool-chain definition from the manifest file or a dynamic element
 	 *                provider
+	 * @param managedBuildRevision the fileVersion of Managed Build System               
 	 */
-	public ToolChain(IConfiguration parent, IManagedConfigElement element) {
+	public ToolChain(IConfiguration parent, IManagedConfigElement element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionToolChain = true;
 		
 		// setup for resolving
 		resolved = false;
 
+		// Set the managedBuildRevision 
+		setManagedBuildRevision(managedBuildRevision);
+		
 		loadFromManifest(element);
 		
 		// Hook me up to the Managed Build Manager
@@ -108,7 +112,7 @@ public class ToolChain extends BuildObject implements IToolChain {
 			// TODO: Report error
 		}
 		if (targetPlatforms.length > 0) {
-			targetPlatform = new TargetPlatform(this, targetPlatforms[0]);
+			targetPlatform = new TargetPlatform(this, targetPlatforms[0], managedBuildRevision);
 		}
 		
 		// Load the Builder child
@@ -118,13 +122,13 @@ public class ToolChain extends BuildObject implements IToolChain {
 			// TODO: Report error
 		}
 		if (builders.length > 0) {
-			builder = new Builder(this, builders[0]);
+			builder = new Builder(this, builders[0], managedBuildRevision);
 		}
 
 		// Load the tool children
 		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
 		for (int n = 0; n < tools.length; ++n) {
-			Tool toolChild = new Tool(this, tools[n]);
+			Tool toolChild = new Tool(this, tools[n], managedBuildRevision);
 			addTool(toolChild);
 		}
 	}
@@ -142,11 +146,15 @@ public class ToolChain extends BuildObject implements IToolChain {
 	public ToolChain(Configuration parent, IToolChain superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
 		this.superClass = superClass;
+		setManagedBuildRevision(parent.getManagedBuildRevision());
+		
 		if (this.superClass != null) {
 			superClassId = this.superClass.getId();
 		}
 		setId(Id);
 		setName(name);
+		setVersion(getVersionFromId());
+		
 		isExtensionToolChain = isExtensionElement;
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
@@ -162,10 +170,14 @@ public class ToolChain extends BuildObject implements IToolChain {
 	 * 
 	 * @param parent The <code>IConfiguration</code> the tool-chain will be added to. 
 	 * @param element The XML element that contains the tool-chain settings.
+	 * @param managedBuildRevision the fileVersion of Managed Build System			
 	 */
-	public ToolChain(IConfiguration parent, Element element) {
+	public ToolChain(IConfiguration parent, Element element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionToolChain = false;
+		
+		// Set the managedBuildRevision
+		setManagedBuildRevision(managedBuildRevision);
 		
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -175,21 +187,22 @@ public class ToolChain extends BuildObject implements IToolChain {
 		for (int i = 0; i < configElements.getLength(); ++i) {
 			Node configElement = configElements.item(i);
 			if (configElement.getNodeName().equals(ITool.TOOL_ELEMENT_NAME)) {
-				Tool tool = new Tool(this, (Element)configElement);
+				Tool tool = new Tool(this, (Element)configElement, managedBuildRevision);
 				addTool(tool);
 			}else if (configElement.getNodeName().equals(ITargetPlatform.TARGET_PLATFORM_ELEMENT_NAME)) {
 				if (targetPlatform != null) {
 					// TODO: report error
 				}
-				targetPlatform = new TargetPlatform(this, (Element)configElement);
+				targetPlatform = new TargetPlatform(this, (Element)configElement, managedBuildRevision);
 			}else if (configElement.getNodeName().equals(IBuilder.BUILDER_ELEMENT_NAME)) {
 				if (builder != null) {
 					// TODO: report error
 				}
-				builder = new Builder(this, (Element)configElement);
+				builder = new Builder(this, (Element)configElement, managedBuildRevision);
 			}else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
 				//load user-defined macros
 				userDefinedMacros = new StorableMacros((Element)configElement);
+
 			}
 		}
 	}
@@ -210,9 +223,21 @@ public class ToolChain extends BuildObject implements IToolChain {
 		}
 		setId(Id);
 		setName(name);
+		
+		// Set the managedBuildRevision and the version
+		setManagedBuildRevision(toolChain.getManagedBuildRevision());
+		setVersion(getVersionFromId());	
+
 		isExtensionToolChain = false;
 		
 		//  Copy the remaining attributes
+		if(toolChain.versionsSupported != null) {
+			versionsSupported = new String(toolChain.versionsSupported);
+		}
+		if(toolChain.convertToId != null) {
+			convertToId = new String(toolChain.convertToId);
+		}
+		
 		if (toolChain.unusedChildren != null) {
 			unusedChildren = new String(toolChain.unusedChildren);
 		}
@@ -250,14 +275,24 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (toolChain.builder != null) {
 			int nnn = ManagedBuildManager.getRandomNumber();
 			String subId;
+			String tmpId;
+			String version;
 			String subName;
+			
 			if (toolChain.builder.getSuperClass() != null) {
-				subId = toolChain.builder.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+				tmpId = toolChain.builder.getSuperClass().getId();		//$NON-NLS-1$
 				subName = toolChain.builder.getSuperClass().getName();
 			} else {
-				subId = toolChain.builder.getId() + "." + nnn;		//$NON-NLS-1$
+				tmpId = toolChain.builder.getId();		//$NON-NLS-1$
 				subName = toolChain.builder.getName();
 			}
+			version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+			if ( version != null) {		// If the 'tmpId' contains version information
+				subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				subId = tmpId + "." + nnn;		//$NON-NLS-1$
+			}
+
 			builder = new Builder(this, subId, subName, toolChain.builder);
 		}
 		if (toolChain.targetPlatform != null) {
@@ -279,14 +314,24 @@ public class ToolChain extends BuildObject implements IToolChain {
 			    Tool toolChild = (Tool) iter.next();
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
+				String tmpId;
 				String subName;
+				String version;
+				
 				if (toolChild.getSuperClass() != null) {
-					subId = toolChild.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
+					tmpId = toolChild.getSuperClass().getId();
 					subName = toolChild.getSuperClass().getName();
 				} else {
-					subId = toolChild.getId() + "." + nnn;		//$NON-NLS-1$
+					tmpId = toolChild.getId();
 					subName = toolChild.getName();
 				}
+				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
+				if ( version != null) {		// If the 'tmpId' contains version information
+					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					subId = tmpId + "." + nnn;		//$NON-NLS-1$
+				}
+
 				Tool newTool = new Tool(this, null, subId, subName, toolChild);
 				addTool(newTool);
 			}
@@ -313,6 +358,9 @@ public class ToolChain extends BuildObject implements IToolChain {
 		
 		// Get the name
 		setName(element.getAttribute(IBuildObject.NAME));
+		
+		// version
+		setVersion(getVersionFromId());
 		
 		// superClass
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
@@ -384,6 +432,7 @@ public class ToolChain extends BuildObject implements IToolChain {
 
 	}
 	
+	
 	/* (non-Javadoc)
 	 * Initialize the tool-chain information from the XML element 
 	 * specified in the argument
@@ -399,7 +448,10 @@ public class ToolChain extends BuildObject implements IToolChain {
 		if (element.hasAttribute(IBuildObject.NAME)) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
-		
+
+		// version
+		setVersion(getVersionFromId());
+
 		// superClass
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
 		if (superClassId != null && superClassId.length() > 0) {
@@ -1367,6 +1419,4 @@ public class ToolChain extends BuildObject implements IToolChain {
 		}
 		return null;
 	}
-
-
 }

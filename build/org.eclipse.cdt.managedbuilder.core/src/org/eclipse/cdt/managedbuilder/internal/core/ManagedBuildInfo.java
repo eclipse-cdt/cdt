@@ -33,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
@@ -120,15 +121,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * 
 	 * @param owner
 	 * @param element
+	 * @param managedBuildRevision
 	 */
-	public ManagedBuildInfo(IResource owner, Element element) {
+	public ManagedBuildInfo(IResource owner, Element element, String managedBuildRevision) {
 		this(owner);
 		
 		// Recreate the managed build project element and its children
 		NodeList projNodes = element.getElementsByTagName(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME);
 		// TODO:  There should only be 1?
 		for (int projIndex = projNodes.getLength() - 1; projIndex >= 0; --projIndex) {
-			ManagedProject proj = new ManagedProject(this, (Element)projNodes.item(projIndex));
+			ManagedProject proj = new ManagedProject(this, (Element)projNodes.item(projIndex), managedBuildRevision);
 			if (!proj.resolveReferences())
 				proj.setValid(false);
 		}
@@ -439,15 +441,26 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					IOption option = opts[j];
 					try {
 						if (option.getValueType() == IOption.INCLUDE_PATH) {
-							// Get all the user-defined paths from the option as absolute paths
-							String[] userPaths = option.getIncludePaths();
-							for (int index = 0; index < userPaths.length; ++index) {
-								IPath userPath = new Path(userPaths[index]);
-								if (userPath.isAbsolute()) {
-									paths.add(userPath.toOSString());
-								} else {
-									IPath absPath = root.addTrailingSeparator().append(userPath);
-									paths.add(absPath.makeAbsolute().toOSString());
+							
+							// check to see if the option has an applicability
+							// calculator
+							IOptionApplicability applicabilityCalculator = option
+									.getApplicabilityCalculator();
+
+							if (applicabilityCalculator == null
+									|| applicabilityCalculator.isOptionUsedInCommandLine(tool)) {
+
+								// Get all the user-defined paths from the
+								// option as absolute paths
+								String[] userPaths = option.getIncludePaths();
+								for (int index = 0; index < userPaths.length; ++index) {
+									IPath userPath = new Path(userPaths[index]);
+									if (userPath.isAbsolute()) {
+										paths.add(userPath.toOSString());
+									} else {
+										IPath absPath = root.addTrailingSeparator().append(userPath);
+										paths.add(absPath.makeAbsolute().toOSString());
+									}
 								}
 							}
 						}
@@ -482,11 +495,19 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					IOption option = opts[i];
 					try {
 						if (option.getValueType() == IOption.LIBRARIES) {
-							String command = option.getCommand();
-							String[] allLibs = option.getLibraries();
-							for (int j = 0; j < allLibs.length; j++) {
-								String string = allLibs[j];
-								libs.add(command + string);
+							
+							// check to see if the option has an applicability calculator
+							IOptionApplicability applicabilitytCalculator = option.getApplicabilityCalculator();
+							
+							if (applicabilitytCalculator == null
+									|| applicabilitytCalculator.isOptionUsedInCommandLine(tool)) {
+								String command = option.getCommand();
+								String[] allLibs = option.getLibraries();
+								for (int j = 0; j < allLibs.length; j++)
+								{
+									String string = allLibs[j];
+									libs.add(command + string);
+								}
 							}
 						}
 					} catch (BuildException e) {

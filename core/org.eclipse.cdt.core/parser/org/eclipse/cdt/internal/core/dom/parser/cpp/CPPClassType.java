@@ -172,7 +172,7 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	
 	private IASTName definition;
 	private IASTName [] declarations;
-	
+	private boolean checked = false;
 	public CPPClassType( IASTName name ){
 	    if( name instanceof ICPPASTQualifiedName ){
 	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
@@ -250,17 +250,19 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	}
 	
 	private void checkForDefinition(){
-		FindDefinitionAction action = new FindDefinitionAction();
-		IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
-
-		node.accept( action );
-	    definition = action.result;
-		
-		if( definition == null ){
-			node.getTranslationUnit().accept( action );
+		if( !checked ) {
+			FindDefinitionAction action = new FindDefinitionAction();
+			IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
+	
+			node.accept( action );
 		    definition = action.result;
+			
+			if( definition == null ){
+				node.getTranslationUnit().accept( action );
+			    definition = action.result;
+			}
+			checked = true;
 		}
-		
 		return;
 	}
 	
@@ -365,6 +367,9 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
 	public IScope getCompositeScope() {
+		if( definition == null ){
+			checkForDefinition();
+		}
 		return (definition != null ) ? getCompositeTypeSpecifier().getScope() : null;
 	}
 	

@@ -1679,6 +1679,9 @@ public class CPPVisitor {
 	        } else if( binding instanceof IVariable ){
 	        	try {
 		        	IType t = ((IVariable)binding).getType();
+		        	while( t instanceof ITypedef ){
+		        		t = ((ITypedef)t).getType();
+		        	}
 		        	if( t instanceof IPointerType && ((IPointerType)t).getType() instanceof IFunctionType ){
 		        		IFunctionType ftype = (IFunctionType) ((IPointerType)t).getType();
 		        		if( ftype != null )
@@ -1751,7 +1754,7 @@ public class CPPVisitor {
 	    else if( expression instanceof IASTUnaryExpression )
 	    {
 			int op = ((IASTUnaryExpression)expression).getOperator();
-			if( op == IASTTypeIdExpression.op_sizeof ){
+			if( op == IASTUnaryExpression.op_sizeof ){
 				IScope scope = getContainingScope( expression );
 				try {
 					IBinding [] bs = scope.find( SIZE_T );
@@ -1764,6 +1767,13 @@ public class CPPVisitor {
 			}
 			
 			IType type = getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+			while( type instanceof ITypedef ){
+				try {
+					type = ((ITypeContainer)type).getType();
+				} catch (DOMException e) {
+					break;
+				}
+			}
 			if( op == IASTUnaryExpression.op_star && (type instanceof IPointerType || type instanceof IArrayType) ){
 			    try {
 					return ((ITypeContainer)type).getType();
@@ -1814,6 +1824,9 @@ public class CPPVisitor {
 		} else if( expression instanceof IASTArraySubscriptExpression ){
 			IType t = getExpressionType( ((IASTArraySubscriptExpression) expression).getArrayExpression() );
 			try {
+				while( t instanceof ITypedef ){
+					t = ((ITypedef)t).getType();
+				}
 				if( t instanceof IPointerType )
 					return ((IPointerType)t).getType();
 				else if( t instanceof IArrayType )

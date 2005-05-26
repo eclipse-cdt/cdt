@@ -1969,6 +1969,7 @@ public class CPPSemantics {
 
 		IType [] sourceParameters = getSourceParameterTypes( data.functionParameters ); //the parameters the function is being called with
 		IType [] targetParameters = null;
+		boolean sourceVoid = ( data.functionParameters == null || data.functionParameters.length == 0 );
 		int numSourceParams = 0;
 		int targetLength = 0;
 		int numFns = fns.length;
@@ -2028,7 +2029,9 @@ public class CPPSemantics {
 				} else if( varArgs ){
 					cost = new Cost( source, null );
 					cost.rank = Cost.ELLIPSIS_CONVERSION;
-				} else if( source.isSameType( target ) ){
+				} else if( source.isSameType( target )  ||
+				   	      ( sourceVoid && ((useImplicitObj && j == 1)||(!useImplicitObj && j == 0)) ) )
+				{
 					cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {

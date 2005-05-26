@@ -14,10 +14,16 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -26,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -80,18 +87,19 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
             }
         }
         char [] className = name.toCharArray();
-               
-        //default constructor: A()
-		IType voidType = new CPPBasicType( IBasicType.t_void, 0 );
-		IParameter [] voidPs = new IParameter [] { new CPPParameter( voidType ) };
-        ICPPMethod m = new CPPImplicitConstructor( this, className, voidPs );
-        implicits[0] = m;
-	    addBinding( m );
+            
+		IParameter [] voidPs = new IParameter [] { new CPPParameter( CPPSemantics.VOID_TYPE ) };
+        if( !hasNonStandardDefaultConstructor( compTypeSpec ) ) {
+	        //default constructor: A(void)
+	        ICPPMethod m = new CPPImplicitConstructor( this, className, voidPs );
+	        implicits[0] = m;
+		    addBinding( m );
+        }
 	    
 	    //copy constructor: A( const A & )
 	    IType pType = new CPPReferenceType( new CPPQualifierType( clsType, true, false ) );
 	    IParameter [] ps = new IParameter [] { new CPPParameter( pType ) };
-	    m = new CPPImplicitConstructor( this, className, ps );
+	    ICPPMethod m = new CPPImplicitConstructor( this, className, ps );
 	    implicits[1] = m;
 	    addBinding( m );
 	    
@@ -106,6 +114,47 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    m = new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), voidPs );
 	    implicits[3] = m;
 	    addBinding( m );
+	}
+	
+	private boolean hasNonStandardDefaultConstructor( ICPPASTCompositeTypeSpecifier compSpec ){
+		IASTDeclaration [] members = compSpec.getMembers();
+		char [] name = compSpec.getName().toCharArray();
+		IASTDeclarator dtor = null;
+		IASTDeclSpecifier spec = null;
+        for( int i = 0; i < members.length; i++ ){
+			if( members[i] instanceof IASTSimpleDeclaration ){
+			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+			    if( dtors.length == 0 || dtors.length > 1 )
+			    	continue;
+			    dtor = dtors[0];
+			    spec = ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();
+			} else if( members[i] instanceof IASTFunctionDefinition ){
+			    dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			    spec = ((IASTFunctionDefinition)members[i]).getDeclSpecifier();
+			}
+			if( !(dtor instanceof ICPPASTFunctionDeclarator) || !(spec instanceof IASTSimpleDeclSpecifier) ||
+				((IASTSimpleDeclSpecifier)spec).getType() != IASTSimpleDeclSpecifier.t_unspecified ||
+				!CharArrayUtils.equals( dtor.getName().toCharArray(), name ) )
+			{
+				continue;
+			}
+			
+			IASTParameterDeclaration [] ps = ((ICPPASTFunctionDeclarator)dtor).getParameters();
+        	if( ps.length >= 1 ){
+        		IASTDeclarator d = ps[0].getDeclarator();
+        		IASTDeclSpecifier s = ps[0].getDeclSpecifier();
+        		if( s instanceof IASTSimpleDeclSpecifier &&
+        		    ((IASTSimpleDeclSpecifier)s).getType() == IASTSimpleDeclSpecifier.t_void &&
+        		    d.getPointerOperators().length == 0 && !(d instanceof IASTArrayDeclarator) )
+        		{
+        			continue;  //A(void)
+        		}
+        		    
+        		if( d.getInitializer() != null )
+        			return true;
+        	}
+	    }
+		return false;
 	}
 	
 	public IScope getParent() {

@@ -4498,4 +4498,22 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPFunction copy = (ICPPFunction) col.getName(1).resolveBinding();
         assertSame( copy, col.getName(5).resolveBinding() );
 	}
+	
+	public void testDefaultConstructor() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class A {                        \n"); //$NON-NLS-1$
+		buffer.append("   A( int i = 0 );               \n"); //$NON-NLS-1$
+		buffer.append("};                               \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(1).resolveBinding();
+		
+		ICPPConstructor [] cs = A.getConstructors();
+		assertTrue( cs.length == 2 );
+		assertSame( cs[1], ctor );
+	}
 }

@@ -165,12 +165,11 @@ public class ExternalExtensionMacroSupplier implements IBuildMacroSupplier {
 	}
 	
 	protected String getValidName(String name){
-		name = EnvVarOperationProcessor.normalizeName(name);
-		if(name == null)
+		if(name == null || (name = name.trim()).length() == 0)
 			return null;
 		if(fNonOverloadableMacros != null){
 			for(int i = 0; i < fNonOverloadableMacros.length; i++){
-				if(name.equals(fNonOverloadableMacros[i].toUpperCase()))
+				if(fNonOverloadableMacros[i].equals(EnvVarOperationProcessor.normalizeName(name)))
 					return null;
 			}
 		}

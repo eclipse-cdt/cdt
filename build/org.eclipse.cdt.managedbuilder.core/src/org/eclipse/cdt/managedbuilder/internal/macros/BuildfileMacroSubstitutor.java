@@ -168,7 +168,8 @@ public class BuildfileMacroSubstitutor extends DefaultMacroSubstitutor {
 	protected ResolvedMacro resolveMacro(IBuildMacro macro) throws BuildMacroException{
 		ResolvedMacro resolved = null;
 			
-		if(!UserDefinedMacroSupplier.getInstance().areMacrosExpanded(fConfiguration) && 
+		if(fConfiguration != null && fBuilder != null && 
+				!UserDefinedMacroSupplier.getInstance().areMacrosExpanded(fConfiguration) && 
 				macro instanceof EnvironmentMacroSupplier.EnvVarMacro){
 			String ref = getMacroReference(macro);
 			if(ref != null)

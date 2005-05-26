@@ -1128,12 +1128,12 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * answers whether the macro of a given name can be sreated
 	 */
 	public boolean canCreate(String name){
-		if((name = EnvVarOperationProcessor.normalizeName(name)) == null)
+		if(name == null || (name = name.trim()).length() == 0)
 			return false;
 
 		if(fHiddenMacros != null){
 			for(int i = 0; i < fHiddenMacros.length; i++){
-				if(name.equals(fHiddenMacros[i].toUpperCase()))
+				if(fHiddenMacros[i].equals(EnvVarOperationProcessor.normalizeName(name)))
 					return false;
 			}
 		}

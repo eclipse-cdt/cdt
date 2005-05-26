@@ -196,7 +196,7 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 		
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
 		if(info != null)
-			MacroResolver.resolveToStringList(value,getMacroSubstitutor(info,nonexistentMacrosValue, " ")); //$NON-NLS-1$ 
+			return MacroResolver.resolveToStringList(value,getMacroSubstitutor(info,nonexistentMacrosValue, " ")); //$NON-NLS-1$ 
 		return null;
 	}
 

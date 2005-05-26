@@ -314,12 +314,11 @@ public class UserDefinedEnvironmentSupplier extends
 	}
 
 	protected String getValidName(String name){
-		name = EnvVarOperationProcessor.normalizeName(name);
-		if(name == null)
+		if(name == null || (name = name.trim()).length() == 0)
 			return null;
 		if(fNonOverloadableVariables != null){
 			for(int i = 0; i < fNonOverloadableVariables.length; i++){
-				if(name.equals(fNonOverloadableVariables[i]))
+				if(fNonOverloadableVariables[i].equals(EnvVarOperationProcessor.normalizeName(name)))
 					return null;
 			}
 		}

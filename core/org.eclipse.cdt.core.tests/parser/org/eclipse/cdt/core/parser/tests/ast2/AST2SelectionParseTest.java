@@ -1581,6 +1581,18 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		IASTNode node = parse( code, ParserLanguage.C, offset1, length );
 		assertNotNull(node);
 	}
+
+	public void testBug96702() throws Exception {
+		importFile("test.h", "int x;\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		String code = "#include \"test.h\"   // comment \nvoid f();   // comment \n"; //$NON-NLS-1$
+		
+		int offset = code.indexOf( "f()" ); //$NON-NLS-1$
+		IFile file = importFile("blah.c", code);
+		IASTNode node = parse( file, ParserLanguage.C, offset, 1 ); // select f();
+		assertTrue(node instanceof IASTName);
+		assertEquals(((ASTNode)node).getOffset(), 44);
+		assertEquals(((ASTNode)node).getLength(), 1);
+	}
 	
 	public void testBug86126() throws Exception {
 		importFile("foo.h", "int x;\r\n"); //$NON-NLS-1$ //$NON-NLS-2$

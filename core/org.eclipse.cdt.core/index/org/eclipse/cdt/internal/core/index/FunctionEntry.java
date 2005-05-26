@@ -12,10 +12,10 @@
 package org.eclipse.cdt.internal.core.index;
 
 public class FunctionEntry extends NamedEntry implements IFunctionEntry {
-
 	
 	char[][] signature;
-		
+	char[]	 returnString;
+	
 	public FunctionEntry(int metakind, int entry_type, char[][] fullName, int modifiers,int fileNumber){
 		super(metakind,entry_type,fullName, modifiers, fileNumber);
 	}

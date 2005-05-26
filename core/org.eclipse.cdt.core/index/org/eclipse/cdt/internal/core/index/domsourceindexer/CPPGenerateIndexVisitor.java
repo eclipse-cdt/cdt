@@ -143,6 +143,9 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             if (name.isDeclaration()) {
                 limitTo = ICSearchConstants.DECLARATIONS;
             }
+            else if (name.isDefinition()){
+				limitTo = ICSearchConstants.DEFINITIONS;
+            }
             else if (name.isReference()) {
                 limitTo = ICSearchConstants.REFERENCES;
             }
@@ -217,24 +220,26 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         }
         
         if (entryType != null) {
+			int entryKind =0;
 			if (limitTo == ICSearchConstants.DECLARATIONS) {
-	            IndexerOutputWrapper.addNameDecl(indexer.getOutput(),
-						getFullyQualifiedName(binding),
-						entryType,
-	                    fileNumber, 
-	                    loc.getNodeOffset(),
-	                    loc.getNodeLength(),
-	                    IIndex.OFFSET);
+				entryKind = IIndex.DECLARATION;
 			}
+			/*else if (limitTo == ICSearchConstants.DEFINITIONS) {
+				entryKind = IIndex.DEFINITION;
+			}*/
 			else if (limitTo == ICSearchConstants.REFERENCES) {
-	            IndexerOutputWrapper.addNameRef(indexer.getOutput(),
-						getFullyQualifiedName(binding),
-						entryType,
-	                    fileNumber, 
-	                    loc.getNodeOffset(),
-	                    loc.getNodeLength(),
-	                    IIndex.OFFSET);
+				entryKind = IIndex.REFERENCE;
 			}
+				
+            IndexerOutputWrapper.addIndexEntry(indexer.getOutput(),
+					getFullyQualifiedName(binding),
+					entryType,
+					entryKind,
+                    fileNumber, 
+                    loc.getNodeOffset(),
+                    loc.getNodeLength(),
+                    IIndex.OFFSET);
+	
         }
     }
 
@@ -251,8 +256,9 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         if (compositeKey == ICPPClassType.k_class || compositeKey == ICompositeType.k_struct) {
             if (prop == ICPPASTBaseSpecifier.NAME) {
                 // base class
-	            IndexerOutputWrapper.addNameDecl(indexer.getOutput(), getFullyQualifiedName(compBinding),
+	            IndexerOutputWrapper.addIndexEntry(indexer.getOutput(), getFullyQualifiedName(compBinding),
 						IndexerOutputWrapper.DERIVED,
+						IIndex.DECLARATION,
 	                    fileNumber, 
 	                    loc.getNodeOffset(),
 	                    loc.getNodeLength(),

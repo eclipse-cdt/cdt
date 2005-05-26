@@ -10,7 +10,11 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
+import org.eclipse.cdt.internal.core.index.FunctionEntry;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.NamedEntry;
+import org.eclipse.cdt.internal.core.index.TypeEntry;
 
 
 /**
@@ -74,9 +78,10 @@ class IndexerOutputWrapper {
 	private IndexerOutputWrapper() {
 	}
 
-	static void addNameDecl(IIndexerOutput indexerOutput,
+	static void addIndexEntry (IIndexerOutput indexerOutput,
 							  char[][] name,
 							  EntryType entryType,
+							  int entryKind,
 							  int fileNumber,
 							  int offset,
 							  int length,
@@ -84,123 +89,103 @@ class IndexerOutputWrapper {
 		//TODO temporary until all bindings are completed
 		if (name == null) 
 			name = new char[][] {"NPE".toCharArray()}; //$NON-NLS-1$
+		
+		TypeEntry typeEntry;
+		NamedEntry namedEntry;
+		FunctionEntry functionEntry;
+		
 		switch (entryType.toInt()) {
 			case CLASS_CONST:
-				indexerOutput.addClassDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_CLASS,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				//typeEntry.setBaseTypes(getInherits());
+				typeEntry.serialize(indexerOutput);
 				break;
 			case STRUCT_CONST:
-				indexerOutput.addStructDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_STRUCT,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				//typeEntry.setBaseTypes(getInherits());
+				typeEntry.serialize(indexerOutput);
 				break;
 			case UNION_CONST:
-				indexerOutput.addUnionDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_UNION,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				//typeEntry.setBaseTypes(getInherits());
+				typeEntry.serialize(indexerOutput);
 				break;
 			case ENUM_CONST:
-				indexerOutput.addEnumDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_ENUM ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case VAR_CONST:
-				indexerOutput.addVariableDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_VAR ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case TYPEDEF_CONST:
-				indexerOutput.addTypedefDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_TYPEDEF, entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case DERIVED_CONST:
-				indexerOutput.addDerivedDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_DERIVED ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case FRIEND_CONST:
-				indexerOutput.addFriendDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_FRIEND ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case FWD_CLASS_CONST:
-				indexerOutput.addFwd_ClassDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_FWD_CLASS ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case FWD_STRUCT_CONST:
-				indexerOutput.addFwd_StructDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_FWD_STRUCT ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case FWD_UNION_CONST:
-				indexerOutput.addFwd_UnionDecl(fileNumber, name, offset, length, offsetType);
+				typeEntry = new TypeEntry(IIndex.TYPE_FWD_UNION ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				typeEntry.setNameOffset(offset, length, offsetType);
+				typeEntry.serialize(indexerOutput);
 				break;
 			case NAMESPACE_CONST:
-				indexerOutput.addNamespaceDecl(fileNumber, name, offset, length, offsetType);
+			    namedEntry = new NamedEntry(IIndex.NAMESPACE, entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				namedEntry.setNameOffset(offset, length, offsetType);
+				namedEntry.serialize(indexerOutput);
 				break;
 			case ENUMERATOR_CONST:
-				indexerOutput.addEnumtorDecl(fileNumber, name, offset, length, offsetType);
+				 namedEntry = new NamedEntry(IIndex.ENUMTOR, entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				 namedEntry.setNameOffset(offset, length, offsetType);
+				 namedEntry.serialize(indexerOutput);
 				break;
 			case FIELD_CONST:
-				indexerOutput.addFieldDecl(fileNumber, name, offset, length, offsetType);
+				 namedEntry = new NamedEntry(IIndex.FIELD, entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				 namedEntry.setNameOffset(offset, length, offsetType);
+				 namedEntry.serialize(indexerOutput);
 				break;
 			case METHOD_CONST:
-				indexerOutput.addMethodDecl(fileNumber, name, offset, length, offsetType);
+				functionEntry = new FunctionEntry(IIndex.METHOD, entryKind,name,0 /*getModifiers()*/, fileNumber);
+				//funEntry.setSignature(getFunctionSignature());
+				functionEntry.setNameOffset(offset, length, offsetType);
+				functionEntry.serialize(indexerOutput);
 				break;
 			case FUNCTION_CONST:
-				indexerOutput.addFunctionDecl(fileNumber, name, offset, length, offsetType);
+				functionEntry = new FunctionEntry(IIndex.FUNCTION, entryKind,name,0 /*getModifiers()*/, fileNumber);
+				//funEntry.setSignature(getFunctionSignature());
+				functionEntry.setNameOffset(offset, length, offsetType);
+				functionEntry.serialize(indexerOutput);
 				break;
 			case MACRO_CONST:
-				indexerOutput.addMacroDecl(fileNumber, name, offset, length, offsetType);
+				 namedEntry = new NamedEntry(IIndex.MACRO, entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				 namedEntry.setNameOffset(offset, length, offsetType);
+				 namedEntry.serialize(indexerOutput);
 				break;
 		}
 	}
-	
-	static void addNameRef(IIndexerOutput indexerOutput,
- 						   char[][] name,
-						   EntryType entryType,
-						   int fileNumber,
-						   int offset,
-						   int length,
-						   int offsetType) {
-		//TODO temporary until all bindings are completed
-		if (name == null) 
-			name = new char[][] {"NPE".toCharArray()}; //$NON-NLS-1$
-		switch (entryType.toInt()) {
-			case CLASS_CONST:
-				indexerOutput.addClassRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case STRUCT_CONST:
-				indexerOutput.addStructRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case UNION_CONST:
-				indexerOutput.addUnionRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case ENUM_CONST:
-				indexerOutput.addEnumRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case VAR_CONST:
-				indexerOutput.addVariableRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case TYPEDEF_CONST:
-				indexerOutput.addTypedefRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case DERIVED_CONST:
-				indexerOutput.addDerivedRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case FRIEND_CONST:
-				indexerOutput.addFriendRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case FWD_CLASS_CONST:
-				indexerOutput.addFwd_ClassRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case FWD_STRUCT_CONST:
-				indexerOutput.addFwd_StructRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case FWD_UNION_CONST:
-				indexerOutput.addFwd_UnionRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case NAMESPACE_CONST:
-				indexerOutput.addNamespaceRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case ENUMERATOR_CONST:
-				indexerOutput.addEnumtorRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case FIELD_CONST:
-				indexerOutput.addFieldRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case METHOD_CONST:
-				indexerOutput.addMethodRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case FUNCTION_CONST:
-				indexerOutput.addFunctionRef(fileNumber, name, offset, length, offsetType);
-				break;
-			case INCLUDE_CONST:
-				indexerOutput.addIncludeRef(fileNumber, name, offset, length, offsetType);
-				break;
-		}
-	}
+
 }

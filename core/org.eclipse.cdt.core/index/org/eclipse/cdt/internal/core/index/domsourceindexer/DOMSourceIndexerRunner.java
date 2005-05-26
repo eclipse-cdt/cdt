@@ -64,7 +64,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     static int errorCount = 0;
     static Map errors = new HashMap();
 
-	public DOMSourceIndexerRunner(IFile resource, SourceIndexer indexer) {
+    public DOMSourceIndexerRunner(IFile resource, SourceIndexer indexer) {
         this.resourceFile = resource;
         this.indexer = indexer;
     }
@@ -259,9 +259,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             getOutput().addRelatives(fileNumber, include, 
                     (parent != null) ? parent.getIncludeDirective().getPath() : null);
 			
-            IndexerOutputWrapper.addNameRef(getOutput(),
+            IndexerOutputWrapper.addIndexEntry(getOutput(),
                     new char[][] {include.toCharArray()}, 
 					IndexerOutputWrapper.INCLUDE,
+					IIndex.REFERENCE,
 					fileNumber,
 					1,
 					1,
@@ -288,9 +289,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
            // Get the location
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(macro);
             int fileNumber = IndexEncoderUtil.calculateIndexFlags(this, loc);
-            IndexerOutputWrapper.addNameDecl(getOutput(),
+            IndexerOutputWrapper.addIndexEntry(getOutput(),
                     new char[][] {macro.toCharArray()},
 					IndexerOutputWrapper.MACRO,
+					IIndex.DECLARATION,
 					fileNumber,
 					loc.getNodeOffset(),
                     loc.getNodeLength(),

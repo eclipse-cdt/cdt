@@ -156,24 +156,24 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             entryType = IndexerOutputWrapper.FUNCTION;
         
         if (entryType != null) {
+			int entryKind=0;
             if (name.isDeclaration()) {
-                IndexerOutputWrapper.addNameDecl(indexer.getOutput(),
-                        getFullyQualifiedName(name),
-                        entryType,
-						fileNumber, 
-                        loc.getNodeOffset(),
-                        loc.getNodeLength(),
-                        IIndex.OFFSET);
-            }                   
+               entryKind=IIndex.DECLARATION;
+            }/* else if (name.isDefinition()){                 
+				entryKind=IIndex.DEFINITION;	
+            }*/
             else if (name.isReference()) {
-                IndexerOutputWrapper.addNameRef(indexer.getOutput(),
-                        getFullyQualifiedName(name),
-                        entryType,
-						fileNumber, 
-                        loc.getNodeOffset(),
-                        loc.getNodeLength(),
-                        IIndex.OFFSET);
+               entryKind=IIndex.REFERENCE;
             }
+			
+		 IndexerOutputWrapper.addIndexEntry(indexer.getOutput(),
+                 getFullyQualifiedName(name),
+                 entryType,
+                 entryKind,
+				 fileNumber, 
+                 loc.getNodeOffset(),
+                 loc.getNodeLength(),
+                 IIndex.OFFSET);
         }
     }
 

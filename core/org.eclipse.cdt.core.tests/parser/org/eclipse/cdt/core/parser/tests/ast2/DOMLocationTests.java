@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
@@ -457,7 +458,7 @@ public class DOMLocationTests extends AST2BaseTest {
                 : null) {
             IASTTranslationUnit tu = parse(code, p);
             IASTForStatement for_stmt = (IASTForStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[1];
-            assertNull( for_stmt.getInitDeclaration() );
+            assertTrue( for_stmt.getInitializerStatement() instanceof IASTNullStatement );
         }
 	}
 	

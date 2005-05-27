@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -25,39 +24,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, IASTAmbiguityParent {
     private IScope scope = null;
     
-    private IASTExpression initialExpression;
-    private IASTDeclaration initDeclaration;
     private IASTExpression condition;
     private IASTExpression iterationExpression;
-    private IASTStatement body;
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getInitExpression()
-     */
-    public IASTExpression getInitExpression() {
-        return initialExpression;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#setInit(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
-    public void setInit(IASTExpression expression) {
-        this.initialExpression = expression;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getInitDeclaration()
-     */
-    public IASTDeclaration getInitDeclaration() {
-        return initDeclaration;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#setInit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
-    public void setInit(IASTDeclaration declaration) {
-        this.initDeclaration = declaration;
-    }
+    private IASTStatement body, init;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getCondition()
@@ -119,8 +88,7 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, 
 	            default : break;
 	        }
 		}
-        if( initDeclaration != null ) if( !initDeclaration.accept( action ) ) return false;
-        if( initialExpression != null ) if( !initialExpression.accept( action ) ) return false;
+        if( init != null ) if( !init.accept( action ) ) return false;
         if( condition != null ) if( !condition.accept( action ) ) return false;
         if( iterationExpression != null ) if( !iterationExpression.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
@@ -146,18 +114,19 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, 
             other.setParent( child.getParent() );
             iterationExpression  = (IASTExpression) other;
         }
-        if( child == initialExpression )
+        if( child == init )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
             other.setParent( child.getParent() );
-            initialExpression  = (IASTExpression) other;
+            init  = (IASTStatement) other;
         }
-        if( initDeclaration == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
-            initDeclaration = (IASTDeclaration) other;
-        }
+    }
 
+    public IASTStatement getInitializerStatement() {
+        return init;
+    }
+
+    public void setInitializerStatement(IASTStatement statement) {
+        init = statement;       
     }
 }

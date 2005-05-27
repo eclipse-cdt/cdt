@@ -53,7 +53,6 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -2264,44 +2263,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTParameterDeclaration createParameterDeclaration() {
         return new CASTParameterDeclaration();
-    }
-
-    /**
-     * @throws BacktrackException
-     */
-    protected IASTNode forInitStatement() throws BacktrackException,
-            EndOfFileException {
-        IToken mark = mark();
-        try {
-            IASTExpression e = null;
-            if( LT(1) != IToken.tSEMI )
-            	e = expression();
-			switch (LT(1)) {
-			case IToken.tSEMI:
-	            consume(IToken.tSEMI);
-				break;
-			case IToken.tEOC:
-				break;
-			default:
-				throw backtrack;
-			}
-            // TODO is this a problem? Should we wrap this in an expression
-            // statement?
-            return e;
-        } catch (BacktrackException bt) {
-            backup(mark);
-            try {
-                return simpleDeclaration();
-            } catch (BacktrackException b) {
-                IASTProblem p = failParse(b);
-                IASTProblemExpression pe = createProblemExpression();
-                ((CASTNode) pe).setOffsetAndLength(((CASTNode) p));
-                pe.setProblem(p);
-                p.setParent(pe);
-                p.setPropertyInParent(IASTProblemHolder.PROBLEM);
-                return pe;
-            }
-        }
     }
 
     /*

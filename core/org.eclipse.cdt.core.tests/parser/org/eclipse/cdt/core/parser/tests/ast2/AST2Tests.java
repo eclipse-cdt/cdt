@@ -1024,9 +1024,9 @@ public class AST2Tests extends AST2BaseTest {
         // for(
         IASTForStatement for_stmt = (IASTForStatement) compound.getStatements()[0];
         // int i = 0;
-        assertNull(for_stmt.getInitExpression());
-        IASTSimpleDeclaration initDecl = (IASTSimpleDeclaration) for_stmt
-                .getInitDeclaration();
+        
+        IASTSimpleDeclaration initDecl = (IASTSimpleDeclaration) ((IASTDeclarationStatement) for_stmt
+                .getInitializerStatement()).getDeclaration();
         IASTDeclarator dtor = initDecl.getDeclarators()[0];
         IASTName name_i = dtor.getName();
         // i < 5;

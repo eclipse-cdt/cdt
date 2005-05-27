@@ -1398,8 +1398,8 @@ public class CVisitor {
 			return checkForBinding( scope, ((IASTDeclarationStatement)node).getDeclaration(), name, typesOnly, prefixMap );
 		} else if( node instanceof IASTForStatement ){
 			IASTForStatement forStatement = (IASTForStatement) node;
-			if( forStatement.getInitDeclaration() != null ){
-				return checkForBinding( scope, forStatement.getInitDeclaration(), name, typesOnly, prefixMap );
+			if( forStatement.getInitializerStatement() instanceof IASTDeclarationStatement ){
+				return checkForBinding( scope, ((IASTDeclarationStatement)forStatement.getInitializerStatement()).getDeclaration(), name, typesOnly, prefixMap );
 			}
 		}
 	    return null;

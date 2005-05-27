@@ -1373,7 +1373,11 @@ public class CPPSemantics {
 		else if( node instanceof IASTDeclarationStatement )
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
 		else if( node instanceof IASTForStatement && checkAux )
-			declaration = ((IASTForStatement)node).getInitDeclaration();
+        {
+			if( ((IASTForStatement)node).getInitializerStatement() instanceof IASTDeclarationStatement )
+                declaration = ((IASTDeclarationStatement)((IASTForStatement)node).getInitializerStatement()).getDeclaration();
+            
+        }
 		else if( node instanceof IASTParameterDeclaration ){
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
 		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();

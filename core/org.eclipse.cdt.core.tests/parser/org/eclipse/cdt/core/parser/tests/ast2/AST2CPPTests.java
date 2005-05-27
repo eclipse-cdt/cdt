@@ -132,6 +132,27 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(A, A_2);
     }
 
+    public void testBug95411() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class A {\n" );
+        buffer.append( "    public:" );
+        buffer.append( "int x;" );
+        buffer.append( "A * next;" );
+        buffer.append( "};" );
+        buffer.append( "A * start;" );
+        buffer.append( "void test() {" );
+        buffer.append( "for(A *y = start; y->x != 0;  y = y->next) {" );
+        buffer.append( "42;" );
+        buffer.append( "}" );
+        buffer.append( "for(int x = 0 ; x < 10; x++ ) {" );
+        buffer.append( "}" );
+        buffer.append( "}" );
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector nameCol = new CPPNameCollector();
+        tu.accept( nameCol );
+        assertNoProblemBindings( nameCol );
+    }
+    
     public void testClassForwardDecl() throws Exception {
         StringBuffer buffer = new StringBuffer("class A; class A {};"); //$NON-NLS-1$
 

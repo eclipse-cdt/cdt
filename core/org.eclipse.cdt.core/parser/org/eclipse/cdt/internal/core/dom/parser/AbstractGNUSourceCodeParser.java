@@ -1450,8 +1450,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTDeclaration declaration() throws BacktrackException,
             EndOfFileException;
 
-    protected abstract IASTNode forInitStatement() throws BacktrackException,
-            EndOfFileException;
+
 
     /**
      * @return
@@ -1826,7 +1825,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         int startOffset;
         startOffset = consume(IToken.t_for).getOffset();
         consume(IToken.tLPAREN);
-        IASTNode init = forInitStatement();
+        IASTStatement init = forInitStatement();
         IASTExpression for_condition = null;
         switch (LT(1)) {
         case IToken.tSEMI:
@@ -1869,17 +1868,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                     calculateEndOffset(for_body) - startOffset);
         }
 
-        if (init instanceof IASTDeclaration) {
-            for_statement.setInit((IASTDeclaration) init);
-            ((IASTDeclaration) init).setParent(for_statement);
-            ((IASTDeclaration) init)
-                    .setPropertyInParent(IASTForStatement.INITDECLARATION);
-        } else if (init instanceof IASTExpression) {
-            for_statement.setInit((IASTExpression) init);
-            ((IASTExpression) init).setParent(for_statement);
-            ((IASTExpression) init)
-                    .setPropertyInParent(IASTForStatement.INITEXPRESSION);
-        }
+        for_statement.setInitializerStatement(init);
+        init.setParent(for_statement);
+        init.setPropertyInParent(IASTForStatement.INITIALIZER);
+        
         if (for_condition != null) {
             for_statement.setCondition(for_condition);
             for_condition.setParent(for_statement);
@@ -2185,6 +2177,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
         throwBacktrack(LA(1));
         return null;
+    }
+    
+    protected abstract IASTDeclaration simpleDeclaration() throws BacktrackException,
+    EndOfFileException;
+
+    /**
+     * @throws BacktrackException
+     */
+    protected IASTStatement forInitStatement() throws BacktrackException, EndOfFileException {
+        if( LT(1) == IToken.tSEMI )
+            return parseNullStatement();
+        return parseDeclarationOrExpressionStatement();
     }
 
 }

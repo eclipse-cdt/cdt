@@ -2447,7 +2447,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return simpleDeclarationStrategyUnion();
         }
     }
-
+    
     protected IASTDeclaration simpleDeclarationStrategyUnion()
             throws EndOfFileException, BacktrackException {
         IToken simpleDeclarationMark = mark();
@@ -4538,38 +4538,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
-     * @throws BacktrackException
-     */
-    protected IASTNode forInitStatement() throws BacktrackException,
-            EndOfFileException {
-        IToken mark = mark();
-        try {
-            IASTExpression e = null;
-            if (LT(1) != IToken.tSEMI)
-                e = expression();
-            switch (LT(1)) {
-            case IToken.tSEMI:
-                consume(IToken.tSEMI);
-                break;
-            case IToken.tEOC:
-                break;
-            default:
-                throw backtrack;
-            }
-            return e;
-        } catch (BacktrackException bt) {
-            backup(mark);
-            try {
-                return simpleDeclarationStrategyUnion();
-            } catch (BacktrackException b) {
-                failParse();
-                throwBacktrack(b);
-                return null;
-            }
-        }
-    }
-
-    /**
      * This is the top-level entry point into the ANSI C++ grammar.
      * translationUnit : (declaration)*
      */
@@ -5334,5 +5302,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IASTStatement s = super.functionBody();
         --functionBodyCount;
         return s;
+    }
+
+    protected IASTDeclaration simpleDeclaration() throws BacktrackException, EndOfFileException {
+        return simpleDeclarationStrategyUnion();
     }
 }

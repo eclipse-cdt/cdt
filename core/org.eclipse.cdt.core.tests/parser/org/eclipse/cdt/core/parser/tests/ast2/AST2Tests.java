@@ -2468,27 +2468,28 @@ public class AST2Tests extends AST2BaseTest {
         assertFalse(mod.isRestrict());
         assertFalse(mod.isVolatile());
     }
-
-    public void testExternalVariable() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("void f() {               \n"); //$NON-NLS-1$
-        buffer.append("   if( a == 0 )          \n"); //$NON-NLS-1$
-        buffer.append("      a = a + 3;         \n"); //$NON-NLS-1$
-        buffer.append("}                        \n"); //$NON-NLS-1$
-
-        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
-        CNameCollector col = new CNameCollector();
-        tu.accept(col);
-
-        IVariable a = (IVariable) col.getName(1).resolveBinding();
-        assertNotNull(a);
-        assertTrue(a instanceof ICExternalBinding);
-        assertInstances(col, a, 3);
-    }
+//AJN: bug 77383 don't do external variables	  
+//    public void testExternalVariable() throws Exception {
+//        StringBuffer buffer = new StringBuffer();
+//        buffer.append("void f() {               \n"); //$NON-NLS-1$
+//        buffer.append("   if( a == 0 )          \n"); //$NON-NLS-1$
+//        buffer.append("      a = a + 3;         \n"); //$NON-NLS-1$
+//        buffer.append("}                        \n"); //$NON-NLS-1$
+//
+//        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+//        CNameCollector col = new CNameCollector();
+//        tu.accept(col);
+//
+//        IVariable a = (IVariable) col.getName(1).resolveBinding();
+//        assertNotNull(a);
+//        assertTrue(a instanceof ICExternalBinding);
+//        assertInstances(col, a, 3);
+//    }
 
     public void testExternalDefs() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void f() {               \n"); //$NON-NLS-1$
+        buffer.append("   int a = 1;            \n"); //$NON-NLS-1$
         buffer.append("   if( a == 0 )          \n"); //$NON-NLS-1$
         buffer.append("      g( a );            \n"); //$NON-NLS-1$
         buffer.append("   if( a < 0 )           \n"); //$NON-NLS-1$
@@ -2502,14 +2503,13 @@ public class AST2Tests extends AST2BaseTest {
         tu.accept(col);
 
         IVariable a = (IVariable) col.getName(1).resolveBinding();
-        IFunction g = (IFunction) col.getName(2).resolveBinding();
+        IFunction g = (IFunction) col.getName(3).resolveBinding();
         assertNotNull(a);
         assertNotNull(g);
-        assertTrue(a instanceof ICExternalBinding);
         assertTrue(g instanceof ICExternalBinding);
 
-        assertEquals(col.size(), 10);
-        assertInstances(col, a, 6);
+        assertEquals(col.size(), 11);
+        assertInstances(col, a, 7);
         assertInstances(col, g, 3);
     }
 

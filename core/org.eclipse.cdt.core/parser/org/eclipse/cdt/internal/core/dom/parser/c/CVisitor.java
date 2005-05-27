@@ -937,7 +937,7 @@ public class CVisitor {
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
 				IBinding binding = (IBinding) findBinding( blockItem, ((IASTIdExpression)node).getName(), bits );
-				if( binding instanceof IType ){
+				if( binding instanceof IType && !(binding instanceof IProblemBinding)  ){
 					return new ProblemBinding( node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray() );
 				}
                 return binding; 
@@ -1135,7 +1135,7 @@ public class CVisitor {
 	}
 	
 	/**
-	 * if (bits | PREFIX_LOOKUP) then returns IBinding []
+	 * if (bits & PREFIX_LOOKUP) then returns IBinding []
 	 * otherwise returns IBinding
 	 */
 	protected static Object findBinding( IASTNode blockItem, IASTName name, int bits ) throws DOMException{
@@ -1274,11 +1274,14 @@ public class CVisitor {
 	        if( parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME ){
 	            //external function
 	            external = new CExternalFunction( tu, name );
-	        } else {
+	            ((CScope)tu.getScope()).addName( name );
+	        } 
+	        else {
 	            //external variable
-	            external = new CExternalVariable( tu, name );
+	            //external = new CExternalVariable( tu, name );
+       	        //((CScope)tu.getScope()).addName( name );
+	        	external = new ProblemBinding( name, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray() );
 	        }
-	        ((CScope)tu.getScope()).addName( name );
 	    }
 	    return external;
 	}

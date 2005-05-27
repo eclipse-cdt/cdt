@@ -11,10 +11,11 @@
 
 package org.eclipse.cdt.internal.core.index;
 
+
 public class TypeEntry  extends NamedEntry implements ITypeEntry {
 
 	int type_kind;
-	char[][] baseTypes;
+	IIndexEntry[] baseTypes;
 	       
 	public TypeEntry(int type_kind, int entry_type, char[][] fullName, int modifiers, int fileNumber){
 		super(IIndex.TYPE, entry_type, fullName, modifiers, fileNumber);
@@ -29,11 +30,11 @@ public class TypeEntry  extends NamedEntry implements ITypeEntry {
 		return type_kind;
 	}
 	
-	public void setBaseTypes(char[][] baseTypes) {
+	public void setBaseTypes(IIndexEntry[] baseTypes) {
 		this.baseTypes=baseTypes;
 	}
 
-	public char[][] getBaseTypes() {
+	public IIndexEntry[] getBaseTypes() {
 		return baseTypes;
 	}
 

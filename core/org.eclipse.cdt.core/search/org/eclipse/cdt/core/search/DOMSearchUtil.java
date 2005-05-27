@@ -87,6 +87,7 @@ public class DOMSearchUtil {
         ICSearchPattern pattern = createPattern(searchName, limitTo, true);
             
         try {
+        	engine.setWaitingPolicy(ICSearchConstants.FORCE_IMMEDIATE_SEARCH);
             engine.search(CCorePlugin.getWorkspace(), pattern, scope, results, false);
         } catch (InterruptedException e) {
             return EMPTY_MATCHES;

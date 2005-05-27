@@ -204,12 +204,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			if (proxy.getType() == IResource.FILE) {
 				// Check extension to see if build model should build this file
 				IResource resource = proxy.requestResource();
-				String ext = resource.getFileExtension();
+				String ext = resource.getFileExtension();				
 				if (info.buildsFileType(ext)) {
+					// If this file resource is a generated resource, then it is uninteresting
 					if (!generator.isGeneratedResource(resource)) {
-						generator.appendBuildSubdirectory(resource);
+						// If this file resource is excluded from build, then it is uninteresting
+						IResourceConfiguration resConfig = config.getResourceConfiguration(resource.getFullPath().toString());
+						if ((resConfig == null) || (!(resConfig.isExcluded()))) {						
+						    generator.appendBuildSubdirectory(resource);
+						}
 					}
-				}
+				}				
 				return false;
 			}
 
@@ -432,13 +437,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.INFO,
-					info,
+					new String(),
 					null);
 			status.add(new Status (
 					IStatus.INFO,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					NO_SOURCE_FOLDERS,
-					new String(),
+					info,
 					null));
 			return status;
 		} 
@@ -632,20 +637,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// See if the user has cancelled the build
 		checkCancel();
 
-		// Populate the makefile if any source files have been found in the project
+		// Populate the makefile if any buildable source files have been found in the project
 		if (getSubdirList().isEmpty()) {
 			String info = ManagedMakeMessages.getFormattedString("MakefileGenerator.warning.no.source", project.getName()); //$NON-NLS-1$ 
 			updateMonitor(info);	
 			status = new MultiStatus(
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					IStatus.INFO,
-					info,
+					new String(),
 					null);
 			status.add(new Status (
 					IStatus.INFO,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					NO_SOURCE_FOLDERS,
-					new String(),
+					info,
 					null));
 			return status;
 		} 

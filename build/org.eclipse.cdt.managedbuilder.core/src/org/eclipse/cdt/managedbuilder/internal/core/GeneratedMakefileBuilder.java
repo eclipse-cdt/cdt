@@ -264,6 +264,46 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 	}
 
+	/* (non-javadoc)
+	 * Emits a message to the console indicating that there were no source files to build
+	 * @param buildType
+	 * @param status
+	 * @param configName
+	 */
+	private void emitNoSourceMessage(int buildType, IStatus status, String configName) throws CoreException {
+		try {
+			StringBuffer buf = new StringBuffer();
+			IConsole console = CCorePlugin.getDefault().getConsole();
+			console.start(getProject());
+			ConsoleOutputStream consoleOutStream = console.getOutputStream();
+			// Report a successful clean
+			String[] consoleHeader = new String[3];
+			if (buildType == FULL_BUILD) {
+			    consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_FULL);
+			} else if (buildType == INCREMENTAL_BUILD) {
+				consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
+			} else {
+				consoleHeader[0] = new String();
+				outputError(getProject().getName(), "The given build type is not supported in this context");	//$NON-NLS-1$
+			}			
+			consoleHeader[1] = configName;
+			consoleHeader[2] = getProject().getName();
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(status.getMessage());
+			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			consoleOutStream.close();
+		} catch (CoreException e) {
+			// Throw the exception back to the builder
+			throw e;
+		} catch (IOException io) {	//  Ignore console failures...
+		}		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -395,8 +435,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 	
 	/* (non-Javadoc)
-	 * @param monitor
 	 * @param info
+	 * @param generator
+	 * @param monitor
 	 */
 	protected void cleanBuild(IManagedBuildInfo info, IManagedBuilderMakefileGenerator generator, IProgressMonitor monitor) {
 		// Make sure that there is a top level directory and a set of makefiles
@@ -418,6 +459,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 
 	/* (non-Javadoc)
+	 * @param info
+	 * @param generator
 	 * @param monitor
 	 */
 	protected void fullBuild(IManagedBuildInfo info, IManagedBuilderMakefileGenerator generator, IProgressMonitor monitor) throws CoreException {
@@ -439,6 +482,15 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// One possibility is that there is nothing to build
 				IStatus status = kids[index]; 
 				if (status.getCode() == IManagedBuilderMakefileGenerator.NO_SOURCE_FOLDERS) {
+					// Inform the user, via the console, that there is nothing to build
+					// either because there are no buildable sources files or all potentially
+					// buildable files have been excluded from build
+					try { 
+						emitNoSourceMessage(FULL_BUILD, status, info.getConfigurationName());
+					} catch (CoreException e) {
+						// Throw the exception back to the builder
+					    throw e;
+					}					
 					// Dude, we're done
 					return;
 				} else {
@@ -550,6 +602,15 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// One possibility is that there is nothing to build
 				IStatus status = kids[index]; 
 				if (status.getCode() == IManagedBuilderMakefileGenerator.NO_SOURCE_FOLDERS) {
+					// Inform the user, via the console, that there is nothing to build
+					// either because there are no buildable sources files or all potentially
+					// buildable files have been excluded from build
+					try { 
+						emitNoSourceMessage(INCREMENTAL_BUILD, status, info.getConfigurationName());
+					} catch (CoreException e) {
+						// Throw the exception back to the builder
+					    throw e;
+					}					
 					// Dude, we're done
 					return;
 				} else {
@@ -691,7 +752,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						//resolve the build macros in environment variables
 						try{
 							envList.add(variables[i].getName() + "=" + macroProvier.resolveValue(variables[i].getValue(),""," ",IBuildMacroProvider.CONTEXT_CONFIGURATION,cfg));	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						}catch(BuildMacroException e){
+						} catch(BuildMacroException e) {
 						envList.add(variables[i].getName() + "=" + variables[i].getValue());	//$NON-NLS-1$
 					}
 					}

@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.internal.core.index.FunctionEntry;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.INamedEntry;
 import org.eclipse.cdt.internal.core.index.NamedEntry;
 import org.eclipse.cdt.internal.core.index.TypeEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.ICIndexStorageConstants;
@@ -255,7 +256,7 @@ class CTagEntry{
 		return modifier;
 	}
 	
-	private char[][] getInherits() {
+	private INamedEntry[] getInherits() {
 		
 		//Check inherits modifier
 		String access = (String) tagExtensionField.get(CTagsConsoleParser.INHERITS);
@@ -266,8 +267,8 @@ class CTagEntry{
 			while (tokenizer.hasMoreTokens()){
 				list.add(tokenizer.nextToken().toCharArray());
 			}
-			char[][] inherits = new char[0][];
-			inherits = (char [][]) list.toArray(inherits);
+			INamedEntry[] inherits = new INamedEntry[0];
+			inherits = (INamedEntry[]) list.toArray(inherits);
 			return inherits;
 		}
 		

@@ -107,7 +107,7 @@ class UpdateManagedProject20 {
 			boolean treeLock = workspace.isTreeLocked();
 			ISchedulingRule rule = workspace.getRuleFactory().createRule(project);
 			if (treeLock) {
-				WorkspaceJob job = new WorkspaceJob("Updating managed Project") {
+				WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
 					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 						ManagedBuildManager.saveBuildInfo(project, false);
 						return Status.OK_STATUS;

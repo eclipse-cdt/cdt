@@ -802,7 +802,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 					EnvironmentVariableProvider provider = (EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider();
 					EnvVarCollector v = provider.getVariables(fCurrentContextInfo,true);
 					if(v != null){
-						EnvVarUIMacroSubstitutor substitutor = new EnvVarUIMacroSubstitutor(macroContextInfo, null, " "); //$NON-NLS-2$
+						EnvVarUIMacroSubstitutor substitutor = new EnvVarUIMacroSubstitutor(macroContextInfo, null, " "); //$NON-NLS-1$
 						IBuildEnvironmentVariable vars[] = v.toArray(false);
 						for(int i = 0; i < vars.length; i++){
 							MacroResolver.checkMacros(vars[i].getValue(), substitutor);

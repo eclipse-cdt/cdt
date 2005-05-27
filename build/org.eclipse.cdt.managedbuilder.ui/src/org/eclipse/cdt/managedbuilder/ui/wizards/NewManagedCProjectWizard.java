@@ -13,13 +13,8 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 public class NewManagedCProjectWizard extends NewManagedProjectWizard {
 	// String constants

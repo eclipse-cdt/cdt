@@ -90,7 +90,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		
 		// add stock pages
 		// TODO: MBSCustomPageManager.addStockPage(fMainPage, NewCProjectWizardPage.PAGE_ID);
-		MBSCustomPageManager.addStockPage(fMainPage, "org.eclipse.cdt.ui.wizard.basicPage");
+		MBSCustomPageManager.addStockPage(fMainPage, "org.eclipse.cdt.ui.wizard.basicPage"); //$NON-NLS-1$
 		MBSCustomPageManager.addStockPage(projectConfigurationPage, CProjectPlatformPage.PAGE_ID);
 		MBSCustomPageManager.addStockPage(optionPage, NewManagedProjectOptionPage.PAGE_ID);
 		

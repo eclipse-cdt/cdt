@@ -74,7 +74,7 @@ public class GnuUIPlugin extends Plugin {
 	public ResourceBundle getResourceBundle() {
 		try {
 			if (resourceBundle == null)
-				resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPluginResources");
+				resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

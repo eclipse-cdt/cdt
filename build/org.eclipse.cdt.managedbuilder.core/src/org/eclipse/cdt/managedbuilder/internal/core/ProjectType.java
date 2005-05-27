@@ -26,7 +26,6 @@ import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 
 public class ProjectType extends BuildObject implements IProjectType {
 	

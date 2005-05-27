@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -53,8 +54,16 @@ public interface IBuilder extends IBuildObject {
 	 * Returns the plugin.xml element of the buildFileGenerator extension or <code>null</code> if none. 
 	 *  
 	 * @return IConfigurationElement
+	 * @deprecated - use getBuildFileGenerator() instead
 	 */
 	public IConfigurationElement getBuildFileGeneratorElement();
+	
+	/**
+	 * Returns the BuildfileGenerator used to generate buildfiles for this builder
+	 * 
+	 * @return IManagedBuilderMakefileGenerator
+	 */
+	IManagedBuilderMakefileGenerator getBuildFileGenerator();
 	
 	/**
 	 * Returns the name of the build/make utility for the configuration.
@@ -138,6 +147,8 @@ public interface IBuilder extends IBuildObject {
 	 * Sets the BuildFileGenerator plugin.xml element
 	 * 
 	 * @param element
+	 * 
+	 * @deprecated
 	 */
 	public void setBuildFileGeneratorElement(IConfigurationElement element);
 

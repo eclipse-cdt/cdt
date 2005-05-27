@@ -20,9 +20,12 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -578,11 +581,36 @@ public class Builder extends BuildObject implements IBuilder {
 	public IConfigurationElement getBuildFileGeneratorElement() {
 		if (buildFileGeneratorElement == null) {
 			if (superClass != null) {
-				return superClass.getBuildFileGeneratorElement();
+				return ((Builder)superClass).getBuildFileGeneratorElement();
 			}
 		}
 		return buildFileGeneratorElement;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getBuildFileGenerator()
+	 */
+	public IManagedBuilderMakefileGenerator getBuildFileGenerator(){
+		IConfigurationElement element = getBuildFileGeneratorElement();
+		if (element != null) {
+			try {
+				if (element.getName().equalsIgnoreCase("target")) {	//$NON-NLS-1$
+					if (element.getAttribute(ManagedBuilderCorePlugin.MAKEGEN_ID) != null) {
+						return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.MAKEGEN_ID);
+					}
+				} else {
+					if (element.getAttribute(IBuilder.BUILDFILEGEN_ID) != null) {
+						return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(IBuilder.BUILDFILEGEN_ID);
+					}
+				}
+			} catch (CoreException e) {
+			} catch (ClassCastException e) {
+			}
+			
+		}
+		return new GnuMakefileGenerator();
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setBuildFileGeneratorElement(String)

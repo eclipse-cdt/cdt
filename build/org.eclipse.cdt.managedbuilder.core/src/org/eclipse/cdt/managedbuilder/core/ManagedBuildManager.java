@@ -590,27 +590,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return
 	 */
 	public static IManagedBuilderMakefileGenerator getBuildfileGenerator(IConfiguration config) {
-		try {
-			IToolChain toolChain = config.getToolChain();
-			if(toolChain != null){
+		IToolChain toolChain = config.getToolChain();
+		if(toolChain != null){
 			IBuilder builder = toolChain.getBuilder();
-			IConfigurationElement element = builder.getBuildFileGeneratorElement();
-			if (element != null) {
-				if (element.getName().equalsIgnoreCase("target")) {	//$NON-NLS-1$
-					if (element.getAttribute(ManagedBuilderCorePlugin.MAKEGEN_ID) != null) {
-						return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(ManagedBuilderCorePlugin.MAKEGEN_ID);
-					}
-				} else {
-					if (element.getAttribute(IBuilder.BUILDFILEGEN_ID) != null) {
-						return (IManagedBuilderMakefileGenerator) element.createExecutableExtension(IBuilder.BUILDFILEGEN_ID);
-					}
-				}
-			}
+			if(builder != null)
+				return builder.getBuildFileGenerator();
 		} 
-		} 
-		catch (CoreException e) {
-			// Probably not defined
-		}
 		// If no generator is defined, return the default GNU generator
 		return new GnuMakefileGenerator();
 	}

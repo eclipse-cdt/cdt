@@ -1848,7 +1848,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public IConfigurationElement getCommandLineGeneratorElement() {
 		if (commandLineGeneratorElement == null) {
 			if (superClass != null) {
-				return superClass.getCommandLineGeneratorElement();
+				return ((Tool)superClass).getCommandLineGeneratorElement();
 			}
 		}
 		return commandLineGeneratorElement;
@@ -1889,7 +1889,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		//  First try the primary InputType
 		IInputType type = getPrimaryInputType();
 		if (type != null) {
-			IConfigurationElement primary = type.getDependencyGeneratorElement();
+			IConfigurationElement primary = ((InputType)type).getDependencyGeneratorElement();
 			if (primary != null) return primary;
 		}
 
@@ -1906,7 +1906,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (types != null) {
 			for (int i=0; i<types.length; i++) {
 				if (types[i].isSourceExtension(sourceExt)) {
-					return types[i].getDependencyGeneratorElement();
+					return ((InputType)types[i]).getDependencyGeneratorElement();
 				}
 			}
 		}

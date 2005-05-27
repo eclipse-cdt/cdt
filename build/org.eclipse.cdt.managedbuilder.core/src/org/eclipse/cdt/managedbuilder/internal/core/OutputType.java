@@ -522,7 +522,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	public IConfigurationElement getNameProviderElement() {
 		if (nameProviderElement == null) {
 			if (superClass != null) {
-				return superClass.getNameProviderElement();
+				return ((OutputType)superClass).getNameProviderElement();
 			}
 		}
 		return nameProviderElement;

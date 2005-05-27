@@ -1032,7 +1032,7 @@ public class Target extends BuildObject implements ITarget {
 			builder.setArguments(getMakeArguments());
             IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			if (element instanceof DefaultManagedConfigElement) {
-				builder.setBuildFileGeneratorElement(((DefaultManagedConfigElement)element).getConfigurationElement());
+				((Builder)builder).setBuildFileGeneratorElement(((DefaultManagedConfigElement)element).getConfigurationElement());
 			}
 			// Create the TargetPlatform
 			subId = id + ".targetplatform"; 	//$NON-NLS-1$

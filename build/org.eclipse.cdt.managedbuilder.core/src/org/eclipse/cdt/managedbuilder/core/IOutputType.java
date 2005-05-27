@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
@@ -218,24 +217,6 @@ public interface IOutputType extends IBuildObject {
 	 * @return pattern
 	 */
 	public void setNamePattern(String pattern);
-	
-	/**
-	 * Returns the plugin.xml element of the nameProvider extension or <code>null</code> if none. 
-	 * nameProvider specified the name of a class that implements the IManagedOutputNameProvider 
-	 * interface.  When specified, the namePattern and outputNames are ignored.  
-	 * When multipleOfType is true, this attribute, or the outputNames attribute, 
-	 * is required in order for MBS to know the names of the output files.
-	 *  
-	 * @return IConfigurationElement
-	 */
-	public IConfigurationElement getNameProviderElement();
-	
-	/**
-	 * Sets the nameProvider plugin.xml element
-	 * 
-	 * @param element
-	 */
-	public void setNameProviderElement(IConfigurationElement element);
 	
 	/**
 	 * Returns the IManagedOutputNameProvider interface as specified by the nameProvider attribute.

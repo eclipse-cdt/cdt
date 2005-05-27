@@ -10,25 +10,25 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 
@@ -160,7 +160,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		     assertEquals(builder.getCommand(), expectedCommand);		     
 		     assertEquals(builder.getArguments(), expectedArguments);		  
 		     assertEquals(builder.getName(), expectedBuilderName[iconfig]);		    	     	   
-			 IConfigurationElement element = builder.getBuildFileGeneratorElement();
+			 IConfigurationElement element = ((Builder)builder).getBuildFileGeneratorElement();
 			 if (element != null) {
 				 assertEquals(element.getAttribute(IBuilder.BUILDFILEGEN_ID), expectedBuilderInfo);						
 			 }

@@ -563,6 +563,8 @@ public interface ITool extends IBuildObject {
 	 * Returns the plugin.xml element of the commandLineGenerator extension or <code>null</code> if none. 
 	 *  
 	 * @return IConfigurationElement
+	 * 
+	 * @deprecated - use getCommandLineGenerator
 	 */
 	public IConfigurationElement getCommandLineGeneratorElement();
 	
@@ -570,6 +572,7 @@ public interface ITool extends IBuildObject {
 	 * Sets the CommandLineGenerator plugin.xml element
 	 * 
 	 * @param element
+	 * @deprecated
 	 */
 	public void setCommandLineGeneratorElement(IConfigurationElement element);
 	
@@ -583,23 +586,15 @@ public interface ITool extends IBuildObject {
 	 * Returns the plugin.xml element of the dependencyGenerator extension or <code>null</code> if none. 
 	 *  
 	 * @return IConfigurationElement
-	 * @deprecated - use getDependencyGeneratorElementForExtension or IInputType method
+	 * @deprecated - use getDependencyGeneratorForExtension or IInputType#getDependencyGenerator method
 	 */
 	public IConfigurationElement getDependencyGeneratorElement();
-	
-	/**
-	 * Returns the plugin.xml element of the dependencyGenerator extension or <code>null</code> if none. 
-	 *  
-	 * @param sourceExt  source file extension
-	 * @return IConfigurationElement
-	 */
-	public IConfigurationElement getDependencyGeneratorElementForExtension(String sourceExt);
 	
 	/**
 	 * Sets the DependencyGenerator plugin.xml element
 	 * 
 	 * @param element
-	 * @deprecated - use IInputType method
+	 * @deprecated 
 	 */
 	public void setDependencyGeneratorElement(IConfigurationElement element);
 	

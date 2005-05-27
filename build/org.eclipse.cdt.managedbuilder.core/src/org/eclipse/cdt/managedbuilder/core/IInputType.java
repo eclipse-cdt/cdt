@@ -11,9 +11,8 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * This interface represents an inputType instance in the managed build system.
@@ -304,20 +303,6 @@ public interface IInputType extends IBuildObject {
 	 */
 	public void setPrimaryInput(boolean primary);
 
-	/**
-	 * Returns the plugin.xml element of the dependencyGenerator extension or <code>null</code> if none. 
-	 *  
-	 * @return IConfigurationElement
-	 */
-	public IConfigurationElement getDependencyGeneratorElement();
-	
-	/**
-	 * Sets the DependencyGenerator plugin.xml element
-	 * 
-	 * @param element
-	 */
-	public void setDependencyGeneratorElement(IConfigurationElement element);
-	
 	/**
 	 * Returns a class instance that implements an interface to generate 
 	 * source-level dependencies for this input type. 

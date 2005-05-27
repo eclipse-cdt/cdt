@@ -854,7 +854,7 @@ public class InputType extends BuildObject implements IInputType {
 	public IConfigurationElement getDependencyGeneratorElement() {
 		if (dependencyGeneratorElement == null) {
 			if (superClass != null) {
-				return superClass.getDependencyGeneratorElement();
+				return ((InputType)superClass).getDependencyGeneratorElement();
 			}
 		}
 		return dependencyGeneratorElement;

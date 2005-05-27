@@ -27,20 +27,34 @@ public interface ICASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier,
 	public static final int t_Bool = IASTSimpleDeclSpecifier.t_last + 1;
 
 	/**
-	 * <code>t_Complex</code> complex number. e.g. _Complex t;
-	 */
-	public static final int t_Complex = IASTSimpleDeclSpecifier.t_last + 2;
-
-	/**
-	 * <code>t_Imaginary</code> complex imaginary number. e.g. _Imaginr
-	 */
-	public static final int t_Imaginary = IASTSimpleDeclSpecifier.t_last + 3;
-
-	/**
 	 * <code>t_last</code> is defined for sub-interfaces.
 	 */
-	public static final int t_last = t_Imaginary;
-
+	public static final int t_last = t_Bool;
+	
+	/**
+	 * Is complex number? e.g. _Complex t;
+	 * @return true if it is a complex number, false otherwise
+	 */
+	public boolean isComplex();
+	
+	/**
+	 * Set the number to be complex.
+	 * @param value true if it is a complex number, false otherwise
+	 */
+	public void setComplex(boolean value);
+	
+	/**
+	 * Is imaginary number? e.g. _Imaginr
+	 * @return true if it is an imaginary number, false otherwise
+	 */
+	public boolean isImaginary();
+	
+	/**
+	 * Set the number to be imaginary.
+	 * @param value true if it is an imaginary number, false otherwise
+	 */
+	public void setImaginary(boolean value);
+	
 	// allow for long long's
 	/**
 	 * Is long long?

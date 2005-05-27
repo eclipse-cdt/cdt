@@ -119,14 +119,10 @@ public class ASTTypeUtil {
 			if (type instanceof IGPPBasicType) {
 				try {
 					if (((IGPPBasicType)type).isLongLong()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.LONG_LONG); needSpace=true; }
-					
+					if (((IGPPBasicType)type).isComplex()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true; }
+					if (((IGPPBasicType)type).isImaginary()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true; }
+
 					switch (((IGPPBasicType)type).getType()) {
-						case IGPPBasicType.t_Complex:
-							result.append(Keywords.c_COMPLEX);
-							break;
-						case IGPPBasicType.t_Imaginary:
-							result.append(Keywords.c_IMAGINARY);
-							break;
 						case IGPPBasicType.t_typeof:
 							result.append(GCCKeywords.TYPEOF);
 							break;						
@@ -145,21 +141,20 @@ public class ASTTypeUtil {
 				} catch (DOMException e) {}
 			} else if (type instanceof ICBasicType) {
 				try {
+					if (((ICBasicType)type).isComplex()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true; }
+					if (((ICBasicType)type).isImaginary()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true; }
+					
 					switch (((ICBasicType)type).getType()) {
 						case ICBasicType.t_Bool:
 							result.append(Keywords.c_BOOL);
-							break;
-						case ICBasicType.t_Complex:
-							result.append(Keywords.c_COMPLEX);
-							break;
-						case ICBasicType.t_Imaginary:
-							result.append(Keywords.c_IMAGINARY);
 							break;
 					}
 				} catch (DOMException e) {}
 			}
 			
 			try {
+				if( needSpace )
+					result.append( SPACE );
 				switch (((IBasicType)type).getType()) {
 					case IBasicType.t_char:
 						result.append(Keywords.CHAR);

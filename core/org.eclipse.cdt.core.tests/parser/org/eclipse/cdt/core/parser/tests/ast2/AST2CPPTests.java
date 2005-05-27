@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -4429,6 +4430,20 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(state, col.getName(9).resolveBinding());
     }
 
+	public void testBug95757() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("float _Complex x;\n"); //$NON-NLS-1$
+		buffer.append("double _Complex y;\n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, true, true );
+		IASTDeclaration[] decls = tu.getDeclarations();
+		
+		assertTrue(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).isComplex());
+		assertEquals(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_float);
+		assertTrue(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).isComplex());
+		assertEquals(((IGPPASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_double);
+	}
+	
     public void testTypedefQualified() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("class _A {                         \n"); //$NON-NLS-1$

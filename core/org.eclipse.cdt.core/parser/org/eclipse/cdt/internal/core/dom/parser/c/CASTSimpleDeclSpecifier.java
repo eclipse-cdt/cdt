@@ -23,7 +23,8 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     private boolean isShort;
     private boolean isLong;
     private boolean longlong;
-
+    private boolean complex=false;
+    private boolean imaginary=false;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#getType()
@@ -119,5 +120,33 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
 		}
         return true;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier#isComplex()
+     */
+	public boolean isComplex() {
+		return complex;
+	}
+
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier#setComplex(boolean)
+     */
+	public void setComplex(boolean value) {
+		this.complex = value;
+	}
+
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier#isImaginary()
+     */
+	public boolean isImaginary() {
+		return imaginary;
+	}
+
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier#setImaginary(boolean)
+     */
+	public void setImaginary(boolean value) {
+		this.imaginary = value;		
+	}
 
 }

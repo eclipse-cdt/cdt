@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
@@ -3093,6 +3094,20 @@ public class AST2Tests extends AST2BaseTest {
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
     }
 	
+    public void testBug95757() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("float _Complex x;\n"); //$NON-NLS-1$
+		buffer.append("double _Complex y;\n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, true );
+		IASTDeclaration[] decls = tu.getDeclarations();
+		
+		assertTrue(((ICASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).isComplex());
+		assertEquals(((ICASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[0]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_float);
+		assertTrue(((ICASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).isComplex());
+		assertEquals(((ICASTSimpleDeclSpecifier)((IASTSimpleDeclaration)decls[1]).getDeclSpecifier()).getType(), IASTSimpleDeclSpecifier.t_double);
+	}
+    
 	public void testBug93980() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int foo();                 \n"); //$NON-NLS-1$

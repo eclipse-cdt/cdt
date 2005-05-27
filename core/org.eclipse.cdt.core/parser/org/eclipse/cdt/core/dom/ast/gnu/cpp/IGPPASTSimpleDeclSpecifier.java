@@ -23,25 +23,39 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier,
 		ICPPASTSimpleDeclSpecifier {
 
 	/**
-	 * <code>t_Complex</code> represents a _Complex type.
-	 */
-	public static final int t_Complex = ICPPASTSimpleDeclSpecifier.t_last + 1;
-
-	/**
-	 * <code>t_Imaginary</code> represents an _Imaginary type.
-	 */
-	public static final int t_Imaginary = ICPPASTSimpleDeclSpecifier.t_last + 2;
-
-	/**
 	 * <code>t_typeof</code> represents a typeof() expression type.
 	 */
-	public static final int t_typeof = ICPPASTSimpleDeclSpecifier.t_last + 3;
+	public static final int t_typeof = ICPPASTSimpleDeclSpecifier.t_last + 1;
 
 	/**
 	 * <code>t_last</code> is for subinterfaces to extend these types.
 	 */
 	public static final int t_last = t_typeof;
-
+	
+	/**
+	 * Is complex number? e.g. _Complex t;
+	 * @return true if it is a complex number, false otherwise
+	 */
+	public boolean isComplex();
+	
+	/**
+	 * Set the number to be complex.
+	 * @param value true if it is a complex number, false otherwise
+	 */
+	public void setComplex(boolean value);
+	
+	/**
+	 * Is imaginary number? e.g. _Imaginr
+	 * @return true if it is an imaginary number, false otherwise
+	 */
+	public boolean isImaginary();
+	
+	/**
+	 * Set the number to be imaginary.
+	 * @param value true if it is an imaginary number, false otherwise
+	 */
+	public void setImaginary(boolean value);
+	
 	/**
 	 * <code>TYPEOF_EXPRESSION</code> represents the relationship between the
 	 * decl spec & the expression for typeof().

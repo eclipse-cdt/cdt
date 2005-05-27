@@ -1076,17 +1076,22 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
     
     private void __builtin_conj() {
         IBinding temp = null;
-        ICASTSimpleDeclSpecifier complexSds = new CASTSimpleDeclSpecifier();
-        complexSds.setType(ICASTSimpleDeclSpecifier.t_Complex);
-        IType c_double_complex = new CBasicType(complexSds);
-        IType cpp_double_complex = new CPPBasicType(IGPPBasicType.t_Complex, 0);
-        IType c_float_complex = c_double_complex;
-        IType cpp_float_complex = cpp_double_complex;
+        ICASTSimpleDeclSpecifier doubleComplexSds = new CASTSimpleDeclSpecifier();
+        doubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
+        doubleComplexSds.setComplex(true);
+        ICASTSimpleDeclSpecifier floatComplexSds = new CASTSimpleDeclSpecifier();
+        floatComplexSds.setType(IASTSimpleDeclSpecifier.t_float);
+        floatComplexSds.setComplex(true);
+        IType c_double_complex = new CBasicType(doubleComplexSds);
+        IType cpp_double_complex = new GPPBasicType(IGPPBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
+        IType c_float_complex = new CBasicType(floatComplexSds);
+        IType cpp_float_complex = new GPPBasicType(IGPPBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
         ICASTSimpleDeclSpecifier longDoubleComplexSds = new CASTSimpleDeclSpecifier();
-        longDoubleComplexSds.setType(ICASTSimpleDeclSpecifier.t_Complex);
+        longDoubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
+        longDoubleComplexSds.setComplex(true);
         longDoubleComplexSds.setLong(true);
         IType c_long_double_complex = new CBasicType(longDoubleComplexSds);
-        IType cpp_long_double_complex = new CPPBasicType(IGPPBasicType.t_Complex, CPPBasicType.IS_LONG);
+        IType cpp_long_double_complex = new GPPBasicType(IGPPBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
 
         // double complex __builtin_conj(double complex)
         if (lang == ParserLanguage.C) {
@@ -1153,17 +1158,22 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
     
     private void __builtin_creal_cimag() {
         IBinding temp = null;
-        ICASTSimpleDeclSpecifier complexSds = new CASTSimpleDeclSpecifier();
-        complexSds.setType(ICASTSimpleDeclSpecifier.t_Complex);
-        IType c_double_complex = new CBasicType(complexSds);
-        IType cpp_double_complex = new CPPBasicType(IGPPBasicType.t_Complex, 0);
-        IType c_float_complex = c_double_complex;
-        IType cpp_float_complex = cpp_double_complex;
+        ICASTSimpleDeclSpecifier doubleComplexSds = new CASTSimpleDeclSpecifier();
+        doubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
+        doubleComplexSds.setComplex(true);
+        ICASTSimpleDeclSpecifier floatComplexSds = new CASTSimpleDeclSpecifier();
+        floatComplexSds.setType(IASTSimpleDeclSpecifier.t_float);
+        floatComplexSds.setComplex(true);
+        IType c_double_complex = new CBasicType(doubleComplexSds);
+        IType cpp_double_complex = new GPPBasicType(IGPPBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
+        IType c_float_complex = new CBasicType(floatComplexSds);
+        IType cpp_float_complex = new GPPBasicType(IGPPBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
         ICASTSimpleDeclSpecifier longDoubleComplexSds = new CASTSimpleDeclSpecifier();
-        longDoubleComplexSds.setType(ICASTSimpleDeclSpecifier.t_Complex);
+        longDoubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
+        longDoubleComplexSds.setComplex(true);
         longDoubleComplexSds.setLong(true);
         IType c_long_double_complex = new CBasicType(longDoubleComplexSds);
-        IType cpp_long_double_complex = new CPPBasicType(IGPPBasicType.t_Complex, CPPBasicType.IS_LONG);
+        IType cpp_long_double_complex = new GPPBasicType(IGPPBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
         ICASTSimpleDeclSpecifier doubleSds = new CASTSimpleDeclSpecifier();
         doubleSds.setType(IASTSimpleDeclSpecifier.t_double);
         IType c_double = new CBasicType(doubleSds);

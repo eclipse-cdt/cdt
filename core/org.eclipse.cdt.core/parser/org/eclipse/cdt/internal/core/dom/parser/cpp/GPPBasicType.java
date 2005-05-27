@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
@@ -22,12 +23,20 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
  */
 public class GPPBasicType extends CPPBasicType implements IGPPBasicType {
 	public static final int IS_LONGLONG = LAST << 1;
+	public static final int IS_COMPLEX = LAST << 2;
+	public static final int IS_IMAGINARY = LAST << 3;
 	
 	private IType typeOf;
 	
 	public GPPBasicType( int type, int bits, IType typeOf ){
 		super( type, bits );
 		this.typeOf = typeOf;
+		if( type == IBasicType.t_unspecified ){
+			if((qualifierBits & ( IS_COMPLEX | IS_IMAGINARY )) != 0 )
+				type = IBasicType.t_float;
+			else if( (qualifierBits & IS_LONGLONG) != 0 )
+				type = IBasicType.t_int;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -44,6 +53,14 @@ public class GPPBasicType extends CPPBasicType implements IGPPBasicType {
 		if( type != IGPPASTSimpleDeclSpecifier.t_typeof )
 			return null;
 		return typeOf;
+	}
+
+	public boolean isComplex() {
+		return ( qualifierBits & IS_COMPLEX ) != 0;
+	}
+
+	public boolean isImaginary() {
+		return ( qualifierBits & IS_IMAGINARY ) != 0;
 	}
 
 }

@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -35,6 +36,11 @@ public class CPPBasicType implements ICPPBasicType {
 	public CPPBasicType( int t, int bits ){
 		type = t;
 		qualifierBits = bits;
+		
+		if( type == IBasicType.t_unspecified ){
+			if( (qualifierBits & ( IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED )) != 0 )
+				type = IBasicType.t_int;
+		}
 	}
 
 	public CPPBasicType( int t, int bits, IASTExpression val ){

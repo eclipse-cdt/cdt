@@ -22,12 +22,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
  */
 public interface IGPPBasicType extends ICPPBasicType {
 
-	public static final int t_Complex = IGPPASTSimpleDeclSpecifier.t_Complex;
-
-	public static final int t_Imaginary = IGPPASTSimpleDeclSpecifier.t_Imaginary;
-
 	public static final int t_typeof = IGPPASTSimpleDeclSpecifier.t_typeof;
-
+	
+	/**
+	 * Is complex number? e.g. _Complex t;
+	 * @return true if it is a complex number, false otherwise
+	 */
+	public boolean isComplex();
+	
+	/**
+	 * Is imaginary number? e.g. _Imaginr
+	 * @return true if it is an imaginary number, false otherwise
+	 */
+	public boolean isImaginary();
+	
 	public boolean isLongLong() throws DOMException;
 
 	public IType getTypeofType() throws DOMException;

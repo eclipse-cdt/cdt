@@ -2708,7 +2708,8 @@ public class CPPSemantics {
 		if( src instanceof IBasicType && trg instanceof IBasicType ){
 			int sType = ((IBasicType)src).getType();
 			int tType = ((IBasicType)trg).getType();
-			if( ( tType == IBasicType.t_int && ( sType == IBasicType.t_char    || 
+			if( ( tType == IBasicType.t_int && ( sType == IBasicType.t_int ||   //short, long , unsigned etc
+												 sType == IBasicType.t_char    || 
 												 sType == ICPPBasicType.t_bool || 
 												 sType == ICPPBasicType.t_wchar_t ||
 												 sType == IBasicType.t_unspecified ) ) || //treat unspecified as int

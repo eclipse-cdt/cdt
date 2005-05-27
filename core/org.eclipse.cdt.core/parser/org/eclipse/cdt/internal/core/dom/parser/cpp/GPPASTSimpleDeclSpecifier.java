@@ -22,6 +22,8 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
 
     private boolean longLong;
     private boolean restrict;
+    private boolean complex=false;
+    private boolean imaginary=false;
     private IASTExpression typeOfExpression;
 
     /* (non-Javadoc)
@@ -79,4 +81,20 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
             
         return true;
     }
+
+	public boolean isComplex() {
+		return complex;
+	}
+
+	public void setComplex(boolean value) {
+		this.complex = value;
+	}
+
+	public boolean isImaginary() {
+		return imaginary;
+	}
+
+	public void setImaginary(boolean value) {
+		this.imaginary = value;
+	}
 }

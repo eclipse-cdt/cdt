@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
@@ -25,6 +26,8 @@ public class CBasicType implements ICBasicType {
 	static public final int IS_SHORT    = 1 << 2;
 	static public final int IS_SIGNED   = 1 << 3;
 	static public final int IS_UNSIGNED = 1 << 4;
+	static public final int IS_COMPLEX  = 1 << 5;
+	static public final int IS_IMAGINARY= 1 << 6;
 	
 	private int type = 0;
 	private int qualifiers = 0;
@@ -41,12 +44,28 @@ public class CBasicType implements ICBasicType {
 		   				  ( sds.isShort()   ? CBasicType.IS_SHORT : 0 ) |
 		   				  ( sds.isSigned()  ? CBasicType.IS_SIGNED: 0 ) |
 		   				  ( sds.isUnsigned()? CBasicType.IS_UNSIGNED : 0 ) |
-						  ( sds.isUnsigned()? CBasicType.IS_LONGLONG : 0 );
+						  ( sds.isUnsigned()? CBasicType.IS_LONGLONG : 0 ) |
+						  ( sds.isComplex() ? CBasicType.IS_COMPLEX : 0 ) |
+						  ( sds.isImaginary()?CBasicType.IS_IMAGINARY : 0 );
+		
+		if( type == IBasicType.t_unspecified ){
+			if( (qualifiers & ( IS_COMPLEX | IS_IMAGINARY )) != 0 )
+				type = IBasicType.t_float;
+			else if( (qualifiers & ~( IS_COMPLEX | IS_IMAGINARY )) != 0 )
+				type = IBasicType.t_int;
+		}
 	}
 	
 	public CBasicType( int type, int qualifiers ){
 		this.type = type;
 		this.qualifiers = qualifiers;
+		
+		if( type == IBasicType.t_unspecified ){
+			if( (qualifiers & ( IS_COMPLEX | IS_IMAGINARY )) != 0 )
+				type = IBasicType.t_float;
+			else if( (qualifiers & ~( IS_COMPLEX | IS_IMAGINARY )) != 0 )
+				type = IBasicType.t_int;
+		}
 	}
 	
 	public CBasicType( int type, int qualifiers, IASTExpression value ){
@@ -109,7 +128,9 @@ public class CBasicType implements ICBasicType {
 				&& cObj.isShort() == this.isShort() 
 				&& cObj.isSigned() == this.isSigned() 
 				&& cObj.isUnsigned() == this.isUnsigned()
-				&& cObj.isLongLong() == this.isLongLong());
+				&& cObj.isLongLong() == this.isLongLong()
+				&& cObj.isComplex() == this.isComplex() 
+				&& cObj.isImaginary() == this.isImaginary());
 	}
 	
     public Object clone(){
@@ -131,5 +152,19 @@ public class CBasicType implements ICBasicType {
 	
 	public void setValue( IASTExpression expression ){
 		this.value = expression;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isComplex()
+	 */
+	public boolean isComplex() {
+		return ( qualifiers & IS_COMPLEX) != 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isImaginary()
+	 */
+	public boolean isImaginary() {
+		return ( qualifiers & IS_IMAGINARY) != 0;
 	}
 }

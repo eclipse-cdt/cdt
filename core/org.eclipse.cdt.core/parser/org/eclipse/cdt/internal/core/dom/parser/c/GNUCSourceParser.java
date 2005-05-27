@@ -1337,6 +1337,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         boolean isInline = false;
         boolean isConst = false, isRestrict = false, isVolatile = false;
         boolean isShort = false, isLong = false, isUnsigned = false, isIdentifier = false, isSigned = false, isLongLong = false;
+        boolean isComplex = false, isImaginary = false;
         int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
         IToken identifier = null;
         IASTCompositeTypeSpecifier structSpec = null;
@@ -1446,11 +1447,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 break;
             case IToken.t__Complex:
                 last = consume(IToken.t__Complex);
-                simpleType = ICASTSimpleDeclSpecifier.t_Complex;
+                isComplex=true;
                 break;
             case IToken.t__Imaginary:
                 last = consume(IToken.t__Imaginary);
-                simpleType = ICASTSimpleDeclSpecifier.t_Imaginary;
+                isImaginary=true;
                 break;
 
             case IToken.tIDENTIFIER:
@@ -1617,6 +1618,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         declSpec.setUnsigned(isUnsigned);
         declSpec.setSigned(isSigned);
         declSpec.setShort(isShort);
+        declSpec.setComplex(isComplex);
+        declSpec.setImaginary(isImaginary);
 		if( typeofExpression != null && last == null ){
 			((ASTNode)declSpec).setOffsetAndLength( (ASTNode)typeofExpression );
 		} else {

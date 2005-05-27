@@ -433,16 +433,12 @@ public class ASTSignatureUtil {
 			// handle complex cases
 			if (declSpec instanceof IGPPASTSimpleDeclSpecifier) {
 				if (((IGPPASTSimpleDeclSpecifier)declSpec).isLongLong()) result.append(Keywords.LONG_LONG);
+				if (((IGPPASTSimpleDeclSpecifier)declSpec).isComplex()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true; }
+				if (((IGPPASTSimpleDeclSpecifier)declSpec).isImaginary()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true; }
 				
 				switch(((IGPPASTSimpleDeclSpecifier)declSpec).getType()) {
 					case IGPPASTSimpleDeclSpecifier.t_typeof:
 						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(GCCKeywords.TYPEOF); needSpace=true;
-						break;
-					case IGPPASTSimpleDeclSpecifier.t_Complex:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true;
-						break;
-					case IGPPASTSimpleDeclSpecifier.t_Imaginary:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true;
 						break;
 				}
 			}
@@ -460,16 +456,12 @@ public class ASTSignatureUtil {
 			
 			if (declSpec instanceof ICASTSimpleDeclSpecifier) {
 				if (((ICASTSimpleDeclSpecifier)declSpec).isLongLong()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.LONG_LONG); needSpace=true; }
+				if (((ICASTSimpleDeclSpecifier)declSpec).isComplex()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true; }
+				if (((ICASTSimpleDeclSpecifier)declSpec).isImaginary()) { if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true; }
 				
 				switch(((ICASTSimpleDeclSpecifier)declSpec).getType()) {
 					case ICASTSimpleDeclSpecifier.t_Bool:
 						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_BOOL); needSpace=true;
-						break;
-					case ICASTSimpleDeclSpecifier.t_Complex:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_COMPLEX); needSpace=true;
-						break;
-					case ICASTSimpleDeclSpecifier.t_Imaginary:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.c_IMAGINARY); needSpace=true;
 						break;
 				}
 			}

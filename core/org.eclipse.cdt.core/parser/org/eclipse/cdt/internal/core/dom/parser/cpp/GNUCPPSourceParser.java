@@ -3169,6 +3169,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         boolean isInline = false, isVirtual = false, isExplicit = false, isFriend = false;
         boolean isConst = false, isVolatile = false, isRestrict = false;
         boolean isLong = false, isShort = false, isUnsigned = false, isSigned = false, isLongLong = false;
+        boolean isComplex = false, isImaginary = false;
         boolean isTypename = false;
 
         int storageClass = IASTDeclSpecifier.sc_unspecified;
@@ -3271,7 +3272,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             - la.getOffset());
                 }
                 last = consume(IToken.t__Complex);
-                simpleType = IGPPASTSimpleDeclSpecifier.t_Complex;
+                isComplex=true;
                 break;
             case IToken.t__Imaginary:
                 if (!supportComplex) {
@@ -3279,7 +3280,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     throwBacktrack(la.getOffset(), la.getLength());
                 }
                 last = consume(IToken.t__Imaginary);
-                simpleType = IGPPASTSimpleDeclSpecifier.t_Imaginary;
+                isImaginary=true;
                 break;
             case IToken.t_char:
                 simpleType = IASTSimpleDeclSpecifier.t_char;
@@ -3487,10 +3488,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return nameSpec;
         }
         ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;
-        if (isLongLong || typeofExpression != null) {
+        if (isComplex || isImaginary || isLongLong || typeofExpression != null) {
             simpleDeclSpec = createGPPSimpleDeclSpecifier();
             ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec)
                     .setLongLong(isLongLong);
+            ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec)
+            		.setComplex(isComplex);
+            ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec)
+            		.setImaginary(isImaginary);
             if (typeofExpression != null) {
                 ((IGPPASTSimpleDeclSpecifier) simpleDeclSpec)
                         .setTypeofExpression(typeofExpression);
@@ -3524,7 +3529,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         simpleDeclSpec.setShort(isShort);
         simpleDeclSpec.setUnsigned(isUnsigned);
         simpleDeclSpec.setSigned(isSigned);
-
+        
         return simpleDeclSpec;
     }
 

@@ -25,6 +25,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
@@ -57,6 +59,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		//suite.addTest(new ManagedProject30MakefileTests("test30LinkedFolder"));
 		suite.addTest(new ManagedProject30MakefileTests("test30CopyandDeploy"));
 		suite.addTest(new ManagedProject30MakefileTests("test30DeleteFile"));
+		suite.addTest(new ManagedProject30MakefileTests("test30NoFilesToBuild"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_1"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_2"));
 		
@@ -132,12 +135,12 @@ public class ManagedProject30MakefileTests extends TestCase {
 		return projects;
 	}
 		
-	private void buildProjects(IProject projects[], IPath[] files) {	
+	private void buildProjectsWorker(IProject projects[], IPath[] files, boolean compareBenchmark) {	
 		if(projects == null || projects.length == 0)
 			return;
 				
 		boolean succeeded = true;
-		for(int i = 0; i < projects.length; i++){
+		for (int i = 0; i < projects.length; i++){
 			IProject curProject = projects[i];
 			
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
@@ -146,7 +149,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 			boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
 			assertTrue(isCompatible);
 			
-			if(isCompatible){
+			if (isCompatible){
 				// Build the project in order to generate the makefiles 
 				try{
 					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
@@ -163,18 +166,31 @@ public class ManagedProject30MakefileTests extends TestCase {
 					if (i == 0) {
 						String configName = info.getDefaultConfiguration().getName();
 						IPath buildDir = Path.fromOSString(configName);
-						succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
+						if (compareBenchmark)
+						    succeeded = ManagedBuildTestHelper.compareBenchmarks(curProject, buildDir, files);
+						else
+							succeeded = ManagedBuildTestHelper.verifyFilesDoNotExist(curProject, buildDir, files);
 					}
 				}
 			}
 		}
 		
 		if (succeeded) {	//  Otherwise leave the projects around for comparison
-			for(int i = 0; i < projects.length; i++)
+			for (int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
 		}
 	}
 
+	// Build projects and compare benchmarks
+	private void buildProjects(IProject projects[], IPath[] files) {
+		buildProjectsWorker(projects, files, true);
+	}
+	
+	// Build projects but don't compare benchmarks because there should be not build files generated
+	private void buildDegenerativeProjects(IProject projects[], IPath[] files) {	
+		buildProjectsWorker(projects, files, false);
+	}
+		
 	private void createPathVariable(IPath tmpDir) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace = ResourcesPlugin.getWorkspace();
@@ -348,10 +364,31 @@ public class ManagedProject30MakefileTests extends TestCase {
 		IResource[] fileResource = (IResource[])resourceList.toArray(new IResource[resourceList.size()]);
 		try {
 		    workspace.delete(fileResource, false, null);
-		}  catch (Exception e) {fail("could not delete file in project " + project.getName());}
-		try {
-			buildProjects(projects, makefiles);
-		} finally {};
+		} catch (Exception e) { 
+		    fail("could not delete file in project " + project.getName());
+		}
+		buildProjects(projects, makefiles);
+	}
+
+	/* (non-Javadoc)
+	 * tests 3.0 managed build system with a project which has only a single source file that is marked as 
+	 * "excluded from build" to see that this degenerative case is handled gracefully
+	 */
+	public void test30NoFilesToBuild(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("subdir.mk"),
+				 Path.fromOSString("sources.mk")}; 		
+
+		IProject[] projects = createProjects("noFilesToBuild", null, null, true);
+		IProject project = projects[0];
+		IFile projfile = project.getFile("filetobeexcluded.cxx");
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		IConfiguration config = info.getDefaultConfiguration();
+		IResourceConfiguration rconfig = config.createResourceConfiguration(projfile);
+		rconfig.setExclude(true);
+		buildDegenerativeProjects(projects, makefiles);			
 	}
 
 	/* (non-Javadoc)

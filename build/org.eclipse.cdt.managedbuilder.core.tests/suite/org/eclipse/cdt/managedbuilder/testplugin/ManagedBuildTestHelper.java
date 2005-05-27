@@ -242,6 +242,27 @@ public class ManagedBuildTestHelper {
 		return true;
 	}
 
+	static public boolean verifyFilesDoNotExist(IProject project, IPath testDir, IPath[] files) {
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (Exception e) {
+			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
+		}
+		for (int i=0; i<files.length; i++) {
+			IPath testFile = testDir.append(files[i]);
+			IPath fullPath = project.getLocation().append(testFile);
+			try {
+				if (fullPath.toFile().exists()) {
+					Assert.fail("File " + testFile.lastSegment() + " unexpectedly found.");
+					return false;
+				}					
+			} catch (Exception e) {
+				Assert.fail("File " + fullPath.toString() + " could not be referenced.");
+			}
+		}
+		return true;
+	}
+
 	static public StringBuffer readContentsStripLineEnds(IProject project, IPath path) {
 		StringBuffer buff = new StringBuffer();
 		IPath fullPath = project.getLocation().append(path);

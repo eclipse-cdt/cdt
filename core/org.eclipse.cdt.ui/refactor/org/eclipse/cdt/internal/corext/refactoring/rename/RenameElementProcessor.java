@@ -725,7 +725,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		if(( returnType == null) || (returnType.length() == 0) )
 			return true;
 		
-		if(getCurrentElementName().startsWith("~"))
+		if(getCurrentElementName().startsWith("~")) //$NON-NLS-1$
 			return true;
 		
 		return false;

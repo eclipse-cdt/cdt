@@ -46,6 +46,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	private String assistPrefix = "CEditor.contentassist"; //$NON-NLS-1$
 	private String noCompletions = assistPrefix + ".noCompletions"; //$NON-NLS-1$
 	private String parseError = assistPrefix + ".parseError"; //$NON-NLS-1$
+	private String dialectError = assistPrefix + ".badDialect"; //$NON-NLS-1$
 	
 	public CCompletionProcessor2(IEditorPart editor) {
 		this.editor = editor;
@@ -134,7 +135,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 			return propsArray;
 			
 		} catch (UnsupportedDialectException e) {
-			errorMessage = "Unsupported Dialect Exception";
+			errorMessage = CUIMessages.getString(dialectError);
 		} catch (Throwable e) {
 			errorMessage = e.toString();
 		}

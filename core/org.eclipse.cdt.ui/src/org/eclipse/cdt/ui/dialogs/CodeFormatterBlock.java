@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -48,7 +49,7 @@ public class CodeFormatterBlock {
 	private static final String ATTR_ID="id"; //$NON-NLS-1$
 	// This is a hack until we have a default Formatter.
 	// For now it is comment out in the plugin.xml
-	private static final String NONE="(NONE)"; //$NON-NLS-1$
+	private static final String NONE=PreferencesMessages.getString("CodeFormatterPreferencePage.emptyName"); //$NON-NLS-1$
 
 
 	public CodeFormatterBlock(Preferences prefs) {
@@ -105,7 +106,7 @@ public class CodeFormatterBlock {
 
 		ControlFactory.createEmptySpace(control, 2);
 
-		Label label = ControlFactory.createLabel(control, "Formatters:");
+		Label label = ControlFactory.createLabel(control, PreferencesMessages.getString("CodeFormatterPreferencePage.selectionName")); //$NON-NLS-1$
 		label.setLayoutData(new GridData());
 		fFormatterCombo = new Combo(control, SWT.DROP_DOWN | SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.GRAB_HORIZONTAL);

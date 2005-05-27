@@ -1,3 +1,13 @@
+2005-05-27 Alain Magloire
+	Patch from Dave Daoust to externalize some strings
+	* refactor/org/eclipse/cdt/internal/core/refactoring/rename/RenameElementProcessor.java
+	* src/rg/eclipse/cdt/internal/ui/CUIMessages.properties
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+	* src/org/eclipse/cdt/internal/ui/search/DOMQuery.java
+	* src/org/eclipse/cdt/internal/ui/search/LevelTreeContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/text/contentassist/CCompletionprocessor2.java
+	* src/org/eclipse/cdt/ui/dialogs/CodeFormatterBlock.java
+
 2005-05-19 Alain Magloire
 	Fixed PR 95943
 	* src/org/elcipse/cdt/internla/corext/template/c/TemplateMessages.properties

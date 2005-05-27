@@ -13,15 +13,25 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.browser.PathUtil;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.LineLocatable;
+import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author bgheorgh
@@ -51,9 +61,36 @@ public class IncludePattern extends CSearchPattern {
 
 		for (int i = 0, max = fileRefs.length; i < max; i++) {
 			IndexedFileEntry file = input.getIndexedFile(fileRefs[i]);
-			String path;
+			String path=null;
 			if (file != null && scope.encloses(path =file.getPath())) {
 				requestor.acceptIncludeDeclaration(path, decodedSimpleName);
+			}
+			
+			for (int j=0; j<offsets[i].length; j++){
+				BasicSearchMatch match = new BasicSearchMatch();
+				match.name = new String(this.decodedSimpleName);
+				//Don't forget that offsets are encoded ICIndexStorageConstants
+				//Offsets can either be LINE or OFFSET 
+				int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
+				if (offsetType==IIndex.LINE){
+					match.locatable = new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0);
+				}else if (offsetType==IIndex.OFFSET){
+					int startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
+					int endOffset= startOffset + offsetLengths[i][j];
+					match.locatable = new OffsetLocatable(startOffset, endOffset);
+				}
+				match.parentName = ""; //$NON-NLS-1$
+				match.type=ICElement.C_INCLUDE;
+				
+			    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+				if (tempFile != null && tempFile.exists())
+					match.resource =tempFile;
+				else {
+					IPath tempPath = PathUtil.getWorkspaceRelativePath(file.getPath());
+					match.path = tempPath;
+					match.referringElement = tempPath;
+				}
+				requestor.acceptSearchMatch(match);
 			}
 		}	
 	}

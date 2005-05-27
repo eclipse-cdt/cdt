@@ -256,7 +256,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 	}
 
 	private Button addVariablesButton(Composite parent, final Text control) {
-		Button variablesButton = createPushButton(parent, "Variables...", null);
+		String variablesTitle = MakeUIPlugin.getResourceString("SettingsBlock.variables"); //$NON-NLS-1$
+		Button variablesButton = createPushButton(parent, variablesTitle, null);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		variablesButton.setLayoutData(gd);
 		variablesButton.addSelectionListener(new SelectionAdapter() {

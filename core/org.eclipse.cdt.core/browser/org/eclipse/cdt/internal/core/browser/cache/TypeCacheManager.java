@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -216,7 +215,6 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 	}
 	
 	public synchronized ITypeCache getCache(IProject project) {
-	    Assert.isNotNull(project);
 		synchronized(fCacheMap) {
 			ITypeCache cache = (ITypeCache) fCacheMap.get(project);
 			if (cache == null) {

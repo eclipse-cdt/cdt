@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.CConventions;
-import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 public class QualifiedTypeName implements IQualifiedTypeName {
@@ -28,22 +27,18 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	public static final QualifiedTypeName EMPTY = new QualifiedTypeName();
 
 	public QualifiedTypeName(IQualifiedTypeName typeName) {
-		Assert.isNotNull(typeName);
 	    fSegments = typeName.segments();
 	}
 	
 	public QualifiedTypeName(String qualifiedName) {
-		Assert.isNotNull(qualifiedName);
 	    fSegments = createSegments(qualifiedName);
 	}
 
 	public QualifiedTypeName(String[] names) {
-		Assert.isNotNull(names);
 	    fSegments = createSegments(names);
 	}
 
 	public QualifiedTypeName(String name, String[] enclosingNames) {
-		Assert.isNotNull(name);
 		if (enclosingNames == null)
 		    fSegments = createSegments(name);
 		else
@@ -78,7 +73,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 				lastIndex = qualifierIndex + QUALIFIER.length();
 				qualifierIndex = qualifiedName.indexOf(QUALIFIER, lastIndex);
 			}
-			Assert.isTrue(segmentCount == (maxSegments - 1));
             // note: we allocate a new string rather than use the returned substring,
             // otherwise we're holding a reference to the entire original string
 			segments[segmentCount] = new String(qualifiedName.substring(lastIndex));
@@ -176,7 +170,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 	
 	public int matchingFirstSegments(IQualifiedTypeName typeName) {
-		Assert.isNotNull(typeName);
 		int max = Math.min(fSegments.length, typeName.segmentCount());
 		int count = 0;
 		for (int i = 0; i < max; ++i) {
@@ -189,7 +182,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	public boolean isPrefixOf(IQualifiedTypeName typeName) {
-		Assert.isNotNull(typeName);
 		if (fSegments.length == 0)
 			return true;
 		
@@ -206,7 +198,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	public IQualifiedTypeName append(String[] names) {
-		Assert.isNotNull(names);
 		int length = fSegments.length;
 		int typeNameLength = names.length;
 		String[] newSegments = new String[length + typeNameLength];
@@ -218,7 +209,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	public IQualifiedTypeName append(IQualifiedTypeName typeName) {
-		Assert.isNotNull(typeName);
 		int length = fSegments.length;
 		int typeNameLength = typeName.segmentCount();
 		String[] newSegments = new String[length + typeNameLength];
@@ -232,7 +222,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 
 	public IQualifiedTypeName append(String qualifiedName) {
-		Assert.isNotNull(qualifiedName);
 		return append(createSegments(qualifiedName));
 	}
 	
@@ -287,7 +276,6 @@ public class QualifiedTypeName implements IQualifiedTypeName {
 	}
 	
 	public boolean isValidSegment(String segment) {
-		Assert.isNotNull(segment);
 		if (segment.indexOf(QUALIFIER) != -1)
 		    return false;
 		// type name must follow C conventions

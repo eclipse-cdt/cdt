@@ -17,7 +17,6 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -152,7 +151,6 @@ public class TranslationUnitBaseTest extends TestCase
        // release resources here and clean-up
        try {
 		testProject.getProject().delete(true,true,monitor);
-	   } catch (ResourceException e) {
 	   } catch (CoreException e) {
 	   } 
     }

@@ -624,7 +624,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		checkCancel(monitor);
 		statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		IPath buildDir = new Path(info.getConfigurationName());
+		IPath buildDir = generator.getBuildWorkingDir();
 		if (buildDir != null) {
 			invokeMake(INCREMENTAL_BUILD, buildDir, info, generator, monitor);
 		} else {

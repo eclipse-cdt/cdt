@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -103,7 +104,7 @@ public class CPathEntryTest extends TestCase {
 			fail("Workspace was not setup");
 		if (root == null)
 			fail("Workspace root was not setup");
-		pluginRoot = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		pluginRoot = CTestPlugin.getDefault().find(new Path("/")).getFile();
 		desc = workspace.getDescription();
 		desc.setAutoBuilding(false);
 		workspace.setDescription(desc);

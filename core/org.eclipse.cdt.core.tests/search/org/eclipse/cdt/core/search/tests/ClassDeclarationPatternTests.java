@@ -16,7 +16,6 @@ package org.eclipse.cdt.core.search.tests;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.cdt.core.parser.IOffsetDuple;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;

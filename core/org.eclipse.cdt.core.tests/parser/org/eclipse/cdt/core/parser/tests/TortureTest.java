@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.Path;
 
 
@@ -54,7 +55,7 @@ public class TortureTest extends FractionalAutomatedTest {
 	}
 	
 	protected void loadProperties() throws Exception{
-		String resourcePath = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+		String resourcePath = CTestPlugin.getDefault().find(new Path("/")).getFile(); //$NON-NLS-1$ //$NON-NLS-2$
 		resourcePath += "resources/parser/TortureTest"; //$NON-NLS-1$
 	
 		try {

@@ -247,7 +247,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 													IPath resPath = projResources[j].getLocation();
 													IPath bldLocation = project.getLocation().append(makeGen.getBuildWorkingDir());
 													if (bldLocation.isPrefixOf(resPath)) {
-														resPath = resPath.removeFirstSegments(bldLocation.matchingFirstSegments(resPath));
+														resPath = resPath.removeFirstSegments(bldLocation.segmentCount()).setDevice(null);
 													}
 													myEnumeratedInputs.add(resPath.toString());
 												}

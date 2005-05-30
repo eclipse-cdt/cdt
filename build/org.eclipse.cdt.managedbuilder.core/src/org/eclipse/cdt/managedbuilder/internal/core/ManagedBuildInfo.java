@@ -431,7 +431,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			location = new Path("."); //$NON-NLS-1$
 		}
 		if (config != null) {
-			IPath root = location.addTrailingSeparator().append(config.getName());
+			IPath root = location.append(config.getName());
 			ITool[] tools = config.getFilteredTools();
 			for (int i = 0; i < tools.length; i++) {
 				ITool tool = tools[i];
@@ -458,7 +458,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 									if (userPath.isAbsolute()) {
 										paths.add(userPath.toOSString());
 									} else {
-										IPath absPath = root.addTrailingSeparator().append(userPath);
+										IPath absPath = root.append(userPath);
 										paths.add(absPath.makeAbsolute().toOSString());
 									}
 								}

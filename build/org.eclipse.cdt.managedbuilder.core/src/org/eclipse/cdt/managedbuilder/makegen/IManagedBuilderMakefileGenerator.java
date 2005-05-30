@@ -21,6 +21,10 @@ import org.eclipse.core.runtime.MultiStatus;
 
 /**
  * @since 2.0
+ * 
+ * TODO:  isGeneratedResource should take an IPath rather than an IResource, 
+ *        because an output file can be generated outside of the project directory.
+ *        This will require a new interface. 
  */
 public interface IManagedBuilderMakefileGenerator {
 

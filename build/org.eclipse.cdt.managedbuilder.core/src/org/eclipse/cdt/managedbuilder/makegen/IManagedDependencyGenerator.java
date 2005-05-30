@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,13 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * @since 2.0
- */
+ * 
+ * TODO:  These methods should take IPath's rather than IResource's, 
+ *        because an output file from one tool can be used as an
+ *        input file to another, and it can be generated outside of the 
+ *        project directory.
+ *        This will require a new interface. 
+*/
 public interface IManagedDependencyGenerator {
 	public int TYPE_NODEPS = 0;
 	public int TYPE_COMMAND = 1;

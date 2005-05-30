@@ -673,7 +673,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			if (root == null) {
 				return;
 			}
-			IPath makefile = workingDirectory.addTrailingSeparator().append(generator.getMakefileName());
+			IPath makefile = workingDirectory.append(generator.getMakefileName());
 			if (root.getFileForLocation(makefile) == null) {
 				return; 
 			}

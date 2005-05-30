@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.index.domsourceindexer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
@@ -73,16 +72,7 @@ public class IndexEncoderUtil {
      * @return
      */
     public static IASTFileLocation getFileLocation(IASTNode node) {
-        IASTFileLocation fileLoc = null;
-        
-        IASTNodeLocation[] locs = node.getNodeLocations();
-        if (locs.length == 1 && locs[0] instanceof IASTFileLocation) {
-            fileLoc = (IASTFileLocation) locs[0];
-        }
-        else if (locs.length > 0) {
-            fileLoc = node.getTranslationUnit().flattenLocationsToFile(locs);
-        }
-        return fileLoc;
+        return node.getFileLocation();
     }
 
 	public static boolean nodeInExternalHeader(IASTNode node) {

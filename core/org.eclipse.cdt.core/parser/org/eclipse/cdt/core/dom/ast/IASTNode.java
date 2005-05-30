@@ -44,6 +44,15 @@ public interface IASTNode {
 	 */
 	public IASTNodeLocation[] getNodeLocations();
 	
+    
+    /**
+     * Get the location of the node as a file.
+     * 
+     * @return <code>IASTFileLocation</code>
+     */
+    public IASTFileLocation getFileLocation();
+    
+    
 	/**
 	 * Lightweight check for understanding what file we are in.  
 	 * 

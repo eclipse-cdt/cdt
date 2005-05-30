@@ -15,13 +15,16 @@ import java.io.Writer;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -1592,6 +1595,47 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertTrue(node instanceof IASTName);
 		assertEquals(((ASTNode)node).getOffset(), 44);
 		assertEquals(((ASTNode)node).getLength(), 1);
+	}
+	
+	public void testBug97301() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		// test2.h:
+		buffer.append("#ifndef _WINGDI_H\r\n"); //$NON-NLS-1$
+		buffer.append("#define _WINGDI_H\r\n"); //$NON-NLS-1$
+		buffer.append("#define _WINGDI_\r\n"); //$NON-NLS-1$
+		buffer.append("#if __GNUC__ >= 3\r\n"); //$NON-NLS-1$
+		buffer.append("#pragma GCC system_header\r\n"); //$NON-NLS-1$
+		buffer.append("#endif\r\n"); //$NON-NLS-1$
+		buffer.append("#ifdef __cplusplus\r\n"); //$NON-NLS-1$
+		buffer.append("extern \"C\" {\r\n"); //$NON-NLS-1$
+		buffer.append("#endif\r\n"); //$NON-NLS-1$
+		buffer.append("#define WINGDIAPI\r\n"); //$NON-NLS-1$
+		buffer.append("#ifdef __cplusplus\r\n"); //$NON-NLS-1$
+		buffer.append("}\r\n"); //$NON-NLS-1$
+		buffer.append("#endif\r\n"); //$NON-NLS-1$
+		String test2_h = buffer.toString();
+		importFile("test2.h", test2_h); //$NON-NLS-1$
+		
+	
+		// test1.h:
+		buffer = new StringBuffer();
+		buffer.append("#ifdef RC_INVOKED\r\n"); //$NON-NLS-1$
+		buffer.append("#else\r\n"); //$NON-NLS-1$
+		buffer.append("#if !(defined NOGDI || defined  _WINGDI_H)\r\n"); //$NON-NLS-1$
+		buffer.append("#include \"test2.h\"\r\n"); //$NON-NLS-1$
+		buffer.append("#endif\r\n"); //$NON-NLS-1$
+		buffer.append("#endif\r\n"); //$NON-NLS-1$
+		importFile("test1.h", buffer.toString()); //$NON-NLS-1$
+		
+		// test.c:
+		IFile file = importFile("test.c", "#include \"test1.h\""); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		IASTTranslationUnit tu = parse(file, ParserLanguage.CPP, false, true);
+		IASTPreprocessorStatement[] stmts = tu.getAllPreprocessorStatements();
+		IASTFileLocation fileLoc = tu.flattenLocationsToFile(stmts[5].getNodeLocations());
+		int fileOffset = test2_h.indexOf("#ifndef _WINGDI_H");
+		int fileLocOffset = fileLoc.getNodeOffset(); 
+		assertEquals(fileOffset, fileLocOffset);
 	}
 	
 	public void testBug86126() throws Exception {

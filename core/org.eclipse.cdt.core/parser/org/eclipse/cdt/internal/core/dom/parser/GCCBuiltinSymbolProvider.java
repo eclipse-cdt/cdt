@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
@@ -1083,15 +1082,15 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         floatComplexSds.setType(IASTSimpleDeclSpecifier.t_float);
         floatComplexSds.setComplex(true);
         IType c_double_complex = new CBasicType(doubleComplexSds);
-        IType cpp_double_complex = new GPPBasicType(IGPPBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
+        IType cpp_double_complex = new GPPBasicType(IBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
         IType c_float_complex = new CBasicType(floatComplexSds);
-        IType cpp_float_complex = new GPPBasicType(IGPPBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
+        IType cpp_float_complex = new GPPBasicType(IBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
         ICASTSimpleDeclSpecifier longDoubleComplexSds = new CASTSimpleDeclSpecifier();
         longDoubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
         longDoubleComplexSds.setComplex(true);
         longDoubleComplexSds.setLong(true);
         IType c_long_double_complex = new CBasicType(longDoubleComplexSds);
-        IType cpp_long_double_complex = new GPPBasicType(IGPPBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
+        IType cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
 
         // double complex __builtin_conj(double complex)
         if (lang == ParserLanguage.C) {
@@ -1165,15 +1164,15 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         floatComplexSds.setType(IASTSimpleDeclSpecifier.t_float);
         floatComplexSds.setComplex(true);
         IType c_double_complex = new CBasicType(doubleComplexSds);
-        IType cpp_double_complex = new GPPBasicType(IGPPBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
+        IType cpp_double_complex = new GPPBasicType(IBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
         IType c_float_complex = new CBasicType(floatComplexSds);
-        IType cpp_float_complex = new GPPBasicType(IGPPBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
+        IType cpp_float_complex = new GPPBasicType(IBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
         ICASTSimpleDeclSpecifier longDoubleComplexSds = new CASTSimpleDeclSpecifier();
         longDoubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
         longDoubleComplexSds.setComplex(true);
         longDoubleComplexSds.setLong(true);
         IType c_long_double_complex = new CBasicType(longDoubleComplexSds);
-        IType cpp_long_double_complex = new GPPBasicType(IGPPBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
+        IType cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
         ICASTSimpleDeclSpecifier doubleSds = new CASTSimpleDeclSpecifier();
         doubleSds.setType(IASTSimpleDeclSpecifier.t_double);
         IType c_double = new CBasicType(doubleSds);

@@ -265,11 +265,17 @@ class CTagEntry{
 			StringTokenizer tokenizer = new StringTokenizer(access, ","); //$NON-NLS-1$
 			LinkedList list = new LinkedList();
 			while (tokenizer.hasMoreTokens()){
-				list.add(tokenizer.nextToken().toCharArray());
+				list.add(tokenizer.nextToken());
 			}
-			INamedEntry[] inherits = new INamedEntry[0];
-			inherits = (INamedEntry[]) list.toArray(inherits);
-			return inherits;
+		
+			String[] inherits = new String[0];
+			inherits = (String []) list.toArray(inherits);
+			INamedEntry[] inherits2 = new INamedEntry[inherits.length];
+			for (int i=0; i<inherits.length; i++){
+				NamedEntry tempEntry = new NamedEntry(IIndex.FIELD, IIndex.REFERENCE, inherits[i], 1, 1);
+				inherits2[i] = tempEntry;
+			}
+			return inherits2;
 		}
 		
 		return null; 

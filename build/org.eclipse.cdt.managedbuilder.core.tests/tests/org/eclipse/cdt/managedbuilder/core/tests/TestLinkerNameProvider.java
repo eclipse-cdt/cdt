@@ -9,7 +9,7 @@
  * Intel Corporation - Initial API and implementation
  **********************************************************************/
 
-package org.eclipse.cdt.managedbuilder.testplugin;
+package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
 import org.eclipse.cdt.managedbuilder.core.ITool;

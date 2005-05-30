@@ -1864,7 +1864,7 @@
          <outputType
 			outputs=""
             buildVariable="EXECUTABLES"
-            nameProvider="org.eclipse.cdt.managedbuilder.testplugin.TestLinkerNameProvider"
+            nameProvider="org.eclipse.cdt.managedbuilder.core.tests.TestLinkerNameProvider"
             id="cdt.managedbuild.tool.testgnu30.c.linker.output">
          </outputType>
       </tool>

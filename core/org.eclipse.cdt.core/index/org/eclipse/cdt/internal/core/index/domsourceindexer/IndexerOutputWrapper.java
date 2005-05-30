@@ -185,6 +185,12 @@ class IndexerOutputWrapper {
 				 namedEntry.setNameOffset(offset, length, offsetType);
 				 namedEntry.serialize(indexerOutput);
 				break;
+				
+			case INCLUDE_CONST:
+				namedEntry = new NamedEntry(IIndex.INCLUDE, entryKind, name, 0, fileNumber);
+				namedEntry.setNameOffset(offset, length, offsetType);
+				namedEntry.serialize(indexerOutput);
+				break;
 		}
 	}
 

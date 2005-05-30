@@ -1009,8 +1009,8 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 */
 	public void setVisible(boolean visible){
 		fVisible = visible;
-		if(visible)
-			updateValues();
+//		if(visible)
+//			updateValues();
 		super.setVisible(visible);
 	}
 	

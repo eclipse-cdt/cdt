@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -164,6 +165,11 @@ public class EnvironmentSetBlock extends AbstractCOptionPage {
 			}
 		}
 		
+		public void setCurrentPage(ICOptionPage page) {
+			((EnvironmentBlock)page).updateValues();
+			super.setCurrentPage(page);
+		}
+		
 	}
 
 	
@@ -209,6 +215,8 @@ public class EnvironmentSetBlock extends AbstractCOptionPage {
 	public void setVisible(boolean visible){
 		if(visible)
 			updateValues();
+		if(fEnvTabs != null)
+			fEnvTabs.setVisible(visible);
 		super.setVisible(visible);
 	}
 

@@ -891,6 +891,8 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * updates both user- and sytem- macros tables.
 	 */
 	public void updateValues(){
+		if(fCurrentContextInfo == null)
+			return;
 		try{
 			MacroResolver.checkIntegrity(fCurrentContextInfo,new MacroUIMacroSubstitutor(fCurrentContextInfo,null," "));//$NON-NLS-1$ //$NON-NLS-2$
 			updateState(null);
@@ -898,7 +900,8 @@ public class MacrosBlock extends AbstractCOptionPage {
 			updateState(e);
 		}
 		updateUserMacros();
-		updateSystemMacros();	}
+		updateSystemMacros();
+	}
 	
 	private void updateState(BuildMacroException e){
 		ICOptionContainer container = getContainer();
@@ -1094,8 +1097,8 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 */
 	public void setVisible(boolean visible){
 		fVisible = visible;
-		if(visible)
-			updateValues();
+//		if(visible)
+//			updateValues();
 		super.setVisible(visible);
 	}
 	

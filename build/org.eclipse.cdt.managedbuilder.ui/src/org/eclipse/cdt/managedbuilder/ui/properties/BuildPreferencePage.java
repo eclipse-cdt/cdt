@@ -245,4 +245,13 @@ public class BuildPreferencePage extends PreferencePage
 		rebuildJob.schedule();
 		
 	}
+	
+	/**
+	 * @see DialogPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		fOptionBlock.setVisible(visible);
+	}
+
 }

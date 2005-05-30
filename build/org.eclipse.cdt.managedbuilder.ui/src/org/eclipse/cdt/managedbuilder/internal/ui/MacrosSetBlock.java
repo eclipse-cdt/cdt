@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -53,8 +54,8 @@ import org.eclipse.swt.widgets.Group;
 	private static final String TAB_WORKSPACE = TAB + ".workspace";	//$NON-NLS-1$
 	private static final String TAB_ECLIPSE = TAB + ".eclipse";	//$NON-NLS-1$
 
-	private MacrosTabFolder fEnvTabs;
-	private MacrosBlock fEnvBlock;
+	private MacrosTabFolder fMacroTabs;
+	private MacrosBlock fMacroBlock;
 	
 	private ICOptionContainer fParentContainer;
 	
@@ -167,6 +168,11 @@ import org.eclipse.swt.widgets.Group;
 */
 		}
 		
+		public void setCurrentPage(ICOptionPage page) {
+			((MacrosBlock)page).updateValues();
+			super.setCurrentPage(page);
+		}
+		
 	}
 
 	
@@ -177,13 +183,13 @@ import org.eclipse.swt.widgets.Group;
 //		fOptionBlock = optionBlock;
 		
 		if(fParentContainer instanceof BuildPropertyPage)
-			fEnvTabs = new MacrosTabFolder();
+			fMacroTabs = new MacrosTabFolder();
 		else {
-			fEnvBlock = new MacrosBlock(fParentContainer,
+			fMacroBlock = new MacrosBlock(fParentContainer,
 					ManagedBuilderUIMessages.getResourceString(TAB_WORKSPACE),
 					true,
 					false);
-			fEnvBlock.displayParentMacros(true);
+			fMacroBlock.displayParentMacros(true);
 		}
 	}
 	
@@ -213,6 +219,8 @@ import org.eclipse.swt.widgets.Group;
 	public void setVisible(boolean visible){
 		if(visible)
 			updateValues();
+		if(fMacroTabs != null)
+			fMacroTabs.setVisible(visible);
 		super.setVisible(visible);
 	}
 
@@ -221,7 +229,7 @@ import org.eclipse.swt.widgets.Group;
 	 */
 	public void createControl(Composite parent) {
 		Control ctrl = null;
-		if(fEnvTabs != null){
+		if(fMacroTabs != null){
 			Group group = new Group(parent, SWT.NONE);
 			group.setFont(parent.getFont());
 			group.setText(ManagedBuilderUIMessages.getResourceString(MACROS_GROUP_LABEL));
@@ -230,14 +238,14 @@ import org.eclipse.swt.widgets.Group;
 			gl.marginHeight = 0;
 			gl.marginWidth = 0;
 			group.setLayout(gl);
-			Control tabs = fEnvTabs.createContents(group);
+			Control tabs = fMacroTabs.createContents(group);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			tabs.setLayoutData(gd);
 			ctrl = group;
 		}
-		else if(fEnvBlock != null){
-			fEnvBlock.createControl(parent);
-			ctrl = fEnvBlock.getControl();
+		else if(fMacroBlock != null){
+			fMacroBlock.createControl(parent);
+			ctrl = fMacroBlock.getControl();
 			ctrl.setLayoutData(new GridData(GridData.FILL_BOTH));
 		}
 
@@ -279,19 +287,19 @@ import org.eclipse.swt.widgets.Group;
 	 * returns the selected environment block
 	 */
 	protected MacrosBlock getSelectedBlock(){
-		if(fEnvTabs != null)
-			return (MacrosBlock)fEnvTabs.getCurrentPage();
-		return fEnvBlock;
+		if(fMacroTabs != null)
+			return (MacrosBlock)fMacroTabs.getCurrentPage();
+		return fMacroBlock;
 	}
 	
 	/*
 	 * returns all available environment blocks
 	 */
 	protected MacrosBlock[] getAllBlocks(){
-		if(fEnvTabs != null)
-			return fEnvTabs.getTabs();
-		else if(fEnvBlock != null)
-			return new MacrosBlock[]{fEnvBlock};
+		if(fMacroTabs != null)
+			return fMacroTabs.getTabs();
+		else if(fMacroBlock != null)
+			return new MacrosBlock[]{fMacroBlock};
 		return new MacrosBlock[0];
 	}
 	
@@ -299,10 +307,10 @@ import org.eclipse.swt.widgets.Group;
 	 * updates the context of each EnvironmentBlock
 	 */
 	protected void updateContexts(){
-		if(fEnvTabs != null)
-			fEnvTabs.updateContexts();
-		else if(fEnvBlock != null)
-			fEnvBlock.setContext(IBuildMacroProvider.CONTEXT_WORKSPACE,ResourcesPlugin.getWorkspace());
+		if(fMacroTabs != null)
+			fMacroTabs.updateContexts();
+		else if(fMacroBlock != null)
+			fMacroBlock.setContext(IBuildMacroProvider.CONTEXT_WORKSPACE,ResourcesPlugin.getWorkspace());
 	}
 	
 	/*

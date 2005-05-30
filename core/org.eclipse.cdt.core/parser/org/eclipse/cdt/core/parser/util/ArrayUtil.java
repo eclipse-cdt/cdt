@@ -202,16 +202,22 @@ public class ArrayUtil {
         if( array == null )
             return (Object[]) Array.newInstance( c, 0 );
         
-        int i = 0;
+        int i;
+		int validEntries = 0;
+		for( i = 0; i < array.length; i++ ){
+	         if( array[i] != null ) validEntries++;
+	    }
+		
+		if (array.length == validEntries) 
+			return array;
+		
+		Object[] newArray = (Object[]) Array.newInstance(c, validEntries);
 		int j = 0;
-		Object[] newArray = new Object[array.length];
-        for( ; i < array.length; i++ ){
+        for( i = 0; i < array.length; i++ ){
             if( array[i] != null ) newArray[j++] = array[i];
         }
 		
-		if (j<i) return ArrayUtil.trim(c, newArray);
-		
-		return array;
+		return newArray;
 	}
 
 	/**

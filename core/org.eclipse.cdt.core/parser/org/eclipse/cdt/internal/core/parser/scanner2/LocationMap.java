@@ -1047,11 +1047,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
         public void removeSubContext(_Context c) {
-            _Context[] sub = getSubContexts();
-            for (int i = 0; i < sub.length; ++i)
-                if (sub[i] == c) {
-                    sub[i] = null;
-                    trimSubContexts();
+            if (subContexts == null)
+                return;         
+            for (int i = 0; i < subContexts.length; ++i)
+                if (subContexts[i] == c) {
+                	subContexts[i] = null;
                     return;
                 }
         }
@@ -1069,64 +1069,27 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
         public _Context findContextContainingOffset(int offset) {
-            if (!hasSubContexts()) {
-                if (offset >= context_directive_start && offset <= context_ends)
-                    return this;
-                return null;
+            if (subContexts != null)
+            {
+	            for (int i = 0; i < subContexts.length; ++i) {
+	                _Context c = subContexts[i];
+	                if (c == null) continue;
+	                if ((offset >= c.context_directive_start && offset <= c.context_ends)) {
+	                    if (c instanceof _CompositeContext) {
+	                        _Context trial = ((_CompositeContext) c)
+	                                .findContextContainingOffset(offset);
+	                        if (trial == null)
+	                            return c;
+	                        return trial;
+	                    }
+	                    return c;
+	                }
+	            }
             }
-            _Context[] l = getSubContexts();
-            int low = 0;
-            int high = l.length-1;
-
-            while (low <= high) {
-                int mid = (low + high) >> 1;
-                _Context midVal = l[mid];
-                int cmp;
-                if( (offset >= midVal.context_directive_start && offset <= midVal.context_ends) )
-                    cmp = 0;
-                else if( midVal.context_directive_start > offset )
-                    cmp = 1;
-                else
-                    cmp = -1;
-
-                if (cmp < 0)
-                    low = mid + 1;
-                else if (cmp > 0)
-                    high = mid - 1;
-                else
-                {
-                    if( midVal instanceof _CompositeContext )
-                    {
-                        _Context c = ((_CompositeContext)midVal).findContextContainingOffset(offset);
-                        if( c != null )
-                            return c;
-                    }
-                    return midVal;
-                }
-            }
-            if (offset >= context_directive_start && offset <= context_ends)
+            // if no sub context contains this, do it this way
+            if ((offset >= context_directive_start && offset <= context_ends))
                 return this;
             return null;
-
-            
-            
-//            for (int i = 0; i < l.length; ++i) {
-//                _Context c = l[i];
-//                if (c.contains(offset)) {
-//                    if (c instanceof _CompositeContext) {
-//                        _Context trial = ((_CompositeContext) c)
-//                                .findContextContainingOffset(offset);
-//                        if (trial == null)
-//                            return c;
-//                        return trial;
-//                    }
-//                    return c;
-//                }
-//            }
-            //if no sub context contains this, do it this way
-//            if (contains(offset))
-//                return this;
-//            return null;
         }
         
 
@@ -2347,7 +2310,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             // check if a sub node of the macro is the selection // TODO
             // determine how this can be kept in sync with logic in
             // getAllPreprocessorStatements (i.e. 1:1 mapping)
-            if (context.contains( globalOffset ) && context instanceof _MacroDefinition) {
+            if ((globalOffset >= context.context_directive_start && globalOffset <= context.context_ends) && context instanceof _MacroDefinition) {
                 if (globalOffset == ((_MacroDefinition) context).nameOffset
                         && length == ((_MacroDefinition) context).name.length)
                     result = createASTMacroDefinition(

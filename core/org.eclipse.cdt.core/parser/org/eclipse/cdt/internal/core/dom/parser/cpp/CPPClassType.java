@@ -233,6 +233,10 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	        {
 	            IBinding binding = name.resolveBinding();
 	            if( binding == CPPClassType.this ){
+	            	if( name instanceof ICPPASTQualifiedName ){
+	            		IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	            		name = ns[ ns.length - 1 ];
+	            	}
 	                result = name;
 	                return PROCESS_ABORT;
 	            }
@@ -241,7 +245,9 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	    }
 	    
 		public int visit( IASTDeclaration declaration ){ 
-		    return (declaration instanceof IASTSimpleDeclaration ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
+			if( declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration )
+				return PROCESS_CONTINUE;
+			return PROCESS_SKIP; 
 		}
 		public int visit( IASTDeclSpecifier declSpec ){
 		    return (declSpec instanceof ICPPASTCompositeTypeSpecifier ) ? PROCESS_CONTINUE : PROCESS_SKIP; 
@@ -254,6 +260,10 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 			FindDefinitionAction action = new FindDefinitionAction();
 			IASTNode node = CPPVisitor.getContainingBlockItem( getPhysicalNode() ).getParent();
 	
+			if( node instanceof ICPPASTCompositeTypeSpecifier )
+				node = CPPVisitor.getContainingBlockItem( node.getParent() );
+			while( node instanceof ICPPASTTemplateDeclaration )
+				node = node.getParent();
 			node.accept( action );
 		    definition = action.result;
 			

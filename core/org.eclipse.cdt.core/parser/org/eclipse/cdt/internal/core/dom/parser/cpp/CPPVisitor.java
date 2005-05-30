@@ -892,6 +892,9 @@ public class CPPVisitor {
 			if( binding == null ){
 				binding = CPPSemantics.resolveBinding( name );
 				name.setBinding( binding );
+				if( name instanceof ICPPASTTemplateId && binding instanceof ICPPSpecialization ){
+					((ICPPASTTemplateId)name).getTemplateName().setBinding( ((ICPPSpecialization)binding).getSpecializedBinding() );
+				}
 			}
 			return binding;
 		}

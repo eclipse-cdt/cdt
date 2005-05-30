@@ -168,13 +168,12 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 			return true;
 		
 		//allow some fuzziness here.
-		if( !(type instanceof CPPDeferredClassInstance ) )
-			return false;
-				
-		ICPPClassTemplate typeClass = (ICPPClassTemplate) ((CPPDeferredClassInstance)type).getSpecializedBinding();
-		if( typeClass != classTemplate )
-			return false;
-		
-		return true;
+		if( type instanceof CPPDeferredClassInstance ){
+			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((CPPDeferredClassInstance)type).getSpecializedBinding();
+			return (typeClass == classTemplate );
+		} else if( type instanceof ICPPClassTemplate && classTemplate == type ){
+			return true;
+		}
+		return false;
 	}
 }

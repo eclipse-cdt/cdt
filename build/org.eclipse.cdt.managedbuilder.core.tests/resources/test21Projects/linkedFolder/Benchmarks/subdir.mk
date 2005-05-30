@@ -8,10 +8,8 @@ $(ROOT)/f1.c \
 $(ROOT)/f2.c 
 
 OBJS += \
-${addprefix ./, \
-f1.o \
-f2.o \
-}
+./f1.o \
+./f2.o 
 
 DEPS += \
 ${addprefix ./, \

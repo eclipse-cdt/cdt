@@ -130,9 +130,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 		return projects;
 	}
 		
-	private void buildProjects(IProject projects[], IPath[] files) {	
+	private boolean buildProjects(IProject projects[], IPath[] files) {	
 		if(projects == null || projects.length == 0)
-			return;
+			return false;
 				
 		boolean succeeded = true;
 		for(int i = 0; i < projects.length; i++){
@@ -171,6 +171,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 			for(int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
 		}
+		return succeeded;
 	}
 
 	private void createPathVariable(IPath tmpDir) {
@@ -254,6 +255,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 	 * tests 2.1 style tool integration for linked files
 	 */
 	public void testLinkedLib(){
+		boolean succeeded = false;
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
@@ -275,14 +277,18 @@ public class ManagedProject21MakefileTests extends TestCase {
 			createFileLink(project, tmpDir, "f2link.c", "f2.c");
 			createFileLink(project, tmpDir, "test_ar.h", "test_ar.h");
 			//  Build the project
-			buildProjects(projects, makefiles);
-		} finally {ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);}
+			succeeded = buildProjects(projects, makefiles);
+		} finally {
+			if (succeeded)
+				ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * tests 2.1 style tool integration for a linked folder
 	 */
 	public void testLinkedFolder(){
+		boolean succeeded = false;
 		IPath[] makefiles = {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
@@ -308,7 +314,10 @@ public class ManagedProject21MakefileTests extends TestCase {
 			IPath location = Path.fromOSString(MBS_TEMP_DIR);
 			IProject[] projects = createProjects("linkedFolder", location, "cdt.managedbuild.target.testgnu21.lib", false);
 			//  Build the project
-			buildProjects(projects, makefiles);
-		} finally {ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);}
+			succeeded = buildProjects(projects, makefiles);
+		} finally {
+			if (succeeded)
+				ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);
+		}
 	}
 }

@@ -2585,15 +2585,16 @@ abstract class BaseScanner implements IScanner {
                                 buffer, start, len));
                     branchState(BRANCH_IF);
                     
-                    processIf(pos, pos + start + len, true); // fix 86870, process IF before skipping the condition and only process it once
-                    
                     if (expressionEvaluator.evaluate(buffer, start, len,
                             definitions,
                             getLineNumber(bufferPos[bufferStackPos]),
                             getCurrentFilename()) == 0) {
+                    	processIf(pos, bufferPos[bufferStackPos], true);
                         skipOverConditionalCode(true);
                         if (isLimitReached())
                             handleInvalidCompletion();
+                    } else {
+                    	processIf(pos, bufferPos[bufferStackPos], false);
                     }
                     return;
                 case ppElse:

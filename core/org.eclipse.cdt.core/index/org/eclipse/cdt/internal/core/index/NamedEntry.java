@@ -22,6 +22,11 @@ public class NamedEntry extends CIndexStorageEntry implements INamedEntry {
 		this.modifiers = modifiers;
 	}
 	
+	public  NamedEntry(int meta_kind, int entry_type,  String simpleName, int modifiers, int fileNumber){
+		super(meta_kind, entry_type, fileNumber);
+		this.fullName = new char[][]{simpleName.toCharArray()};
+		this.modifiers = modifiers;
+	}
 	public char[][] getFullName(){
 		return fullName;
 	}

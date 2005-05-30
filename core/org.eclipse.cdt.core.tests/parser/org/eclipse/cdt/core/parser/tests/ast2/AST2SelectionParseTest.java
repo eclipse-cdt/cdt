@@ -1632,7 +1632,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		
 		IASTTranslationUnit tu = parse(file, ParserLanguage.CPP, false, true);
 		IASTPreprocessorStatement[] stmts = tu.getAllPreprocessorStatements();
-		IASTFileLocation fileLoc = tu.flattenLocationsToFile(stmts[5].getNodeLocations());
+		IASTFileLocation fileLoc = stmts[5].getFileLocation();
 		int fileOffset = test2_h.indexOf("#ifndef _WINGDI_H");
 		int fileLocOffset = fileLoc.getNodeOffset(); 
 		assertEquals(fileOffset, fileLocOffset);

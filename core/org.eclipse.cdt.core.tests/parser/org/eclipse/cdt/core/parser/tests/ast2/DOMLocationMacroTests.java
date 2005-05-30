@@ -209,7 +209,7 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTFileLocation tenth_loc = (IASTFileLocation) nodeLocations[9];
             assertEquals( 1, tenth_loc.getNodeLength() );
 
-            final IASTFileLocation flatLocation = tu.flattenLocationsToFile(nodeLocations);
+            final IASTFileLocation flatLocation = var.getFileLocation();
             assertNotNull( flatLocation);
             assertEquals( code.indexOf("XYZ IT C_PO C_PO V;"), flatLocation.getNodeOffset() ); //$NON-NLS-1$
             assertEquals( "XYZ IT C_PO C_PO V;".length(), flatLocation.getNodeLength() ); //$NON-NLS-1$
@@ -244,13 +244,13 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTFileLocation loc_4 = (IASTFileLocation) locations[3];
             assertEquals( loc_4.getNodeOffset(), code.indexOf( ";")); //$NON-NLS-1$
             assertEquals( loc_4.getNodeLength(), 1 );
-            IASTFileLocation flat = tu.flattenLocationsToFile(locations);
+            IASTFileLocation flat = memchr.getFileLocation();
             assertEquals( flat.getNodeOffset() , code.indexOf( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));")); //$NON-NLS-1$
             assertEquals( flat.getNodeLength(), "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));".length() ); //$NON-NLS-1$
             
             IASTDeclarator d = memchr.getDeclarators()[0];
             final IASTNodeLocation[] declaratorLocations = d.getNodeLocations();
-            IASTFileLocation f = tu.flattenLocationsToFile( declaratorLocations );
+            IASTFileLocation f = d.getFileLocation();
             assertEquals( code.indexOf( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t))"), f.getNodeOffset() ); //$NON-NLS-1$
             assertEquals( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t))".length(), f.getNodeLength() ); //$NON-NLS-1$
         }        

@@ -91,7 +91,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
         public IASTFileLocation asFileLocation() {
-            return rootNode.flattenLocationsToFile(getExpansionLocations());
+            return rootNode.flattenLocationsToFile(locations);
         }
         
         public String toString() {

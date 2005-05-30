@@ -284,30 +284,21 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	public String getFilename()
 	{
 		if ( node == null ) return BLANK_STRING;
-	   IASTNodeLocation [] location = node.getNodeLocations();
-	   if( location.length == 1 && location[0] instanceof IASTFileLocation )
-	      return ((IASTFileLocation)location[0]).getFileName();
-       IASTFileLocation f = node.getTranslationUnit().flattenLocationsToFile(location);
+       IASTFileLocation f = node.getFileLocation();
        if( f == null )
            return BLANK_STRING; //$NON-NLS-1$
        return f.getFileName();
 	}
 	
 	public int getOffset() {
-	   IASTNodeLocation [] location = node.getNodeLocations();
-	   if( location.length == 1 && location[0] instanceof IASTFileLocation )
-	      return location[0].getNodeOffset();
-       IASTFileLocation f = node.getTranslationUnit().flattenLocationsToFile(location);
+       IASTFileLocation f = node.getFileLocation();
        if( f == null )
            return 0; //$NON-NLS-1$
        return f.getNodeOffset();
 	}
 	
 	public int getLength() {
-	   IASTNodeLocation [] location = node.getNodeLocations();
-	   if( location.length == 1 && location[0] instanceof IASTFileLocation )
-	      return location[0].getNodeLength();
-       IASTFileLocation f = node.getTranslationUnit().flattenLocationsToFile(location);
+       IASTFileLocation f = node.getFileLocation();
        if( f == null )
            return 0; //$NON-NLS-1$
        return f.getNodeLength();

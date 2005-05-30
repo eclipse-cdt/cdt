@@ -161,7 +161,7 @@ public class OpenDefinitionAction extends SelectionParseAction implements
                         int end=0;
                         
                         if ( domNames[0].getTranslationUnit() != null ) {
-                            IASTFileLocation location = domNames[0].getTranslationUnit().flattenLocationsToFile( domNames[0].getNodeLocations() );
+                            IASTFileLocation location = domNames[0].getFileLocation();
                             fileName = location.getFileName();
                             start = location.getNodeOffset();
                             end = location.getNodeOffset() + location.getNodeLength();

@@ -118,7 +118,7 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
                     int end = 0;
                     
                     if ( foundNames[i].getTranslationUnit() != null ) {
-                        IASTFileLocation location = foundNames[i].getTranslationUnit().flattenLocationsToFile( foundNames[i].getNodeLocations() );
+                        IASTFileLocation location = foundNames[i].getFileLocation();
                         fileName = location.getFileName();
                         start = location.getNodeOffset();
                         end = location.getNodeOffset() + location.getNodeLength();

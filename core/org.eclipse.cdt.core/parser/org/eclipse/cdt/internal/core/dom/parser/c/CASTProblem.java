@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
@@ -270,24 +269,19 @@ public class CASTProblem extends CASTNode implements IASTProblem {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
         }
 
-        IASTNodeLocation [] locs = getNodeLocations();
+        
         String file = null;
         int offset = 0;
-        if( locs != null && locs.length == 1 && locs[0] instanceof IASTFileLocation ){
-            file = ((IASTFileLocation) locs[0]).getFileName();
-            offset = locs[0].getNodeOffset();
-        } else {
-            IASTFileLocation f = getTranslationUnit().flattenLocationsToFile(locs);
-            if( f == null )
-            {
-                file = ""; //$NON-NLS-1$
-                offset = 0;
-            }
-            else
-            {
-                file = f.getFileName();
-                offset = f.getNodeOffset();
-            }
+        IASTFileLocation f = getFileLocation();
+        if( f == null )
+        {
+            file = ""; //$NON-NLS-1$
+            offset = 0;
+        }
+        else
+        {
+            file = f.getFileName();
+            offset = f.getNodeOffset();
         }
         
         Object[] args = new Object[] { msg, file, new Integer( offset ) }; //$NON-NLS-1$        

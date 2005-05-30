@@ -344,7 +344,7 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
             IASTPreprocessorMacroDefinition INCLUDE_H = macro_defs[1];
             final IASTNodeLocation[] nodeLocations = INCLUDE_H.getName().getNodeLocations();
             assertEquals( nodeLocations.length, 1 );
-            final IASTFileLocation flatLoc = tu.flattenLocationsToFile( nodeLocations );
+            final IASTFileLocation flatLoc = INCLUDE_H.getName().getFileLocation();
             assertNotNull( flatLoc );
             assertEquals( include_file.getLocation().toOSString(), flatLoc.getFileName() );
             assertEquals( inc_file_code.indexOf( "#define _INCLUDE_H_") + "#define ".length(), flatLoc.getNodeOffset() ); //$NON-NLS-1$ //$NON-NLS-2$

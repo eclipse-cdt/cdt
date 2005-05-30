@@ -53,6 +53,7 @@ public abstract class ASTNode implements IASTNode {
     }
 
     private IASTNodeLocation[] locations = null;
+    private IASTFileLocation fileLocation = null;
 
     /*
      * (non-Javadoc)
@@ -83,6 +84,9 @@ public abstract class ASTNode implements IASTNode {
     }
 
     public IASTFileLocation getFileLocation() {
-        return getTranslationUnit().flattenLocationsToFile( getNodeLocations() );
+        if( fileLocation != null )
+            return fileLocation;
+        fileLocation = getTranslationUnit().flattenLocationsToFile( getNodeLocations() );
+        return fileLocation;
     }
 }

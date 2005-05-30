@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -197,8 +196,7 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
 
 	public int getLineNumber() {
 		if( node != null ){
-			IASTNodeLocation [] locs = node.getNodeLocations();
-			IASTFileLocation fileLoc = node.getTranslationUnit().flattenLocationsToFile( locs );
+			IASTFileLocation fileLoc = node.getFileLocation();
 			return fileLoc.getStartingLineNumber();
 		}
 		return -1;

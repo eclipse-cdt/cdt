@@ -93,7 +93,7 @@ public class DOMDisplaySearchNames extends CSearchQuery implements ISearchQuery 
      			int start = 0;
      			int end = 0;
      			if ( nodes[i] != null ) {
-	     		  IASTFileLocation location = nodes[i].getTranslationUnit().flattenLocationsToFile( nodes[i].getNodeLocations() );
+	     		  IASTFileLocation location = nodes[i].getFileLocation();
                   if (location == null) {
                       return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), 0, "Null Location associated with IASTFileLocation.", null); //$NON-NLS-1$
                   }

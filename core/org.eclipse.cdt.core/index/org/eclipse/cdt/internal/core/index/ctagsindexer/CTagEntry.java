@@ -162,7 +162,6 @@ class CTagEntry{
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.MEMBER)){
-    		output.addFieldDecl(fileNum, fullName, lineNumber, 1, IIndex.LINE);
 			NamedEntry namedEntry = new NamedEntry(IIndex.FIELD, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
 			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			namedEntry.serialize(output);

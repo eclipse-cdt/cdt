@@ -90,6 +90,10 @@ public class CPPSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		//indexManager.reset();
 		//Get the indexer used for the test project
 		sourceIndexer = (CTagsIndexer) indexManager.getIndexerForProject(project);
+		
+		if (!sourceIndexer.validCTagsInstalled())
+			fail("Exuberant CTags not installed");  //$NON-NLS-1$
+		
 		sourceIndexer.addIndexChangeListener(this);
 	}
 

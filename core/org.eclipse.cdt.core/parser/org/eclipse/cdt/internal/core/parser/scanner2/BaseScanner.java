@@ -1398,8 +1398,10 @@ abstract class BaseScanner implements IScanner {
         }
         if (r == null)
             return;
-        Object i = createInclusionConstruct(r.filename, r.filename, false, -1,
-                -1, -1, -1, -1, -1, -1, true);
+        int o = getCurrentOffset() + 1; 
+        int l = getLineNumber(o);
+        Object i = createInclusionConstruct(r.filename, r.filename, false, o,
+                l, o, o, l, o, l, true);
         InclusionData d = new InclusionData(r, i);
         pushContext(r.buffer, d);
     }

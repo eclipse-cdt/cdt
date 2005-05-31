@@ -229,11 +229,14 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popContext()
      */
     protected Object popContext() {
-        // TODO calibrate offsets
         Object result = super.popContext();
         if (result instanceof CodeReader) {
-            locationMap.endTranslationUnit(bufferDelta[0]
-                    + ((CodeReader) result).buffer.length);
+            if( isInitialized )
+                locationMap.endTranslationUnit(bufferDelta[0]
+                        + ((CodeReader) result).buffer.length);
+            else
+                bufferDelta[0] += bufferDelta[bufferStackPos + 1] + ((CodeReader) result).buffer.length;
+
         } else if (result instanceof InclusionData) {
             CodeReader codeReader = ((InclusionData) result).reader;
             if (log.isTracing()) {

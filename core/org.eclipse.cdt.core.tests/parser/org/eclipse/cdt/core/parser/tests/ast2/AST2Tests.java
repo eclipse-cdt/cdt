@@ -3126,4 +3126,11 @@ public class AST2Tests extends AST2BaseTest {
 		assertTrue( t instanceof IBasicType );
 		assertEquals( ((IBasicType)t).getType(), IBasicType.t_int );
 	}
+    
+    public void testBug95866() throws Exception {
+        IASTTranslationUnit tu = parse( "int test[10] = { [0 ... 9] = 2 };", ParserLanguage.C, true, true );
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings(col);
+    }
 }

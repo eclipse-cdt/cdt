@@ -181,6 +181,7 @@
          <outputType
 			outputs=""
             buildVariable="EXECUTABLES"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.gnu.c.linker.output">
          </outputType>
       </tool>
@@ -329,6 +330,7 @@
          <outputType
 			outputs=""
             buildVariable="EXECUTABLES"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.gnu.cpp.linker.output">
          </outputType>
       </tool>
@@ -369,6 +371,7 @@
 			outputs="a"
             outputPrefix="lib"
             buildVariable="ARCHIVES"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.gnu.archiver.output">
          </outputType>
       </tool>
@@ -617,6 +620,7 @@
          <outputType
 			outputs=""
             buildVariable="EXECUTABLES"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.macosx.c.linker.output">
          </outputType>
       </tool>
@@ -745,6 +749,7 @@
          <outputType
 			outputs=""
             buildVariable="EXECUTABLES"
+            nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
             id="cdt.managedbuild.tool.macosx.cpp.linker.output">
          </outputType>
       </tool>

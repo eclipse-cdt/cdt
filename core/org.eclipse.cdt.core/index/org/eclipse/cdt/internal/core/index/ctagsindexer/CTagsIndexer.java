@@ -11,16 +11,23 @@
 package org.eclipse.cdt.internal.core.index.ctagsindexer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.index.ICDTIndexer;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexStorage;
+import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
@@ -32,16 +39,26 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Bogdan Gheorghe
  */
 public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 
+	public static boolean VERBOSE = false;
+	
 	public final static String CTAGS_INTERNAL = "ctags_internal"; //$NON-NLS-1$
 	public final static String CTAGS_EXTERNAL = "ctags_external"; //$NON-NLS-1$
 	public final static String CTAGS_LOCATION = "ctags_location"; //$NON-NLS-1$
 	
+	protected List indexChangeListeners = Collections.synchronizedList(new ArrayList());
+	public static final String INDEX_NOTIFICATION_NAME = Util.bind( "indexNotificationJob" ); //$NON-NLS-1$
 	private CIndexStorage		indexStorage = null;
 	public 	ReadWriteMonitor	storageMonitor = null;
 	private IndexManager  		indexManager = null; 
@@ -374,5 +391,61 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
         indexManager.removeIndexerProblems(project);
 	}
 	
+	public void addIndexChangeListener(IIndexChangeListener listener) {
+		synchronized(indexChangeListeners) {
+			if (!indexChangeListeners.contains(listener)) {
+				indexChangeListeners.add(listener);
+			}
+		}
+	}
+	
+	public void removeIndexChangeListener(IIndexChangeListener listener) {
+		synchronized(indexChangeListeners) {
+			int i = indexChangeListeners.indexOf(listener);
+			if (i != -1) {
+				indexChangeListeners.remove(i);
+			}
+		}
+	}
+	/**
+	 * @param indexDelta
+	 */
+	public void notifyListeners(IndexDelta indexDelta) {
+		final IndexChangeEvent indexEvent = new IndexChangeEvent(indexDelta);
+		for (int i= 0; i < indexChangeListeners.size(); i++) {
+			    IIndexChangeListener tempListener = null;
+			    synchronized(indexChangeListeners){
+			    	tempListener = (IIndexChangeListener) indexChangeListeners.get(i);
+			    }
+			    final IIndexChangeListener listener = tempListener;
+				long start = -1;
+				if (VERBOSE) {
+					System.out.print("Listener #" + (i+1) + "=" + listener.toString());//$NON-NLS-1$//$NON-NLS-2$
+					start = System.currentTimeMillis();
+				}
+				
+				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
+				Job job = new Job(INDEX_NOTIFICATION_NAME){
+					protected IStatus run(IProgressMonitor monitor)	{	
+						Platform.run(new ISafeRunnable() {
+							public void handleException(Throwable exception) {
+								CCorePlugin.log(exception);
+							}
+							public void run() throws Exception {
+								listener.indexChanged(indexEvent);
+							}
+						});
+						
+						return Status.OK_STATUS;
+					}
+				};
+				
+				job.schedule();
+				if (VERBOSE) {
+					System.out.println(" -> " + (System.currentTimeMillis()-start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+		
+		}
 
 }

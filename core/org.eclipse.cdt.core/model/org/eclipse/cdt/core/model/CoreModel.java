@@ -1098,7 +1098,7 @@ public class CoreModel {
 
 	public static boolean isScannerInformationEmpty(IResource resource) {
 		final int PATH_ENTRY_MASK = IPathEntry.CDT_INCLUDE | IPathEntry.CDT_MACRO |
-									IPathEntry.CDT_INCLUDE_FILE | IPathEntry.CDT_MACRO_FILE;
+									IPathEntry.CDT_INCLUDE_FILE | IPathEntry.CDT_MACRO_FILE | IPathEntry.CDT_SOURCE;
 		boolean rc = true;
 		IPath resPath = resource.getFullPath();
 		IProject project = resource.getProject();

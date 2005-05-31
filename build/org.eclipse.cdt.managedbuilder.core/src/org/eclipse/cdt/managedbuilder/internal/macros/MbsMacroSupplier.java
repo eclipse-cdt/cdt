@@ -494,10 +494,13 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 				if(macro != null)
 					macros[num++] = macro;
 			}
-			IBuildMacro result[] = new IBuildMacro[num];
-			if(num > 0)
-				System.arraycopy(macros,0,result,0,num);
-			return result;
+			if(macros.length != num){
+				IBuildMacro tmp[] = new IBuildMacro[num];
+				if(num > 0)
+					System.arraycopy(macros,0,tmp,0,num);
+				macros = tmp;
+			}
+			return macros;
 		}
 		return null;
 	}

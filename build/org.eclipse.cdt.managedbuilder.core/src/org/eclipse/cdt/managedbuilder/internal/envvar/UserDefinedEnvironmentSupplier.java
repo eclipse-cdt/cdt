@@ -326,23 +326,7 @@ public class UserDefinedEnvironmentSupplier extends
 	}
 	
 	protected IBuildEnvironmentVariable[] filterVariables(IBuildEnvironmentVariable variables[]){
-		if(variables == null || variables.length == 0)
-			return variables;
-		
-		IBuildEnvironmentVariable filtered[] = new IBuildEnvironmentVariable[variables.length];
-		int filteredNum = 0;
-		for(int i = 0; i < variables.length; i++){
-			if(getValidName(variables[i].getName()) != null)
-				filtered[filteredNum++] = variables[i];
-		}
-
-		if(filteredNum != filtered.length){
-			IBuildEnvironmentVariable vars[] = new IBuildEnvironmentVariable[filteredNum];
-			for(int i = 0; i < filteredNum; i++)
-				vars[i] = filtered[i];
-			filtered = vars;
-		}
-		return filtered;
+		return EnvVarOperationProcessor.filterVariables(variables,fNonOverloadableVariables);
 	}
 
 }

@@ -248,4 +248,38 @@ public class EnvVarOperationProcessor {
 			name = name.toUpperCase();
 		return name;
 	}
+	
+	static public IBuildEnvironmentVariable[] filterVariables(IBuildEnvironmentVariable variables[], String remove[]){
+		
+		if(variables == null || variables.length == 0)
+			return variables;
+		
+		IBuildEnvironmentVariable filtered[] = new IBuildEnvironmentVariable[variables.length];
+		int filteredNum = 0;
+		for(int i = 0; i < variables.length; i++){
+			IBuildEnvironmentVariable var = variables[i];
+			String name = null;
+			if(var != null && (name = normalizeName(var.getName())) != null){
+				boolean skip = false;
+				if(remove != null && remove.length > 0){
+					for(int j = 0; j < remove.length; j++){
+						if(remove[j] != null && remove[j].equals(name)){
+							skip = true;
+							break;
+						}
+					}
+				}
+				if(!skip)
+					filtered[filteredNum++] = var;
+			}
+		}
+
+		if(filteredNum != filtered.length){
+			IBuildEnvironmentVariable vars[] = new IBuildEnvironmentVariable[filteredNum];
+			for(int i = 0; i < filteredNum; i++)
+				vars[i] = filtered[i];
+			filtered = vars;
+		}
+		return filtered;
+	}
 }

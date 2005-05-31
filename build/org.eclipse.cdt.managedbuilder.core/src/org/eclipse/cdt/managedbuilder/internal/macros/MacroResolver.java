@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvVarOperationProcessor;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus;
@@ -387,6 +388,40 @@ public class MacroResolver {
 		} catch (BuildMacroException e){
 		}
 		return collector.getExplicisFileMacros();
+	}
+
+	static public IBuildMacro[] filterMacros(IBuildMacro macros[], String remove[]){
+		
+		if(macros == null || macros.length == 0)
+			return macros;
+		
+		IBuildMacro filtered[] = new IBuildMacro[macros.length];
+		int filteredNum = 0;
+		for(int i = 0; i < macros.length; i++){
+			IBuildMacro var = macros[i];
+			String name = null;
+			if(var != null && (name = EnvVarOperationProcessor.normalizeName(var.getName())) != null){
+				boolean skip = false;
+				if(remove != null && remove.length > 0){
+					for(int j = 0; j < remove.length; j++){
+						if(remove[j] != null && remove[j].equals(name)){
+							skip = true;
+							break;
+						}
+					}
+				}
+				if(!skip)
+					filtered[filteredNum++] = var;
+			}
+		}
+
+		if(filteredNum != filtered.length){
+			IBuildMacro m[] = new IBuildMacro[filteredNum];
+			for(int i = 0; i < filteredNum; i++)
+				m[i] = filtered[i];
+			filtered = m;
+		}
+		return filtered;
 	}
 
 }

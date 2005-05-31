@@ -894,7 +894,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		EnvVarCollector variables =  provider.getVariables(fSystemContextInfo,includeParentLevels);
 		if(variables == null)
 			return null;
-		return filterDisplayedVariables(variables.toArray(false));
+		return filterVariables(variables.toArray(false));
 	}
 
 	/* (non-Javadoc)
@@ -1054,24 +1054,8 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	/*
 	 * filteres the names to be displayed
 	 */
-	protected IBuildEnvironmentVariable[] filterDisplayedVariables(IBuildEnvironmentVariable variables[]){
-		if(variables == null || variables.length == 0)
-			return variables;
-		
-		IBuildEnvironmentVariable filtered[] = new IBuildEnvironmentVariable[variables.length];
-		int filteredNum = 0;
-		for(int i = 0; i < variables.length; i++){
-			if(canDisplay(variables[i].getName()))
-				filtered[filteredNum++] = variables[i];
-		}
-
-		if(filteredNum != filtered.length){
-			IBuildEnvironmentVariable vars[] = new IBuildEnvironmentVariable[filteredNum];
-			for(int i = 0; i < filteredNum; i++)
-				vars[i] = filtered[i];
-			filtered = vars;
-		}
-		return filtered;
+	protected IBuildEnvironmentVariable[] filterVariables(IBuildEnvironmentVariable variables[]){
+		return EnvVarOperationProcessor.filterVariables(variables,fHiddenVariables);
 	}
 	
 	private void updateState(BuildMacroException e){

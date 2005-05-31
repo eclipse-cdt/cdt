@@ -982,7 +982,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 		IBuildMacro macros[] =  BuildMacroProvider.getMacros(fSystemContextInfo,includeParentLevels);
 		if(macros == null)
 			return null;
-		return filterDisplayedMacros(macros);
+		return filterMacros(macros);
 	}
 
 	/* (non-Javadoc)
@@ -1146,24 +1146,8 @@ public class MacrosBlock extends AbstractCOptionPage {
 	/*
 	 * filteres the macros to be displayed
 	 */
-	protected IBuildMacro[] filterDisplayedMacros(IBuildMacro macros[]){
-		if(macros == null || macros.length == 0)
-			return macros;
-		
-		IBuildMacro filtered[] = new IBuildMacro[macros.length];
-		int filteredNum = 0;
-		for(int i = 0; i < macros.length; i++){
-			if(canDisplay(macros[i].getName()))
-				filtered[filteredNum++] = macros[i];
-		}
-
-		if(filteredNum != filtered.length){
-			IBuildMacro tmp[] = new IBuildMacro[filteredNum];
-			for(int i = 0; i < filteredNum; i++)
-				tmp[i] = filtered[i];
-			filtered = tmp;
-		}
-		return filtered;
+	protected IBuildMacro[] filterMacros(IBuildMacro macros[]){
+		return MacroResolver.filterMacros(macros,fHiddenMacros);
 	}
 	
 	protected IEnvironmentVariableProvider obtainEnvironmentVariableProvider(){

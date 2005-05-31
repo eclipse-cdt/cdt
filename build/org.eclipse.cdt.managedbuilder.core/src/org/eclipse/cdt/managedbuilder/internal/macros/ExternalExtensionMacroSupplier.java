@@ -177,23 +177,7 @@ public class ExternalExtensionMacroSupplier implements IBuildMacroSupplier {
 	}
 	
 	protected IBuildMacro[] filterMacros(IBuildMacro macros[]){
-		if(macros == null || macros.length == 0)
-			return macros;
-		
-		IBuildMacro filtered[] = new IBuildMacro[macros.length];
-		int filteredNum = 0;
-		for(int i = 0; i < macros.length; i++){
-			if(getValidName(macros[i].getName()) != null)
-				filtered[filteredNum++] = macros[i];
-		}
-
-		if(filteredNum != filtered.length){
-			IBuildMacro m[] = new IBuildMacro[filteredNum];
-			for(int i = 0; i < filteredNum; i++)
-				m[i] = filtered[i];
-			filtered = m;
-		}
-		return filtered;
+		return MacroResolver.filterMacros(macros,fNonOverloadableMacros);
 	}
 
 	protected IBuildMacroSupplier[] filterValidSuppliers(IBuildMacroSupplier suppliers[]){

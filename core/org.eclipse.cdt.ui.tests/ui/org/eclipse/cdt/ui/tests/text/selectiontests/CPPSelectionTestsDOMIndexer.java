@@ -18,6 +18,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -27,8 +28,13 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -69,8 +75,12 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
 		//Enable indexing on test project
 		project.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 		
-		if (project==null)
-			fail("Unable to create project");	 //$NON-NLS-1$
+		if (project==null) fail("Unable to create project");	 //$NON-NLS-1$
+		IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());
+		CCProjectNature.addCCNature(project,monitor); 
+		MakeProjectNature.addNature(project, new NullProgressMonitor());
+		ScannerConfigNature.addScannerConfigNature(project);
+		PerProjectSICollector.calculateCompilerBuiltins(project);
 		
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 

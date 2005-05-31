@@ -30,6 +30,7 @@
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.cdt.make.core"/>
    </requires>
 
    <extension

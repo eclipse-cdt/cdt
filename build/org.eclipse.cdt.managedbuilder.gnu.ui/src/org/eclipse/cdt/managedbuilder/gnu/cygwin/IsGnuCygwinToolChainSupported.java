@@ -40,14 +40,11 @@ public class IsGnuCygwinToolChainSupported implements
 		String etcCygwin = CygwinPathResolver.getEtcPath();
 		if (etcCygwin != null) {
 			File file = new File(etcCygwin + "/setup/installed.db"); //$NON-NLS-1$
-			BufferedReader data;
 			try {
-				data = new BufferedReader(new FileReader(file));
-			} catch (FileNotFoundException e) { return false; }
-			
-			// all required package names should be found 
-			boolean[] found = new boolean[CHECKED_NAMES.length];
-			try {
+				BufferedReader data = new BufferedReader(new FileReader(file));
+
+				// all required package names should be found 
+				boolean[] found = new boolean[CHECKED_NAMES.length];
 				String s;			
 				while ((s = data.readLine()) != null ) {
 					for (int j = 0; j < CHECKED_NAMES.length; j++) {
@@ -59,8 +56,8 @@ public class IsGnuCygwinToolChainSupported implements
 					toolchainIsSupported &= found[j]; 
 				}
 				data.close();
+			} catch (FileNotFoundException e) {
 			} catch (IOException e) {
-				//TODO: log
 			}
 		}
 		return toolchainIsSupported;

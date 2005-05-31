@@ -120,30 +120,25 @@ public class CygwinPathResolver implements IBuildPathResolver {
 			IPath toSave = GnuUIPlugin.getDefault().getStateLocation();
 			toSave = toSave.addTrailingSeparator().append(OUTFILE);
 			String[] args = {ARG0, ARG1, toSave.toOSString(), REGISTRY_ROOTS[i]+REGISTRY_KEY+QUOT };
-			File f = new File(toSave.toOSString());
-			f.delete();
-			int result = -1;
 			try {
-				result = ProcessFactory.getFactory().exec(args).waitFor();
-			} 
-			catch (IOException e) {}
-			catch (InterruptedException e) {}
-			if (result == 0 && f.exists() && f.canRead()) {
-				BufferedReader r = null;
-				try {
-					r = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-				} catch (FileNotFoundException e) {}
-				ArrayList ls = new ArrayList(1);
-				try {
+				File f = new File(toSave.toOSString());
+				f.delete();
+				if (ProcessFactory.getFactory().exec(args).waitFor() == 0 && f.exists() && f.canRead()) {
+					BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+					ArrayList ls = new ArrayList(1);
 					String s;
 					while ((s = r.readLine() ) != null ) ls.add(s);
 					r.close();
 					f.delete();
-				} catch (IOException e) {}					
-				String[] aus = (String[])ls.toArray(new String[0]); 	
-				if (etcCygwin  == null) { etcCygwin  = getDir(aus, ETCPATTERN); }
-				if (binCygwin  == null) { binCygwin  = getDir(aus, BINPATTERN); }
-				if (rootCygwin == null) { rootCygwin = getDir(aus, ROOTPATTERN);}
+					String[] aus = (String[])ls.toArray(new String[0]); 	
+					if (etcCygwin  == null) { etcCygwin  = getDir(aus, ETCPATTERN); }
+					if (binCygwin  == null) { binCygwin  = getDir(aus, BINPATTERN); }
+					if (rootCygwin == null) { rootCygwin = getDir(aus, ROOTPATTERN);}
+				}
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {					
+			} catch (InterruptedException e) {
+			} catch (SecurityException e) {
 			}
 		}
 	}

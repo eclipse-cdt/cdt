@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -154,6 +155,23 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
             return true;
         if( type instanceof ITypedef )
             return ((ITypedef)type).isSameType( this );
+        
+        if( type instanceof ICPPTemplateInstance ){
+        	if( getSpecializedBinding() != ((ICPPTemplateInstance)type).getTemplateDefinition() )
+        		return false;
+        	
+        	ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)type).getArgumentMap();
+        	if( m1.size() != m2.size() )
+        		return false;
+        	for( int i = 0; i < m1.size(); i++ ){
+        		IType t1 = (IType) m1.getAt( i );
+        		IType t2 = (IType) m2.getAt( i );
+        		if( t1 == null || ! t1.isSameType( t2 ) )
+        			return false;
+        	}
+        	return true;
+        }
+
         return false;
     }
 

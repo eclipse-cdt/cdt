@@ -384,12 +384,17 @@ public class CPPTemplates {
 		    
 		    ICPPSpecialization spec = null;
 		    if( parent.getParent() instanceof ICPPASTExplicitTemplateInstantiation ){
-		        spec = (ICPPSpecialization) CPPTemplates.createInstance( scope, function, (ObjectMap)map_types[0], (IType[])map_types[1] );
+		    	spec = ((ICPPInternalTemplate)function).getInstance( (IType[])map_types[1] );
+		    	if( spec == null )
+		    		spec = (ICPPSpecialization) CPPTemplates.createInstance( scope, function, (ObjectMap)map_types[0], (IType[])map_types[1] );
 		    } else {
-				if( function instanceof ICPPMethod )
-					spec = new CPPMethodSpecialization( function, scope, (ObjectMap) map_types[0] );
-				else 
-					spec = new CPPFunctionSpecialization( function, scope, (ObjectMap) map_types[0] );
+		    	spec = ((ICPPInternalTemplate)function).getInstance( (IType[])map_types[1] );
+		    	if( spec == null ) {
+					if( function instanceof ICPPMethod )
+						spec = new CPPMethodSpecialization( function, scope, (ObjectMap) map_types[0] );
+					else 
+						spec = new CPPFunctionSpecialization( function, scope, (ObjectMap) map_types[0] );
+		    	}
 				
 				if( parent instanceof IASTSimpleDeclaration )
 					((ICPPInternalBinding)spec).addDeclaration( name );
@@ -471,7 +476,8 @@ public class CPPTemplates {
 				ICPPTemplateParameter param = params[j];
 				if( j < numArgs ){
 					arg = templateArguments[j];
-				}
+				} else
+					arg = null;
 				if( map.containsKey( param ) ) {
 					IType t = (IType) map.get( param );
 					if( arg == null ) 
@@ -754,11 +760,23 @@ public class CPPTemplates {
 			this.bindings = bindings;
 		}
 		public int visit(IASTName name) {
-			if( name.getBinding() != null && bindings.containsKey( name.getBinding() ) ){
+			if( name.getBinding() != null ){
 				IBinding binding = name.getBinding();
-				if( binding instanceof ICPPInternalBinding )
-					((ICPPInternalBinding)binding).removeDeclaration( name );
-				name.setBinding( null );
+				boolean clear = bindings.containsKey( name.getBinding() );
+				if( !clear && binding instanceof ICPPTemplateInstance ){
+					IType [] args = ((ICPPTemplateInstance)binding).getArguments();
+					for( int i = 0; i < args.length; i++ ){
+						if( bindings.containsKey( args[i] ) ){
+							clear = true;
+							break;
+						}
+					}
+				}
+				if( clear ){
+					if( binding instanceof ICPPInternalBinding )
+						((ICPPInternalBinding)binding).removeDeclaration( name );
+					name.setBinding( null );
+				}
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -1072,6 +1090,8 @@ public class CPPTemplates {
 			}
 		} else {
 			while( p != null ){
+				while( a instanceof ITypedef )
+					a = ((ITypedef)a).getType();
 				if( p instanceof IBasicType ){
 					return p.isSameType( a );
 				} else if( p instanceof ICPPPointerToMemberType ){
@@ -1124,12 +1144,24 @@ public class CPPTemplates {
 					ICPPTemplateInstance aInst = (ICPPTemplateInstance) a;
 
 					IType [] pArgs = createTypeArray( pInst.getArguments() );
-					IType [] aArgs = createTypeArray( aInst.getArguments() );
-					if( pArgs.length != aArgs.length )
-						return false;
-					for (int i = 0; i < pArgs.length; i++) {
-						if( !deduceTemplateArgument( map, pArgs[i], aArgs[i] ) ) 
+					ObjectMap aMap = aInst.getArgumentMap();
+					if( aMap != null && !(aInst.getTemplateDefinition() instanceof ICPPClassTemplatePartialSpecialization) ) {
+						ICPPTemplateParameter [] aParams = aInst.getTemplateDefinition().getTemplateParameters();
+						if( pArgs.length != aParams.length )
 							return false;
+						for (int i = 0; i < pArgs.length; i++) {
+							IType t = (IType) aMap.get( aParams[i] );
+							if( t == null || !deduceTemplateArgument( map, pArgs[i], t ) ) 
+								return false;
+						}
+					} else {
+						IType [] aArgs = createTypeArray( aInst.getArguments() );
+						if( aArgs.length != pArgs.length )
+							return false;
+						for (int i = 0; i < pArgs.length; i++) {
+							if( !deduceTemplateArgument( map, pArgs[i], aArgs[i] ) ) 
+								return false;
+						}
 					}
 					return true;
 				} else {

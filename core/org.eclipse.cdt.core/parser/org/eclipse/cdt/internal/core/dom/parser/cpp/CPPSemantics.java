@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -219,10 +220,33 @@ public class CPPSemantics {
 			    p1 = p1.getParent();
 			}			
 			IASTNode p2 = p1.getParent();
-			
-			return ( ( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration) ||
-				     ( p1 instanceof IASTDeclarator && p2 instanceof IASTFunctionDefinition));
+			if( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration ){
+				return !( p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation );
+			}
+			return ( p1 instanceof IASTDeclarator && p2 instanceof IASTFunctionDefinition);
 		}
+		
+		public boolean forExplicitInstantiation(){
+			if( astName == null ) return false;
+			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
+			
+			IASTName n = astName;
+			if( n.getParent() instanceof ICPPASTTemplateId )
+			    n = (IASTName) n.getParent();
+			IASTNode p1 = n.getParent();
+			if( p1 instanceof ICPPASTQualifiedName ){
+			    IASTName [] ns = ((ICPPASTQualifiedName)p1).getNames();
+			    if( ns[ns.length - 1] != n )
+			        return false;
+			    p1 = p1.getParent();
+			}			
+			IASTNode p2 = p1.getParent();
+			if( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration ){
+				return ( p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation );
+			}
+			return false;
+		}
+		
 		private boolean considerConstructors(){
 			if( astName == null ) return false;
 			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
@@ -1944,7 +1968,7 @@ public class CPPSemantics {
 		//reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable( data, fns );
 		
-		if( data.forDefinition() ){
+		if( data.forDefinition() || data.forExplicitInstantiation() ){
 			for (int i = 0; i < fns.length; i++) {
 				if( fns[i] != null ){
 					return fns[i];

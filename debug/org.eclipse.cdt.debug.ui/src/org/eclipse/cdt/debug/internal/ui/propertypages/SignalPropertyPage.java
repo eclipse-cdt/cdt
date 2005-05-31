@@ -112,15 +112,6 @@ public class SignalPropertyPage extends PropertyPage {
 			DebugPlugin.getDefault().asyncExec( 
 					new Runnable() {
 						public void run() {
-							
-							
-		try {
-			Thread.sleep( 10000 );
-		}
-		catch( InterruptedException e1 ) {
-			// TODO Auto-generated catch block
-		}
-
 							if ( !getSignal().canModify() )
 								return;
 							if ( getPassButton() != null ) { 
@@ -128,7 +119,7 @@ public class SignalPropertyPage extends PropertyPage {
 									getSignal().setPassEnabled( getPassButton().isSelected() );
 								}
 								catch( DebugException e ) {
-									failed( PropertyPageMessages.getString( "SignalPropertyPage.4" ), e ); //$NON-NLS-1$
+									failed( PropertyPageMessages.getString( "SignalPropertyPage.5" ), e ); //$NON-NLS-1$
 								}
 							}
 							if ( getStopButton() != null ) { 
@@ -136,7 +127,7 @@ public class SignalPropertyPage extends PropertyPage {
 									getSignal().setStopEnabled( getStopButton().isSelected() );
 								}
 								catch( DebugException e ) {
-									failed( PropertyPageMessages.getString( "SignalPropertyPage.4" ), e ); //$NON-NLS-1$
+									failed( PropertyPageMessages.getString( "SignalPropertyPage.5" ), e ); //$NON-NLS-1$
 								}
 							}
 						}

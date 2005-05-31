@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.IndexerView;
 
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -60,14 +59,12 @@ public class IndexerNodeLeaf implements IAdaptable {
     private class IndexerPropertySource implements IPropertySource {
 
         private static final String IENTRYRESULT = "IEntryResult"; //$NON-NLS-1$
+        private static final String NAME = "Name"; //$NON-NLS-1$
         private static final String IENTRYRESULT_GETWORD__ = "IEntryResult#getWord()"; //$NON-NLS-1$
-        private static final String REFERENCES = "References"; //$NON-NLS-1$
-        private static final String REFERENCE_NUMBER_ = "reference# "; //$NON-NLS-1$
-        private static final String OFFSETS = "Offsets"; //$NON-NLS-1$
-        private static final String OFFSETS_NUMBER = "offsets for #"; //$NON-NLS-1$
+        private static final String REFS = "References"; //$NON-NLS-1$
         private static final String OFFSETS_LINE = "Line "; //$NON-NLS-1$
         private static final String OFFSETS_OFFSET = "Offset "; //$NON-NLS-1$
-        private static final int DEFAULT_DESCRIPTOR_SIZE = 4;
+        private static final int DEFAULT_DESCRIPTOR_SIZE = 64;
         IEntryResult entryResult = null;
         
         public IndexerPropertySource(IEntryResult result) {
@@ -83,62 +80,51 @@ public class IndexerNodeLeaf implements IAdaptable {
             
             TextPropertyDescriptor text = null;
             
-                // get the reference descriptors
-                int[] references = entryResult.getFileReferences();
-                if (references != null) {
-                    for (int j = 0; j < references.length; ++j) {
-                        String file = fileMap[references[j]];
-                        if (file != null) {
-                            String id = REFERENCE_NUMBER_ + String.valueOf(j);
-                            text = new TextPropertyDescriptor(new TextDescriptorId(id, PathUtil.getWorkspaceRelativePath(file).toOSString()), id);
-                            text.setCategory(REFERENCES);
-                            descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
+            // Add reference block
+            int[] references = entryResult.getFileReferences();
+            int[][]offsets = entryResult.getOffsets();
+			int[][]offsetLengths = entryResult.getOffsetLengths();
+            if (offsets != null){
+                for (int j=0; j<offsets.length; j++){
+                    String id = fileMap[references[j]];
+                    String offsetString = ""; //$NON-NLS-1$
+                    for (int k=0; k<offsets[j].length; k++){
+                        String rawOffset = String.valueOf(offsets[j][k]) ;
+						String offsetLocation = String.valueOf(offsetLengths[j][k]);
+                        switch(rawOffset.charAt(0)){
+                         case '1':
+                             offsetString +=  OFFSETS_LINE + rawOffset.substring(1) + " "; //$NON-NLS-1$
+                         break;
+                         case '2':
+                             offsetString +=  OFFSETS_OFFSET + rawOffset.substring(1) + ":" + offsetLocation + " "; //$NON-NLS-1$ //$NON-NLS-2$
+                         break;    
                         }
+                   
                     }
+                    text = new TextPropertyDescriptor(new TextDescriptorId(id, offsetString), id);
+                    text.setCategory(REFS);
+                    descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
                 }
-                
-                //offsets
-                int[][]offsets = entryResult.getOffsets();
-				int[][]offsetLengths = entryResult.getOffsetLengths();
-                if (offsets != null){
-                    for (int j=0; j<offsets.length; j++){
-                        String id = OFFSETS_NUMBER + j;
-                        String offsetString = ""; //$NON-NLS-1$
-                        for (int k=0; k<offsets[j].length; k++){
-                            String rawOffset = String.valueOf(offsets[j][k]) ;
-							String offsetLocation = String.valueOf(offsetLengths[j][k]);
-                            switch(rawOffset.charAt(0)){
-                             case '1':
-                                 offsetString +=  OFFSETS_LINE + rawOffset.substring(1) + " "; //$NON-NLS-1$
-                             break;
-                             case '2':
-                                 offsetString +=  OFFSETS_OFFSET + rawOffset.substring(1) + ":" + offsetLocation + " "; //$NON-NLS-1$ //$NON-NLS-2$
-                             break;    
-                            }
-                       
-                        }
-                        text = new TextPropertyDescriptor(new TextDescriptorId(id, offsetString), id);
-                        text.setCategory(OFFSETS);
-                        descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
-                    }
-                }
-				
-                // add a word descriptor
-                text = new TextPropertyDescriptor(new TextDescriptorId("MetaKind", entryResult.getStringMetaKind()), "MetaKind");
-                text.setCategory(IENTRYRESULT);
-                descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
-				
-		          // add a word descriptor
-				if (entryResult.getMetaKind() == IIndex.TYPE) {
-					text = new TextPropertyDescriptor(new TextDescriptorId("TypeKind", entryResult.getStringKind()), "TypeKind");
-					text.setCategory(IENTRYRESULT);
-					descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
-				}
-		          // add a word descriptor
-                text = new TextPropertyDescriptor(new TextDescriptorId("ReferenceKind", entryResult.getStringRefKind()), "ReferenceKind");
-                text.setCategory(IENTRYRESULT);
-                descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
-
+            }
+			
+            // add Name Block
+            text = new TextPropertyDescriptor(new TextDescriptorId(NAME, entryResult.getName()), NAME);
+            text.setCategory(IENTRYRESULT);
+            descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
+            
+            // add IEntryResult
+            text = new TextPropertyDescriptor(new TextDescriptorId("MetaKind", entryResult.getStringMetaKind()), "MetaKind");
+            text.setCategory(IENTRYRESULT);
+            descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
+			
+			if (entryResult.getMetaKind() == IIndex.TYPE) {
+				text = new TextPropertyDescriptor(new TextDescriptorId("TypeKind", entryResult.getStringKind()), "TypeKind");
+				text.setCategory(IENTRYRESULT);
+				descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
+			}
+            text = new TextPropertyDescriptor(new TextDescriptorId("ReferenceKind", entryResult.getStringRefKind()), "ReferenceKind");
+            text.setCategory(IENTRYRESULT);
+            descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
 				
             return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, descriptors);
         }

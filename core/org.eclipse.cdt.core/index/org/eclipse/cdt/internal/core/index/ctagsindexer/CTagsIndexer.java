@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.index.ctagsindexer;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,12 +19,15 @@ import java.util.List;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICLogConstants;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
@@ -42,6 +46,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -447,5 +453,60 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 			}
 		
 		}
+	
+	public boolean validCTagsInstalled(){
+		String[] args = {"--version"}; //$NON-NLS-1$
+    	
+        String errMsg = null;
+        CommandLauncher launcher = new CommandLauncher();
+       
+        CTagLineReader parser = new CTagLineReader();
+        IConsoleParser[] parsers = { parser };
+        ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(parsers);
+        
+        OutputStream consoleOut = sniffer.getOutputStream();
+        OutputStream consoleErr = sniffer.getErrorStream();
+        
+        Process p = launcher.execute(new Path("ctags"), args,new String[0], new Path(".")); //$NON-NLS-1$ //$NON-NLS-2$
+        if (p != null) {
+            try {
+                // Close the input of the Process explicitely.
+                // We will never write to it.
+                p.getOutputStream().close();
+            } catch (IOException e) {}
+            if (launcher.waitAndRead(consoleOut, consoleErr, new NullProgressMonitor()) != CommandLauncher.OK) {
+                errMsg = launcher.getErrorMessage();
+            }
+        }
+        else {
+            errMsg = launcher.getErrorMessage();
+            return false;
+        }
+
+        try {
+			consoleOut.close();
+			consoleErr.close();
+		} catch (IOException e) {}
+       
+		
+		if (parser.isExuberantCtags)
+			return true;
+		
+		return false;
+	}
+	
+	class CTagLineReader implements IConsoleParser{
+
+		boolean isExuberantCtags=false;
+
+		public boolean processLine(String line) {
+			if (line.startsWith("Exuberant Ctags")) //$NON-NLS-1$
+				isExuberantCtags=true;
+			
+			return true;
+		}
+
+		public void shutdown() {}
+	}
 
 }

@@ -1,3 +1,7 @@
+2005-05-31 Mikhail Khodjaiants
+	Bug 84816: The modification of the signal properties should be done in the background.
+	* SignalPropertyPage.java
+
 2005-05-24 Mikhail Khodjaiants
 	Bug 88558: run-to-line not thread oriented.
 	The "Run to Line" action should be enabled on stack frames and threads, not on targets.

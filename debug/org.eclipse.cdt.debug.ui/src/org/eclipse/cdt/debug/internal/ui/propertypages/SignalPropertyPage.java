@@ -11,21 +11,23 @@
 package org.eclipse.cdt.debug.internal.ui.propertypages; 
 
 import java.text.MessageFormat;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICSignal;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.PropertyPage;
  
@@ -107,46 +109,45 @@ public class SignalPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		boolean result = super.performOk();
 		if ( result ) {
-			try {
-				setSignalProperties();
-			}
-			catch( DebugException e ) {
-				DebugUIPlugin.errorDialog( getShell(), PropertyPageMessages.getString( "SignalPropertyPage.3" ), PropertyPageMessages.getString( "SignalPropertyPage.4" ), e.getStatus() ); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			DebugPlugin.getDefault().asyncExec( 
+					new Runnable() {
+						public void run() {
+							
+							
+		try {
+			Thread.sleep( 10000 );
+		}
+		catch( InterruptedException e1 ) {
+			// TODO Auto-generated catch block
+		}
+
+							if ( !getSignal().canModify() )
+								return;
+							if ( getPassButton() != null ) { 
+								try {
+									getSignal().setPassEnabled( getPassButton().isSelected() );
+								}
+								catch( DebugException e ) {
+									failed( PropertyPageMessages.getString( "SignalPropertyPage.4" ), e ); //$NON-NLS-1$
+								}
+							}
+							if ( getStopButton() != null ) { 
+								try {
+									getSignal().setStopEnabled( getStopButton().isSelected() );
+								}
+								catch( DebugException e ) {
+									failed( PropertyPageMessages.getString( "SignalPropertyPage.4" ), e ); //$NON-NLS-1$
+								}
+							}
+						}
+					} );
 		}
 		return result;
 	}
 
-	private void setSignalProperties() throws DebugException {
-		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(),
-												DebugException.REQUEST_FAILED,
-												PropertyPageMessages.getString( "SignalPropertyPage.5" ), //$NON-NLS-1$
-												null );
-		BusyIndicator.showWhile( Display.getCurrent(), 
-							new Runnable() {
-								public void run() {
-									if ( !getSignal().canModify() )
-										return;
-									if ( getPassButton() != null ) { 
-										try {
-											getSignal().setPassEnabled( getPassButton().isSelected() );
-										}
-										catch( DebugException e ) {
-											ms.merge( e.getStatus() );
-										}
-									}
-									if ( getStopButton() != null ) { 
-										try {
-											getSignal().setStopEnabled( getStopButton().isSelected() );
-										}
-										catch( DebugException e ) {
-											ms.merge( e.getStatus() );
-										}
-									}
-								}
-							} );
-		if ( !ms.isOK() ) {
-			throw new DebugException( ms );
-		}
+	protected void failed( String message, Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
+		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null ) );
+		CDebugUtils.error( ms, getSignal() );
 	}
 }

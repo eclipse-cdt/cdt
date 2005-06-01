@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -320,6 +321,19 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             IASTFileLocation loc = (IASTFileLocation) nodeLocations[0];
             assertEquals( code.indexOf( "int MACRO") + "int ".length(), loc.getNodeOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
             assertEquals( "MACRO".length(), loc.getNodeLength() ); //$NON-NLS-1$
+        }
+    }
+    
+    public void testBug94933() throws Exception {
+        StringBuffer buffer = new StringBuffer( "#define API extern\n" );
+        buffer.append( "#define MYAPI API\n");
+        buffer.append( "MYAPI void func() {}" );
+        String code = buffer.toString();
+        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+                : null) {
+            IASTTranslationUnit tu = parse(code, p);
+            IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
+            assertNotNull( f.getFileLocation() ); 
         }
     }
 }

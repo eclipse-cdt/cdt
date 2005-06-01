@@ -2395,8 +2395,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             } else {
                 if( result[i] != null && !result[i].getFileName().equals( filename ) )
                     return null;
+                if( result[i].getNodeOffset()  == result[i-1].getNodeOffset() )
+                    continue;
                 if (result[i] != null
-                        && result[i].getNodeOffset() != (offset + length))
+                        && result[i].getNodeOffset() != (offset + length)  )
                     return null;
                 if (result[i] != null)
                     length += result[i].getNodeLength();

@@ -102,6 +102,13 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
 
+    public void testBug86282() throws Exception {
+        IASTTranslationUnit tu = parse( "void foo() { int (* f[])() = new (int (*[10])());  }", ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );
+    }
+    
     public void testBug75858() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append( "bool f() {\n" );
@@ -3990,7 +3997,6 @@ public class AST2CPPTests extends AST2BaseTest {
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         assertNoProblemBindings(col);
-
     }
 
     protected void assertNoProblemBindings(CPPNameCollector col) {

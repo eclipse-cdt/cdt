@@ -12532,4 +12532,50 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
         buffer.append( "}"); 
         parse(buffer.toString(), ParserLanguage.CPP, true, 0);
     }
+    
+    /**
+     [--Start Example(CPP 8.2-3):
+    // #include <cstddef>
+    char *p;
+    void *operator new(size_t, int);
+    void foo() {
+    const int x = 63;
+    new (int(*p)) int; // newplacement expression
+    new (int(*[x])); // new typeid
+    }
+     --End Example]
+     */
+    public void test8_2s3() throws Exception { 
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("// #include <cstddef>\n"); //$NON-NLS-1$
+        buffer.append("char *p;\n"); //$NON-NLS-1$
+        buffer.append("void *operator new(size_t, int);\n"); //$NON-NLS-1$
+        buffer.append("void foo() {\n"); //$NON-NLS-1$
+        buffer.append("const int x = 63;\n"); //$NON-NLS-1$
+        buffer.append("new (int(*p)) int; // newplacement expression\n"); //$NON-NLS-1$
+        buffer.append("new (int(*[x])); // new typeid\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        parse(buffer.toString(), ParserLanguage.CPP, false, 0);
+    }
+    
+    /**
+     [--Start Example(CPP 14.3-2):
+    template<class T> void f();
+    template<int I> void f();
+    void g()
+    {
+    f<int()>(); // int() is a typeid:call the first f()
+    }
+     --End Example]
+     */
+    public void test14_3s2()  throws Exception { 
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("template<class T> void f();\n"); //$NON-NLS-1$
+        buffer.append("template<int I> void f();\n"); //$NON-NLS-1$
+        buffer.append("void g()\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("f<int()>(); // int() is a typeid:call the first f()\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+    }
 }

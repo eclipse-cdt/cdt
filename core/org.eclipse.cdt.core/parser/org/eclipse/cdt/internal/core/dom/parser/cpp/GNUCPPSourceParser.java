@@ -1126,7 +1126,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     // CASE: new (typeid-not-looking-as-placement) ...
                     // the first expression in () is not a placement
                     // - then it has to be typeId
-                    typeId = typeId(true);
+                    typeId = typeId(false);
                     lastOffset = consume(IToken.tRPAREN).getEndOffset();
                     if (templateIdScopes.size() > 0) {
                         templateIdScopes.pop();

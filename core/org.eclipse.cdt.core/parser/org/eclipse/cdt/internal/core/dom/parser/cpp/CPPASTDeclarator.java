@@ -110,7 +110,16 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
         if( getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR &&
     		nestedDeclarator == null )
 		{
-            if( name != null ) if( !name.accept( action ) ) return false;
+           if( getParent() instanceof IASTDeclarator )
+            {
+                IASTDeclarator outermostDeclarator = (IASTDeclarator) getParent();
+                while( outermostDeclarator.getParent() instanceof IASTDeclarator )
+                    outermostDeclarator = (IASTDeclarator) outermostDeclarator.getParent();
+                if( outermostDeclarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR )
+                    if( name != null ) if( !name.accept( action ) ) return false;
+            }
+            else
+                if( name != null ) if( !name.accept( action ) ) return false;
 		}
         
         if( nestedDeclarator != null ) if( !nestedDeclarator.accept( action ) ) return false;

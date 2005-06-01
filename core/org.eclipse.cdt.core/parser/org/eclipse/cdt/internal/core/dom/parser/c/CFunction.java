@@ -232,6 +232,7 @@ public class CFunction implements IFunction, ICInternalBinding {
     	        temp = ((IASTStandardFunctionDeclarator)definition).getParameters()[idx];
         		temp.getDeclarator().getName().setBinding( binding );
     	    } else if( definition instanceof ICASTKnRFunctionDeclarator ){
+    	    	fKnRDtor = (ICASTKnRFunctionDeclarator) definition;
     	        IASTName n = fKnRDtor.getParameterNames()[idx];
     	        n.setBinding( binding );
     	        IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( fKnRDtor, n );

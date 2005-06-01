@@ -651,4 +651,17 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertEquals( lemp_name3.resolveBinding(), lemp_name4.resolveBinding() );
     }
     
+    public void testBug97447() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void f( a ) int a; {} \n");
+    	buffer.append("void f( int );        \n");
+    	
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+
+        IFunction def = (IFunction) col.getName(0).resolveBinding();
+        IFunction f1 = (IFunction) col.getName(3).resolveBinding();
+        IParameter a = (IParameter) col.getName(4).resolveBinding();
+    }
 }

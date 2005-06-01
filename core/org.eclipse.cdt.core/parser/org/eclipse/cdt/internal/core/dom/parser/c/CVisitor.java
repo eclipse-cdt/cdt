@@ -645,7 +645,7 @@ public class CVisitor {
 		        if( op == IASTUnaryExpression.op_star && (type instanceof IPointerType || type instanceof IArrayType) ){
 		            return ((ITypeContainer)type).getType();
 		        } else if( op == IASTUnaryExpression.op_amper ){
-		            return new CPointerType( type );
+		            return new CPointerType( type, 0 );
 		        }
 		        return type;
 		    } else if( expression instanceof IASTLiteralExpression ){
@@ -659,7 +659,7 @@ public class CVisitor {
 		    		case IASTLiteralExpression.lk_string_literal:
 		    			IType type = new CBasicType( IBasicType.t_char, 0, expression );
 		    			type = new CQualifierType( type, true, false, false );
-		    			return new CPointerType( type );
+		    			return new CPointerType( type, 0 );
 		    	}
 	    	} else if( expression instanceof IASTBinaryExpression ){
 		        IASTBinaryExpression binary = (IASTBinaryExpression) expression;
@@ -712,7 +712,7 @@ public class CVisitor {
 						return e.getProblem();
 					}
 				} else if( op == IASTUnaryExpression.op_amper ){
-				    return new CPointerType( type );
+				    return new CPointerType( type, 0 );
 				} else if ( type instanceof CBasicType ){
 					((CBasicType)type).setValue( expression );
 				}
@@ -1581,7 +1581,7 @@ public class CVisitor {
 	            type = new CQualifiedPointerType( at.getType(), at.getModifier() );
 	        } else if( type instanceof IFunctionType ) {
 	            //-8 A declaration of a parameter as "function returning type" shall be adjusted to "pointer to function returning type"
-	            type = new CPointerType( type );
+	            type = new CPointerType( type, 0 );
 	        }
         }
         
@@ -1755,19 +1755,31 @@ public class CVisitor {
 											
 			if (ptrs.length == 1) {
 				pointerType.setType(lastType);
-				pointerType.setPointer((ICASTPointer)ptrs[0]);
+				pointerType.setQualifiers(
+						(((ICASTPointer)ptrs[0]).isConst() ? CPointerType.IS_CONST : 0) |
+						(((ICASTPointer)ptrs[0]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+						(((ICASTPointer)ptrs[0]).isVolatile() ? CPointerType.IS_VOLATILE : 0));				
 			} else {
 				CPointerType tempType = new CPointerType();
 				pointerType.setType(tempType);
-				pointerType.setPointer((ICASTPointer)ptrs[ptrs.length - 1]);
+				pointerType.setQualifiers(
+						(((ICASTPointer)ptrs[ptrs.length - 1]).isConst() ? CPointerType.IS_CONST : 0) |
+						(((ICASTPointer)ptrs[ptrs.length - 1]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+						(((ICASTPointer)ptrs[ptrs.length - 1]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
 				int i = ptrs.length - 2;
 				for (; i > 0; i--) {
 					tempType.setType(new CPointerType());
-					tempType.setPointer((ICASTPointer)ptrs[i]);
+					tempType.setQualifiers(
+							(((ICASTPointer)ptrs[i]).isConst() ? CPointerType.IS_CONST : 0) |
+							(((ICASTPointer)ptrs[i]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+							(((ICASTPointer)ptrs[i]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
 					tempType = (CPointerType)tempType.getType();
 				}					
 				tempType.setType(lastType);
-				tempType.setPointer((ICASTPointer)ptrs[i]);
+				tempType.setQualifiers(
+						(((ICASTPointer)ptrs[i]).isConst() ? CPointerType.IS_CONST : 0) |
+						(((ICASTPointer)ptrs[i]).isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+						(((ICASTPointer)ptrs[i]).isVolatile() ? CPointerType.IS_VOLATILE : 0));
 			}
 			
 			return pointerType;

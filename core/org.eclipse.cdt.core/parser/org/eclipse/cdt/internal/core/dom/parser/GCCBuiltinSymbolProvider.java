@@ -13,19 +13,15 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTBuiltinSymbolProvider;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CImplicitFunction;
@@ -38,7 +34,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
 
@@ -163,6 +158,131 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 
     private static final int NUM_OTHER_GCC_BUILTINS = 105; // the total number of builtin functions listed above
 	
+    static final private  IType c_unspecified;
+    static final private  IType c_char;
+    static final private  IType c_char_p;
+    static final private  IType c_char_p_r;
+    static final private  IType c_const_char_p;
+    static final private  IType c_const_char_p_r;
+    static final private  IType c_const_void_p;
+    static final private  IType c_const_void_p_r;
+    static final private  IType c_double;
+    static final private  IType c_double_complex;
+    static final private  IType c_float;
+    static final private  IType c_float_complex;
+    static final private  IType c_int;
+    //static final private  IType c_long;
+    static final private  IType c_long_double;
+    static final private  IType c_long_double_complex;
+    static final private  IType c_long_int;
+    static final private  IType c_long_long_int;
+    static final private  IType c_signed_long_int;
+    static final private  IType c_size_t;
+    static final private  IType c_unsigned_int;
+    static final private  IType c_unsigned_long;
+    static final private  IType c_unsigned_long_long;
+    static final private  IFunctionType c_va_list;
+    static final private  IType c_void;
+    static final private  IType c_void_p;
+    static final private  IType c_void_p_r;
+    static final private  IType c_FILE_p_r; // implemented as void * restrict
+    static final private  IType cpp_unspecified;
+    static final private  IType cpp_char;
+    static final private  IType cpp_char_p;
+    static final private  IType cpp_char_p_r;
+    static final private  IType cpp_const_char_p;
+    static final private  IType cpp_const_char_p_r;
+    static final private  IType cpp_const_void_p;
+    static final private  IType cpp_const_void_p_r;
+    static final private  IType cpp_double;
+    static final private  IType cpp_double_complex;
+    static final private  IType cpp_float;
+    static final private  IType cpp_float_complex;
+    static final private  IType cpp_int;
+    //static final private  IType cpp_long;
+    static final private  IType cpp_long_double;
+    static final private  IType cpp_long_double_complex;
+    static final private  IType cpp_long_int;
+    static final private  IType cpp_long_long_int;
+    static final private  IType cpp_signed_long_int;
+    static final private  IType cpp_size_t;
+    static final private  IType cpp_unsigned_int;
+    static final private  IType cpp_unsigned_long;
+    static final private  IType cpp_unsigned_long_long;
+    static final private  IFunctionType cpp_va_list;
+    static final private  IType cpp_void;
+    static final private  IType cpp_void_p;
+    static final private  IType cpp_void_p_r;
+    static final private  IType cpp_FILE_p_r; // implemented as void * restrict
+
+	static {
+		c_unspecified = new CBasicType(IBasicType.t_unspecified, 0);
+		c_char = new CBasicType( IBasicType.t_char, 0 );
+		c_char_p = new CPointerType( c_char, 0);
+		c_char_p_r = new CPointerType( c_char, CPointerType.IS_RESTRICT);
+		c_const_char_p = new CPointerType(new CQualifierType( c_char, true, false, false), 0);
+		c_const_char_p_r = new CPointerType(new CQualifierType( c_char, true, false, false), CPointerType.IS_RESTRICT);
+		
+		c_double = new CBasicType(IBasicType.t_double, 0);
+		c_double_complex = new CBasicType(IBasicType.t_double, CBasicType.IS_COMPLEX);
+		c_float = new CBasicType(IBasicType.t_float, 0);
+		c_float_complex = new CBasicType(IBasicType.t_float, CBasicType.IS_COMPLEX);
+		c_int = new CBasicType(IBasicType.t_int, 0);
+
+		c_long_double = new CBasicType(IBasicType.t_double, CBasicType.IS_LONG);
+		c_long_double_complex = new CBasicType(IBasicType.t_double, CBasicType.IS_LONG | CBasicType.IS_COMPLEX);
+		c_long_int = new CBasicType(IBasicType.t_int, CBasicType.IS_LONG);
+		c_long_long_int = new CBasicType(IBasicType.t_int, CBasicType.IS_LONGLONG);
+		c_signed_long_int = new CBasicType(IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_SIGNED);
+		c_unsigned_int = new CBasicType(IBasicType.t_int, CBasicType.IS_UNSIGNED);
+		c_unsigned_long = new CBasicType(IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED);
+		c_unsigned_long_long = new CBasicType(IBasicType.t_int, CBasicType.IS_LONGLONG | CBasicType.IS_UNSIGNED);
+
+		c_va_list = new CFunctionType( c_char_p, new IType[0]); // assumed: char * va_list();
+		c_size_t = c_unsigned_long; // assumed unsigned long int
+		
+		c_void = new CBasicType(IBasicType.t_void, 0);
+		c_void_p = new CPointerType( c_void, 0);
+		c_void_p_r = new CPointerType( c_void, CPointerType.IS_RESTRICT);
+		c_const_void_p = new CPointerType(new CQualifierType( c_void, true, false, false), 0);
+		c_const_void_p_r = new CPointerType(new CQualifierType( c_void, true, false, false), CPointerType.IS_RESTRICT);
+		
+		c_FILE_p_r = c_void_p_r; // implemented as void * restrict
+		
+		cpp_unspecified = new CPPBasicType(IBasicType.t_unspecified, 0);
+		cpp_char = new CPPBasicType(IBasicType.t_char, 0);
+		cpp_char_p = new CPPPointerType( cpp_char );
+		cpp_char_p_r = new GPPPointerType( cpp_char, false, false, true);
+		cpp_const_char_p = new CPPPointerType(new CPPQualifierType(cpp_char, true, false));
+		cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(cpp_char, true, false), false, false, true);
+		
+		cpp_double = new CPPBasicType(IBasicType.t_double, 0);
+		cpp_double_complex = new GPPBasicType(IBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
+		cpp_float = new CPPBasicType(IBasicType.t_float, 0);
+		cpp_float_complex = new GPPBasicType(IBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
+		cpp_int = new CPPBasicType(IBasicType.t_int, 0);
+		cpp_long_int = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG);
+		cpp_long_double = new CPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG);
+		cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG | GPPBasicType.IS_COMPLEX, null);
+		cpp_long_long_int = new CPPBasicType(IBasicType.t_int, GPPBasicType.IS_LONGLONG);
+		cpp_signed_long_int = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG | CPPBasicType.IS_SIGNED);
+		
+		cpp_unsigned_int = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_UNSIGNED);
+		cpp_unsigned_long = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_UNSIGNED | CPPBasicType.IS_LONG);
+		cpp_unsigned_long_long = new GPPBasicType(IBasicType.t_int, CPPBasicType.IS_UNSIGNED | GPPBasicType.IS_LONGLONG, null);
+		
+		cpp_size_t = cpp_unsigned_long; // assumed unsigned long int
+		cpp_va_list = new CPPFunctionType( cpp_char_p, new IType[0]); // assumed: char * va_list();
+		
+		cpp_void = new CPPBasicType(IBasicType.t_void, 0);
+		cpp_void_p = new CPPPointerType( cpp_void );
+		cpp_void_p_r = new GPPPointerType( cpp_void, false, false, true);
+		cpp_const_void_p = new CPPPointerType(new CPPQualifierType(cpp_void, true, false));
+		cpp_const_void_p_r = new GPPPointerType(new CPPQualifierType(cpp_void, true, false), false, false, true);
+		
+		cpp_FILE_p_r = cpp_void_p_r; // implemented as void * restrict
+	}
+    
 	private IBinding[] bindings=new IBinding[NUM_OTHER_GCC_BUILTINS];
 	private IScope scope=null;
 	private ParserLanguage lang=null;
@@ -199,184 +319,126 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 	private void __builtin_va_list() {
 		// char * __builtin_va_list();
 		IBinding temp = null;
-		
         if (lang == ParserLanguage.C) {
-            ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-            sds.setType(IASTSimpleDeclSpecifier.t_char);
-            IType type = new CBasicType(sds);
-            CPointerType returnType = new CPointerType(type);
-            returnType.setPointer(new CASTPointer());
-            IFunctionType functionType = null;
-            functionType = new CFunctionType(returnType, new IType[0]);
-            temp = new CImplicitTypedef(functionType, __BUILTIN_VA_LIST, scope);
+            temp = new CImplicitTypedef(c_va_list, __BUILTIN_VA_LIST, scope);
         } else {
-            IType type = new CPPBasicType( IBasicType.t_char, 0 );
-            IType returnType = new CPPPointerType(type);
-            IFunctionType functionType = null;
-            functionType = new CPPFunctionType(returnType, new IType[0]);
-            temp = new CPPImplicitTypedef(functionType, __BUILTIN_VA_LIST, scope);
+            temp = new CPPImplicitTypedef(cpp_va_list, __BUILTIN_VA_LIST, scope);
         }
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_expect() {
         //long __builtin_expect( long exp, long c )
 		IBinding temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setLong(true);
-			IType returnType = new CBasicType(sds);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[2];
-			parms[0] = new CBasicType(sds);
-			parms[1] = parms[0];
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_long_int;
+			parms[1] = c_long_int;
+			functionType = new CFunctionType(c_long_int, parms);
 			IParameter[] theParms = new IParameter[2];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			theParms[1] = theParms[0];
 			temp = new CImplicitFunction(__BUILTIN_EXPECT, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_unspecified, CPPBasicType.IS_LONG );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[2];
-			parms[0] = returnType;
-			parms[1] = parms[0];
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_long_int;
+			parms[1] = cpp_long_int;
+			functionType = new CPPFunctionType(cpp_long_int, parms);
 			IParameter[] theParms = new IParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = theParms[0];
 			temp = new CPPImplicitFunction(__BUILTIN_EXPECT, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_prefetch() {
 		// void __builtin_prefetch (const void *addr, ...)
 		IBinding temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_void);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_void);
-			parmSds.setConst(true);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			((CPointerType)parms[0]).setPointer(new CASTPointer());
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_const_void_p;
+			functionType = new CFunctionType(c_void, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_PREFETCH, scope, functionType, theParms, true);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_void, 0 );
-			IType parmType = new CPPPointerType( new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), true, false) );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = parmType;
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_const_void_p;
+			functionType = new CPPFunctionType(cpp_void, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_PREFETCH, scope, functionType, theParms, true);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_huge_val() {
         //double __builtin_huge_val (void)
 		IBinding temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_void);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_void;
+			functionType = new CFunctionType(c_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_HUGE_VAL, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_double, 0 );
-			IType parmType = new CPPBasicType(IBasicType.t_void, 0);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = parmType;
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_void;
+			functionType = new CPPFunctionType(cpp_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_HUGE_VAL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
         //float __builtin_huge_valf (void)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_float);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_void);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_void;
+			functionType = new CFunctionType(c_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_HUGE_VALF, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_float, 0 );
-			IType parmType = new CPPBasicType(IBasicType.t_void, 0);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = parmType;
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_void;
+			functionType = new CPPFunctionType(cpp_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_HUGE_VALF, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
         //long double __builtin_huge_vall (void)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			sds.setLong(true);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_void);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_void;
+			functionType = new CFunctionType(c_long_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_HUGE_VALL, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_double, CPPBasicType.IS_LONG );
-			IType parmType = new CPPBasicType(IBasicType.t_void, 0);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = parmType;
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_void;
+			functionType = new CPPFunctionType(cpp_long_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_HUGE_VALL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 	}
@@ -384,495 +446,365 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 	private void __builtin_inf() {
         //double __builtin_inf (void)
 		IBinding temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_void);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_void;
+			functionType = new CFunctionType(c_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_INF, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_double, 0 );
-			IType parmType = new CPPBasicType(IBasicType.t_void, 0);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = parmType;
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_void;
+			functionType = new CPPFunctionType(cpp_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_INF, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
         //float __builtin_inff (void)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_float);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_void);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_void;
+			functionType = new CFunctionType(c_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_INFF, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_float, 0 );
-			IType parmType = new CPPBasicType(IBasicType.t_void, 0);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = parmType;
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_void;
+			functionType = new CPPFunctionType(cpp_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_INFF, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
         //long double __builtin_infl (void)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			sds.setLong(true);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_void);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_void;
+			functionType = new CFunctionType(c_long_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
+			temp = new CImplicitFunction(__BUILTIN_INFL, scope, functionType, theParms, false);
+		} else {
+			IFunctionType functionType = null;
+			IType[] parms = new IType[1];
+			parms[0] = cpp_void;
+			functionType = new CPPFunctionType(cpp_long_double, parms);
+			IParameter[] theParms = new IParameter[1];
+			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_INFL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_nan() {
-		// const char *
-		ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-		parmSds.setType(IASTSimpleDeclSpecifier.t_char);
-		parmSds.setConst(true);
-		CPointerType c_const_char_p = new CPointerType(new CQualifierType(parmSds));
-		c_const_char_p.setPointer(new CASTPointer());
-		IType cpp_const_char_p = new CPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), true, false));
-
 		//double __builtin_nan (const char * str)
 		IBinding temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			IType returnType = new CBasicType(sds);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = c_const_char_p;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_NAN, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_double, 0 );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NAN, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//float __builtin_nanf (const char * str)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_float);
-			IType returnType = new CBasicType(sds);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = c_const_char_p;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_NANF, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_float, 0 );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANF, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//long double __builtin_nanl (const char * str)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			sds.setLong(true);
-			IType returnType = new CBasicType(sds);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = c_const_char_p;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_long_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_NANL, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_double, CPPBasicType.IS_LONG );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_long_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//double __builtin_nans (const char * str)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			IType returnType = new CBasicType(sds);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = c_const_char_p;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_NANS, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_double, 0 );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANS, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//float __builtin_nansf (const char * str)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_float);
-			IType returnType = new CBasicType(sds);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = c_const_char_p;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(cpp_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_NANSF, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_float, 0 );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_float, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANSF, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//long double __builtin_nansl (const char * str)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_double);
-			sds.setLong(true);
-			IType returnType = new CBasicType(sds);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = c_const_char_p;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_long_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_NANSL, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_double, CPPBasicType.IS_LONG );
 			IFunctionType functionType = null;
 			IType[] parms = new IType[1];
 			parms[0] = cpp_const_char_p;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_long_double, parms);
 			IParameter[] theParms = new IParameter[1];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_NANSL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_unsigned_int() {
-		//unsigned int
-		ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-		parmSds.setType(IASTSimpleDeclSpecifier.t_int);
-		parmSds.setUnsigned(true);
-		IType c_unsigned_int = new CQualifierType(parmSds);
-		IType cpp_unsigned_int = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_UNSIGNED);
-		
 		//int __builtin_ffs(unsigned int x)
 		IBinding temp = null;
-
 		IFunctionType functionType = null;
 		IParameter[] theParms = new IParameter[1];
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_int);
-			IType returnType = new CBasicType(sds);
 			IType[] parms = new IType[1];
 			parms[0] = c_unsigned_int;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_int, parms);
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_FFS, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_int, 0 );
 			IType[] parms = new IType[1];
 			parms[0] = cpp_unsigned_int;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_int, parms);
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_FFS, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_clz(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CLZ, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_CLZ, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_ctz(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CTZ, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_CTZ, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_popcount(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_POPCOUNT, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNT, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_parity(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_PARITY, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_PARITY, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_unsigned_long() {
-        //unsigned long
-		ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-		parmSds.setType(IASTSimpleDeclSpecifier.t_unspecified);
-		parmSds.setUnsigned(true);
-		parmSds.setLong(true);
-		IType c_unsigned_long = new CQualifierType(parmSds);
-		IType cpp_unsigned_long = new CPPBasicType(IBasicType.t_unspecified, CPPBasicType.IS_UNSIGNED & CPPBasicType.IS_LONG);
-		
-		//int __builtin_ffsl(unsigned int x)
+		//int __builtin_ffsl(unsigned long x)
 		IBinding temp = null;
-
 		IFunctionType functionType = null;
 		IParameter[] theParms = new IParameter[1];
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_int);
-			IType returnType = new CBasicType(sds);
 			IType[] parms = new IType[1];
 			parms[0] = c_unsigned_long;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_int, parms);
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_FFSL, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_int, 0 );
 			IType[] parms = new IType[1];
 			parms[0] = cpp_unsigned_long;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_int, parms);
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_FFSL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_clzl(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CLZL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_CLZL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_ctzl(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CTZL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_CTZL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
-		
+
 		//int __builtin_popcountl(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_POPCOUNTL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNTL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_parityl(unsigned int x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_PARITYL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_PARITYL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_unsigned_long_long() {
-        //unsigned long long
-		ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-		parmSds.setType(IASTSimpleDeclSpecifier.t_unspecified);
-		parmSds.setUnsigned(true);
-		parmSds.setLongLong(true);
-		IType c_unsigned_long_long = new CQualifierType(parmSds);
-		IType cpp_unsigned_long_long = new GPPBasicType(IBasicType.t_unspecified, CPPBasicType.IS_UNSIGNED & GPPBasicType.IS_LONGLONG, null);
-		
 		//int __builtin_ffsll(unsigned long long x)
 		IBinding temp = null;
-
 		IFunctionType functionType = null;
 		IParameter[] theParms = new IParameter[1];
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_int);
-			IType returnType = new CBasicType(sds);
 			IType[] parms = new IType[1];
 			parms[0] = c_unsigned_long_long;
-			functionType = new CFunctionType(returnType, parms);
+			functionType = new CFunctionType(c_int, parms);
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			temp = new CImplicitFunction(__BUILTIN_FFSLL, scope, functionType, theParms, false);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_int, 0 );
 			IType[] parms = new IType[1];
 			parms[0] = cpp_unsigned_long_long;
-			functionType = new CPPFunctionType(returnType, parms);
+			functionType = new CPPFunctionType(cpp_int, parms);
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			temp = new CPPImplicitFunction(__BUILTIN_FFSLL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_clzll(unsigned long long x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CLZLL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_CLZLL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_ctzll(unsigned long long x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_CTZLL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_CTZLL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_popcountll(unsigned long long x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_POPCOUNTLL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_POPCOUNTLL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		//int __builtin_parityll(unsigned long long x)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			temp = new CImplicitFunction(__BUILTIN_PARITYLL, scope, functionType, theParms, false);
 		} else {
 			temp = new CPPImplicitFunction(__BUILTIN_PARITYLL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
-
 	}
 	
 	private void __builtin_types_compatible_p() {
@@ -880,60 +812,32 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 		IBinding temp = null;
 		
 		if (lang == ParserLanguage.C) {
-			ICASTSimpleDeclSpecifier sds = new CASTSimpleDeclSpecifier();
-			sds.setType(IASTSimpleDeclSpecifier.t_int);
-			IType returnType = new CBasicType(sds);
-			ICASTSimpleDeclSpecifier parmSds = new CASTSimpleDeclSpecifier();
-			parmSds.setType(IASTSimpleDeclSpecifier.t_unspecified);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[2];
-			parms[0] = new CPointerType(new CQualifierType(parmSds));
-			parms[1] = parms[0];
-			functionType = new CFunctionType(returnType, parms);
+			parms[0] = c_unspecified;
+			parms[1] = c_unspecified;
+			functionType = new CFunctionType(c_int, parms);
 			IParameter[] theParms = new IParameter[2];
 			theParms[0] = new CBuiltinParameter(parms[0]);
 			theParms[1] = theParms[0];
 			temp = new CImplicitFunction(__BUILTIN_TYPES_COMPATIBLE_P, scope, functionType, theParms, true);
 		} else {
-			IType returnType = new CPPBasicType( IBasicType.t_int, 0 );
-			IType parmType = new CPPBasicType(IBasicType.t_unspecified, 0);
 			IFunctionType functionType = null;
 			IType[] parms = new IType[2];
-			parms[0] = parmType;
-			parms[1] = parms[0];
-			functionType = new CPPFunctionType(returnType, parms);
+			parms[0] = cpp_unspecified;
+			parms[1] = cpp_unspecified;
+			functionType = new CPPFunctionType(cpp_int, parms);
 			IParameter[] theParms = new IParameter[2];
 			theParms[0] = new CPPBuiltinParameter(parms[0]);
 			theParms[1] = theParms[0];
 			temp = new CPPImplicitFunction(__BUILTIN_TYPES_COMPATIBLE_P, scope, functionType, theParms, true);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
 	
 	private void __builtin_powi() {
-		// double and int
-		ICASTSimpleDeclSpecifier doubleSds = new CASTSimpleDeclSpecifier();
-		doubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-		ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-		intSds.setType(IASTSimpleDeclSpecifier.t_int);
-		ICASTSimpleDeclSpecifier floatSds = new CASTSimpleDeclSpecifier();
-		floatSds.setType(IASTSimpleDeclSpecifier.t_float);
-		ICASTSimpleDeclSpecifier longDoubleSds = new CASTSimpleDeclSpecifier();
-		longDoubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-		longDoubleSds.setLong(true);
-		IType c_double = new CBasicType(doubleSds);
-		IType cpp_double = new CPPBasicType(IBasicType.t_double, 0);
-		IType c_int = new CBasicType(intSds);
-		IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-		IType c_float = new CBasicType(floatSds);
-		IType cpp_float = new CPPBasicType(IBasicType.t_float, 0);
-		IType c_long_double = new CBasicType(longDoubleSds);
-		IType cpp_long_double = new CPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG);
-
 		// double __builtin_powi (double, int)
 		IBinding temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			IFunctionType functionType = null;
 			IType[] parms = new IType[2];
@@ -954,12 +858,10 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 			theParms[1] = new CPPBuiltinParameter(parms[1]);
 			temp = new CPPImplicitFunction(__BUILTIN_POWI, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		// float __builtin_powif (float, int)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			IFunctionType functionType = null;
 			IType[] parms = new IType[2];
@@ -980,12 +882,10 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 			theParms[1] = new CPPBuiltinParameter(parms[1]);
 			temp = new CPPImplicitFunction(__BUILTIN_POWIF, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 		
 		// long double __builtin_powil (long double, int)
 		temp = null;
-		
 		if (lang == ParserLanguage.C) {
 			IFunctionType functionType = null;
 			IType[] parms = new IType[2];
@@ -1006,22 +906,12 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 			theParms[1] = new CPPBuiltinParameter(parms[1]);
 			temp = new CPPImplicitFunction(__BUILTIN_POWIL, scope, functionType, theParms, false);
 		}
-		
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
     
     public void __builtin_exit() {
         // void __builtin_abort(void)
         IBinding temp = null;
-        ICASTSimpleDeclSpecifier voidSds = new CASTSimpleDeclSpecifier();
-        voidSds.setType(IASTSimpleDeclSpecifier.t_void);
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_void);
-        IType c_void = new CBasicType(voidSds);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_void = new CPPBasicType(IBasicType.t_void, 0);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
             IType[] parms = new IType[1];
@@ -1038,7 +928,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ABORT, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // void __builtin_exit(int)
@@ -1075,23 +964,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
     
     private void __builtin_conj() {
         IBinding temp = null;
-        ICASTSimpleDeclSpecifier doubleComplexSds = new CASTSimpleDeclSpecifier();
-        doubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
-        doubleComplexSds.setComplex(true);
-        ICASTSimpleDeclSpecifier floatComplexSds = new CASTSimpleDeclSpecifier();
-        floatComplexSds.setType(IASTSimpleDeclSpecifier.t_float);
-        floatComplexSds.setComplex(true);
-        IType c_double_complex = new CBasicType(doubleComplexSds);
-        IType cpp_double_complex = new GPPBasicType(IBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
-        IType c_float_complex = new CBasicType(floatComplexSds);
-        IType cpp_float_complex = new GPPBasicType(IBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
-        ICASTSimpleDeclSpecifier longDoubleComplexSds = new CASTSimpleDeclSpecifier();
-        longDoubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
-        longDoubleComplexSds.setComplex(true);
-        longDoubleComplexSds.setLong(true);
-        IType c_long_double_complex = new CBasicType(longDoubleComplexSds);
-        IType cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
-
         // double complex __builtin_conj(double complex)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
@@ -1109,7 +981,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CONJ, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // float complex __builtin_conjf(float complex)
@@ -1130,7 +1001,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CONJF, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // long double complex __builtin_conjl(long double complex)
@@ -1151,42 +1021,11 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CONJL, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
     private void __builtin_creal_cimag() {
         IBinding temp = null;
-        ICASTSimpleDeclSpecifier doubleComplexSds = new CASTSimpleDeclSpecifier();
-        doubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
-        doubleComplexSds.setComplex(true);
-        ICASTSimpleDeclSpecifier floatComplexSds = new CASTSimpleDeclSpecifier();
-        floatComplexSds.setType(IASTSimpleDeclSpecifier.t_float);
-        floatComplexSds.setComplex(true);
-        IType c_double_complex = new CBasicType(doubleComplexSds);
-        IType cpp_double_complex = new GPPBasicType(IBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
-        IType c_float_complex = new CBasicType(floatComplexSds);
-        IType cpp_float_complex = new GPPBasicType(IBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
-        ICASTSimpleDeclSpecifier longDoubleComplexSds = new CASTSimpleDeclSpecifier();
-        longDoubleComplexSds.setType(IASTSimpleDeclSpecifier.t_double);
-        longDoubleComplexSds.setComplex(true);
-        longDoubleComplexSds.setLong(true);
-        IType c_long_double_complex = new CBasicType(longDoubleComplexSds);
-        IType cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG & GPPBasicType.IS_COMPLEX, null);
-        ICASTSimpleDeclSpecifier doubleSds = new CASTSimpleDeclSpecifier();
-        doubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-        IType c_double = new CBasicType(doubleSds);
-        IType cpp_double = new CPPBasicType(IBasicType.t_double, 0);
-        ICASTSimpleDeclSpecifier floatSds = new CASTSimpleDeclSpecifier();
-        floatSds.setType(IASTSimpleDeclSpecifier.t_float);
-        IType c_float = new CBasicType(doubleSds);
-        IType cpp_float = new CPPBasicType(IBasicType.t_float, 0);
-        ICASTSimpleDeclSpecifier longDoubleSds = new CASTSimpleDeclSpecifier();
-        longDoubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-        longDoubleSds.setLong(true);
-        IType c_long_double = new CBasicType(longDoubleSds);
-        IType cpp_long_double = new CPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG);
-                
         // double __builtin_creal(double complex)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
@@ -1204,7 +1043,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CREAL, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // float __builtin_crealf(float complex)
@@ -1225,7 +1063,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CREALF, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // long double __builtin_creall(long double complex)
@@ -1246,7 +1083,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CREALL, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // double __builtin_cimag(double complex)
@@ -1266,7 +1102,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CIMAG, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // float __builtin_cimagf(float complex)
@@ -1287,7 +1122,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CIMAGF, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // long double __builtin_cimagl(long double complex)
@@ -1308,54 +1142,11 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_CIMAGL, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);      
     }
     
     private void __builtin_abs() {
         IBinding temp = null;
-        
-        // int
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_int);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        // double
-        ICASTSimpleDeclSpecifier doubleSds = new CASTSimpleDeclSpecifier();
-        doubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-        IType c_double = new CBasicType(doubleSds);
-        IType cpp_double = new CPPBasicType(IBasicType.t_double, 0);
-        // long int
-        ICASTSimpleDeclSpecifier longIntSds = new CASTSimpleDeclSpecifier();
-        longIntSds.setType(IASTSimpleDeclSpecifier.t_int);
-        longIntSds.setLong(true);
-        IType c_long_int = new CBasicType(longIntSds);
-        IType cpp_long_int = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG);
-        // long double
-        ICASTSimpleDeclSpecifier longDoubleSds = new CASTSimpleDeclSpecifier();
-        longDoubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-        longDoubleSds.setLong(true);
-        IType c_long_double = new CBasicType(longDoubleSds);
-        IType cpp_long_double = new CPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG);
-        // signed long int
-        ICASTSimpleDeclSpecifier signedLongIntSds = new CASTSimpleDeclSpecifier();
-        signedLongIntSds.setType(IASTSimpleDeclSpecifier.t_int);
-        signedLongIntSds.setLong(true);
-        signedLongIntSds.setSigned(true);
-        IType c_signed_long_int = new CBasicType(signedLongIntSds);
-        IType cpp_signed_long_int = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG & CPPBasicType.IS_SIGNED);
-        // long long int
-        ICASTSimpleDeclSpecifier longLongIntSds = new CASTSimpleDeclSpecifier();
-        longLongIntSds.setType(IASTSimpleDeclSpecifier.t_int);
-        longLongIntSds.setLongLong(true);
-        IType c_long_long_int = new CBasicType(longLongIntSds);
-        IType cpp_long_long_int = new CPPBasicType(IBasicType.t_int, GPPBasicType.IS_LONGLONG);
-        // float
-        ICASTSimpleDeclSpecifier floatSds = new CASTSimpleDeclSpecifier();
-        floatSds.setType(IASTSimpleDeclSpecifier.t_float);
-        IType c_float = new CBasicType(floatSds);
-        IType cpp_float = new CPPBasicType(IBasicType.t_float, 0);
-        
         // int __builtin_abs(int)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
@@ -1373,7 +1164,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_ABS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // double __builtin_fabs(double)
@@ -1394,7 +1184,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_FABS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // long int __builtin_labs(long int)
@@ -1415,7 +1204,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_LABS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // intmax_t __builtin_imaxabs(intmax_t) // C99: 7.18.1.5- intmax_t = signed long int (any signed int)
@@ -1436,7 +1224,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_IMAXABS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // long long int __builtin_llabs(long long int)
@@ -1457,7 +1244,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_LLABS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // float __builtin_fabsf(float)
@@ -1478,7 +1264,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_FABSF, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // long double __builtin_fabsl(long double)
@@ -1499,63 +1284,11 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_FABSL, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
     private void __builtin_printf() {
         IBinding temp = null;
-        
-        // int
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_int);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        // char * restrict
-        ICASTSimpleDeclSpecifier charPSds = new CASTSimpleDeclSpecifier();
-        charPSds.setType(IASTSimpleDeclSpecifier.t_char);
-        CPointerType c_char_p_r = new CPointerType(new CQualifierType(charPSds));
-        CASTPointer cPointer = new CASTPointer();
-        cPointer.setRestrict(true);
-        c_char_p_r.setPointer(cPointer);
-        GPPASTPointer gppPointer = new GPPASTPointer();
-        gppPointer.setRestrict(true);
-        IType cpp_char_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), false, false), gppPointer);
-        // const char * restrict
-        ICASTSimpleDeclSpecifier constCharPSds = new CASTSimpleDeclSpecifier();
-        constCharPSds.setType(IASTSimpleDeclSpecifier.t_char);
-        constCharPSds.setConst(true);
-        CPointerType c_const_char_p_r = new CPointerType(new CQualifierType(constCharPSds));
-        CASTPointer cPointerRestrict = new CASTPointer();
-        cPointerRestrict.setRestrict(true);
-        c_const_char_p_r.setPointer(cPointerRestrict);
-        GPPASTPointer gppPointerRestrict = new GPPASTPointer();
-        gppPointerRestrict.setRestrict(true);
-        IType cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), true, false), gppPointerRestrict);
-        // void * restrict (FILE)
-        ICASTSimpleDeclSpecifier voidPSds = new CASTSimpleDeclSpecifier();
-        voidPSds.setType(IASTSimpleDeclSpecifier.t_void);
-        CPointerType c_void_p_r = new CPointerType(new CQualifierType(voidPSds));
-        c_void_p_r.setPointer(cPointer);
-        IType cpp_void_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), false, false), gppPointer);
-        // va_list // assumed: char * va_list();
-        ICASTSimpleDeclSpecifier vaListSds = new CASTSimpleDeclSpecifier();
-        vaListSds.setType(IASTSimpleDeclSpecifier.t_char);
-        IType type = new CBasicType(vaListSds);
-        CPointerType returnType = new CPointerType(type);
-        returnType.setPointer(new CASTPointer());
-        IFunctionType c_va_list = new CFunctionType(returnType, new IType[0]);
-        IType type2 = new CPPBasicType( IBasicType.t_char, 0 );
-        IType returnType2 = new CPPPointerType(type2);
-        IFunctionType cpp_va_list = new CPPFunctionType(returnType2, new IType[0]);
-        // size_t // assumed: unsigned long int
-        ICASTSimpleDeclSpecifier unsignedLongIntSds = new CASTSimpleDeclSpecifier();
-        unsignedLongIntSds.setType(IASTSimpleDeclSpecifier.t_int);
-        unsignedLongIntSds.setLong(true);
-        unsignedLongIntSds.setSigned(true);
-        IType c_size_t = new CBasicType(unsignedLongIntSds);
-        IType cpp_size_t = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG & CPPBasicType.IS_SIGNED);
-        
         // int __builtin_printf(const char * restrict, ...)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
@@ -1573,7 +1306,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_PRINTF, scope, functionType, theParms, true);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_sprintf(char * restrict, const char * restrict, ...)
@@ -1598,7 +1330,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_SPRINTF, scope, functionType, theParms, true);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_snprintf(char * restrict, size_t, const char * restrict, ...) // use unsigned long int for size_t
@@ -1627,32 +1358,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_SNPRINTF, scope, functionType, theParms, true);
         }
-        
-        bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
-        
-        // int __builtin_sprintf(char * restrict, const char * restrict, ...)
-        temp = null;
-        if (lang == ParserLanguage.C) {
-            IFunctionType functionType = null;
-            IType[] parms = new IType[2];
-            parms[0] = c_char_p_r;
-            parms[1] = c_const_char_p_r;
-            functionType = new CFunctionType(c_int, parms);
-            IParameter[] theParms = new IParameter[2];
-            theParms[0] = new CBuiltinParameter(parms[0]);
-            theParms[1] = new CBuiltinParameter(parms[1]);
-            temp = new CImplicitFunction(__BUILTIN_SPRINTF, scope, functionType, theParms, true);
-        } else {
-            IType[] parms = new IType[2];
-            parms[0] = cpp_char_p_r;
-            parms[1] = cpp_const_char_p_r;
-            IFunctionType functionType = new CPPFunctionType(cpp_int, parms);
-            IParameter[] theParms = new IParameter[2];
-            theParms[0] = new CPPBuiltinParameter(parms[0]);
-            theParms[1] = new CPPBuiltinParameter(parms[1]);
-            temp = new CPPImplicitFunction(__BUILTIN_SPRINTF, scope, functionType, theParms, true);
-        }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_fprintf(FILE * restrict, const char * restrict) // use void * restrict for FILE
@@ -1660,7 +1365,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
             IType[] parms = new IType[2];
-            parms[0] = c_void_p_r;
+            parms[0] = c_FILE_p_r;
             parms[1] = c_const_char_p_r;
             functionType = new CFunctionType(c_int, parms);
             IParameter[] theParms = new IParameter[2];
@@ -1669,7 +1374,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             temp = new CImplicitFunction(__BUILTIN_FPRINTF, scope, functionType, theParms, true);
         } else {
             IType[] parms = new IType[2];
-            parms[0] = cpp_void_p_r;
+            parms[0] = cpp_FILE_p_r;
             parms[1] = cpp_const_char_p_r;
             IFunctionType functionType = new CPPFunctionType(cpp_int, parms);
             IParameter[] theParms = new IParameter[2];
@@ -1677,7 +1382,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_FPRINTF, scope, functionType, theParms, true);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_vprintf(const char * restrict, va_list)
@@ -1702,7 +1406,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_VPRINTF, scope, functionType, theParms, true);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_vsprintf(char * restrict, size_t, const char * restrict, va_list)
@@ -1746,34 +1449,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
     
     private void __builtin_scanf() {
         IBinding temp = null;
-        
-        // int
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_int);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        // const char * restrict
-        ICASTSimpleDeclSpecifier constCharPSds = new CASTSimpleDeclSpecifier();
-        constCharPSds.setType(IASTSimpleDeclSpecifier.t_char);
-        constCharPSds.setConst(true);
-        CPointerType c_const_char_p_r = new CPointerType(new CQualifierType(constCharPSds));
-        CASTPointer cPointer2 = new CASTPointer();
-        cPointer2.setRestrict(true);
-        c_const_char_p_r.setPointer(cPointer2);
-        GPPASTPointer gppPointer2 = new GPPASTPointer();
-        gppPointer2.setRestrict(true);
-        IType cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), true, false), gppPointer2);
-        // va_list // assumed: char * va_list();
-        ICASTSimpleDeclSpecifier vaListSds = new CASTSimpleDeclSpecifier();
-        vaListSds.setType(IASTSimpleDeclSpecifier.t_char);
-        IType type = new CBasicType(vaListSds);
-        CPointerType returnType = new CPointerType(type);
-        returnType.setPointer(new CASTPointer());
-        IFunctionType c_va_list = new CFunctionType(returnType, new IType[0]);
-        IType type2 = new CPPBasicType( IBasicType.t_char, 0 );
-        IType returnType2 = new CPPPointerType(type2);
-        IFunctionType cpp_va_list = new CPPFunctionType(returnType2, new IType[0]);
-        
         // int __builtin_vscanf(const char * restrict, va_list)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
@@ -1795,7 +1470,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_VSCANF, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_vsscanf(const char * restrict, const char * restrict, va_list)
@@ -1824,7 +1498,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_VSSCANF, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_scanf(const char * restrict, ...)
@@ -1845,7 +1518,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_SCANF, scope, functionType, theParms, true);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_sscanf(const char * restrict, const char * restrict, ...)
@@ -1870,30 +1542,11 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_SSCANF, scope, functionType, theParms, true);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
     private void __builtin_math() {
         IBinding temp = null;
-        
-        // double
-        ICASTSimpleDeclSpecifier doubleSds = new CASTSimpleDeclSpecifier();
-        doubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-        IType c_double = new CBasicType(doubleSds);
-        IType cpp_double = new CPPBasicType(IBasicType.t_double, 0);
-        // long double
-        ICASTSimpleDeclSpecifier longDoubleSds = new CASTSimpleDeclSpecifier();
-        longDoubleSds.setType(IASTSimpleDeclSpecifier.t_double);
-        longDoubleSds.setLong(true);
-        IType c_long_double = new CBasicType(longDoubleSds);
-        IType cpp_long_double = new CPPBasicType(IBasicType.t_double, CPPBasicType.IS_LONG);
-        // float
-        ICASTSimpleDeclSpecifier floatSds = new CASTSimpleDeclSpecifier();
-        floatSds.setType(IASTSimpleDeclSpecifier.t_float);
-        IType c_float = new CBasicType(floatSds);
-        IType cpp_float = new CPPBasicType(IBasicType.t_float, 0);
-        
         // double __builtin_cos(double)
         // double __builtin_exp(double)
         // double __builtin_log(double)
@@ -2019,45 +1672,12 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
     
     private void __builtin_put() {
         IBinding temp = null;
-
-        // int
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_int);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        // const char *
-        ICASTSimpleDeclSpecifier constCharPSds2 = new CASTSimpleDeclSpecifier();
-        constCharPSds2.setType(IASTSimpleDeclSpecifier.t_char);
-        constCharPSds2.setConst(true);
-        CPointerType c_const_char_p = new CPointerType(new CQualifierType(constCharPSds2));
-        CASTPointer cPointer = new CASTPointer();
-        c_const_char_p.setPointer(cPointer);
-        GPPASTPointer gppPointer = new GPPASTPointer();
-        IType cpp_const_char_p = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), true, false), gppPointer);
-        // const char * restrict
-        ICASTSimpleDeclSpecifier constCharPSds = new CASTSimpleDeclSpecifier();
-        constCharPSds.setType(IASTSimpleDeclSpecifier.t_char);
-        constCharPSds.setConst(true);
-        CPointerType c_const_char_p_r = new CPointerType(new CQualifierType(constCharPSds));
-        CASTPointer cPointerRestrict = new CASTPointer();
-        cPointerRestrict.setRestrict(true);
-        c_const_char_p_r.setPointer(cPointerRestrict);
-        GPPASTPointer gppPointerRestrict = new GPPASTPointer();
-        gppPointerRestrict.setRestrict(true);
-        IType cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), true, false), gppPointerRestrict);
-        // void * restrict (FILE)
-        ICASTSimpleDeclSpecifier voidPSds = new CASTSimpleDeclSpecifier();
-        voidPSds.setType(IASTSimpleDeclSpecifier.t_void);
-        CPointerType c_void_p_r = new CPointerType(new CQualifierType(voidPSds));
-        c_void_p_r.setPointer(cPointerRestrict);
-        IType cpp_void_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), false, false), gppPointerRestrict);
-        
         // int __builtin_fputs(const char * restrict, FILE * restrict)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
             IType[] parms = new IType[2];
             parms[0] = c_const_char_p_r;
-            parms[1] = c_void_p_r;
+            parms[1] = c_FILE_p_r;
             functionType = new CFunctionType(c_int, parms);
             IParameter[] theParms = new IParameter[2];
             theParms[0] = new CBuiltinParameter(parms[0]);
@@ -2066,14 +1686,13 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         } else {
             IType[] parms = new IType[2];
             parms[0] = cpp_const_char_p_r;
-            parms[1] = cpp_void_p_r;
+            parms[1] = cpp_FILE_p_r;
             IFunctionType functionType = new CPPFunctionType(cpp_int, parms);
             IParameter[] theParms = new IParameter[2];
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_FPUTS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // int __builtin_putchar(int)
@@ -2094,7 +1713,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_PUTCHAR, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_puts(const char *)
@@ -2115,50 +1733,11 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_PUTS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
     private void __builtin_mem() {
         IBinding temp = null;
-
-        // int
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_int);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        // void *
-        ICASTSimpleDeclSpecifier voidPSds3 = new CASTSimpleDeclSpecifier();
-        voidPSds3.setType(IASTSimpleDeclSpecifier.t_void);
-        IType c_void_p = new CQualifierType(voidPSds3);
-        IType cpp_void_p = new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), false, false);
-        // const void *
-        ICASTSimpleDeclSpecifier constVoidPSds2 = new CASTSimpleDeclSpecifier();
-        constVoidPSds2.setType(IASTSimpleDeclSpecifier.t_void);
-        constVoidPSds2.setConst(true);
-        CPointerType c_const_void_p = new CPointerType(new CQualifierType(constVoidPSds2));
-        c_const_void_p.setPointer(new CASTPointer());
-        IType cpp_const_void_p = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), true, false), new GPPASTPointer());
-        // const void * restrict
-        CASTPointer cPointerRestrict = new CASTPointer();
-        cPointerRestrict.setRestrict(true);
-        GPPASTPointer gppPointerRestrict = new GPPASTPointer();
-        gppPointerRestrict.setRestrict(true);
-
-        ICASTSimpleDeclSpecifier voidPSds = new CASTSimpleDeclSpecifier();
-        voidPSds.setType(IASTSimpleDeclSpecifier.t_void);
-        voidPSds.setConst(true);
-        CPointerType c_const_void_p_r = new CPointerType(new CQualifierType(voidPSds));
-        c_const_void_p_r.setPointer(cPointerRestrict);
-        IType cpp_const_void_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), true, false), gppPointerRestrict);
-        // size_t // assumed: unsigned long int
-        ICASTSimpleDeclSpecifier unsignedLongIntSds = new CASTSimpleDeclSpecifier();
-        unsignedLongIntSds.setType(IASTSimpleDeclSpecifier.t_int);
-        unsignedLongIntSds.setLong(true);
-        unsignedLongIntSds.setSigned(true);
-        IType c_size_t = new CBasicType(unsignedLongIntSds);
-        IType cpp_size_t = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG & CPPBasicType.IS_SIGNED);
-        
         // int __builtin_memcmp(const void *, const void *, size_t)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
@@ -2184,7 +1763,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_MEMCMP, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // void * __builtin_memcpy(void * restrict, const void * restrict, size_t)
@@ -2192,7 +1770,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
             IType[] parms = new IType[3];
-            parms[0] = c_const_void_p_r;
+            parms[0] = c_void_p_r;
             parms[1] = c_const_void_p_r;
             parms[2] = c_size_t;
             functionType = new CFunctionType(c_void_p, parms);
@@ -2203,7 +1781,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             temp = new CImplicitFunction(__BUILTIN_MEMCPY, scope, functionType, theParms, false);
         } else {
             IType[] parms = new IType[3];
-            parms[0] = cpp_const_void_p_r;
+            parms[0] = cpp_void_p_r;
             parms[1] = cpp_const_void_p_r;
             parms[2] = cpp_size_t;
             IFunctionType functionType = new CPPFunctionType(cpp_void_p, parms);
@@ -2213,7 +1791,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_MEMCPY, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // void * __builtin_memset(void *, int, size_t)
@@ -2221,7 +1798,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
             IType[] parms = new IType[3];
-            parms[0] = c_const_void_p;
+            parms[0] = c_void_p;
             parms[1] = c_int;
             parms[2] = c_size_t;
             functionType = new CFunctionType(c_void_p, parms);
@@ -2232,7 +1809,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             temp = new CImplicitFunction(__BUILTIN_MEMSET, scope, functionType, theParms, false);
         } else {
             IType[] parms = new IType[3];
-            parms[0] = cpp_const_void_p;
+            parms[0] = cpp_void_p;
             parms[1] = cpp_int;
             parms[2] = cpp_size_t;
             IFunctionType functionType = new CPPFunctionType(cpp_void_p, parms);
@@ -2242,61 +1819,17 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_MEMSET, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
     private void __builtin_str_strn() {
         IBinding temp = null;
-        
-        // int
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_int);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        // char *
-        ICASTSimpleDeclSpecifier charPSds3 = new CASTSimpleDeclSpecifier();
-        charPSds3.setType(IASTSimpleDeclSpecifier.t_char);
-        IType c_char_p = new CQualifierType(charPSds3);
-        IType cpp_char_p = new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), false, false);
-        // char * restrict
-        ICASTSimpleDeclSpecifier charPSds2 = new CASTSimpleDeclSpecifier();
-        charPSds2.setType(IASTSimpleDeclSpecifier.t_char);
-        CPointerType c_char_p_r = new CPointerType(new CQualifierType(charPSds2));
-        CASTPointer cPointerRestrict = new CASTPointer();
-        cPointerRestrict.setRestrict(true);
-        GPPASTPointer gppPointerRestrict = new GPPASTPointer();
-        gppPointerRestrict.setRestrict(true);
-        c_char_p_r.setPointer(cPointerRestrict);
-        IType cpp_char_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), false, false), gppPointerRestrict);
-        // const char *
-        ICASTSimpleDeclSpecifier constCharPSds3 = new CASTSimpleDeclSpecifier();
-        constCharPSds3.setType(IASTSimpleDeclSpecifier.t_char);
-        constCharPSds3.setConst(true);
-        CPointerType c_const_char_p = new CPointerType(new CQualifierType(constCharPSds3));
-        c_const_char_p.setPointer(new CASTPointer());
-        IType cpp_const_char_p = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_void, 0), true, false), new GPPASTPointer());
-        // const char * restrict
-        ICASTSimpleDeclSpecifier constCharPSds2 = new CASTSimpleDeclSpecifier();
-        constCharPSds2.setType(IASTSimpleDeclSpecifier.t_char);
-        constCharPSds2.setConst(true);
-        CPointerType c_const_char_p_r = new CPointerType(new CQualifierType(constCharPSds2));
-        c_const_char_p_r.setPointer(cPointerRestrict);
-        IType cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(new CPPBasicType(IBasicType.t_char, 0), true, false), gppPointerRestrict);
-        // size_t // assumed: unsigned long int
-        ICASTSimpleDeclSpecifier unsignedLongIntSds = new CASTSimpleDeclSpecifier();
-        unsignedLongIntSds.setType(IASTSimpleDeclSpecifier.t_int);
-        unsignedLongIntSds.setLong(true);
-        unsignedLongIntSds.setSigned(true);
-        IType c_size_t = new CBasicType(unsignedLongIntSds);
-        IType cpp_size_t = new CPPBasicType(IBasicType.t_int, CPPBasicType.IS_LONG & CPPBasicType.IS_SIGNED);
-        
         // char * __builtin_strcat(char * restrict, const char * restrict)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
             IType[] parms = new IType[2];
             parms[0] = c_char_p_r;
-            parms[1] = c_char_p_r;
+            parms[1] = c_const_char_p_r;
             functionType = new CFunctionType(c_char_p, parms);
             IParameter[] theParms = new IParameter[2];
             theParms[0] = new CBuiltinParameter(parms[0]);
@@ -2312,7 +1845,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCAT, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // char * __builtin_strchr(const char *, int)
@@ -2337,7 +1869,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCHR, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_strcmp(const char *, const char *)
@@ -2362,7 +1893,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCMP, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // char * __builtin_strcpy(char * restrict, const char * restrict)
@@ -2387,7 +1917,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCPY, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // size_t __builtin_strcspn(const char *, const char *)
@@ -2412,7 +1941,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRCSPN, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // size_t __builtin_strlen(const char *)
@@ -2433,7 +1961,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[0] = new CPPBuiltinParameter(parms[0]);
             temp = new CPPImplicitFunction(__BUILTIN_STRLEN, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // char * __builtin_strpbrk(const char *, const char *)
@@ -2458,7 +1985,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRPBRK, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // char * __builtin_strrchr(const char *, int)
@@ -2483,7 +2009,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRRCHR, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // size_t __builtin_strspn(const char *, const char *)
@@ -2508,7 +2033,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRSPN, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // char * __builtin_strstr(const char *, const char *)
@@ -2533,7 +2057,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_STRSTR, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // char * __builtin_strncat(char * restrict, const char * restrict, size_t)
@@ -2562,7 +2085,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_STRNCAT, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_strncmp(const char *, const char *, size_t)
@@ -2591,7 +2113,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_STRNCMP, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 
         // char * __builtin_strncpy(char * restrict, const char * restrict, size_t)
@@ -2620,24 +2141,11 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[2] = new CPPBuiltinParameter(parms[2]);
             temp = new CPPImplicitFunction(__BUILTIN_STRNCPY, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     
     public void __builtin_less_greater() {
         IBinding temp = null;
-        
-        // int
-        ICASTSimpleDeclSpecifier intSds = new CASTSimpleDeclSpecifier();
-        intSds.setType(IASTSimpleDeclSpecifier.t_int);
-        IType c_int = new CBasicType(intSds);
-        IType cpp_int = new CPPBasicType(IBasicType.t_int, 0);
-        // float
-        ICASTSimpleDeclSpecifier floatSds = new CASTSimpleDeclSpecifier();
-        floatSds.setType(IASTSimpleDeclSpecifier.t_float);
-        IType c_float = new CBasicType(floatSds);
-        IType cpp_float = new CPPBasicType(IBasicType.t_float, 0);
-        
         // int __builtin_isgreater(real-floating, real-floating)
         if (lang == ParserLanguage.C) {
             IFunctionType functionType = null;
@@ -2659,7 +2167,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ISGREATER, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_isgreaterequal(real-floating, real-floating)
@@ -2684,7 +2191,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ISGREATEREQUAL, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_isless(real-floating, real-floating)
@@ -2709,7 +2215,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ISLESS, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_islessequal(real-floating, real-floating)
@@ -2734,7 +2239,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ISLESSEQUAL, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_islessgreater(real-floating, real-floating)
@@ -2759,7 +2263,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ISLESSGREATER, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
         
         // int __builtin_isunordered(real-floating, real-floating)
@@ -2784,7 +2287,6 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
             theParms[1] = new CPPBuiltinParameter(parms[1]);
             temp = new CPPImplicitFunction(__BUILTIN_ISUNORDERED, scope, functionType, theParms, false);
         }
-        
         bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
     }
     

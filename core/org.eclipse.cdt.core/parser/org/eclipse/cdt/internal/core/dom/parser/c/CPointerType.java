@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
@@ -21,14 +20,18 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  * @author dsteffle
  */
 public class CPointerType implements ICPointerType, ITypeContainer {
-
+	static public final int IS_CONST       = 1;
+	static public final int IS_RESTRICT    = 1 << 1;
+	static public final int IS_VOLATILE    = 1 << 2;
+	
 	IType nextType = null;
-	ICASTPointer pointer = null;
+	private int qualifiers = 0;
 	
 	public CPointerType() {}
 	
-	public CPointerType(IType next) {
+	public CPointerType(IType next, int qualifiers) {
 		this.nextType = next;
+		this.qualifiers = qualifiers;
 	}
 	
 	public boolean isSameType( IType obj ){
@@ -56,7 +59,7 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICPointerType#isRestrict()
 	 */
 	public boolean isRestrict() {
-		return pointer.isRestrict();
+		return (qualifiers & IS_RESTRICT) != 0;
 	}
 
 	/* (non-Javadoc)
@@ -74,20 +77,16 @@ public class CPointerType implements ICPointerType, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isConst()
 	 */
 	public boolean isConst() {
-		return pointer.isConst();
+		return (qualifiers & IS_CONST) != 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isVolatile()
 	 */
 	public boolean isVolatile() {
-		return pointer.isVolatile();
+		return (qualifiers & IS_VOLATILE) != 0;
 	}
-	
-	public void setPointer(ICASTPointer pointer) {
-		this.pointer = pointer;
-	}
-	
+		
     public Object clone(){
         IType t = null;
    		try {
@@ -97,4 +96,8 @@ public class CPointerType implements ICPointerType, ITypeContainer {
         }
         return t;
     }
+
+	public void setQualifiers(int qualifiers) {
+		this.qualifiers = qualifiers;
+	}
 }

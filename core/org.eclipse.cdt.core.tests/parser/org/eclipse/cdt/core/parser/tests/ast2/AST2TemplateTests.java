@@ -1589,4 +1589,45 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPMethod init = (ICPPMethod) col.getName(4).resolveBinding();
 		assertSame( init, col.getName(19).resolveBinding() );
 	}
+	
+	public void testBug91707() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class Tp, class Tr > class iter {                         \n"); //$NON-NLS-1$
+		buffer.append("   Tp operator -> () const;                                         \n"); //$NON-NLS-1$
+		buffer.append("   Tr operator [] (int) const;                                      \n"); //$NON-NLS-1$
+		buffer.append("};                                                                  \n"); //$NON-NLS-1$
+		buffer.append("template <class T> class list {                                     \n"); //$NON-NLS-1$
+		buffer.append("   typedef iter< T*, T& > iterator;                                 \n"); //$NON-NLS-1$
+		buffer.append("   iterator begin();                                                \n"); //$NON-NLS-1$
+		buffer.append("   iterator end();                                                  \n"); //$NON-NLS-1$
+		buffer.append("};                                                                  \n"); //$NON-NLS-1$
+		buffer.append("class Bar { public: int foo; };                                     \n"); //$NON-NLS-1$
+		buffer.append("void f() {                                                          \n"); //$NON-NLS-1$
+		buffer.append("   list<Bar> bar;                                                   \n"); //$NON-NLS-1$
+		buffer.append("   for( list<Bar>::iterator i = bar.begin(); i != bar.end(); ++i ){ \n"); //$NON-NLS-1$
+		buffer.append("      i->foo;  i[0].foo;                                            \n"); //$NON-NLS-1$
+		buffer.append("   }                                                                \n"); //$NON-NLS-1$
+		buffer.append("}                                                                   \n"); //$NON-NLS-1$
+		
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPMethod begin = (ICPPMethod) col.getName(16).resolveBinding();
+		ICPPMethod end = (ICPPMethod) col.getName(18).resolveBinding();
+
+		ICPPField foo = (ICPPField) col.getName(20).resolveBinding();
+		
+		IBinding r = col.getName(33).resolveBinding();
+		assertTrue( r instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)r).getSpecializedBinding(), begin );
+		
+		r = col.getName(36).resolveBinding();
+		assertTrue( r instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)r).getSpecializedBinding(), end );
+		
+		assertSame( foo, col.getName(39).resolveBinding() );
+		assertSame( foo, col.getName(41).resolveBinding() );
+	}
 }

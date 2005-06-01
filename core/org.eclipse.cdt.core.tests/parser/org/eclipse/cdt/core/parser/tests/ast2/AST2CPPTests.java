@@ -4565,4 +4565,28 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue( cs.length == 2 );
 		assertSame( cs[1], ctor );
 	}
+	
+	public void testBug91707() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class C { public: int foo; };                 \n");
+		buffer.append("class B {                                     \n");
+		buffer.append("   C* operator ->();                          \n");
+		buffer.append("   C& operator [] ( int );                    \n");
+		buffer.append("};                                            \n");
+		buffer.append("void f(){                                     \n");
+		buffer.append("   B b;                                       \n");
+		buffer.append("   b->foo;                                    \n");
+		buffer.append("   b[0].foo;                                  \n");
+		buffer.append("}                                             \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col); 
+        
+		ICPPField foo = (ICPPField) col.getName(1).resolveBinding();
+		
+		assertSame( foo, col.getName(12).resolveBinding() );
+		assertSame( foo, col.getName(14).resolveBinding() );
+	}
+	
 }

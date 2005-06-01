@@ -790,7 +790,18 @@ public class CPPVisitor {
 				}
 			} else if( parent instanceof ICPPASTFieldReference ){
 				IASTExpression owner = ((ICPPASTFieldReference)parent).getFieldOwner();
-				IType type = CPPSemantics.getUltimateType( getExpressionType( owner ), false );
+				IType type = getExpressionType( owner );
+				if( ((ICPPASTFieldReference)parent).isPointerDereference() ){
+					while( type instanceof ITypedef )
+						type = ((ITypedef)type).getType();
+					if( type instanceof ICPPClassType ){
+						ICPPFunction op = CPPSemantics.findOperator( (IASTFieldReference)parent, (ICPPClassType) type );
+						if( op != null ){
+							type = op.getType().getReturnType();
+						}
+					}
+				} 
+				type =  CPPSemantics.getUltimateType( type, false );
 				if( type instanceof ICPPClassType ){
 					return ((ICPPClassType) type).getCompositeScope();
 				}
@@ -1829,6 +1840,12 @@ public class CPPVisitor {
 			try {
 				while( t instanceof ITypedef ){
 					t = ((ITypedef)t).getType();
+				}
+				if( t instanceof ICPPClassType ){
+					ICPPFunction op = CPPSemantics.findOperator( expression, (ICPPClassType) t );
+					if( op != null ){
+						return op.getType().getReturnType();
+					}
 				}
 				if( t instanceof IPointerType )
 					return ((IPointerType)t).getType();

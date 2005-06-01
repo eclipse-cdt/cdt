@@ -1453,6 +1453,13 @@ public class CPPTemplates {
 		return template;
 	}
 	
+	public static boolean typeContainsTemplateParameter( IType t ){
+		if( t instanceof ICPPTemplateParameter )
+			return true;
+		t = CPPSemantics.getUltimateType( t, false );
+		return (t instanceof ICPPTemplateParameter);
+	}
+	
 	public static IBinding instantiateTemplate( ICPPTemplateDefinition template, IType [] arguments, ObjectMap specializedArgs ){
 		if( template == null ){
 			template = null;
@@ -1484,7 +1491,7 @@ public class CPPTemplates {
 			if( i < numArgs ){
 				arg = arguments[i];
 				//If the argument is a template parameter, we can't instantiate yet, defer for later
-				if( arg instanceof ICPPTemplateParameter ){
+				if( typeContainsTemplateParameter( arg ) ){
 					return ((ICPPInternalTemplate)template).deferredInstance( arguments );
 				}
 			} else {

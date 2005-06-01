@@ -76,7 +76,7 @@ public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate impl
 			IType arg = args[i];
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
-			if( arg instanceof ICPPTemplateParameter ){
+			if( CPPTemplates.typeContainsTemplateParameter( arg ) ){
 				return deferredInstance( args );
 			}
 			try {

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -74,6 +75,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -338,7 +340,9 @@ public class CPPSemantics {
                     tempName = (IASTName) tempName.getParent();
                 
                 ASTNodeProperty prop = tempName.getPropertyInParent();
-                if( prop == IASTFieldReference.FIELD_NAME ){
+                if( prop == IASTFieldReference.FIELD_NAME || 
+                	(prop == STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof ICPPASTFieldReference) )
+                {
                     ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempName.getParent();
                     implied = CPPVisitor.getExpressionType( fieldRef.getFieldOwner() );
                     if( fieldRef.isPointerDereference() && implied instanceof IPointerType ){
@@ -362,6 +366,9 @@ public class CPPSemantics {
 	                        }
 	                    }
                     }
+                } else if( prop == STRING_LOOKUP_PROPERTY && tempName.getParent() instanceof IASTArraySubscriptExpression ){
+            		IASTExpression exp = ((IASTArraySubscriptExpression)tempName.getParent()).getArrayExpression();
+            		implied = CPPVisitor.getExpressionType( exp );
                 }
             }
             return implied;
@@ -2914,6 +2921,42 @@ public class CPPSemantics {
 				return n + 1;
 		}
 		return -1;
+	}
+	
+	public static ICPPFunction findOperator( IASTExpression exp, ICPPClassType cls ){
+		IScope scope = null;
+		try {
+			scope = cls.getCompositeScope();
+		} catch (DOMException e1) {
+			return null;
+		}
+		CPPASTName astName = new CPPASTName();
+		astName.setParent( exp );
+	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );
+	    LookupData data = null;
+	    
+		if( exp instanceof IASTArraySubscriptExpression ){
+		    astName.setName( ICPPASTOperatorName.OPERATOR_BRACKET );
+		    data = new LookupData( astName );
+		    data.forceQualified = true;
+		    data.functionParameters = new IASTExpression [] { ((IASTArraySubscriptExpression)exp).getSubscriptExpression() };
+		} else if( exp instanceof IASTFieldReference ){
+			astName.setName( ICPPASTOperatorName.OPERATOR_ARROW );
+			data = new LookupData( astName );
+			data.forceQualified = true;
+			data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		} else {
+			return null;
+		}
+		
+		try {
+		    lookup( data, scope );
+		    IBinding binding = resolveAmbiguities( data, astName );
+		    if( binding instanceof ICPPFunction )
+		    	return (ICPPFunction) binding;
+		} catch( DOMException e ){
+		}
+		return null;
 	}
 	
 	public static IBinding[] findBindings( IScope scope, String name, boolean qualified ) throws DOMException{

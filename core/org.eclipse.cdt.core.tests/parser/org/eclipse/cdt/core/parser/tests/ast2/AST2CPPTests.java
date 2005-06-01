@@ -102,6 +102,19 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
 
+    public void testBug75858() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "bool f() {\n" );
+        buffer.append( "    int first, last;\n" );
+        buffer.append( "if(first < 1 || last > 99 )\n" );
+        buffer.append( "return false;\n" );
+        buffer.append( "}\n" );
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );
+    }
+    
     public void testBug95424() throws Exception {
         IASTTranslationUnit tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, true, true );
         tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, false, true );

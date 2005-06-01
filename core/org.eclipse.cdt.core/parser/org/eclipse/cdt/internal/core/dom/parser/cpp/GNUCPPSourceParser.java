@@ -420,8 +420,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IToken consumeTemplateArguments(IToken last,
             TemplateParameterManager argumentList) throws EndOfFileException,
             BacktrackException {
-        // if (language != ParserLanguage.CPP)
-        // return last;
         if (LT(1) == IToken.tLT) {
             IToken secondMark = mark();
             consume(IToken.tLT);
@@ -432,6 +430,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 case IToken.tGT:
                 case IToken.tEOC:
                     last = consume();
+                    if( LT(1) == IToken.tINTEGER || LT(1) == IToken.tFLOATINGPT )
+                    {
+                        backup( secondMark );
+                        return last;
+                    }
                     break;
                 default:
                     throw backtrack;
@@ -5153,7 +5156,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tLPAREN);
             IASTNode condition = null;
             try {
-                condition = cppStyleCondition(); // TODO should be while
+                condition = cppStyleCondition(); 
                 // condition
                 if (LT(1) == IToken.tEOC) {
                     // Completing in the condition

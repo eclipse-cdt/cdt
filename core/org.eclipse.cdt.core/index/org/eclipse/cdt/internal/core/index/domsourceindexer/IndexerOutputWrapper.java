@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.core.index.TypeEntry;
  * (in anticipation that the interface is going to change)
  * 
  * @author vhirsl
+ * @deprecated Obsolete with introduction of IIndexEntry hierarchy
  */
 class IndexerOutputWrapper {
     static class EntryType {

@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.NamedEntry;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
@@ -259,15 +260,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             getOutput().addRelatives(fileNumber, include, 
                     (parent != null) ? parent.getIncludeDirective().getPath() : null);
 			
-            IndexerOutputWrapper.addIndexEntry(getOutput(),
-                    new char[][] {include.toCharArray()}, 
-					IndexerOutputWrapper.INCLUDE,
-					IIndex.REFERENCE,
-					fileNumber,
-					1,
-					1,
-					IIndex.OFFSET);
-            
+            NamedEntry namedEntry = new NamedEntry(IIndex.INCLUDE, IIndex.REFERENCE, new char[][] {include.toCharArray()}, 0, fileNumber);
+            namedEntry.setNameOffset(1, 1, IIndex.OFFSET);
+            namedEntry.serialize(getOutput());
+
             /* See if this file has been encountered before */
             indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(include), true);
 
@@ -289,16 +285,11 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
            // Get the location
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(macro);
             int fileNumber = IndexEncoderUtil.calculateIndexFlags(this, loc);
-            IndexerOutputWrapper.addIndexEntry(getOutput(),
-                    new char[][] {macro.toCharArray()},
-					IndexerOutputWrapper.MACRO,
-					IIndex.DECLARATION,
-					fileNumber,
-					loc.getNodeOffset(),
-                    loc.getNodeLength(),
-                    IIndex.OFFSET);
+            
+            NamedEntry namedEntry = new NamedEntry(IIndex.MACRO, IIndex.DECLARATION, new char[][] {macro.toCharArray()}, 0, fileNumber);
+            namedEntry.setNameOffset(loc.getNodeOffset(), loc.getNodeLength(), IIndex.OFFSET);
+            namedEntry.serialize(getOutput());
         }
-        
     }
 
     /**

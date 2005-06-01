@@ -39,8 +39,12 @@ public interface ITypeEntry extends INamedEntry  {
 	public int getTypeKind();
 	/**
 	 * Returns the types that are inherited 
-	 * @return an array of char arrays - each representing a separate type that this entry inherits from
+	 * @return an array of index entries - each representing a separate type that this entry inherits from
 	 */
 	public IIndexEntry[] getBaseTypes();
-	
+    /**
+     * Return friend types
+     * @return an array of index entries - each representing a friend to this type
+     */
+	public IIndexEntry[] getFriends();
 }

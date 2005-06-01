@@ -12,11 +12,12 @@
 package org.eclipse.cdt.internal.core.index;
 
 
-public class TypeEntry  extends NamedEntry implements ITypeEntry {
+public class TypeEntry extends NamedEntry implements ITypeEntry {
 
 	int type_kind;
 	IIndexEntry[] baseTypes;
-	       
+	IIndexEntry[] friends;
+    
 	public TypeEntry(int type_kind, int entry_type, char[][] fullName, int modifiers, int fileNumber){
 		super(IIndex.TYPE, entry_type, fullName, modifiers, fileNumber);
 		this.type_kind = type_kind;
@@ -37,5 +38,13 @@ public class TypeEntry  extends NamedEntry implements ITypeEntry {
 	public IIndexEntry[] getBaseTypes() {
 		return baseTypes;
 	}
+
+    public IIndexEntry[] getFriends() {
+        return friends;
+    }
+
+    public void setFriends(IIndexEntry[] friends) {
+        this.friends = friends;
+    }
 
 }

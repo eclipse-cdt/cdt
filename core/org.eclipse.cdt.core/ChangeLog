@@ -1,3 +1,19 @@
+2005-06-01 Vladimir Hirsl
+	Modified DOM indexer to use IIndexEntry hierarchy to store index entries.
+	This enables more information to be stored during indexing (modifiers, function sigantures,...)
+	Also should address definition/declaration issues raised by Devin.
+	
+	* index/org/eclipse/cdt/internal/core/index/FunctionEntry.java
+	* index/org/eclipse/cdt/internal/core/index/IFunctionEntry.java
+	* index/org/eclipse/cdt/internal/core/index/IIndex.java
+	* index/org/eclipse/cdt/internal/core/index/ITypeEntry.java
+	* index/org/eclipse/cdt/internal/core/index/TypeEntry.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexerOutputWrapper.java
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexVisitorUtil.java
+
 2005-05-25 David Inglis
 	
 	CModel performance improvement: only need to test project existance and nature for ICElement.exists()

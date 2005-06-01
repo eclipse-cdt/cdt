@@ -26,12 +26,18 @@ public class FunctionEntry extends NamedEntry implements IFunctionEntry {
 
 	public char[][] getSignature() {
 		return signature;
-
 	}
+
+    public void setReturnType(char[] returnType) {
+        this.returnString = returnType;
+    }
+    
+    public char[] getReturnType() {
+        return returnString;
+    }
 
 	public void serialize(IIndexerOutput output) {
 		output.addIndexEntry(this);
 	}
-
 
 }

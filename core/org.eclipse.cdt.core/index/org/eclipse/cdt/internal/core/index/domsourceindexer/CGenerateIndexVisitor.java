@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.internal.core.index.FunctionEntry;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexerOutputWrapper.EntryType;
+import org.eclipse.cdt.internal.core.index.NamedEntry;
+import org.eclipse.cdt.internal.core.index.TypeEntry;
 
 public class CGenerateIndexVisitor extends CASTVisitor {
     private DOMSourceIndexerRunner indexer; 
@@ -123,57 +125,100 @@ public class CGenerateIndexVisitor extends CASTVisitor {
      * @throws DOMException 
      */
     private void processNameBinding(IASTName name, IBinding binding, IASTFileLocation loc, int fileNumber) throws DOMException {
+        char[][] qualifiedName = getFullyQualifiedName(name);
+        IASTFileLocation fileLoc = IndexEncoderUtil.getFileLocation(name);
+        
+        // determine entryKind
+        int entryKind = IIndex.UNKNOWN;
+        if (name.isDefinition()){
+            entryKind = IIndex.DEFINITION;
+        }
+        else if (name.isDeclaration()) {
+            entryKind = IIndex.DECLARATION;
+        }
+        else if (name.isReference()) {
+            entryKind = IIndex.REFERENCE;
+        }
+        
         // determine type
-        EntryType entryType = null;
         if (binding instanceof ICompositeType) {
+            int iEntryType = 0;
             int compositeKey = ((ICompositeType) binding).getKey();
             ASTNodeProperty prop = name.getPropertyInParent();
             switch (compositeKey) {
                 case ICompositeType.k_struct:
-                    entryType = IndexerOutputWrapper.STRUCT;
+                    iEntryType = IIndex.TYPE_STRUCT;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
-                        entryType = IndexerOutputWrapper.FWD_STRUCT;
+                        iEntryType = IIndex.TYPE_FWD_STRUCT;
                     break;
                 case ICompositeType.k_union:
-                    entryType = IndexerOutputWrapper.UNION;
+                    iEntryType = IIndex.TYPE_UNION;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
-                        entryType = IndexerOutputWrapper.FWD_UNION;
+                        iEntryType = IIndex.TYPE_FWD_UNION;
                     break;
             }
-        }
-        else if (binding instanceof IEnumeration)
-            entryType = IndexerOutputWrapper.ENUM;
-        else if (binding instanceof ITypedef)
-            entryType = IndexerOutputWrapper.TYPEDEF;
-        else if (binding instanceof IEnumerator)
-            entryType = IndexerOutputWrapper.ENUMERATOR;
-        else if (binding instanceof IField) 
-            entryType = IndexerOutputWrapper.FIELD;
-        else if (binding instanceof IParameter ||
-                 binding instanceof IVariable) 
-            entryType = IndexerOutputWrapper.VAR;
-        else if (binding instanceof IFunction)
-            entryType = IndexerOutputWrapper.FUNCTION;
-        
-        if (entryType != null) {
-			int entryKind=0;
-            if (name.isDeclaration()) {
-               entryKind=IIndex.DECLARATION;
-            }/* else if (name.isDefinition()){                 
-				entryKind=IIndex.DEFINITION;	
-            }*/
-            else if (name.isReference()) {
-               entryKind=IIndex.REFERENCE;
+            int modifiers = 0;
+            if (entryKind != IIndex.REFERENCE) {
+                modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-			
-		 IndexerOutputWrapper.addIndexEntry(indexer.getOutput(),
-                 getFullyQualifiedName(name),
-                 entryType,
-                 entryKind,
-				 fileNumber, 
-                 loc.getNodeOffset(),
-                 loc.getNodeLength(),
-                 IIndex.OFFSET);
+            TypeEntry indexEntry = new TypeEntry(iEntryType, entryKind, qualifiedName, modifiers, fileNumber);
+            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+
+            indexEntry.serialize(indexer.getOutput());
+        }
+        else if (binding instanceof IEnumeration){
+            int modifiers = 0;
+            if (entryKind != IIndex.REFERENCE) {
+                modifiers = IndexVisitorUtil.getModifiers(name, binding);
+            }
+            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_ENUM, entryKind, qualifiedName, modifiers, fileNumber);
+            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+
+            indexEntry.serialize(indexer.getOutput());
+        }
+        else if (binding instanceof ITypedef) {
+            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_TYPEDEF, entryKind, qualifiedName, 0, fileNumber);
+            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+    
+            indexEntry.serialize(indexer.getOutput());
+        }
+        else if (binding instanceof IEnumerator) {
+            NamedEntry indexEntry = new NamedEntry(IIndex.ENUMTOR, entryKind, qualifiedName, 0, fileNumber);
+            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+
+            indexEntry.serialize(indexer.getOutput());
+        }
+        else if (binding instanceof IField) { 
+            int modifiers = 0;
+            if (entryKind != IIndex.REFERENCE) {
+                modifiers = IndexVisitorUtil.getModifiers(name, binding);
+            }
+            NamedEntry indexEntry = new NamedEntry(IIndex.FIELD, entryKind, qualifiedName, modifiers, fileNumber);
+            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+
+            indexEntry.serialize(indexer.getOutput());
+        }
+        else if (binding instanceof IParameter ||
+                 binding instanceof IVariable) { 
+            int modifiers = 0;
+            if (entryKind != IIndex.REFERENCE) {
+                modifiers = IndexVisitorUtil.getModifiers(name, binding);
+            }
+            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_VAR, entryKind, qualifiedName, modifiers, fileNumber);
+            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+
+            indexEntry.serialize(indexer.getOutput());
+        }
+        else if (binding instanceof IFunction) {
+            int modifiers = 0;
+            if (entryKind != IIndex.REFERENCE) {
+                modifiers = IndexVisitorUtil.getModifiers(name, binding);
+            }
+            FunctionEntry indexEntry = new FunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
+            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
+
+            indexEntry.serialize(indexer.getOutput());
         }
     }
 

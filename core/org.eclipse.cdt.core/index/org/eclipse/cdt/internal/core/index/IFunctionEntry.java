@@ -16,4 +16,6 @@ public interface IFunctionEntry extends INamedEntry  {
 	
     public char[][] getSignature();
 	
+    public char[] getReturnType();
+    
 }

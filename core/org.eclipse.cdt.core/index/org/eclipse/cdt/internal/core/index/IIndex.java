@@ -56,6 +56,7 @@ public interface IIndex {
 	final static int TYPE_FWD_UNION = 11;
 	
 	// type
+    final static int UNKNOWN = 0;
     final static int DECLARATION = 1;
     final static int REFERENCE = 2;
     final static int DEFINITION = 3;

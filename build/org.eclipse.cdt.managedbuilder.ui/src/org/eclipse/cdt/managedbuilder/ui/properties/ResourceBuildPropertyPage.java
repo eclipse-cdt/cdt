@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,20 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IFile;
@@ -27,6 +32,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -77,6 +83,11 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	private static final String MANAGE_TITLE = PREFIX + ".manage.title"; //$NON-NLS-1$
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 20, 30 };
 	private static final String ID_SEPARATOR = "."; //$NON-NLS-1$
+	private static final String MSG_UNSUPPORTED_PROJ = PREFIX + ".unsupported.proj"; //$NON-NLS-1$
+	private static final String MSG_UNSUPPORTED_CONFIG = PREFIX + ".unsupported.config"; //$NON-NLS-1$
+	private static final String MSG_CONFIG_NOTSELECTED = PREFIX + ".config.notselected"; //$NON-NLS-1$
+	private static final String MSG_RC_NON_BUILD = PREFIX + ".rc.non.build"; //$NON-NLS-1$
+	private static final String MSG_RC_GENERATED = PREFIX + ".rc.generated"; //$NON-NLS-1$
 
 	/*
 	 * Dialog widgets
@@ -86,7 +97,7 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 
 //	private Point lastShellSize;
 	private Button excludedCheckBox;
-
+	
 	/*
 	 * Bookeeping variables
 	 */
@@ -135,28 +146,33 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		if (openMBSProject) {
 		    contentForMBSFile(composite);
 		} else {
-		    noContent(composite);
+		    noContent(composite,ManagedBuilderUIMessages.getResourceString(NOTMBSFILE_LABEL));
 		}
 		
 		return composite;
 	}
-		
+	
 	protected void contentForMBSFile(Composite composite) {
 		GridData gd;
-		
+
 		//	Initialize the key data
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		String error = null;
 		if (info.getVersion() == null) {
-			// Display a message page instead of the properties control
-			final Label invalidInfo = new Label(composite, SWT.LEFT);
-			invalidInfo.setFont(composite.getFont());
-			invalidInfo.setText(ManagedBuilderUIMessages.getResourceString("ResourceBuildPropertyPage.error.version_low")); //$NON-NLS-1$
-			invalidInfo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING,GridData.VERTICAL_ALIGN_CENTER, true, true));
-			noContentOnPage = true;
-			noDefaultAndApplyButton();
-			return;
+			error = ManagedBuilderUIMessages.getResourceString("ResourceBuildPropertyPage.error.version_low"); //$NON-NLS-1$
+		} else {
+			IFile file = (IFile)getElement();
+			if(isGeneratedResource(file))
+				error = ManagedBuilderUIMessages.getResourceString(MSG_RC_GENERATED);
+			else if(!isBuildResource(file))
+				error = ManagedBuilderUIMessages.getResourceString(MSG_RC_NON_BUILD);
 		}
 		
+		if(error != null){
+			noContent(composite,error);
+			return;
+		}
+
 		// Add a config selection area
 		Group configGroup = ControlFactory.createGroup(composite, ManagedBuilderUIMessages.getResourceString(ACTIVE_RESOURCE_LABEL), 1);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -177,7 +193,6 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		excludedCheckBox.setToolTipText(ManagedBuilderUIMessages.getResourceString(EXCLUDE_TIP));
 
 		FormData fd = new FormData();
-		fd = new FormData();
 		fd.left = new FormAttachment(excludedCheckBox, 0, SWT.CENTER);
 		excludedCheckBox.setLayoutData(fd);
 
@@ -208,15 +223,15 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		gd = new GridData(GridData.FILL_BOTH);
 		tabGroup.setLayoutData(gd);
 		fOptionBlock.createContents(tabGroup, getElement());
-		
+
 		//	Update the contents of the configuration widget
 		populateConfigurations();
 		WorkbenchHelp.setHelp(composite,ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
 	}
 	
-	protected void noContent(Composite composite) {
+	protected void noContent(Composite composite, String message) {
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(ManagedBuilderUIMessages.getResourceString(NOTMBSFILE_LABEL));
+		label.setText(message);
 		label.setFont(composite.getFont());
 
 		noContentOnPage = true;
@@ -319,8 +334,95 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		}
 		return;
 	}
-
 	
+	/*
+	 * This method updates the property page message
+	 */
+	private void doUpdateMessage(){
+		if(selectedConfiguration != null){
+			if(selectedConfiguration.isSupported()){
+				setMessage(null,IMessageProvider.NONE);
+			}
+			else{
+				IManagedProject mngProj = selectedConfiguration.getManagedProject();
+				IProjectType projType = mngProj != null ? mngProj.getProjectType() : null;
+				if(projType != null && !projType.isSupported())
+					setMessage(ManagedBuilderUIMessages.getResourceString(MSG_UNSUPPORTED_PROJ),IMessageProvider.WARNING);
+				else
+					setMessage(ManagedBuilderUIMessages.getResourceString(MSG_UNSUPPORTED_CONFIG),IMessageProvider.WARNING);
+			}
+		} else {
+			setMessage(ManagedBuilderUIMessages.getResourceString(MSG_CONFIG_NOTSELECTED),IMessageProvider.WARNING);
+		}
+		getContainer().updateMessage();
+	}
+
+	/*
+	 * Returns true if the given resource is created by the buildfile generator
+	 */
+	public boolean isGeneratedResource(IFile file){
+		IConfiguration cfg = getSelectedConfiguration();
+		IProject project = getProject();
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		if(cfg == null)
+			cfg = info.getDefaultConfiguration();
+
+		if(cfg != null && info != null){
+			IManagedBuilderMakefileGenerator makeGen = ManagedBuildManager.getBuildfileGenerator(cfg);
+			makeGen.initialize(project,info,null);
+			return makeGen.isGeneratedResource(file);
+		}
+		return false;
+	}
+	
+	/*
+	 * Returns true if the tool-chain used in the given configuration 
+	 * can build the resource
+	 *  
+	 * @param file
+	 * @param cfg
+	 * @return
+	 */
+	public boolean isBuildResource(IFile file, IConfiguration cfg){
+		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(file.getFullPath().toOSString());
+		if(rcCfg != null){
+			ITool tools[] = rcCfg.getTools();
+			if(tools != null && tools.length > 0)
+				return true;
+		} else {
+			String ext = file.getFileExtension();
+			ITool[] tools = cfg.getFilteredTools();
+			for (int index = 0; index < tools.length; index++) {
+				ITool tool = tools[index];
+				if (tool.buildsFileType(ext))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * Returns true if the given resource can be built by at list one configuration 
+	 * defined for the resource project
+	 */
+	public boolean isBuildResource(IFile file){
+		IProject project = file.getProject();
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		if(info != null){
+			IManagedProject managedProject = info.getManagedProject();
+			if(managedProject != null){
+				IConfiguration cfgs[] = managedProject.getConfigurations();
+				if(cfgs != null && cfgs.length > 0){
+					for(int i = 0; i < cfgs.length; i++){
+						if(isBuildResource(file,cfgs[i]))
+							return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -348,30 +450,30 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		//	If the user did not visit this page, then there is nothing to do.
 		if (!displayedConfig) return true;
 
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				fOptionBlock.performApply(monitor);
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					fOptionBlock.performApply(monitor);
+				}
+			};
+			IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
+			try {
+				new ProgressMonitorDialog(getShell()).run(false, true, op);
+			} catch (InvocationTargetException e) {
+				Throwable e1 = e.getTargetException();
+				ManagedBuilderUIPlugin.errorDialog(getShell(), ManagedBuilderUIMessages.getResourceString("ManagedProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
+				return false;
+			} catch (InterruptedException e) {
+				// cancelled
+				return false;
 			}
-		};
-		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
-		try {
-			new ProgressMonitorDialog(getShell()).run(false, true, op);
-		} catch (InvocationTargetException e) {
-			Throwable e1 = e.getTargetException();
-			ManagedBuilderUIPlugin.errorDialog(getShell(), ManagedBuilderUIMessages.getResourceString("ManagedProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
-			return false;
-		} catch (InterruptedException e) {
-			// cancelled
-			return false;
-		}
-
-		// Write out the build model info
+	
+			// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
-		if ( getCurrentResourceConfig().isExcluded() != isExcluded() ) {
-			getCurrentResourceConfig().setExclude(isExcluded());
-			selectedConfiguration.setRebuildState(true);
-		}
-		
+			if ( getCurrentResourceConfig().isExcluded() != isExcluded() ) {
+				getCurrentResourceConfig().setExclude(isExcluded());
+				selectedConfiguration.setRebuildState(true);
+			}
+
 		ManagedBuildManager.saveBuildInfo(getProject(), false);
 		return true;
 	}

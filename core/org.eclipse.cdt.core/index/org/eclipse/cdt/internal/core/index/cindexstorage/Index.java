@@ -32,10 +32,8 @@ import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.MergeFactory;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.SimpleIndexInput;
-import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.impl.Int;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
@@ -313,13 +311,8 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 			CCorePlugin.getDefault().cdtLog.flushLog();
 			
 			//Send out notification to listeners;
-			if (indexer instanceof SourceIndexer){
-				IndexDelta indexDelta = new IndexDelta(null,null,IIndexDelta.MERGE_DELTA);
-				((SourceIndexer) indexer).notifyListeners(indexDelta);
-			} else if (indexer instanceof CTagsIndexer) {
-				IndexDelta indexDelta = new IndexDelta(null,null,IIndexDelta.MERGE_DELTA);
-				((CTagsIndexer) indexer).notifyListeners(indexDelta);
-			}
+			IndexDelta indexDelta = new IndexDelta(null,null,IIndexDelta.MERGE_DELTA);
+			indexer.notifyListeners(indexDelta);
 		}
 	}
 

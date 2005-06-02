@@ -39,5 +39,5 @@ public class FunctionEntry extends NamedEntry implements IFunctionEntry {
 	public void serialize(IIndexerOutput output) {
 		output.addIndexEntry(this);
 	}
-
+	
 }

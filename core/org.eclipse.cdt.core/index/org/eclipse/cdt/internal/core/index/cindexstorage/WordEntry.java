@@ -29,6 +29,9 @@ public class WordEntry {
 	//File reference id's
 	private int[] fileRefs;
 	
+	//Modifier bit fields - one for each fileRef
+	private int[] modifiers;
+	
 	//Offset arrays - each fileRef's position in the fileRef array is the
 	//key into the offsets
 	//Offsets are prefixed with LINE or OFFSET designation
@@ -47,6 +50,7 @@ public class WordEntry {
 		this.word= word;
 		fileRefCount= 0;
 		fileRefs= new int[1];
+		modifiers= new int[1];
 		offsets = new int [1][1];
 		offsetLengths = new int[1][1];
 		offsetCount = new int[1];
@@ -71,6 +75,8 @@ public class WordEntry {
 		int newSize= fileRefCount < 4 ? 4 : fileRefCount * 2;
 		//Grow the fileRefs array
 		System.arraycopy(fileRefs, 0, fileRefs= new int[newSize], 0, fileRefCount);
+		//Grow the modifier array
+		System.arraycopy(modifiers, 0, modifiers= new int[newSize], 0, fileRefCount);
 		//Grow the offset array
 		System.arraycopy(offsets, 0, offsets= new int[newSize][1], 0, fileRefCount);
 		//Grow the offsetLengths array
@@ -94,13 +100,15 @@ public class WordEntry {
     /**
 	 * Adds a set of references and records the change in footprint.
      * @param passedOffsetCount
+     * @param modifers 
      * @param offsets
 	 */
-	public void addWordInfo(int[] refs, int[][] passedOffsets, int[][] passedOffsetLengths, int[] passedOffsetCount) {
+	public void addWordInfo(int[] refs, int[][] passedOffsets, int[][] passedOffsetLengths, int[] passedOffsetCount, int[] passedModifers) {
 		int[] newRefs= new int[fileRefCount + refs.length];
 		int[][] newOffsets = new int[fileRefCount + refs.length][];
 		int[][] newOffsetLengths = new int[fileRefCount + refs.length][];
 		int[] newOffSetCount= new int[fileRefCount + refs.length];
+		int[] newModifiers = new int[fileRefCount + refs.length];
 		
 		int pos1= 0;
 		int pos2= 0;
@@ -127,6 +135,7 @@ public class WordEntry {
 				newOffsets[posNew]= offsets[pos1];
 				newOffsetLengths[posNew]=offsetLengths[pos1];
 				newOffSetCount[posNew]=offsetCount[pos1];
+				newModifiers[posNew]=modifiers[pos1]; 
 				posNew++;
 				pos1++;
 			} else {
@@ -135,6 +144,7 @@ public class WordEntry {
 					newOffsets[posNew]=passedOffsets[pos2];
 					newOffsetLengths[posNew]=passedOffsetLengths[pos2];
 					newOffSetCount[posNew]=passedOffsetCount[pos2];
+					newModifiers[posNew]=passedModifers[pos2]; 
 					posNew++;
 				}
 				pos2++;
@@ -144,6 +154,7 @@ public class WordEntry {
 		offsets= newOffsets;
 		offsetLengths=newOffsetLengths;
 		offsetCount=newOffSetCount;
+		modifiers=newModifiers;
 		fileRefCount= posNew;
 	}
 	
@@ -201,6 +212,22 @@ public class WordEntry {
 		offsets[filePosition]=selectedOffsets;
 		offsetLengths[filePosition]=selectedOffsetLengths;
 		return (newSize - fileRefCount + 1) * 4;
+	}
+	
+	public int addModifiers(int modifier, int fileNum){
+		//Get the position in the fileRefs array for this file number - the 
+	    //position acts as an index into the offsets array
+	    int filePosition = getPositionForFile(fileNum);
+	    //File Number wasn't found
+        if (filePosition == -1)
+            return -1;
+        
+        if (modifier <= 0){
+        	int x=4;
+        }
+        
+        modifiers[filePosition]=modifier;
+        return 0;
 	}
 	
 	/**
@@ -330,6 +357,7 @@ public class WordEntry {
 		System.arraycopy(offsets, 0, (offsets = new int[fileRefCount][]), 0,fileRefCount);
 		System.arraycopy(offsetLengths, 0, (offsetLengths = new int[fileRefCount][]), 0,fileRefCount);
 		System.arraycopy(offsetCount, 0,(offsetCount=new int[fileRefCount]),0,fileRefCount);
+		System.arraycopy(modifiers, 0, (modifiers=new int[fileRefCount]),0,fileRefCount);
 		
 		//Store original ref positions in order to generate map
 		int[] originalRefs;
@@ -341,6 +369,7 @@ public class WordEntry {
 	     int[] mapping = new int[fileRefs.length];
 	     figureOutMapping(originalRefs, fileRefs, mapping);
 	     mapOffsets(mapping);
+	     mapModiers(mapping);
 	}
 	
 	/**
@@ -364,6 +393,17 @@ public class WordEntry {
         System.arraycopy(tempOffsetCountArray, 0, offsetCount,0, fileRefLength);
     }
 	
+    private void mapModiers(int[] mapping) {
+    	int fileRefLength = fileRefs.length;
+        int[] tempModifierArray = new int[fileRefLength];
+        
+        for (int i=0; i<mapping.length; i++){
+            int moveTo = mapping[i];
+            tempModifierArray [moveTo] = modifiers[i];
+        }
+        
+        System.arraycopy(tempModifierArray, 0, modifiers,0, fileRefLength);
+    }
     private void figureOutMapping(int[] originalRefs, int[] sortedRefs, int[] mapping){
 	    int position = 0;
         for (int i=0; i<originalRefs.length; i++){
@@ -460,5 +500,29 @@ public class WordEntry {
 		//Put the newly grown array back in place
 		offsetLengths[index]=selectedOffsets;
    }
+   
+   /**
+	 * returns the modifier in the i position in the list of references.
+	 */
+	public int getModifiers(int i) {
+		if (i < fileRefCount) return modifiers[i];
+		throw new IndexOutOfBoundsException();
+	}
+	/**
+	 * Returns the modifiers of the word entry
+	 */
+	public int[] getModifiers() {
+		int[] result= new int[fileRefCount];
+		System.arraycopy(modifiers, 0, result, 0, fileRefCount);
+		return result;
+	}
+	
+	  /**
+     * @param index
+     * @param modifier
+     */
+    public void setModifier(int index, int modifier) {
+        modifiers[index]=modifier;
+    }
 }
 

@@ -17,7 +17,7 @@ public interface ICIndexStorageConstants {
 	 * The signature of the index file.
 	 */
 	
-	public static final String SIGNATURE= "INDEX FILE 0.016"; //$NON-NLS-1$
+	public static final String SIGNATURE= "INDEX FILE 0.017"; //$NON-NLS-1$
 	
 	/**
 	 * The size of a block for a <code>Block</code>.
@@ -86,7 +86,7 @@ public interface ICIndexStorageConstants {
 		"FWD Union" //$NON-NLS-1$
 };
 	
-	final static String[] allSpecifiers = {
+	final static String[] allSpecifiers = {"", //not used  //$NON-NLS-1$ 
 		"private", 		// private        //$NON-NLS-1$
 		"public", 		// public         //$NON-NLS-1$
 		"protected", 	// protected      //$NON-NLS-1$

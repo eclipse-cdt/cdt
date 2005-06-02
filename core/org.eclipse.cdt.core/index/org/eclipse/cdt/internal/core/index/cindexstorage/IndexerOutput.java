@@ -32,20 +32,23 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 		this.index= index;
 	}
 	
-	protected void addRef(int indexedFileNumber, char [][] name, char suffix, int type, int offset, int offsetLength, int offsetType) {
+	protected void addRef(int indexedFileNumber, char [][] name, char suffix, int type, int offset, int offsetLength, int offsetType, int modifiers) {
 		if (indexedFileNumber == 0) {
 			throw new IllegalStateException();
 		}
 		
 		if (offsetLength <= 0)
 			offsetLength = 1;
+		
+		if (modifiers <=0)
+			modifiers = 1;
 		
 		index.addRef(
 				encodeTypeEntry(name, suffix, type),
-                indexedFileNumber, offset, offsetLength, offsetType);
+                indexedFileNumber, offset, offsetLength, offsetType, modifiers);
 	}  
 	
-	protected void addRef(int indexedFileNumber, char[][] name, int meta_kind, int ref, int offset, int offsetLength, int offsetType) {
+	protected void addRef(int indexedFileNumber, char[][] name, int meta_kind, int ref, int offset, int offsetLength, int offsetType, int modifiers) {
 		if (indexedFileNumber == 0) {
 			throw new IllegalStateException();
 		}
@@ -53,9 +56,12 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 		if (offsetLength <= 0)
 			offsetLength = 1;
 		
+		if (modifiers <=0)
+			modifiers = 1;
+		
 		index.addRef(
 				encodeEntry(name, meta_kind, ref), 
-                indexedFileNumber, offset, offsetLength, offsetType);
+                indexedFileNumber, offset, offsetLength, offsetType, modifiers);
 		
 	}
 	
@@ -90,7 +96,7 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 	}
 
 	public void addIncludeRef(int indexedFileNumber, char[][] name, int offset, int offsetLength, int offsetType) {
-	    addRef(indexedFileNumber,  name, IIndex.INCLUDE, IIndex.REFERENCE, offset,offsetLength, offsetType);
+	    addRef(indexedFileNumber,  name, IIndex.INCLUDE, IIndex.REFERENCE, offset,offsetLength, offsetType,1);
 	}
 
 	/**
@@ -183,59 +189,150 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 	     return result;
 	 }
 
-	public void addIndexEntry(IIndexEntry indexEntry) {
+	public void addIndexEntry(IIndexEntry indexEntry) throws IndexEntryNotSupportedException {
 		
 		if (indexEntry == null)
 			return;
 		
-	  if (indexEntry instanceof ITypeEntry){
-			ITypeEntry typeEntry = (ITypeEntry) indexEntry;
-			int indexedFileNumber=typeEntry.getFileNumber();
-			int meta_type = typeEntry.getMetaKind();
-			int type_kind = typeEntry.getTypeKind();
-			int entryType = typeEntry.getEntryType();
-			int modifiers = typeEntry.getModifiers();
-			
-			char[][]name=typeEntry.getFullName();
-			
-			int nameOffset=typeEntry.getNameOffset();
-			int nameOffsetLength=typeEntry.getNameLength();
-			int nameOffsetType=typeEntry.getNameOffsetType();
-			
-			int elementOffset=typeEntry.getElementOffset();
-			int elementOffsetLength=typeEntry.getElementLength();
-			int elementOffsetType=typeEntry.getElementOffsetType();
-			
-			addRef(indexedFileNumber,  name, ICIndexStorageConstants.typeConstants[type_kind], entryType, nameOffset,nameOffsetLength, nameOffsetType);
-			
-		} else if (indexEntry instanceof IFunctionEntry) {
-			IFunctionEntry functionEntry = (IFunctionEntry) indexEntry;
-			int indexedFileNumber=functionEntry.getFileNumber();
-			int meta_type = functionEntry.getMetaKind();
-			int entryType = functionEntry.getEntryType();
-			int modifiers = functionEntry.getModifiers();
-			char[][] sig=functionEntry.getSignature();
-			char[][]name=functionEntry.getFullName();
-			int nameOffset=functionEntry.getNameOffset();
-			int nameOffsetLength=functionEntry.getNameLength();
-			int nameOffsetType=functionEntry.getNameOffsetType();
-			addRef(indexedFileNumber, name, meta_type, entryType, nameOffset,nameOffsetLength, nameOffsetType);
-		} 	
-		else if (indexEntry instanceof INamedEntry){
-			INamedEntry nameEntry = (INamedEntry) indexEntry;
-			int indexedFileNumber=nameEntry.getFileNumber();
-			int meta_type = nameEntry.getMetaKind();
-			int entryType = nameEntry.getEntryType();
-			int modifiers = nameEntry.getModifiers();
-			char[][]name=nameEntry.getFullName();
-			int nameOffset=nameEntry.getNameOffset();
-			int nameOffsetLength=nameEntry.getNameLength();
-			int nameOffsetType=nameEntry.getNameOffsetType();
-			int elementOffset=nameEntry.getElementOffset();
-			int elementOffsetLength=nameEntry.getElementLength();
-			int elementOffsetType=nameEntry.getElementOffsetType();
-			addRef(indexedFileNumber,  name, meta_type, entryType, nameOffset,nameOffsetLength, nameOffsetType);
+		throw new IndexEntryNotSupportedException("Index Entry type not supported - need to add handler"); //$NON-NLS-1$
+	}
+
+	public void addIndexEntry(ITypeEntry typeEntry) {
+		int indexedFileNumber=typeEntry.getFileNumber();
+		int meta_type = typeEntry.getMetaKind();
+		int type_kind = typeEntry.getTypeKind();
+		int entryType = typeEntry.getEntryType();
+		int modifiers = typeEntry.getModifiers();
+		
+		char[][]name=typeEntry.getFullName();
+		
+		int nameOffset=typeEntry.getNameOffset();
+		int nameOffsetLength=typeEntry.getNameLength();
+		int nameOffsetType=typeEntry.getNameOffsetType();
+		
+		int elementOffset=typeEntry.getElementOffset();
+		int elementOffsetLength=typeEntry.getElementLength();
+		int elementOffsetType=typeEntry.getElementOffsetType();
+		
+		if (modifiers <= 0)
+			modifiers = 1;
+		
+		addRef(indexedFileNumber,  name, ICIndexStorageConstants.typeConstants[type_kind], entryType, nameOffset,nameOffsetLength, nameOffsetType, modifiers);
+		
+		IIndexEntry[] baseClasses = typeEntry.getBaseTypes();
+		if (baseClasses != null &&
+			baseClasses.length > 0){
+			for (int i=0; i<baseClasses.length; i++){
+				char[][] baseName= ((INamedEntry) baseClasses[i]).getFullName();
+				addRef(indexedFileNumber, baseName, ICIndexStorageConstants.DERIVED_SUFFIX, IIndex.DECLARATION, nameOffset,nameOffsetLength, nameOffsetType, 1);
+			}
 		}
+	}
+
+	public void addIndexEntry(INamedEntry nameEntry) {
+		int indexedFileNumber=nameEntry.getFileNumber();
+		int meta_type = nameEntry.getMetaKind();
+		int entryType = nameEntry.getEntryType();
+		int modifiers = nameEntry.getModifiers();
+		char[][]name=nameEntry.getFullName();
+		int nameOffset=nameEntry.getNameOffset();
+		int nameOffsetLength=nameEntry.getNameLength();
+		int nameOffsetType=nameEntry.getNameOffsetType();
+		int elementOffset=nameEntry.getElementOffset();
+		int elementOffsetLength=nameEntry.getElementLength();
+		int elementOffsetType=nameEntry.getElementOffsetType();
+		
+		if (modifiers <= 0)
+			modifiers = 1;
+		
+		addRef(indexedFileNumber,  name, meta_type, entryType, nameOffset,nameOffsetLength, nameOffsetType, modifiers);
+	}
+
+	public void addIndexEntry(IFunctionEntry functionEntry) {
+		int indexedFileNumber=functionEntry.getFileNumber();
+		int meta_type = functionEntry.getMetaKind();
+		int entryType = functionEntry.getEntryType();
+		int modifiers = functionEntry.getModifiers();
+		char[][] sig=functionEntry.getSignature();
+		char[][]name=functionEntry.getFullName();
+		char[]returnName=functionEntry.getReturnType();
+		int sigL=0, nameL=0, returnNameL=0;
+		
+		int totalSize=0;
+		
+		//Get the size of the signature
+		if (sig != null){
+			sigL=sig.length;
+			totalSize+=sigL + 2;
+		}
+		//Get the size of the name
+		if (name != null ){
+			nameL=name.length;
+			totalSize+=nameL;
+		}	
+		//If return type is included it will be only 1 element
+		if (returnName != null ){
+			returnNameL=1;
+			totalSize+=returnNameL + 2;
+		}
+		char[][] finalName = new char[totalSize][];
+
+		int positionCounter=0;
+		if (sig != null){
+			char[][] startParm= new char[1][];
+			char[] tempParm = {'('};
+			startParm[0] = tempParm;
+			
+			char[][] endParm= new char[1][];
+			char[] tempParm2 = {')'};
+			endParm[0] = tempParm2;
+			
+			//Copy the signature delimiter in the final array starting where the name left off, length 1
+			System.arraycopy(startParm, 0, finalName,positionCounter, 1);
+			positionCounter+=1;
+			//Copy the signature to the final array starting where the name left off + 1 for the delimiter, length signature length
+			System.arraycopy(sig, 0, finalName, positionCounter, sigL);
+			positionCounter+=sigL;
+			//Copy the signature delimiter in the final array starting where the name left off, length 1
+			System.arraycopy(endParm, 0, finalName, positionCounter, 1);
+			positionCounter+=1;
+		}
+		
+		if (returnName != null){
+			char[][] startParm= new char[1][];
+			String tempParm = "R("; //$NON-NLS-1$
+			startParm[0] = tempParm.toCharArray();
+			
+			char[][] endParm= new char[1][];
+			String tempParm2 = ")R"; //$NON-NLS-1$
+			endParm[0] = tempParm2.toCharArray();
+			
+			char[][] tempReturn = new char[1][];
+			tempReturn[0] = returnName;
+			
+			//Copy the signature delimiter in the final array starting where the name left off, length 1
+			System.arraycopy(startParm, 0, finalName,positionCounter, 1);
+			positionCounter+=1;
+			//Copy the signature to the final array starting where the name left off + 1 for the delimiter, length signature length
+			System.arraycopy(tempReturn, 0, finalName, positionCounter, returnNameL);
+			positionCounter+=returnNameL;
+			//Copy the signature delimiter in the final array starting where the name left off, length 1
+			System.arraycopy(endParm, 0, finalName, positionCounter, 1);
+			positionCounter+=1;
+		}
+		
+		//copy name to first part of the array
+		if (name != null)
+			System.arraycopy(name, 0, finalName,positionCounter, nameL);
+		
+		int nameOffset=functionEntry.getNameOffset();
+		int nameOffsetLength=functionEntry.getNameLength();
+		int nameOffsetType=functionEntry.getNameOffsetType();
+		
+		if (modifiers <= 0)
+			modifiers = 1;
+		
+		addRef(indexedFileNumber, finalName, meta_type, entryType, nameOffset,nameOffsetLength, nameOffsetType, modifiers);
 	}
 
 }

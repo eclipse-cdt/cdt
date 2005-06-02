@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Util;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.core.resources.IFile;
@@ -54,7 +55,8 @@ public class MethodDeclarationPattern extends CSearchPattern {
 
 	private char[]   decodedSimpleName;
 	private char[][] decodedQualifications;
-
+	private char[][] decodedParameters;
+	
 	public MethodDeclarationPattern(char[] name, char[][] qual, char [][] params, int matchMode, SearchFor search, LimitTo limitTo, boolean caseSensitive) {
 		//super( name, params, matchMode, limitTo, caseSensitive );
 		super( matchMode, caseSensitive, limitTo );
@@ -148,10 +150,43 @@ public class MethodDeclarationPattern extends CSearchPattern {
 		this.decodedSimpleName = entryResult.extractSimpleName().toCharArray();	
 		String []missmatch = entryResult.getEnclosingNames();
 		if(missmatch != null) {
-			this.decodedQualifications = new char[missmatch.length][];
-			for (int i = 0; i < missmatch.length; i++)
-				this.decodedQualifications[i] = missmatch[i].toCharArray();
+			
+			//Find the first opening braces
+			int start=0;
+			int end=0;
+			boolean parmsExist=false;
+			for (int i=0; i<missmatch.length; i++){
+				if (missmatch[i].equals("(")){ //$NON-NLS-1$
+					start=i;
+					parmsExist=true;
+				}
+				
+				if (missmatch[i].equals(")")){ //$NON-NLS-1$
+					end=i;
+					break;
+				}
+			}
+			
+			if (parmsExist){
+				this.decodedParameters = new char[end - (start + 1)][];
+				
+				int counter=0;
+				for (int i=start+1; i<end; i++){
+					decodedParameters[counter++]=missmatch[i].toCharArray();
+				}
+				this.decodedQualifications = new char[missmatch.length - (end + 1)][];
+				counter=0;
+				for (int i = end + 1; i < missmatch.length; i++)
+					this.decodedQualifications[counter++] = missmatch[i].toCharArray();
+			} else {
+				this.decodedParameters = new char[0][];
+				this.decodedQualifications = new char[missmatch.length][];
+				for (int i = 0; i < missmatch.length; i++)
+					this.decodedQualifications[i] = missmatch[i].toCharArray();
+			}
+			
 		}
+			
 	}
 
 	protected boolean matchIndexEntry() {
@@ -166,9 +201,38 @@ public class MethodDeclarationPattern extends CSearchPattern {
 			return false;
 		}
 		
+		if( !matchParameters( parameterNames, decodedParameters ) ){
+			return false;
+		}
+		
 		return true;
 	}
 	
+	private boolean matchParameters(char[][] parameterNames2, char[][] decodedParameters2) {
+		
+		if (parameterNames2.length == 0)
+			return true;
+		
+		//Check lengths of decoded
+		if (decodedParameters2.length != parameterNames2.length)
+			return false;
+		
+		for (int i=0; i<parameterNames2.length; i++){
+			boolean matchFound=false;
+			for (int j=0; j<decodedParameters2.length; j++){
+				if (Util.compare(parameterNames2[i],decodedParameters[j])==0){
+					matchFound=true;
+					break;
+				}
+			}
+			
+			if (!matchFound)
+				 return false;
+			
+		}
+		return true;
+	}
+
 	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] fileRefs, int[][] offsets, int[][] offsetLengths,IndexInput input, ICSearchScope scope) throws IOException {
 
 		for (int i = 0, max = fileRefs.length; i < max; i++) {

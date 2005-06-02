@@ -85,6 +85,14 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 		        codeStream.writeGamma(ref);
 		    }
 		}
+		//encode modifiers
+		//number of modifiers same as number of files
+		for (int i= 0; i < n; ++i) {
+			int ref= entry.getModifiers(i);
+			  if (ref <= 0)
+		            throw new IllegalArgumentException();
+			codeStream.writeGamma(ref);
+		}
 	}
 	/**
 	 * @see IndexBlock#addEntry
@@ -190,6 +198,12 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 					tempOffsetLengthArray[j] = ref;
 				}
 				entry.setOffsetLengths(i, tempOffsetLengthArray);
+			}
+			
+			//read in modifiers
+			for (int i= 0; i < n; ++i) {
+				int ref= readCodeStream.readGamma();
+				entry.setModifier(i,ref);
 			}
 	
 			offset= readCodeStream.byteLength();

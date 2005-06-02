@@ -8,6 +8,7 @@ import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -79,6 +80,11 @@ public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
 	public boolean shouldIndex(IFile file) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public void notifyListeners(IndexDelta indexDelta) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

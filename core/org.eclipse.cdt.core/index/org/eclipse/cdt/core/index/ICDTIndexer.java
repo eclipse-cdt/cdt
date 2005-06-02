@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
+import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
@@ -104,7 +105,13 @@ public interface ICDTIndexer extends IIndexer {
 	 */
 	public void notifyIndexerChange(IProject project);
 
-
+	/**
+	 * Called by the index manager when a project has switched indexers to this
+	 * type of indexer - can be used by the indexer to schedule initial jobs
+	 * @param project - the project that has changed indexers
+	 */
+	public void notifyListeners(IndexDelta indexDelta);
+	
     /**
      * Returns if this indexer is enabled
      * @param project

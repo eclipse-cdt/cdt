@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexEntryNotSupportedException;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 
 /**
@@ -19,7 +20,11 @@ import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 
 public interface IIndexerOutput {
 	
-	public void addIndexEntry(IIndexEntry indexEntry);
+	public void addIndexEntry(IIndexEntry indexEntry) throws IndexEntryNotSupportedException;
+	
+	public void addIndexEntry(ITypeEntry indexEntry);
+	public void addIndexEntry(INamedEntry indexEntry);
+	public void addIndexEntry(IFunctionEntry indexEntry);
 	
 	public IndexedFileEntry  getIndexedFile(String path); 
 	public IndexedFileEntry  addIndexedFile(String path);

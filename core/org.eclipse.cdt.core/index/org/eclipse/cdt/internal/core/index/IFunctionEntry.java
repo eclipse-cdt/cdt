@@ -15,7 +15,5 @@ package org.eclipse.cdt.internal.core.index;
 public interface IFunctionEntry extends INamedEntry  {
 	
     public char[][] getSignature();
-	
-    public char[] getReturnType();
-    
+	public char[] getReturnType();
 }

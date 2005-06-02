@@ -65,13 +65,14 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
 		//first check if we already know it
 	    IASTName [] declarations = (IASTName[]) getDeclarations();
 		if( declarations != null ){
-			for( int i = 0; i < declarations.length; i++ ){
-				IASTNode node = declarations[i].getParent();
-				while( !(node instanceof IASTDeclaration ) )
-					node = node.getParent();
-				
-				if( node.getParent() instanceof ICPPASTCompositeTypeSpecifier )
-					return (IASTDeclaration) node;
+			for( int i = -1; i < declarations.length; i++ ){
+				IASTNode node = ( i == -1 ) ? getDefinition() : declarations[i];
+				if( node != null ){
+					while( !(node instanceof IASTDeclaration ) )
+						node = node.getParent();
+					if( node.getParent() instanceof ICPPASTCompositeTypeSpecifier )
+						return (IASTDeclaration) node;
+				}
 			}
 		}
 		
@@ -99,21 +100,25 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
 	public int getVisibility() throws DOMException {
-		IASTDeclaration decl = getPrimaryDeclaration();
-		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
-		IASTDeclaration [] members = cls.getMembers();
 		ICPPASTVisiblityLabel vis = null;
-		for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof ICPPASTVisiblityLabel )
-				vis = (ICPPASTVisiblityLabel) members[i];
-			else if( members[i] == decl )
-				break;
+		IASTDeclaration decl = getPrimaryDeclaration();
+		if( decl != null ) {
+			IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
+			IASTDeclaration [] members = cls.getMembers();
+			
+			for( int i = 0; i < members.length; i++ ){
+				if( members[i] instanceof ICPPASTVisiblityLabel )
+					vis = (ICPPASTVisiblityLabel) members[i];
+				else if( members[i] == decl )
+					break;
+			}
+		
+			if( vis != null ){
+				return vis.getVisibility();
+			} else if( cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class ){
+				return ICPPASTVisiblityLabel.v_private;
+			}
 		}
-		if( vis != null ){
-			return vis.getVisibility();
-		} else if( cls.getKey() == ICPPASTCompositeTypeSpecifier.k_class ){
-			return ICPPASTVisiblityLabel.v_private;
-		} 
 		return ICPPASTVisiblityLabel.v_public;
 	}
 	

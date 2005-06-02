@@ -57,9 +57,7 @@ import org.eclipse.core.runtime.Platform;
 public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
     // Managed make per project scanner configuration discovery profile
     public static final String MM_PP_DISCOVERY_PROFILE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".GCCManagedMakePerProjectProfile"; //$NON-NLS-1$
-    private static final String SPECS_FILE_PROVIDER = "specsFile"; //$NON-NLS-1$
     
-	private static final String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	private static final String ERROR_HEADER = "PathEntryContainer error [";	//$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
@@ -176,23 +174,27 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
         final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.
                 createScannerConfigBuildInfo2(MakeCorePlugin.getDefault().getPluginPreferences(),
                         profileInstance.getProfile().getId(), false);
-        final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider(SPECS_FILE_PROVIDER);
-        
-		// Set the arguments for the provider
-		
-		ISafeRunnable runnable = new ISafeRunnable() {
-			public void run() {
-				IProgressMonitor monitor = new NullProgressMonitor();
-				esiProvider.invokeProvider(monitor, project, SPECS_FILE_PROVIDER, buildInfo, collector);
-			}
-
-			public void handleException(Throwable exception) {
-				if (exception instanceof OperationCanceledException) {
-					throw (OperationCanceledException) exception;
+        List providerIds = buildInfo.getProviderIdList();
+        for (Iterator i = providerIds.iterator(); i.hasNext(); ) {
+        	final String providerId = (String) i.next();
+	        final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider(providerId);
+	        
+			// Set the arguments for the provider
+			
+			ISafeRunnable runnable = new ISafeRunnable() {
+				public void run() {
+					IProgressMonitor monitor = new NullProgressMonitor();
+					esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector);
 				}
-			}
-		};
-		Platform.run(runnable);
+	
+				public void handleException(Throwable exception) {
+					if (exception instanceof OperationCanceledException) {
+						throw (OperationCanceledException) exception;
+					}
+				}
+			};
+			Platform.run(runnable);
+        }
 	}
 
 	/* (non-Javadoc)

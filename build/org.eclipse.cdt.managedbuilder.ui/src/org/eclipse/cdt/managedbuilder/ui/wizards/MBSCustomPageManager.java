@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -363,11 +364,11 @@ public final class MBSCustomPageManager
 				while (toolchainIterator.hasNext())
 				{
 					IToolChain toolchain = (IToolChain) toolchainIterator.next();
+					String id = ManagedBuildManager.getIdFromIdAndVersion(toolchain.getId());
+					String version = ManagedBuildManager.getVersionFromIdAndVersion(toolchain.getId());
 
-					// get the ID and version
-					// version support in MBS is not complete yet so just check the id for now
-					// TODO:  implement version support
-					if (toolchain.getId().equals(toolchainData[k].getId()))
+					// check the ID and version
+					if (page.shouldBeVisibleForToolchain(id, version))
 					{
 						return true;
 					}

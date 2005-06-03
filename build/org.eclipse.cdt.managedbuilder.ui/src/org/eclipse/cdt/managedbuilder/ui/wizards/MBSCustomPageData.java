@@ -187,20 +187,21 @@ public final class MBSCustomPageData
 		{
 			ToolchainData tcd = (ToolchainData) iterator.next();
 
-			// look for toolchain with same id
+			// look for toolchain with same id.  The id in the tool-chain data should never
+			// contain a version suffix.
 			if (tcd.getId().equals(id))
 			{
 				// if we don't check versions then we're done
-				if (version == null)
+				if (tcd.getVersionsSupported() == null)
 					return true;
 
-				// does the toolchain have a compatible version?
+				
+				
+				// is the toolchain of one of the specified versions?
 				for (int k = 0; k < tcd.getVersionsSupported().length; k++)
 				{
-					// TODO:  implement version support - should this check for an exact match?
-					//        An older version of a tool-chain could use a different custom page
-					//        than a newer version.
-					if (tcd.getVersionsSupported()[k].compareTo(version) >= 0)
+					// check for an exact version match
+					if (tcd.getVersionsSupported()[k].equals(version))
 					{
 						return true;
 					}

@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.internal.core.index.FunctionEntry;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.NamedEntry;
 import org.eclipse.cdt.internal.core.index.TypeEntry;
+import org.eclipse.cdt.internal.core.model.Util;
 
 public class CGenerateIndexVisitor extends CASTVisitor {
     private DOMSourceIndexerRunner indexer; 
@@ -70,7 +73,12 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return PROCESS_CONTINUE;
+        catch (Exception e) {
+            // TODO remove
+            e.printStackTrace();
+            Util.log(e, e.toString(), ICLogConstants.CDT);
+        }
+       return PROCESS_CONTINUE;
     }
 
     /* (non-Javadoc)
@@ -95,6 +103,8 @@ public class CGenerateIndexVisitor extends CASTVisitor {
 			return;
 
 		IBinding binding = name.resolveBinding();
+        if (binding == null) return;
+
         // check for IProblemBinding
         if (binding instanceof IProblemBinding) {
             IProblemBinding problem = (IProblemBinding) binding;
@@ -126,8 +136,8 @@ public class CGenerateIndexVisitor extends CASTVisitor {
      */
     private void processNameBinding(IASTName name, IBinding binding, IASTFileLocation loc, int fileNumber) throws DOMException {
         char[][] qualifiedName = getFullyQualifiedName(name);
-        IASTFileLocation fileLoc = IndexEncoderUtil.getFileLocation(name);
-        
+        if (qualifiedName == null) 
+            return;
         // determine entryKind
         int entryKind = IIndex.UNKNOWN;
         if (name.isDefinition()){
@@ -139,6 +149,9 @@ public class CGenerateIndexVisitor extends CASTVisitor {
         else if (name.isReference()) {
             entryKind = IIndex.REFERENCE;
         }
+        else return;
+        
+        IASTFileLocation fileLoc = IndexEncoderUtil.getFileLocation(name);
         
         // determine type
         if (binding instanceof ICompositeType) {
@@ -198,16 +211,20 @@ public class CGenerateIndexVisitor extends CASTVisitor {
 
             indexEntry.serialize(indexer.getOutput());
         }
-        else if (binding instanceof IParameter ||
-                 binding instanceof IVariable) { 
-            int modifiers = 0;
-            if (entryKind != IIndex.REFERENCE) {
-                modifiers = IndexVisitorUtil.getModifiers(name, binding);
+        else if (binding instanceof IVariable &&
+                !(binding instanceof IParameter)) { 
+            // exclude local variables
+            IScope definingScope = binding.getScope();
+            if (definingScope == name.getTranslationUnit().getScope()) {
+                int modifiers = 0;
+                if (entryKind != IIndex.REFERENCE) {
+                    modifiers = IndexVisitorUtil.getModifiers(name, binding);
+                }
+                TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_VAR, entryKind, qualifiedName, modifiers, fileNumber);
+                indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+    
+                indexEntry.serialize(indexer.getOutput());
             }
-            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_VAR, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-
-            indexEntry.serialize(indexer.getOutput());
         }
         else if (binding instanceof IFunction) {
             int modifiers = 0;
@@ -217,6 +234,7 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             FunctionEntry indexEntry = new FunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
             indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
+            indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
             indexEntry.serialize(indexer.getOutput());
         }

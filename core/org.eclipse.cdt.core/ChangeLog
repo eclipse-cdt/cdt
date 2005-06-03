@@ -1,3 +1,11 @@
+2005-06-03 Vladimir Hirsl
+	Fix for PR 93786: DOM Indexer adds local variables to the index
+	Other smaller fixes in DOM Indexer domain.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexVisitorUtil.java
+
 2005-06-01 Vladimir Hirsl
 	Modified DOM indexer to use IIndexEntry hierarchy to store index entries.
 	This enables more information to be stored during indexing (modifiers, function sigantures,...)

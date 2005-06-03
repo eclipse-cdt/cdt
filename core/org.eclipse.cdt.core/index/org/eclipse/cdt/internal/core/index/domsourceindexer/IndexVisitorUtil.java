@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.domsourceindexer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -196,14 +197,12 @@ public class IndexVisitorUtil {
                 }
                 //For performance reasons, use internal interface if possible, since we know the 
                 //index is resolving bindings in order.
-                else if (  (binding instanceof ICPPInternalFunction) ? ((ICPPInternalFunction)functionBinding).isStatic(false) 
-                													 : functionBinding.isStatic() )
-                {
+                else if ((binding instanceof ICPPInternalFunction) ? ((ICPPInternalFunction)functionBinding).isStatic(false) 
+                												   : functionBinding.isStatic()) {
                     modifiers |= IIndex.staticSpecifier;
                 }
                 else if (functionBinding.isInline()) {
-
-                    
+                    modifiers |= IIndex.inlineSpecifier;
                 }
                 if (functionBinding instanceof ICPPFunction) {
                     ICPPFunction cppFunction = (ICPPFunction) functionBinding;
@@ -255,7 +254,7 @@ public class IndexVisitorUtil {
             IType[] parameterTypes = functionType.getParameterTypes();
             for (int i = 0; i < parameterTypes.length; i++) {
                 IType parameterType = parameterTypes[i];
-                parameterList.add(parameterType.toString().toCharArray());
+                parameterList.add(ASTTypeUtil.getType(parameterType).toCharArray());
             }
             if (parameterList.isEmpty()) {
                 parameterList.add("void".toCharArray()); //$NON-NLS-1$
@@ -274,7 +273,7 @@ public class IndexVisitorUtil {
         try {
             IFunctionType functionType = function.getType();
             IType returnType = functionType.getReturnType();
-            return returnType.toString().toCharArray();
+            return ASTTypeUtil.getType(returnType).toCharArray();
         }
         catch (DOMException e) {
         }

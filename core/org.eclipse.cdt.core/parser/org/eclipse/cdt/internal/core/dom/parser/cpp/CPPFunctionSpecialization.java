@@ -195,7 +195,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if( !(n instanceof ICPPASTFunctionDeclarator) )
 			return;
 	    updateParameterBindings( (ICPPASTFunctionDeclarator) n );
-        super.addDefinition( node );
+        super.addDeclaration( node );
 	}
     protected void updateParameterBindings( ICPPASTFunctionDeclarator fdtor ){
         IParameter [] params = null;

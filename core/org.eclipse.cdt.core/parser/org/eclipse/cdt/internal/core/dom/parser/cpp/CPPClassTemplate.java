@@ -274,8 +274,8 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
 	 */
 	public IBinding[] getFriends() {
-		// TODO Auto-generated method stub
-		return null;
+		//TODO
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	/* (non-Javadoc)

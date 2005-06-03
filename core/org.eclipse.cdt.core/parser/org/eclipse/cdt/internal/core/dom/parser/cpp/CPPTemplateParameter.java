@@ -70,16 +70,14 @@ public class CPPTemplateParameter implements ICPPTemplateParameter, ICPPInternal
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
 	 */
 	public String[] getQualifiedName() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] { getName() };
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
 	 */
 	public char[][] getQualifiedNameCharArray() {
-		// TODO Auto-generated method stub
-		return null;
+		return new char [][] {getNameCharArray() };
 	}
 
 	/* (non-Javadoc)

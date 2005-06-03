@@ -64,8 +64,9 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
 	    IASTName [] declarations = (IASTName[]) getDeclarations();
-		if( declarations != null ){
-			for( int i = -1; i < declarations.length; i++ ){
+		if( declarations != null || getDefinition() != null ){
+			int len = ( declarations != null ) ? declarations.length : 0;
+			for( int i = -1; i < len; i++ ){
 				IASTNode node = ( i == -1 ) ? getDefinition() : declarations[i];
 				if( node != null ){
 					while( !(node instanceof IASTDeclaration ) )

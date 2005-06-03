@@ -128,7 +128,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 	 */
 	public IBinding[] getFriends() throws DOMException {
 		// TODO Auto-generated method stub
-		return null;
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 	/* (non-Javadoc)

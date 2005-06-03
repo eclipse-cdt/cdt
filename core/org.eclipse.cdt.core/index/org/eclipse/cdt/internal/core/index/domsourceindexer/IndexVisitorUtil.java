@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.index.IIndex;
 
 /**
@@ -193,7 +194,11 @@ public class IndexVisitorUtil {
                 else if (functionBinding.isRegister()) {
                     modifiers |= IIndex.registerSpecifier;
                 }
-                else if (functionBinding.isStatic()) {
+                //For performance reasons, use internal interface if possible, since we know the 
+                //index is resolving bindings in order.
+                else if (  (binding instanceof ICPPInternalFunction) ? ((ICPPInternalFunction)functionBinding).isStatic(false) 
+                													 : functionBinding.isStatic() )
+                {
                     modifiers |= IIndex.staticSpecifier;
                 }
                 else if (functionBinding.isInline()) {

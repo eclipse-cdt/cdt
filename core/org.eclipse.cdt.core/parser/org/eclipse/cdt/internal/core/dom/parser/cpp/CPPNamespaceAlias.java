@@ -146,4 +146,8 @@ public class CPPNamespaceAlias implements ICPPNamespaceAlias, ICPPInternalBindin
 	public void removeDeclaration(IASTNode node) {
 		
 	}
+
+	public IBinding[] getMemberBindings() throws DOMException {
+		return namespace.getMemberBindings();
+	}
 }

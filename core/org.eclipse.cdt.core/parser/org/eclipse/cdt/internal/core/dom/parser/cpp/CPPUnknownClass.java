@@ -130,4 +130,8 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPClassType 
         return type == this;
     }
 
+	public ICPPClassType[] getNestedClasses() {
+		return ICPPClassType.EMPTY_CLASS_ARRAY;
+	}
+
 }

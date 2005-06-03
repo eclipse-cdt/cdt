@@ -4595,4 +4595,45 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( foo, col.getName(14).resolveBinding() );
 	}
 	
+	public void testBug92425() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class A;                    \n");
+		buffer.append("class A {                   \n");
+		buffer.append("   class B;                 \n");
+		buffer.append("   class C {};              \n");
+		buffer.append("};                          \n");
+		buffer.append("class A::B{};               \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col); 
+		
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+		ICPPClassType C = (ICPPClassType) col.getName(3).resolveBinding();
+		
+		ICPPClassType [] classes = A.getNestedClasses();
+		assertEquals( classes.length, 2 );
+		assertSame( classes[0], B );
+		assertSame( classes[1], C );
+	}
+	
+	public void testBug92425_2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace A {                                  \n"); //$NON-NLS-1$
+        buffer.append("   struct F {} f;                              \n"); //$NON-NLS-1$
+        buffer.append("   void f( int a) {}                           \n"); //$NON-NLS-1$
+        buffer.append("}                                              \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col); 
+		
+		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+		IBinding [] bindings = A.getMemberBindings();
+		assertEquals( bindings.length, 3 );
+		assertSame( bindings[0], col.getName(1).resolveBinding() );
+		assertSame( bindings[1], col.getName(2).resolveBinding() );
+		assertSame( bindings[2], col.getName(3).resolveBinding() );
+	}
 }

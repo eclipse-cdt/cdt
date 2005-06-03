@@ -19,19 +19,29 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -45,6 +55,9 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
         public ICPPNamespaceScope getNamespaceScope() throws DOMException {
             return ((ICPPNamespace)getBinding()).getNamespaceScope();
         }
+		public IBinding[] getMemberBindings() throws DOMException {
+			return ((ICPPNamespace)getBinding()).getMemberBindings();
+		}
     }
 	private static final char[] EMPTY_CHAR_ARRAY = { };
 	
@@ -102,6 +115,63 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 	    }
 	}
 	
+	static private class NamespaceMemberCollector extends CPPASTVisitor {
+		public ObjectSet members = new ObjectSet(8);
+		public NamespaceMemberCollector(){
+			shouldVisitNamespaces = true;
+			shouldVisitDeclarators = true;
+			shouldVisitDeclSpecifiers = true;
+			shouldVisitDeclarations = true;
+		}
+		
+		public int visit(IASTDeclarator declarator) {
+			while( declarator.getNestedDeclarator() != null )
+				declarator = declarator.getNestedDeclarator();
+			
+			IBinding binding = declarator.getName().resolveBinding();
+			if( binding != null && !(binding instanceof IProblemBinding))
+				members.put( binding );
+			
+			return PROCESS_SKIP;
+		}
+		public int visit(IASTDeclSpecifier declSpec) {
+			if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
+				IBinding binding = ((ICPPASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
+				if( binding != null && !(binding instanceof IProblemBinding) )
+					members.put( binding );
+				return PROCESS_SKIP;
+			} else if( declSpec instanceof ICPPASTElaboratedTypeSpecifier ) {
+				IASTNode parent = declSpec.getParent();
+				if( parent instanceof IASTSimpleDeclaration ){
+					if( ((IASTSimpleDeclaration)parent).getDeclarators().length > 0 )
+						return PROCESS_SKIP;
+					
+					IBinding binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
+					if( binding != null && !(binding instanceof IProblemBinding) )
+						members.put( binding );
+					return PROCESS_SKIP;
+				}
+			}
+			return PROCESS_SKIP;
+		}
+		public int visit(ICPPASTNamespaceDefinition namespace) {
+			IBinding binding = namespace.getName().resolveBinding();
+			if( binding != null && !(binding instanceof IProblemBinding) )
+				members.put( binding );
+			return PROCESS_SKIP;
+		}
+		public int visit(IASTDeclaration declaration) {
+			if( declaration instanceof ICPPASTUsingDeclaration ){
+				IBinding binding =((ICPPASTUsingDeclaration)declaration).getName().resolveBinding();
+				if( binding != null && !(binding instanceof IProblemBinding) )
+					members.put( binding );
+				return PROCESS_SKIP;
+			} else if( declaration instanceof IASTFunctionDefinition ){
+				return visit( ((IASTFunctionDefinition)declaration).getDeclarator() );
+			}
+			return PROCESS_CONTINUE;
+		}
+	}
 	private void findAllDefinitions( IASTName namespaceName ){
 	    NamespaceCollector collector = new NamespaceCollector( namespaceName );
 	    ICPPASTNamespaceDefinition nsDef = (ICPPASTNamespaceDefinition) namespaceName.getParent();
@@ -256,6 +326,23 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 				}
 			}
 		}
+	}
+
+	public IBinding[] getMemberBindings() {
+		if( namespaceDefinitions != null ){
+			NamespaceMemberCollector collector = new NamespaceMemberCollector();
+			for (int i = 0; i < namespaceDefinitions.length; i++) {
+				IASTNode parent = namespaceDefinitions[i].getParent();
+				if( parent instanceof ICPPASTNamespaceDefinition ){
+					IASTDeclaration [] decls = ((ICPPASTNamespaceDefinition)parent).getDeclarations();
+					for (int j = 0; j < decls.length; j++) {
+						decls[j].accept( collector );
+					}
+				}
+			}
+			return (IBinding[]) ArrayUtil.trim( IBinding.class, collector.members.keyArray(), true );
+		}
+		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
 }

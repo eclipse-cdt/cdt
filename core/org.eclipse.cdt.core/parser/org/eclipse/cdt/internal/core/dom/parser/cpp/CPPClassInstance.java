@@ -175,4 +175,8 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
         return false;
     }
 
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		return ICPPClassType.EMPTY_CLASS_ARRAY;
+	}
+
 }

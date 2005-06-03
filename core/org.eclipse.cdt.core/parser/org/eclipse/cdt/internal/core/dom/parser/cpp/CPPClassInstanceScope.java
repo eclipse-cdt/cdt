@@ -234,6 +234,8 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	        bindings.remove( name, 0, name.length );
 	    }
 	
+		if( instanceMap != null && instanceMap.containsKey( binding ) )
+			instanceMap.remove( binding );
 		isFullyCached = false;
 	}
 
@@ -260,5 +262,11 @@ public class CPPClassInstanceScope implements ICPPClassScope {
         } else {
             bindings.put( c, binding );
         }
+	}
+	
+	public IBinding getInstance( IBinding binding ){
+		if( instanceMap != null && instanceMap.containsKey( binding ) )
+			return (IBinding) instanceMap.get( binding );
+		return null;
 	}
 }

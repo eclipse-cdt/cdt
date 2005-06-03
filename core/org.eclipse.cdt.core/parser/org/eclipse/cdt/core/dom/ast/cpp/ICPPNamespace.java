@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * This interface represents a C++ namespace
@@ -28,4 +29,11 @@ public interface ICPPNamespace extends ICPPBinding {
 	 * @throws DOMException
 	 */
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
+	
+	/**
+	 * get an array of the all the bindings declared in this namespace.
+	 * @return
+	 * @throws DOMException
+	 */
+	public IBinding [] getMemberBindings() throws DOMException;
 }

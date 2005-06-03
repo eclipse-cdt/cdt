@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeProblem;
 
 /**
  * @author aniefer
@@ -348,4 +349,36 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
     public ICPPDelegate createDelegate( IASTName name ) {
         return new CPPClassTemplateDelegate( name, this );
     }
+
+	public ICPPClassType[] getNestedClasses() {
+		if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new ICPPClassType[] { new CPPClassTypeProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+            }
+        }
+	    IBinding binding = null;
+	    ICPPClassType [] result = null;
+	    
+	    IASTDeclaration [] decls = getCompositeTypeSpecifier().getMembers();
+	    for ( int i = 0; i < decls.length; i++ ) {
+			IASTDeclaration decl = decls[i];
+			while( decl instanceof ICPPASTTemplateDeclaration )
+				decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
+            if( decl instanceof IASTSimpleDeclaration ){
+				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decl).getDeclSpecifier();
+				if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
+					binding = ((ICPPASTCompositeTypeSpecifier)declSpec).getName().resolveBinding();
+				} else if( declSpec instanceof ICPPASTElaboratedTypeSpecifier &&
+						   ((IASTSimpleDeclaration)decl).getDeclarators().length == 0 )
+				{
+					binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
+				}
+				if( binding instanceof ICPPClassType )
+					result = (ICPPClassType[])ArrayUtil.append( ICPPClassType.class, result, binding );
+            } 
+        }
+		return (ICPPClassType[]) ArrayUtil.trim( ICPPClassType.class, result );
+	}
 }

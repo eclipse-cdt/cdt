@@ -176,4 +176,9 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 		}
 		return false;
 	}
+
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

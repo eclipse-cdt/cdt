@@ -24,6 +24,7 @@
          point="org.eclipse.cdt.managedbuilder.ui.newWizardPages">
       <wizardPage
             ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage"
+            operationClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.TestRunnable"
             pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage"/>
       <wizardPage
             ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage"
@@ -39,6 +40,13 @@
             ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage"
             pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage">
          <toolchain  toolchainID="C"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCv20WizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCv20WizardPage">
+         <toolchain
+               toolchainID="C"
+               versionsSupported="2.0.0"/>
       </wizardPage>
       <wizardPage
             ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage"

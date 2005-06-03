@@ -44,12 +44,17 @@ public class TestCustomPageManager extends TestCase
 	private static final String projectTypeDPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage";
 	private static final String projectTypeEPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage";
 	private static final String toolchainFPageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage";
+	private static final String toolchainCv20PageName = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCv20WizardPage";
+	
+	public static boolean testFlag = false;
 	
 	public void setUp() throws Exception
 	{
 		MBSCustomPageManager.init();
 		
 		MBSCustomPageManager.loadExtensions();
+		
+		testFlag = false;
 	}
 	
 	/**
@@ -100,6 +105,12 @@ public class TestCustomPageManager extends TestCase
 		if(MBSCustomPageManager.isPageVisible(toolchainCPageName))
 		{
 			fail("ToolChainCWizardPage should not be visible");
+		}
+		
+//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolChainCv20WizardPage should not be visible");
 		}
 		
 //		 the rest of the pages should be invisible
@@ -185,6 +196,12 @@ public class TestCustomPageManager extends TestCase
 		}
 		
 //		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolChainCv20WizardPage should not be visible");
+		}
+		
+//		 the rest of the pages should be invisible
 		if(MBSCustomPageManager.isPageVisible(projectTypeDPageName))
 		{
 			fail("ProjectTypeDWizardPage should not be visible");
@@ -266,6 +283,12 @@ public class TestCustomPageManager extends TestCase
 		}
 		
 //		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolChainCv20WizardPage should not be visible");
+		}
+		
+//		 the rest of the pages should be invisible
 		if(MBSCustomPageManager.isPageVisible(projectTypeDPageName))
 		{
 			fail("ProjectTypeDWizardPage should not be visible");
@@ -335,6 +358,12 @@ public class TestCustomPageManager extends TestCase
 		}
 		
 //		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolChainCv20WizardPage should not be visible");
+		}
+		
+//		 the rest of the pages should be invisible
 		if(MBSCustomPageManager.isPageVisible(natureAPageName))
 		{
 			fail("NatureAWizardPage should not be visible");
@@ -365,6 +394,107 @@ public class TestCustomPageManager extends TestCase
 			fail("ToolchainFWizardPage should not be visible");
 		}
 	}
+	
+	/**
+	 *   Set the toolchain to "C_2.0.0".  Only pages with no contraints, or toolchains set to "C", or toolchains set to "C" version 2.0.0 should show up.
+	 */
+	public void testToolchainCv20()
+	{
+//		 set the project type to be "X"
+		MBSCustomPageManager.addPageProperty(CProjectPlatformPage.PAGE_ID, CProjectPlatformPage.PROJECT_TYPE, "X");
+
+		// set the toolchain to "C"
+		Set toolchainSet = new LinkedHashSet();
+		TestToolchain toolchain = new TestToolchain();
+		toolchain.setID("C_2.0.0");
+		toolchainSet.add(toolchain);
+		MBSCustomPageManager.addPageProperty(CProjectPlatformPage.PAGE_ID, CProjectPlatformPage.TOOLCHAIN, toolchainSet);
+		
+		// set the nature to "Z"
+		MBSCustomPageManager.addPageProperty(CProjectPlatformPage.PAGE_ID, CProjectPlatformPage.NATURE, "Z");
+		
+		// check each of the pages
+		
+		// this page should always be visible
+		if(!MBSCustomPageManager.isPageVisible(alwaysPresentPageName))
+		{
+			fail("AlwaysPresentWizardPage should be visible");
+		}
+		
+		// next page for this page should be the page for toolchain C
+		if(MBSCustomPageManager.getNextPage(alwaysPresentPageName) != MBSCustomPageManager.getPageData(toolchainCPageName).getWizardPage())
+		{
+			fail("AlwaysPresentWizardPage's next page should be ToolchainCWizardPage");
+		}
+		
+		// toolchain C page's previous page should be the always present page
+		if(MBSCustomPageManager.getPreviousPage(toolchainCPageName) != MBSCustomPageManager.getPageData(alwaysPresentPageName).getWizardPage())
+		{
+			fail("ToolchainCWizardPage's previous page should be AlwaysPresentWizardPage");
+		}
+		
+		// Toolchain C page should be visible
+		if(!MBSCustomPageManager.isPageVisible(toolchainCPageName))
+		{
+			fail("ToolchainCWizardPage should be visible");
+		}
+		
+		// Toolchain C page's next page should be the page for C 2.0
+		if(MBSCustomPageManager.getNextPage(toolchainCPageName) != MBSCustomPageManager.getPageData(toolchainCv20PageName).getWizardPage())
+		{
+			fail("ToolchainCWizardPage's next page should be ToolchainCv20WizardPage.");
+		}
+		
+		// toolchain C v 2.0.0 page's previous page should be the toolchain C page
+		if(MBSCustomPageManager.getPreviousPage(toolchainCv20PageName) != MBSCustomPageManager.getPageData(toolchainCPageName).getWizardPage())
+		{
+			fail("ToolchainCv20WizardPage's previous page should be ToolchainCWizardPage");
+		}
+		
+		// Toolchain C v 2.0.0 page should be visible
+		if(!MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolchainCWizardPage should be visible");
+		}
+		
+		// Toolchain C v 2.0.0 page's next page should be null
+		if(MBSCustomPageManager.getNextPage(toolchainCv20PageName) != null)
+		{
+			fail("ToolchainCv20WizardPage should not have a next page.");
+		}
+		
+//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(natureAPageName))
+		{
+			fail("NatureAWizardPage should not be visible");
+		}
+		
+		//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(natureBPageName))
+		{
+			fail("NatureBWizardPage should not be visible");
+		}		
+		
+//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(projectTypeDPageName))
+		{
+			fail("ProjectTypeDWizardPage should not be visible");
+		}
+		
+		
+//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(projectTypeEPageName))
+		{
+			fail("ProjectTypeEWizardPage should not be visible");
+		}		
+		
+//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainFPageName))
+		{
+			fail("ToolchainFWizardPage should not be visible");
+		}
+	}
+	
 	
 	
 	/**
@@ -433,6 +563,12 @@ public class TestCustomPageManager extends TestCase
 		if(MBSCustomPageManager.isPageVisible(toolchainCPageName))
 		{
 			fail("ToolChainCWizardPage should not be visible");
+		}
+		
+//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolChainCv20WizardPage should not be visible");
 		}
 		
 //		 the rest of the pages should be invisible
@@ -520,6 +656,12 @@ public class TestCustomPageManager extends TestCase
 		}
 		
 //		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolChainCv20WizardPage should not be visible");
+		}
+		
+//		 the rest of the pages should be invisible
 		if(MBSCustomPageManager.isPageVisible(projectTypeDPageName))
 		{
 			fail("ProjectTypeDWizardPage should not be visible");
@@ -594,6 +736,12 @@ public class TestCustomPageManager extends TestCase
 		{
 			fail("NatureBWizardPage should not be visible");
 		}		
+		
+//		 the rest of the pages should be invisible
+		if(MBSCustomPageManager.isPageVisible(toolchainCv20PageName))
+		{
+			fail("ToolChainCv20WizardPage should not be visible");
+		}
 		
 //		 the rest of the pages should be invisible
 		if(MBSCustomPageManager.isPageVisible(projectTypeDPageName))
@@ -722,6 +870,16 @@ public class TestCustomPageManager extends TestCase
 	}
 	
 	
+	public void testOperation()
+	{
+		MBSCustomPageManager.getPageData(alwaysPresentPageName).getOperation().run();
+		
+		if(testFlag != true)
+		{
+			fail("Running operation associated with AlwaysPresentWizardPage failed.");
+		}
+	}
+	
 	public TestCustomPageManager(String name)
 	{
 		
@@ -735,11 +893,12 @@ public class TestCustomPageManager extends TestCase
 		suite.addTest(new TestCustomPageManager("testNatureA"));
 		suite.addTest(new TestCustomPageManager("testNatureB"));
 		suite.addTest(new TestCustomPageManager("testToolchainC"));
+		suite.addTest(new TestCustomPageManager("testToolchainCv20"));
 		suite.addTest(new TestCustomPageManager("testProjectTypeD"));
 		suite.addTest(new TestCustomPageManager("testProjectTypeE"));
 		suite.addTest(new TestCustomPageManager("testToolchainF"));
 		suite.addTest(new TestCustomPageManager("testMultiplePages"));
-		
+		suite.addTest(new TestCustomPageManager("testOperation"));
 		return suite;
 	}
 	

@@ -40,7 +40,11 @@ public class CPPTemplateTypeParameter extends CPPTemplateParameter implements
 
 	public ICPPScope getUnknownScope() {
 	    if( unknownScope == null ) {
-	        unknownScope = new CPPUnknownScope( this, null );
+	    	IASTName n = null;
+	    	IASTNode[] nodes = getDeclarations();
+	    	if( nodes != null && nodes.length > 0 )
+	    		n = (IASTName) nodes[0];
+	        unknownScope = new CPPUnknownScope( this, n );
 	    }
 	    return unknownScope;
 	}

@@ -95,24 +95,21 @@ public class CPPUnknownBinding implements ICPPInternalUnknown {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
      */
-    public String[] getQualifiedName() throws DOMException {
-        // TODO Auto-generated method stub
-        return null;
+    public String[] getQualifiedName() {
+        return CPPVisitor.getQualifiedName( this );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
      */
-    public char[][] getQualifiedNameCharArray() throws DOMException {
-        // TODO Auto-generated method stub
-        return null;
+    public char[][] getQualifiedNameCharArray() {
+    	return CPPVisitor.getQualifiedNameCharArray( this );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
      */
-    public boolean isGloballyQualified() throws DOMException {
-        // TODO Auto-generated method stub
+    public boolean isGloballyQualified() {
         return false;
     }
 

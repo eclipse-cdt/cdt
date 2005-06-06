@@ -267,6 +267,8 @@
             <element ref="tool"/>
             <element ref="targetPlatform"/>
             <element ref="builder"/>
+            <element ref="optionCategory"/>
+            <element ref="option"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -594,6 +596,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Path to a 16x16 pixel big icon that is to be displayed instead of the default icon. The path is relative to the plug-in directory which defines .buildDefinitions.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="versionsSupported" type="string">
             <annotation>
                <documentation>
@@ -912,7 +921,15 @@
          <attribute name="owner" type="string">
             <annotation>
                <documentation>
-                  Option categories can belong to a tool or be nested inside other option categories. This is the ID of the owner of the category.
+                  Option categories can belong to a tool, a toolChain or be nested inside other option categories. This is the ID of the owner of the category.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Path to a 16x16 pixel big icon that is to be displayed instead of the default icon.
+The path is relative to the plug-in directory which defines .buildDefinitions.
                </documentation>
             </annotation>
          </attribute>
@@ -923,6 +940,7 @@
       <annotation>
          <documentation>
             An option is associated with a tool. Options can contain boolean values, a simple text string, a selection from an enumerated list, or a list of values. Options also map the value they contain to a command-line flag, such as &apos;-g&apos; in the case of debugging symbol information for compilers.
+Options can also be associated with a toolchain. However in such a case the option must be contained in a optionCategory.
          </documentation>
       </annotation>
       <complexType>
@@ -1077,6 +1095,23 @@ Additional special types exist to flag options of special relevance to the build
             <annotation>
                <documentation>
                   Specifies a &quot;tip&quot; that can be displayed in hover help or on the property page. Not implemented in 2.0.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="valueHandler" type="string">
+            <annotation>
+               <documentation>
+                  The id of a class that implements the IManagedOptionValueHandler interface
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="valueHandlerExtraArgument" type="string">
+            <annotation>
+               <documentation>
+                  An optional extra text string that is passed into the valueHandler
                </documentation>
             </annotation>
          </attribute>

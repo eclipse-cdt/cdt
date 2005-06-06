@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
  * A tool will generally process one or more resources to produce output resources.
  * Most tools have a set of options that can be used to modify the behavior of the tool.
  */
-public interface ITool extends IBuildObject {
+public interface ITool extends IBuildObject, IHoldsOptions {
 	// Schema element names
 	public static final String COMMAND = "command";	//$NON-NLS-1$
 	public static final String COMMAND_LINE_PATTERN = "commandLinePattern"; //$NON-NLS-1$
@@ -30,9 +30,6 @@ public interface ITool extends IBuildObject {
 	public static final String DEP_CALC_ID ="dependencyCalculator"; //$NON-NLS-1$
 	public static final String INTERFACE_EXTS = "headerExtensions";	//$NON-NLS-1$
 	public static final String NATURE =	"natureFilter";	//$NON-NLS-1$
-	public static final String OPTION = "option";	//$NON-NLS-1$
-	public static final String OPTION_CAT = "optionCategory";	//$NON-NLS-1$
-	public static final String OPTION_REF = "optionReference";	//$NON-NLS-1$
 	public static final String OUTPUT_FLAG = "outputFlag";	//$NON-NLS-1$
 	public static final String INPUT_TYPE = "inputType";	//$NON-NLS-1$
 	public static final String OUTPUT_TYPE = "outputType";	//$NON-NLS-1$
@@ -59,74 +56,6 @@ public interface ITool extends IBuildObject {
 	 * @return IBuildObject
 	 */
 	public IBuildObject getParent();
-
-	/**
-	 * Creates a child Option for this tool.
-	 * 
-	 * @param Option The superClass, if any
-	 * @param String The id for the new option 
-	 * @param String The name for the new option
-	 * @param boolean Indicates whether this is an extension element or a managed project element
-	 * 
-	 * @return IOption
-	 */
-	public IOption createOption(IOption superClass, String Id, String name, boolean isExtensionElement);
-
-	/**
-	 * Removes an option from the tool's list.
-	 * 
-	 * @param option
-	 */
-	public void removeOption(IOption option);
-
-	/**
-	 * This is a deprecated method for retrieving an <code>IOption</code> from 
-	 * the receiver based on an ID. It is preferred that you use the newer method 
-	 * <code>getOptionById</code>
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptionById(java.lang.String)
-	 *  
-	 * @param id unique identifier of the option to search for
-	 * @return <code>IOption</code>
-	 */
-	public IOption getOption(String id);
-
-	/**
-	 * Get the <code>IOption</code> in the receiver with the specified 
-	 * ID. This is an efficient search in the receiver.
-	 * 
-	 * <p>If the receiver does not have an option with that ID, the method 
-	 * returns <code>null</code>. It is the responsibility of the caller to 
-	 * verify the return value.  
-	 * 
-	 * @param id unique identifier of the option to search for
-	 * @return <code>IOption</code>
-	 * @since 2.0
-	 */
-	public IOption getOptionById(String id);
-
-	/**
-	 * Get the <code>IOption</code> in the receiver with the specified 
-	 * ID, or an option with a superclass with this id. 
-	 * 
-	 * <p>If the receiver does not have an option with that ID, the method 
-	 * returns <code>null</code>. It is the responsibility of the caller to 
-	 * verify the return value.  
-	 * 
-	 * @param id unique identifier of the option to search for
-	 * @return <code>IOption</code>
-	 * @since 3.0
-	 */
-	public IOption getOptionBySuperClassId(String id);
-	
-	/**
-	 * Returns the complete list of options that are available for this tool.
-	 * The list is a merging of the options specified for this tool with the 
-	 * options of its superclasses.  The lowest option instance in the hierarchy
-	 * takes precedence.  
-	 * 
-	 * @return IOption[]
-	 */
-	public IOption[] getOptions();
 
 	/**
 	 * Creates a child InputType for this tool.
@@ -696,14 +625,7 @@ public interface ITool extends IBuildObject {
 	 * 
 	 * @return IOptionCategory
 	 */
-	public IOptionCategory getTopOptionCategory();
-
-	/**
-	 * Returns the option category children of this tool.
-	 * 
-	 * @return IOptionCategory[]
-	 */
-	public IOptionCategory[] getChildCategories();
+	public IOptionCategory getTopOptionCategory(); 
 
 	/**
 	 * Return <code>true</code> if the receiver builds files with the

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
@@ -55,7 +58,7 @@ import org.w3c.dom.NodeList;
  * Note that this class implements IOptionCategory to represent the top
  * category.
  */
-public class Tool extends BuildObject implements ITool, IOptionCategory {
+public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 
 	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
@@ -68,16 +71,15 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private static final String DEFAULT_ANNOUNCEMENT_PREFIX = "Tool.default.announcement";	//$NON-NLS-1$
 	private static final String WHITESPACE = " ";	//$NON-NLS-1$
 
+	private static final boolean resolvedDefault = true;
+	
 	//  Superclass
-	private ITool superClass;
+	//  Note that superClass itself is defined in the base and that the methods
+	//  getSuperClass() and setSuperClass(), defined in Tool must be used to 
+	//  access it. This avoids widespread casts from IHoldsOptions to ITool.
 	private String superClassId;
 	//  Parent and children
 	private IBuildObject parent;
-	private Vector categoryIds;
-	private Map categoryMap;
-	private List childOptionCategories;
-	private Vector optionList;
-	private Map optionMap;
 	private Vector inputTypeList;
 	private Map inputTypeMap;
 	private Vector outputTypeList;
@@ -104,10 +106,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private IManagedCommandLineGenerator commandLineGenerator = null;
 	private IConfigurationElement dependencyGeneratorElement = null;
 	private IManagedDependencyGenerator dependencyGenerator = null;
+	private URL iconPathURL;	
 	//  Miscellaneous
 	private boolean isExtensionTool = false;
 	private boolean isDirty = false;
-	private boolean resolved = true;
+	private boolean resolved = resolvedDefault;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -121,11 +124,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
 	public Tool(IManagedConfigElement element, String managedBuildRevision) {
-		isExtensionTool = true;
-		
 		// setup for resolving
+		super(false);
 		resolved = false;
 
+		isExtensionTool = true;
+		
 		// Set the managedBuildRevision
 		setManagedBuildRevision(managedBuildRevision);
 		
@@ -141,11 +145,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		IManagedConfigElement[] toolElements = element.getChildren();
 		for (int l = 0; l < toolElements.length; ++l) {
 			IManagedConfigElement toolElement = toolElements[l];
-			if (toolElement.getName().equals(ITool.OPTION)) {
-				Option option = new Option(this, toolElement);
-				addOption(option);
-			} else if (toolElement.getName().equals(ITool.OPTION_CAT)) {
-				new OptionCategory(this, toolElement);
+			if (loadChild(toolElement)) {
+				// do nothing
 			} else if (toolElement.getName().equals(ITool.INPUT_TYPE)) {
 				InputType inputType = new InputType(this, toolElement);
 				addInputType(inputType);
@@ -183,11 +184,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @param boolean Indicates whether this is an extension element or a managed project element
 	 */
 	public Tool(ToolChain parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
+		super(resolvedDefault);
 		this.parent = parent;
-		this.superClass = superClass;
+		setSuperClass(superClass);
 		setManagedBuildRevision(parent.getManagedBuildRevision());
-		if (this.superClass != null) {
-			superClassId = this.superClass.getId();
+		if (getSuperClass() != null) {
+			superClassId = getSuperClass().getId();
 		}
 		
 		setId(Id);
@@ -215,11 +217,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	 
 	public Tool(ResourceConfiguration parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
+		super(resolvedDefault);
 		this.parent = parent;
-		this.superClass = superClass;
+		setSuperClass( superClass );
 		setManagedBuildRevision(parent.getManagedBuildRevision());
-		if (this.superClass != null) {
-			superClassId = this.superClass.getId();
+		if (getSuperClass() != null) {
+			superClassId = getSuperClass().getId();
 		}
 		setId(Id);
 		setName(name);
@@ -244,6 +247,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
 	public Tool(IBuildObject parent, Element element, String managedBuildRevision) {
+		super(resolvedDefault);
 		this.parent = parent;
 		isExtensionTool = false;
 		
@@ -260,11 +264,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		NodeList toolElements = element.getChildNodes();
 		for (int i = 0; i < toolElements.getLength(); ++i) {
 			Node toolElement = toolElements.item(i);
-			if (toolElement.getNodeName().equals(ITool.OPTION)) {
-				Option option = new Option(this, (Element)toolElement);
-				addOption(option);
-			} else if (toolElement.getNodeName().equals(ITool.OPTION_CAT)) {
-				new OptionCategory(this, (Element)toolElement);
+			if (loadChild(toolElement)) {
+				// do nothing
 			} else if (toolElement.getNodeName().equals(ITool.INPUT_TYPE)) {
 				InputType inputType = new InputType(this, (Element)toolElement);
 				addInputType(inputType);
@@ -283,14 +284,15 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @param tool The existing tool to clone.
 	 */
 	public Tool(IBuildObject parent, ITool toolSuperClass, String Id, String name, Tool tool){
+		super(resolvedDefault);
 		this.parent = parent;
 		if (toolSuperClass != null) {
-			superClass = toolSuperClass;
+			setSuperClass( toolSuperClass );
 		} else {
-		    superClass = tool.superClass;
+			setSuperClass( tool.getSuperClass() );
 		}
-		if (superClass != null) {
-			superClassId = superClass.getId();
+		if (getSuperClass() != null) {
+			superClassId = getSuperClass().getId();
 		}
 		setId(Id);
 		setName(name);
@@ -356,27 +358,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if(tool.envVarBuildPathList != null)
 			envVarBuildPathList = new ArrayList(tool.envVarBuildPathList);
 		
+		//  Clone the children in superclass
+		super.copyChildren(tool);
 		//  Clone the children
-		//  Note: This constructor ignores OptionCategories since they should not be
-		//        found on an non-extension tool - TODO: This may need to change!
-		if (tool.optionList != null) {
-			Iterator iter = tool.getOptionList().listIterator();
-			while (iter.hasNext()) {
-				Option option = (Option) iter.next();
-				int nnn = ManagedBuildManager.getRandomNumber();
-				String subId;
-				String subName;
-				if (option.getSuperClass() != null) {
-					subId = option.getSuperClass().getId() + "." + nnn;		//$NON-NLS-1$
-					subName = option.getSuperClass().getName();
-				} else {
-					subId = option.getId() + "." + nnn;		//$NON-NLS-1$
-					subName = option.getName();
-				}
-				Option newOption = new Option(this, subId, subName, option);
-				addOption(newOption);
-			}
-		}
 		if (tool.inputTypeList != null) {
 			Iterator iter = tool.getInputTypeList().listIterator();
 			while (iter.hasNext()) {
@@ -414,6 +398,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			}
 		}
 
+		// icon
+		if ( tool.iconPathURL != null ) {
+			iconPathURL = tool.iconPathURL;
+		}	
+		
         setDirty(true);
 	}
 	
@@ -533,6 +522,13 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (depGenerator != null && element instanceof DefaultManagedConfigElement) {
 			dependencyGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		}
+		
+		// icon
+		if ( element.getAttribute(IOptionCategory.ICON) != null && element instanceof DefaultManagedConfigElement)
+		{
+		    String icon = element.getAttribute(IOptionCategory.ICON);
+			iconPathURL = ManagedBuildManager.getURLInBuildDefinitions( (DefaultManagedConfigElement)element, new Path(icon) );
+		}		
 	}
 	
 	/* (non-Javadoc)
@@ -559,11 +555,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (superClassId != null && superClassId.length() > 0) {
 			if( getParent() instanceof IResourceConfiguration ) {
 				IResourceConfiguration resConfig = (IResourceConfiguration) getParent();
-				superClass = resConfig.getParent().getTool(superClassId);
+				setSuperClass( resConfig.getParent().getTool(superClassId) );
 			} else {
-				superClass = ManagedBuildManager.getExtensionTool(superClassId);
+				setSuperClass( ManagedBuildManager.getExtensionTool(superClassId) );
 			}
-			if (superClass == null) {
+			if (getSuperClass() == null) {
 				// TODO:  Report error
 			}
 		}
@@ -679,6 +675,18 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (element.hasAttribute(ITool.ANNOUNCEMENT)) {
 			announcement = element.getAttribute(ITool.ANNOUNCEMENT);
 		}
+		
+		// icon - was saved as URL in string form
+		if (element.hasAttribute(IOptionCategory.ICON)) {
+			String iconPath = element.getAttribute(IOptionCategory.ICON);
+			try {
+				iconPathURL = new URL(iconPath);
+			} catch (MalformedURLException e) {
+				// Print a warning
+				ManagedBuildManager.OutputIconError(iconPath);
+				iconPathURL = null;
+			}
+		}
 	}
 
 	/**
@@ -689,8 +697,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public void serialize(Document doc, Element element) {
 		try {
-			if (superClass != null)
-				element.setAttribute(IProjectType.SUPERCLASS, superClass.getId());
+			if (getSuperClass() != null)
+				element.setAttribute(IProjectType.SUPERCLASS, getSuperClass().getId());
 			
 			// id
 			element.setAttribute(IBuildObject.ID, id);
@@ -804,24 +812,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				element.setAttribute(ITool.ANNOUNCEMENT, announcement);
 			}
 			
+			// Serialize elements from my super class
+			super.serialize(doc, element);
+
 			// Serialize my children
-			if (childOptionCategories != null) {
-				Iterator iter = childOptionCategories.listIterator();
-				while (iter.hasNext()) {
-					OptionCategory optCat = (OptionCategory)iter.next();
-					Element optCatElement = doc.createElement(OPTION);
-					element.appendChild(optCatElement);
-					optCat.serialize(doc, optCatElement);
-				}
-			}
-			List optionElements = getOptionList();
-			Iterator iter = optionElements.listIterator();
-			while (iter.hasNext()) {
-				Option option = (Option) iter.next();
-				Element optionElement = doc.createElement(OPTION);
-				element.appendChild(optionElement);
-				option.serialize(doc, optionElement);
-			}
+			Iterator iter;
 			List typeElements = getInputTypeList();
 			iter = typeElements.listIterator();
 			while (iter.hasNext()) {
@@ -851,6 +846,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 				//  TODO:  issue warning?
 			}
 			
+			if (iconPathURL != null) {
+				// Save as URL in string form
+				element.setAttribute(IOptionCategory.ICON, iconPathURL.toString());
+			}
+			
 			// I am clean now
 			isDirty = false;
 		} catch (Exception e) {
@@ -877,132 +877,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createOption(IOption, String, String, boolean)
-	 */
-	public IOption createOption(IOption superClass, String Id, String name, boolean isExtensionElement) {
-		Option option = new Option(this, superClass, Id, name, isExtensionElement);
-		addOption(option);
-		setDirty(true);
-		return option;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOption(IOption)
-	 */
-	public void removeOption(IOption option) {
-		getOptionList().remove(option);
-		getOptionMap().remove(option.getId());
-		setDirty(true);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOptions()
-	 */
-	public IOption[] getOptions() {
-		IOption[] options = null;
-		// Merge our options with our superclass' options.
-		if (superClass != null) {
-			options = superClass.getOptions();
-		}
-		// Our options take precedence.
-		Vector ourOpts = getOptionList();
-		if (options != null) {
-			for (int i = 0; i < ourOpts.size(); i++) {
-				IOption ourOpt = (IOption)ourOpts.get(i);
-				int j;
-				for (j = 0; j < options.length; j++) {
-					if (options[j].overridesOnlyValue()) {
-						if (ourOpt.getSuperClass().getId().equals(options[j].getSuperClass().getId())) {
-							options[j] = ourOpt;
-							break;
-						}
-					} else {
-						if (ourOpt.getSuperClass().getId().equals(options[j].getId())) {
-							options[j] = ourOpt;
-							break;
-						}
-					}
-				}
-				//  No Match?  Add it.
-				if (j == options.length) {
-					IOption[] newOptions = new IOption[options.length + 1];
-					for (int k = 0; k < options.length; k++) {
-						newOptions[k] = options[k];
-					}						 
-					newOptions[j] = ourOpt;
-					options = newOptions;
-				}
-			}
-		} else {
-			options = (IOption[])ourOpts.toArray(new IOption[ourOpts.size()]);
-		}
-		return options;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getTopOptionCategory()
 	 */
 	public IOptionCategory getTopOptionCategory() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOption(java.lang.String)
-	 */
-	public IOption getOption(String id) {
-		return getOptionById(id);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptionById(java.lang.String)
-	 */
-	public IOption getOptionById(String id) {
-		IOption opt = (IOption)getOptionMap().get(id);
-		if (opt == null) {
-			if (superClass != null) {
-				return superClass.getOptionById(id);
-			}
-		}
-		return opt;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptionBySuperClassId(java.lang.String)
-	 */
-	public IOption getOptionBySuperClassId(String optionId) {
-		if (optionId == null) return null;
-		
-		//  Look for an option with this ID, or an option with a superclass with this id
-		IOption[] options = getOptions();
-		for (int i = 0; i < options.length; i++) {
-			IOption targetOption = options[i];
-			IOption option = targetOption;
-			do {
-				if (optionId.equals(option.getId())) {
-					return targetOption;
-				}		
-				option = option.getSuperClass();
-			} while (option != null);
-		}
-		
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
-	 */
-	public IOptionCategory[] getChildCategories() {
-		if (childOptionCategories != null)
-			return (IOptionCategory[])childOptionCategories.toArray(new IOptionCategory[childOptionCategories.size()]);
-		else {
-			if (superClass != null) {
-				return superClass.getChildCategories();
-			} else {
-				return EMPTY_CATEGORIES;
-			}
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createInputType(IInputType, String, String, boolean)
 	 */
@@ -1028,8 +908,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public IInputType[] getInputTypes() {
 		IInputType[] types = null;
 		// Merge our input types with our superclass' input types.
-		if (superClass != null) {
-			types = superClass.getInputTypes();
+		if (getSuperClass() != null) {
+			types = getSuperClass().getInputTypes();
 		}
 		// Our options take precedence.
 		Vector ourTypes = getInputTypeList();
@@ -1069,8 +949,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public IInputType getInputTypeById(String id) {
 		IInputType type = (IInputType)getInputTypeMap().get(id);
 		if (type == null) {
-			if (superClass != null) {
-				return superClass.getInputTypeById(id);
+			if (getSuperClass() != null) {
+				return getSuperClass().getInputTypeById(id);
 			}
 		}
 		return type;
@@ -1101,8 +981,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public IOutputType[] getOutputTypes() {
 		IOutputType[] types = null;
 		// Merge our output types with our superclass' output types.
-		if (superClass != null) {
-			types = superClass.getOutputTypes();
+		if (getSuperClass() != null) {
+			types = getSuperClass().getOutputTypes();
 		}
 		// Our options take precedence.
 		Vector ourTypes = getOutputTypeList();
@@ -1157,8 +1037,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public IOutputType getOutputTypeById(String id) {
 		IOutputType type = (IOutputType)getOutputTypeMap().get(id);
 		if (type == null) {
-			if (superClass != null) {
-				return superClass.getOutputTypeById(id);
+			if (getSuperClass() != null) {
+				return getSuperClass().getOutputTypeById(id);
 			}
 		}
 		return type;
@@ -1169,6 +1049,16 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public IOptionCategory getOwner() {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getIconPath()
+	 */
+	public URL getIconPath() {
+		if (iconPathURL == null  &&  getSuperClass() != null) {
+			return getSuperClass().getTopOptionCategory().getIconPath();
+		}
+		return iconPathURL;
 	}
 
 	/* (non-Javadoc)
@@ -1248,83 +1138,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
-	 * Memory-safe way to access the vector of category IDs
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptionHolder()
 	 */
-	private Vector getCategoryIds() {
-		if (categoryIds == null) {
-			categoryIds = new Vector();
-		}
-		return categoryIds;
-	}
-	
-	/**
-	 * @param category
-	 */
-	public void addChildCategory(IOptionCategory category) {
-		if (childOptionCategories == null)
-			childOptionCategories = new ArrayList();
-		childOptionCategories.add(category);
-	}
-	
-	/**
-	 * @param option
-	 */
-	public void addOption(Option option) {
-		getOptionList().add(option);
-		getOptionMap().put(option.getId(), option);
-	}
-	
-	/**
-	 * @param category
-	 */
-	protected void addOptionCategory(IOptionCategory category) {
-		// To preserve the order of the categories, record the ids in the order they are read
-		getCategoryIds().add(category.getId());
-		// Map the categories by ID for resolution later
-		getCategoryMap().put(category.getId(), category);
+	public IHoldsOptions getOptionHolder() {
+		return this; 
 	}
 
-	/**
-	 * Answers the <code>IOptionCategory</code> that has the unique identifier 
-	 * specified in the argument. 
-	 * 
-	 * @param id The unique identifier of the option category
-	 * @return <code>IOptionCategory</code> with the id specified in the argument
-	 */
-	public IOptionCategory getOptionCategory(String id) {
-		return (IOptionCategory)getCategoryMap().get(id);
-	}
-	
-	/* (non-Javadoc)
-	 * Memeory-safe way to access the map of category IDs to categories
-	 */
-	private Map getCategoryMap() {
-		if (categoryMap == null) {
-			categoryMap = new HashMap();
-		}
-		return categoryMap;
-	}
-	
-	/* (non-Javadoc)
-	 * Memory-safe way to access the list of options
-	 */
-	private Vector getOptionList() {
-		if (optionList == null) {
-			optionList = new Vector();
-		}
-		return optionList;
-	}
-	
-	/* (non-Javadoc)
-	 * Memory-safe way to access the list of IDs to options
-	 */
-	private Map getOptionMap() {
-		if (optionMap == null) {
-			optionMap = new HashMap();
-		}
-		return optionMap;
-	}
-	
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of input types
 	 */
@@ -1389,14 +1208,22 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getSuperClass()
 	 */
 	public ITool getSuperClass() {
-		return superClass;
+		return (ITool)superClass;
+	}
+
+	/* (non-Javadoc)
+	 * Access function to set the superclass element that is defined in
+	 * the base class.
+	 */
+	private void setSuperClass(ITool superClass) {
+		this.superClass = superClass;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getName()
 	 */
 	public String getName() {
-		return (name == null && superClass != null) ? superClass.getName() : name;
+		return (name == null && getSuperClass() != null) ? getSuperClass().getName() : name;
 	}
 
 	/* (non-Javadoc)
@@ -1435,8 +1262,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		String ids = errorParserIds;
 		if (ids == null) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				ids = superClass.getErrorParserIds();
+			if (getSuperClass() != null) {
+				ids = getSuperClass().getErrorParserIds();
 			}
 		}
 		return ids;
@@ -1483,8 +1310,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private List getInputExtensionsAttribute() {
 		if( (inputExtensions == null) || ( inputExtensions.size() == 0) ) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return ((Tool)superClass).getInputExtensionsAttribute();
+			if (getSuperClass() != null) {
+				return ((Tool)getSuperClass()).getInputExtensionsAttribute();
 			} else {
 				inputExtensions = new ArrayList();
 			}
@@ -1699,8 +1526,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private List getHeaderExtensionsAttribute() {
 		if (interfaceExtensions == null || interfaceExtensions.size() == 0) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return ((Tool)superClass).getHeaderExtensionsAttribute();
+			if (getSuperClass() != null) {
+				return ((Tool)getSuperClass()).getHeaderExtensionsAttribute();
 			} else {
 			    if (interfaceExtensions == null) {
 			        interfaceExtensions = new ArrayList();
@@ -1723,8 +1550,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public String getOutputFlag() {
 		if (outputFlag == null) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return superClass.getOutputFlag();
+			if (getSuperClass() != null) {
+				return getSuperClass().getOutputFlag();
 			} else {
 				return EMPTY_STRING;
 			}
@@ -1755,8 +1582,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		// If there are no OutputTypes, use the deprecated Tool attribute
 		if (outputPrefix == null) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return superClass.getOutputPrefix();
+			if (getSuperClass() != null) {
+				return getSuperClass().getOutputPrefix();
 			} else {
 				return EMPTY_STRING;
 			}
@@ -1770,8 +1597,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public String getToolCommand() {
 		if (command == null) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return superClass.getToolCommand();
+			if (getSuperClass() != null) {
+				return getSuperClass().getToolCommand();
 			} else {
 				return EMPTY_STRING;
 			}
@@ -1784,8 +1611,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public String getCommandLinePattern() {
 		if (commandLinePattern == null) {
-			if (superClass != null) {
-				return superClass.getCommandLinePattern();
+			if (getSuperClass() != null) {
+				return getSuperClass().getCommandLinePattern();
 			} else {
 				if (getCustomBuildStep()) {
 					return new String(DEFAULT_CBS_PATTERN);  // Default pattern
@@ -1802,8 +1629,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public boolean getAdvancedInputCategory() {
 		if (advancedInputCategory == null) {
-			if (superClass != null) {
-				return superClass.getAdvancedInputCategory();
+			if (getSuperClass() != null) {
+				return getSuperClass().getAdvancedInputCategory();
 			} else {
 				return false;	// default is false
 			}
@@ -1816,8 +1643,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public boolean getCustomBuildStep() {
 		if (customBuildStep == null) {
-			if (superClass != null) {
-				return superClass.getCustomBuildStep();
+			if (getSuperClass() != null) {
+				return getSuperClass().getCustomBuildStep();
 			} else {
 				return false;	// default is false
 			}
@@ -1830,8 +1657,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public String getAnnouncement() {
 		if (announcement == null) {
-			if (superClass != null) {
-				return superClass.getAnnouncement();
+			if (getSuperClass() != null) {
+				return getSuperClass().getAnnouncement();
 			} else {
 				//  Generate the default announcement string for the Tool
 				String defaultAnnouncement = ManagedMakeMessages.getResourceString(DEFAULT_ANNOUNCEMENT_PREFIX) +
@@ -1847,8 +1674,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public IConfigurationElement getCommandLineGeneratorElement() {
 		if (commandLineGeneratorElement == null) {
-			if (superClass != null) {
-				return ((Tool)superClass).getCommandLineGeneratorElement();
+			if (getSuperClass() != null) {
+				return ((Tool)getSuperClass()).getCommandLineGeneratorElement();
 			}
 		}
 		return commandLineGeneratorElement;
@@ -1917,8 +1744,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	
 	private IConfigurationElement getToolDependencyGeneratorElement() {
 		if (dependencyGeneratorElement == null) {
-			if (superClass != null) {
-				return ((Tool)superClass).getToolDependencyGeneratorElement();
+			if (getSuperClass() != null) {
+				return ((Tool)getSuperClass()).getToolDependencyGeneratorElement();
 			}
 		}
 		return dependencyGeneratorElement;		
@@ -1978,8 +1805,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public int getNatureFilter() {
 		if (natureFilter == null) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return superClass.getNatureFilter();
+			if (getSuperClass() != null) {
+				return getSuperClass().getNatureFilter();
 			} else {
 				return FILTER_BOTH;
 			}
@@ -2028,8 +1855,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public String[] getOutputsAttribute() {
 		// TODO:  Why is this treated differently than inputExtensions?
 		if (outputExtensions == null) {
-			if (superClass != null) {
-				return superClass.getOutputsAttribute();
+			if (getSuperClass() != null) {
+				return getSuperClass().getOutputsAttribute();
 			} else {
 				return null;
 			}
@@ -2232,7 +2059,14 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
-			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(this)) {
+			IBuildObject config = null;
+			IBuildObject parent = getParent();
+			if ( parent instanceof IResourceConfiguration ) {
+				config = parent;
+			} else if ( parent instanceof IToolChain ){
+				config = ((IToolChain)parent).getParent();
+			}
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(config, this, option)) {
 				try{
 				switch (option.getValueType()) {
 				case IOption.BOOLEAN :
@@ -2424,11 +2258,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		if (isDirty) return true;
 		
 		// Otherwise see if any options need saving
-		List optionElements = getOptionList();
-		Iterator iter = optionElements.listIterator();
-		while (iter.hasNext()) {
-			Option option = (Option) iter.next();
-			if (option.isDirty()) return true;
+		if (super.isDirty()) {
+			return true;
 		}
 		
 		return isDirty;
@@ -2439,16 +2270,12 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 */
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
+		// Propagate "false" to options
+		super.setDirty(isDirty);
 		// Propagate "false" to the children
 		if (!isDirty) {
-			List optionElements = getOptionList();
-			Iterator iter = optionElements.listIterator();
-			while (iter.hasNext()) {
-				Option option = (Option) iter.next();
-				option.setDirty(false);
-			}
 			List typeElements = getInputTypeList();
-			iter = typeElements.listIterator();
+			Iterator iter = typeElements.listIterator();
 			while (iter.hasNext()) {
 				InputType type = (InputType) iter.next();
 				type.setDirty(false);
@@ -2470,8 +2297,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			resolved = true;
 			// Resolve superClass
 			if (superClassId != null && superClassId.length() > 0) {
-				superClass = ManagedBuildManager.getExtensionTool(superClassId);
-				if (superClass == null) {
+				setSuperClass( ManagedBuildManager.getExtensionTool(superClassId) );
+				if (getSuperClass() == null) {
 					// Report error
 					ManagedBuildManager.OutputResolveError(
 							"superClass",	//$NON-NLS-1$
@@ -2480,12 +2307,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 							getId());
 				}
 			}
+			//  Resolve HoldsOptions 
+			super.resolveReferences();
 			//  Call resolveReferences on our children
-			Iterator optionIter = getOptionList().iterator();
-			while (optionIter.hasNext()) {
-				Option current = (Option)optionIter.next();
-				current.resolveReferences();
-			}
 			Iterator typeIter = getInputTypeList().iterator();
 			while (typeIter.hasNext()) {
 				InputType current = (InputType)typeIter.next();
@@ -2495,17 +2319,6 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			while (typeIter.hasNext()) {
 				OutputType current = (OutputType)typeIter.next();
 				current.resolveReferences();
-			}
-			// Somewhat wasteful, but use the vector to retrieve the categories in proper order
-			Iterator catIter = getCategoryIds().iterator();
-			while (catIter.hasNext()) {
-				String id = (String)catIter.next();
-				IOptionCategory current = (IOptionCategory)getCategoryMap().get(id);
-				if (current instanceof Tool) {
-					((Tool)current).resolveReferences();
-				} else if (current instanceof OptionCategory) {
-					((OptionCategory)current).resolveReferences();
-				}
 			}
 		}		
 	}
@@ -2526,8 +2339,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public String getConvertToId() {
 		if (convertToId == null) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return superClass.getConvertToId();
+			if (getSuperClass() != null) {
+				return getSuperClass().getConvertToId();
 			} else {
 				return EMPTY_STRING;
 			}
@@ -2553,8 +2366,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	public String getVersionsSupported() {
 		if (versionsSupported == null) {
 			// If I have a superClass, ask it
-			if (superClass != null) {
-				return superClass.getVersionsSupported();
+			if (getSuperClass() != null) {
+				return getSuperClass().getVersionsSupported();
 			} else {
 				return EMPTY_STRING;
 			}
@@ -2582,8 +2395,8 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			return (IEnvVarBuildPath[])envVarBuildPathList.toArray(
 					new IEnvVarBuildPath[envVarBuildPathList.size()]);
 		}
-		else if(superClass != null)
-			return superClass.getEnvVarBuildPaths();
+		else if(getSuperClass() != null)
+			return getSuperClass().getEnvVarBuildPaths();
 		return null;
 	}
 	

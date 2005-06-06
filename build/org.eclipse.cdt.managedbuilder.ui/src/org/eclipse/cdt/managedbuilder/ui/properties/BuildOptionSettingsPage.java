@@ -14,14 +14,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -58,6 +61,17 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	public Point computeSize() {
 		return super.computeSize();
 	}
+	/* (non-Javadoc)
+	 * Private access function which returns the correct configuration
+	 * argument for valueHandler call-backs.
+	 */	
+	private IBuildObject getConfigurationHandle() {
+		if ( isItResourceConfigPage ) {
+			return resConfig;
+		} else {
+			return configuration;
+		}		
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
@@ -76,15 +90,22 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		
 		for (int index = 0; index < options.length; ++index) {
 			// Get the option
-			ITool tool = (ITool)options[index][0];
-			if (tool == null) break;	//  The array may not be full
+			IHoldsOptions holder = (IHoldsOptions)options[index][0];
+			if (holder == null) break;	//  The array may not be full
 			IOption opt = (IOption)options[index][1];
+
 			
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
 			
 			// is the option visible?
-			if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(tool)) {
+			IBuildObject config;
+			if ( isItResourceConfigPage ) {
+				config = resConfig;
+			} else {
+				config = configuration;
+			}
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(config, holder, opt)) {
 		
 			try {
 				// Figure out which type the option is and add a proper field
@@ -103,8 +124,8 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 							DirectoryFieldEditor dirFieldEditor = new DirectoryFieldEditor(
 									opt.getId(), opt.getName(),	fieldEditorParent2);
 
-							setFieldEditorEnablement(tool,
-									applicabilityCalculator, dirFieldEditor, fieldEditorParent2);
+							setFieldEditorEnablement(holder,
+									opt, applicabilityCalculator, dirFieldEditor, fieldEditorParent2);
 
 							addField(dirFieldEditor);
 							fieldsMap.put(opt.getId(), dirFieldEditor);
@@ -117,8 +138,8 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 							FileFieldEditor fileFieldEditor = new FileFieldEditor(
 									opt.getId(), opt.getName(),	fieldEditorParent3);
 
-							setFieldEditorEnablement(tool,
-									applicabilityCalculator, fileFieldEditor, fieldEditorParent3);
+							setFieldEditorEnablement(holder,
+									opt, applicabilityCalculator, fileFieldEditor, fieldEditorParent3);
 
 							addField(fileFieldEditor);
 							fieldsMap.put(opt.getId(), fileFieldEditor);
@@ -130,8 +151,8 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 							StringFieldEditor stringField = new StringFieldEditor(
 									opt.getId(), opt.getName(),	fieldEditorParent4);
 
-							setFieldEditorEnablement(tool,
-									applicabilityCalculator, stringField, fieldEditorParent4);
+							setFieldEditorEnablement(holder,
+									opt, applicabilityCalculator, stringField, fieldEditorParent4);
 
 							addField(stringField);
 							fieldsMap.put(opt.getId(), stringField);
@@ -149,8 +170,8 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						BooleanFieldEditor booleanField = new BooleanFieldEditor(
 								opt.getId(), opt.getName(), fieldEditorParent5);
 
-						setFieldEditorEnablement(tool, 
-								applicabilityCalculator, booleanField, fieldEditorParent5);
+						setFieldEditorEnablement(holder, 
+								opt, applicabilityCalculator, booleanField, fieldEditorParent5);
 
 						addField(booleanField);
 						fieldsMap.put(opt.getId(), booleanField);
@@ -167,13 +188,27 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 							// wrong
 							break;
 						}
+						// Get all applicable values for this enumerated Option, But display
+						// only the enumerated values that are valid (static set of enumerated values defined
+						// in the plugin.xml file) in the UI Combobox. This refrains the user from selecting an
+						// invalid value and avoids issuing an error message.
+						String[] enumNames = opt.getApplicableValues();
+						Vector enumValidList = new Vector();
+						for (int i = 0; i < enumNames.length; ++i) {
+							if (opt.getValueHandler().isEnumValueAppropriate(getConfigurationHandle(), 
+									opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
+								enumValidList.add(enumNames[i]);
+							}
+						}
+						String[] enumValidNames = new String[enumValidList.size()];
+						enumValidList.copyInto(enumValidNames);
 
 						Composite fieldEditorParent6 = getFieldEditorParent();
 						BuildOptionComboFieldEditor comboField = new BuildOptionComboFieldEditor(
-								opt.getId(), opt.getName(), opt.getApplicableValues(), sel,	fieldEditorParent6);
+								opt.getId(), opt.getName(), enumValidNames, sel, fieldEditorParent6);
 
-						setFieldEditorEnablement(tool, 
-								applicabilityCalculator, comboField, fieldEditorParent6);
+						setFieldEditorEnablement(holder, 
+								opt, applicabilityCalculator, comboField, fieldEditorParent6);
 
 						addField(comboField);
 						fieldsMap.put(opt.getId(), comboField);
@@ -189,8 +224,8 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						FileListControlFieldEditor listField = new FileListControlFieldEditor(
 								opt.getId(), opt.getName(), fieldEditorParent7,	opt.getBrowseType());
 
-						setFieldEditorEnablement(tool, 
-								applicabilityCalculator, listField, fieldEditorParent7);
+						setFieldEditorEnablement(holder, 
+								opt, applicabilityCalculator, listField, fieldEditorParent7);
 
 						addField(listField);
 						fieldsMap.put(opt.getId(), listField);
@@ -235,19 +270,20 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		}
 		
 		for (int i = 0; i < options.length; i++) {
-			ITool tool = (ITool)options[i][0];
-			if (tool == null) break;	//  The array may not be full
+			IHoldsOptions holder = (IHoldsOptions)options[i][0];
+			if (holder == null) break;	//  The array may not be full
 			IOption option = (IOption)options[i][1];
+
 			try {
 				// Transfer value from preference store to options
-				IOption setOption;
+				IOption setOption = null;
 				switch (option.getValueType()) {
 					case IOption.BOOLEAN :
 						boolean boolVal = getToolSettingsPreferenceStore().getBoolean(option.getId());
 						if(isItResourceConfigPage) {
-							setOption = ManagedBuildManager.setOption(resConfig, tool, option, boolVal);
+							setOption = ManagedBuildManager.setOption(resConfig, holder, option, boolVal);
 						} else {
-							setOption = ManagedBuildManager.setOption(configuration, tool, option, boolVal);
+							setOption = ManagedBuildManager.setOption(configuration, holder, option, boolVal);
 						}
 						// Reset the preference store since the Id may have changed
 						if (setOption != option) {
@@ -260,10 +296,10 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						String enumVal = getToolSettingsPreferenceStore().getString(option.getId());
 						String enumId = option.getEnumeratedId(enumVal);
 						if(isItResourceConfigPage) {
-							setOption = ManagedBuildManager.setOption(resConfig, tool, option, 
+							setOption = ManagedBuildManager.setOption(resConfig, holder, option, 
 									(enumId != null && enumId.length() > 0) ? enumId : enumVal);
 						} else {
-							setOption = ManagedBuildManager.setOption(configuration, tool, option, 
+							setOption = ManagedBuildManager.setOption(configuration, holder, option, 
 									(enumId != null && enumId.length() > 0) ? enumId : enumVal);
 						}
 						// Reset the preference store since the Id may have changed
@@ -276,9 +312,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 					case IOption.STRING :
 						String strVal = getToolSettingsPreferenceStore().getString(option.getId());
 						if(isItResourceConfigPage){
-							setOption = ManagedBuildManager.setOption(resConfig, tool, option, strVal);
+							setOption = ManagedBuildManager.setOption(resConfig, holder, option, strVal);
 						} else {
-							setOption = ManagedBuildManager.setOption(configuration, tool, option, strVal);	
+							setOption = ManagedBuildManager.setOption(configuration, holder, option, strVal);	
 						}
 						
 						// Reset the preference store since the Id may have changed
@@ -296,9 +332,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						String listStr = getToolSettingsPreferenceStore().getString(option.getId());
 						String[] listVal = BuildToolsSettingsStore.parseString(listStr);
 						if( isItResourceConfigPage){
-							setOption = ManagedBuildManager.setOption(resConfig, tool, option, listVal);
+							setOption = ManagedBuildManager.setOption(resConfig, holder, option, listVal);
 						}else {
-							setOption = ManagedBuildManager.setOption(configuration, tool, option, listVal);	
+							setOption = ManagedBuildManager.setOption(configuration, holder, option, listVal);	
 						}
 						
 						// Reset the preference store since the Id may have changed
@@ -311,7 +347,25 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 					default :
 						break;
 				}
+
+				// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
+				// press have been applied.
+				if (setOption == null)
+					setOption = option;
+				
+				if (setOption.getValueHandler().handleValue(
+						getConfigurationHandle(), 
+						setOption.getOptionHolder(), 
+						setOption,
+						setOption.getValueHandlerExtraArgument(), 
+						IManagedOptionValueHandler.EVENT_APPLY)) {
+					// TODO : Event is handled successfully and returned true.
+					// May need to do something here say log a message.
+				} else {
+					// Event handling Failed. 
+				} 
 			} catch (BuildException e) {}
+
 		}
 		return ok;
 	}
@@ -338,17 +392,23 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		super.performOk();
 	}
 	
-	private void setFieldEditorEnablement(ITool tool, IOptionApplicability optionApplicability,
-			FieldEditor fieldEditor, Composite parent) {
+	private void setFieldEditorEnablement(IHoldsOptions holder, IOption option,
+			IOptionApplicability optionApplicability, FieldEditor fieldEditor, Composite parent) {
 		if (optionApplicability == null)
 			return;
 
 		// if the option is not enabled then disable it
-		if (!optionApplicability.isOptionEnabled(tool)) {
-			fieldEditor.setEnabled(false, parent);
+		IBuildObject config;
+		if ( isItResourceConfigPage ) {
+			config = resConfig;
 		} else {
-			fieldEditor.setEnabled(true, parent);
+			config = configuration;
 		}
+		//if (!optionApplicability.isOptionEnabled(config, holder, )) {
+		//	fieldEditor.setEnabled(false, parent);
+		//} else {
+		//	fieldEditor.setEnabled(true, parent);
+		//}
 	}
 
 	/* (non-Javadoc)
@@ -369,8 +429,8 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 
 		for (int index = 0; index < options.length; ++index) {
 			// Get the option
-			ITool tool = (ITool) options[index][0];
-			if (tool == null)
+			IHoldsOptions holder = (IHoldsOptions) options[index][0];
+			if (holder == null)
 				break; //  The array may not be full
 			IOption opt = (IOption) options[index][1];
 
@@ -382,7 +442,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 				if (applicabilityCalculator != null) {
 					FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(opt.getId());
 					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
-					setFieldEditorEnablement(tool, applicabilityCalculator, fieldEditor, parent);
+					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
 				}
 			}
 

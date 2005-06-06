@@ -30,7 +30,7 @@ import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
  * 
  * @since 2.1
  */
-public interface IToolChain extends IBuildObject {
+public interface IToolChain extends IBuildObject, IHoldsOptions {
 	public static final String TOOL_CHAIN_ELEMENT_NAME = "toolChain";	//$NON-NLS-1$
 	public static final String OS_LIST = "osList";						//$NON-NLS-1$
 	public static final String ARCH_LIST = "archList";					//$NON-NLS-1$
@@ -354,7 +354,7 @@ public interface IToolChain extends IBuildObject {
 	 * @return IConfigurationEnvironmentVariableSupplier
 	 */
 	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier();
-	
+		
 	/**
 	 * Returns the tool-integrator provided implementation of the configuration build macro supplier
 	 * or <code>null</code> if none. 

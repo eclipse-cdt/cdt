@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -77,6 +78,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -88,6 +90,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -114,6 +117,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String MANIFEST_ERROR_HEADER = "ManagedBuildManager.error.manifest.header";	//$NON-NLS-1$
 	public  static final String MANIFEST_ERROR_RESOLVING = "ManagedBuildManager.error.manifest.resolving";	//$NON-NLS-1$
 	public  static final String MANIFEST_ERROR_DUPLICATE = "ManagedBuildManager.error.manifest.duplicate";	//$NON-NLS-1$
+	public  static final String MANIFEST_ERROR_ICON = "ManagedBuildManager.error.manifest.icon";	//$NON-NLS-1$
+	private static final String MANIFEST_ERROR_OPTION_CATEGORY = "ManagedBuildManager.error.manifest.option.category";	//$NON-NLS-1$
+	private static final String MANIFEST_ERROR_OPTION_FILTER = "ManagedBuildManager.error.manifest.option.filter";	//$NON-NLS-1$
+	private static final String MANIFEST_ERROR_OPTION_VALUEHANDLER = "ManagedBuildManager.error.manifest.option.valuehandler";	//$NON-NLS-1$
+	// Error ID's for OptionValidError()
+	public static final int ERROR_CATEGORY = 0;
+	public static final int ERROR_FILTER = 1;
+	
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files
@@ -707,19 +718,24 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	/**
-	 * Set the string value for an option for a given config.
+	 * Set the boolean value for an option for a given config.
 	 * 
 	 * @param config The configuration the option belongs to.
+	 * @param holder The holder/parent of the option.
 	 * @param option The option to set the value for.
 	 * @param value The boolean that the option should contain after the change.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * 
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
+	 *        has changed to <code>IHoldsOptions holder</code>. Client code
+	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IConfiguration config, ITool tool, IOption option, boolean value) {
+	public static IOption setOption(IConfiguration config, IHoldsOptions holder, IOption option, boolean value) {
 		IOption retOpt;
 		try {
 			// Request a value change and set dirty if real change results
-			retOpt = config.setOption(tool, option, value);
+			retOpt = config.setOption(holder, option, value);
 			notifyListeners(config, option);
 		} catch (BuildException e) {
 			return null;
@@ -727,11 +743,25 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return retOpt;
 	}
 
-	public static IOption setOption(IResourceConfiguration resConfig, ITool tool, IOption option, boolean value) {
+	/**
+	 * Set the boolean value for an option for a given config.
+	 * 
+	 * @param resConfig The resource configuration the option belongs to.
+	 * @param holder The holder/parent of the option.
+	 * @param option The option to set the value for.
+	 * @param value The boolean that the option should contain after the change.
+	 * 
+	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * 
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
+	 *        has changed to <code>IHoldsOptions holder</code>. Client code
+	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
+	 */
+	public static IOption setOption(IResourceConfiguration resConfig, IHoldsOptions holder, IOption option, boolean value) {
 		IOption retOpt;
 		try {
 			// Request a value change and set dirty if real change results
-			retOpt = resConfig.setOption(tool, option, value);
+			retOpt = resConfig.setOption(holder, option, value);
 			notifyListeners(resConfig, option);
 		} catch (BuildException e) {
 			return null;
@@ -742,15 +772,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Set the string value for an option for a given config.
 	 * 
 	 * @param config The configuration the option belongs to.
+	 * @param holder The holder/parent of the option.
 	 * @param option The option to set the value for.
 	 * @param value The value that the option should contain after the change.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * 
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
+	 *        has changed to <code>IHoldsOptions holder</code>. Client code
+	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IConfiguration config, ITool tool, IOption option, String value) {
+	public static IOption setOption(IConfiguration config, IHoldsOptions holder, IOption option, String value) {
 		IOption retOpt;
 		try {
-			retOpt = config.setOption(tool, option, value);
+			retOpt = config.setOption(holder, option, value);
 			notifyListeners(config, option);
 		} catch (BuildException e) {
 			return null;
@@ -762,15 +797,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Set the string value for an option for a given  resource config.
 	 * 
 	 * @param resConfig The resource configuration the option belongs to.
+	 * @param holder The holder/parent of the option.
 	 * @param option The option to set the value for.
 	 * @param value The value that the option should contain after the change.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * 
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
+	 *        has changed to <code>IHoldsOptions holder</code>. Client code
+	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IResourceConfiguration resConfig, ITool tool, IOption option, String value) {
+	public static IOption setOption(IResourceConfiguration resConfig, IHoldsOptions holder, IOption option, String value) {
 		IOption retOpt;
 		try {
-			retOpt = resConfig.setOption(tool, option, value);
+			retOpt = resConfig.setOption(holder, option, value);
 			notifyListeners(resConfig, option);
 		} catch (BuildException e) {
 			return null;
@@ -781,15 +821,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Set the string array value for an option for a given config.
 	 * 
 	 * @param config The configuration the option belongs to.
+	 * @param holder The holder/parent of the option.
 	 * @param option The option to set the value for.
 	 * @param value The values the option should contain after the change.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * 
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
+	 *        has changed to <code>IHoldsOptions holder</code>. Client code
+	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IConfiguration config, ITool tool, IOption option, String[] value) {
+	public static IOption setOption(IConfiguration config, IHoldsOptions holder, IOption option, String[] value) {
 		IOption retOpt;
 		try {
-			retOpt = config.setOption(tool, option, value);
+			retOpt = config.setOption(holder, option, value);
 			notifyListeners(config, option);				
 		} catch (BuildException e) {
 			return null;
@@ -801,15 +846,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Set the string array value for an option for a given resource config.
 	 * 
 	 * @param resConfig The resource configuration the option belongs to.
+	 * @param holder The holder/parent of the option.
 	 * @param option The option to set the value for.
 	 * @param value The values the option should contain after the change.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * 
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
+	 *        has changed to <code>IHoldsOptions holder</code>. Client code
+	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
 	 */
-	public static IOption setOption(IResourceConfiguration resConfig, ITool tool, IOption option, String[] value) {
+	public static IOption setOption(IResourceConfiguration resConfig, IHoldsOptions holder, IOption option, String[] value) {
 		IOption retOpt;
 		try {
-			retOpt = resConfig.setOption(tool, option, value);
+			retOpt = resConfig.setOption(holder, option, value);
 			notifyListeners(resConfig, option);				
 		} catch (BuildException e) {
 			return null;
@@ -831,7 +881,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			config.setToolCommand(tool, command);
 		}
 	}
-	
+
 	public static void setToolCommand(IResourceConfiguration resConfig, ITool tool, String command) {
 		// The tool may be a reference.
 		if (tool instanceof IToolReference) {
@@ -1340,6 +1390,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 				}
 				project.setSessionProperty(buildInfoProperty, buildInfo);
+				IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
+				// Send an event to each configuration and if they exist, its resource configurations
+				for (int i=0; i < configs.length; ++i) {
+					ManagedBuildManager.performValueHandlerEvent(configs[i], IManagedOptionValueHandler.EVENT_OPEN);
+				}
 			}
 		} catch (Exception e) {
 			throw e;
@@ -1421,8 +1476,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 							}
 						}
 						
-						// Get the value of 'ManagedBuilRevision' attribute
-						loadConfigElements(DefaultManagedConfigElement.convertArray(elements), revision);
+						// Get the value of 'ManagedBuildRevision' attribute
+						loadConfigElements(DefaultManagedConfigElement.convertArray(elements, extension), revision);
 					}
 				}
 				// Then call resolve.
@@ -1567,7 +1622,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						// If the "fileVersion" attribute is missing, then default revision is "1.2.0"
 						if (revision == null)
 							revision = "1.2.0"; 	//$NON-NLS-1$
-						loadConfigElementsV2(DefaultManagedConfigElement.convertArray(elements), revision);
+						loadConfigElementsV2(DefaultManagedConfigElement.convertArray(elements, extension), revision);
 					}
 					// Resolve references
 					Iterator targetIter = getExtensionTargetMap().values().iterator();
@@ -1937,6 +1992,57 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return buildInfoVersion;
 	}
 
+	/**
+	 * Get the full URL for a path that is relative to the plug-in 
+	 * in which .buildDefinitions are defined
+	 * 
+	 * @return the full URL for a path relative to the .buildDefinitions
+	 *         plugin
+	 */
+	public static URL getURLInBuildDefinitions(DefaultManagedConfigElement element, IPath path) {
+		
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
+		if( extensionPoint != null) {
+			IExtension[] extensions = extensionPoint.getExtensions();
+			if (extensions != null) {
+				
+				// Iterate over all extensions that contribute to .buildDefinitions
+				for (int i = 0; i < extensions.length; ++i) {
+					IExtension extension = extensions[i];
+					
+					// Determine whether the configuration element that is
+					// associated with the path, is valid for the extension that
+					// we are currently processing.
+					//
+					// Note: If not done, icon file names would have to be unique
+					// across several plug-ins.
+					if (element.getExtension().getExtensionPointUniqueIdentifier() 
+						 == extension.getExtensionPointUniqueIdentifier())
+					{
+						// Get the path-name
+						Bundle bundle = Platform.getBundle( extension.getNamespace() );
+						URL url = Platform.find(bundle, path);
+						if ( url != null )
+						{
+							try {
+								return Platform.asLocalURL(url);
+							} catch (IOException e) {
+								// Ignore the exception
+								return null;
+							}
+						}
+						else
+						{
+							// Print a warning
+							OutputIconError(path.toString());
+						}
+					}
+				}
+			}			
+		}		
+		return null;
+	}	
+	
 	/*
 	 * @return
 	 */
@@ -2032,6 +2138,29 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return (IManagedConfigElement)getConfigElementMap().get(buildObj);
 	}
 	
+	public static void OptionValidError(int errorId, String id) {
+		String[] msgs = new String[1];
+		msgs[0] = id;
+		switch (errorId) {
+		case ERROR_CATEGORY:
+			ManagedBuildManager.OutputManifestError(
+					ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_CATEGORY, msgs));
+			break;
+		case ERROR_FILTER:
+			ManagedBuildManager.OutputManifestError(
+					ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_FILTER, msgs));
+			break;
+		}
+	}
+	
+	public static void OptionValueHandlerError(String attribute, String id) {
+		String[] msgs = new String[2];
+		msgs[0] = attribute;
+		msgs[1] = id;
+		ManagedBuildManager.OutputManifestError(
+			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_OPTION_VALUEHANDLER, msgs));
+	}
+	
 	public static void OutputResolveError(String attribute, String lookupId, String type, String id) {
 		String[] msgs = new String[4];
 		msgs[0] = attribute;
@@ -2052,6 +2181,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	
 	public static void OutputManifestError(String message) {
 		System.err.println(ManagedMakeMessages.getResourceString(MANIFEST_ERROR_HEADER) + message + NEWLINE);
+	}
+	
+	public static void OutputIconError(String iconLocation) {
+		String[] msgs = new String[1];
+		msgs[0]= iconLocation;
+		ManagedBuildManager.OutputManifestError(
+			ManagedMakeMessages.getFormattedString(ManagedBuildManager.MANIFEST_ERROR_ICON, msgs));
 	}
 	
 	/**
@@ -2119,4 +2255,123 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IBuildMacroProvider getBuildMacroProvider(){
 		return BuildMacroProvider.getDefault();
 	}
+	
+	/**
+	 * Send event to value handlers of relevant configuration including
+	 * all its child resource configurations, if they exist.
+	 * 
+	 * @param IConfiguration configuration for which to send the event
+	 * @param event to be sent
+	 * 
+	 * @since 3.0
+	 */
+	public static void performValueHandlerEvent(IConfiguration config, int event) {
+		performValueHandlerEvent(config, event, true);		
+	}
+	
+	/**
+	 * Send event to value handlers of relevant configuration.
+	 * 
+	 * @param IConfiguration configuration for which to send the event
+	 * @param event to be sent
+	 * @param doChildren - if true, also perform the event for all 
+	 *        resource configurations that are children if this configuration. 
+	 * 
+	 * @since 3.0
+	 */
+	public static void performValueHandlerEvent(IConfiguration config, int event, boolean doChildren) {
+
+		IToolChain toolChain = config.getToolChain();
+		if (toolChain == null)
+			return;
+		
+		IOption[] options = toolChain.getOptions();
+		// Get global options directly under Toolchain (not associated with a particular tool)
+		// This has to be sent to all the Options associated with this configuration.
+		for (int i = 0; i < options.length; ++i) {
+			// Ignore invalid options
+			if (options[i].isValid()) {
+				// Call the handler
+				if (options[i].getValueHandler().handleValue(
+						config, 
+						options[i].getOptionHolder(), 
+						options[i], 
+						options[i].getValueHandlerExtraArgument(), 
+						event)) {
+					// TODO : Event is handled successfully and returned true.
+					// May need to do something here say logging a message.
+				} else {
+					// Event handling Failed. 
+				}
+			}
+		}
+
+		// Get options associated with tools under toolChain
+		ITool[] tools = toolChain.getTools();
+		for (int i = 0; i < tools.length; ++i) {
+			IOption[] toolOptions = tools[i].getOptions();
+			for (int j = 0; j < toolOptions.length; ++j) {
+				// Ignore invalid options
+				if (toolOptions[j].isValid()) {
+					// Call the handler
+					if (toolOptions[j].getValueHandler().handleValue(
+							config, 
+							toolOptions[j].getOptionHolder(), 
+							toolOptions[j], 
+							toolOptions[j].getValueHandlerExtraArgument(), 
+							event)) {
+						// TODO : Event is handled successfully and returned true.
+						// May need to do something here say logging a message.
+					} else {
+						// Event handling Failed. 
+					}
+				}
+			}
+		}
+		
+		// Call backs for Resource Configurations associated with this config.
+		if (doChildren == true) {
+			IResourceConfiguration[] resConfigs = config.getResourceConfigurations();
+			for (int j=0; j < resConfigs.length; ++j) {
+				ManagedBuildManager.performValueHandlerEvent(resConfigs[j], event);
+			}			
+		}
+	}
+	
+	/**
+	 * Send event to value handlers of relevant configuration.
+	 * 
+	 * @param IResourceConfiguration configuration for which to send the event
+	 * @param event to be sent
+	 * 
+	 * @since 3.0
+	 */
+	public static void performValueHandlerEvent(IResourceConfiguration config, int event) {
+
+		// Note: Resource configurations have no toolchain options
+		
+		// Get options associated with the resource configuration
+		ITool[] tools = config.getTools();
+		for (int i = 0; i < tools.length; ++i) {
+			IOption[] toolOptions = tools[i].getOptions();
+			for (int j = 0; j < toolOptions.length; ++j) {
+				// Ignore invalid options
+				if (toolOptions[j].isValid()) {
+					// Call the handler
+					if (toolOptions[j].getValueHandler().handleValue(
+							config, 
+							toolOptions[j].getOptionHolder(), 
+							toolOptions[j], 
+							toolOptions[j].getValueHandlerExtraArgument(), 
+							event)) {
+						// TODO : Event is handled successfully and returned true.
+						// May need to do something here say logging a message.
+					} else {
+						// Event handling Failed. 
+					}
+				}
+			}
+		}
+	}
+		
 }

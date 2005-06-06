@@ -448,7 +448,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 									.getApplicabilityCalculator();
 
 							if (applicabilityCalculator == null
-									|| applicabilityCalculator.isOptionUsedInCommandLine(tool)) {
+									|| applicabilityCalculator.isOptionUsedInCommandLine(config, tool, option)) {
 
 								// Get all the user-defined paths from the
 								// option as absolute paths
@@ -500,7 +500,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 							IOptionApplicability applicabilitytCalculator = option.getApplicabilityCalculator();
 							
 							if (applicabilitytCalculator == null
-									|| applicabilitytCalculator.isOptionUsedInCommandLine(tool)) {
+									|| applicabilitytCalculator.isOptionUsedInCommandLine(getDefaultConfiguration(), tool, option)) {
 								String command = option.getCommand();
 								String[] allLibs = option.getLibraries();
 								for (int j = 0; j < allLibs.length; j++)

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -225,6 +226,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id) {
 		Configuration config = new Configuration(this, (Configuration)parent, id, false);
+		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
 	}
 
@@ -233,6 +235,8 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 */
 	public IConfiguration createConfigurationClone(IConfiguration parent, String id) {
 		Configuration config = new Configuration(this, (Configuration)parent, id, true);
+		// Inform all options in the configuration and all its resource configurations
+		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
 	}
 

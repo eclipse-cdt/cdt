@@ -24,7 +24,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -218,9 +220,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
 	 * @param cloneConfig The <code>IConfiguration</code> to copy the settings from.
 	 * @param id A unique ID for the new configuration.
-	 * @param cloneTools If <code>true</code>, the configuration's tools are cloned 
+	 * @param cloneChildren If <code>true</code>, the configuration's tools are cloned 
 	 */
-	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneTools) {
+	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneChildren) {
 		setId(id);
 		setName(cloneConfig.getName());
 		this.managedProject = managedProject;
@@ -274,7 +276,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			tmpId = cloneConfig.getToolChain().getId();	
 			subName = cloneConfig.getToolChain().getName();
 		}
-
+		
 		String version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
 		if ( version != null) {			// If the 'tmpId' contains version information
 			subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
@@ -282,7 +284,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			subId = tmpId + "." + nnn;		//$NON-NLS-1$
 		}
 
-		if (cloneTools) {
+		if (cloneChildren) {
 		    toolChain = new ToolChain(this, subId, subName, (ToolChain)cloneConfig.getToolChain());
 		} else {
 			// Add a tool-chain element that specifies as its superClass the 
@@ -297,6 +299,12 @@ public class Configuration extends BuildObject implements IConfiguration {
 			}
 			IToolChain newChain = createToolChain(superChain, subId, superChain.getName(), false);
 			
+			// For each option/option category child of the tool-chain that is
+			// the child of the selected configuration element, create an option/
+			// option category child of the cloned configuration's tool-chain element
+			// that specifies the original tool element as its superClass.
+			newChain.createOptions(superChain);
+
 			// For each tool element child of the tool-chain that is the child of 
 			// the selected configuration element, create a tool element child of 
 			// the cloned configuration's tool-chain element that specifies the 
@@ -691,7 +699,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, boolean)
 	 */
-	public IOption setOption(ITool tool, IOption option, boolean value) throws BuildException {
+	public IOption setOption(IHoldsOptions holder, IOption option, boolean value) throws BuildException {
 		// Is there a change?
 		IOption retOpt = option;
 		if (option.getBooleanValue() != value) {
@@ -709,7 +717,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				String subId;
 				int nnn = ManagedBuildManager.getRandomNumber();
 				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt = holder.createOption(newSuperClass, subId, null, false); 
 				retOpt.setValueType(option.getValueType());
 				retOpt.setValue(value);
 				setDirty(true);
@@ -724,7 +732,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String)
 	 */
-	public IOption setOption(ITool tool, IOption option, String value) throws BuildException {
+	public IOption setOption(IHoldsOptions holder, IOption option, String value) throws BuildException {
 		IOption retOpt = option;
 		String oldValue;
 		oldValue = option.getStringValue(); 
@@ -743,7 +751,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				String subId;
 				int nnn = ManagedBuildManager.getRandomNumber();
 				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt = holder.createOption(newSuperClass, subId, null, false); 
 				retOpt.setValueType(option.getValueType());
 				retOpt.setValue(value);
 				setDirty(true);
@@ -758,7 +766,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String[])
 	 */
-	public IOption setOption(ITool tool, IOption option, String[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions holder, IOption option, String[] value) throws BuildException {
 		IOption retOpt = option;
 		// Is there a change?
 		String[] oldValue;
@@ -797,7 +805,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				String subId;
 				int nnn = ManagedBuildManager.getRandomNumber();
 				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt = holder.createOption(newSuperClass, subId, null, false); 
 				retOpt.setValueType(option.getValueType());
 				retOpt.setValue(value);
 				setDirty(true);
@@ -1344,12 +1352,24 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void reset() {
 		// We just need to remove all Options
 		ITool[] tools = getTools();
+		IToolChain toolChain = getToolChain();
+		IOption[] opts;
+		
+		// Send out the event to notify the options that they are about to be removed.
+		// Do not do this for the child resource configurations as they are handled when
+		// the configuration itself is destroyed.
+		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE, false);
+		// Remove the configurations		
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
-			IOption[] opts = tool.getOptions();
+			opts = tool.getOptions();
 			for (int j = 0; j < opts.length; j++) {
 				tool.removeOption(opts[j]);
 			}
+		}
+		opts = toolChain.getOptions();
+		for (int j = 0; j < opts.length; j++) {
+			toolChain.removeOption(opts[j]);
 		}
 	}
 
@@ -1378,6 +1398,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 		 
 		// Add this resource to the list.
 		addResourceConfiguration(resConfig);
+		ManagedBuildManager.performValueHandlerEvent(resConfig, IManagedOptionValueHandler.EVENT_OPEN);
+		
 		return resConfig;
 	}
 	
@@ -1419,5 +1441,4 @@ public class Configuration extends BuildObject implements IConfiguration {
 		return null;
 		
 	}
-
 }

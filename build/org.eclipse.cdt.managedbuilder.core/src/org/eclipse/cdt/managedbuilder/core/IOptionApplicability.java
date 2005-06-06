@@ -20,22 +20,34 @@ public interface IOptionApplicability {
 	 * generated which uses this option, and in the C/C++ Build property
 	 * pages when displaying the current command line.
 	 * 
-	 * @param toolParent  The parent tool for this option.  This provides
-	 *         a context for obtaining other information from the MBS     
-	 * @return true if this this option is to be used in command line
+	 * @param configuration  build configuration of option 
+	 *                       (may be IConfiguration or IResourceConfiguration)
+	 * @param holder         contains the holder of the option
+	 * @param option         the option itself
+	 * 
+	 * @return true if this option is to be used in command line
 	 *         generation, false otherwise
 	 */
-	public boolean isOptionUsedInCommandLine(ITool toolParent);
+	public boolean isOptionUsedInCommandLine(
+			IBuildObject configuration, 
+            IHoldsOptions holder, 
+            IOption option);           
 
 	/**
 	 * This method is queried whenever a new option category is displayed.
 	 * 
-	 * @param toolParent  The parent tool for this option.  This provides
-	 *         a context for obtaining other information from the MBS     
+	 * @param configuration  build configuration of option 
+	 *                       (may be IConfiguration or IResourceConfiguration)
+	 * @param holder         contains the holder of the option
+	 * @param option         the option itself
+	 * 
 	 * @return true if this option should be visible in the build options page,
 	 *         false otherwise
 	 */
-	public boolean isOptionVisible(ITool toolParent);
+	public boolean isOptionVisible(
+			IBuildObject configuration, 
+            IHoldsOptions holder, 
+            IOption option);           
 
 	/**
 	 * Whenever the value of an option changes in the GUI, this method is
@@ -43,11 +55,17 @@ public interface IOptionApplicability {
 	 * this occurs when the GUI changes - the user may opt to cancel these
 	 * changes.
 	 * 
-	 * @param toolParent  The parent tool for this option.  This provides
-	 *         a context for obtaining other information from the MBS     
+	 * @param configuration  build configuration of option 
+	 *                       (may be IConfiguration or IResourceConfiguration)
+	 * @param holder         contains the holder of the option
+	 * @param option         the option itself
+	 *
 	 * @return true if this option should be enabled in the build options page,
 	 *         or false if it should be disabled (grayed out)
 	 */
-	public boolean isOptionEnabled(ITool toolParent);
+	public boolean isOptionEnabled(
+			IBuildObject configuration, 
+		    IHoldsOptions holder, 
+		    IOption option);           
 
 }

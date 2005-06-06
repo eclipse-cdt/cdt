@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
+ * Copyright (c) 2004, 2005 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,46 +118,56 @@ public interface IResourceConfiguration extends IBuildObject {
 	 * @param command The command
 	 */
 	public void setToolCommand(ITool tool, String command);
+	
 	/**
 	 * Sets the value of a boolean option for this resource configuration.
 	 * 
-	 * @param tool The Tool parent of the option.
+	 * @param parent The holder/parent of the option.
 	 * @param option The option to change.
 	 * @param value The value to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 * 
 	 * @throws BuildException
+	 * 
+	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
+	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
-	public IOption setOption(ITool tool, IOption option, boolean value) 
+	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) 
 		throws BuildException;	
 
 	/**
 	 * Sets the value of a string option for this resource configuration.
 	 * 
-	 * @param tool The Tool parent of the option.
+	 * @param parent The holder/parent of the option.
 	 * @param option The option that will be effected by change.
 	 * @param value The value to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 * 
 	 * @throws BuildException
+	 * 
+	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
+	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
-	public IOption setOption(ITool tool, IOption option, String value)
+	public IOption setOption(IHoldsOptions parent, IOption option, String value)
 		throws BuildException;
 	
 	/**
 	 * Sets the value of a list option for this resource configuration.
 	 * 
-	 * @param tool The Tool parent of the option.
+	 * @param parent The holder/parent of the option.
 	 * @param option The option to change.
 	 * @param value The values to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 * 
 	 * @throws BuildException
+	 * 
+	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
+	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
-	public IOption setOption(ITool tool, IOption option, String[] value)
+	public IOption setOption(IHoldsOptions parent, IOption option, String[] value)
 		throws BuildException;
 
 	

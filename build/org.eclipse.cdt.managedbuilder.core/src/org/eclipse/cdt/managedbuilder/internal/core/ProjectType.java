@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -191,6 +192,7 @@ public class ProjectType extends BuildObject implements IProjectType {
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id, String name) {
 		Configuration config = new Configuration(this, parent, id, name);
+		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
 	}
 

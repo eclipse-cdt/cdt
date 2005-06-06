@@ -16,12 +16,15 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -503,10 +506,17 @@ public class OptionReference implements IOption {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getParent()
 	 */
-	public ITool getParent() {
+	public IBuildObject getParent() {
 		return owner;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getOptionHolder()
+	 */
+	public IHoldsOptions getOptionHolder() {
+		return owner;
+	}
+	
 	/**
 	 * Answers the tool reference that contains the receiver.
 	 * 
@@ -744,4 +754,37 @@ public class OptionReference implements IOption {
 		return option.getManagedBuildRevision();
 	}	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueHandlerElement()
+	 */
+	public IConfigurationElement getValueHandlerElement() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setValueHandlerElement(IConfigurationElement)
+	 */
+	public void setValueHandlerElement(IConfigurationElement element) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueHandler()
+	 */
+	public IManagedOptionValueHandler getValueHandler() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueHandlerExtraArgument())
+	 */
+	public String getValueHandlerExtraArgument() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isValid()
+	 */
+	public boolean isValid() {
+		return option.isValid();
+	}
 }

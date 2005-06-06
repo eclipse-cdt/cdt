@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import java.net.URL;
+
 /**
  * 
  */
@@ -17,6 +19,7 @@ public interface IOptionCategory extends IBuildObject {
 
 	// Schema element names
 	public static final String OWNER = "owner"; //$NON-NLS-1$
+	public static final String ICON  = "icon";  //$NON-NLS-1$
 	
 //	 Resource Filter type
 	public static final int FILTER_ALL = 0;
@@ -52,10 +55,35 @@ public interface IOptionCategory extends IBuildObject {
 	
 	/**
 	 * Returns the tool that ultimately owns this category.
+	 * If owned by a toolChain return null.
 	 * 
 	 * @return
+	 * @deprecated since 3.0 - use getOptionHolder() instead
 	 */
 	public ITool getTool();
+
+	/**
+	 * Returns the holder (parent) of this category. This may be an object
+	 * implementing ITool or IToolChain, which both extend IHoldsOptions.
+	 * The call can return null, for example the top option category of a tool 
+	 * will return null.
+	 * 
+	 * Note that the name getOptionHolder() has been choosen, because Tool implements
+	 * both ITool and IOptionCategory and ITool.getParent() exists already.
+	 *  
+	 * @return IHoldsOptions
+	 * @since 3.0
+	 */
+	public IHoldsOptions getOptionHolder();
+
+	/**
+	 * Get the path name of an alternative icon for the option group.
+	 * Or null if no alternative icon was defined.
+	 * 
+	 * @return URL
+	 * @since 3.0
+	 */
+	public URL getIconPath();
 
 	/**
 	 * Returns <code>true</code> if this element has changes that need to 

@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
@@ -25,7 +26,9 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
@@ -446,71 +449,81 @@ public class ToolReference implements IToolReference {
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
 			
-			if (applicabilityCalculator == null
-					|| applicabilityCalculator.isOptionUsedInCommandLine(getTool())) {
-			switch (option.getValueType()) {
-				case IOption.BOOLEAN :
-					String boolCmd;
-					if (option.getBooleanValue()) {
-						boolCmd = option.getCommand();
-					} else {
-						// Note: getCommandFalse is new with CDT 2.0
-						boolCmd = option.getCommandFalse();
-					}
-					if (boolCmd != null && boolCmd.length() > 0) {
-						buf.append(boolCmd + WHITE_SPACE);
-					}
-					break;
-				
-				case IOption.ENUMERATED :
-					String enumVal = option.getEnumCommand(option.getSelectedEnum());
-					if (enumVal.length() > 0) {
-						buf.append(enumVal + WHITE_SPACE);
-					}
-					break;
-				
-				case IOption.STRING :
-					String strCmd = option.getCommand();
-					String val = option.getStringValue();
-					if (val.length() > 0) { 
-						if (strCmd != null) buf.append(strCmd);
-						buf.append(val + WHITE_SPACE);
-					}
-					break;
-					
-				case IOption.STRING_LIST :
-					String cmd = option.getCommand();
-					String[] list = option.getStringListValue();
-					for (int j = 0; j < list.length; j++) {
-						String temp = list[j];
-						if (cmd != null) buf.append(cmd);
-						buf.append(temp + WHITE_SPACE);
-					}
-					break;
-					
-				case IOption.INCLUDE_PATH :
-					String incCmd = option.getCommand();
-					String[] paths = option.getIncludePaths();
-					for (int j = 0; j < paths.length; j++) {
-						String temp = paths[j];
-						buf.append(incCmd + temp + WHITE_SPACE);
-					}
-					break;
-
-				case IOption.PREPROCESSOR_SYMBOLS :
-					String defCmd = option.getCommand();
-					String[] symbols = option.getDefinedSymbols();
-					for (int j = 0; j < symbols.length; j++) {
-						String temp = symbols[j];
-						buf.append(defCmd + temp + WHITE_SPACE);
-					}
-					break;
-
-				default :
-					break;
+			boolean optionIsApplicable = true;
+			if (applicabilityCalculator != null) {
+				ITool tool = getTool();
+				IBuildObject config;
+				if( tool.getParent() instanceof IResourceConfiguration ) {
+					config = tool.getParent();
+				} else {
+					config = ((IToolChain)tool.getParent()).getParent();
+				}
+				optionIsApplicable = 
+					applicabilityCalculator.isOptionUsedInCommandLine(config, tool, option);	
 			}
-
-		}
+			if (optionIsApplicable) {
+				switch (option.getValueType()) {
+					case IOption.BOOLEAN :
+						String boolCmd;
+						if (option.getBooleanValue()) {
+							boolCmd = option.getCommand();
+						} else {
+							// Note: getCommandFalse is new with CDT 2.0
+							boolCmd = option.getCommandFalse();
+						}
+						if (boolCmd != null && boolCmd.length() > 0) {
+							buf.append(boolCmd + WHITE_SPACE);
+						}
+						break;
+					
+					case IOption.ENUMERATED :
+						String enumVal = option.getEnumCommand(option.getSelectedEnum());
+						if (enumVal.length() > 0) {
+							buf.append(enumVal + WHITE_SPACE);
+						}
+						break;
+					
+					case IOption.STRING :
+						String strCmd = option.getCommand();
+						String val = option.getStringValue();
+						if (val.length() > 0) { 
+							if (strCmd != null) buf.append(strCmd);
+							buf.append(val + WHITE_SPACE);
+						}
+						break;
+						
+					case IOption.STRING_LIST :
+						String cmd = option.getCommand();
+						String[] list = option.getStringListValue();
+						for (int j = 0; j < list.length; j++) {
+							String temp = list[j];
+							if (cmd != null) buf.append(cmd);
+							buf.append(temp + WHITE_SPACE);
+						}
+						break;
+						
+					case IOption.INCLUDE_PATH :
+						String incCmd = option.getCommand();
+						String[] paths = option.getIncludePaths();
+						for (int j = 0; j < paths.length; j++) {
+							String temp = paths[j];
+							buf.append(incCmd + temp + WHITE_SPACE);
+						}
+						break;
+	
+					case IOption.PREPROCESSOR_SYMBOLS :
+						String defCmd = option.getCommand();
+						String[] symbols = option.getDefinedSymbols();
+						for (int j = 0; j < symbols.length; j++) {
+							String temp = symbols[j];
+							buf.append(defCmd + temp + WHITE_SPACE);
+						}
+						break;
+	
+					default :
+						break;
+				}
+			}
 		}
 
 		return buf.toString().trim();
@@ -919,6 +932,12 @@ public class ToolReference implements IToolReference {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#createOptions()
+	 */
+	public void createOptions(IHoldsOptions options) {
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOption()
 	 */
 	public void removeOption(IOption o) {
@@ -1088,7 +1107,15 @@ public class ToolReference implements IToolReference {
 	public IOption getOptionBySuperClassId(String id) {
 		return null;
 	}
+	
+	public IOptionCategory getOptionCategory(String id) {
+		// return null as class is deprecated
+		return null;
+	}
 
+	public void addOptionCategory(IOptionCategory category) {
+	}
+	
 	/*
 	 * The following methods are added to allow the converter from ToolReference -> Tool
 	 * to retrieve the actual value of attributes.  These routines do not go to the

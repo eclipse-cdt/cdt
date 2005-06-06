@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 TimeSys Corporation and others.
+ * Copyright (c) 2004, 2005 TimeSys Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 
 /**
  * Implements the ManagedConfigElement by delegate all calls to an
@@ -21,12 +22,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class DefaultManagedConfigElement implements IManagedConfigElement {
 
 	private IConfigurationElement element;
+	private IExtension extension;
 	
 	/**
 	 * @param element
 	 */
-	public DefaultManagedConfigElement(IConfigurationElement element) {
+	public DefaultManagedConfigElement(IConfigurationElement element, IExtension extension) {
 		this.element = element;
+		this.extension = extension;
 	}
 	
 	/* (non-Javadoc)
@@ -47,16 +50,23 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getChildren()
 	 */
 	public IManagedConfigElement[] getChildren() {
-		return convertArray(element.getChildren());
+		return convertArray(element.getChildren(), extension);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getChildren(java.lang.String)
 	 */
 	public IManagedConfigElement[] getChildren(String elementName) {
-		return convertArray(element.getChildren(elementName));
+		return convertArray(element.getChildren(elementName), extension);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getExtension(java.lang.String)
+	 */
+	public IExtension getExtension() {
+		return extension;
+	}
+	
 	/**
 	 * @return
 	 */
@@ -69,11 +79,12 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	 * into an array of IManagedConfigElements.
 	 */
 	public static IManagedConfigElement[] convertArray(
-		IConfigurationElement[] elements) {
+		IConfigurationElement[] elements,
+		IExtension extension) {
 
 		IManagedConfigElement[] ret = new IManagedConfigElement[elements.length];
 		for (int i = 0; i < elements.length; i++) {
-			ret[i] = new DefaultManagedConfigElement(elements[i]);
+			ret[i] = new DefaultManagedConfigElement(elements[i], extension);
 		}
 		return ret;
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -15,10 +15,12 @@ import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -237,8 +239,8 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		if ( options == null)
 			return;
 		for (int j = 0; j < options.length; ++j) {
-			ITool tool = (ITool)options[j][0];
-			if (tool == null) break;	//  The array may not be full
+			IHoldsOptions optionHolder = (IHoldsOptions)options[j][0];
+			if (optionHolder == null) break;	//  The array may not be full
 			IOption opt = (IOption)options[j][1];
 			String name = opt.getId();
 			Object value;
@@ -367,23 +369,40 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	private void populateSettingsMap() {
 		// Each configuration has a list of tools
 		ITool [] tools;
+		IOptionCategory [] toolChainsCategories;
+		int index;
 		
-		// If resConfigOwner is not null, get the resource specific tools.
-		
+		// If resConfigOwner is not null, get the resource specific tools.		
 		if ( resConfigOwner != null) {
 			tools = resConfigOwner.getTools();
+			// Resource configurations do not support categories that
+			// are children of toolchains. The reason for this is that
+			// options in such categories are intended to be global.
+			// TODO: Remove this restriction in future?
+			toolChainsCategories = new IOptionCategory[0];
 		} else {
+			// Get the tools
 			tools = owner.getFilteredTools();
+			// Get the the option categories of the toolChain  
+			IToolChain toolChain = owner.getToolChain();
+			toolChainsCategories = toolChain.getChildCategories();
 		}
 		
-		for (int index = 0; index < tools.length; ++index) {
+		// Add the tools options to the map
+		for (index = 0; index < tools.length; ++index) {
 			// Add the tool to the map
 			ITool tool = tools[index];
 			getSettingsMap().put(tool.getId(), tool.getToolCommand());
-			
+
 			// Add the options defined for the tool
 			IOptionCategory cat = tool.getTopOptionCategory();
 			getOptionsForCategory(cat);
+		}
+	
+		// Add the tool chain options to the map
+		for (index = 0; index < toolChainsCategories.length; ++index) {
+			// Add the options defined for the category
+			getOptionsForCategory(toolChainsCategories[index]);
 		}
 	}
 

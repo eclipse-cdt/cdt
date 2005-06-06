@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+
 /**
  * 
  */
@@ -60,17 +61,31 @@ public interface IOption extends IBuildObject {
 	public static final String TYPE_DEFINED_SYMBOLS = "definedSymbols"; //$NON-NLS-1$
 	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String VALUE_TYPE = "valueType"; //$NON-NLS-1$
+	public static final String VALUE_HANDLER = "valueHandler"; //$NON-NLS-1$
+	public static final String VALUE_HANDLER_EXTRA_ARGUMENT = "valueHandlerExtraArgument"; //$NON-NLS-1$
 
 	// Schema attribute names for listOptionValue elements
 	public static final String LIST_ITEM_VALUE = "value"; //$NON-NLS-1$
 	public static final String LIST_ITEM_BUILTIN = "builtIn"; //$NON-NLS-1$
 
 	/**
-	 * Returns the tool defining this option.
-	 * 
-	 * @return ITool
+	 * Returns the parent of this option. This is an object implementing ITool
+	 * or IToolChain.
+	 *
+	 * @return IBuildObject
+	 * @since 3.0 - changed return type from ITool to IBuildObject. The method returns
+	 * the same object as getOptionHolder().  It is included as a convenience for clients.
 	 */
-	public ITool getParent();
+	public IBuildObject getParent();
+
+	/**
+	 * Returns the holder (parent) of this option. This may be an object
+	 * implenting ITool or IToolChain, which both extend IHoldsOptions
+	 *
+	 * @return IHoldsOptions
+	 * @since 3.0
+	 */
+	public IHoldsOptions getOptionHolder();
 
 	/**
 	 * Returns the <code>IOption</code> that is the superclass of this
@@ -347,6 +362,20 @@ public interface IOption extends IBuildObject {
 	public void setValueType(int type);
 	
 	/**
+	 * Returns the value handler specified for this tool.
+	 * @return IManagedOptionValueHandler
+	 * @since 3.0
+	 */
+	public IManagedOptionValueHandler getValueHandler();
+	
+	/**
+	 * Returns the value handlers extra argument specified for this tool
+	 * @return String
+	 * @since 3.0
+	 */
+	public String getValueHandlerExtraArgument();
+		
+	/**
 	 * Returns <code>true</code> if this option was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
 	 * 
@@ -361,4 +390,15 @@ public interface IOption extends IBuildObject {
 	 * @return boolean
 	 */
 	public boolean overridesOnlyValue();
+	
+	/**
+	 * Returns <code>true</code> if this option is valid and <code>false</code>
+	 * if the option cannot be safely used due to an error in the MBS grammar.
+	 * 
+	 * @return boolean
+	 * @since 3.0
+	 * 
+	 * @pre Can only be used after Ids in MBS grammar have been resolved by pointers.
+	 */
+	public boolean isValid();
 }

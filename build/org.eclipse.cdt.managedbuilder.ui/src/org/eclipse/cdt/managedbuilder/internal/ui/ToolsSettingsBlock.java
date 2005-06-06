@@ -19,9 +19,11 @@ import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildOptionSettingsPage;
@@ -436,37 +438,25 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			// There is a selected option or category.  
 			// See if it matches any category in the current config (by name)
 			ITool[] tools = null;
+			IToolChain toolChain = null;
+			
 			if ( element instanceof IProject ) {
 				tools = config.getFilteredTools();
+				toolChain = config.getToolChain();
 			} else if ( element instanceof IFile){
 				tools = resConfig.getTools();
 			}
-			String matchName = EMPTY_STRING;
 			IBuildObject catOrTool = selectedCategory;
-			do {
-				matchName = catOrTool.getName() + matchName;
-				if (catOrTool instanceof ITool) break;
-				else if (catOrTool instanceof IOptionCategory) {
-					catOrTool = ((IOptionCategory)catOrTool).getOwner();					
-				} else break;
-			} while (catOrTool != null);
-			for (int i=0; i<tools.length && primary == null; i++) {
-				ITool tool = tools[i];
-				IOptionCategory[] cats = tool.getChildCategories();
-				for (int j=0; j<cats.length; j++) {
-					String catName = EMPTY_STRING;
-					catOrTool = cats[j]; 
-					do {
-						catName = catOrTool.getName() + catName;
-						if (catOrTool instanceof ITool) break;
-						else if (catOrTool instanceof IOptionCategory) {
-							catOrTool = ((IOptionCategory)catOrTool).getOwner();					
-						} else break;
-					} while (catOrTool != null);
-					if (catName.equals(matchName)) {
-						primary = cats[j];
-						break;
-					}
+			// Make the match name
+			String matchName = makeMatchName(catOrTool);
+			// Search for selected category/tool in toolChain
+			if ( toolChain != null ) {
+				primary = findOptionCategoryByMatchName(matchName, toolChain.getChildCategories());
+			}			
+			// Search for selected category/tool in tools
+			if ( primary == null ) {
+				for (int i=0; i<tools.length && primary == null; i++) {
+					primary = findOptionCategoryByMatchName(matchName, tools[i].getChildCategories());
 				}
 			}
 		} 
@@ -504,6 +494,23 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 	}
 
+	/**
+	 * Call an MBS CallBack function to inform that default settings have been applied.
+	 * This has to be sent to all the Options associated with this configuration.
+	 */
+	private void performSetDefaultsEventCallBack() {
+		
+		if ( element instanceof IProject) {
+			// Do not send the event to the child resource configurations, as performDefaults
+			// is only scoped to what is visible in the UI.
+			ManagedBuildManager.performValueHandlerEvent(parent.getSelectedConfiguration(), 
+					IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
+		} else if ( element instanceof IFile) {
+			ManagedBuildManager.performValueHandlerEvent(resParent.getCurrentResourceConfig(), 
+					IManagedOptionValueHandler.EVENT_SETDEFAULT);
+		}
+	}
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
@@ -543,7 +550,10 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(parent.getProject(), parent.getSelectedConfiguration());
 		ManagedBuildManager.saveBuildInfo(parent.getProject(), false);
-	
+
+		// Call an MBS CallBack function to inform that default settings have been applied.
+		performSetDefaultsEventCallBack();
+			
 		// Reset the category or tool selection and run selection event handler
 		selectedCategory = null;
 		selectedTool = null;
@@ -578,7 +588,10 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(resParent.getProject(), resParent.getSelectedConfiguration());
 		ManagedBuildManager.saveBuildInfo(resParent.getProject(), false);
-	
+
+		// Call an MBS CallBack function to inform that default settings have been applied.
+		performSetDefaultsEventCallBack();
+
 		// Reset the category or tool selection and run selection event handler
 		selectedCategory = null;
 		selectedTool = null;
@@ -726,8 +739,62 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			MacrosSetBlock block = optionBlock.getMacrosBlock();
 			if(block != null)
 				return block.getBuildMacroProvider();
-}
+		}
 		return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 	}
+	
+	/**
+	 * Creates a name that uniquely identifies a category. The match name is 
+	 * a concatenation of the tool and categories, e.g. Tool->Cat1->Cat2 
+	 * maps onto the string "Tool|Cat1|Cat2|"
+	 * 
+	 * @param category or tool for which to build the match name 
+	 * @return match name
+	 */
+	private String makeMatchName(IBuildObject catOrTool) {
+		String catName = EMPTY_STRING;
+		
+		// Build the match name.
+		do {
+			catName = catOrTool.getName() + "|" + catName;
+			if (catOrTool instanceof ITool) break;
+			else if (catOrTool instanceof IOptionCategory) {
+				catOrTool = ((IOptionCategory)catOrTool).getOwner();					
+			} else 
+				break;
+		} while (catOrTool != null);
+		
+		return catName;
+	}
+	
+	/**
+	 * Finds an option category from an array of categories by comparing against
+	 * a match name. The match name is a concatenation of the tool and categories, 
+	 * e.g. Tool->Cat1->Cat2 maps onto the string "Tool|Cat1|Cat2|"
+	 * 
+	 * @param matchName an identifier to search 
+	 * @param categories as returned by getChildCategories(), i.e. non-flattened 
+	 * @return category or tool, if found and null otherwise
+	 */
+	private Object findOptionCategoryByMatchName(String matchName, IOptionCategory[] cats) {
+		Object primary = null;
+		
+		for (int j=0; j<cats.length; j++) {
+			IBuildObject catOrTool = cats[j]; 
+			// Build the match name
+			String catName = makeMatchName(catOrTool);
+			// Check whether the name matches
+			if (catName.equals(matchName)) {
+				primary = cats[j];
+				break;
+			} else if (matchName.startsWith(catName)) {
+				// If there is a common root then check for any further children
+				primary = findOptionCategoryByMatchName(matchName, cats[j].getChildCategories());
+				if (primary != null)
+					break;
+			}
+		}
+		return primary;
+	}	
 }
 

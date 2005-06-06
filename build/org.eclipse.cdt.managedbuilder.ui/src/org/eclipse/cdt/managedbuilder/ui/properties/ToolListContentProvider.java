@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -35,6 +36,33 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	public ToolListContentProvider(int elementType) {
 		this.elementType = elementType;
 	}
+	
+	/**
+	 *  Gets the top level contents to be displayed in the tool list.
+	 *  If defined, first display the toolChain's option categories (unfiltered).
+	 *  Then display the the tools which are relevant for the project's nature.
+	 */
+	private Object[] getToplevelContent(IConfiguration config) {
+		Object toolChainsCategories[]; 
+		Object filteredTools[];
+		Object all[];
+		// Get the the option categories of the toolChain  
+		IToolChain toolChain = config.getToolChain();
+		toolChainsCategories = toolChain.getChildCategories();
+		// Get the tools to be displayed
+		filteredTools = config.getFilteredTools();
+		// Add up both arrays and return
+		int i;
+		int len = toolChainsCategories.length+filteredTools.length;
+		all = new Object[len];
+		for (i=0; i < toolChainsCategories.length; i++) 
+			all[i] = toolChainsCategories[i];
+		for (; i < len; i++) 
+			all[i] = filteredTools[i-toolChainsCategories.length];
+		
+		return all;
+	}
+	
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
@@ -42,10 +70,14 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		// If parent is configuration, return a list of its option categories
 		if (parentElement instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration)parentElement;
-			// the categories are all accessed through the tools
-			return config.getFilteredTools();
+			// Get the contents to be displayed for the configuration
+			return getToplevelContent(config);
 		} else if( parentElement instanceof IResourceConfiguration) {
-			// If parent is a resource configuration, return a list of its tools
+			// If parent is a resource configuration, return a list of its tools.
+			// Resource configurations do not support categories that are children 
+			// of toolchains. The reason for this is that options in such categories 
+			// are intended to be global.
+			// TODO: Remove this restriction in future? Requires getToplevelContent() variant
 			IResourceConfiguration resConfig = (IResourceConfiguration)parentElement;
 			return resConfig.getTools();
 		} else if (parentElement instanceof ITool) {

@@ -20,10 +20,13 @@ import java.util.Map;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -477,6 +480,9 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	public void reset() {
 		// We just need to remove all Options
 		ITool[] tools = getTools();
+		// Send out the event to notify the options that they are about to be removed
+		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE);
+		// Remove the configurations		
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
 			IOption[] opts = tool.getOptions();
@@ -495,13 +501,23 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			tool.setToolCommand(command);
 	}
 	
-	public IOption setOption(ITool tool, IOption option, boolean value) throws BuildException {
+	private IBuildObject getHoldersParent(IOption option) {
+		IHoldsOptions holder = option.getOptionHolder();
+		if (holder instanceof ITool) {
+			return ((ITool)holder).getParent();
+		} else if (holder instanceof IToolChain) {
+			return ((IToolChain)holder).getParent();
+		}
+		return null;
+	}
+	
+	public IOption setOption(IHoldsOptions holder, IOption option, boolean value) throws BuildException {
 		// Is there a change?
 		IOption retOpt = option;
 		if (option.getBooleanValue() != value) {
 		    //  If this resource config does not already override this option, then we need to
 		    //  create a new option
-		    if (option.getParent().getParent() != this) {
+		    if (getHoldersParent(option) != this) {
 				IOption newSuperClass = option;
 				if (!newSuperClass.isExtensionElement()) {
 					newSuperClass = newSuperClass.getSuperClass();
@@ -520,7 +536,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				String subId;
 				int nnn = ManagedBuildManager.getRandomNumber();
 				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt = holder.createOption(newSuperClass, subId, null, false); 
 				retOpt.setValueType(option.getValueType());
 				retOpt.setValue(value);
 				setDirty(true);
@@ -534,14 +550,14 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		return retOpt;
 	}
 	
-	public IOption setOption(ITool tool, IOption option, String value) throws BuildException {
+	public IOption setOption(IHoldsOptions holder, IOption option, String value) throws BuildException {
 		IOption retOpt = option;
 		String oldValue;
 		oldValue = option.getStringValue(); 
 		if (oldValue != null && !oldValue.equals(value)) {
 		    //  If this resource config does not already override this option, then we need to
 		    //  create a new option
-		    if (option.getParent().getParent() != this) {
+		    if (getHoldersParent(option) != this) {
 				IOption newSuperClass = option;
 				if (!newSuperClass.isExtensionElement()) {
 					newSuperClass = newSuperClass.getSuperClass();
@@ -560,7 +576,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				String subId;
 				int nnn = ManagedBuildManager.getRandomNumber();
 				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt = holder.createOption(newSuperClass, subId, null, false); 
 				retOpt.setValueType(option.getValueType());
 				retOpt.setValue(value);
 				setDirty(true);
@@ -577,7 +593,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String[])
 	 */
-	public IOption setOption(ITool tool, IOption option, String[] value) throws BuildException {
+	public IOption setOption(IHoldsOptions holder, IOption option, String[] value) throws BuildException {
 		IOption retOpt = option;
 		// Is there a change?
 		String[] oldValue;
@@ -604,7 +620,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if(!Arrays.equals(value, oldValue)) {
 		    //  If this resource config does not already override this option, then we need to
 		    //  create a new option
-		    if (option.getParent().getParent() != this) {
+		    if (getHoldersParent(option) != this) {
 				IOption newSuperClass = option;
 				if (!newSuperClass.isExtensionElement()) {
 					newSuperClass = newSuperClass.getSuperClass();
@@ -623,7 +639,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				String subId;
 				int nnn = ManagedBuildManager.getRandomNumber();
 				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt = holder.createOption(newSuperClass, subId, null, false); 
 				retOpt.setValueType(option.getValueType());
 				retOpt.setValue(value);
 				setDirty(true);
@@ -640,7 +656,6 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	public IResource getOwner() {
 		return getParent().getOwner();
 	}
-	
 	
 	/**
 	 * @return Returns the version.

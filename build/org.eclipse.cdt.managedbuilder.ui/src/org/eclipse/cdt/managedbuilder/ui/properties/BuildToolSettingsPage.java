@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
@@ -136,6 +137,17 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	public Point computeSize() {
 		return super.computeSize();
 	}
+	/* (non-Javadoc)
+	 * Private access function which returns the correct configuration
+	 * argument for valueHandler call-backs.
+	 */	
+	private IBuildObject getConfigurationHandle() {
+		if ( isItResourceConfigPage ) {
+			return resConfig;
+		} else {
+			return configuration;
+		}		
+	}	
 	
 	/*
 	 * (non-Javadoc)
@@ -257,6 +269,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		String listStr = ""; //$NON-NLS-1$
 		String[] listVal = null;
 		IBuildObject parent = configuration != null ? (IBuildObject)configuration.getToolChain() : (IBuildObject)resConfig;
+		IBuildObject config = configuration != null ? (IBuildObject)configuration : (IBuildObject)resConfig;
 		IMacroSubstitutor macroSubstitutor = new UIMacroSubstitutor(0,null,EMPTY_STRING,WHITESPACE,fProvider); 
 		for (int k = 0; k < options.length; k++) {
 			IOption option = options[k];
@@ -264,7 +277,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
-			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(tool)) {
+			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(config, tool, option)) {
 			
 			try{
 			switch (option.getValueType()) {
@@ -581,9 +594,10 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			ITool tool = (ITool)options[i][0];
 			if (tool == null) break;	//  The array may not be full
 			IOption option = (IOption)options[i][1];
+			
 			try {
 				// Transfer value from preference store to options
-				IOption setOption;
+				IOption setOption = null;
 				switch (option.getValueType()) {
 					case IOption.BOOLEAN :
 						boolean boolVal = getToolSettingsPreferenceStore().getBoolean(option.getId());
@@ -627,6 +641,23 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					default :
 						break;
 				}
+
+				// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
+				// press have been applied.
+				if (setOption == null)
+					setOption = option;
+				
+				if (setOption.getValueHandler().handleValue(
+						getConfigurationHandle(), 
+						setOption.getOptionHolder(), 
+						setOption,
+						setOption.getValueHandlerExtraArgument(), 
+						IManagedOptionValueHandler.EVENT_APPLY)) {
+					// TODO : Event is handled successfully and returned true.
+					// May need to do something here say log a message.
+				} else {
+					// Event handling Failed. 
+				} 
 			} catch (BuildException e) {}
 		}
 		

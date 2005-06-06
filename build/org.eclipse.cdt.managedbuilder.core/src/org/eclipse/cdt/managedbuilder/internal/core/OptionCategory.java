@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-// import org.eclipse.core.runtime.PluginVersionIdentifier;  // uncomment this line after 'parent' is available
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -33,11 +38,12 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	private static final IOptionCategory[] emtpyCategories = new IOptionCategory[0];
 
 	//  Parent and children
-	private Tool tool;
+	private IHoldsOptions holder;
 	private List children;			// Note: These are logical Option Category children, not "model" children
 	//  Managed Build model attributes
 	private IOptionCategory owner;	// The logical Option Category parent
 	private String ownerId;
+	private URL    iconPathURL;
 	//  Miscellaneous
 	private boolean isExtensionOptionCategory = false;
 	private boolean isDirty = false;
@@ -55,13 +61,13 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * This constructor is called to create an option category defined by an extension point in 
 	 * a plugin manifest file, or returned by a dynamic element provider
 	 * 
-	 * @param parent  The IToolChain parent of this builder, or <code>null</code> if
+	 * @param parent  The IHoldsOptions parent of this catgeory, or <code>null</code> if
 	 *                defined at the top level
-	 * @param element The builder definition from the manifest file or a dynamic element
+	 * @param element The category definition from the manifest file or a dynamic element
 	 *                provider
 	 */
-	public OptionCategory(Tool parent, IManagedConfigElement element) {
-		this.tool = parent;
+	public OptionCategory(IHoldsOptions parent, IManagedConfigElement element) {
+		this.holder = parent;
 		isExtensionOptionCategory = true;
 
 		// setup for resolving
@@ -72,26 +78,26 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionOptionCategory(this);
 		
-		// Add the category to the tool
-		tool.addOptionCategory(this);
+		// Add the category to the parent
+		parent.addOptionCategory(this);
 	}
 
 	/**
 	 * Create an <codeOptionCategory</code> based on the specification stored in the 
 	 * project file (.cdtbuild).
 	 * 
-	 * @param parent The <code>Tool</code> the OptionCategory will be added to. 
+	 * @param parent The <code>IHoldsOptions</code> object the OptionCategory will be added to. 
 	 * @param element The XML element that contains the OptionCategory settings.
 	 */
-	public OptionCategory(Tool parent, Element element) {
-		tool = parent;
+	public OptionCategory(IHoldsOptions parent, Element element) {
+		this.holder = parent;
 		isExtensionOptionCategory = false;
 		
 		// Initialize from the XML attributes
 		loadFromProject(element);
 		
-		// Add the category to the tool
-		tool.addOptionCategory(this);
+		// Add the category to the parent
+		parent.addOptionCategory(this);
 	}
 
 	/*
@@ -109,6 +115,13 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		
 		// owner
 		ownerId = element.getAttribute(IOptionCategory.OWNER);
+
+		// icon
+		if ( element.getAttribute(IOptionCategory.ICON) != null  && element instanceof DefaultManagedConfigElement)
+		{
+		    String icon = element.getAttribute(IOptionCategory.ICON);
+			iconPathURL = ManagedBuildManager.getURLInBuildDefinitions( (DefaultManagedConfigElement)element, new Path(icon) );
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -132,16 +145,40 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			ownerId = element.getAttribute(IOptionCategory.OWNER);
 		}
 		if (ownerId != null) {
-			owner = tool.getOptionCategory(ownerId);
+			owner = holder.getOptionCategory(ownerId);
 		} else {
-			owner = tool;
+			owner = getNullOptionCategory();
 		}		
 		
+		// icon - was saved as URL in string form
+		if (element.hasAttribute(IOptionCategory.ICON)) {
+			String iconPath = element.getAttribute(IOptionCategory.ICON);
+			try {
+				iconPathURL = new URL(iconPath);
+			} catch (MalformedURLException e) {
+				// Print a warning
+				ManagedBuildManager.OutputIconError(iconPath);
+				iconPathURL = null;
+			}
+		}
+		
 		// Hook me in
-		if (owner instanceof Tool)
+		if (owner == null)
+			((HoldsOptions)holder).addChildCategory(this);
+		else if (owner instanceof Tool)
 			((Tool)owner).addChildCategory(this);
 		else
 			((OptionCategory)owner).addChildCategory(this);
+	}
+
+	private IOptionCategory getNullOptionCategory() {
+		// Handle difference between Tool and others by using
+		// the fact that Tool implements IOptionCategory. If so,
+		// the holder is in fact a parent category to this category.
+		if (holder instanceof IOptionCategory) {
+			return (IOptionCategory)holder;
+		}
+		return null;
 	}
 
 	/**
@@ -159,6 +196,11 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 		if (owner != null)
 			element.setAttribute(IOptionCategory.OWNER, owner.getId());
+		
+		if (iconPathURL != null) {
+			// Save as URL in string form
+			element.setAttribute(IOptionCategory.ICON, iconPathURL.toString());
+		}
 		
 		// I am clean now
 		isDirty = false;
@@ -188,46 +230,76 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions(org.eclipse.cdt.core.build.managed.ITool)
 	 */
 	public Object[][] getOptions(IConfiguration configuration) {
-		ITool[] tools = null;
+		IHoldsOptions[] optionHolders = null;
 		if (configuration != null) {
-			tools = configuration.getTools();
+			IHoldsOptions optionHolder = getOptionHolder();
+			if (optionHolder instanceof ITool) {
+				optionHolders = configuration.getTools();
+			} else if (optionHolder instanceof IToolChain) {
+				// Get the toolchain of this configuration, which is
+				// the holder equivalent for this option
+				optionHolders = new IHoldsOptions[1];
+				optionHolders[0] = configuration.getToolChain();
+			}
+			// TODO: if further option holders were to be added in future,
+			// this function needs to be extended
 		}
-		return getOptions(tools, FILTER_PROJECT);
+		return getOptions(optionHolders, FILTER_PROJECT);
 	}
 
 	public Object[][] getOptions(IResourceConfiguration resConfig) {
-		ITool[] tools = null;
+		IHoldsOptions[] optionHolders = null;
 		if (resConfig != null) {
-			tools = resConfig.getTools();
+			IHoldsOptions optionHolder = getOptionHolder();
+			if (optionHolder instanceof ITool) {
+				optionHolders = resConfig.getTools();
+			} else if (optionHolder instanceof IToolChain) {
+				// Resource configurations do not support categories that are children 
+				// of toolchains. The reason for this is that options in such categories 
+				// are intended to be global. Thus return nothing.
+				// TODO: Remove this restriction in future? 
+				optionHolders = new IHoldsOptions[1];
+				optionHolders[0] = null;
+			}
+			// TODO: if further option holders were to be added in future,
+			// this function needs to be extended
 		}
-		return getOptions(tools, FILTER_FILE);
+		return getOptions(optionHolders, FILTER_FILE);
 	}
 	
-	private Object[][] getOptions(ITool[] tools, int filterValue) {
-		ITool catTool = getTool();
-		ITool tool = null;
+	private IHoldsOptions getOptionHoldersSuperClass(IHoldsOptions optionHolder) {
+		if (optionHolder instanceof ITool) 
+			return ((ITool)optionHolder).getSuperClass();
+		else if (optionHolder instanceof IToolChain) 
+			return ((IToolChain)optionHolder).getSuperClass();
+		return null;
+	}
+	
+	private Object[][] getOptions(IHoldsOptions[] optionHolders, int filterValue) {
+		IHoldsOptions catHolder = getOptionHolder();
+		IHoldsOptions optionHolder = null;
 
-		if (tools != null) {
+		if (optionHolders != null) {
 			// Find the child of the configuration/resource configuration that represents the same tool.
 			// It could the tool itself, or a "sub-class" of the tool.
-			for (int i = 0; i < tools.length; ++i) {
-				ITool current = tools[i];
+			for (int i = 0; i < optionHolders.length; ++i) {
+				IHoldsOptions current = optionHolders[i];
 				do {
-					if (catTool == current) {
-						tool = tools[i];
+					if (catHolder == current) {
+						optionHolder = optionHolders[i];
 						break;
 					}
-				} while ((current = current.getSuperClass()) != null);
-				if (tool != null) break;
+				} while ((current = getOptionHoldersSuperClass(current)) != null);
+				if (optionHolder != null) break;
 			}
 		}
-		if (tool == null) {
-			tool = catTool;
+		if (optionHolder == null) {
+			optionHolder = catHolder;
 		}
 		
 		// Get all of the tool's options and see which ones are part of
 		// this category.
-		IOption[] allOptions = tool.getOptions();
+		IOption[] allOptions = optionHolder.getOptions();
 		Object[][] myOptions = new Object[allOptions.length][2];
 		int index = 0;
 		for (int i = 0; i < allOptions.length; ++i) {
@@ -237,7 +309,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 				// Check whether this option can be displayed for a specific resource type.
 				if( (option.getResourceFilter() == FILTER_ALL) || (option.getResourceFilter() == filterValue) ) {
 					myOptions[index] = new Object[2];
-					myOptions[index][0] = tool;
+					myOptions[index][0] = optionHolder;
 					myOptions[index][1] = option;
 					index++;	
 				}
@@ -258,13 +330,35 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptionHolder()
+	 */
+	public IHoldsOptions getOptionHolder() {
+		// This will stop at the parent's top category
+		if (owner != null)
+			return owner.getOptionHolder();
+		return holder;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getTool()
 	 */
 	public ITool getTool() {
-		// This will stop at the Tool's top category
-		return owner.getTool();
+		// This will stop at the tool's top category
+		IHoldsOptions parent = owner.getOptionHolder();
+		if (parent instanceof ITool)
+		{
+			return (ITool)parent;
+		}
+		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getIconPath()
+	 */
+	public URL getIconPath() {
+		return iconPathURL;
+	}
+	
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
@@ -293,39 +387,53 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	}
 
 	public void resolveReferences() {
+		boolean error = false;
 		if (!resolved) {
 			resolved = true;
 			if (ownerId != null) {
-				owner = tool.getOptionCategory(ownerId);
+				owner = holder.getOptionCategory(ownerId);
 				if (owner == null) {
-					// Report error
-					ManagedBuildManager.OutputResolveError(
-							"owner",	//$NON-NLS-1$
-							ownerId,
-							"optionCategory",	//$NON-NLS-1$
-							getId());
+					if (holder instanceof IOptionCategory) {
+						// Report error, only if the parent is a tool and thus also
+						// an option category. 
+						ManagedBuildManager.OutputResolveError(
+								"owner",	//$NON-NLS-1$
+								ownerId,
+								"optionCategory",	//$NON-NLS-1$
+								getId());
+						error = true;
+					} else if ( false == holder.getId().equals(ownerId) ) {
+						// Report error, if the holder ID does not match the owner's ID.
+						ManagedBuildManager.OutputResolveError(								
+								"owner",	//$NON-NLS-1$
+								ownerId,
+								"optionCategory",	//$NON-NLS-1$
+								getId());
+						error = true;
+					}
 				}
 			}
 			if (owner == null) {
-				owner = tool;
+				owner = getNullOptionCategory();
 			}
 			
 			// Hook me in
-			if (owner instanceof Tool)
+			if (owner == null  &&  error == false)
+				((HoldsOptions)holder).addChildCategory(this);
+			else if (owner instanceof Tool)
 				((Tool)owner).addChildCategory(this);
 			else
 				((OptionCategory)owner).addChildCategory(this);
 		}
 	}
 
-	// Uncomment this code after the 'parent' is available
 	/**
 	 * @return Returns the managedBuildRevision.
-	 *
+	 */
 	public String getManagedBuildRevision() {
 		if ( managedBuildRevision == null) {
-			if ( getParent() != null) {
-				return getParent().getManagedBuildRevision();
+			if ( getOptionHolder() != null) {
+				return getOptionHolder().getManagedBuildRevision();
 			}
 		}
 		return managedBuildRevision;
@@ -333,11 +441,11 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	/**
 	 * @return Returns the version.
-	 *
+	 */
 	public PluginVersionIdentifier getVersion() {
 		if ( version == null) {
-			if ( getParent() != null) {
-				return getParent().getVersion();
+			if ( getOptionHolder() != null) {
+				return getOptionHolder().getVersion();
 			}
 		}
 		return version;
@@ -346,6 +454,5 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	public void setVersion(PluginVersionIdentifier version) {
 		// Do nothing
 	}
-*/
 
 }

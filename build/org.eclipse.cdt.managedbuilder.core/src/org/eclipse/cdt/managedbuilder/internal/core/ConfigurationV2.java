@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Rational Software and others.
+ * Copyright (c) 2003,2005 IBM Rational Software and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,10 +268,12 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				return answer.createOptionReference(option);
 			}
 		} else {
-			// Find out if a tool reference already exists
-			searchRef = (ToolReference) getToolReference(option.getParent());
+			// Find out if a tool reference already exists.
+			// Note: as in MBS 2.0 the ITool == IHoldsOptions was always
+			// true, just up-cast the pointers.
+			searchRef = (ToolReference) getToolReference((ITool)option.getOptionHolder());
 			if (searchRef == null) {
-				answer = new ToolReference(this, option.getParent());
+				answer = new ToolReference(this, (ITool)option.getOptionHolder());
 			} else {
 				// The reference may belong to the target
 				if (!searchRef.ownedByConfiguration(this)) {

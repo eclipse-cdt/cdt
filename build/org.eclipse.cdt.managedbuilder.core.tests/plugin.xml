@@ -3284,7 +3284,185 @@
 				  </tool>   
 			  </toolChain>
          </configuration>
-      </projectType>           
+      </projectType>      
+                 
+      <toolChain
+            archList="all"
+            id="test30_sto.dummy.toolchain.parent"
+            isAbstract="true"
+            name="test30_sto ToolChain.Parent"
+            osList="all">   
+         <optionCategory
+               id="test30_sto.dummy.category.5"
+               name="Category.Top.5.NoIcon"/>
+         <optionCategory
+               icon="icons/two.gif"
+               id="test30_sto.dummy.category.6"
+               name="Category.Top.6.Icon2"/>
+            <option
+                  category="test30_sto.dummy.category.5"
+                  id="test30_sto.dummy.option.parent.5.1"
+                  isAbstract="true"
+                  name="Option5.1.Handler.Parent"
+                  valueHandler="org.eclipse.cdt.managedbuilder.core.tests.TestValueHandler"
+                  valueHandlerExtraArgument="Option5.1"
+                  valueType="boolean"/>
+         <tool
+               icon="icons/one.gif"
+               id="test30_sto.dummy.tool.parent.1"
+               isAbstract="true"
+               name="test30_sto Tool1.Parent"/>
+         <tool
+               id="test30_sto.dummy.tool.parent.2"
+               isAbstract="true"
+               name="test30_sto Tool2.Parent">
+            <option
+                  id="test30_sto.dummy.option.parent.2.1.1"
+                  isAbstract="true"
+                  name="Option2.1.1.Handler.Parent"
+                  valueHandler="org.eclipse.cdt.managedbuilder.core.tests.TestValueHandler"
+                  valueHandlerExtraArgument="Option2.1.1"
+                  valueType="string"/>
+         </tool>
+         <tool
+               id="test30_sto.dummy.tool.parent.3"
+               isAbstract="true"
+               name="test30_sto Tool3.Parent">
+            <optionCategory
+                  icon="icons/one.gif"
+                  id="test30_sto.dummy.category.parent.3.1"
+                  name="Category.Tool3.1.Icon1"
+                  owner="test30_sto.dummy.tool.parent.3"/>
+            <option
+                  category="test30_sto.dummy.category.parent.3.1"
+                  id="test30_sto.dummy.option.parent.3.1.1"
+                  isAbstract="true"
+                  name="Option3.1.1.NoHandler.Parent"/>
+            <option
+                  category="test30_sto.dummy.category.parent.3.1"
+                  id="test30_sto.dummy.option.parent.3.1.2"
+                  isAbstract="true"
+                  name="Option3.1.2.Handler.Parent"
+                  valueHandler="org.eclipse.cdt.managedbuilder.core.tests.TestValueHandler"
+                  valueHandlerExtraArgument="Option3.1.2"/>
+         </tool>
+      </toolChain>
+      <projectType
+            id="test30_sto.dummy"
+            isAbstract="false"
+            isTest="true"
+            name="test30_sto">
+         <configuration
+               id="test30_sto.dummy.config"
+               name="Configuration for test30_sto">
+            <toolChain
+                  id="test30_sto.dummy.toolchain"
+                  isAbstract="false"
+                  name="Toolchain for test30_sto"
+                  superClass="test30_sto.dummy.toolchain.parent">
+               <targetPlatform
+                     archList="all"
+                     id="test30_sto.dummy.platform"
+                     isAbstract="false"
+                     name="Platform for test30_sto"
+                     osList="all"/>
+               <builder
+                     buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
+                     id="test30_sto.dummy.builder"
+                     isAbstract="false"
+                     name="Builder for test30_sto"/>
+               <tool
+                     id="test30_sto.dummy.tool.1"
+                     isAbstract="false"
+                     name="Tool.1.Icon1"
+                     superClass="test30_sto.dummy.tool.parent.1"/>
+               <tool
+                     id="test30_sto.dummy.tool.2"
+                     isAbstract="false"
+                     name="Tool.2.NoIcon"
+                     superClass="test30_sto.dummy.tool.parent.2">
+                  <optionCategory
+                        icon="icons/two.gif"
+                        id="test30_sto.dummy.category.2.1"
+                        name="Category.Tool2.1.Icon2"
+                        owner="test30_sto.dummy.tool.2"/>
+                  <option
+                        category="test30_sto.dummy.category.2.1"
+                        id="test30_sto.dummy.option.2.1.1"
+                        isAbstract="false"
+                        name="Option2.1.1.Handler"
+                        superClass="test30_sto.dummy.option.parent.2.1.1"/>
+                  <option
+                        category="test30_sto.dummy.category.2.1"
+                        id="test30_sto.dummy.option.2.1.2"
+                        isAbstract="false"
+                        name="Option2.1.2.NoHandler"/>
+                  <optionCategory
+                        icon="icons/one.gif"
+                        id="test30_sto.dummy.category.2.2"
+                        name="Category.Tool2.2.Icon1"
+                        owner="test30_sto.dummy.tool.2"/>
+                  <option
+                        category="test30_sto.dummy.category.2.2"
+                        id="test30_sto.dummy.option.2.2.1"
+                        isAbstract="false"
+                        name="Option2.2.1.NoHandler"/>
+                  <option
+                        category="test30_sto.dummy.category.2.2"
+                        id="test30_sto.dummy.option.2.2.2"
+                        isAbstract="false"
+                        name="Option2.2.2.Handler"
+                        valueHandler="org.eclipse.cdt.managedbuilder.core.tests.TestValueHandler"
+                        valueHandlerExtraArgument="Option2.2.2"/>
+               </tool>
+               <tool
+                     icon="icons/two.gif"
+                     id="test30_sto.dummy.tool.3"
+                     isAbstract="false"
+                     name="Tool.3.Icon2"
+                     superClass="test30_sto.dummy.tool.parent.3">
+                  <option
+                        id="test30_sto.dummy.option.3.1.1"
+                        superClass="test30_sto.dummy.option.parent.3.1.1"
+                        isAbstract="false"
+                        name="Option3.1.1.NoHandler"/>
+                  <option
+                        id="test30_sto.dummy.option.3.1.2"
+                        superClass="test30_sto.dummy.option.parent.3.1.2"
+                        isAbstract="false"
+                        name="Option3.1.2.Handler"/>
+               </tool>
+               <tool
+                     icon="icons/one.gif"
+                     id="test30_sto.dummy.tool.4"
+                     isAbstract="false"
+                     name="Tool4.Icon1"/>                     
+               <optionCategory
+                     icon="icons/one.gif"
+                     id="test30_sto.dummy.category.7"
+                     name="Category.Top.7.Icon1"/>
+               <option
+                     id="test30_sto.dummy.option.5.1"
+                     isAbstract="false"
+                     name="Option5.1.Handler"
+                     superClass="test30_sto.dummy.option.parent.5.1"/>
+               <option
+                     category="test30_sto.dummy.category.6"
+                     id="test30_sto.dummy.option.6.1"
+                     isAbstract="false"
+                     name="Option6.1.NoHandler"
+                     valueType="boolean"/>
+               <option
+                     category="test30_sto.dummy.category.7"
+                     id="test30_sto.dummy.option.7.1"
+                     isAbstract="false"
+                     name="Option7.1.Handler"
+                     valueHandler="org.eclipse.cdt.managedbuilder.core.tests.TestValueHandler"
+                     valueHandlerExtraArgument="Option7.1"
+                     valueType="boolean"/>
+            </toolChain>
+         </configuration>
+      </projectType>
       
 	  <!-- Test tools and project types for testing multiple input types,
 	       multiple output types, and input & output options
@@ -3410,8 +3588,6 @@
 			      </tool>
 			  </toolChain>
          </configuration>
-      </projectType>           
-      
+      </projectType>                 
    </extension>
-
 </plugin>

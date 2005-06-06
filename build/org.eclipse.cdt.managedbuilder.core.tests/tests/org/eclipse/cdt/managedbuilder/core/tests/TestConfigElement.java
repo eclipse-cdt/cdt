@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.core.runtime.IExtension;
 
 public class TestConfigElement implements IManagedConfigElement {
 	
@@ -66,4 +67,11 @@ public class TestConfigElement implements IManagedConfigElement {
 		}
 		return (IManagedConfigElement[])ret.toArray(new IManagedConfigElement[ret.size()]);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getExtension(java.lang.String)
+	 */
+	public IExtension getExtension() {
+		return null;
+	}		
 }

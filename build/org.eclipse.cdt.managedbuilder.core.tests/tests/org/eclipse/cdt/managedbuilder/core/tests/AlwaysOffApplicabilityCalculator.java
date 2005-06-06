@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 
 /**
  * 
@@ -21,21 +23,30 @@ public class AlwaysOffApplicabilityCalculator implements IOptionApplicability {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionUsedInCommandLine()
 	 */
-	public boolean isOptionUsedInCommandLine(ITool tool) {
+	public boolean isOptionUsedInCommandLine(
+			IBuildObject config,
+			IHoldsOptions holder,
+			IOption option) {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionVisible()
 	 */
-	public boolean isOptionVisible(ITool tool) {
+	public boolean isOptionVisible(
+			IBuildObject config,
+			IHoldsOptions holder,
+			IOption option) {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionEnabled()
 	 */
-	public boolean isOptionEnabled(ITool tool) {
+	public boolean isOptionEnabled(
+			IBuildObject config,
+			IHoldsOptions holder,
+			IOption option) {
 		return false;
 	}
 

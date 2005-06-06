@@ -17,11 +17,17 @@ import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
-public class TestToolchain implements IToolChain {
+public class TestToolchain extends HoldsOptions implements IToolChain {
+
+	public TestToolchain() {
+		super(true /* resolved */);
+		// TODO Auto-generated constructor stub
+	}
 
 	public String getManagedBuildRevision() {
 		// TODO Auto-generated method stub

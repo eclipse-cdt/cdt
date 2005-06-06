@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedCommandLineGeneratorTest;
@@ -47,6 +48,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ResourceBuildCoreTests.suite());
 		suite.addTest(ManagedProject21MakefileTests.suite());
 		suite.addTest(ManagedProject30MakefileTests.suite());
+		suite.addTest(ManagedBuildCoreTests_SharedToolOptions.suite());
 		//$JUnit-END$
 		return suite;
 	}

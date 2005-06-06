@@ -1643,7 +1643,10 @@ public class CVisitor {
 		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
 			name = ((IASTElaboratedTypeSpecifier) declSpec).getName();
 		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
-			name = ((IASTCompositeTypeSpecifier) declSpec).getName();		}
+			name = ((IASTCompositeTypeSpecifier) declSpec).getName();		
+		} else if( declSpec instanceof IASTEnumerationSpecifier ){
+			name = ((IASTEnumerationSpecifier)declSpec).getName();
+		}
 		
 		binding = name.resolveBinding();
 		if( binding instanceof IType )

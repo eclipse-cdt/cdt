@@ -3133,4 +3133,14 @@ public class AST2Tests extends AST2BaseTest {
         tu.accept(col);
         assertNoProblemBindings(col);
     }
+    
+    public void testBug98502() throws Exception {
+    	IASTTranslationUnit tu = parse("typedef enum { ONE } e;", ParserLanguage.C, true, true );
+    	CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        
+        IEnumeration etion = (IEnumeration) col.getName(0).resolveBinding();
+        ITypedef e = (ITypedef) col.getName(2).resolveBinding();
+        assertSame( e.getType(), etion );
+    }
 }

@@ -519,16 +519,16 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 					synchronized ( getBreakpointMap() ) {
 						ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 						if ( cdiBreakpoint == null ) {
-							if ( location instanceof ICDILineLocation ) {
-								cdiBreakpoint = target.setLineBreakpoint( ICDIBreakpoint.REGULAR,
-										(ICDILineLocation)location, condition, true );
-							} else if ( location instanceof ICDIFunctionLocation ) {
+							if ( breakpoint instanceof ICFunctionBreakpoint ) {
 								cdiBreakpoint = target.setFunctionBreakpoint( ICDIBreakpoint.REGULAR,
 										(ICDIFunctionLocation)location, condition, true );								
-							} else if ( location instanceof ICDIAddressLocation ) {
+							} else if ( breakpoint instanceof ICAddressBreakpoint ) {
 								cdiBreakpoint = target.setAddressBreakpoint( ICDIBreakpoint.REGULAR,
 										(ICDIAddressLocation)location, condition, true );
 								
+							} else if ( breakpoint instanceof ICLineBreakpoint ) {
+								cdiBreakpoint = target.setLineBreakpoint( ICDIBreakpoint.REGULAR,
+										(ICDILineLocation)location, condition, true );
 							}
 							if ( !enabled ) {
 								cdiBreakpoint.setEnabled( false );

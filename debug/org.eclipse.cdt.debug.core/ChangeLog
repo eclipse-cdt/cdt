@@ -1,3 +1,7 @@
+2005-06-06 Mikhail Khodjaiants
+	Bug 98594: Unable to set address breakpoints.
+	* CBreakpointManager.java
+
 2005-05-24 Mikhail Khodjaiants
 	Bug 88558: run-to-line not thread oriented.
 	The IRunTo* and IJumpTo* interfaces moved to ICStackFrame.

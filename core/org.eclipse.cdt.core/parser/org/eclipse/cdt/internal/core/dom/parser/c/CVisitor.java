@@ -840,6 +840,12 @@ public class CVisitor {
 		    if( temp != null && temp instanceof IFunction ){
 		        binding = ((CFunction) temp).resolveParameter( name );
 		    }
+		    try {
+				if( scope != null && scope.getPhysicalNode() instanceof IASTTranslationUnit ){
+					return binding;
+				}
+			} catch (DOMException e) {
+			}
 		} else if( declarator instanceof IASTFunctionDeclarator ){
 			if( binding != null ) {
 			    if( binding instanceof IFunction ){
@@ -1092,9 +1098,13 @@ public class CVisitor {
 			scope = getContainingScope( (IASTStatement)parent );
 		} else if( parent instanceof IASTFunctionDefinition ){
 			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
-			IFunction function = (IFunction) fnDeclarator.getName().resolveBinding();
+			IBinding function = fnDeclarator.getName().resolveBinding();
 			try {
-                scope = function.getFunctionScope();
+				if( function instanceof IFunction ){
+					scope = ((IFunction)function).getFunctionScope();
+				} else if( function instanceof ProblemBinding ) {
+					return (IScope) function;
+				}
             } catch ( DOMException e ) {
                 return e.getProblem();
             }
@@ -1214,17 +1224,28 @@ public class CVisitor {
 							node = nodes[idx];
 						} else {
 						    node = null;
-						    if( parent instanceof IASTCompoundStatement &&
-						        ( nodes[0].getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ||
-						          nodes[0].getPropertyInParent() == IASTStandardFunctionDeclarator.FUNCTION_PARAMETER ) )
+						    if( nodes[0].getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ||
+						        nodes[0].getPropertyInParent() == IASTStandardFunctionDeclarator.FUNCTION_PARAMETER ) 
 						    {
 						    	//function body, we were looking at parameters, now check the body itself
-						        IASTCompoundStatement compound = (IASTCompoundStatement) parent;
-								nodes = compound.getStatements(); 
-								if( nodes.length > 0 ){
-							        idx = 0;
-							        node = nodes[0];
-							    }  
+						    	IASTCompoundStatement compound = null;
+						    	if( parent instanceof IASTCompoundStatement ){
+						    		compound = (IASTCompoundStatement) parent;
+						    	} else if( parent instanceof IASTFunctionDeclarator ){
+						    		IASTNode n = parent.getParent();
+						    		while( n instanceof IASTDeclarator )
+						    			n = n.getParent();
+						    		if( n instanceof IASTFunctionDefinition ){
+						    			compound = (IASTCompoundStatement) ((IASTFunctionDefinition)n).getBody();
+						    		}
+						    	}
+						    	if( compound != null ) {
+									nodes = compound.getStatements(); 
+									if( nodes.length > 0 ){
+								        idx = 0;
+								        node = nodes[0];
+								    }	
+						    	}
 						    }
 						}
 					}

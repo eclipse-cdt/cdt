@@ -21,7 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 
 /**
  * @author aniefer
@@ -29,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 public class CExternalFunction implements IFunction, ICExternalBinding {
     private IASTName name = null;
     private IASTTranslationUnit tu = null;
+    private IFunctionType fType = null;
     
     public CExternalFunction( IASTTranslationUnit tu, IASTName name ) {
         this.name = name;
@@ -43,7 +47,7 @@ public class CExternalFunction implements IFunction, ICExternalBinding {
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
      */
     public IParameter[] getParameters() {
-        return null;
+        return IParameter.EMPTY_PARAMETER_ARRAY;
     }
 
     /* (non-Javadoc)
@@ -57,7 +61,10 @@ public class CExternalFunction implements IFunction, ICExternalBinding {
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
     public IFunctionType getType() {
-        return null;
+    	if( fType == null ){
+    		fType = new CPPFunctionType( CPPSemantics.VOID_TYPE, IType.EMPTY_TYPE_ARRAY );
+    	}
+        return fType;
     }
 
     /* (non-Javadoc)

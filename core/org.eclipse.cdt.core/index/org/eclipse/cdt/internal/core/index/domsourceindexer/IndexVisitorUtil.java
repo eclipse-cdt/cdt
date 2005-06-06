@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.index.IIndex;
 
@@ -184,6 +185,12 @@ public class IndexVisitorUtil {
                 }
             }
             else if (binding instanceof IFunction) {
+            	if( binding instanceof ICInternalFunction ){
+            		//performance improvement for indexing, we know we have already resolved all the previous 
+            		//declarations of this function.
+            		((ICInternalFunction)binding).setFullyResolved( true );
+            	}
+            	
                 IFunction functionBinding = (IFunction) binding;
 
                 if (functionBinding.isAuto()) {

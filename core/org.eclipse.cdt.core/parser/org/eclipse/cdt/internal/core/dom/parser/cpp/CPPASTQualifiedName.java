@@ -66,18 +66,21 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#addName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public void addName(IASTName name) {
-        names = (IASTName[]) ArrayUtil.append( IASTName.class, names, name );
+		if (name != null) {
+			namesPos++;
+			names = (IASTName[]) ArrayUtil.append( IASTName.class, names, name );
+		}
 	}
 
 	/**
 	 * @param decls2
 	 */
 	private void removeNullNames() {
-        names = (IASTName[]) ArrayUtil.removeNulls( IASTName.class, names );
-
+        names = (IASTName[]) ArrayUtil.removeNullsAfter( IASTName.class, names, namesPos );
 	}
 
 	private IASTName[] names = null;
+	private int namesPos=-1;
 	private boolean value;
 	private String signature;
 

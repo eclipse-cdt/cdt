@@ -33,7 +33,7 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
     private IASTName name;
     private IASTDeclarator nestedDeclarator;
     private IASTPointerOperator [] pointerOps = null;
-
+    private int pointerOpsPos=-1;
 
     
     /* (non-Javadoc)
@@ -41,7 +41,8 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
      */
     public IASTPointerOperator[] getPointerOperators() {
         if( pointerOps == null ) return IASTPointerOperator.EMPTY_ARRAY;
-        return (IASTPointerOperator[]) ArrayUtil.removeNulls( IASTPointerOperator.class, pointerOps );
+        pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter( IASTPointerOperator.class, pointerOps, pointerOpsPos );
+        return pointerOps;
     }
 
     /* (non-Javadoc)
@@ -76,7 +77,10 @@ public class CPPASTDeclarator extends CPPASTNode implements IASTDeclarator {
      * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#addPointerOperator(org.eclipse.cdt.core.dom.ast.IASTPointerOperator)
      */
     public void addPointerOperator(IASTPointerOperator operator) {
-        pointerOps = (IASTPointerOperator[]) ArrayUtil.append( IASTPointerOperator.class, pointerOps, operator );
+    	if (operator != null) {
+    		pointerOpsPos++;
+    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append( IASTPointerOperator.class, pointerOps, operator );
+    	}
     }
 
     /* (non-Javadoc)

@@ -36,15 +36,20 @@ public class CPPASTSimpleDeclaration extends CPPASTNode implements
      */
     public IASTDeclarator[] getDeclarators() {
         if( declarators == null ) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        return (IASTDeclarator[]) ArrayUtil.removeNulls( IASTDeclarator.class, declarators );
+        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter( IASTDeclarator.class, declarators, declaratorsPos );
+        return declarators;
     }
     
     public void addDeclarator( IASTDeclarator d )
     {
-        declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, d );
+    	if (d != null) {
+    		declaratorsPos++;
+    		declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, d );
+    	}
     }
     
     private IASTDeclarator [] declarators = null;
+    private int declaratorsPos=-1;
     private IASTDeclSpecifier declSpecifier;
 
     /**

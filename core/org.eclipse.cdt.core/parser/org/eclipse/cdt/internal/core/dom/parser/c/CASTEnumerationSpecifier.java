@@ -26,7 +26,10 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
      * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier#addEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
      */
     public void addEnumerator(IASTEnumerator enumerator) {
-        enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, enumerator );
+    	if (enumerator != null) {
+    		enumeratorsPos++;
+    		enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, enumerator );
+    	}
     }
 
     /* (non-Javadoc)
@@ -34,10 +37,12 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
      */
     public IASTEnumerator[] getEnumerators() {        
         if( enumerators == null ) return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-        return (IASTEnumerator[]) ArrayUtil.removeNulls( IASTEnumerator.class, enumerators );
+        enumerators = (IASTEnumerator[]) ArrayUtil.removeNullsAfter( IASTEnumerator.class, enumerators, enumeratorsPos );
+        return enumerators;
     }
 
     private IASTEnumerator [] enumerators = null;
+    private int enumeratorsPos=-1;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier#setName(org.eclipse.cdt.core.dom.ast.IASTName)

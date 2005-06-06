@@ -25,7 +25,10 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#addCatchHandler(org.eclipse.cdt.core.dom.ast.IASTStatement)
      */
     public void addCatchHandler(ICPPASTCatchHandler statement) {
-        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, statement );
+    	if (statement != null) {
+    		catchHandlersPos++;
+    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, statement );	
+    	}
     }
 
     /* (non-Javadoc)
@@ -33,11 +36,13 @@ public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
      */
     public ICPPASTCatchHandler [] getCatchHandlers() {
         if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
-        return (ICPPASTCatchHandler[]) ArrayUtil.removeNulls( ICPPASTCatchHandler.class, catchHandlers );
+        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.removeNullsAfter( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
+        return catchHandlers;
     }
 
 
     private ICPPASTCatchHandler [] catchHandlers = null;
+    private int catchHandlersPos=-1;
     protected boolean postAccept( ASTVisitor action ){
         if( !super.postAccept( action ) ) return false;
         

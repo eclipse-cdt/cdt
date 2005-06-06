@@ -22,16 +22,20 @@ public class CASTArrayDeclarator extends CASTDeclarator implements
         IASTArrayDeclarator {
     
     private IASTArrayModifier [] arrayMods = null;
-
+    private int arrayModsPos=-1;
 
     public IASTArrayModifier[] getArrayModifiers() {
         if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;
-        return (IASTArrayModifier[]) ArrayUtil.removeNulls( IASTArrayModifier.class, arrayMods );
+        arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter( IASTArrayModifier.class, arrayMods, arrayModsPos );
+        return arrayMods;
  
     }
 
     public void addArrayModifier(IASTArrayModifier arrayModifier) {
-        arrayMods = (IASTArrayModifier[]) ArrayUtil.append( IASTArrayModifier.class, arrayMods, arrayModifier );
+    	if (arrayModifier != null) {
+    		arrayModsPos++;
+            arrayMods = (IASTArrayModifier[]) ArrayUtil.append( IASTArrayModifier.class, arrayMods, arrayModifier );    		
+    	}
     }
 
     protected boolean postAccept( ASTVisitor action ){

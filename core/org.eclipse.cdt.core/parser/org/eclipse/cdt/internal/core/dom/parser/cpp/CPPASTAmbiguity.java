@@ -29,17 +29,22 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
 
     protected static class CPPASTNameCollector extends CPPASTVisitor {
         private IASTName[] names = new IASTName[2];
+        private int namesPos=-1;
         {
             shouldVisitNames = true;
         }
 
         public int visit(IASTName name) {
-            names = (IASTName[]) ArrayUtil.append(IASTName.class, names, name);
+        	if (name != null) {
+        		namesPos++;
+        		names = (IASTName[]) ArrayUtil.append(IASTName.class, names, name);
+        	}
             return PROCESS_CONTINUE;
         }
 
         public IASTName[] getNames() {
-            return (IASTName[]) ArrayUtil.removeNulls(IASTName.class, names);
+            names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
+        	return names;
         }
     }
 

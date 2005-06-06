@@ -27,16 +27,21 @@ public class CPPASTInitializerList extends CPPASTNode implements
      */
     public IASTInitializer [] getInitializers() {
         if( initializers == null ) return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
-        return (IASTInitializer[]) ArrayUtil.removeNulls( IASTInitializer.class, initializers );
+        initializers = (IASTInitializer[]) ArrayUtil.removeNullsAfter( IASTInitializer.class, initializers, initializersPos );
+        return initializers;
     }
     
     public void addInitializer( IASTInitializer d )
     {
-        initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, d );
+    	if (d != null) {
+    		initializersPos++;
+    		initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, d );
+    	}
     }
     
     
     private IASTInitializer [] initializers = null;
+    private int initializersPos=-1;
 
     public boolean accept( ASTVisitor action ){
         if( action.shouldVisitInitializers ){

@@ -19,13 +19,18 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
         IASTAmbiguousStatement {
 
     private IASTStatement [] stmts = new IASTStatement[2];
+    private int stmtsPos=-1;
     
     public void addStatement(IASTStatement s) {
-        stmts = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, stmts, s );
+    	if (s != null) {
+    		stmtsPos++;
+    		stmts = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, stmts, s );
+    	}
     }
 
     public IASTStatement[] getStatements() {
-        return (IASTStatement[]) ArrayUtil.removeNulls( IASTStatement.class, stmts );
+        stmts = (IASTStatement[]) ArrayUtil.removeNullsAfter( IASTStatement.class, stmts, stmtsPos );
+    	return stmts;
     }
     
     protected IASTNode[] getNodes() {

@@ -23,14 +23,18 @@ public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements
     }
 
     private IASTDeclaration [] decls = new IASTDeclaration[2];
+    private int declsPos=-1;
     
     public void addDeclaration(IASTDeclaration d) {
-        decls = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, decls, d );
-        
+    	if (d != null) {
+    		declsPos++;
+    		decls = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, decls, d );
+    	}
     }
 
     public IASTDeclaration[] getDeclarations() {
-        return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, decls );
+        decls = (IASTDeclaration[]) ArrayUtil.removeNullsAfter( IASTDeclaration.class, decls, declsPos );
+    	return decls;
     }
 
 }

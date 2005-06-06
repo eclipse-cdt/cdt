@@ -21,6 +21,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
         IASTStandardFunctionDeclarator {
 
     private IASTParameterDeclaration [] parameters = null;
+    private int parametersPos=-1;
     private boolean varArgs;
     
 
@@ -30,14 +31,18 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
      */
     public IASTParameterDeclaration[] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        return (IASTParameterDeclaration[]) ArrayUtil.removeNulls( IASTParameterDeclaration.class, parameters );
+        parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter( IASTParameterDeclaration.class, parameters, parametersPos );
+        return parameters;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#addParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
      */
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
-        parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, parameter );
+    	if (parameter != null) {
+    		parametersPos++;
+    		parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, parameter );
+    	}        
     }
 
     /* (non-Javadoc)

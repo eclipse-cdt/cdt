@@ -28,14 +28,19 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
 
     public ICPPASTTemplateParameter[] getTemplateParameters() {
         if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
-        return (ICPPASTTemplateParameter[]) ArrayUtil.removeNulls( ICPPASTTemplateParameter.class, parameters );
+        parameters = (ICPPASTTemplateParameter[]) ArrayUtil.removeNullsAfter( ICPPASTTemplateParameter.class, parameters, parametersPos );
+        return parameters;
     }
 
     public void addTemplateParamter(ICPPASTTemplateParameter parm) {
-        parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, parm );
+    	if(parm != null) {
+    		parametersPos++;
+    		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, parm );
+    	}
     }
 
     private ICPPASTTemplateParameter [] parameters = null;
+    private int parametersPos=-1;
     private IASTName name;
     private IASTExpression defaultValue;
 

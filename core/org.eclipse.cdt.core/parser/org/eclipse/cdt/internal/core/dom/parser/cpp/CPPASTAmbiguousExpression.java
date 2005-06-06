@@ -19,13 +19,18 @@ public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
         IASTAmbiguousExpression {
 
     private IASTExpression [] exp = new IASTExpression[2];
+    private int expPos=-1;
     
     public void addExpression(IASTExpression e) {
-        exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, e );
+    	if (e != null) {
+    		expPos++;
+    		exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, e );    		
+    	}
     }
 
     public IASTExpression[] getExpressions() {
-        return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, exp );
+        exp = (IASTExpression[]) ArrayUtil.removeNullsAfter( IASTExpression.class, exp, expPos );
+    	return exp;
     }
 
     protected IASTNode[] getNodes() {

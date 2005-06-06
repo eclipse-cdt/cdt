@@ -50,6 +50,7 @@ public class CASTTranslationUnit extends CASTNode implements
 		IASTTranslationUnit, IRequiresLocationInformation {
 
 	private IASTDeclaration[] decls = null;
+	private int declsPos=-1;
 
 	// Binding
 	private CScope compilationUnit = null;
@@ -71,7 +72,10 @@ public class CASTTranslationUnit extends CASTNode implements
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
 	public void addDeclaration(IASTDeclaration d) {
-        decls = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, decls, d );
+		if (d != null) {
+			declsPos++;
+			decls = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, decls, d );	
+		}
 	}
 
 	/*
@@ -81,7 +85,8 @@ public class CASTTranslationUnit extends CASTNode implements
 	 */
 	public IASTDeclaration[] getDeclarations() {
 		if (decls == null) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-		return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, decls );
+		decls = (IASTDeclaration[]) ArrayUtil.removeNullsAfter( IASTDeclaration.class, decls, declsPos );
+		return decls;
 	}
 
 

@@ -190,6 +190,9 @@ public class ArrayUtil {
     }
 	
 	/**
+	 * Note that this should only be used when the placement of 
+	 * nulls within the array is unknown (due to performance efficiency).  
+	 * 
 	 * Removes all of the nulls from the array and returns a new
      * array that contains all of the non-null elements.
      *
@@ -215,6 +218,29 @@ public class ArrayUtil {
 		int j = 0;
         for( i = 0; i < array.length; i++ ){
             if( array[i] != null ) newArray[j++] = array[i];
+        }
+		
+		return newArray;
+	}
+	
+	/**
+	 * To improve performance, this method should be used instead of ArrayUtil#removeNulls(Class, Object[]) when
+	 * all of the non-null elements in the array are grouped together at the beginning of the array
+	 * and all of the nulls are at the end of the array.  
+	 * The position of the last non-null element in the array must also be known. 
+     *
+	 * @return
+	 */
+	public static Object[] removeNullsAfter(Class c, Object[] array, int index) {
+        if( array == null || index < 0)
+            return (Object[]) Array.newInstance( c, 0 );
+        
+        if( array.length == index + 1 )
+        	return array;
+        
+        Object[] newArray = (Object[]) Array.newInstance(c, index + 1);
+        for( int i = 0; i <= index; i++ ){
+            newArray[i] = array[i];
         }
 		
 		return newArray;

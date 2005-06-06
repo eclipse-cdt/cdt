@@ -41,14 +41,18 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
      */
     public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
         if( baseSpecs == null ) return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
-        return (ICPPASTBaseSpecifier[]) ArrayUtil.removeNulls( ICPPASTBaseSpecifier.class, baseSpecs );
+        baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.removeNullsAfter( ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos );
+        return baseSpecs;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier#addBaseSpecifier(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
      */
     public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
-        baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.append( ICPPASTBaseSpecifier.class, baseSpecs, baseSpec );
+    	if (baseSpec != null) {
+    		baseSpecsPos++;
+    		baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.append( ICPPASTBaseSpecifier.class, baseSpecs, baseSpec );
+    	}
     }
 
     /* (non-Javadoc)
@@ -98,6 +102,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
     private IASTDeclaration [] declarations = new IASTDeclaration[4];
     private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] baseSpecs = null;
+    private int baseSpecsPos=-1;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getScope()

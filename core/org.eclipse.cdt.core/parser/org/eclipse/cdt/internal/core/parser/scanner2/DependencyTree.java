@@ -27,14 +27,18 @@ public class DependencyTree implements IASTTranslationUnit.IDependencyTree, IDep
     }
 
     private IASTInclusionNode [] incs = new IASTInclusionNode[2];
+    private int incsPos=-1;
     
     public IASTInclusionNode[] getInclusions() {
-        incs = (IASTInclusionNode[]) ArrayUtil.removeNulls( IASTInclusionNode.class, incs );
+        incs = (IASTInclusionNode[]) ArrayUtil.removeNullsAfter( IASTInclusionNode.class, incs, incsPos );
         return incs;
     }
 
     public void addInclusionNode(IASTInclusionNode node) {
-        incs = (IASTInclusionNode[]) ArrayUtil.append( IASTInclusionNode.class, incs, node );
+    	if (node != null) {
+    		incsPos++;
+    		incs = (IASTInclusionNode[]) ArrayUtil.append( IASTInclusionNode.class, incs, node );
+    	}
     }
 
 }

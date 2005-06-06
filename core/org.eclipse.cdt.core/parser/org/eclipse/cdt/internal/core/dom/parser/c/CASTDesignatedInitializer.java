@@ -28,7 +28,10 @@ public class CASTDesignatedInitializer extends CASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#addDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
      */
     public void addDesignator(ICASTDesignator designator) {
-        designators = (ICASTDesignator[]) ArrayUtil.append( ICASTDesignator.class, designators, designator );
+    	if (designator != null) {
+    		designatorsPos++;
+    		designators = (ICASTDesignator[]) ArrayUtil.append( ICASTDesignator.class, designators, designator );
+    	}
     }
 
     /* (non-Javadoc)
@@ -36,10 +39,12 @@ public class CASTDesignatedInitializer extends CASTNode implements
      */
     public ICASTDesignator[] getDesignators() {
         if( designators == null ) return ICASTDesignatedInitializer.EMPTY_DESIGNATOR_ARRAY;
-        return (ICASTDesignator[]) ArrayUtil.removeNulls( ICASTDesignator.class, designators );
+        designators = (ICASTDesignator[]) ArrayUtil.removeNullsAfter( ICASTDesignator.class, designators, designatorsPos );
+        return designators;
     }
 
     private ICASTDesignator [] designators = null;
+    int designatorsPos=-1;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#getRHSInitializer()
      */

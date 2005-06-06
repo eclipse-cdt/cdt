@@ -27,14 +27,18 @@ public class InclusionNode implements IASTInclusionNode, IDependencyNodeHost {
     }
 
     private IASTInclusionNode [] incs = new IASTInclusionNode[2];
+    private int incsPos=-1;
     
     public IASTInclusionNode[] getNestedInclusions() {
-        incs = (IASTInclusionNode[]) ArrayUtil.removeNulls( IASTInclusionNode.class, incs );
+        incs = (IASTInclusionNode[]) ArrayUtil.removeNullsAfter( IASTInclusionNode.class, incs, incsPos );
         return incs;
     }
 
     public void addInclusionNode(IASTInclusionNode node) {
-        incs = (IASTInclusionNode[]) ArrayUtil.append( IASTInclusionNode.class, incs, node );
+    	if (node != null) {
+    		incsPos++;
+    		incs = (IASTInclusionNode[]) ArrayUtil.append( IASTInclusionNode.class, incs, node );
+    	}
     }
     
     public String toString() {

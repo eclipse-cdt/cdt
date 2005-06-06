@@ -56,6 +56,7 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 
     
     private IASTDeclaration [] declarations = null;
+    private int declarationsPos=-1;
     private IScope scope = null;
     
 
@@ -64,14 +65,18 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
      */
     public IASTDeclaration [] getMembers() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
-        return (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, declarations );
+        declarations = (IASTDeclaration[]) ArrayUtil.removeNullsAfter( IASTDeclaration.class, declarations, declarationsPos );
+        return declarations;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#addMemberDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
      */
     public void addMemberDeclaration(IASTDeclaration declaration) {
-        declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
+    	if (declaration != null) {
+    		declarationsPos++;
+    		declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
+    	}
     }
     
 

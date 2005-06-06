@@ -29,6 +29,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
         ICPPASTFunctionDeclarator {
     
     private IASTParameterDeclaration [] parameters = null;
+    private int parametersPos=-1;
     private ICPPFunctionScope scope = null;
     private boolean varArgs;
     private boolean pureVirtual;
@@ -42,14 +43,18 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
      */
     public IASTParameterDeclaration [] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        return (IASTParameterDeclaration[]) ArrayUtil.removeNulls( IASTParameterDeclaration.class, parameters );
+        parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter( IASTParameterDeclaration.class, parameters, parametersPos );
+        return parameters;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#addParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
      */
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
-        parameters = (IASTParameterDeclaration []) ArrayUtil.append( IASTParameterDeclaration.class, parameters, parameter );
+    	if (parameter != null) {
+    		parametersPos++;
+    		parameters = (IASTParameterDeclaration []) ArrayUtil.append( IASTParameterDeclaration.class, parameters, parameter );
+    	}
     }
 
     /* (non-Javadoc)
@@ -99,12 +104,14 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     }
 
     private IASTTypeId [] typeIds = null;
+    private int typeIdsPos=-1;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#getExceptionSpecification()
      */
     public IASTTypeId[] getExceptionSpecification() {
         if( typeIds == null ) return IASTTypeId.EMPTY_TYPEID_ARRAY;
-        return (IASTTypeId[]) ArrayUtil.removeNulls( IASTTypeId.class, typeIds );
+        typeIds = (IASTTypeId[]) ArrayUtil.removeNullsAfter( IASTTypeId.class, typeIds, typeIdsPos );
+        return typeIds;
     }
 
 
@@ -112,7 +119,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#addExceptionSpecificationTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
      */
     public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
-        typeIds = (IASTTypeId[]) ArrayUtil.append( IASTTypeId.class, typeIds, typeId );
+    	if (typeId != null) {
+    		typeIdsPos++;
+    		typeIds = (IASTTypeId[]) ArrayUtil.append( IASTTypeId.class, typeIds, typeId );
+    	}
     }
 
 
@@ -133,13 +143,15 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
 
 
     private ICPPASTConstructorChainInitializer [] constructorChain = null;
+    private int constructorChainPos=-1;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#getConstructorChain()
      */
     public ICPPASTConstructorChainInitializer[] getConstructorChain() {
         if( constructorChain == null ) return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
-        return (ICPPASTConstructorChainInitializer[]) ArrayUtil.removeNulls( ICPPASTConstructorChainInitializer.class, constructorChain );
+        constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.removeNullsAfter( ICPPASTConstructorChainInitializer.class, constructorChain, constructorChainPos );
+        return constructorChain;
     }
 
 
@@ -147,7 +159,10 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#addConstructorToChain(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer)
      */
     public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer) {
-        constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.append( ICPPASTConstructorChainInitializer.class, constructorChain, initializer );
+    	if (initializer != null) {
+    		constructorChainPos++;
+    		constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.append( ICPPASTConstructorChainInitializer.class, constructorChain, initializer );
+    	}
     }
 
     public ICPPFunctionScope getFunctionScope(){

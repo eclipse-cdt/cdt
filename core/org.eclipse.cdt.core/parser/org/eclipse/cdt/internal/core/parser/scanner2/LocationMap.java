@@ -1154,14 +1154,18 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
         IMacroDefinition [] builtins = new IMacroDefinition[2];
+        private int builtinsPos=-1;
         
         public void addBuiltinMacro(IMacroDefinition def) {
-            builtins = (IMacroDefinition[]) ArrayUtil.append( IMacroDefinition.class, builtins, def );
+        	if (def != null) {
+        		builtinsPos++;
+        		builtins = (IMacroDefinition[]) ArrayUtil.append( IMacroDefinition.class, builtins, def );	
+        	}
         }
         
         public IMacroDefinition [] getBuiltinMacroDefinitions()
         {
-            builtins = (IMacroDefinition[]) ArrayUtil.removeNulls( IMacroDefinition.class, builtins );
+            builtins = (IMacroDefinition[]) ArrayUtil.removeNullsAfter( IMacroDefinition.class, builtins, builtinsPos );
             return builtins;
         }
 

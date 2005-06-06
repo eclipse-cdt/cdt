@@ -19,13 +19,18 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements
         IASTAmbiguousExpression {
 
     private IASTExpression [] expressions = new IASTExpression[2];
+    private int expressionsPos=-1;
 
     public void addExpression(IASTExpression e) {
-        expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, e );
+    	if (e != null) {
+    		expressionsPos++;
+    		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, e );
+    	}
     }
 
     public IASTExpression[] getExpressions() {
-        return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, expressions );
+    	expressions = (IASTExpression[]) ArrayUtil.removeNullsAfter( IASTExpression.class, expressions, expressionsPos ); 
+        return expressions;
     }
 
     protected IASTNode[] getNodes() {

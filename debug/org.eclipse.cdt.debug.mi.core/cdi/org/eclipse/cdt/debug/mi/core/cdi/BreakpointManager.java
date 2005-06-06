@@ -31,6 +31,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.AddressBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.AddressLocation;
@@ -422,12 +423,32 @@ public class BreakpointManager extends Manager {
 					wpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
 					bList.add(wpoint);
 				} else {
-					LineLocation location = new LineLocation (allMIBreakpoints[i].getFile(),
-							allMIBreakpoints[i].getLine());
-					// By default new breakpoint are LineBreakpoint
-					Breakpoint newBreakpoint = new LineBreakpoint(target, type, location, condition);
-					newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
-					bList.add(newBreakpoint);
+					String function = allMIBreakpoints[i].getFunction();
+					String file = allMIBreakpoints[i].getFile();
+					int line = allMIBreakpoints[i].getLine();
+					String addr = allMIBreakpoints[i].getAddress();
+
+					if (file != null && file.length() > 0 && line > 0) {
+						LineLocation location = createLineLocation (allMIBreakpoints[i].getFile(),
+								allMIBreakpoints[i].getLine());
+						// By default new breakpoint are LineBreakpoint
+						Breakpoint newBreakpoint = new LineBreakpoint(target, type, location, condition);
+						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
+						bList.add(newBreakpoint);
+					} else if (function != null && function.length() > 0) {
+						FunctionLocation location = createFunctionLocation(file, function);
+						// By default new breakpoint are LineBreakpoint
+						Breakpoint newBreakpoint = new FunctionBreakpoint(target, type, location, condition);
+						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
+						bList.add(newBreakpoint);
+					} else if (addr != null && addr.length() > 0) {
+						BigInteger big = MIFormat.getBigInteger(addr);
+						AddressLocation location = createAddressLocation (big);
+						// By default new breakpoint are LineBreakpoint
+						Breakpoint newBreakpoint = new AddressBreakpoint(target, type, location, condition);
+						newBreakpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});
+						bList.add(newBreakpoint);
+					}
 				}
 				eventList.add(new MIBreakpointCreatedEvent(miSession, no)); 
 			}

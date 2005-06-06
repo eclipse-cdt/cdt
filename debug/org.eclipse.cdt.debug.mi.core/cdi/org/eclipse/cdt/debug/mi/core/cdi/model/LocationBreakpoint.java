@@ -59,6 +59,7 @@ public abstract class LocationBreakpoint extends Breakpoint implements ICDIBreak
 			if (a != null) {
 				addr = MIFormat.getBigInteger(a);
 			}
+			return addr;
 		} else if (fLocation instanceof ICDIAddressLocation) {
 			return ((ICDIAddressLocation)fLocation).getAddress();
 		}

@@ -3143,4 +3143,21 @@ public class AST2Tests extends AST2BaseTest {
         ITypedef e = (ITypedef) col.getName(2).resolveBinding();
         assertSame( e.getType(), etion );
     }
+    
+    public void testBug98365() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+		buffer.append("typedef struct _loop_data {   \n"); //$NON-NLS-1$
+		buffer.append("   enum { PIPERR } pipe_err;  \n"); //$NON-NLS-1$
+		buffer.append("} loop_data;                  \n"); //$NON-NLS-1$
+		buffer.append("void f(){                     \n"); //$NON-NLS-1$
+		buffer.append("   PIPERR;                    \n"); //$NON-NLS-1$
+		buffer.append("}                             \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        
+        IEnumerator etor = (IEnumerator) col.getName(2).resolveBinding();
+        assertSame( etor, col.getName(6).resolveBinding() );
+    }
 }

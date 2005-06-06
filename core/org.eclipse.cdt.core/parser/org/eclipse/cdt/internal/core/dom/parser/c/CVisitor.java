@@ -1316,7 +1316,7 @@ public class CVisitor {
 			for( int i = 0; i < nested.length; i++ ){
 				if( nested[i] instanceof IASTSimpleDeclaration ){
 					IASTDeclSpecifier d = ((IASTSimpleDeclaration)nested[i]).getDeclSpecifier();
-					if( d instanceof ICASTCompositeTypeSpecifier ) {
+					if( d instanceof ICASTCompositeTypeSpecifier || d instanceof IASTEnumerationSpecifier ) {
 						Object obj = checkForBinding( scope, d, name, typesOnly, prefixMap );
 					    if( prefixMap == null && resultName == null ){
 						    resultName = (IASTName) obj;

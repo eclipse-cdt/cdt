@@ -2586,8 +2586,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
             // look ahead for the start of the function body, if end of file is
             // found then return 0 parameters found (implies not KnR C)
+            IToken previous=null;
+            IToken next=null;
             while (LT(1) != IToken.tLBRACE) {
-                consume();
+               	next = consume();
+               	if (next == previous) { // infinite loop detected
+               		break;
+               	}
+               	previous = next;
             }
 
             backup(mark);
@@ -2612,8 +2618,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         // consume until LBRACE is found (to leave off at the function body and
         // continue from there)
-        while (LT(1) != IToken.tLBRACE)
-            consume();
+        IToken previous=null;
+        IToken next=null;
+        while (LT(1) != IToken.tLBRACE) {
+           	next = consume();
+           	if (next == previous) { // infinite loop detected
+           		break;
+           	}
+           	previous = next;
+        }
 
         return pd;
     }

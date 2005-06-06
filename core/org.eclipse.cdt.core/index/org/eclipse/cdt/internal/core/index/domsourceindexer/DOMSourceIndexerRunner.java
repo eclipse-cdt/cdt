@@ -351,7 +351,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 	        if (location != null) {
 	            try {
 	                //we only ever add index markers on the file, so DEPTH_ZERO is far enough
-	                IMarker[] markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+	                IMarker[] markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_ZERO);
 	                
 	                boolean newProblem = true;
 	                
@@ -363,9 +363,13 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 	                    
 	                    for (int i=0; i<markers.length; i++) {
 	                        tempMarker = markers[i];
-	                        nameStart = ((Integer) tempMarker.getAttribute(IMarker.CHAR_START)).intValue();
+                            tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+                            Integer tempInt = (Integer) tempMarker.getAttribute(IMarker.CHAR_START);
+                            if (tempInt == null) {
+                                continue;
+                            }
+	                        nameStart = tempInt.intValue();
 	                        nameLen = ((Integer) tempMarker.getAttribute(IMarker.CHAR_END)).intValue() - nameStart;
-	                        tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
 	                        if (nameStart != -1 && 
 	                                nameStart == location.getNodeOffset() &&
 	                                nameLen == location.getNodeLength() &&

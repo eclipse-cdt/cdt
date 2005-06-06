@@ -123,6 +123,7 @@ public class CygpathTranslator {
                 }
             }
         }
+        cygpath.cygPath.dispose();
         return translatedIncludePaths;
     }
 

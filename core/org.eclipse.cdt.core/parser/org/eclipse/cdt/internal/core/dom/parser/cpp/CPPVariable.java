@@ -247,7 +247,7 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
             dtor = (IASTDeclarator) declarations[0].getParent();
         else {
             //definition of a static field doesn't necessarily say static
-            if( definition instanceof ICPPASTQualifiedName )
+            if( definition.getParent() instanceof ICPPASTQualifiedName )
                 return true;
             dtor = (IASTDeclarator) definition.getParent();
         }

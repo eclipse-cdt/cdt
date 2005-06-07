@@ -162,12 +162,12 @@ public class CGenerateIndexVisitor extends CASTVisitor {
                 case ICompositeType.k_struct:
                     iEntryType = IIndex.TYPE_STRUCT;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
-                        iEntryType = IIndex.TYPE_FWD_STRUCT;
+                        iEntryType = IIndex.TYPE_STRUCT;
                     break;
                 case ICompositeType.k_union:
                     iEntryType = IIndex.TYPE_UNION;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
-                        iEntryType = IIndex.TYPE_FWD_UNION;
+                        iEntryType = IIndex.TYPE_UNION;
                     break;
             }
             int modifiers = 0;

@@ -172,7 +172,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		//or if it occurs in another file
 		int indexFlag = calculateIndexFlags();
 		
-		indexer.addFunctionDeclaration(function,indexFlag);
+		indexer.addFunctionDefinition(function,indexFlag);
 		
 	}
 
@@ -235,7 +235,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		//or if it occurs in another file
 		int indexFlag = calculateIndexFlags();
 		
-		indexer.addMethodDeclaration(method, indexFlag);
+		indexer.addMethodDefinition(method, indexFlag);
 	}
 
 	public void exitMethodBody(IASTMethod method) {}

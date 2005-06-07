@@ -12,6 +12,7 @@ import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 
@@ -83,6 +84,21 @@ public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
 	}
 
 	public void notifyListeners(IndexDelta indexDelta) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addResource(IProject project, IResource resource) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void removeResource(IProject project, IResource resource) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addResourceByPath(IProject project, IPath path, int resourceType) {
 		// TODO Auto-generated method stub
 		
 	}

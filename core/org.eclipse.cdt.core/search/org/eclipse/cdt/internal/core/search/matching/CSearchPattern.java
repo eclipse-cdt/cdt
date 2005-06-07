@@ -108,7 +108,6 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		CSearchPattern pattern = null;
 		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || 
-			searchFor == FWD_CLASS || searchFor == FWD_STRUCT || searchFor == FWD_UNION ||
 			searchFor == ENUM || searchFor == UNION || searchFor == CLASS_STRUCT  ||
 			searchFor == TYPEDEF )
 		{
@@ -171,7 +170,6 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	private static CSearchPattern createNamespacePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		if( limitTo == ALL_OCCURRENCES ){
 			OrPattern orPattern = new OrPattern();
-			orPattern.addPattern( createNamespacePattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createNamespacePattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createNamespacePattern( patternString, REFERENCES, matchMode, caseSensitive ) );
 			return orPattern;
@@ -332,6 +330,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		if( limitTo == ALL_OCCURRENCES ){
 			OrPattern orPattern = new OrPattern();
 			orPattern.addPattern( createClassPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createClassPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createClassPattern( patternString, searchFor, REFERENCES, matchMode, caseSensitive ) );
 			return orPattern;
 		}
@@ -341,11 +340,6 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			orPattern.addPattern( createClassPattern( patternString, CLASS, limitTo, matchMode, caseSensitive ) );
 			orPattern.addPattern( createClassPattern( patternString, STRUCT, limitTo, matchMode, caseSensitive ) );
 			return orPattern;
-		}
-		
-		boolean isForward = false;
-		if (searchFor == FWD_CLASS || searchFor == FWD_STRUCT || searchFor == FWD_UNION){
-			isForward = true;
 		}
 		
 		char [] patternArray = patternString.toCharArray();
@@ -396,9 +390,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		char[] name = (char [])list.removeLast();
 		char [][] qualifications = new char[0][];
 		
-		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive, isForward );
+		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive);
 	}
-
 
 	private static CSearchPattern createDerivedPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		char [] patternArray = patternString.toCharArray();

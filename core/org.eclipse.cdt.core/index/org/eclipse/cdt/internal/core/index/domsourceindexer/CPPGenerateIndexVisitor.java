@@ -188,19 +188,19 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
                 case ICPPClassType.k_class:
                     iEntryType = IIndex.TYPE_CLASS;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
-                        iEntryType = IIndex.TYPE_FWD_CLASS;
+                        iEntryType = IIndex.TYPE_CLASS;
                     }
                     break;
                 case ICompositeType.k_struct:
                     iEntryType = IIndex.TYPE_STRUCT;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
-                        iEntryType = IIndex.TYPE_FWD_STRUCT;
+                        iEntryType = IIndex.TYPE_STRUCT;
                     }
                     break;
                 case ICompositeType.k_union:
                     iEntryType = IIndex.TYPE_UNION;
                     if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME) {
-                        iEntryType = IIndex.TYPE_FWD_UNION;
+                        iEntryType = IIndex.TYPE_UNION;
                     }
                     break;
             }

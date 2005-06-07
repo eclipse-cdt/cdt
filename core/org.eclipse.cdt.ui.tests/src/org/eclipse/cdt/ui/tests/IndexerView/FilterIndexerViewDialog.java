@@ -91,10 +91,7 @@ public class FilterIndexerViewDialog extends Dialog {
     public static final int ENTRY_TYPE_DECL_UNION = 17;
     public static final int ENTRY_TYPE_DECL_DERIVED = 18;
     public static final int ENTRY_TYPE_DECL_FRIEND = 19;
-    public static final int ENTRY_TYPE_DECL_FWD_CLASS = 20;
-    public static final int ENTRY_TYPE_DECL_FWD_STRUCT = 21;
-    public static final int ENTRY_TYPE_DECL_FWD_UNION = 22;
-    public static final int ENTRY_INCLUDE_REF = 23;
+    public static final int ENTRY_INCLUDE_REF = 20;
 
     private String fDialogSection;
     
@@ -133,9 +130,6 @@ public class FilterIndexerViewDialog extends Dialog {
         {IIndex.TYPE,      IIndex.TYPE_UNION,      IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_DERIVED,    IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_FRIEND,     IIndex.DECLARATION},
-        {IIndex.TYPE,      IIndex.TYPE_FWD_CLASS,  IIndex.DECLARATION},
-        {IIndex.TYPE,      IIndex.TYPE_FWD_STRUCT, IIndex.DECLARATION},
-        {IIndex.TYPE,      IIndex.TYPE_FWD_UNION,  IIndex.DECLARATION}, 
         {IIndex.INCLUDE,   IIndex.ANY,             IIndex.REFERENCE}
     };
     
@@ -160,9 +154,6 @@ public class FilterIndexerViewDialog extends Dialog {
 		"Union",
 		"Derived",
 		"Friend",
-		"Fwd Class",
-		"Fwd Struct",
-		"Fwd Union",
 		"Include"
 	};
     // keep track of the buttons to programmatically change their state

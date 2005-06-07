@@ -43,9 +43,6 @@ class IndexerOutputWrapper {
 	private final static int TYPEDEF_CONST = 6;
 	private final static int DERIVED_CONST = 7;
 	private final static int FRIEND_CONST = 8;
-	private final static int FWD_CLASS_CONST = 9;
-	private final static int FWD_STRUCT_CONST = 10;
-	private final static int FWD_UNION_CONST = 11;
 	private final static int NAMESPACE_CONST = 12;
 	private final static int ENUMERATOR_CONST = 13;
 	private final static int FIELD_CONST = 14;
@@ -64,9 +61,6 @@ class IndexerOutputWrapper {
     final static EntryType TYPEDEF = new EntryType(TYPEDEF_CONST);
     final static EntryType DERIVED = new EntryType(DERIVED_CONST);
     final static EntryType FRIEND = new EntryType(FRIEND_CONST);
-    final static EntryType FWD_CLASS = new EntryType(FWD_CLASS_CONST);
-    final static EntryType FWD_STRUCT = new EntryType(FWD_STRUCT_CONST);
-    final static EntryType FWD_UNION = new EntryType(FWD_UNION_CONST);
     final static EntryType NAMESPACE = new EntryType(NAMESPACE_CONST);
     final static EntryType ENUMERATOR = new EntryType(ENUMERATOR_CONST);
     final static EntryType FIELD = new EntryType(FIELD_CONST);
@@ -136,21 +130,6 @@ class IndexerOutputWrapper {
 				break;
 			case FRIEND_CONST:
 				typeEntry = new TypeEntry(IIndex.TYPE_FRIEND ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
-				typeEntry.setNameOffset(offset, length, offsetType);
-				typeEntry.serialize(indexerOutput);
-				break;
-			case FWD_CLASS_CONST:
-				typeEntry = new TypeEntry(IIndex.TYPE_FWD_CLASS ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
-				typeEntry.setNameOffset(offset, length, offsetType);
-				typeEntry.serialize(indexerOutput);
-				break;
-			case FWD_STRUCT_CONST:
-				typeEntry = new TypeEntry(IIndex.TYPE_FWD_STRUCT ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
-				typeEntry.setNameOffset(offset, length, offsetType);
-				typeEntry.serialize(indexerOutput);
-				break;
-			case FWD_UNION_CONST:
-				typeEntry = new TypeEntry(IIndex.TYPE_FWD_UNION ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
 				typeEntry.setNameOffset(offset, length, offsetType);
 				typeEntry.serialize(indexerOutput);
 				break;

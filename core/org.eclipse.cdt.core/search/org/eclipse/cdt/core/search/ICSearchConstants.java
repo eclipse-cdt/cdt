@@ -107,11 +107,6 @@ public interface ICSearchConstants {
 	
 	public static final SearchFor FRIEND = new SearchFor( 16 );
 	
-	public static final SearchFor FWD_CLASS = new SearchFor ( 17 );
-		
-	public static final SearchFor FWD_STRUCT = new SearchFor ( 18 );
-		
-	public static final SearchFor FWD_UNION = new SearchFor ( 19 );
 	
 	/* Nature of match */
 	

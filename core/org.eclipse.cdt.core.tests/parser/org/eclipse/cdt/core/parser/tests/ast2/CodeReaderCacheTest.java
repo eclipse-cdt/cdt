@@ -88,6 +88,7 @@ public class CodeReaderCacheTest extends CDOMBaseTest {
 		parse(file);
 		
 		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
+		cache.flush();
 		CodeReader reader = cache.get(file.getLocation().toOSString());
 		assertNotNull(reader);
 		assertEquals(cache.getCurrentSpace(), 1);

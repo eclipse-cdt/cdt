@@ -121,11 +121,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			
 			//include those items not represented in the UI
 			searching.add( MACRO );
-			searching.add( TYPEDEF );
-			searching.add( FWD_CLASS );
-			searching.add( FWD_STRUCT );
-			searching.add( FWD_UNION );
-			
+			searching.add( TYPEDEF );	
 		} else {
 			searching = data.searchFor;
 		}
@@ -345,7 +341,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
 			SearchFor element = (SearchFor) iter.next();
 			if( element == FUNCTION || element == METHOD 	|| element == VAR || 
-				element == FIELD 	|| element == NAMESPACE || element == UNKNOWN_SEARCH_FOR ){
+				element == FIELD 	|| element == NAMESPACE || element == CLASS_STRUCT || 
+				element == UNION     || element == UNKNOWN_SEARCH_FOR ){
 				set.add( DEFINITIONS );
 				break;
 			}

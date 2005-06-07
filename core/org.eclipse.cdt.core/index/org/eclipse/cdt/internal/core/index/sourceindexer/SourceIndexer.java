@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.sourcedependency.UpdateDependency;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -627,6 +628,30 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 
 	public void indexerRemoved(IProject project) {
         removeIndexerProblems(project);
+	}
+
+	public void addResource(IProject project, IResource resource) {
+		
+		if (resource instanceof IProject){
+			this.indexAll(project);
+		}
+		else if (resource instanceof IFolder){
+			this.indexSourceFolder(project,resource.getFullPath(),null);
+		}
+		else if (resource instanceof IFile){
+			IFile file = (IFile) resource;
+			this.addSource(file, project.getFullPath());
+		}	
+	}
+
+	public void removeResource(IProject project, IResource resource) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addResourceByPath(IProject project, IPath path, int resourceType) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -599,9 +599,6 @@ public class IndexerView extends ViewPart {
             		case IIndex.TYPE_TYPEDEF    : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_TYPEDEF;
             		case IIndex.TYPE_DERIVED    : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_DERIVED;
             		case IIndex.TYPE_FRIEND     : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FRIEND;
-            		case IIndex.TYPE_FWD_CLASS  : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FWD_CLASS;
-            		case IIndex.TYPE_FWD_STRUCT : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FWD_STRUCT;
-            		case IIndex.TYPE_FWD_UNION  : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FWD_UNION;
             		}              
             	case IIndex.FUNCTION  : return FilterIndexerViewDialog.ENTRY_FUNCTION_DECL;
             	case IIndex.METHOD    : return FilterIndexerViewDialog.ENTRY_METHOD_DECL;

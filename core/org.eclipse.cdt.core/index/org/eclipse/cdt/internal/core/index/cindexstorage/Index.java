@@ -477,6 +477,8 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 		char [] prefix = null;
 		if( limitTo == DECLARATIONS ){
 			prefix = encodeEntry(IIndex.TYPE, ANY, DECLARATION);
+		} else if (limitTo == DEFINITIONS){
+		    prefix = encodeEntry(IIndex.TYPE, ANY, DEFINITION);
 		} else if( limitTo == REFERENCES ){
 			prefix = encodeEntry(IIndex.TYPE, ANY, REFERENCE);
 		} else {
@@ -499,12 +501,6 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 			classType = DERIVED_SUFFIX;
 		} else if ( searchFor == ICSearchConstants.FRIEND){
 			classType = FRIEND_SUFFIX;
-		} else if ( searchFor == ICSearchConstants.FWD_CLASS) {
-			classType = FWD_CLASS_SUFFIX;
-		} else if ( searchFor == ICSearchConstants.FWD_STRUCT) {
-			classType = FWD_STRUCT_SUFFIX;
-		} else if ( searchFor == ICSearchConstants.FWD_UNION) {
-			classType = FWD_UNION_SUFFIX;
 		} else {
 			//could be TYPE or CLASS_STRUCT, best we can do for these is the prefix
 			return prefix;
@@ -517,8 +513,8 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = encodeEntry(IIndex.NAMESPACE, ANY, REFERENCE);
-		} else if ( limitTo == DECLARATIONS ) {
-			prefix = encodeEntry(IIndex.NAMESPACE, ANY, DECLARATION);
+		} else if ( limitTo == DEFINITIONS ) {
+			prefix = encodeEntry(IIndex.NAMESPACE, ANY, DEFINITION);
 		} else {
 			return encodeEntry(IIndex.NAMESPACE, ANY, ANY);
 		}
@@ -532,6 +528,8 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 			prefix = encodeEntry(IIndex.TYPE, ANY, REFERENCE);
 		} else if( limitTo == DECLARATIONS ){
 			prefix = encodeEntry(IIndex.TYPE, ANY, DECLARATION);
+		} else if( limitTo == DEFINITIONS ){
+				prefix = encodeEntry(IIndex.TYPE, ANY, DEFINITION);
 		} else {
 			return encodeEntry(IIndex.TYPE, ANY, ANY);
 		}
@@ -545,6 +543,8 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 			prefix = encodeEntry(IIndex.FIELD, ANY, REFERENCE);
 		} else if( limitTo == DECLARATIONS ){
 			prefix = encodeEntry(IIndex.FIELD, ANY, DECLARATION);
+		} else if( limitTo == DEFINITIONS ){
+			prefix = encodeEntry(IIndex.FIELD, ANY, DEFINITION);
 		} else {
 			return encodeEntry(IIndex.FIELD, ANY, ANY);
 		}
@@ -576,8 +576,7 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 		} else if( limitTo == DECLARATIONS ){
 			prefix = encodeEntry(IIndex.METHOD, ANY, DECLARATION);
 		} else if( limitTo == DEFINITIONS ){
-			//TODO prefix = METHOD_DEF;
-			return encodeEntry(IIndex.METHOD, ANY, ANY);	
+			return encodeEntry(IIndex.METHOD, ANY, DEFINITION);	
 		} else {
 			return encodeEntry(IIndex.METHOD, ANY, ANY);
 		}

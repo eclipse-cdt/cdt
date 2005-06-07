@@ -592,7 +592,7 @@ import org.eclipse.core.runtime.Platform;
  	
    testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
 	
-   ICSearchPattern pattern = SearchEngine.createSearchPattern( "Z", ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true );
+   ICSearchPattern pattern = SearchEngine.createSearchPattern( "Z", ICSearchConstants.TYPE, ICSearchConstants.DEFINITIONS, true );
 		
    search(workspace,pattern,scope,resultCollector);
  	

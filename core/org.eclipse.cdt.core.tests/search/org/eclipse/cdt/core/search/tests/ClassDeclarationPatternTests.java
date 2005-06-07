@@ -40,7 +40,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 	}
 	
 	public void testMatchSimpleDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", TYPE, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", TYPE, DEFINITIONS, false );
 		
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
@@ -52,7 +52,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 	}
 	
 	public void testMatchNamespaceNestedDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS::B", TYPE, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS::B", TYPE, DEFINITIONS, true );
 		
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
@@ -65,12 +65,11 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		//Changed to 2 since we also return Derived as a Typdecl
-		assertEquals( 2, matches.size() );
+		assertEquals( 1, matches.size() );
 	}
 	
 	public void testBug39652() {
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B", TYPE, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B", TYPE, DEFINITIONS, true );
 		
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
@@ -79,13 +78,13 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		assertTrue( matches != null );
 		assertTrue( matches.size() == 1 );
 				
-		pattern = SearchEngine.createSearchPattern( "NS::NS2::a", TYPE, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "NS::NS2::a", TYPE, DEFINITIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
 		matches = resultCollector.getSearchResults();
 		assertTrue( matches != null );
 		
-		pattern = SearchEngine.createSearchPattern( "NS::B::AA", TYPE, DECLARATIONS, true ); //TODO was NS::B::A, changed for bug 41445
+		pattern = SearchEngine.createSearchPattern( "NS::B::AA", TYPE, DEFINITIONS, true ); //TODO was NS::B::A, changed for bug 41445
 		search( workspace, pattern, scope, resultCollector );
 
 		matches = resultCollector.getSearchResults();
@@ -93,7 +92,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 	}
 	
 	public void testMatchStruct(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "AA", STRUCT, DECLARATIONS, true ); //TODO was A, changed for bug 41445
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "AA", STRUCT, DEFINITIONS, true ); //TODO was A, changed for bug 41445
 		
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
@@ -102,7 +101,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "NS::B::AA", TYPE, DECLARATIONS, true ); //TODO was 2, changed for bug 41445
+		pattern = SearchEngine.createSearchPattern( "NS::B::AA", TYPE, DEFINITIONS, true ); //TODO was 2, changed for bug 41445
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches2 = resultCollector.getSearchResults();
@@ -121,13 +120,13 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 	}
 	
 	public void testWildcardQualification() {
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::*::A", TYPE, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::*::A", TYPE, DEFINITIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 0 );
 		
-		pattern = SearchEngine.createSearchPattern( "NS::*::A", TYPE, DECLARATIONS, false );
+		pattern = SearchEngine.createSearchPattern( "NS::*::A", TYPE, DEFINITIONS, false );
 		search( workspace, pattern, scope, resultCollector );
 		
 		matches = resultCollector.getSearchResults();
@@ -135,19 +134,19 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 	}
 	
 	public void testElaboratedType(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "struct AA", TYPE, DECLARATIONS, true ); //TODO was 2, changed for bug 41445
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "struct AA", TYPE, DEFINITIONS, true ); //TODO was 2, changed for bug 41445
 		search( workspace, pattern, scope, resultCollector );
 
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "union u", TYPE, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "union u", TYPE, DEFINITIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 2 );
 
-		pattern = SearchEngine.createSearchPattern( "union ::*::u", TYPE, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "union ::*::u", TYPE, DEFINITIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 
 		matches = resultCollector.getSearchResults();
@@ -172,16 +171,15 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 	}
 	
 	public void testGloballyQualifiedItem(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::A", TYPE, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::A", TYPE, DEFINITIONS, true );
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		//Changed to 2 since we return 2 typeDecls - one typeDecl/C/A and one typeDecl/D/A
-		assertEquals( matches.size(), 2 );
+		assertEquals( matches.size(), 1 );
 
-		pattern = SearchEngine.createSearchPattern( "::u", TYPE, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "::u", TYPE, DEFINITIONS, true );
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
 		search( workspace, pattern, scope, resultCollector );
@@ -227,7 +225,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 	}
 	
 	public void testHeadersVisitedTwice(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Hea*", CLASS, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Hea*", CLASS, DEFINITIONS, true );
 		
 		search( workspace, pattern, scope, resultCollector );
 		

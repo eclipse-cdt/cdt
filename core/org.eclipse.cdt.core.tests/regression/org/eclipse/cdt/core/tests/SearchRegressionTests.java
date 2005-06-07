@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
@@ -171,11 +172,11 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new SearchRegressionTests("testClassStructReference") ); //$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testNamespaceDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new FailingTest( new SearchRegressionTests("testNamespaceDefinition"),92296)); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testNamespaceDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testNamespaceReference") ); //$NON-NLS-1$
         
-        suite.addTest( new FailingTest( new SearchRegressionTests("testMethodDeclaration"), 92299) ); //$NON-NLS-1$
-        suite.addTest(  new FailingTest( new SearchRegressionTests("testMethodDefinition"), 92296)); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testMethodDeclaration")); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testMethodDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodReference") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodReferenceOperator") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new SearchRegressionTests("testMethodReferenceImplicitOperator"), 80117 ) ); //defect80117 //$NON-NLS-1$ 
@@ -191,17 +192,17 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new SearchRegressionTests("testDestructorReference") );     //defect79792 //$NON-NLS-1$
                
         suite.addTest( new SearchRegressionTests("testFunctionDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new FailingTest(new SearchRegressionTests("testFunctionDefinition"), 92296) ); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testFunctionDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testFunctionReference") ); //$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testFieldDeclaration") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testBitFieldDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new FailingTest(new SearchRegressionTests("testFieldDefinition"),92296 )); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testFieldDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testFieldReference") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new SearchRegressionTests("testNestedFieldReference"), 76203 ) );       //defect76203//$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testVarDeclaration") ); //$NON-NLS-1$
-        suite.addTest( new FailingTest(new SearchRegressionTests("testVarDefinition"), 92296) ); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testVarDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testVarReference") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testVarDeclarationArgument"));     //defect75901 //$NON-NLS-1$
         //var in initializer list of constructor not found
@@ -247,7 +248,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
        
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", CLASS, ALL_OCCURRENCES, true ); //$NON-NLS-1$
 		Set matches = search( pattern, list );
-		
+
 		assertEquals( 2, matches.size() );
 		assertMatch( matches, f, code.indexOf( "A {" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, f, code.indexOf( "A::" ) ); //$NON-NLS-1$ 
@@ -275,7 +276,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         String code = writer.toString();			
         IFile gh = importFile( "ClassStructDeclaration.h", code ); //$NON-NLS-1$
              
-        ICSearchPattern pattern = SearchEngine.createSearchPattern( "N1::*", CLASS_STRUCT, DECLARATIONS, true ); //$NON-NLS-1$
+        ICSearchPattern pattern = SearchEngine.createSearchPattern( "N1::*", CLASS_STRUCT, DEFINITIONS, true ); //$NON-NLS-1$
     	Set matches = search( pattern );
     		
     	assertEquals( 2, matches.size() );
@@ -364,7 +365,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
        
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", NAMESPACE, DEFINITIONS, true ); //$NON-NLS-1$
 		Set matches = search( pattern,list );
 		
 		assertEquals( 3, matches.size() );
@@ -484,19 +485,17 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
         Set matches = search(pattern,list);
-        assertEquals( 3, matches.size());
+        assertEquals( 1, matches.size());
 		assertMatch( matches, gh, code.indexOf( "M/*dec1*/" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "M/*dec2*/" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "~M/*dec3*/" )  ); //$NON-NLS-1$ 
+		
 		//vp2 method, static, inline
         pattern=SearchEngine.createSearchPattern("m*", METHOD, DECLARATIONS, true); //$NON-NLS-1$
         matches = search(pattern,list);
-        assertEquals( 3, matches.size());
+        assertEquals( 1, matches.size());
 		assertMatch( matches, gh, code.indexOf( "m1/*dec4*/" )  ); //$NON-NLS-1$
-		assertMatch( matches, gh, code.indexOf( "m2/*dec5*/" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "m3/*dec6*/" )  ); //$NON-NLS-1$ 
+
 		//vp3 namespace scope, fully qualified search
-		pattern=SearchEngine.createSearchPattern("N::C::m3", METHOD, DECLARATIONS, true); //$NON-NLS-1$
+		pattern=SearchEngine.createSearchPattern("N::C::m3", METHOD, DEFINITIONS, true); //$NON-NLS-1$
         matches = search(pattern,list);
         assertEquals( 1, matches.size());
 		assertMatch( matches, gh, code.indexOf( "m3/*dec6*/" )  ); //$NON-NLS-1$ 
@@ -556,11 +555,11 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
 		assertMatch( matches, cpp, code.indexOf( "foo/*def6*/" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, cpp, code.indexOf( "M/*def7*/" )  ); //$NON-NLS-1$
 		assertMatch( matches, cpp, code.indexOf( "m1/*def8*/" )  ); //$NON-NLS-1$
-		assertEquals( 8, matches.size());
+		assertEquals( 9, matches.size());
         //vp2 operator with space in search pattern
 		pattern=SearchEngine.createSearchPattern("operator |*", METHOD, DEFINITIONS, true); //$NON-NLS-1$
         matches = search(pattern, list);
-        assertEquals( 1, matches.size());
+        assertEquals( 2, matches.size());
         assertMatch( matches, cpp, code.indexOf( "operator|/*def1*/" )  ); //$NON-NLS-1$
     }
     // test SE50, SE100c
@@ -804,12 +803,12 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
         Set matches = search( pattern,list );
-		assertMatch( matches, h, header.indexOf( "f1" )  ); //$NON-NLS-1$ 
+		//assertMatch( matches, h, header.indexOf( "f1" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, h, header.indexOf( "f2" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, h, header.indexOf( "f3" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, h, header.indexOf( "f4" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, cpp, source.indexOf( "f5" )  ); //$NON-NLS-1$ 
-		assertEquals( 5, matches.size());
+		//assertMatch( matches, h, header.indexOf( "f4" )  ); //$NON-NLS-1$ 
+		//assertMatch( matches, cpp, source.indexOf( "f5" )  ); //$NON-NLS-1$ 
+		assertEquals( 2, matches.size());
 		
    	}
 	public void testFunctionDefinition() throws Exception {
@@ -837,6 +836,12 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
         Set matches = search( pattern,list );
+        Iterator i = matches.iterator();
+        while (i.hasNext()){
+        	BasicSearchMatch match =(BasicSearchMatch) i.next();
+        	int x=0;
+        }
+        
 		assertMatch( matches, h, header.indexOf( "f1" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, cpp, source.indexOf( "f2" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, h, header.indexOf( "f4" )  ); //$NON-NLS-1$ 
@@ -898,18 +903,17 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     	String code = writer.toString();			
         IFile gh = importFile( "FieldDeclaration.h", code ); //$NON-NLS-1$
         
-        ICSearchPattern pattern = SearchEngine.createSearchPattern("*", FIELD, DECLARATIONS, true); //$NON-NLS-1$
+        ICSearchPattern pattern = SearchEngine.createSearchPattern("*", FIELD, DEFINITIONS, true); //$NON-NLS-1$
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
         Set matches = search( pattern,list);
         assertMatch( matches, gh, code.indexOf( "field1" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "field2" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "sfield" )  ); //$NON-NLS-1$ 
+		assertMatch( matches, gh, code.indexOf( "field2" )  ); //$NON-NLS-1$  
 		assertMatch( matches, gh, code.indexOf( "field3" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, gh, code.indexOf( "field4" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, gh, code.indexOf( "field5" )  ); //$NON-NLS-1$ 
 		assertMatch( matches, gh, code.indexOf( "field6" )  ); //$NON-NLS-1$ 
-		assertEquals( 7, matches.size());
+		assertEquals( 6, matches.size());
 		
    	}
     public void testBitFieldDeclaration() throws Exception {
@@ -924,7 +928,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
 		String code = writer.toString();			
         IFile cpp = importFile( "BitFieldDeclaration.cpp", code ); //$NON-NLS-1$
 
-        ICSearchPattern pattern = SearchEngine.createSearchPattern("n*", FIELD, DECLARATIONS, true); //$NON-NLS-1$
+        ICSearchPattern pattern = SearchEngine.createSearchPattern("n*", FIELD, DEFINITIONS, true); //$NON-NLS-1$
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
         Set matches = search( pattern,list);
@@ -1077,14 +1081,8 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
         Set matches = search( pattern,list);
-        assertEquals( 7, matches.size());
-		assertMatch( matches, gh, code.indexOf( "var1" )  ); //$NON-NLS-1$ 
+        assertEquals( 1, matches.size());
 		assertMatch( matches, gh, code.indexOf( "var2" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "var3" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "var4" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "var5" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "var6" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, gh, code.indexOf( "var7" )  ); //$NON-NLS-1$ 
 	}
 	//  SE63a  var field defn 
 	public void testVarDefinition() throws Exception {
@@ -1223,9 +1221,8 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         IFile z = importFile( "VarDeclarationArgument.cpp", code ); //$NON-NLS-1$
         ICSearchPattern pattern=SearchEngine.createSearchPattern("s", VAR, DEFINITIONS, true); //$NON-NLS-1$
         Set matches = search(pattern);
-        assertEquals( 2, matches.size());
-		assertMatch( matches, z, code.indexOf( "s/*def1*/" )  ); //$NON-NLS-1$ 
-		assertMatch( matches, z, code.indexOf( "s/*def2*/" )  ); //$NON-NLS-1$ 
+        //Changed to 0 as we no longer encode parameter strings as individual references
+        assertEquals( 0, matches.size());
 		  
    	}
     
@@ -1259,7 +1256,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     	String code = writer.toString();
         IFile uh = importFile( "UnionDeclaration.h", code ); //$NON-NLS-1$
             
-        ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", UNION, DECLARATIONS, true ); //$NON-NLS-1$
+        ICSearchPattern pattern = SearchEngine.createSearchPattern( "*", UNION, DEFINITIONS, true ); //$NON-NLS-1$
         ICElement[] list = new ICElement[1];
         list[0]=cproject.getCProject();
         Set matches = search( pattern,list );

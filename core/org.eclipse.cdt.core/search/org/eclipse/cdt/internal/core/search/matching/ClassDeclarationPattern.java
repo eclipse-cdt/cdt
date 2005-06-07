@@ -52,10 +52,9 @@ public class ClassDeclarationPattern extends CSearchPattern {
 //		super( matchMode, caseSensitive, DECLARATIONS );
 //	}
 	
-	public ClassDeclarationPattern( char[] name, char[][] containers, SearchFor searchFor, LimitTo limit, int mode, boolean caseSensitive, boolean isForward ){
+	public ClassDeclarationPattern( char[] name, char[][] containers, SearchFor searchFor, LimitTo limit, int mode, boolean caseSensitive ){
 		super( mode, caseSensitive, limit );
 		
-		this.isForward = isForward;
 		simpleName = caseSensitive ? name : CharOperation.toLowerCase( name );
 		if( caseSensitive || containers == null ){
 			qualifications = containers;
@@ -69,13 +68,13 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		
 		this.searchFor = searchFor;
 		
-		if( searchFor == CLASS || searchFor == FWD_CLASS ){
+		if( searchFor == CLASS ){
 			classKind = ASTClassKind.CLASS;
-		} else if( searchFor == STRUCT || searchFor == FWD_STRUCT) {
+		} else if( searchFor == STRUCT ) {
 			classKind = ASTClassKind.STRUCT;
 		} else if ( searchFor == ENUM ) {
 			classKind = ASTClassKind.ENUM;
-		} else if ( searchFor == UNION || searchFor == FWD_UNION ) {
+		} else if ( searchFor == UNION ) {
 			classKind = ASTClassKind.UNION;
 		} else {
 			classKind = null;		
@@ -96,11 +95,6 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		
 		if( ! canAccept( limit ) )
 			return IMPOSSIBLE_MATCH;
-		
-		if ((node instanceof IASTElaboratedTypeSpecifier &&!isForward)||
-			(node instanceof IASTClassSpecifier && isForward)){
-				return IMPOSSIBLE_MATCH;
-		}
 		
 		char[] nodeName = null;
 		if (node instanceof IASTElaboratedTypeSpecifier)
@@ -161,9 +155,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected char[] decodedSimpleName;
 	private char[][] decodedContainingTypes;
 	protected int decodedType;
-	protected boolean isForward;
 
-	
 	public void feedIndexRequestor(IIndexSearchRequestor requestor, int detailLevel, int[] fileRefs, int[][] offsets, int[][] offsetLengths,IndexInput input, ICSearchScope scope) throws IOException {
 		boolean isClass = decodedType == IIndex.TYPE_CLASS;
 		
@@ -265,18 +257,15 @@ public class ClassDeclarationPattern extends CSearchPattern {
 				return false;
 			}
 		} else if( classKind == ASTClassKind.CLASS ) {
-			if( decodedType != IIndex.TYPE_CLASS &&
-				decodedType != IIndex.TYPE_FWD_CLASS){
+			if( decodedType != IIndex.TYPE_CLASS ){
 				return false;
 			} 
 		} else if ( classKind == ASTClassKind.STRUCT ) {
-			if( decodedType != IIndex.TYPE_STRUCT &&
-				decodedType != IIndex.TYPE_FWD_STRUCT){
+			if( decodedType != IIndex.TYPE_STRUCT){
 				return false;
 			}
 		} else if ( classKind == ASTClassKind.UNION ) {
-			if( decodedType != IIndex.TYPE_UNION &&
-				decodedType != IIndex.TYPE_FWD_UNION){
+			if( decodedType != IIndex.TYPE_UNION){
 				return false;
 			}
 		} else if ( classKind == ASTClassKind.ENUM ) {

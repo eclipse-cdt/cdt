@@ -44,14 +44,14 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 
 	public void testNamespaceIndexPrefix(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, DEFINITIONS, true ); //$NON-NLS-1$
 		assertTrue( pattern instanceof NamespaceDeclarationPattern );
 		
 		NamespaceDeclarationPattern nsPattern = (NamespaceDeclarationPattern)pattern;
-		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION, "c/B/A"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.DEFINITION, "c/B/A"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
-		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
-		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION, "c/B/A/"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
+		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::*::A::B::c", NAMESPACE, DEFINITIONS, true ); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.DEFINITION, "c/B/A/"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
 				
 		nsPattern = (NamespaceDeclarationPattern) SearchEngine.createSearchPattern( "::RT*::c", NAMESPACE, REFERENCES, true ); //$NON-NLS-1$
 		assertEquals( getSearchPattern(IIndex.NAMESPACE, IIndex.ANY, IIndex.REFERENCE, "c/RT"), nsPattern.indexEntryPrefix() ); //$NON-NLS-1$
@@ -95,7 +95,7 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testNamespaceDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS*", NAMESPACE, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "NS*", NAMESPACE, DEFINITIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -124,7 +124,7 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testFieldDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "a*Struct", FIELD, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "a*Struct", FIELD, DEFINITIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -133,7 +133,7 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testVariableDeclaration(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "b?", VAR, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "b?", VAR, DEFINITIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -356,12 +356,12 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testBug68235(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "bug68235::xTag", STRUCT, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "bug68235::xTag", STRUCT, DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );		
 		
-		pattern = SearchEngine.createSearchPattern( "bug68235::yTag", STRUCT, DECLARATIONS, true ); //$NON-NLS-1$
+		pattern = SearchEngine.createSearchPattern( "bug68235::yTag", STRUCT, DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );

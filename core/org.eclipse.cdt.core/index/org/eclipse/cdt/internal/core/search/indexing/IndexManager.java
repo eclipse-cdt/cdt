@@ -132,6 +132,40 @@ public class IndexManager extends JobManager{
 			indexer.removeRequest(project, delta, kind);
 	}
 	
+	/**
+	 * @param project
+	 * @param element
+	 * @param delta
+	 */
+	public void addResource(IProject project, IResource resource) {
+		//Get indexer for this project
+		ICDTIndexer indexer = getIndexerForProject(project);	
+		
+		if (indexer != null)
+			indexer.addResource(project, resource);
+	}
+
+	public void addResourceByPath(IProject project, IPath path, int resourceType) {
+		//Get indexer for this project
+		ICDTIndexer indexer = getIndexerForProject(project);	
+		
+		if (indexer != null)
+			indexer.addResourceByPath(project, path,resourceType);
+		
+	}
+	/**
+	 * @param project
+	 * @param element
+	 * @param delta
+	 */
+	public void removeResource(IProject project, IResource resource) {
+		//Get the indexer for this project
+		ICDTIndexer indexer = null;
+		indexer = (ICDTIndexer) indexerMap.get(project);
+		
+		if (indexer != null)
+			indexer.removeResource(project, resource);
+	}
 	
 	/**
 	 * Name of the background process
@@ -401,5 +435,6 @@ public class IndexManager extends JobManager{
         job.setPriority( Job.DECORATE );
         job.schedule();
     }
+
     
 }

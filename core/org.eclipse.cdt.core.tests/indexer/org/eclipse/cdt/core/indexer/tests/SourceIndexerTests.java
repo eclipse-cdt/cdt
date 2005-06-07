@@ -198,33 +198,35 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		IIndex ind = sourceIndexer.getIndex(testProject.getFullPath(),true,true);
 		assertTrue("Index exists for project",ind != null); //$NON-NLS-1$
 		
-		IQueryResult[] qresults = ind.getPrefix(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
-		IEntryResult[] eresults = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
+		IQueryResult[] qresults = ind.getPrefix(IIndex.TYPE, IIndex.ANY, IIndex.DEFINITION);
+		IEntryResult[] eresults = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DEFINITION);
+		IEntryResult[] eresultsDecls = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
 		
 		assertTrue("Query Results exist", qresults != null); //$NON-NLS-1$
 		assertTrue("Entry Results exist", eresults != null); //$NON-NLS-1$
 		
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"}; //$NON-NLS-1$
 		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }, offsets={ [ 294] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/Unknown, refs={ 1 }, offsets={ [ 2738] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/container, refs={ 1 }, offsets={ [ 21084] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/first_class, refs={ 1 }, offsets={ [ 2506] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/C/postcard, refs={ 1 }, offsets={ [ 2298] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/C/Unknown, refs={ 1 }, offsets={ [ 2738] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/C/container, refs={ 1 }, offsets={ [ 21084] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/C/first_class, refs={ 1 }, offsets={ [ 2506] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/C/postcard, refs={ 1 }, offsets={ [ 2298] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/V/PO_Box, refs={ 1 }, offsets={ [ 21371] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/V/size, refs={ 1 }, offsets={ [ 21927] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/V/temp, refs={ 1 }, offsets={ [ 21964] }",  //$NON-NLS-1$
+				"EntryResult: word=typeDefn/V/x, refs={ 1 }, offsets={ [ 21201, 21526] }"}; //$NON-NLS-1$ 
+		
+		String [] entryResultDeclsModel = {
 				"EntryResult: word=typeDecl/D/Mail, refs={ 1 }, offsets={ [ 294] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDecl/D/first_class, refs={ 1 }, offsets={ [ 2506] }",  //$NON-NLS-1$ 
 				"EntryResult: word=typeDecl/D/postcard, refs={ 1 }, offsets={ [ 2298] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/PO_Box, refs={ 1 }, offsets={ [ 21371] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDecl/V/index, refs={ 1 }, offsets={ [ 21303, 21846] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDecl/V/mail, refs={ 1 }, offsets={ [ 21336, 21912] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/size, refs={ 1 }, offsets={ [ 21927] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/temp, refs={ 1 }, offsets={ [ 21964] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/x, refs={ 1 }, offsets={ [ 21201, 21526] }"}; //$NON-NLS-1$ 
-		
-		
-		String[] entryResultNameModel = {"Mail","Unknown","container","first_class","postcard","Mail","first_class","postcard","PO_Box","index","mail","size","temp","x"};
+		};
+		String[] entryResultNameModel = {"Mail","Unknown","container","first_class","postcard","PO_Box","size","temp","x"};
 		int[] entryResultMetaModel = {IIndex.TYPE};
-		int[] entryResultTypeModel = {IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_DERIVED,IIndex.TYPE_DERIVED,IIndex.TYPE_DERIVED, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR};
-		int[] entryResultRefModel = {IIndex.DECLARATION};
+		int[] entryResultTypeModel = {IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR};
+		int[] entryResultRefModel = {IIndex.DEFINITION};
 		
 		if (qresults.length != queryResultModel.length)
 			fail("Query Result length different from model"); //$NON-NLS-1$
@@ -232,6 +234,9 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		if (eresults.length != entryResultModel.length)
 			fail("Entry Result length different from model"); //$NON-NLS-1$
 
+		if (eresultsDecls.length != entryResultDeclsModel.length)
+			fail("Entry Result length different from model"); //$NON-NLS-1$
+			
 		for (int i=0; i<qresults.length;i++)
 		{
 			assertEquals(queryResultModel[i],qresults[i].toString());
@@ -269,10 +274,10 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		String[] entryResultNameModel = {"CDocumentManager"};
 		int[] entryResultMetaModel = {IIndex.TYPE};
 		int[] entryResultTypeModel = {IIndex.TYPE_CLASS};
-		int[] entryResultRefModel = {IIndex.DECLARATION};
+		int[] entryResultRefModel = {IIndex.DEFINITION};
 		
-		IEntryResult[] eresults =ind.getEntries(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DECLARATION, name);
-		IEntryResult[] bogRe = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
+		IEntryResult[] eresults =ind.getEntries(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DEFINITION, name);
+		IEntryResult[] bogRe = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DEFINITION);
 		assertTrue("Entry Result exists", eresults != null); //$NON-NLS-1$
 		
 		if (eresults.length != entryResultNameModel.length)
@@ -336,8 +341,10 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		 
 	 //Do a "before" deletion comparison
 	 //ind = indexManager.getIndex(testProjectPath,true,true);
-	 IEntryResult[] eresults = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
-	 assertTrue("Entry result found for typdeDecl/", eresults != null); //$NON-NLS-1$
+	 IEntryResult[] eresults = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DEFINITION);
+	 IEntryResult[] eresultsDecls = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
+	 
+	 assertTrue("Entry result found for typdeDefn/", eresults != null); //$NON-NLS-1$
 	 
 	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }, offsets={ [ 2127] }",
 			 "EntryResult: word=typeDecl/C/Mail, refs={ 3 }, offsets={ [ 294] }",
@@ -355,10 +362,10 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 			 "EntryResult: word=typeDecl/V/temp, refs={ 3 }, offsets={ [ 21964] }", 
 			 "EntryResult: word=typeDecl/V/x, refs={ 3 }, offsets={ [ 21201, 21526] }"};
 	 
-	String[] entryResultNameModel = {"CDocumentManager","Mail","Unknown","container","first_class","postcard","Mail","first_class","postcard","PO_Box","index","mail","size","temp","x"};
+	String[] entryResultNameModel = {"CDocumentManager","Mail","Unknown","container","first_class","postcard","PO_Box", "size","temp","x"};
 	int[] entryResultMetaModel = {IIndex.TYPE};
-	int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_DERIVED,IIndex.TYPE_DERIVED,IIndex.TYPE_DERIVED, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR};
-	int[] entryResultRefModel = {IIndex.DECLARATION};
+	int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR};
+	int[] entryResultRefModel = {IIndex.DEFINITION};
 		
 	 if (eresults.length != entryResultNameModel.length)
 			fail("Entry Result length different from model"); //$NON-NLS-1$	 
@@ -381,7 +388,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	 
 	 //See if the index is still there
 	 ind = sourceIndexer.getIndex(testProjectPath,true,true);
-	 eresults = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
+	 eresults = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DEFINITION);
 	 assertTrue("Entry exists", eresults != null);  //$NON-NLS-1$ 
 		
 	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }, offsets={ [ 2127] }"};  //$NON-NLS-1$ //$NON-NLS-2$ 
@@ -389,7 +396,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	String[] entryResultANameModel = {"CDocumentManager"};
 	int[] entryResultAMetaModel = {IIndex.TYPE};
 	int[] entryResultATypeModel = {IIndex.TYPE_CLASS};
-	int[] entryResultARefModel = {IIndex.DECLARATION};
+	int[] entryResultARefModel = {IIndex.DEFINITION};
 		
 	 if (eresults.length != entryResultANameModel.length)
 		fail("Entry Result length different from model");  //$NON-NLS-1$
@@ -416,26 +423,27 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		IEntryResult[] typerefreesults = ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.REFERENCE);
 		assertTrue("Type Ref Results exist", typerefreesults != null);  //$NON-NLS-1$
 		
-		String[] entryResultNameModel = {"Mail/Y/X/Z", "Unknown/Y/X/Z", "container/Y/X/Z", "first_class/Y/X/Z", "postcard/Y/X/Z", "Mail/Y/X/Z",
-				"first_class/Y/X/Z", "postcard/Y/X/Z", "test/Y/X/Z", "int32", "PO_Box", "index", "mail", "size", "temp", "x", "x/Z" };
+		String[] entryResultDeclNameModel = {"Mail/Y/X/Z","first_class/Y/X/Z", "postcard/Y/X/Z", "test/Y/X/Z", "int32", "index", "mail",};
+		String[] entryResultDefnNameModel = {"Mail/Y/X/Z", "Unknown/Y/X/Z", "container/Y/X/Z", "first_class/Y/X/Z", "postcard/Y/X/Z", "PO_Box", "size", "temp", "x", "x/Z" };
 		int[] entryResultMetaModel = {IIndex.TYPE};
-		int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS,
-				IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_ENUM, IIndex.TYPE_TYPEDEF, IIndex.TYPE_VAR,
-				IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR};
-		int[] entryResultRefModel = {IIndex.DECLARATION};
+		int[] entryResultDefnTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS,
+				 					  IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR};
+		int[] entryResultDeclTypeModel = {IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_ENUM, IIndex.TYPE_TYPEDEF,IIndex.TYPE_VAR,IIndex.TYPE_VAR}; 
+		
 		
 		IEntryResult[] typedeclresults =ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
+		IEntryResult[] typedefinitionsresults = ind.getEntries(IIndex.TYPE, IIndex.ANY , IIndex.DEFINITION);
 		assertTrue("Type Decl Results exist", typedeclresults != null);  //$NON-NLS-1$ 
 		
-		if (typedeclresults.length != entryResultNameModel.length)
-			fail("Entry Result length different from model for typeDecl");  //$NON-NLS-1$
+		if (typedefinitionsresults.length != entryResultDefnNameModel.length)
+			fail("Entry Result length different from model for typeDefn");  //$NON-NLS-1$
 	
 		for (int i=0;i<typedeclresults.length; i++)
 		{
-			assertEquals(entryResultNameModel[i],typedeclresults[i].getName());
-			assertEquals(entryResultMetaModel[0],typedeclresults[i].getMetaKind());
-			assertEquals(entryResultTypeModel[i],typedeclresults[i].getKind());
-			assertEquals(entryResultRefModel[0],typedeclresults[i].getRefKind());
+			assertEquals(entryResultDefnNameModel[i],typedefinitionsresults[i].getName());
+			assertEquals(entryResultMetaModel[0],typedefinitionsresults[i].getMetaKind());
+			assertEquals(entryResultDefnTypeModel[i],typedefinitionsresults[i].getKind());
+			assertEquals(IIndex.DEFINITION,typedefinitionsresults[i].getRefKind());
 		}
 	
 		String[] entryResultTNameModel = {"int32" };
@@ -452,17 +460,17 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	
 		for (int i=0;i<typedefresults.length; i++)
 		{
-			assertEquals(entryResultNameModel[i],typedeclresults[i].getName());
-			assertEquals(entryResultMetaModel[i],typedeclresults[i].getMetaKind());
-			assertEquals(entryResultTypeModel[i],typedeclresults[i].getKind());
-			assertEquals(entryResultRefModel[i],typedeclresults[i].getRefKind());
+			assertEquals(entryResultTNameModel[i],typedefresults[i].getName());
+			assertEquals(entryResultTMetaModel[i],typedefresults[i].getMetaKind());
+			assertEquals(entryResultTTypeModel[i],typedefresults[i].getKind());
+			assertEquals(entryResultTRefModel[i],typedefresults[i].getRefKind());
 		}
 	
 		String[] entryResultNNameModel = {"X/Z", "Y/X/Z" , "Z" };
 		int[] entryResultNMetaModel = {IIndex.NAMESPACE};
-		int[] entryResultNRefModel = {IIndex.DECLARATION};
+		int[] entryResultNRefModel = {IIndex.DEFINITION};
 		
-		IEntryResult[] namespaceresults =ind.getEntries(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION);
+		IEntryResult[] namespaceresults =ind.getEntries(IIndex.NAMESPACE, IIndex.ANY, IIndex.DEFINITION);
 		assertTrue("Namespace Results exist", namespaceresults != null);  //$NON-NLS-1$  
 		
 		if (namespaceresults.length != entryResultNNameModel.length)
@@ -477,9 +485,9 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 				
 		String[] entryResultFNameModel = {"array/container/Y/X/Z", "index/container/Y/X/Z" , "postage/Mail/Y/X/Z","sz/container/Y/X/Z", "type/Mail/Y/X/Z"};
 		int[] entryResultFMetaModel = {IIndex.FIELD};
-		int[] entryResultFRefModel = {IIndex.DECLARATION};
+		int[] entryResultFRefModel = {IIndex.DEFINITION};
 		
-		IEntryResult[] fieldresults =ind.getEntries(IIndex.FIELD, IIndex.ANY, IIndex.DECLARATION);
+		IEntryResult[] fieldresults =ind.getEntries(IIndex.FIELD, IIndex.ANY, IIndex.DEFINITION);
 		assertTrue("Field Results exist", fieldresults != null);  //$NON-NLS-1$
 		
 		if (fieldresults.length != entryResultFNameModel.length)
@@ -510,7 +518,7 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 			assertEquals(entryResultERefModel[0],enumeratorresults[i].getRefKind());
 		}
 	
-		String[] entryResultFNNameModel = {"doSomething", "main/Y/X/Z"};
+		String[] entryResultFNNameModel = {"doSomething"};
 		int[] entryResultFNMetaModel = {IIndex.FUNCTION};
 		int[] entryResultFNRefModel = {IIndex.DECLARATION};
 		
@@ -527,24 +535,29 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		}
 		
 									   							   
-		String[] entryResultMNameModel = {"Mail/Mail/Y/X/Z", "Unknown/Unknown/Y/X/Z" , "container/container/Y/X/Z", "first_class/first_class/Y/X/Z",
-				"operator =/container/Y/X/Z", "operator []/container/Y/X/Z","postcard/postcard/Y/X/Z","print/Mail/Y/X/Z", "print/Unknown/Y/X/Z",
-				"print/first_class/Y/X/Z", "print/postcard/Y/X/Z", "size/container/Y/X/Z", "~container/container/Y/X/Z"};
-		int[] entryResultMMetaModel = {IIndex.METHOD};
-		int[] entryResultMRefModel = {IIndex.DECLARATION};
+		String[] entryResultMNameDefnModel = {"Mail/Mail/Y/X/Z", "Unknown/Unknown/Y/X/Z" , "container/container/Y/X/Z", "first_class/first_class/Y/X/Z",
+				"print/Unknown/Y/X/Z","print/first_class/Y/X/Z", "print/postcard/Y/X/Z", "size/container/Y/X/Z", "~container/container/Y/X/Z"};
+		int[] entryResultMMetaDefnModel = {IIndex.METHOD};
+		int[] entryResultMRefDefnModel = {IIndex.DEFINITION};
+		
+		
+		String [] entryResultMNameDeclModel = {"operator =/container/Y/X/Z", "operator []/container/Y/X/Z","print/Mail/Y/X/Z"};
+		int[] entryResultMMetaDeclModel = {IIndex.METHOD};
+		int[] entryResultMRefDeclModel = {IIndex.DECLARATION};
 		
 		IEntryResult[] methodresults =ind.getEntries(IIndex.METHOD, IIndex.ANY, IIndex.DECLARATION);
 		assertTrue("Entry exists", methodresults != null);  //$NON-NLS-1$ 
 		
-		if (methodresults.length != entryResultMNameModel.length)
+		if (methodresults.length != entryResultMNameDeclModel.length)
 				fail("Entry Result length different from model for functionDecl");  //$NON-NLS-1$  
 	
 		for (int i=0;i<methodresults.length; i++)
 		{
-			assertEquals(entryResultMNameModel[i],methodresults[i].getName());
-			assertEquals(entryResultMMetaModel[0],methodresults[i].getMetaKind());
-			assertEquals(entryResultMRefModel[0],methodresults[i].getRefKind());
+			assertEquals(entryResultMNameDeclModel[i],methodresults[i].getName());
+			assertEquals(entryResultMMetaDeclModel[0],methodresults[i].getMetaKind());
+			assertEquals(entryResultMRefDeclModel[0],methodresults[i].getRefKind());
 		}
+	
   }
   
   public void testRefs() throws Exception{
@@ -556,9 +569,9 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 		  IIndex ind = sourceIndexer.getIndex(testProjectPath,true,true);
 		  assertTrue("Index exists for project",ind != null);  //$NON-NLS-1$ 
 
-		 String[] entryResultNameModel = {"C/B/A", "e1/B/A", "ForwardA/A", "x/B/A"};
+		 String[] entryResultNameModel = {"C/B/A","ForwardA/A", "e1/B/A",  "x/B/A"};
 		 int[] entryResultMetaModel = {IIndex.TYPE};
-		 int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_ENUM, IIndex.TYPE_FWD_CLASS, IIndex.TYPE_VAR};
+		 int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_ENUM, IIndex.TYPE_VAR};
 		 int[] entryResultRefModel = {IIndex.REFERENCE};
 		
 			
@@ -663,8 +676,8 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	  importFile("DepTest3.h","resources/dependency/DepTest3.h");//$NON-NLS-1$ //$NON-NLS-2$ 
 	  importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");//$NON-NLS-1$ //$NON-NLS-2$ 
 	  
-	  IEntryResult[] eResult = ind.getEntries(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DECLARATION);
-	  IQueryResult[] qResult = ind.getPrefix(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DECLARATION);
+	  IEntryResult[] eResult = ind.getEntries(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DEFINITION);
+	  IQueryResult[] qResult = ind.getPrefix(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DEFINITION);
 	  
 	  assertTrue("Expected 2 files indexed", qResult.length == 2); //$NON-NLS-1$ 
 	  assertTrue("Checking DepTest3.h location", qResult[0].getPath().equals("/IndexerTestProject/DepTest3.h")); //$NON-NLS-1$ //$NON-NLS-2$ 
@@ -792,13 +805,13 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 	 IPath testProjectPath = testProject.getFullPath();
 	 IIndex ind = sourceIndexer.getIndex(testProjectPath,true,true);
 	 assertTrue("Index exists for project",ind != null); //$NON-NLS-1$ 
-	 IEntryResult[] fwdDclResults = ind.getEntries(IIndex.TYPE, IIndex.TYPE_FWD_CLASS, IIndex.DECLARATION, "ForwardA/A" ); //$NON-NLS-1$ 
+	 IEntryResult[] fwdDclResults = ind.getEntries(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.DECLARATION, "ForwardA/A" ); //$NON-NLS-1$ 
 	 assertTrue("Entry exists",fwdDclResults != null); //$NON-NLS-1$ 
 	 
 	 String [] fwdDclModel = {"EntryResult: word=typeDecl/G/ForwardA/A, refs={ 1 }, offsets={ [ 225] }"}; //$NON-NLS-1$
 	 String[] entryResultNameModel = {"ForwardA/A"};
 	 int[] entryResultMetaModel = {IIndex.TYPE};
-	 int[] entryResultTypeModel = {IIndex.TYPE_FWD_CLASS};
+	 int[] entryResultTypeModel = {IIndex.TYPE_CLASS};
 	 int[] entryResultRefModel = {IIndex.DECLARATION};
 		
 	 if (fwdDclResults.length != fwdDclModel.length)
@@ -812,13 +825,13 @@ public class SourceIndexerTests extends TestCase implements IIndexChangeListener
 			assertEquals(entryResultRefModel[i],fwdDclResults[i].getRefKind());
 	 }
 
-	IEntryResult[] fwdDclRefResults = ind.getEntries(IIndex.TYPE, IIndex.TYPE_FWD_CLASS, IIndex.REFERENCE, "ForwardA/A"); //$NON-NLS-1$ 
+	IEntryResult[] fwdDclRefResults = ind.getEntries(IIndex.TYPE, IIndex.TYPE_CLASS, IIndex.REFERENCE, "ForwardA/A"); //$NON-NLS-1$ 
 	assertTrue("Entry exists", fwdDclRefResults!= null); //$NON-NLS-1$
 	
 	String [] fwdDclRefModel = {"EntryResult: word=typeRef/G/ForwardA/A, refs={ 1 }, offsets={ [ 237] }"}; //$NON-NLS-1$  
 	String[] entryResultName2Model = {"ForwardA/A"};
 	int[] entryResultMeta2Model = {IIndex.TYPE};
-	int[] entryResultType2Model = {IIndex.TYPE_FWD_CLASS};
+	int[] entryResultType2Model = {IIndex.TYPE_CLASS};
 	int[] entryResultRef2Model = {IIndex.REFERENCE};
 	 
 	if (fwdDclRefResults.length != fwdDclRefModel.length)

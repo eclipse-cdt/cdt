@@ -162,11 +162,11 @@ class CTagEntry{
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.MEMBER)){
-			NamedEntry namedEntry = new NamedEntry(IIndex.FIELD, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
+			NamedEntry namedEntry = new NamedEntry(IIndex.FIELD, IIndex.DEFINITION,fullName,getModifiers(),fileNum);
 			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			namedEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.NAMESPACE)){
-			NamedEntry namedEntry = new NamedEntry(IIndex.NAMESPACE, IIndex.DECLARATION,fullName,getModifiers(),fileNum);
+			NamedEntry namedEntry = new NamedEntry(IIndex.NAMESPACE, IIndex.DEFINITION,fullName,getModifiers(),fileNum);
 			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			namedEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.PROTOTYPE)){

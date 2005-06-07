@@ -66,10 +66,7 @@ public interface ICIndexStorageConstants {
 			'V', // VAR              
 			'T', // TYPEDEF          
 			'D', // DERIVED          
-			'F', // FRIEND           
-			'G', // FWD_CLASS        
-			'H', // FWD_STRUCT       
-			'I'  // FWD_UNION
+			'F' // FRIEND           
 	};
 	
 	final static String[] typeConstantNames = { "", // not used //$NON-NLS-1$
@@ -81,9 +78,6 @@ public interface ICIndexStorageConstants {
 		"Typedef", //$NON-NLS-1$
 		"Derived", //$NON-NLS-1$
 		"Friend", //$NON-NLS-1$
-		"FWD Class", //$NON-NLS-1$
-		"FWD Struct", //$NON-NLS-1$
-		"FWD Union" //$NON-NLS-1$
 };
 	
 	final static String[] allSpecifiers = {"", //not used  //$NON-NLS-1$ 

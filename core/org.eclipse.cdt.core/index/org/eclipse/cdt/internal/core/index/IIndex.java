@@ -51,9 +51,7 @@ public interface IIndex {
 	final static int TYPE_TYPEDEF = 6;
 	final static int TYPE_DERIVED = 7;
 	final static int TYPE_FRIEND = 8;
-	final static int TYPE_FWD_CLASS = 9;
-	final static int TYPE_FWD_STRUCT = 10;
-	final static int TYPE_FWD_UNION = 11;
+
 	
 	// type
     final static int UNKNOWN = 0;

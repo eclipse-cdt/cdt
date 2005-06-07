@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.AbstractCExtension;
@@ -37,10 +38,12 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -97,9 +100,10 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 			    this.indexAll(project);
 				break;
 	        
-			/*case ICDTIndexer.FOLDER:
-				this.indexSourceFolder(element.getCProject().getProject(),element.getPath(),null);
-			break;*/
+			case ICDTIndexer.FOLDER:
+				IFolder folder = (IFolder) delta.getResource();
+				this.indexSourceFolder(project,folder);
+			break;
 		
 			
 			case ICDTIndexer.COMPILATION_UNIT:
@@ -113,6 +117,26 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 		}
 		
 		
+	}
+
+	public void indexSourceFolder(IProject project, IFolder folder) {
+	
+		final HashSet indexables = new HashSet();
+		try {
+			folder.accept(new IResourceVisitor(){
+				public boolean visit(IResource resource) throws CoreException {
+					if (resource instanceof IFile)
+						indexables.add(resource);
+					
+					return true;
+				} 
+			});
+		} catch (CoreException e) {}
+		
+		Iterator i = indexables.iterator();
+		while (i.hasNext()){
+			this.addSource((IFile) i.next(), project.getFullPath());
+		}
 	}
 
 	/**
@@ -149,7 +173,7 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 			IFile file = (IFile) delta.getResource();
 			this.remove(file.getFullPath().toString(), file.getProject().getFullPath());
 			break;				
-	}	
+		}	
 	}
 
 	/* (non-Javadoc)
@@ -507,6 +531,41 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 		}
 
 		public void shutdown() {}
+	}
+
+	public void addResource(IProject project, IResource resource) {
+
+		if (resource instanceof IProject){
+		    this.indexAll(project);
+		} 
+		else if (resource instanceof IFolder){
+			IFolder folder = (IFolder) resource;
+			this.indexSourceFolder(project,folder);
+		}
+		else if (resource instanceof IFile){
+			IFile file = (IFile) resource;
+			this.addSource(file, project.getFullPath());
+		}
+		else {
+		    this.indexAll(project);
+		}
+		
+	}
+
+	public void removeResource(IProject project, IResource resource) {
+		if (resource instanceof IProject){
+			IPath fullPath = project.getFullPath();
+			indexManager.discardJobs(fullPath.segment(0));
+			indexStorage.removeIndexFamily(fullPath);
+		}
+		else if (resource instanceof IFile){
+			IFile file = (IFile) resource;
+			this.remove(file.getFullPath().toString(), file.getProject().getFullPath());			
+		}	
+	}
+
+	public void addResourceByPath(IProject project, IPath path, int resourceType) {
+	  //Nothing yet
 	}
 
 }

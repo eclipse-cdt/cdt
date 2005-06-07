@@ -15,6 +15,7 @@ import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 
@@ -79,6 +80,21 @@ public interface ICDTIndexer extends IIndexer {
 	public void removeRequest(IProject project, IResourceDelta delta, int kind); 
 	
 	/**
+	 * Adds the given resource to the IProject's index 
+	 */
+	public void addResource(IProject project, IResource resource); 
+	
+	/**
+	 * Removes the given resource from the IProject's index
+	 */
+	public void removeResource(IProject project, IResource resource); 
+	
+	/**
+	 * Attempts to add the resource type specified by the path to the project's index
+	 */
+	public void addResourceByPath(IProject project, IPath path, int resourceType);
+
+	/**
 	 * The <code>IndexManager</code> will send out a jobFinishedEvent to the indexer that
 	 * had scheduled the previous runnign job to give that indexer a chance to update its 
 	 * state info.
@@ -141,4 +157,5 @@ public interface ICDTIndexer extends IIndexer {
 	 */
 	public void indexerRemoved(IProject project);
 
+	
 }

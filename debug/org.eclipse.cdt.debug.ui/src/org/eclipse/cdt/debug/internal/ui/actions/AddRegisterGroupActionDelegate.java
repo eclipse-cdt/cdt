@@ -44,7 +44,7 @@ public class AddRegisterGroupActionDelegate extends AbstractViewActionDelegate {
 	protected void doAction() throws DebugException {
 		RegisterGroupDialog dialog = new RegisterGroupDialog( getView().getSite().getShell(), getDebugTarget().getRegisterDescriptors() );
 		if ( dialog.open() == Window.OK ) {
-			getDebugTarget().addUserDefinedRegisterGroup( dialog.getName(), dialog.getDescriptors() );
+			getDebugTarget().addRegisterGroup( dialog.getName(), dialog.getDescriptors() );
 		}
 	}
 

@@ -97,15 +97,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 
 	public void dispose() {
 		fDisposed = true;
-		if (fRegisters == null) {
-			return;
-		}
-		for ( int i = 0; i < fRegisters.length; ++i ) {
-			if ( fRegisters[i] != null ) {
-				((CRegister)fRegisters[i]).dispose();
-			}
-		}
-		fRegisters = null;
+		invalidate();
 	}
 
 	public void targetSuspended() {
@@ -216,7 +208,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 			childNode = childNode.getNextSibling();
 		}
 		setName( groupName );
-		setRegisterDescriptors( (IRegisterDescriptor[])list.toArray( new IRegisterDescriptor[list.size()] ) );
+		fRegisterDescriptors = (IRegisterDescriptor[])list.toArray( new IRegisterDescriptor[list.size()] );
 		setEnabled( enabled );
 	}
 
@@ -229,11 +221,34 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 		fName = name;
 	}
 
-	private void setRegisterDescriptors( IRegisterDescriptor[] registerDescriptors ) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup#setRegisterDescriptors(org.eclipse.cdt.debug.core.model.IRegisterDescriptor[])
+	 */
+	public void setRegisterDescriptors( IRegisterDescriptor[] registerDescriptors ) {
+		invalidate();
 		fRegisterDescriptors = registerDescriptors;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup#getRegisterDescriptors()
+	 */
+	public IRegisterDescriptor[] getRegisterDescriptors() {
+		return fRegisterDescriptors;
 	}
 
 	private CRegisterManager getRegisterManager() {
 		return (CRegisterManager)getDebugTarget().getAdapter( CRegisterManager.class );
+	}
+
+	private void invalidate() {
+		if (fRegisters == null) {
+			return;
+		}
+		for ( int i = 0; i < fRegisters.length; ++i ) {
+			if ( fRegisters[i] != null ) {
+				((CRegister)fRegisters[i]).dispose();
+			}
+		}
+		fRegisters = null;
 	}
 }

@@ -72,6 +72,7 @@ import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
+import org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup;
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
 import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
@@ -1736,7 +1737,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#addUserDefinedRegisterGroup(java.lang.String, org.eclipse.cdt.debug.core.model.IRegisterDescriptor[])
 	 */
-	public void addUserDefinedRegisterGroup( String name, IRegisterDescriptor[] descriptors ) {
+	public void addRegisterGroup( String name, IRegisterDescriptor[] descriptors ) {
 		getRegisterManager().addRegisterGroup( name, descriptors );
 	}
 
@@ -1745,6 +1746,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 */
 	public void removeRegisterGroups( IRegisterGroup[] groups ) {
 		getRegisterManager().removeRegisterGroups( groups );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#modifyRegisterGroup(org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup, org.eclipse.cdt.debug.core.model.IRegisterDescriptor[])
+	 */
+	public void modifyRegisterGroup( IPersistableRegisterGroup group, IRegisterDescriptor[] descriptors ) {
+		getRegisterManager().modifyRegisterGroup( group, descriptors );
 	}
 
 	protected void skipBreakpoints( boolean enabled ) {

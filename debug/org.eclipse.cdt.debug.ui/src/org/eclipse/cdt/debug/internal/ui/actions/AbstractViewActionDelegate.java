@@ -17,7 +17,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -109,12 +108,12 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 			}
 		} );
 		if ( !ms.isOK() ) {
-			IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 			if ( window != null ) {
-				DebugUIPlugin.errorDialog( window.getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms.getChildren()[0] ); //$NON-NLS-1$
+				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), ms.getChildren()[0] ); //$NON-NLS-1$
 			}
 			else {
-				DebugUIPlugin.log( ms );
+				CDebugUIPlugin.log( ms );
 			}
 		}
 	}

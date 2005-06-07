@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
+import org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup;
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CRegisterDescriptor;
@@ -272,5 +273,16 @@ public class CRegisterManager {
 				return d;
 		}
 		return null;
+	}
+
+	public void modifyRegisterGroup( final IPersistableRegisterGroup group, final IRegisterDescriptor[] descriptors ) {
+		DebugPlugin.getDefault().asyncExec( 
+				new Runnable() {
+					public void run() {
+						group.setRegisterDescriptors( descriptors );					
+						((CRegisterGroup)group).fireChangeEvent( DebugEvent.CONTENT );
+					}
+				} );
+		
 	}
 }

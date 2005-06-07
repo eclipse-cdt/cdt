@@ -729,7 +729,7 @@
       <objectContribution
             adaptable="false"
             id="org.eclipse.cdt.debug.ui.RegisterGroupActions"
-            objectClass="org.eclipse.debug.core.model.IRegisterGroup">
+            objectClass="org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup">
          <action
                class="org.eclipse.cdt.debug.internal.ui.actions.RemoveRegisterGroupActionDelegate"
                enablesFor="+"
@@ -738,6 +738,14 @@
                label="%RemoveRegisterGroupAction.label"
                menubarPath="additions"
                tooltip="%RemoveRegisterGroupAction.tooltip"/>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.EditRegisterGroupActionDelegate"
+               enablesFor="1"
+               helpContextId="edit_register_group_action_context"
+               id="org.eclipse.cdt.debug.ui.editRegisterGroupAction"
+               label="%EditRegisterGroupAction.label"
+               menubarPath="additions"
+               tooltip="%EditRegisterGroupAction.tooltip"/>
       </objectContribution>
    </extension>
    <extension

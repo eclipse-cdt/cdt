@@ -36,4 +36,18 @@ public interface IPersistableRegisterGroup extends IRegisterGroup {
 	 * @exception CoreException on failure to initialize 
 	 */
 	public void initializeFromMemento( String memento ) throws CoreException;
+
+	/**
+	 * Returns the array of group's register descriptors.
+	 * 
+	 * @return the array of group's register descriptors
+	 */
+	public IRegisterDescriptor[] getRegisterDescriptors();
+
+	/**
+	 * Replaces the group register descriptors by the specified descriptors.
+	 *  
+	 * @param the array of register descriptors
+	 */
+	public void setRegisterDescriptors( IRegisterDescriptor[] registerDescriptors );
 }

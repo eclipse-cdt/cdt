@@ -106,7 +106,7 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * 
 	 * @since 3.0
 	 */
-	public void addUserDefinedRegisterGroup( String name, IRegisterDescriptor[]  descriptors );
+	public void addRegisterGroup( String name, IRegisterDescriptor[]  descriptors );
 
 	/**
 	 * Removes the given register group from the target
@@ -116,4 +116,14 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * @since 3.0
 	 */
 	public void removeRegisterGroups( IRegisterGroup[] groups );
+
+	/**
+	 * Replace the given group's register descriptors by the specified descriptors.
+	 *  
+	 * @param group a group to be modified
+	 * @param descriptors a descriptor array to replace existing descriptors
+	 * 
+	 * @since 3.0
+	 */
+	public void modifyRegisterGroup( IPersistableRegisterGroup group, IRegisterDescriptor[] descriptors );
 }

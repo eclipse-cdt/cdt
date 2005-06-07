@@ -3324,6 +3324,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 isTypename = true;
                 last = consume(IToken.t_typename);
                 duple = name();
+                last = duple.getLastToken();
                 flags.setEncounteredTypename(true);
                 break;
             case IToken.tCOLONCOLON:

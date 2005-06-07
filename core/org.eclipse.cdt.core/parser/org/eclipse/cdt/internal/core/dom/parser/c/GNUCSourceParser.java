@@ -2016,11 +2016,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                         .setPropertyInParent(IASTDeclarator.DECLARATOR_NAME);
             }
 
-            for (int i = 0; i < parmNames.length; ++i) {
-                parmNames[i].setParent(functionDecltor);
-                parmNames[i]
-                        .setPropertyInParent(ICASTKnRFunctionDeclarator.PARAMETER_NAME);
-            }
+            if( parmNames != null )
+                for (int i = 0; i < parmNames.length; ++i) {
+                    parmNames[i].setParent(functionDecltor);
+                    parmNames[i]
+                            .setPropertyInParent(ICASTKnRFunctionDeclarator.PARAMETER_NAME);
+                }
 
             d = functionDecltor;
         } else if (isFunction) {

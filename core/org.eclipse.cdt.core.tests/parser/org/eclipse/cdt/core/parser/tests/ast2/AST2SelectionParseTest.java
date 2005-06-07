@@ -1648,4 +1648,11 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertNotNull(node);
 	}
 
+    
+    public void testBug98806() throws Exception {
+        String code = "template <class T> class A { typedef typename T::B _B;};";
+        IASTNode node = parse( code, ParserLanguage.CPP, code.indexOf( "T::B"), "T::B".length() );
+        assertNotNull( node );
+        assertTrue( node instanceof IASTName );
+    }
 }

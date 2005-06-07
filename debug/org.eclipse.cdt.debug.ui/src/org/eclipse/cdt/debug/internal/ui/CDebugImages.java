@@ -121,6 +121,8 @@ public class CDebugImages
 	public static final String IMG_LCL_COLLAPSE_ALL = NAME_PREFIX + "collapseall.gif";	//$NON-NLS-1$
 
 	public static final String IMG_WIZBAN_ADD_SOURCE = NAME_PREFIX + "addsrcloc_wiz.gif";	//$NON-NLS-1$
+	public static final String IMG_WIZBAN_PATH_MAPPING = NAME_PREFIX + "mapping_wiz.gif";	//$NON-NLS-1$
+	public static final String IMG_WIZBAN_PATH_MAP_ENTRY = NAME_PREFIX + "mapentry_wiz.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -181,6 +183,8 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_PATH_MAPPING = createManaged( T_OBJ, IMG_OBJS_PATH_MAPPING );
 	public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged( T_OBJ, IMG_OBJS_PATH_MAP_ENTRY );
 	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE );
+	public static final ImageDescriptor DESC_WIZBAN_PATH_MAPPING = createManaged( T_WIZBAN, IMG_WIZBAN_PATH_MAPPING );
+	public static final ImageDescriptor DESC_WIZBAN_PATH_MAP_ENTRY = createManaged( T_WIZBAN, IMG_WIZBAN_PATH_MAP_ENTRY );
 	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_ELCL, IMG_LCL_CAST_TO_TYPE );
 	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_ELCL, IMG_LCL_DISPLAY_AS_ARRAY );
 	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE = createManaged( T_ELCL, IMG_LCL_RESUME_AT_LINE );

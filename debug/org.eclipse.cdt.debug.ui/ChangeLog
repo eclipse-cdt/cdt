@@ -1,4 +1,13 @@
 2005-06-07 Mikhail Khodjaiants
+	New images for mapping source containers.
+	* icons/obj16/mapentry_obj.gif
+	* icons/obj16/mapping_obj.gif
+	+ icons/wizban/mapentry_obj.gif
+	+ icons/wizban/mapping_obj.gif
+	* CDebugImages.java
+	* PathMappingDialog.java
+
+2005-06-07 Mikhail Khodjaiants
 	Bug 94139: User-defined register groups.
 	Support fo the "Edit Register Group" action.
 	* AbstractViewActionDelegate.java

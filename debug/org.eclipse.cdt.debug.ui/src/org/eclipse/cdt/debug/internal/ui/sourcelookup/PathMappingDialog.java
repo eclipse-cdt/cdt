@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 import java.io.File;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
+import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -86,6 +87,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		 */
 		protected Control createDialogArea( Composite parent ) {
 			setTitle( SourceLookupUIMessages.getString( "PathMappingDialog.0" ) ); //$NON-NLS-1$
+			setTitleImage( CDebugImages.get( CDebugImages.IMG_WIZBAN_PATH_MAP_ENTRY ) );
 
 			Font font = parent.getFont();
 			Composite composite = new Composite( parent, SWT.NONE );
@@ -347,7 +349,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 	 */
 	protected Control createDialogArea( Composite parent ) {
 		setTitle( SourceLookupUIMessages.getString( "PathMappingDialog.11" ) ); //$NON-NLS-1$
-		//TODO Add image
+		setTitleImage( CDebugImages.get( CDebugImages.IMG_WIZBAN_PATH_MAPPING ) );
 		
 		Font font = parent.getFont();
 		Composite composite = new Composite( parent, SWT.NONE );

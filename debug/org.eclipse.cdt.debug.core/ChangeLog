@@ -1,3 +1,7 @@
+2005-06-07 Mikhail Khodjaiants
+	The endianness flag is not chached.
+	* CDebugTarget.java
+
 2005-06-06 Mikhail Khodjaiants
 	Bug 98594: Unable to set address breakpoints.
 	* CBreakpointManager.java

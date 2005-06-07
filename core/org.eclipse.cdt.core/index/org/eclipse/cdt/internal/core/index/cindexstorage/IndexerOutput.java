@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
  */
 
 public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput { 
+	public static int entryCount = 0;
 	protected InMemoryIndex index;
 	/**
 	 * IndexerOutput constructor comment.
@@ -43,6 +44,7 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 		if (modifiers <=0)
 			modifiers = 1;
 		
+		entryCount++;
 		index.addRef(
 				encodeTypeEntry(name, suffix, type),
                 indexedFileNumber, offset, offsetLength, offsetType, modifiers);
@@ -58,7 +60,7 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 		
 		if (modifiers <=0)
 			modifiers = 1;
-		
+		entryCount++;
 		index.addRef(
 				encodeEntry(name, meta_kind, ref), 
                 indexedFileNumber, offset, offsetLength, offsetType, modifiers);

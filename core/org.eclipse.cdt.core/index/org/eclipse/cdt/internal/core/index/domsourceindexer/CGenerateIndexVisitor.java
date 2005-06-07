@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.index.domsourceindexer;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -39,7 +40,7 @@ public class CGenerateIndexVisitor extends CASTVisitor {
     private DOMSourceIndexerRunner indexer; 
     {
         shouldVisitNames          = true;
-//        shouldVisitDeclarations   = false;
+        shouldVisitDeclarations   = true;
 //        shouldVisitInitializers   = false;
 //        shouldVisitParameterDeclarations = false;
 //        shouldVisitDeclarators    = false;
@@ -60,6 +61,15 @@ public class CGenerateIndexVisitor extends CASTVisitor {
     }
 
     /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
+     */
+    public int visit(IASTDeclaration declaration) {
+        if (IndexEncoderUtil.nodeInVisitedExternalHeader(declaration, indexer.getIndexer())) 
+            return PROCESS_SKIP;
+        return PROCESS_CONTINUE;
+    }
+
+    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
      */
     public int visit(IASTName name) {
@@ -70,15 +80,16 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             processName(name);
         }
         catch (DOMException e) {
-            // TODO Auto-generated catch block
+            // TODO remove printStackTrace
             e.printStackTrace();
+            Util.log(e, e.getProblem().getMessage(), ICLogConstants.CDT);
         }
         catch (Exception e) {
-            // TODO remove
+            // TODO remove printStackTrace
             e.printStackTrace();
             Util.log(e, e.toString(), ICLogConstants.CDT);
         }
-       return PROCESS_CONTINUE;
+        return PROCESS_CONTINUE;
     }
 
     /* (non-Javadoc)

@@ -157,6 +157,9 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	 * 
 	 * Warning: Does not check whether index is consistent (not being used)
 	 */
+	public static int trimed = 0;
+	public static int added = 0;
+	
 	public synchronized boolean haveEncounteredHeader(IPath projectPath, IPath filePath, boolean add) {
 		SimpleLookupTable headerTable = indexStorage.getEncounteredHeaders(); 
 		
@@ -168,11 +171,14 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 			headerTable.put(projectPath, headers);
 		 }
 		
-		if (headers.containsKey(filePath.toOSString()))
+		if (headers.containsKey(filePath.toOSString())) {
+			trimed++;
 			return true;
+		}
 		
 		if (add) {
 			headers.put(filePath.toOSString());
+            added++;
 		}
 		
 		return false;

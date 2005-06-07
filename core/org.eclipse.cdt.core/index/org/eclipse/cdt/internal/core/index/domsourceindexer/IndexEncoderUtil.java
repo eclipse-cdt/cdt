@@ -86,7 +86,7 @@ public class IndexEncoderUtil {
 		IPath filePath = new Path(fileName);
 		IPath projectPath = indexer.getProject().getFullPath();
 		
-		return (CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName)) == null) &&
+		return (CCorePlugin.getWorkspace().getRoot().getFileForLocation(filePath) == null) &&
 				indexer.haveEncounteredHeader(projectPath, filePath, false);
 	}
 

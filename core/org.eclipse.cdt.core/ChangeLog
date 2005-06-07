@@ -1,3 +1,16 @@
+2005-06-07 Vladimir Hirsl
+	Fix for a problem with DOM indexer, where external header files in translation unit's
+	inclusion tree were not visited.
+	Optimization from Dave; skipping declarations in already visited external headers.
+	
+	* index/org/eclipse/cdt/internal/core/index/cindexstorage/IndexOutput.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexEncoderUtil.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexVisitorUtil.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexer.java
+
 2005-06-03 Vladimir Hirsl
 	Fix for PR 93786: DOM Indexer adds local variables to the index
 	Other smaller fixes in DOM Indexer domain.

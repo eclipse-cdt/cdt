@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.NamedEntry;
+import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
@@ -59,6 +60,7 @@ import org.eclipse.core.runtime.Path;
 public class DOMSourceIndexerRunner extends AbstractIndexer {
 
     private SourceIndexer indexer;
+    
     // timing & errors
     static int totalParseTime = 0;
     static int totalVisitTime = 0;
@@ -117,10 +119,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             if (AbstractIndexer.TIMING)
                 parseTime = System.currentTimeMillis();
             
-            processIncludeDirectives(tu.getDependencyTree());
-            processMacroDefinitions(tu.getMacroDefinitions());
-            processPreprocessorProblems(tu.getPreprocessorProblems());
-            
             ASTVisitor visitor = null;
             if (language == ParserLanguage.CPP) {
                 visitor = new CPPGenerateIndexVisitor(this);
@@ -130,6 +128,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
            
             tu.accept(visitor);   
  
+            processMacroDefinitions(tu.getMacroDefinitions());
+            processPreprocessorProblems(tu.getPreprocessorProblems());
+            // must be the last step in processing of a translation unit
+            processIncludeDirectives(tu.getDependencyTree());
         }
         catch (VirtualMachineError vmErr) {
 			error = vmErr.toString();
@@ -161,15 +163,17 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                     }
                     errors.put(error, new Integer(((Integer) errors.get(error)).intValue()+1)); 
 				}
-                System.out.println("DOM Indexer - Total Parse Time for " + resourceFile.getName()  + ": " + (parseTime - startTime)); //$NON-NLS-1$ //$NON-NLS-2$
-                System.out.println("DOM Indexer - Total Visit Time for " + resourceFile.getName()  + ": " + (endTime - parseTime)); //$NON-NLS-1$  //$NON-NLS-2$
+                System.out.print("DOM Indexer - " + resourceFile.getName()  + ": " + (parseTime - startTime)); //$NON-NLS-1$ //$NON-NLS-2$
+                System.out.print("+" + (endTime - parseTime)); //$NON-NLS-1$  //$NON-NLS-2$
                 totalParseTime += parseTime - startTime;
                 totalVisitTime += endTime - parseTime;
                 long currentTime = endTime - startTime;
-                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + currentTime); //$NON-NLS-1$  //$NON-NLS-2$
+                System.out.print("=" + currentTime); //$NON-NLS-1$  //$NON-NLS-2$
                 long tempTotaltime = indexer.getTotalIndexTime() + currentTime;
 	            indexer.setTotalIndexTime(tempTotaltime);
-                System.out.println("DOM Indexer - Overall Index Time: " + tempTotaltime + "(" + totalParseTime + ", " + totalVisitTime + ") " + errorCount + " errors"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                System.out.println(" \t\tOverall " + tempTotaltime + "=" + totalParseTime + "+" + totalVisitTime + " " + errorCount + " errors "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+                System.out.println( "Attempted Entries " + IndexerOutput.entryCount + " Trimed " + SourceIndexer.trimed + " Added " + SourceIndexer.added);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+                
                 System.out.flush();
             }
             if (AbstractIndexer.VERBOSE){
@@ -243,7 +247,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             IASTInclusionNode inclusion = inclusions[i];
             // Quick check to see if the name is in an already indexed external header file
     		if (IndexEncoderUtil.nodeInVisitedExternalHeader(inclusion.getIncludeDirective(), getIndexer())) 
-    			return;
+    			continue;
 
             String include = inclusion.getIncludeDirective().getPath();
 
@@ -298,7 +302,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     private void processPreprocessorProblems(IASTProblem[] preprocessorProblems) {
         for (int i = 0; i < preprocessorProblems.length; i++) {
             IASTProblem problem = preprocessorProblems[i];
-            // Quick check to see if the macro is in an already indexed external header file
+            // Quick check to see if the problem is in an already indexed external header file
     		if (IndexEncoderUtil.nodeInVisitedExternalHeader(problem, getIndexer())) 
     			continue;
 

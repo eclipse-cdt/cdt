@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
@@ -60,7 +61,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
     
     {
         shouldVisitNames          = true;
-//        shouldVisitDeclarations   = false;
+        shouldVisitDeclarations   = true;
 //        shouldVisitInitializers   = false;
 //        shouldVisitParameterDeclarations = false;
 //        shouldVisitDeclarators    = false;
@@ -73,7 +74,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         shouldVisitProblems       = true;
 
 //        shouldVisitBaseSpecifiers = false;
-//        shouldVisitNamespaces     = false;
+        shouldVisitNamespaces     = true;
 //        shouldVisitTemplateParameters = false;
     }
     
@@ -82,7 +83,25 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         this.indexer = indexer;
     }
 
+/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
+     */
+    public int visit(ICPPASTNamespaceDefinition namespace) {
+        if (IndexEncoderUtil.nodeInVisitedExternalHeader(namespace, indexer.getIndexer())) 
+            return PROCESS_SKIP;
+        return PROCESS_CONTINUE;
+    }
+
     /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
+     */
+    public int visit(IASTDeclaration declaration) {
+        if (IndexEncoderUtil.nodeInVisitedExternalHeader(declaration, indexer.getIndexer())) 
+            return PROCESS_SKIP;
+        return PROCESS_CONTINUE;
+    }
+
+   /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTName)
      */
     public int visit(IASTName name) {
@@ -93,11 +112,12 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             processName(name);
         }
         catch (DOMException e) {
-            // TODO Auto-generated catch block
+            // TODO remove printStackTrace
             e.printStackTrace();
+            Util.log(e, e.getProblem().getMessage(), ICLogConstants.CDT);
         }
         catch (Exception e) {
-            // TODO remove
+            // TODO remove printStackTrace
             e.printStackTrace();
             Util.log(e, e.toString(), ICLogConstants.CDT);
         }
@@ -214,8 +234,8 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
                 addDerivedDeclarations(name, (ICPPClassType)binding, indexEntry, fileNumber);
                 addFriendDeclarations(name, (ICPPClassType)binding, indexEntry, fileNumber);
             }
-
-            indexEntry.serialize(indexer.getOutput());
+            
+            serialize(indexEntry);
         }
         else if (binding instanceof IEnumeration) {
             int modifiers = 0;
@@ -225,25 +245,25 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_ENUM, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            serialize(indexEntry);
         }
         else if (binding instanceof ITypedef) {
             TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_TYPEDEF, entryKind, qualifiedName, 0, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            serialize(indexEntry);
         }
         else if (binding instanceof ICPPNamespace) {
             NamedEntry indexEntry = new NamedEntry(IIndex.NAMESPACE, entryKind, qualifiedName, 0, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            serialize(indexEntry);
         }
         else if (binding instanceof IEnumerator) {
             NamedEntry indexEntry = new NamedEntry(IIndex.ENUMTOR, entryKind, qualifiedName, 0, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            serialize(indexEntry);
         }
         else if (binding instanceof IField) {
             int modifiers = 0;
@@ -253,7 +273,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             NamedEntry indexEntry = new NamedEntry(IIndex.FIELD, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            serialize(indexEntry);
         }
         else if (binding instanceof IVariable &&
                 !(binding instanceof IParameter)) { 
@@ -267,7 +287,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
                 TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_VAR, entryKind, qualifiedName, modifiers, fileNumber);
                 indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
     
-                indexEntry.serialize(indexer.getOutput());
+                serialize(indexEntry);
             }
         }
         else if (binding instanceof ICPPMethod) {
@@ -280,7 +300,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
             indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
-            indexEntry.serialize(indexer.getOutput());
+            serialize(indexEntry);
             // TODO In case we want to add friend method declarations to index
 //          if (isFriendDeclaration(name, binding)) {
 //			    entryType = IndexerOutputWrapper.FRIEND; 
@@ -296,7 +316,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
             indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
-            indexEntry.serialize(indexer.getOutput());
+            serialize(indexEntry);
             // TODO In case we want to add friend function declarations to index
 //	        if (isFriendDeclaration(name, binding)) {
 //				entryType = IndexerOutputWrapper.FRIEND; 
@@ -312,16 +332,13 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             return;
         }
         
-//        if (entryType != null) {
-//            IndexerOutputWrapper.addIndexEntry(indexer.getOutput(),
-//					getFullyQualifiedName(binding),
-//					entryType,
-//					entryKind,
-//                    fileNumber, 
-//                    loc.getNodeOffset(),
-//                    loc.getNodeLength(),
-//                    IIndex.OFFSET);
-//        }
+    }
+
+    /**
+     * @param indexEntry
+     */
+    private void serialize(IIndexEntry indexEntry) {
+        indexEntry.serialize(indexer.getOutput());
     }
 
     /**

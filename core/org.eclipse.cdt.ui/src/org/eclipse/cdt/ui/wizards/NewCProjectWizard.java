@@ -210,21 +210,30 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	public IRunnableWithProgress getRunnable() {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				final IProgressMonitor fMonitor;
 				if (monitor == null) {
-					monitor= new NullProgressMonitor();
+					fMonitor= new NullProgressMonitor();
+				} else {
+					fMonitor = monitor;
 				}
-				monitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
-
-				doRunPrologue(new SubProgressMonitor(monitor, 1));
-				try {
-					doRun(new SubProgressMonitor(monitor, 1));
+				fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
+				final CoreException except[] = new CoreException[1];
+				getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						doRunPrologue(new SubProgressMonitor(fMonitor, 1));
+						try {
+							doRun(new SubProgressMonitor(fMonitor, 1));
+						}
+						catch (CoreException e) {
+							except[0] = e;
+						}
+						doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
+					}
+				});
+				if (except[0] != null) {
+					throw new InvocationTargetException(except[0]);
 				}
-				catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-				doRunEpilogue(new SubProgressMonitor(monitor, 1));
-
-				monitor.done();
+				fMonitor.done();
 			}
 		};
 	}
@@ -235,7 +244,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	protected boolean invokeRunnable(IRunnableWithProgress runnable) {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(runnable);
 		try {
-			getContainer().run(false, true, op);
+			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {
 			Shell shell= getShell();
 			String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$

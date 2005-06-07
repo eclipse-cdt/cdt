@@ -1,3 +1,7 @@
+2005-06-07 David Inglis
+	Fixed PR#95885 Blocking UI on project creation
+	* src/org/eclipse/cdt/ui/wizards/NewCProjectWizards.java
+	
 2005-02-25 Alain Magloire
 	Fix PR 86718: Dialog shows twice
 	* src/org/eclipse/cdt/internal/ui/cview/OpenProjectGroup.java

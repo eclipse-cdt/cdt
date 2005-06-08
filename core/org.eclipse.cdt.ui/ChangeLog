@@ -1,3 +1,8 @@
+2005-06-08 Vladimir Hirsl
+	Fix for NPE in CPElement.java
+	
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPElement.java
+
 2005-06-07 Alain Magloire
 	Patch form Chris Recoskie to provide an ID to the wizard.
 	* src/org/eclipse/cdt/ui/wizards/NewCProjectWizardPage.java

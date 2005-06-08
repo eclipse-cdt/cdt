@@ -26,8 +26,12 @@ public class DiscoveredElement {
 	public static final int CONTAINER = 1;
 	public static final int INCLUDE_PATH = 2;
 	public static final int SYMBOL_DEFINITION = 3;
-	public static final int PATHS_GROUP = 4;
-	public static final int SYMBOLS_GROUP = 5;
+	public static final int INCLUDE_FILE = 4;
+	public static final int MACROS_FILE = 5;
+	public static final int PATHS_GROUP = 10;
+	public static final int SYMBOLS_GROUP = 11;
+	public static final int INCLUDE_FILE_GROUP = 12;
+	public static final int MACROS_FILE_GROUP = 13;
 	
 	private IProject fProject;
 	private String fEntry;
@@ -53,71 +57,58 @@ public class DiscoveredElement {
 											  boolean removed,
 											  boolean system) {
 		DiscoveredElement rv = null;
+		int parentKind = 0;
 		switch (kind) {
 			case CONTAINER: {
 				rv = new DiscoveredElement(project, entry, kind, removed, system);
 				DiscoveredElement group = new DiscoveredElement(project, null, PATHS_GROUP, false, false);
 				rv.fChildren.add(group);
-				group.fParent = rv;
+				group.setParent(rv);
 				group = new DiscoveredElement(project, null, SYMBOLS_GROUP, false, false);
 				rv.fChildren.add(group);
-				group.fParent = rv;
+				group.setParent(rv);
+				group = new DiscoveredElement(project, null, INCLUDE_FILE_GROUP, false, false);
+				rv.fChildren.add(group);
+				group.setParent(rv);
+				group = new DiscoveredElement(project, null, MACROS_FILE_GROUP, false, false);
+				rv.fChildren.add(group);
+				group.setParent(rv);
 			}
-			break;
-			case INCLUDE_PATH: {
-				if (parent != null) {
-					DiscoveredElement group = null;
-					if (parent.getEntryKind() == PATHS_GROUP) {
-						parent = parent.getParent();
-						group = parent;
-					}
-					else if (parent.getEntryKind() == CONTAINER) {
-						for (Iterator i = parent.fChildren.iterator(); i.hasNext(); ) {
-							DiscoveredElement child = (DiscoveredElement) i.next();
-							if (child.getEntryKind() == PATHS_GROUP) {
-								group = child;
-								break;
-							}
+			return rv;
+			case INCLUDE_PATH:
+				parentKind = PATHS_GROUP;
+				break;
+			case SYMBOL_DEFINITION:
+				parentKind = SYMBOLS_GROUP;
+				break;
+			case INCLUDE_FILE:
+				parentKind = INCLUDE_FILE_GROUP;
+				break;
+			case MACROS_FILE:
+				parentKind = MACROS_FILE_GROUP;
+				break;
+		}
+		if (parentKind != 0) {
+			if (parent != null) {
+				DiscoveredElement group = null;
+				if (parent.getEntryKind() == parentKind) {
+					group = parent;
+				}
+				else if (parent.getEntryKind() == CONTAINER) {
+					for (Iterator i = parent.fChildren.iterator(); i.hasNext(); ) {
+						DiscoveredElement child = (DiscoveredElement) i.next();
+						if (child.getEntryKind() == parentKind) {
+							group = child;
+							break;
 						}
-						if (group == null) {
-							return null;
-						}
-					}
-					if (parent.getEntryKind() == CONTAINER) {
-						rv = new DiscoveredElement(project, entry, kind, removed, system);
-						group.fChildren.add(rv);
-						rv.setParent(group);
 					}
 				}
-			}
-			break;
-			case SYMBOL_DEFINITION: {
-				if (parent != null) {
-					DiscoveredElement group = null;
-					if (parent.getEntryKind() == SYMBOLS_GROUP) {
-						parent = parent.getParent();
-						group = parent;
-					}
-					else if (parent.getEntryKind() == CONTAINER) {
-						for (Iterator i = parent.fChildren.iterator(); i.hasNext(); ) {
-							DiscoveredElement child = (DiscoveredElement) i.next();
-							if (child.getEntryKind() == SYMBOLS_GROUP) {
-								group = child;
-								break;
-							}
-						}
-						if (group == null) {
-							return null;
-						}
-					}
-					if (parent.getEntryKind() == CONTAINER) {
-						rv = new DiscoveredElement(project, entry, kind, removed, system);
-						group.fChildren.add(rv);
-						rv.setParent(group);
-					}
+				if (group != null) {
+					rv = new DiscoveredElement(project, entry, kind, removed, system);
+					group.fChildren.add(rv);
+					rv.setParent(group);
 				}
-			}			
-			break;
+			}
 		}
 		return rv;
 	}
@@ -184,6 +175,8 @@ public class DiscoveredElement {
 		switch(fEntryKind) {
 			case INCLUDE_PATH:
 			case SYMBOL_DEFINITION:
+			case INCLUDE_FILE:
+			case MACROS_FILE:
 				return new Object[0];
 		}
 		return fChildren.toArray();
@@ -193,6 +186,8 @@ public class DiscoveredElement {
 		switch(fEntryKind) {
 			case INCLUDE_PATH:
 			case SYMBOL_DEFINITION:
+			case INCLUDE_FILE:
+			case MACROS_FILE:
 				return false;
 		}
 		return (fChildren.size() > 0);

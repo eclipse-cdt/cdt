@@ -707,8 +707,13 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
      * @return
      */
     private CCommandDSC getCommand(IPath path) {
-        IFile file = project.getWorkspace().getRoot().getFile(path);
-		return getCommand(file);
+        try {
+        	IFile file = project.getWorkspace().getRoot().getFile(path);
+    		return getCommand(file);
+        }
+        catch (Exception e) {
+        	return null;
+        }
     }
 
     private CCommandDSC getCommand(IFile file) {

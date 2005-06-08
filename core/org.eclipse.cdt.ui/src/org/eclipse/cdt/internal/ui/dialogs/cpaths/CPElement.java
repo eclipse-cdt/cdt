@@ -764,7 +764,7 @@ public class CPElement {
 				res = root.findMember(path);
 				break;
 		}
-		CPElement elem = new CPElement(element.getCProject(), curr.getEntryKind(), path, res);
+		CPElement elem = new CPElement((element == null) ? null : element.getCProject(), curr.getEntryKind(), path, res);
 		elem.setAttribute(SOURCEATTACHMENT, sourceAttachment);
 		elem.setAttribute(EXCLUSION, exclusion);
 		elem.setAttribute(INCLUDE, include);

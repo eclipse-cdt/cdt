@@ -35,17 +35,24 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	private final Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));
 
 	private ImageDescriptor fIncludeIcon, fMacroIcon, fContainerImage;
-	private ImageDescriptor fRemovedIncludeIcon, fRemovedMacroIcon;
+	private ImageDescriptor fIncludeGroupIcon, fMacroGroupIcon;
+	private ImageDescriptor fIncludeAndMacrosFileIcon;
+	private ImageDescriptor fIncludeAndMacrosFileGroupIcon;
 	private ImageDescriptorRegistry fRegistry;
 
 	private final String DISABLED_LABEL = MakeUIPlugin.
 			getResourceString("ManageScannerConfigDialogCommon.discoveredGroup.annotation.disabled");//$NON-NLS-1$ 
-		
+
 	public DiscoveredElementLabelProvider() {
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
-		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
-		fMacroIcon = CPluginImages.DESC_OBJS_MACRO;
 		fContainerImage = CPluginImages.DESC_OBJS_LIBRARY;
+		fIncludeGroupIcon = CPluginImages.DESC_OBJS_INCLUDES_CONTAINER;
+		fMacroGroupIcon = CPluginImages.DESC_OBJS_MACRO;
+		fIncludeAndMacrosFileGroupIcon = CPluginImages.DESC_OBJS_INCLUDE;
+		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
+//        fQuoteIncludeIcon = CPluginImages.DESC_OBJS_QUOTE_INCLUDES_FOLDER;
+        fIncludeAndMacrosFileIcon = CPluginImages.DESC_OBJS_TUNIT_HEADER;
+		fMacroIcon = fMacroGroupIcon;
 	}
 	
 	/* (non-Javadoc)
@@ -69,7 +76,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		Image image = null;
 		switch (elem.getEntryKind()) {
 			case DiscoveredElement.PATHS_GROUP:
-				image = CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
+				image = fRegistry.get(fIncludeGroupIcon);
 				break;
 			case DiscoveredElement.CONTAINER:
 				image = fRegistry.get(fContainerImage);
@@ -80,7 +87,15 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 			case DiscoveredElement.SYMBOLS_GROUP:
 			case DiscoveredElement.SYMBOL_DEFINITION:
 				image = fRegistry.get(fMacroIcon);
+				break;
+			case DiscoveredElement.INCLUDE_FILE:
+			case DiscoveredElement.MACROS_FILE:
+				image = fRegistry.get(fIncludeAndMacrosFileIcon);
 			    break;
+			case DiscoveredElement.INCLUDE_FILE_GROUP:
+			case DiscoveredElement.MACROS_FILE_GROUP:
+				image = fRegistry.get(fIncludeAndMacrosFileGroupIcon);
+				break;
 		}
 		if (image != null && elem.isRemoved()) {
 			image = new DiscoveredElementImageDescriptor(image, true).createImage();
@@ -99,9 +114,15 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 					return CPathEntryMessages.getString("CPElementLabelProvider.Includes"); //$NON-NLS-1$
 				case DiscoveredElement.SYMBOLS_GROUP:
 					return CPathEntryMessages.getString("CPElementLabelProvider.PreprocessorSymbols"); //$NON-NLS-1$
+				case DiscoveredElement.INCLUDE_FILE_GROUP:
+					return CPathEntryMessages.getString("CPElementLabelProvider.IncludeFiles"); //$NON-NLS-1$
+				case DiscoveredElement.MACROS_FILE_GROUP:
+					return CPathEntryMessages.getString("CPElementLabelProvider.MacrosFiles"); //$NON-NLS-1$
 				case DiscoveredElement.CONTAINER:
 				case DiscoveredElement.INCLUDE_PATH:
 				case DiscoveredElement.SYMBOL_DEFINITION:
+				case DiscoveredElement.INCLUDE_FILE:
+				case DiscoveredElement.MACROS_FILE:
 					return elem.getEntry() + (elem.isRemoved() ? addAnnotation(DISABLED_LABEL) : "");	//$NON-NLS-1$
 			}
 		}
@@ -125,6 +146,8 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 			switch (elem.getEntryKind()) {
 				case DiscoveredElement.INCLUDE_PATH:
 				case DiscoveredElement.SYMBOL_DEFINITION:
+				case DiscoveredElement.INCLUDE_FILE:
+				case DiscoveredElement.MACROS_FILE:
 					if (elem.isRemoved()) {
 						return inDirect;
 					}

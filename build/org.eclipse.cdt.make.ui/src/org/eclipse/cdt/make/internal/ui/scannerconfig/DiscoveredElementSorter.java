@@ -22,7 +22,9 @@ public class DiscoveredElementSorter extends ViewerSorter {
 	private static final int CONTAINER = 0;
 	private static final int PATHS_GROUP = 1;
 	private static final int SYMBOLS_GROUP = 2;
-	private static final int OTHER = 5;
+	private static final int INCLUDE_FILE_GROUP = 3;
+	private static final int MACROS_FILE_GROUP = 4;
+	private static final int OTHER = 10;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
@@ -37,6 +39,10 @@ public class DiscoveredElementSorter extends ViewerSorter {
 					return PATHS_GROUP;
 				case DiscoveredElement.SYMBOLS_GROUP:
 					return SYMBOLS_GROUP;
+				case DiscoveredElement.INCLUDE_FILE_GROUP:
+					return INCLUDE_FILE_GROUP;
+				case DiscoveredElement.MACROS_FILE_GROUP:
+					return MACROS_FILE_GROUP;
 			}
 		}
 		return OTHER;
@@ -50,6 +56,8 @@ public class DiscoveredElementSorter extends ViewerSorter {
 			switch (firstElem.getEntryKind()) {
 				case DiscoveredElement.INCLUDE_PATH:
 				case DiscoveredElement.SYMBOL_DEFINITION:
+				case DiscoveredElement.INCLUDE_FILE:
+				case DiscoveredElement.MACROS_FILE:
 					return;
 			}
 		}

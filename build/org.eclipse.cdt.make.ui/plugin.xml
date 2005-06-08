@@ -427,8 +427,9 @@
          point="org.eclipse.cdt.ui.PathContainerPage">
       <PathContainerPage
             class="org.eclipse.cdt.make.ui.dialogs.DiscoveredPathContainerPage"
-            name="%DiscoveredScannerInfoContainer.name"
-            id="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+            icon="icons/obj16/lib_obj.gif"
+            id="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"
+            name="%DiscoveredScannerInfoContainer.name"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

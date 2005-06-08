@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -33,6 +34,10 @@ public class CPPUsingDeclaration implements ICPPUsingDeclaration, ICPPInternalBi
     private ICPPDelegate [] delegates;
     
     public CPPUsingDeclaration( IASTName name, IBinding [] bindings ) {
+    	if( name instanceof ICPPASTQualifiedName ){
+    		IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+    		name = ns[ ns.length - 1 ];
+    	}
         this.name = name;
         this.delegates = createDelegates( bindings );
     }
@@ -58,15 +63,15 @@ public class CPPUsingDeclaration implements ICPPUsingDeclaration, ICPPInternalBi
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
      */
-    public String[] getQualifiedName() throws DOMException {
-        return delegates[0].getQualifiedName();
+    public String[] getQualifiedName() {
+    	return CPPVisitor.getQualifiedName( this );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
      */
-    public char[][] getQualifiedNameCharArray() throws DOMException {
-        return delegates[0].getQualifiedNameCharArray();
+    public char[][] getQualifiedNameCharArray() {
+    	return CPPVisitor.getQualifiedNameCharArray( this );
     }
 
     /* (non-Javadoc)
@@ -86,14 +91,15 @@ public class CPPUsingDeclaration implements ICPPUsingDeclaration, ICPPInternalBi
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return delegates[0].getName();
+    	return name.toString();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        return delegates[0].getNameCharArray();    }
+    	return name.toCharArray();
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()

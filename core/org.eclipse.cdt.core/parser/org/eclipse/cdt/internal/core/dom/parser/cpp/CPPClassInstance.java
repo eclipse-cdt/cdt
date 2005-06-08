@@ -155,13 +155,15 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
             return true;
         if( type instanceof ITypedef )
             return ((ITypedef)type).isSameType( this );
+        if( type instanceof CPPDeferredClassInstance )
+        	return type.isSameType( this );  //the CPPDeferredClassInstance has some fuzziness
         
         if( type instanceof ICPPTemplateInstance ){
         	if( getSpecializedBinding() != ((ICPPTemplateInstance)type).getTemplateDefinition() )
         		return false;
         	
         	ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)type).getArgumentMap();
-        	if( m1.size() != m2.size() )
+        	if( m1 == null || m2 == null || m1.size() != m2.size())
         		return false;
         	for( int i = 0; i < m1.size(); i++ ){
         		IType t1 = (IType) m1.getAt( i );

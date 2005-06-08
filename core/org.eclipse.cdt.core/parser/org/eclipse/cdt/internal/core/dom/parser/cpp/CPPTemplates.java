@@ -1215,12 +1215,16 @@ public class CPPTemplates {
 		IType [] args = createArgsForFunctionTemplateOrdering( f1 );
 		ICPPFunction function = (ICPPFunction) ((ICPPInternalTemplate)f1).instantiate( args );
 		
-		ObjectMap m1 = deduceTemplateArguments( f2, function.getType().getParameterTypes() );
+		ObjectMap m1 = null;
+		if( function != null )
+			m1 = deduceTemplateArguments( f2, function.getType().getParameterTypes() );
 		
 		args = createArgsForFunctionTemplateOrdering( f2 );
 		function = (ICPPFunction) ((ICPPInternalTemplate)f2).instantiate( args );
 		
-		ObjectMap m2 = deduceTemplateArguments( f1, function.getType().getParameterTypes() );
+		ObjectMap m2 = null;
+		if( function != null )
+			m2 = deduceTemplateArguments( f1, function.getType().getParameterTypes() );
 		
 		//The transformed  template is at least as specialized as the other iff the deduction
 		//succeeds and the deduced parameter types are an exact match

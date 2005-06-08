@@ -157,13 +157,14 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			    }
 			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, prev != null ? prev : startOfSegment, newArgs );
 			    r.add( d );
-			    startOfSegment = token.getNext();
+			    startOfSegment = (token != last ) ? token.getNext() : last;
 			    ++count;
 				continue;
 			}
 		}
 	    List newArgs = null;
-	    if( argLists[count] != null )
+	    //pointer to members could have a A::B<int>::
+	    if( count < argLists.length && argLists[count] != null )
 	    {
 	        newArgs = new ArrayList( 1 );
 	        newArgs.add( argLists[count]);

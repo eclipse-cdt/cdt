@@ -31,9 +31,9 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  * @author aniefer
  */
 public class ProblemBinding implements IProblemBinding, IType, IScope {
-    private final int id;
-    private final char [] arg;
-    private IASTNode node;
+    protected final int id;
+    protected final char [] arg;
+    protected IASTNode node;
     private String message = null;
     
     public ProblemBinding( IASTNode node, int id, char [] arg ){

@@ -173,9 +173,8 @@ public class TokenFactory {
 		
 		public int removeValue()
 		{
-			int result = array[currentIndex];
+			int result = array[--currentIndex];
 			array[currentIndex] = -1;
-			--currentIndex;
 			return result;
 		}
 		

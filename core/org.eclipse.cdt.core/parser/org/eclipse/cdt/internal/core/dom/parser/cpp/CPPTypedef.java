@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  * @author aniefer
  */
 public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding {
-    public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef {
+    public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef, ITypeContainer {
         public CPPTypedefDelegate( IASTName name, ITypedef binding ) {
             super( name, binding );
         }
@@ -47,6 +47,9 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
         public boolean isSameType( IType type ) {
             return ((ITypedef)getBinding()).isSameType( type );
         }
+		public void setType(IType type) {
+			((ITypeContainer)getBinding()).setType( type );
+		}
     }
 	private IASTName [] declarations = null;
 	private IType type = null;

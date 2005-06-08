@@ -4636,4 +4636,11 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( bindings[1], col.getName(2).resolveBinding() );
 		assertSame( bindings[2], col.getName(3).resolveBinding() );
 	}
+	
+	public void testBug98704() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "A< B< C< D< E< F< G< H<int> > > > > > > > a;  \n"); //$NON-NLS-1$
+		buffer.append( "int A::B<int>::* b;                           \n"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+	}
 }

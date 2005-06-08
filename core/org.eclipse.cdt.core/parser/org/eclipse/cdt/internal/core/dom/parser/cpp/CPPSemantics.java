@@ -914,7 +914,7 @@ public class CPPSemantics {
 				return;
 			
 			if( !data.usingDirectivesOnly && scope instanceof ICPPClassScope ){
-				mergeResults( data, lookupInParents( data, (ICPPClassScope) scope ), true );
+				mergeResults( data, lookupInParents( data, scope ), true );
 			}
 			
 			if( !data.prefixLookup && (data.problem != null || data.hasResults()) )
@@ -950,7 +950,7 @@ public class CPPSemantics {
 		}
 	}
 
-	private static Object lookupInParents( CPPSemantics.LookupData data, ICPPClassScope lookIn ) throws DOMException{
+	private static Object lookupInParents( CPPSemantics.LookupData data, ICPPScope lookIn ) throws DOMException{
 		IASTNode node = lookIn.getPhysicalNode();
 		if( node == null || !(node instanceof ICPPASTCompositeTypeSpecifier) )
 			return null;
@@ -983,9 +983,9 @@ public class CPPSemantics {
 				cls = (ICPPClassType) binding;
 			else 
 				continue;
-			ICPPClassScope parent = (ICPPClassScope) cls.getCompositeScope();
+			ICPPScope parent = (ICPPScope) cls.getCompositeScope();
 			
-			if( parent == null )
+			if( parent == null || parent instanceof CPPUnknownScope )
 				continue;
 	
 			if( !bases[i].isVirtual() || !data.visited.containsKey( parent ) ){

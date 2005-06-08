@@ -29,11 +29,15 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  */
 public class CPPBaseClause implements ICPPBase {
     static public class CPPBaseProblem extends ProblemBinding implements ICPPBase {
+    	private ICPPClassType classProblem = null; 
         public CPPBaseProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
         }
-        public ICPPClassType getBaseClass() throws DOMException {
-            throw new DOMException( this );
+        public ICPPClassType getBaseClass() {
+        	if( classProblem == null ){
+        		classProblem = new CPPClassType.CPPClassTypeProblem( node, id, arg );
+        	}
+        	return classProblem;
         }
 
         public int getVisibility() throws DOMException {

@@ -1630,4 +1630,31 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( foo, col.getName(39).resolveBinding() );
 		assertSame( foo, col.getName(41).resolveBinding() );
 	}
+	
+	public void testBug98961() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class B { int i; };                       \n"); //$NON-NLS-1$
+		buffer.append("template <class T > class A {             \n"); //$NON-NLS-1$
+		buffer.append("   typedef T* _T;                         \n"); //$NON-NLS-1$
+		buffer.append("};                                        \n"); //$NON-NLS-1$
+		buffer.append("void f(){                                 \n"); //$NON-NLS-1$
+		buffer.append("   A<B>::_T t;                            \n"); //$NON-NLS-1$
+		buffer.append("   (*t).i;                                \n"); //$NON-NLS-1$
+		buffer.append("}                                         \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+
+		ICPPClassType B = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPField i = (ICPPField) col.getName(1).resolveBinding();
+		ITypedef _T = (ITypedef) col.getName(5).resolveBinding();
+		ICPPVariable t = (ICPPVariable) col.getName(12).resolveBinding();
+		
+		IType type = t.getType();
+		assertTrue( type instanceof ICPPSpecialization );
+		assertSame( ((ICPPSpecialization)type).getSpecializedBinding(), _T );
+		
+		assertSame( i, col.getName(14).resolveBinding() );
+	}
 }

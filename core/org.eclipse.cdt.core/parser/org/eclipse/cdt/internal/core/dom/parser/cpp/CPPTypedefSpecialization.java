@@ -22,13 +22,14 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef.CPPTypedefDelegate;
 
 /**
  * @author aniefer
  */
 public class CPPTypedefSpecialization extends CPPSpecialization implements
-        ITypedef {
+        ITypedef, ITypeContainer {
 
     private IType type = null;
     /**
@@ -58,13 +59,13 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements
      * @see java.lang.Object#clone()
      */
     public Object clone() {
-//        IType t = null;
-//   		try {
-//            t = (IType) super.clone();
-//        } catch ( CloneNotSupportedException e ) {
-//            //not going to happen
-//        }
-        return this;
+    	IType t = null;
+   		try {
+            t = (IType) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            //not going to happen
+        }
+        return t;
     }
 
     /* (non-Javadoc)
@@ -99,5 +100,9 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements
     public ICPPDelegate createDelegate( IASTName name ) {
         return new CPPTypedefDelegate( name, this );
     }
+
+	public void setType(IType type) {
+		this.type = type;
+	}
 
 }

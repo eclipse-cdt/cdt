@@ -559,7 +559,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		ITool buildTools[] = null; 
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(inputPath.toOSString());
 		if(rcCfg != null)
-			buildTools = rcCfg.getTools();
+			buildTools = rcCfg.getToolsToInvoke();
 		else
 			buildTools = cfg.getFilteredTools();
 		

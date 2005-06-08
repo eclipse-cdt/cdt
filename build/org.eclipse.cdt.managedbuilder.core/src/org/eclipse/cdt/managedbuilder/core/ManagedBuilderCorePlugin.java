@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -16,6 +16,11 @@ import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEnt
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
+//  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
+//        ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
+//        elements
+//import org.eclipse.cdt.managedbuilder.internal.core.ResourceChangeHandler;
+//import org.eclipse.core.resources.*;
 
 
 public class ManagedBuilderCorePlugin extends Plugin {
@@ -27,6 +32,10 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	public static final String COMMANDLINEGEN_ID = "commandlineGenerator"; //$NON-NLS-1$
 	// The unique id for all managed make projects 
 	public static final String MANAGED_MAKE_PROJECT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedMake"; //$NON-NLS-1$
+	//  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
+	//  ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
+	//  elements
+	//private static ResourceChangeHandler listener;
 
 	/**
 	 * @param descriptor
@@ -60,6 +69,31 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		// Turn on logging for plugin when debugging
 		super.start(context);
 		configurePluginDebugOptions();
+		
+		//	  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
+		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
+		//      elements
+		
+		// Set up a listener for resource change events
+		//listener = new ResourceChangeHandler();
+		//ResourcesPlugin.getWorkspace().addResourceChangeListener(
+		//	  listener, IResourceChangeEvent.POST_CHANGE /*| IResourceChangeEvent.POST_BUILD*/);
+	    //ISavedState lastState =
+	    //    ResourcesPlugin.getWorkspace().addSaveParticipant(plugin, listener);
+	    //if (lastState != null) {
+	    //    lastState.processResourceChangeEvents(listener);
+	    //}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		//	  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
+		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
+		//      elements
+		//ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 	}
 	
 	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$

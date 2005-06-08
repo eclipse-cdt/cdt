@@ -46,6 +46,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	//  Managed Build model attributes
 	private String resPath;
 	private Boolean isExcluded;
+	private Integer rcbsApplicability;
+	private String toolsToInvoke;
 	//  Miscellaneous
 	private boolean isExtensionResourceConfig = false;
 	private boolean isDirty = false;
@@ -124,6 +126,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		resPath = path;
 		isDirty = false;
 		isExcluded = new Boolean(false);
+		toolsToInvoke = EMPTY_STRING;
+		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
 	}
 
 	/**
@@ -148,7 +152,13 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (cloneConfig.isExcluded != null) {
 			isExcluded = new Boolean(cloneConfig.isExcluded.booleanValue());
 		}
-		
+		if (cloneConfig.toolsToInvoke != null) {
+			toolsToInvoke = new String(cloneConfig.toolsToInvoke);
+		}
+		if (cloneConfig.rcbsApplicability != null) {
+			rcbsApplicability = new Integer(cloneConfig.rcbsApplicability.intValue());
+		}
+				
 		// Clone the resource configuration's tool children
 		if (cloneConfig.toolList != null) {
 			Iterator iter = cloneConfig.getToolList().listIterator();
@@ -226,6 +236,20 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
         if (excludeStr != null){
     		isExcluded = new Boolean("true".equals(excludeStr)); //$NON-NLS-1$
         }
+		// toolsToInvoke
+		toolsToInvoke = element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE);
+
+		// rcbsApplicability
+		String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
+		if (rcbsApplicabilityStr == null || rcbsApplicabilityStr.equals(DISABLE_RCBS_TOOL)) {
+			rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_BEFORE)) {
+			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_BEFORE);
+		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AFTER)) {
+			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AFTER);
+		} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AS_OVERRIDE)) {
+			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -256,6 +280,25 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (element.hasAttribute(IResourceConfiguration.RESOURCE_PATH)) {
 			resPath = element.getAttribute(IResourceConfiguration.RESOURCE_PATH);
 		}
+
+		// toolsToInvoke
+		if (element.hasAttribute(IResourceConfiguration.TOOLS_TO_INVOKE)) {
+			toolsToInvoke = element.getAttribute(IResourceConfiguration.TOOLS_TO_INVOKE);
+		}
+
+		// rcbsApplicability
+		if (element.hasAttribute(IResourceConfiguration.RCBS_APPLICABILITY)) {
+			String rcbsApplicabilityStr = element.getAttribute(IResourceConfiguration.RCBS_APPLICABILITY);
+			if (rcbsApplicabilityStr == null || rcbsApplicabilityStr.equals(DISABLE_RCBS_TOOL)) {
+				rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_BEFORE)) {
+				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_BEFORE);
+			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AFTER)) {
+				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AFTER);
+			} else if (rcbsApplicabilityStr.equals(APPLY_RCBS_TOOL_AS_OVERRIDE)) {
+				rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+			}
+		}
 	}
 
 	/**
@@ -278,6 +321,32 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 
 		if (resPath != null) {
 			element.setAttribute(IResourceConfiguration.RESOURCE_PATH, resPath);
+		}
+		
+		if (toolsToInvoke != null) {
+			element.setAttribute(IResourceConfiguration.TOOLS_TO_INVOKE, toolsToInvoke);
+		}
+
+		if (rcbsApplicability != null) {
+			String str;
+			switch (getRcbsApplicability()) {
+				case KIND_APPLY_RCBS_TOOL_BEFORE:
+					str = APPLY_RCBS_TOOL_BEFORE;
+					break;
+				case KIND_APPLY_RCBS_TOOL_AFTER:
+					str = APPLY_RCBS_TOOL_AFTER;
+					break;
+				case KIND_APPLY_RCBS_TOOL_AS_OVERRIDE:
+					str = APPLY_RCBS_TOOL_AS_OVERRIDE;
+					break;
+				case KIND_DISABLE_RCBS_TOOL:
+					str = DISABLE_RCBS_TOOL;
+					break;
+				default:
+					str = DISABLE_RCBS_TOOL; 
+					break;
+			}
+			element.setAttribute(IResourceConfiguration.RCBS_APPLICABILITY, str);
 		}
 		
 		// Serialize my children
@@ -361,6 +430,16 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		getToolMap().put(tool.getId(), tool);
 	}
 
+	/* (non-Javadoc)
+	 * Removes the Tool from the Tool list and map
+	 * 
+	 * @param Tool
+	 */
+	public void removeTool(ITool tool) {
+		getToolList().remove(tool);
+		getToolMap().remove(tool);
+	}
+
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
 	 */
@@ -386,6 +465,180 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		return path;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getRcbsApplicability()
+	 */
+	public int getRcbsApplicability() {
+		/*
+		 * rcbsApplicability is an integer constant that represents how the user wants to
+		 * order the application of a resource custom build step tool.
+		 * Defaults to disable rcbs tool.
+		 * Choices are before, after, or override other tools, or disable rcbs tool.
+		 */
+		if (rcbsApplicability == null) {
+			return KIND_DISABLE_RCBS_TOOL;
+		}
+		return rcbsApplicability.intValue();
+		}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getToolsToInvoke()
+	 */
+	public ITool[] getToolsToInvoke() {
+		/*
+		 * toolsToInvoke is an ordered list of tool ids for the currently defined tools in
+		 * the resource configuration.
+		 * Defaults to all tools in the order found.
+		 * Modified by the presence of an rcbs tool and the currently assigned applicability of that tool.
+		 * The attribute is implemented as a String of a semicolon separated list of tool ids.
+		 * An empty string implies treat as if no resource configuration, i.e., use project level tool.
+		 * This getter routine returns an ITool[] to consumers (i.e., the makefile generator).
+		 */
+		String t_ToolsToInvoke = EMPTY_STRING;
+		ITool[] resConfigTools;
+		ITool[] tools;
+		String id;
+		String rcbsToolId = EMPTY_STRING;
+		int len;
+		int j;
+		int rcbsToolIdx=-1;
+		resConfigTools = getTools();
+
+		/*
+		 * Evaluate the tools currently defined in the resource configuration.
+		 * Update the current state of the toolsToInvoke attribute.
+		 * Build and return an ITool[] for consumers.
+		 */
+		
+		/*
+		 * If no tools are currently defined, return a zero lengh array of ITool.
+		 */
+		if (resConfigTools.length == 0) {
+			toolsToInvoke = EMPTY_STRING;
+			tools = new ITool[0];
+			return tools;
+		}
+		
+		/*
+		 * See if there is an rcbs tool defined.  There should only be one at most.
+		 */
+		for ( int i = 0; i < resConfigTools.length; i++ ){
+			if (resConfigTools[i].getCustomBuildStep() && !resConfigTools[i].isExtensionElement()) {
+				rcbsToolId = resConfigTools[i].getId();
+				rcbsToolIdx = i;
+				break;
+			}
+		}
+		if (!rcbsToolId.equals(EMPTY_STRING)){
+			/*
+			 * Here if an rcbs tool is defined.
+			 * Apply the tools according to the current rcbsApplicability setting.
+			 */
+			switch(rcbsApplicability.intValue()){
+			case KIND_APPLY_RCBS_TOOL_AS_OVERRIDE:
+				toolsToInvoke = rcbsToolId;
+				tools = new ITool[1];
+				tools[0] = resConfigTools[rcbsToolIdx];
+				break;
+			case KIND_APPLY_RCBS_TOOL_AFTER:
+				j = 0;
+				tools = new ITool[resConfigTools.length];
+				for ( int i = 0; i < resConfigTools.length; i++ ){
+					if (resConfigTools[i].getId() != rcbsToolId) {
+						t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+						tools[j++] = resConfigTools[i];
+					}
+				}
+				t_ToolsToInvoke += rcbsToolId;
+				tools[j++] = resConfigTools[rcbsToolIdx];
+				toolsToInvoke = t_ToolsToInvoke;
+				break;
+			case KIND_APPLY_RCBS_TOOL_BEFORE:
+				j = 0;
+				tools = new ITool[resConfigTools.length];
+				t_ToolsToInvoke = rcbsToolId + ";";	//$NON-NLS-1$
+				tools[j++] = resConfigTools[rcbsToolIdx];
+				for ( int i = 0; i < resConfigTools.length; i++ ){
+					if (resConfigTools[i].getId() != rcbsToolId) {
+						t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+						tools[j++] = resConfigTools[i];
+					}
+				}
+				len = t_ToolsToInvoke.length();
+				t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
+				toolsToInvoke = t_ToolsToInvoke;
+				break;
+			case KIND_DISABLE_RCBS_TOOL:
+				/*
+				 * If the rcbs tool is the only tool and the user has disabled it,
+				 * there are no tools to invoke in the resource configuration.
+				 */
+				if(resConfigTools.length == 1){
+					tools = new ITool[0];
+					toolsToInvoke = EMPTY_STRING;
+					break;
+				}
+				j = 0;
+				tools = new ITool[resConfigTools.length-1];
+				for ( int i = 0; i < resConfigTools.length; i++ ){
+					if (resConfigTools[i].getId() != rcbsToolId) {
+						t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+						tools[j++] = resConfigTools[i];
+					}
+				}
+				len = t_ToolsToInvoke.length();
+				t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
+				toolsToInvoke = t_ToolsToInvoke;
+				break;
+			default:
+				/*
+				 * If we get an unexpected value, apply all tools in the order found.
+				 */
+				tools = new ITool[resConfigTools.length];
+				for ( int i = 0; i < resConfigTools.length; i++ ){
+					t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+					tools[i] = resConfigTools[i];
+				}
+				len = t_ToolsToInvoke.length();
+				t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
+				toolsToInvoke = t_ToolsToInvoke;
+				break;
+			}
+		}
+		else {
+			/*
+			 * Here if no rcbs tool is defined, but there are other tools in the resource configuration.
+			 * Specify all tools in the order found.
+			 */
+			tools = new ITool[resConfigTools.length];
+			for ( int i = 0; i < resConfigTools.length; i++ ){
+				t_ToolsToInvoke += resConfigTools[i].getId() + ";";	//$NON-NLS-1$
+				tools[i] = resConfigTools[i];
+			}
+			len = t_ToolsToInvoke.length();
+			t_ToolsToInvoke = t_ToolsToInvoke.substring(0,len-1);
+			toolsToInvoke = t_ToolsToInvoke;
+		}
+		return tools;
+		}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getRcbsApplicability()
+	 */
+	public void setRcbsApplicability(int newValue) {
+		/*
+		 * rcbsApplicability is an integer constant that represents how the user wants to
+		 * order the application of a resource custom build step tool.
+		 * Defaults to override all other tools.
+		 * Choices are before, after, or override other tools, or disable rcbs tool.
+		 */
+		if (rcbsApplicability == null || !(rcbsApplicability.intValue() == newValue)) {
+			rcbsApplicability = new Integer(newValue);
+			isDirty = true;
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#setExclude()
 	 */

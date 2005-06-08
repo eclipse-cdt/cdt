@@ -272,8 +272,20 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							String[] paths = addlInput.getPaths();
 							if (paths != null) {
 								for (int k = 0; k < paths.length; k++) {
-									myCommandInputs.add(paths[k]);
-									myEnumeratedInputs.add(paths[k]);
+									// Translate the path from project relative to
+									// build directory relative
+									String path = paths[k];
+									if (!(path.startsWith("$("))) {		//$NON-NLS-1$
+										IResource addlResource = project.getFile(path);
+										if (addlResource != null) {
+											IPath addlPath = addlResource.getLocation();
+											if (addlPath != null) {
+												path = makeGen.calculateRelativePath(makeGen.getTopBuildDir(), addlPath).toString();
+											}
+										}
+									}
+									myCommandInputs.add(path);
+									myEnumeratedInputs.add(path);
 								}
 							}
 						}
@@ -635,8 +647,20 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							String[] paths = addlInput.getPaths();
 							if (paths != null) {
 								for (int k = 0; k < paths.length; k++) {
-									myCommandDependencies.add(paths[k]);
-									//myEnumeratedInputs.add(pathTokens[k]);
+									// Translate the path from project relative to
+									// build directory relative
+									String path = paths[k];
+									if (!(path.startsWith("$("))) {		//$NON-NLS-1$
+										IResource addlResource = project.getFile(path);
+										if (addlResource != null) {
+											IPath addlPath = addlResource.getLocation();
+											if (addlPath != null) {
+												path = makeGen.calculateRelativePath(makeGen.getTopBuildDir(), addlPath).toString();
+											}
+										}
+									}
+									myCommandDependencies.add(path);
+									//myEnumeratedInputs.add(path);
 								}
 							}
 						}

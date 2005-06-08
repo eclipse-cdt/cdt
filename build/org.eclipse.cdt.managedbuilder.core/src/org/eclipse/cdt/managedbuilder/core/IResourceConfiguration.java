@@ -26,6 +26,16 @@ public interface IResourceConfiguration extends IBuildObject {
 	public static final String RESOURCE_CONFIGURATION_ELEMENT_NAME = "resourceConfiguration"; //$NON-NLS-1$
 	public static final String RESOURCE_PATH = "resourcePath";					  //$NON-NLS-1$
 	public static final String EXCLUDE = "exclude";								  //$NON-NLS-1$
+	public static final String RCBS_APPLICABILITY = "rcbsApplicability";		  //$NON-NLS-1$
+	public static final String TOOLS_TO_INVOKE = "toolsToInvoke";				  //$NON-NLS-1$
+	public static final String APPLY_RCBS_TOOL_AS_OVERRIDE = "override";		  //$NON-NLS-1$
+	public static final int KIND_APPLY_RCBS_TOOL_AS_OVERRIDE = 1;
+	public static final String APPLY_RCBS_TOOL_BEFORE = "before";				  //$NON-NLS-1$
+	public static final int KIND_APPLY_RCBS_TOOL_BEFORE = 2;
+	public static final String APPLY_RCBS_TOOL_AFTER = "after";					  //$NON-NLS-1$
+	public static final int KIND_APPLY_RCBS_TOOL_AFTER = 3;
+	public static final String DISABLE_RCBS_TOOL = "disable";					  //$NON-NLS-1$
+	public static final int KIND_DISABLE_RCBS_TOOL = 4;
 
 	//TODO:  Set name and ID in the constructors to be 
 	//       configuration-name#resource-path
@@ -53,6 +63,30 @@ public interface IResourceConfiguration extends IBuildObject {
 	 * @return String 
 	 */
 	public String getResourcePath();
+	
+	/**
+	 * Returns an integer constant representing the users desire for ordering the application of
+	 * a resource custom build step tool.
+	 *
+	 * @return int 
+	 */
+	public int getRcbsApplicability();
+	
+	/**
+	 * Returns the list of tools currently defined for the project resource that 
+	 * this element references.  Updates the String attribute toolsToInvoke.
+	 *
+	 * @return String 
+	 */
+	public ITool[] getToolsToInvoke();
+	
+	/**
+	 * Sets the new value representing the users desire for ordering the application of
+	 * a resource custom build step tool.
+	 *
+	 * @param int
+	 */
+	public void setRcbsApplicability(int value);
 	
 	/**
 	 * Sets the "excluded" flag for the resource.
@@ -99,6 +133,13 @@ public interface IResourceConfiguration extends IBuildObject {
 	 */
 	public ITool getTool(String id);
 	
+	/**
+	 * Removes the Tool from the Tool list and map
+	 * 
+	 * @param Tool
+	 */
+	public void removeTool(ITool tool);
+
 	/**
 	 * Creates a <code>Tool</code> child for this resource configuration.
 	 *

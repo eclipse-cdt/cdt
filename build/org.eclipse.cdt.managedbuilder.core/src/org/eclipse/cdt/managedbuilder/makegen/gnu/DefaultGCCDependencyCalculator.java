@@ -114,7 +114,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		String outputPrefix = "";   //$NON-NLS-1$
 		String outputFile = "";   //$NON-NLS-1$
 		if( resConfig != null) {
-			ITool[] tools = resConfig.getTools(); 
+			ITool[] tools = resConfig.getToolsToInvoke(); 
 			String cmd = tools[0].getToolCommand();
 			//try to resolve the build macros in the tool command
 			try{

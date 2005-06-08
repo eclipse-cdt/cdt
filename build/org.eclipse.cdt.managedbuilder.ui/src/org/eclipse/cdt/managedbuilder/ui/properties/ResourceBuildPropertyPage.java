@@ -164,7 +164,7 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 			IFile file = (IFile)getElement();
 			if(isGeneratedResource(file))
 				error = ManagedBuilderUIMessages.getResourceString(MSG_RC_GENERATED);
-			else if(!isBuildResource(file))
+			else if(file.isDerived())
 				error = ManagedBuilderUIMessages.getResourceString(MSG_RC_NON_BUILD);
 		}
 		
@@ -386,7 +386,7 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	public boolean isBuildResource(IFile file, IConfiguration cfg){
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(file.getFullPath().toOSString());
 		if(rcCfg != null){
-			ITool tools[] = rcCfg.getTools();
+			ITool tools[] = rcCfg.getToolsToInvoke();
 			if(tools != null && tools.length > 0)
 				return true;
 		} else {

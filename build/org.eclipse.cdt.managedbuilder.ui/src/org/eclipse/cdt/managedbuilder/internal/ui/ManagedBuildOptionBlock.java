@@ -31,6 +31,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 
 	private ToolsSettingsBlock toolsSettingsBlock;
+	private ResourceCustomBuildStepBlock resCustomBuildStepBlock;
 	private BuildSettingsBlock buildSettingsBlock;
 	private BuildStepSettingsBlock buildStepSettingsBlock;
 	private ErrorParserBlock errParserBlock;
@@ -81,6 +82,7 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			addTab(macrosBlock = new MacrosSetBlock((BuildPropertyPage) fParent));
 		} else if (element instanceof IFile) {
 			addTab(toolsSettingsBlock = new ToolsSettingsBlock((ResourceBuildPropertyPage) fParent, element));
+			addTab(resCustomBuildStepBlock = new ResourceCustomBuildStepBlock((ResourceBuildPropertyPage) fParent));
 		} else if (element instanceof IWorkspace) {
 			addTab(environmentBlock = new EnvironmentSetBlock((BuildPreferencePage) fParent));
 			addTab(macrosBlock = new MacrosSetBlock((BuildPreferencePage) fParent));
@@ -89,6 +91,10 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 
 	public ToolsSettingsBlock getToolsSettingsBlock() {
 		return toolsSettingsBlock;
+	}
+	
+	public ResourceCustomBuildStepBlock getResourceCustomBuildStepBlock() {
+		return resCustomBuildStepBlock;
 	}
 	
 	public BuildSettingsBlock getBuildSettingsBlock() {
@@ -134,6 +140,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 	protected void initializeValues() {
 		if (getToolsSettingsBlock()!= null) {
 			getToolsSettingsBlock().initializeValues();
+		}
+		if (getResourceCustomBuildStepBlock()!= null) {
+			getResourceCustomBuildStepBlock().initializeValues();
 		}
 		if (getBuildSettingsBlock()!= null) {
 			getBuildSettingsBlock().initializeValues();
@@ -182,6 +191,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if (getToolsSettingsBlock() != null) {
 				getToolsSettingsBlock().updateValues();
 			}
+			if (getResourceCustomBuildStepBlock() != null) {
+				getResourceCustomBuildStepBlock().updateValues();
+			}
 		} else if(element instanceof IWorkspace) {
 			if(getCurrentPage() instanceof EnvironmentSetBlock) {
 				((EnvironmentSetBlock)getCurrentPage()).updateValues();
@@ -220,6 +232,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if (getToolsSettingsBlock() != null) {
 				getToolsSettingsBlock().updateValues();
 			}
+			if (getResourceCustomBuildStepBlock() != null) {
+				getResourceCustomBuildStepBlock().setValues();
+			}
 		} else if (element instanceof IWorkspace) {
 			if(getCurrentPage() instanceof EnvironmentSetBlock) {
 				((EnvironmentSetBlock)getCurrentPage()).updateValues();
@@ -257,6 +272,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			if (getToolsSettingsBlock()!= null) {
 				getToolsSettingsBlock().removeValues(id);
 			}
+			if (getResourceCustomBuildStepBlock() != null) {
+				getResourceCustomBuildStepBlock().removeValues(id);
+			}
 		} else if (element instanceof IWorkspace) {
 			if(getEnvironmentBlock()!= null) {
 			}
@@ -292,6 +310,9 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		} else if( element instanceof IFile) {
 			if (getCurrentPage() instanceof ToolsSettingsBlock) {
 				return toolsSettingsBlock.getPreferenceStore();
+			}
+			if (getCurrentPage() instanceof ResourceCustomBuildStepBlock) {
+				return resCustomBuildStepBlock.getPreferenceStore();
 			}
 		} else if (element instanceof IWorkspace) {
 			if(getCurrentPage() instanceof EnvironmentSetBlock) {
@@ -344,6 +365,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			ICOptionPage tab = (ICOptionPage)iter.next();
 			if (tab instanceof BuildSettingsBlock) {
 			    ((BuildSettingsBlock)tab).setDirty(b);
+			} else if (tab instanceof ResourceCustomBuildStepBlock) {
+			    ((ResourceCustomBuildStepBlock)tab).setDirty(b);
 			} else if (tab instanceof ToolsSettingsBlock) {
 				    ((ToolsSettingsBlock)tab).setDirty(b);
 			} else if (tab instanceof BuildStepSettingsBlock) {
@@ -370,6 +393,8 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			ICOptionPage tab = (ICOptionPage)iter.next();
 			if (tab instanceof BuildSettingsBlock) {
 			    if (((BuildSettingsBlock)tab).isDirty()) return true;
+			} else if (tab instanceof ResourceCustomBuildStepBlock) {
+			    if (((ResourceCustomBuildStepBlock)tab).isDirty()) return true;
 			} else if (tab instanceof ToolsSettingsBlock) {
 			    if (((ToolsSettingsBlock)tab).isDirty()) return true;
 			} else if (tab instanceof BuildStepSettingsBlock) {

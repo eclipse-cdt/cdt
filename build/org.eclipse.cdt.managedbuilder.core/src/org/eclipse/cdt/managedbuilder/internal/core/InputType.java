@@ -644,7 +644,9 @@ public class InputType extends BuildObject implements IInputType {
 				String[] paths = current.getPaths();
 				if (paths != null) {
 					for (int i = 0; i < paths.length; i++) {
-						deps.add(Path.fromOSString(paths[i]));
+						if (paths[i].length() > 0) {
+							deps.add(Path.fromOSString(paths[i]));
+						}
 					}
 				}
 			}
@@ -666,7 +668,9 @@ public class InputType extends BuildObject implements IInputType {
 				String[] paths = current.getPaths();
 				if (paths != null) {
 					for (int i = 0; i < paths.length; i++) {
-						ins.add(Path.fromOSString(paths[i]));
+						if (paths[i].length() > 0) {
+							ins.add(Path.fromOSString(paths[i]));
+						}
 					}
 				}
 			}

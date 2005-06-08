@@ -418,6 +418,39 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="rcbsApplicability">
+            <annotation>
+                <documentation>
+                  Identifies how the user desires to apply a resource custom build step:
+     1.  Apply rcbs tool before any other tools defined for the resource.
+     2.  Apply rcbs tool after any other tools defined for the resource.
+     3.  Apply rcbs tool overriding any other tools defined for the resource.
+     4.  Disable (don't apply) the rcbs tool.
+               </documentation>
+           </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="before">
+                  </enumeration>
+                  <enumeration value="after">
+                  </enumeration>
+                  <enumeration value="override">
+                  </enumeration>
+                  <enumeration value="disable">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="toolsToInvoke" type="string">
+            <annotation>
+               <documentation>
+                  Identifies which tools to invoke by a semicolon separated list of child tool ids.  Applies as follows:
+     1.  Defaults to all tools in the order found
+     2.  Use specified ordered list of children to invoke
+     3.  If empty string, treat as if no resource configuration existed, i.e., use project level tool.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

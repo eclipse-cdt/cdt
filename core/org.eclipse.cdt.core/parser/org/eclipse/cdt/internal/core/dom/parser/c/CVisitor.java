@@ -850,7 +850,8 @@ public class CVisitor {
 			if( binding != null ) {
 			    if( binding instanceof IFunction ){
 			        IFunction function = (IFunction) binding;
-		            ((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
+			        if( function instanceof CFunction )
+			        	((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
 			        return function;
 			    }
 		        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );

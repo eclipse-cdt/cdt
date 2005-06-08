@@ -18,15 +18,17 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -266,6 +268,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
 		ManagedBuildManager.saveBuildInfo(getProject(), false);
+		IManagedBuildInfo bi = ManagedBuildManager.getBuildInfo(getProject());
+		if (bi != null & bi instanceof ManagedBuildInfo) {
+			((ManagedBuildInfo)bi).initializePathEntries();
+		}
 		return true;
 	}
 

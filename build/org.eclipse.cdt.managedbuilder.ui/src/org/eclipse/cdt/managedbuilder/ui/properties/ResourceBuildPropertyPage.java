@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
@@ -475,6 +476,11 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 			}
 
 		ManagedBuildManager.saveBuildInfo(getProject(), false);
+		
+		IManagedBuildInfo bi = ManagedBuildManager.getBuildInfo(getProject());
+		if (bi != null & bi instanceof ManagedBuildInfo) {
+			((ManagedBuildInfo)bi).initializePathEntries();
+		}
 		return true;
 	}
 

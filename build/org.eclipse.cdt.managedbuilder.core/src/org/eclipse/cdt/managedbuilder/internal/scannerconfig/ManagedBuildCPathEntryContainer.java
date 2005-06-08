@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +26,8 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
-import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
@@ -131,41 +126,6 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		}
 	}
 
-	protected void calculateBuiltIns(ITarget defaultTarget, IConfiguration config) {
-		ITool[] tools = config.getFilteredTools();
-
-		// Iterate over the list
-		for (int toolIndex = 0; toolIndex < tools.length; ++toolIndex) {
-			ITool tool = tools[toolIndex];
-			// Check its options
-			IOption[] options = tool.getOptions();
-			for (int optIndex = 0; optIndex < options.length; ++optIndex) {
-				IOption option = options[optIndex];
-				try {
-					if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
-						String[] builtIns = option.getBuiltIns();
-						Map macroMap = new HashMap();
-						for (int biIndex = 0; biIndex < builtIns.length; ++biIndex) {
-							String  symbol = builtIns[biIndex];
-							String[] tokens = symbol.split("=");	//$NON-NLS-1$
-							String macro = tokens[0].trim();
-							String value = (tokens.length > 1) ? tokens[1] : new String();
-							macroMap.put(macro, value);
-						}
-						addDefinedSymbols(macroMap);
-					} else if (option.getValueType() == IOption.INCLUDE_PATH) {
-						// Make sure it is a built-in, not a user-defined path
-						String[] values = option.getBuiltIns();
-						if (values.length > 0) {
-							addIncludePaths(Arrays.asList(values));
-						}
-					}
-				} catch (BuildException e) {}
-			}
-		}
-
-	}
-
 	protected void calculateEntriesDynamically(final IProject project, 
                                                SCProfileInstance profileInstance, 
                                                final IScannerInfoCollector collector) {
@@ -233,10 +193,12 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			calculateEntriesDynamically((IProject)info.getOwner(), profileInstance, collector);
 			addIncludePaths(mCollector.getIncludePaths());
 			addDefinedSymbols(mCollector.getDefinedSymbols());
+			addEntries(info.getManagedBuildValues());
 		} else {
 			// If none supplied, use the built-ins
 			if (defaultConfig != null) {
-				calculateBuiltIns(defaultTarget, defaultConfig);
+				addEntries(info.getManagedBuildValues());
+				addEntries(info.getManagedBuildBuiltIns());
 				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + defaultConfig.getName());	//$NON-NLS-1$
 			} else {
 				ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null");	//$NON-NLS-1$
@@ -261,4 +223,16 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		return new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER");	//$NON-NLS-1$
 	}
 	
+ 	/**
+ 	 * @param values
+ 	 * @return
+ 	 */
+ 	private void addEntries(IPathEntry[] values) {
+ 		if (values == null) return;
+ 		for (int i=0; i<values.length; i++) {
+ 			if (values[i] == null) continue;
+ 			if (!entries.contains(values[i])) {	entries.add(values[i]); }
+ 		}	
+ 	}
+
 }

@@ -30,21 +30,26 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
-import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -270,38 +275,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public Map getDefinedSymbols() {
 		// Return the defined symbols for the default configuration
 		HashMap symbols = getMacroPathEntries();
-		IConfiguration config = getDefaultConfiguration();
-		if(config == null)
-			return symbols;
-		ITool[] tools = config.getFilteredTools();
-		for (int i = 0; i < tools.length; i++) {
-			ITool tool = tools[i];
-			// Now extract the valid tool's options
-			IOption[] opts = tool.getOptions();
-			for (int j = 0; j < opts.length; j++) {
-				IOption option = opts[j];
-				try {
-					if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
-						ArrayList symbolList = new ArrayList();
-						symbolList.addAll(Arrays.asList(option.getDefinedSymbols()));
-						Iterator iter = symbolList.listIterator();
-						while (iter.hasNext()) {
-							String symbol = (String) iter.next();
-							if (symbol.length() == 0){
-								continue;
-							}
-							String[] tokens = symbol.split("="); //$NON-NLS-1$
-							String key = tokens[0].trim();
-							String value = (tokens.length > 1) ? tokens[1].trim() : new String();
-							symbols.put(key, value);
-						}
-					}
-				} catch (BuildException e) {
-					// TODO: report error
-					continue;
-				}
-			}
-		}
 		return symbols; 
 	}
 	
@@ -424,59 +397,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public String[] getIncludePaths() {
 		// Return the include paths for the default configuration
 		ArrayList paths = getIncludePathEntries();
-		IConfiguration config = getDefaultConfiguration();
-		IPath location = owner.getLocation();
-		// If the build info is out of date this might be null
-		if (location == null) {
-			location = new Path("."); //$NON-NLS-1$
-		}
-		if (config != null) {
-			IPath root = location.append(config.getName());
-			ITool[] tools = config.getFilteredTools();
-			for (int i = 0; i < tools.length; i++) {
-				ITool tool = tools[i];
-				// The tool checks out for this project, get its options
-				IOption[] opts = tool.getOptions();
-				for (int j = 0; j < opts.length; j++) {
-					IOption option = opts[j];
-					try {
-						if (option.getValueType() == IOption.INCLUDE_PATH) {
-							
-							// check to see if the option has an applicability
-							// calculator
-							IOptionApplicability applicabilityCalculator = option
-									.getApplicabilityCalculator();
-
-							if (applicabilityCalculator == null
-									|| applicabilityCalculator.isOptionUsedInCommandLine(config, tool, option)) {
-
-								// Get all the user-defined paths from the
-								// option as absolute paths
-								String[] userPaths = option.getIncludePaths();
-								for (int index = 0; index < userPaths.length; ++index) {
-									IPath userPath = new Path(userPaths[index]);
-									if (userPath.isAbsolute()) {
-										paths.add(userPath.toOSString());
-									} else {
-										IPath absPath = root.append(userPath);
-										paths.add(absPath.makeAbsolute().toOSString());
-									}
-								}
-							}
-						}
-					} catch (BuildException e) {
-						// TODO: report error
-						continue;
-					}
-				}
-			}
-			//add paths specified in the environment
-			String envIncludePaths[] = ManagedBuildManager.getEnvironmentVariableProvider().getBuildPaths(config,IEnvVarBuildPath.BUILDPATH_INCLUDE);
-			if(envIncludePaths != null)
-				paths.addAll(Arrays.asList(envIncludePaths));
-		}
-				
-		// Answer the results as an array
 		return (String[])paths.toArray(new String[paths.size()]); 
 	}
 
@@ -836,7 +756,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/* (non-Javadoc)
 	 * 
 	 */
-	private void initializePathEntries() {
+	public void initializePathEntries() {
 		try {
 			IPathEntryContainer container = new ManagedBuildCPathEntryContainer(getOwner().getProject());
 			CoreModel.setPathEntryContainer(new ICProject[]{cProject}, container, new NullProgressMonitor());
@@ -1171,4 +1091,273 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		return targetList;	
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private String getCWD() {
+		String cwd = ""; //$NON-NLS-1$
+		IBuildEnvironmentVariable cwdvar = ManagedBuildManager.getEnvironmentVariableProvider().getVariable("CWD", getDefaultConfiguration(), false); //$NON-NLS-1$
+		if (cwdvar != null) { cwd = cwdvar.getValue().replace('\\','/'); }     //$NON-NLS-1$  //$NON-NLS-2$
+		return cwd;
+	}
+	
+	/**
+	 */
+	private String processPath(String path, int context, Object obj) {
+		final String EMPTY = "";   //$NON-NLS-1$
+		final String QUOTE = "\""; //$NON-NLS-1$
+		
+		if (path == null) { return EMPTY; }
+		String s = path;
+		if (context != 0) {
+			try {
+				s = ManagedBuildManager.getBuildMacroProvider().resolveValue(s, EMPTY, " ", context, obj); //$NON-NLS-1$
+			} catch (BuildMacroException e) { return EMPTY; }
+		}
+		if (s == null) { s = path; }
+
+		if (s.length()> 1 && s.startsWith(QUOTE) && s.endsWith(QUOTE)) {
+			s = s.substring(1, s.length()-1);
+		}
+		
+		if ( ".".equals(s) ) { //$NON-NLS-1$
+			String cwd = getCWD();
+			if (cwd.length()>0) { s = cwd; }
+		}
+		if (!(new Path(s)).isAbsolute()) {
+			String cwd = getCWD();
+			if (cwd.length()>0) { s = cwd + "/" + s; } //$NON-NLS-1$
+		}
+		return s;
+	}
+
+	/**
+	 * Obtain all possible Managed build values
+	 * @return
+	 */
+	public IPathEntry[] getManagedBuildValues() {
+		List entries = new ArrayList();
+		int i=0;
+		IPathEntry[] a = getManagedBuildValues(IPathEntry.CDT_INCLUDE_FILE);
+		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
+		a = getManagedBuildValues(IPathEntry.CDT_LIBRARY);
+		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
+		a = getManagedBuildValues(IPathEntry.CDT_MACRO);
+		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
+		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+	}
+
+	/**
+	 * Obtain all possible Managed build built-ins
+	 * @return
+	 */
+	public IPathEntry[] getManagedBuildBuiltIns() {
+		List entries = new ArrayList();
+		int i=0;
+		IPathEntry[] a = getManagedBuildBuiltIns(IPathEntry.CDT_INCLUDE_FILE);
+		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
+		a = getManagedBuildBuiltIns(IPathEntry.CDT_LIBRARY);
+		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
+		a = getManagedBuildBuiltIns(IPathEntry.CDT_MACRO);
+		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
+		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+	}
+	
+	/**
+	 * 
+	 * @param entryType
+	 * @return
+	 */
+	public IPathEntry[] getManagedBuildValues(int entryType) {
+		// obtain option values
+		List entries = getOptionValues(entryType, false);
+	
+		// for includes, get env variables values; useless for other entry types  
+		if (entryType == IPathEntry.CDT_INCLUDE_FILE) {
+			IEnvironmentVariableProvider env = ManagedBuildManager.getEnvironmentVariableProvider();
+			entries = addIncludes(entries, env.getBuildPaths(getDefaultConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE), Path.EMPTY, null);
+		}	
+		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+	}
+	
+	/**
+	 * @param entryType
+	 * @return
+	 */
+	public IPathEntry[] getManagedBuildBuiltIns(int entryType) {
+		List entries = getOptionValues(entryType, true);
+		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);		
+	}
+	
+	/**
+	 * 
+	 * @param entryType  - data type to be scanned for 
+	 * @param builtIns   - return either values or built-in's 
+	 * @return list of strings which contains all found values 
+	 */
+	private List getOptionValues(int entryType, boolean builtIns) {
+		List entries = new ArrayList(); 
+		IConfiguration cfg = getDefaultConfiguration();
+		
+		// process config toolchain's options
+		entries = readToolsOptions(
+				entryType, 
+				entries, 
+				builtIns, 
+				cfg);
+		
+		
+		// code below (obtaining of resource config values)
+		// is now commented because resource-related include
+		// paths are displayed by UI together with config-
+		// related includes, so paths are duplicated in
+		// project's "includes" folder.
+		// 
+		// Uncomment following code after UI problem fix.     
+/* 
+		// process resource configurations
+        IResourceConfiguration[] rescfgs = cfg.getResourceConfigurations();
+		if (rescfgs != null) {
+			for (int i=0; i<rescfgs.length; i++) {
+				entries = readToolsOptions(
+							entryType, 
+							entries, 
+							builtIns, 
+							rescfgs[i]);
+			}
+		}
+//		*/
+		return entries;
+	}
+
+	/**
+	 * 
+	 * @param optionType - data type: include | library | symbols 
+	 * @param entries    - list to be affected
+	 * @param builtIns   - whether get actual values or builtins 
+	 * @param obj        - object to be processed (ResCfg | Cfg) 
+	 */
+	private List readToolsOptions(int entryType, List entries, boolean builtIns, IBuildObject obj) {
+		ITool[] t = null;
+		Path resPath = Path.EMPTY;
+
+		// check that entryType is correct
+		if (entryType != IPathEntry.CDT_INCLUDE_FILE &&
+			entryType != IPathEntry.CDT_LIBRARY &&
+			entryType != IPathEntry.CDT_MACRO) { return entries; }
+		
+		// calculate parameters depending of object type
+		if (obj instanceof IResourceConfiguration) {
+			resPath = new Path(((IResourceConfiguration)obj).getResourcePath());
+			t = ((IResourceConfiguration)obj).getTools();
+		} else if (obj instanceof IConfiguration) {
+			t  = ((IConfiguration)obj).getFilteredTools();
+		} else { return entries; } // wrong object passed 
+		if (t == null) { return entries; }
+		
+		// process all tools and all their options
+		for (int i=0; i<t.length; i++) {
+			IOption[] op = t[i].getOptions();
+			for (int j=0; j<op.length; j++) {
+				
+				// check to see if the option has an applicability calculator
+				IOptionApplicability applicabilityCalculator = op[j].getApplicabilityCalculator();
+				if (applicabilityCalculator != null &&
+				   !applicabilityCalculator.isOptionUsedInCommandLine(obj, t[i], op[j])) continue;
+				
+				try {
+					if (entryType == IPathEntry.CDT_INCLUDE_FILE && 
+							op[j].getValueType() == IOption.INCLUDE_PATH) 
+					{
+						OptionContextData ocd = new OptionContextData(op[j], obj);				
+						addIncludes(entries, builtIns ? op[j].getBuiltIns() : op[j].getIncludePaths(), resPath, ocd);
+					} else if (entryType == IPathEntry.CDT_LIBRARY && 
+							op[j].getValueType() == IOption.LIBRARIES) 
+					{
+						OptionContextData ocd = new OptionContextData(op[j], obj);				
+						addLibraries(entries, builtIns ? op[j].getBuiltIns() : op[j].getLibraries(), resPath, ocd);
+					} else if (entryType == IPathEntry.CDT_MACRO && 
+							op[j].getValueType() == IOption.PREPROCESSOR_SYMBOLS) 
+					{
+						addSymbols(entries, builtIns ? op[j].getBuiltIns() : op[j].getDefinedSymbols(), resPath);
+					} else { continue; }
+				} catch (BuildException e) {}
+			}
+		}
+		return entries;
+	}
+	
+	/**
+	 * 
+	 * @param entries
+	 * @param values
+	 * @param resPath
+	 * @param ocd       
+	 */
+	protected List addIncludes(List entries, String[] values, Path resPath, OptionContextData ocd) {
+		if (values != null) {
+			for (int k=0; k<values.length; k++) {
+				if (ocd != null) {
+				   values[k] = processPath(values[k], IBuildMacroProvider.CONTEXT_OPTION, ocd);
+				}
+				IPathEntry entry = CoreModel.newIncludeEntry(resPath, Path.EMPTY, new Path(processPath(values[k], 0, null)), true);
+				if (!entries.contains(entry)) {	entries.add(entry);	}
+			}
+		}
+		return entries;
+	}
+	
+	/**
+	 * 
+	 * @param entries
+	 * @param values
+	 * @param resPath
+	 * @param ocd
+	 */
+	protected List addLibraries(List entries, String[] values, Path resPath, OptionContextData ocd) {
+		if (values != null) {
+			for (int k=0; k<values.length; k++) {
+				if (ocd != null) {
+					values[k] = processPath(values[k], IBuildMacroProvider.CONTEXT_OPTION, ocd);
+				}
+				IPathEntry entry = CoreModel.newLibraryEntry(resPath, Path.EMPTY, new Path(processPath(values[k], 0, null)), null, null, null, true);
+				if (!entries.contains(entry)) {	entries.add(entry); }
+			}
+		}
+		return entries;
+	}
+	
+	/**
+	 * 
+	 * @param entries
+	 * @param values
+	 * @param resPath
+	 */
+	protected List addSymbols(List entries, String[] values, Path resPath) {
+		if (values == null) return entries;
+		for (int i=0; i<values.length; i++) {
+			if (values[i].length() == 0) continue;
+			String[] tokens = values[i].split("="); //$NON-NLS-1$
+			String key = tokens[0].trim();
+			String value = (tokens.length > 1) ? tokens[1].trim() : new String();
+			// Make sure the current entries do not contain a duplicate
+			boolean add = true;
+			Iterator entryIter = entries.listIterator();
+			while (entryIter.hasNext()) {
+				IPathEntry entry = (IPathEntry) entryIter.next();
+				if (entry.getEntryKind() == IPathEntry.CDT_MACRO) {	
+					if (((IMacroEntry)entry).getMacroName().equals(key) && 
+						((IMacroEntry)entry).getMacroValue().equals(value)) {
+						add = false;
+						break;
+					}
+				}
+			}
+			if (add) { entries.add(CoreModel.newMacroEntry(resPath, key, value)); }
+		}
+		return entries;
+	}
+
 }

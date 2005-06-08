@@ -14,7 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
@@ -227,6 +229,16 @@ public class BuildPreferencePage extends PreferencePage
     			return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
     		}
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				
+                for(int i = 0; i < projectsToBuild.length; i++){
+                    if(ManagedBuildManager.manages(projectsToBuild [i])){
+                          IManagedBuildInfo bi = ManagedBuildManager.getBuildInfo(projectsToBuild [i]);
+                          if (bi != null & bi instanceof ManagedBuildInfo) {
+                                ((ManagedBuildInfo)bi).initializePathEntries();
+                          }
+                    }
+				}
+				
 				for(int i = 0; i < projectsToBuild.length; i++){
 					try{
 						projectsToBuild[i].build(IncrementalProjectBuilder.FULL_BUILD,monitor);

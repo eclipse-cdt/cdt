@@ -4643,4 +4643,19 @@ public class AST2CPPTests extends AST2BaseTest {
 		buffer.append( "int A::B<int>::* b;                           \n"); //$NON-NLS-1$
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
 	}
+	
+	public void testBug_AIOOBE() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void f();          \n");
+		buffer.append("void f( void ) {}  \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        IFunction f = (IFunction) col.getName(0).resolveBinding();
+        assertSame( f, col.getName(1).resolveBinding() );
+        IParameter p = (IParameter) col.getName(2).resolveBinding();
+        assertNotNull( p );
+	}
 }

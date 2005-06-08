@@ -2792,9 +2792,14 @@ public class CPPSemantics {
 			if( exp instanceof IASTLiteralExpression && 
 			    ((IASTLiteralExpression)exp).getKind() == IASTLiteralExpression.lk_integer_constant  )
 			{
-				if( Integer.decode( exp.toString() ).intValue() == 0 ){
-					cost.rank = Cost.CONVERSION_RANK;
-					cost.conversion = 1;
+				try { 
+					String val = exp.toString().toLowerCase().replace('u', '0');
+					val.replace( 'l', '0' );
+					if( Integer.decode( val ).intValue() == 0 ){
+						cost.rank = Cost.CONVERSION_RANK;
+						cost.conversion = 1;
+					}
+				} catch( NumberFormatException e ) {
 				}
 			}
 		} else if( sPrev instanceof IPointerType && s instanceof ICPPClassType ){

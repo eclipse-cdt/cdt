@@ -380,13 +380,15 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
     	}
     	if( declarations != null ){
     		for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
-    			temp = declarations[j].getParameters()[i];
-        		IASTName n = temp.getDeclarator().getName();
-        		if( n != name ) {
-        		    n.setBinding( binding );
-        		    ((CPPParameter)binding).addDeclaration( n );
-        		}
-
+    			IASTParameterDeclaration [] paramDecls = declarations[j].getParameters();
+    			if( paramDecls.length > i ) {
+	    			temp = paramDecls[i];
+	        		IASTName n = temp.getDeclarator().getName();
+	        		if( n != name ) {
+	        		    n.setBinding( binding );
+	        		    ((CPPParameter)binding).addDeclaration( n );
+	        		}
+    			}
     		}
     	}
     	return binding;
@@ -397,9 +399,9 @@ public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
     	IASTParameterDeclaration [] ops = orig.getParameters();
     	IASTParameterDeclaration [] nps = fdtor.getParameters();
     	CPPParameter temp = null;
-    	for( int i = 0; i < nps.length; i++ ){
+    	for( int i = 0; i < ops.length; i++ ){
     		temp = (CPPParameter) ops[i].getDeclarator().getName().getBinding();
-    		if( temp != null ){
+    		if( temp != null && nps.length > i ){		//length could be different, ie 0 or 1 with void
     		    IASTDeclarator dtor = nps[i].getDeclarator();
     		    while( dtor.getNestedDeclarator() != null )
     		        dtor = dtor.getNestedDeclarator();

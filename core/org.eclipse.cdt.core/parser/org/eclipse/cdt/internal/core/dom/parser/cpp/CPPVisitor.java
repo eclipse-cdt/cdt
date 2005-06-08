@@ -685,7 +685,7 @@ public class CPPVisitor {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
 					if( dtor.getNestedDeclarator() == null ) {
 						while( parent.getParent() instanceof IASTDeclarator )
-						    parent = (ICPPASTFunctionDeclarator) parent.getParent();
+						    parent = (IASTDeclarator) parent.getParent();
 						ASTNodeProperty prop = parent.getPropertyInParent();
 						if( prop == IASTSimpleDeclaration.DECLARATOR )
 						    return dtor.getFunctionScope();

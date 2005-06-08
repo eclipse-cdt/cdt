@@ -2618,6 +2618,7 @@ public class CPPSemantics {
 	
 	static private void qualificationConversion( Cost cost ) throws DOMException{
 		boolean canConvert = true;
+		int conversionRequired = 1;  //1 means it will work without a conversion, 2 means conversion was needed
 
 		IPointerType op1, op2;
 		IType s = cost.source, t = cost.target;
@@ -2671,9 +2672,10 @@ public class CPPSemantics {
 		}
 		
 		if( s instanceof IQualifierType ^ t instanceof IQualifierType ){
-		    if( t instanceof IQualifierType )
+		    if( t instanceof IQualifierType ){
 		        canConvert = true;
-		    else {
+		        conversionRequired = 2;
+		    } else {
 		    	//4.2-2 a string literal can be converted to pointer to char
 		    	if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_char &&
 		    		s instanceof IQualifierType )
@@ -2695,8 +2697,13 @@ public class CPPSemantics {
 			IQualifierType qs = (IQualifierType) s, qt = (IQualifierType) t;
 			if( qs.isConst() && !qt.isConst() || qs.isVolatile() && !qt.isVolatile() )
 				canConvert = false;
+			else if( qs.isConst() == qt.isConst() && qs.isVolatile() == qt.isVolatile() )
+				conversionRequired = 1;
+			else
+				conversionRequired = 2;
 		} else if( constInEveryCV2k && !canConvert ){
 			canConvert = true;
+			conversionRequired = 2;
 			int i = 1;
 			for( IType type = s; canConvert == true && i == 1; type = t, i++  ){
 				while( type instanceof ITypeContainer ){
@@ -2713,7 +2720,7 @@ public class CPPSemantics {
 		}
 
 		if( canConvert == true ){
-			cost.qualification = 1;
+			cost.qualification = conversionRequired;
 			cost.rank = Cost.LVALUE_OR_QUALIFICATION_RANK;
 		} else {
 			cost.qualification = 0;

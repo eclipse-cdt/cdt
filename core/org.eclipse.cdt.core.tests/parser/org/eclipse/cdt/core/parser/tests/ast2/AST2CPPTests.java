@@ -4658,4 +4658,28 @@ public class AST2CPPTests extends AST2BaseTest {
         IParameter p = (IParameter) col.getName(2).resolveBinding();
         assertNotNull( p );
 	}
+	
+	public void testRankingQualificationConversions() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("void f( const int );     \n");
+		buffer.append("void f( int );           \n");
+		buffer.append("void g() { f(1); }       \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        assertSame( col.getName(2).resolveBinding(), col.getName(5).resolveBinding() );
+        
+        buffer = new StringBuffer();
+		buffer.append("void f( const volatile int );     \n");
+		buffer.append("void f( const int );              \n");
+		buffer.append("void g() { f(1); }                \n");
+		
+		tu = parse( buffer.toString(), ParserLanguage.CPP );
+        col = new CPPNameCollector();
+        tu.accept(col);
+        
+        assertSame( col.getName(2).resolveBinding(), col.getName(5).resolveBinding() );
+	}
 }

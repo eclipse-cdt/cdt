@@ -39,6 +39,10 @@ public class EnvVarCollector {
 	 * @param vars
 	 */
 	public void add(IBuildEnvironmentVariable vars[]){
+		add(vars,null,-1);
+	}
+	
+	public void add(IBuildEnvironmentVariable vars[], IContextInfo info, int num){
 		if(vars == null)
 			return;
 		boolean isCaseInsensitive = !EnvironmentVariableProvider.getDefault().isVariableCaseSensitive();
@@ -55,11 +59,15 @@ public class EnvVarCollector {
 				fMap = new HashMap();
 			}
 			
-			if(noCheck)
-				fMap.put(name,var);
+			EnvVarDescriptor des = null;
+			if(noCheck || (des = (EnvVarDescriptor)fMap.get(name)) == null){
+				des = new EnvVarDescriptor(var,info,num);
+				fMap.put(name,des);
+			}
 			else {
-				IBuildEnvironmentVariable prevVar = (IBuildEnvironmentVariable)fMap.remove(name);
-				fMap.put(name,EnvVarOperationProcessor.performOperation(prevVar,var));
+				des.setContextInfo(info);
+				des.setSupplierNum(num);
+				des.setVariable(EnvVarOperationProcessor.performOperation(des.getOriginalVariable(),var));
 			}
 		}
 	}
@@ -70,19 +78,19 @@ public class EnvVarCollector {
 	 * @param includeRemoved true if removed variables should be included in the resulting array
 	 * @return IBuildEnvironmentVariable[]
 	 */
-	public IBuildEnvironmentVariable[] toArray(boolean includeRemoved){
+	public EnvVarDescriptor[] toArray(boolean includeRemoved){
 		if(fMap == null)
-			return new IBuildEnvironmentVariable[0];
+			return new EnvVarDescriptor[0];
 		Collection values = fMap.values();
 		List list = new ArrayList();
 		Iterator iter = values.iterator();
 		while(iter.hasNext()){
-			IBuildEnvironmentVariable var = (IBuildEnvironmentVariable)iter.next();
-			if(var != null && 
-					(includeRemoved || var.getOperation() != IBuildEnvironmentVariable.ENVVAR_REMOVE))
-				list.add(var);
+			EnvVarDescriptor des = (EnvVarDescriptor)iter.next();
+			if(des != null && 
+					(includeRemoved || des.getOperation() != IBuildEnvironmentVariable.ENVVAR_REMOVE))
+				list.add(des);
 		}
-		return (IBuildEnvironmentVariable[])list.toArray(new IBuildEnvironmentVariable[list.size()]);
+		return (EnvVarDescriptor[])list.toArray(new EnvVarDescriptor[list.size()]);
 	}
 	
 	/**
@@ -91,14 +99,14 @@ public class EnvVarCollector {
 	 * @param name a variable name
 	 * @return IBuildEnvironmentVariable
 	 */
-	public IBuildEnvironmentVariable getVariable(String name){
+	public EnvVarDescriptor getVariable(String name){
 		if(fMap == null)
 			return null;
 		
 		if(!EnvironmentVariableProvider.getDefault().isVariableCaseSensitive())
 			name = name.toUpperCase();
 
-		return (IBuildEnvironmentVariable)fMap.get(name);
+		return (EnvVarDescriptor)fMap.get(name);
 	}
 	
 	/**
@@ -107,7 +115,7 @@ public class EnvVarCollector {
 	 * 
 	 * @return IBuildEnvironmentVariable[]
 	 */
-	public IBuildEnvironmentVariable[] getVariables(){
+	public EnvVarDescriptor[] getVariables(){
 		return toArray(true);
 	}
 

@@ -170,7 +170,8 @@ public class BuildfileMacroSubstitutor extends DefaultMacroSubstitutor {
 			
 		if(fConfiguration != null && fBuilder != null && 
 				!UserDefinedMacroSupplier.getInstance().areMacrosExpanded(fConfiguration) && 
-				macro instanceof EnvironmentMacroSupplier.EnvVarMacro){
+				macro instanceof EnvironmentMacroSupplier.EnvVarMacro &&
+				!MacroResolver.isStringListMacro(macro.getMacroValueType())){
 			String ref = getMacroReference(macro);
 			if(ref != null)
 				resolved = new ResolvedMacro(macro.getName(),ref);

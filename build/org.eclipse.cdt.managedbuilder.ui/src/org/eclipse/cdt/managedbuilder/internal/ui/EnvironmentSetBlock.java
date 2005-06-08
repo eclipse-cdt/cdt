@@ -11,7 +11,6 @@
 package org.eclipse.cdt.managedbuilder.internal.ui;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.DefaultContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo;
@@ -90,7 +89,7 @@ public class EnvironmentSetBlock extends AbstractCOptionPage {
 	 * the user-modified variables that are not applied yet
 	 */
 	private class UIEnvVarProvider extends EnvironmentVariableProvider{
-		protected IContextInfo getContextInfo(Object context){
+		public IContextInfo getContextInfo(Object context){
 			EnvironmentBlock blocks[] = getAllBlocks();
 			for(int i = 0; i < blocks.length; i++){
 				if(blocks[i].getContext() == context)
@@ -314,7 +313,7 @@ public class EnvironmentSetBlock extends AbstractCOptionPage {
 	 * Unlike the default provider, the returned provider also contains
 	 * the user-modified variables that are not applied yet
 	 */
-	public IEnvironmentVariableProvider getEnvironmentVariableProvider(){
+	public EnvironmentVariableProvider getEnvironmentVariableProvider(){
 		if(fEnvProvider == null)
 			fEnvProvider = new UIEnvVarProvider();
 		return fEnvProvider;

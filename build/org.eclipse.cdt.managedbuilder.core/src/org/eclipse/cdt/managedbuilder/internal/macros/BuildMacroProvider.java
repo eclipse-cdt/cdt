@@ -191,12 +191,12 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValue(java.lang.String, java.lang.String, int, java.lang.Object)
 	 */
 	public String[] resolveStringListValue(String value,
-			String nonexistentMacrosValue, int contextType, Object contextData)
-			throws BuildMacroException {
+			String nonexistentMacrosValue, String listDelimiter,
+			int contextType, Object contextData) throws BuildMacroException {
 		
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
 		if(info != null)
-			return MacroResolver.resolveToStringList(value,getMacroSubstitutor(info,nonexistentMacrosValue, " ")); //$NON-NLS-1$ 
+			return MacroResolver.resolveToStringList(value,getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter)); 
 		return null;
 	}
 
@@ -218,12 +218,12 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValueToMakefileFormat(java.lang.String, java.lang.String, int, java.lang.Object)
 	 */
 	public String[] resolveStringListValueToMakefileFormat(String value,
-			String nonexistentMacrosValue, int contextType, Object contextData)
+			String nonexistentMacrosValue, String listDelimiter, int contextType, Object contextData)
 			throws BuildMacroException {
 
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
 		if(info != null)
-			MacroResolver.resolveToStringList(value,getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, " ")); //$NON-NLS-1$ 
+			MacroResolver.resolveToStringList(value,getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
 		return null;
 	}
 
@@ -247,8 +247,15 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 			throws BuildMacroException {
 
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
+		IMacroSubstitutor subst = new DefaultMacroSubstitutor(info,null,""){ //$NON-NLS-1$
+			protected ResolvedMacro resolveMacro(IBuildMacro macro) throws BuildMacroException {
+				if(macro instanceof EclipseVariablesMacroSupplier.EclipseVarMacro)
+					return new ResolvedMacro(macro.getName(),""); //$NON-NLS-1$
+				return super.resolveMacro(macro);
+			}
+		};
 		if(info != null)
-			MacroResolver.checkIntegrity(info,getMacroSubstitutor(info,null,"")); 	//$NON-NLS-1$
+			MacroResolver.checkIntegrity(info,subst);
 	}
 
 	public IMacroSubstitutor getMacroSubstitutor(IMacroContextInfo info, String inexistentMacroValue, String listDelimiter){

@@ -42,7 +42,7 @@ public interface IBuildMacroProvider{
 	 *     NOTE: the IFileContextData is passed that represents the current file and the option 
 	 *     for that file because Macro Value Provider needs to know what option should be used 
 	 *     as a context in case macro is not found for �current file� context
-	 * 2.  IOption � used to represent the currently selected option context
+	 * 2.  IOptionContextData interface used to represent the currently selected option context
 	 * 3.  IConfiguration � used to represent the currently selected configuration context
 	 * 4.  IProject � used to represent current project context
 	 * 5.  IWorkspace � used to represent current workspace context
@@ -109,6 +109,7 @@ public interface IBuildMacroProvider{
 	 */
 	public String[] resolveStringListValue(String value, 
 					String nonexistentMacrosValue,
+					String listDelimiter,
 					int contextType, 
 					Object contextData) throws BuildMacroException;
 
@@ -149,6 +150,7 @@ public interface IBuildMacroProvider{
 	 */
 	public String[] resolveStringListValueToMakefileFormat(String value, 
 					String nonexistentMacrosValue,
+					String listDelimiter,
 					int contextType, 
 					Object contextData) throws BuildMacroException;
 

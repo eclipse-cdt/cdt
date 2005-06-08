@@ -47,7 +47,7 @@ public interface IEnvironmentVariableProvider{
 	 *    4. null to represent the system environment passed to eclipse
 	 */
 	public IBuildEnvironmentVariable getVariable(
-				String variableName, Object level, boolean includeParentLevels);
+				String variableName, Object level, boolean includeParentLevels, boolean resolveMacros);
 
 	/**
 	 *
@@ -58,7 +58,7 @@ public interface IEnvironmentVariableProvider{
 	 * @return the array of IBuildEnvironmentVariable that represents the environment variables 
 	 */
 	public IBuildEnvironmentVariable[] getVariables(
-				Object level, boolean includeParentLevels);
+				Object level, boolean includeParentLevels, boolean resolveMacros);
 
 	/**
 	 *

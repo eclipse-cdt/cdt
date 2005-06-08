@@ -319,8 +319,10 @@ import org.eclipse.swt.widgets.Group;
 	 * the user-modified macros that are not applied yet
 	 */
 	public BuildMacroProvider getBuildMacroProvider(){
-		if(fMacroProvider == null)
+		if(fMacroProvider == null){
+			updateContexts();
 			fMacroProvider = new UIMacroProvider();
+		}
 		return fMacroProvider;
 	}
 	

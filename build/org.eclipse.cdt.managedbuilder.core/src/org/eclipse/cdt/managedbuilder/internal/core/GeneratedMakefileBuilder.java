@@ -743,18 +743,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				launcher.showCommand(true);
 	
 				// Set the environmennt
-				IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true);
-				IBuildMacroProvider macroProvier = ManagedBuildManager.getBuildMacroProvider();
+				IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true,true);
 				String[] env = null;
 				ArrayList envList = new ArrayList();
 				if (variables != null) {
 					for(int i = 0; i < variables.length; i++){
-						//resolve the build macros in environment variables
-						try{
-							envList.add(variables[i].getName() + "=" + macroProvier.resolveValue(variables[i].getValue(),""," ",IBuildMacroProvider.CONTEXT_CONFIGURATION,cfg));	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						} catch(BuildMacroException e) {
 						envList.add(variables[i].getName() + "=" + variables[i].getValue());	//$NON-NLS-1$
-					}
 					}
 					env = (String[]) envList.toArray(new String[envList.size()]);
 				}

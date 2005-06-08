@@ -882,8 +882,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		if(!canDisplay(name))
 			return null;
 		
-		EnvironmentVariableProvider provider = (EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider();
-		return provider.getVariable(name,fSystemContextInfo,includeParentLevels);
+		return EnvironmentVariableProvider.getDefault().getVariable(name,fSystemContextInfo,includeParentLevels);
 	}
 
 	/*

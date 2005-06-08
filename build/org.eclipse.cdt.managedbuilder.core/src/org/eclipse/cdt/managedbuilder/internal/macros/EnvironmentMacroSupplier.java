@@ -16,8 +16,8 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
-import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvVarOperationProcessor;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -31,10 +31,10 @@ import org.eclipse.core.resources.IWorkspace;
  */
 public class EnvironmentMacroSupplier implements IBuildMacroSupplier {
 	private static EnvironmentMacroSupplier fInstance;
-	private IEnvironmentVariableProvider fEnvironmentProvider;
+	private EnvironmentVariableProvider fEnvironmentProvider;
 	
 	public class EnvVarMacro extends BuildMacro{
-		IBuildEnvironmentVariable fVariable;
+		private IBuildEnvironmentVariable fVariable;
 		private EnvVarMacro(IBuildEnvironmentVariable var){
 			fName = var.getName();
 			fVariable = var;
@@ -92,11 +92,17 @@ public class EnvironmentMacroSupplier implements IBuildMacroSupplier {
 	}
 
 	protected EnvironmentMacroSupplier(){
-		this(ManagedBuildManager.getEnvironmentVariableProvider());
+		this((EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider());
 	}
 	
-	public EnvironmentMacroSupplier(IEnvironmentVariableProvider varProvider){
+	public EnvironmentMacroSupplier(EnvironmentVariableProvider varProvider){
 		fEnvironmentProvider = varProvider;
+	}
+	
+	public IBuildMacro createBuildMacro(IBuildEnvironmentVariable var){
+		if(var != null)
+			return new EnvVarMacro(var);
+		return null; 
 	}
 
 	public static EnvironmentMacroSupplier getInstance(){
@@ -116,22 +122,22 @@ public class EnvironmentMacroSupplier implements IBuildMacroSupplier {
 		switch(contextType){
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 			if(contextData instanceof IConfiguration){
-				var = fEnvironmentProvider.getVariable(macroName,contextData,false);
+				var = fEnvironmentProvider.getVariable(macroName,fEnvironmentProvider.getContextInfo(contextData),false);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if(contextData instanceof IManagedProject){
-				var = fEnvironmentProvider.getVariable(macroName,contextData,false);
+				var = fEnvironmentProvider.getVariable(macroName,fEnvironmentProvider.getContextInfo(contextData),false);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_WORKSPACE:
 			if(contextData instanceof IWorkspace){
-				var = fEnvironmentProvider.getVariable(macroName,contextData,false);
+				var = fEnvironmentProvider.getVariable(macroName,fEnvironmentProvider.getContextInfo(contextData),false);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
 			if(contextData == null){
-				var = fEnvironmentProvider.getVariable(macroName,contextData,false);
+				var = fEnvironmentProvider.getVariable(macroName,fEnvironmentProvider.getContextInfo(contextData),false);
 			}
 			break;
 		}
@@ -149,22 +155,22 @@ public class EnvironmentMacroSupplier implements IBuildMacroSupplier {
 		switch(contextType){
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 			if(contextData instanceof IConfiguration){
-				vars = fEnvironmentProvider.getVariables(contextData,false);
+				vars = fEnvironmentProvider.getVariables(fEnvironmentProvider.getContextInfo(contextData),false).toArray(false);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_PROJECT:
 			if(contextData instanceof IManagedProject){
-				vars = fEnvironmentProvider.getVariables(contextData,false);
+				vars = fEnvironmentProvider.getVariables(fEnvironmentProvider.getContextInfo(contextData),false).toArray(false);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_WORKSPACE:
 			if(contextData instanceof IWorkspace){
-				vars = fEnvironmentProvider.getVariables(contextData,false);
+				vars = fEnvironmentProvider.getVariables(fEnvironmentProvider.getContextInfo(contextData),false).toArray(false);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
 			if(contextData == null){
-				vars = fEnvironmentProvider.getVariables(contextData,false);
+				vars = fEnvironmentProvider.getVariables(fEnvironmentProvider.getContextInfo(contextData),false).toArray(false);
 			}
 			break;
 		}
@@ -179,4 +185,7 @@ public class EnvironmentMacroSupplier implements IBuildMacroSupplier {
 		return null;
 	}
 
+	public EnvironmentVariableProvider getEnvironmentVariableProvider(){
+		return fEnvironmentProvider;
+	}
 }

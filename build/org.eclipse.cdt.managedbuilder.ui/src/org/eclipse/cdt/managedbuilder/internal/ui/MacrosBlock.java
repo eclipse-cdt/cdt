@@ -23,8 +23,8 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvVarOperationProcessor;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroContextInfo;
@@ -231,7 +231,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 			IBuildMacroSupplier suppliers[] = super.getSuppliers(contextType,contextData);
 			if(suppliers == null || suppliers.length == 0)
 				return null;
-			IEnvironmentVariableProvider envProvider = obtainEnvironmentVariableProvider();
+			EnvironmentVariableProvider envProvider = obtainEnvironmentVariableProvider();
 			if(envProvider != null){
 				for(int i = 0; i < suppliers.length; i++){
 					if((suppliers[i] instanceof EnvironmentMacroSupplier)){
@@ -1150,7 +1150,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 		return MacroResolver.filterMacros(macros,fHiddenMacros);
 	}
 	
-	protected IEnvironmentVariableProvider obtainEnvironmentVariableProvider(){
+	protected EnvironmentVariableProvider obtainEnvironmentVariableProvider(){
 		ICOptionContainer container = getContainer();
 		ManagedBuildOptionBlock optionBlock = null;
 		if(container instanceof BuildPropertyPage){

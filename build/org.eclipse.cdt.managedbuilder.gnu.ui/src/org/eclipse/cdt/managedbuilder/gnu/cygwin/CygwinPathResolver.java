@@ -70,7 +70,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		ArrayList ls = new ArrayList();
 		String s = exePath + TOOL + variableValue;
 		String[] lines = exec(s);
-		if (s != null && s.length() > 0) {
+		if (lines != null && lines.length > 0) {
 			result = lines[0].replace(BS,SLASH).split(DELIMITER_WIN); 
 		}
 		return result; 

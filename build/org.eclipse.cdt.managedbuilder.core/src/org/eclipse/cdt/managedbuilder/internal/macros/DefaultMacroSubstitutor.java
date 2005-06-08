@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
 
 /**
  * This substitutor resolves all macro references 
@@ -36,6 +37,7 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 	private String fInexistentMacroValue;
 	private String fListDelimiter;
 	private String fIncorrectlyReferencedMacroValue;
+	private Map fDelimiterMap;
 	
 	protected class ResolvedMacro extends BuildMacro{
 		private boolean fIsDefined;
@@ -85,21 +87,31 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 				fStringListValue = new String[]{fStringValue};
 			return fStringListValue;
 		}
+		
+		protected String getDelimiter(){
+			if(fDelimiterMap != null){
+				Object delimiter = fDelimiterMap.get(fName);
+				if(delimiter instanceof String)
+					return (String)delimiter;
+			}
+			return fListDelimiter;
+		}
 	
 		protected String stringListToString(String values[]) throws BuildMacroException {
 			String result = null;
+			String delimiter;
 			if(values == null)
 				result = null;
 			else if(values.length == 0)
 				result = EMPTY_STRING;
 			else if(values.length == 1)
 				result = values[0];
-			else if(fListDelimiter != null){
+			else if((delimiter = getDelimiter()) != null){
 				StringBuffer buffer = new StringBuffer(); 
 				for(int i = 0; i < values.length; i++){
 					buffer.append(values[i]);
 					if(i < values.length-1)
-						buffer.append(fListDelimiter);
+						buffer.append(delimiter);
 				}
 				result = buffer.toString();
 			} else {
@@ -132,65 +144,61 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 		private IMacroContextInfo fInfo;
 		private IBuildMacro fMacro;
 		private boolean fInitialized;
+		private int fSupplierNum;
+		private int fEnvSupplierNum;
 		
-		public MacroDescriptor(String name){
-			this(name, null);
-		}
-
 		public MacroDescriptor(String name, IMacroContextInfo info){
 			fName = name;
 			fInfo = info;
 		}
 
-		public MacroDescriptor(IBuildMacro macro, IMacroContextInfo info){
+		public MacroDescriptor(String name, IMacroContextInfo info, int supplierNum){
+			fName = name;
+			fInfo = info;
+			fSupplierNum = supplierNum;
+		}
+
+		public MacroDescriptor(IBuildMacro macro, IMacroContextInfo info, int supplierNum){
 			fName = macro.getName();
 			fInfo = info;
 			fMacro = macro;
+			fSupplierNum = supplierNum;
+			fInitialized = true;
 		}
-		
-		public MacroDescriptor getNext(){
-			IMacroContextInfo info = getInfo();
-			if(info != null)
-				info = info.getNext();
 
-			return get(fName,info);
+		public MacroDescriptor getNext(){
+			return new MacroDescriptor(fName,getInfo(),getSupplierNum()+1);
 		}
 		
-		protected MacroDescriptor get(String name, IMacroContextInfo info){
-			MacroDescriptor next = null;
-			IBuildMacro macro = null;
-			for(; info != null; info = info.getNext()){
-				if((macro = BuildMacroProvider.getMacro(fName,info,false)) != null){
-					next = new MacroDescriptor(macro,info);
-					break;
-				}
-			}
-			return next;
+		public int getSupplierNum(){
+			init();
+			return fSupplierNum;
 		}
 		
 		private void init(){
 			if(fInitialized)
 				return;
-
-			MacroDescriptor des = get(fName,fContextInfo);
-			if(des != null){
-				fInfo = des.fInfo;
-				fMacro = des.fMacro;
-			}
-	
 			fInitialized = true;
-			
+			for(; fInfo != null; fInfo = fInfo.getNext()){
+				IBuildMacroSupplier suppliers[] = fInfo.getSuppliers();
+				if(suppliers != null){
+					for(; fSupplierNum < suppliers.length; fSupplierNum++){
+						if((fMacro = suppliers[fSupplierNum].getMacro(fName,fInfo.getContextType(),fInfo.getContextData())) != null){
+							return;
+						}
+					}
+				}
+				fSupplierNum = 0;
+			}
 		}
 
-		public IMacroContextInfo getInfo(){
-			if(fInfo == null)
-				init();
+		protected IMacroContextInfo getInfo(){
+			init();
 			return fInfo;
 		}
 		
 		public IBuildMacro getMacro(){
-			if(fMacro == null)
-				init();
+			init();
 			return fMacro;
 		}
 
@@ -199,39 +207,56 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 	private Map fResolvedMacros = new HashMap();
 	private HashSet fMacrosUnderResolution = new HashSet();
 	private Stack fMacroDescriptors = new Stack();
-	
+
+	public DefaultMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter, Map delimiterMap, String incorrectlyReferencedMacroValue){
+		this(new DefaultMacroContextInfo(contextType,contextData),inexistentMacroValue,listDelimiter, delimiterMap, incorrectlyReferencedMacroValue);
+	}
+
 	public DefaultMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
 		this(new DefaultMacroContextInfo(contextType,contextData),inexistentMacroValue,listDelimiter);
 	}
 
 	public DefaultMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
-		this(contextInfo, inexistentMacroValue, listDelimiter, inexistentMacroValue);
+		this(contextInfo, inexistentMacroValue, listDelimiter, null ,inexistentMacroValue);
 	}
 
-	public DefaultMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter, String incorrectlyReferencedMacroValue){
+	public DefaultMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter, Map delimiterMap, String incorrectlyReferencedMacroValue){
 		fContextInfo = contextInfo;
 		fInexistentMacroValue = inexistentMacroValue;
 		fListDelimiter = listDelimiter;
+		fDelimiterMap = delimiterMap;
 		fIncorrectlyReferencedMacroValue = incorrectlyReferencedMacroValue;
+	}
+
+	protected String resolveToString(MacroDescriptor des) throws BuildMacroException {
+		String result = null;
+		ResolvedMacro value = getResolvedMacro(des);
+		result = value.getStringValue();
+		
+		return result;
+	}
+
+	protected String[] resolveToStringList(MacroDescriptor des) throws BuildMacroException {
+		String result[] = null;
+		ResolvedMacro value = getResolvedMacro(des);
+		result = value.getStringListValue();
+
+		return result;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#resolveToString(java.lang.String)
 	 */
 	public String resolveToString(String macroName) throws BuildMacroException {
-		String result = null;
-		ResolvedMacro value = getResolvedMacro(macroName);
-		result = value.getStringValue();
-		
-		return result;
+		return resolveToString(new MacroDescriptor(macroName,fContextInfo));
 	}
 	
 	public void setMacroContextInfo(IMacroContextInfo info)
 			throws BuildMacroException{
-		if(fMacrosUnderResolution.size() != 0)
-			throw new BuildMacroException(IBuildMacroStatus.TYPE_ERROR,(String)null,null,null,0,null);
-		
-		fResolvedMacros.clear();
+		if(checkEqual(fContextInfo,info))
+			return;
+
+		reset();
 		fContextInfo = info;
 	}
 	
@@ -246,20 +271,20 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 		return ((BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider()).getMacroContextInfo(contextType,contextData);
 	}
 
-	protected ResolvedMacro getResolvedMacro(String macroName)
+	protected ResolvedMacro getResolvedMacro(MacroDescriptor des)
 			throws BuildMacroException {
-		ResolvedMacro value = checkResolvingMacro(macroName);
+		ResolvedMacro value = checkResolvingMacro(des);
 		
 		if(value == null)
 		{
 			try{
-				value = resolveMacro(macroName);
+				value = resolveMacro(des);
 			}finally{
 				if(value != null)
-					addResolvedMacro(macroName,value);
+					addResolvedMacro(des,value);
 				else {
-					value = new ResolvedMacro(macroName,fInexistentMacroValue,false);
-					addResolvedMacro(macroName,value);
+					value = new ResolvedMacro(des.fName,fInexistentMacroValue,false);
+					addResolvedMacro(des,value);
 				}
 			}
 		}
@@ -267,16 +292,16 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 		return value;
 	}
 	
+	protected ResolvedMacro resolveMacro(MacroDescriptor des) throws BuildMacroException{
+		return des.fMacro != null ? resolveMacro(des.fMacro) : resolveMacro(des.fName);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor#resolveToStringList(java.lang.String)
 	 */
 	public String[] resolveToStringList(String macroName)
 			throws BuildMacroException {
-		String result[] = null;
-		ResolvedMacro value = getResolvedMacro(macroName);
-		result = value.getStringListValue();
-		
-		return result;
+		return resolveToStringList(new MacroDescriptor(macroName,fContextInfo));
 	}
 	
 	protected ResolvedMacro resolveMacro(String macroName) throws BuildMacroException{
@@ -368,13 +393,14 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 		}
 		return resolvedMacro;
 	}
-
-	private ResolvedMacro checkResolvingMacro(String name)
+	
+	private ResolvedMacro checkResolvingMacro(MacroDescriptor des)
 				throws BuildMacroException{
+		String name = des.fName;
 		ResolvedMacro value = (ResolvedMacro)fResolvedMacros.get(name);
 		if(value == null){
 			if(fMacrosUnderResolution.add(name))
-				fMacroDescriptors.push(new MacroDescriptor(name,null));
+				fMacroDescriptors.push(des);
 			else {
 				// the macro of the specified name is referenced from the other macros that
 				// are referenced by the given macro
@@ -408,10 +434,15 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 		return value;
 	}
 	
-	private void addResolvedMacro(String name, ResolvedMacro value){
+	protected void addResolvedMacro(MacroDescriptor des, ResolvedMacro value){
+		String name = des.fName;
 		fMacrosUnderResolution.remove(name);
 		fResolvedMacros.put(name,value);
 		fMacroDescriptors.pop();
+	}
+	
+	protected ResolvedMacro removeResolvedMacro(String name){
+		return (ResolvedMacro)fResolvedMacros.remove(name);
 	}
 	
 	/* (non-Javadoc)
@@ -419,6 +450,67 @@ public class DefaultMacroSubstitutor implements IMacroSubstitutor {
 	 */
 	public IMacroContextInfo getMacroContextInfo(){
 		return fContextInfo;
+	}
+	
+	public void reset() throws BuildMacroException{
+		if(fMacrosUnderResolution.size() != 0)
+			throw new BuildMacroException(IBuildMacroStatus.TYPE_ERROR,(String)null,null,null,0,null);
+		
+		fResolvedMacros.clear();
+	}
+
+	public Map getDelimiterMap() {
+		return fDelimiterMap;
+	}
+
+	public void setDelimiterMap(Map delimiterMap) throws BuildMacroException {
+		if(checkEqual(fDelimiterMap,delimiterMap))
+			return;
+		reset();
+		fDelimiterMap = delimiterMap;
+	}
+
+	public String getIncorrectlyReferencedMacroValue() {
+		return fIncorrectlyReferencedMacroValue;
+	}
+
+	protected boolean checkEqual(Object o1, Object o2){
+		if(o1 != null){
+			if(o1.equals(o2))
+				return true;
+		} else if (o2 == null)
+			return true;
+		return false;
+	}
+
+	public void setIncorrectlyReferencedMacroValue(
+			String incorrectlyReferencedMacroValue) throws BuildMacroException {
+		if(checkEqual(fIncorrectlyReferencedMacroValue,incorrectlyReferencedMacroValue))
+			return;
+		reset();
+		fIncorrectlyReferencedMacroValue = incorrectlyReferencedMacroValue;
+	}
+
+	public String getInexistentMacroValue() {
+		return fInexistentMacroValue;
+	}
+
+	public void setInexistentMacroValue(String inexistentMacroValue) throws BuildMacroException {
+		if(checkEqual(fInexistentMacroValue,inexistentMacroValue))
+			return;
+		reset();
+		fInexistentMacroValue = inexistentMacroValue;
+	}
+
+	public String getListDelimiter() {
+		return fListDelimiter;
+	}
+
+	public void setListDelimiter(String listDelimiter) throws BuildMacroException {
+		if(checkEqual(fListDelimiter,listDelimiter))
+			return;
+		reset();
+		fListDelimiter = listDelimiter;
 	}
 
 }

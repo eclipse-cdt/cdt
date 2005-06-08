@@ -102,8 +102,11 @@ public class StoredBuildPathEnvironmentContainer extends
 		for(int i = 0; i < vars.length; i++){
 			IBuildEnvironmentVariable var = vars[i];
 			String name = var.getName();
-			IBuildEnvironmentVariable curVar = existingVariables != null ? 
+			EnvVarDescriptor des = existingVariables != null ? 
 					existingVariables.getVariable(name) : null;
+			EnvironmentVariableProvider provider = ((EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider());
+			IBuildEnvironmentVariable curVar = des != null ?
+					provider.calculateResolvedVariable(des,provider.getContextInfo(configuration)) : null;
 			if(!haveIdenticalValues(var,curVar)){
 				if(curVar == null){
 					env.createVariable(name,null,IBuildEnvironmentVariable.ENVVAR_REMOVE,null);
@@ -131,7 +134,7 @@ public class StoredBuildPathEnvironmentContainer extends
 	 * returns false in this case
 	 */
 	public boolean isVariableChanged(String name, 
-			IBuildEnvironmentVariable variable, 
+			EnvVarDescriptor variable, 
 			IConfiguration configuration){
 		StorableEnvironment env = getEnvironment(configuration);
 		if(env == null)
@@ -139,8 +142,12 @@ public class StoredBuildPathEnvironmentContainer extends
 		IBuildEnvironmentVariable var = env.getVariable(name);
 		if(var == null)
 			return false;
+
+		EnvironmentVariableProvider provider = ((EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider());
+		IBuildEnvironmentVariable curVar = variable != null ?
+				provider.calculateResolvedVariable(variable,provider.getContextInfo(configuration)) : null;
 		
-		if(haveIdenticalValues(var,variable))
+		if(haveIdenticalValues(var,curVar))
 			return false;
 
 		return true;

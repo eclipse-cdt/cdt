@@ -1098,7 +1098,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	private String getCWD() {
 		String cwd = ""; //$NON-NLS-1$
-		IBuildEnvironmentVariable cwdvar = ManagedBuildManager.getEnvironmentVariableProvider().getVariable("CWD", getDefaultConfiguration(), false); //$NON-NLS-1$
+		IBuildEnvironmentVariable cwdvar = ManagedBuildManager.getEnvironmentVariableProvider().getVariable("CWD", getDefaultConfiguration(), false, true); //$NON-NLS-1$
 		if (cwdvar != null) { cwd = cwdvar.getValue().replace('\\','/'); }     //$NON-NLS-1$  //$NON-NLS-2$
 		return cwd;
 	}

@@ -1657,4 +1657,20 @@ public class AST2TemplateTests extends AST2BaseTest {
 		
 		assertSame( i, col.getName(14).resolveBinding() );
 	}
+	
+	public void testBug98784() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("class A {                                 \n"); //$NON-NLS-1$
+		buffer.append("   template <class T > void f( T ) {      \n"); //$NON-NLS-1$
+		buffer.append("      begin();                            \n"); //$NON-NLS-1$
+		buffer.append("   }                                      \n"); //$NON-NLS-1$
+		buffer.append("   void begin();                          \n"); //$NON-NLS-1$
+		buffer.append("};                                        \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		assertSame( col.getName(5).resolveBinding(), col.getName(6).resolveBinding() );
+	}
 }

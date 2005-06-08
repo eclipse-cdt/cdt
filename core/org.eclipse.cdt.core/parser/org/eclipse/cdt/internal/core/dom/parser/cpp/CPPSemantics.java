@@ -297,6 +297,8 @@ public class CPPSemantics {
                 parent = parent.getParent();
             }
             if( parent instanceof IASTFunctionDefinition ){
+            	while( parent.getParent() instanceof ICPPASTTemplateDeclaration )
+            		parent = parent.getParent();
                 if( parent.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION )
                     return false;
                 

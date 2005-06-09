@@ -1,6 +1,12 @@
 2005-06-09 Mikhail Khodjaiants
 	Bug 94139: User-defined register groups.
-	Support fo the "Restore Default Register Groups" action.
+	Externalized strings for the "Restore Default Register Groups" action.
+	* RestoreDefaultRegisterGroupsActionDelegate.java
+	* ActionMessages.properties
+
+2005-06-09 Mikhail Khodjaiants
+	Bug 94139: User-defined register groups.
+	Support for the "Restore Default Register Groups" action.
 	+ RestoreDefaultRegisterGroupsActionDelegate.java
 	* plugin.properties
 	* plugin.xml

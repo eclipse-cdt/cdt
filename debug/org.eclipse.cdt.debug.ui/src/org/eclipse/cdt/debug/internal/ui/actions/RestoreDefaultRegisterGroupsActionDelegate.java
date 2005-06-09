@@ -22,11 +22,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 public class RestoreDefaultRegisterGroupsActionDelegate extends AbstractViewActionDelegate {
 
 	protected String getErrorDialogTitle() {
-		return "Error";
+		return ActionMessages.getString( "RestoreDefaultRegisterGroupsActionDelegate.0" ); //$NON-NLS-1$
 	}
 
 	protected String getErrorDialogMessage() {
-		return "Error(s) occurred restoring default register groups.";
+		return ActionMessages.getString( "RestoreDefaultRegisterGroupsActionDelegate.1" ); //$NON-NLS-1$
 	}
 
 	protected void doAction() throws DebugException {

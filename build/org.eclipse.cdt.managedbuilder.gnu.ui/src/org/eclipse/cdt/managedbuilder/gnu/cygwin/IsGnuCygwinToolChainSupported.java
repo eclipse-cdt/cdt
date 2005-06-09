@@ -20,6 +20,17 @@ import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
+/*
+ * This class inplements the IManagedIsToolChainSupported for the Gnu Cygwin tool-chain
+ * The class is NOT used currently, because currently the gnu cygwin tool-chain
+ * is intended to be used not only with Cygwin, but with MinGW also, and there is no 
+ * correct way of determining whether the appropriate packages are installed for MinGW.
+ * 
+ * For the future MBS/CDT versions we might create the separate tool-chain/configuration/project-type
+ * for the MinGW and define a set of converters using the tool-chain converter mechanism that MBS will provide,
+ * that would convert the CygWin to the MinGW projects/tool-chains, and vice a versa.
+ * 
+ */
 public class IsGnuCygwinToolChainSupported implements
 		IManagedIsToolChainSupported {
 	

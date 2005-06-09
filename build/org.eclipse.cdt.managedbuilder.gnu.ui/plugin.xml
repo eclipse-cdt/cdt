@@ -1808,7 +1808,6 @@
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.debug">
                   <targetPlatform
@@ -1880,7 +1879,6 @@
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.exe.release">
                   <targetPlatform
@@ -1959,7 +1957,6 @@
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.debug">
                   <targetPlatform
@@ -2053,7 +2050,6 @@
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.release;cdt.managedbuild.tool.gnu.cpp.linker.cygwin.so.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.so.release">
                   <targetPlatform
@@ -2154,7 +2150,6 @@
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.debug">
                   <targetPlatform
@@ -2222,7 +2217,6 @@
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfile"
-                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                      id="cdt.managedbuild.toolchain.gnu.cygwin.lib.release">
                   <targetPlatform

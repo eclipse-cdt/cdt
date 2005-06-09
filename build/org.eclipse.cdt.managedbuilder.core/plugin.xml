@@ -149,7 +149,7 @@
    <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.managedbuilder.core.executableFile"
-       file-extensions="exe,"/>
+       file-extensions="exe"/>
    </extension> 
 
    <extension point="org.eclipse.core.runtime.contentTypes"> 

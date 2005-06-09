@@ -4682,4 +4682,40 @@ public class AST2CPPTests extends AST2BaseTest {
         
         assertSame( col.getName(2).resolveBinding(), col.getName(5).resolveBinding() );
 	}
+	
+	public void testBug98818() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace n {                   \n");
+		buffer.append("   namespace m {                \n");
+		buffer.append("      class A;                  \n");
+		buffer.append("   }                            \n");
+		buffer.append("}                               \n");
+		buffer.append("namespace n {                   \n");
+		buffer.append("   namespace m {                \n");
+		buffer.append("      class A { void f(); };    \n");
+		buffer.append("   }                            \n");
+		buffer.append("}                               \n");
+		buffer.append("namespace n {                   \n");
+		buffer.append("   namespace m {                \n");
+		buffer.append("      void A::f(){}             \n");
+		buffer.append("   }                            \n");
+		buffer.append("}                               \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPNamespace n = (ICPPNamespace) col.getName(0).resolveBinding();
+        ICPPNamespace m = (ICPPNamespace) col.getName(1).resolveBinding();
+        assertSame( n, col.getName(3).resolveBinding() );
+        assertSame( n, col.getName(7).resolveBinding() );
+        assertSame( m, col.getName(4).resolveBinding() );
+        assertSame( m, col.getName(8).resolveBinding() );
+        
+        ICPPClassType A = (ICPPClassType) col.getName(2).resolveBinding(); 
+        assertSame( A, col.getName(5).resolveBinding() );
+        
+        ICPPMethod f = (ICPPMethod) col.getName(9).resolveBinding();
+        assertSame( f, col.getName(11).resolveBinding() );
+	}
 }

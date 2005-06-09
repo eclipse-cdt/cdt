@@ -13,11 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -65,7 +60,7 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 	ICPPNamespaceScope scope = null;
 	
 	ICPPASTTranslationUnit tu = null;
-	public CPPNamespace( IASTName nsDef ){
+	public CPPNamespace( ICPPASTNamespaceDefinition nsDef ){
 	    findAllDefinitions( nsDef );
 	}
 	
@@ -84,34 +79,44 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
     }
 
 	static private class NamespaceCollector extends CPPASTVisitor {
-	    private char [] name;
-	    public List namespaces = Collections.EMPTY_LIST;
-	    public int processResult = PROCESS_SKIP;
+	    private ICPPASTNamespaceDefinition namespaceDef = null;
+	    private IASTName [] namespaces = null;
 	    
-	    public NamespaceCollector( IASTName name  ){
+	    public NamespaceCollector( ICPPASTNamespaceDefinition ns  ){
 	        shouldVisitNamespaces = true;
 	        shouldVisitDeclarations = true;
-	        this.name = name.toCharArray();
+	        this.namespaceDef = ns;
 	    }
 
 	    public int visit( ICPPASTNamespaceDefinition namespace) {
-	        if( CharArrayUtils.equals( namespace.getName().toCharArray(), name ) ){
-	            if( namespaces == Collections.EMPTY_LIST )
-	                namespaces = new ArrayList();
-	            namespaces.add( namespace.getName() );
-	        }
-	        if( processResult == PROCESS_CONTINUE ){
-	            processResult = PROCESS_SKIP;
-	            return PROCESS_CONTINUE;
-	        }
-	            
-	        return processResult; 
+	    	ICPPASTNamespaceDefinition orig = namespaceDef, candidate = namespace;
+	    	while( candidate != null ){
+	    		if( !CharArrayUtils.equals( orig.getName().toCharArray(), candidate.getName().toCharArray() ) )
+	    			return PROCESS_CONTINUE;
+	    		if( orig.getParent() instanceof ICPPASTNamespaceDefinition ){
+	    			if( !(candidate.getParent() instanceof ICPPASTNamespaceDefinition ) )
+	    				return PROCESS_CONTINUE;
+	    			orig = (ICPPASTNamespaceDefinition) orig.getParent();
+	    			candidate = (ICPPASTNamespaceDefinition) candidate.getParent();
+	    		} else if( candidate.getParent() instanceof ICPPASTNamespaceDefinition ){
+	    			return PROCESS_CONTINUE;
+	    		} else {
+	    			break;
+	    		}
+	    	}
+
+	    	namespaces = (IASTName[]) ArrayUtil.append( IASTName.class, namespaces, namespace.getName() );
+	        return PROCESS_SKIP;
 	    }
 	    
 	    public int visit( IASTDeclaration declaration ){
 	        if( declaration instanceof ICPPASTLinkageSpecification )
 	            return PROCESS_CONTINUE;
 	        return PROCESS_SKIP;
+	    }
+	    
+	    public IASTName [] getNamespaces() {
+	    	return (IASTName[]) ArrayUtil.trim( IASTName.class, namespaces );
 	    }
 	}
 	
@@ -172,24 +177,12 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 			return PROCESS_CONTINUE;
 		}
 	}
-	private void findAllDefinitions( IASTName namespaceName ){
-	    NamespaceCollector collector = new NamespaceCollector( namespaceName );
-	    ICPPASTNamespaceDefinition nsDef = (ICPPASTNamespaceDefinition) namespaceName.getParent();
-	    IASTNode node = nsDef.getParent();
-	    
-	    while( node instanceof ICPPASTLinkageSpecification )
-	        node = node.getParent();
-	  
-	    if( node instanceof ICPPASTNamespaceDefinition ){
-	        collector.processResult = ASTVisitor.PROCESS_CONTINUE;
-	    }
-	    
-	    node.accept( collector );
-	    
-	    int size = collector.namespaces.size();
-	    namespaceDefinitions = new IASTName [ size ];
-	    for( int i = 0; i < size; i++ ){
-	        namespaceDefinitions[i] = (IASTName) collector.namespaces.get(i);
+	private void findAllDefinitions( ICPPASTNamespaceDefinition namespaceDef ){
+	    NamespaceCollector collector = new NamespaceCollector( namespaceDef );
+	    namespaceDef.getTranslationUnit().accept( collector );
+
+	    namespaceDefinitions = collector.getNamespaces();
+	    for( int i = 0; i < namespaceDefinitions.length; i++ ){
 	        namespaceDefinitions[i].setBinding( this );
 	    }
 	}

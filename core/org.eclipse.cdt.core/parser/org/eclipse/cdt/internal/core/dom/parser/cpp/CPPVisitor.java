@@ -409,8 +409,8 @@ public class CPPVisitor {
 			IBinding binding;
             try {
                 binding = scope.getBinding( namespaceDef.getName(), false );
-                if( binding == null ){
-    				binding = new CPPNamespace( namespaceDef.getName() );
+                if( binding == null || binding instanceof IProblemBinding ){
+    				binding = new CPPNamespace( namespaceDef );
     				scope.addName( namespaceDef.getName() );
     			}
             } catch ( DOMException e ) {

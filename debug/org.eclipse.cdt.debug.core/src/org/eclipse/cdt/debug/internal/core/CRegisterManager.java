@@ -63,6 +63,8 @@ public class CRegisterManager {
 	 */
 	private IRegisterDescriptor[] fRegisterDescriptors;
 
+	private boolean fUseDefaultRegisterGroups = true;
+
 	/** 
 	 * Constructor for CRegisterManager. 
 	 */
@@ -235,9 +237,11 @@ public class CRegisterManager {
 			}
 			childNode = childNode.getNextSibling();
 		}
+		fUseDefaultRegisterGroups = false;
 	}
 
 	protected void initializeDefaults() {
+		fUseDefaultRegisterGroups = true;
 		String current = null;
 		int startIndex = 0;
 		for ( int i = 0; i < fRegisterDescriptors.length; ++i ) {
@@ -274,7 +278,7 @@ public class CRegisterManager {
 	}
 
 	private String getMemento() throws CoreException {
-		if ( fRegisterGroups == null )
+		if ( fUseDefaultRegisterGroups || fRegisterGroups == null )
 			return ""; //$NON-NLS-1$
 		Document document = DebugPlugin.newDocument();
 		Element element = document.createElement( ELEMENT_REGISTER_GROUP_LIST );

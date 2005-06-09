@@ -13,8 +13,6 @@ package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -135,13 +133,13 @@ public class AddFolderToIndex extends IndexRequest {
 	protected void sortFiles(IFile file){
 		
 		/* Check to see if this is a header file */ 
-		ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
-		
+		boolean isHeader = CoreModel.isValidHeaderUnitName(file.getProject(), file.getName());
 		/* See if this file has been encountered before */
-		if (type.isHeader())
+		if (isHeader)
 			headerFilesToIndex.add(file);
-		
-		if (type.isSource())
+
+		boolean isSource = CoreModel.isValidSourceUnitName(file.getProject(), file.getName());
+		if (isSource)
 			sourceFilesToIndex.add(file);
 		
 	}

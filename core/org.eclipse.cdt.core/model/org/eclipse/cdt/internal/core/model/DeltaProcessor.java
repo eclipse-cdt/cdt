@@ -5,8 +5,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -20,7 +18,6 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -627,8 +624,7 @@ public class DeltaProcessor {
 			boolean shouldAddFile=false;
 			IProject project = element.getCProject().getProject();
 			if (elementHasChanged){
-				ICFileType type = CCorePlugin.getDefault().getFileType(project,((IFile) delta.getResource()).getName());
-				if (type.isSource())
+				if (CoreModel.isValidSourceUnitName(project, element.getElementName()))
 					shouldAddFile=true;
 			} else {
 				shouldAddFile = true;

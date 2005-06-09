@@ -41,7 +41,7 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 	protected void executeOperation() throws CModelException {
 		ITranslationUnit tu = getTranslationUnit();
 
-		WorkingCopy workingCopy = new WorkingCopy(tu.getParent(), (IFile)tu.getResource(), this.factory, this.problemRequestor);
+		WorkingCopy workingCopy = new WorkingCopy(tu.getParent(), (IFile)tu.getResource(), tu.getContentTypeId(), this.factory, this.problemRequestor);
 		// open the working copy now to ensure contents are that of the current state of this element
 		// Alain: Actually no, delay the parsing 'till it is really needed.  Doing the parsing here
 		// really slows down the opening of the CEditor.

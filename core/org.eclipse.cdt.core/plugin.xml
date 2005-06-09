@@ -241,7 +241,7 @@
 <!-- =================================================================================== -->
 <!-- CDT file type mappings                                                              -->
 <!-- =================================================================================== -->
-   <extension
+   <!--extension
          point="org.eclipse.cdt.core.CLanguage">
       <language
             name="C"
@@ -312,7 +312,7 @@
             type="org.eclipse.cdt.core.fileType.asm_source"
             pattern="*.asm,*.s,*.S">
       </association>
-   </extension>
+   </extension-->
 <!-- =================================================================================== -->
 <!-- Some well known C file extensions override for the team plugins                     -->
 <!-- =================================================================================== -->
@@ -492,35 +492,57 @@
           priority="high"/>
   </extension>
 
-  <!--extension point="org.eclipse.core.runtime.contentTypes"> 
+  <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cSource"
        file-extensions="c"/>
-   </extension--> 
+   </extension> 
 
-   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxSource"
        file-extensions="cpp,cxx,cc"/>
-   </extension--> 
+   </extension> 
 
-   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
-       content-type="org.eclipse.cdt.core.cxxHeader"
-       file-extensions="hpp,hh"/>
-   </extension--> 
+       content-type="org.eclipse.cdt.core.asmSource"
+       file-extensions="s,asm"/>
+   </extension> 
 
-   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cHeader"
        file-extensions="h"/>
-   </extension--> 
+   </extension> 
 
-   <!--extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
-       content-type="org.eclipse.cdt.core.asmSource"
-       file-extensions="asm,s"/>
-   </extension-->
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-extensions="hpp,hh,hxx"/>
+   </extension> 
+
+	<!-- the reserved filenames by the C++ standard -->
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="algorithm,bitset,cassert,cctype,cerrno,cfloat,ciso646,climits,clocale,cmath,complex,csetjmp,csignal"/>
+   </extension> 
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="cstdarg,cstddef,cstdio,cstdlib,cstring,ctime,cwchar,cwctype,deque,exception,fstream,functional"/>
+   </extension> 
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="hash_map,hash_set,iomanip,ios,iosfwd,iostream,istream,iterator,limits,list,locale,map,memory"/>
+   </extension> 
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="new,numeric,ostream,queue,set,sstream,stack,stdexcept,streambuf,string,strstream,typeinfo,utility,valarray,vector"/>
+   </extension> 
  
 <!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->

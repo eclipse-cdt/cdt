@@ -341,7 +341,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @return IWorkingCopy
 	 */
 	IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException;
-	
+
+	/**
+	 * Return the contentType id for this file.
+	 * @return String - contentType id
+	 */
+	String getContentTypeId();
+
 	/**
 	 * Checks if this is a working copy.
 	 * @return boolean

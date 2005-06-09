@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
@@ -54,11 +55,11 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * Creates a working copy of this element
 	 */
-	public WorkingCopy(ICElement parent, IFile file, IBufferFactory bufferFactory) {
-		this(parent, file, bufferFactory, null);
+	public WorkingCopy(ICElement parent, IFile file, String id, IBufferFactory bufferFactory) {
+		this(parent, file, id, bufferFactory, null);
 	}
-	public WorkingCopy(ICElement parent, IFile file, IBufferFactory bufferFactory, IProblemRequestor requestor) {
-		super(parent, file);
+	public WorkingCopy(ICElement parent, IFile file, String id, IBufferFactory bufferFactory, IProblemRequestor requestor) {
+		super(parent, file, id);
 		this.bufferFactory = 
 			bufferFactory == null ? 
 				getBufferManager() :
@@ -66,8 +67,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		problemRequestor = requestor;
 	}
 
-	public WorkingCopy(ICElement parent, IPath path, IBufferFactory bufferFactory) {
-		super(parent, path);
+	public WorkingCopy(ICElement parent, IPath path, String id, IBufferFactory bufferFactory) {
+		super(parent, path, id);
 		this.bufferFactory = 
 			bufferFactory == null ? 
 				getBufferManager() :
@@ -224,7 +225,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#getOriginalElement()
 	 */
 	public ITranslationUnit getOriginalElement() {
-		return new TranslationUnit(getParent(), getFile());
+		String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), getElementName());
+		return new TranslationUnit(getParent(), getFile(), id);
 	}
 
 	/**

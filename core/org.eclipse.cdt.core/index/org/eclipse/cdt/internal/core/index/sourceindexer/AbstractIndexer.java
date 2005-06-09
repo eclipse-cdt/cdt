@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.Util;
@@ -35,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 
 public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
@@ -85,15 +84,22 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
 	 */
 	public boolean shouldIndex(IFile fileToBeIndexed) {
 		if (fileToBeIndexed != null){
-			ICFileType type = CCorePlugin.getDefault().getFileType(fileToBeIndexed.getProject(),fileToBeIndexed.getName());
-			if (type.isSource() || type.isHeader()){
-			  String id = type.getId();
-			  if (id.equals(ICFileTypeConstants.FT_C_SOURCE) ||
-			  	  id.equals(ICFileTypeConstants.FT_CXX_SOURCE) ||
-				  id.equals(ICFileTypeConstants.FT_C_HEADER) ||
-				  id.equals(ICFileTypeConstants.FT_CXX_HEADER))
-			  	return true;
-			}
+	    	String id = null;
+	    	IContentType contentType = CCorePlugin.getContentType(fileToBeIndexed.getProject(), fileToBeIndexed.getName());
+	    	if (contentType != null) {
+	    		id = contentType.getId();
+	    	}
+	    	if (id != null) {
+	    		if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)
+	    			|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
+	    			|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)
+	    			|| CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
+	    			return true;
+	    		} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
+	    			// FIXME: ALAIN
+	    			// What do we do here ?
+	    		}
+	    	}
 		}
 		
 		return false;

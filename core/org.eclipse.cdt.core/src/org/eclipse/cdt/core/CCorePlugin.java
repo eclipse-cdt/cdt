@@ -17,10 +17,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
-import org.eclipse.cdt.core.filetype.IResolverModel;
-import org.eclipse.cdt.core.internal.filetype.ResolverModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -59,6 +55,9 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 import org.osgi.framework.BundleContext;
 
 public class CCorePlugin extends Plugin {
@@ -119,7 +118,30 @@ public class CCorePlugin extends Plugin {
      * @see #getDefaultOptions
      */
     public static final String CORE_ENCODING = PLUGIN_ID + ".encoding"; //$NON-NLS-1$
-	public CDTLogWriter cdtLog = null;
+	
+	/**
+	 * IContentType id for C Source Unit
+	 */
+	public final static String CONTENT_TYPE_CSOURCE =  "org.eclipse.cdt.core.cSource"; //$NON-NLS-1$
+	/**
+	 * IContentType id for C Header Unit
+	 */
+	public final static String CONTENT_TYPE_CHEADER =  "org.eclipse.cdt.core.cHeader"; //$NON-NLS-1$
+	/**
+	 * IContentType id for C++ Source Unit
+	 */
+	public final static String CONTENT_TYPE_CXXSOURCE = "org.eclipse.cdt.core.cxxSource"; //$NON-NLS-1$
+	/**
+	 * IContentType id for C++ Header Unit
+	 */
+	public final static String CONTENT_TYPE_CXXHEADER = "org.eclipse.cdt.core.cxxHeader"; //$NON-NLS-1$
+	/**
+	 * IContentType id for ASM Unit
+	 */
+	public final static String CONTENT_TYPE_ASMSOURCE = "org.eclipse.cdt.core.asmSource"; //$NON-NLS-1$
+
+
+    public CDTLogWriter cdtLog = null;
 
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
@@ -578,43 +600,6 @@ public class CCorePlugin extends Plugin {
 		return parser;
 	}
 
-	/**
-	 * Returns the file type object corresponding to the provided
-	 * file name.
-	 * 
-	 * If no file type object exists, a default file type object is
-	 * returned.
-	 * 
-	 * @param project Project to resolve type info for.
-	 * @param fileName Name of the file to resolve type info for.
-	 * 
-	 * @return File type object for the provided file name, in the context
-	 * of the given project (or the workspace, if project is null)
-	 */
-	public ICFileType getFileType(IProject project, String fileName) {	
-		return getFileTypeResolver(project).getFileType(fileName);
-	}
-
-	/**
-	 * Return the file type resolver for the specified project.
-	 * Specifying a null project returns the file type resolver
-	 * for the workspace.
-	 * 
-	 * @param project Project to get file type resolver for.
-	 * 	 * 
-	 * @return File type resolver for the project.
-	 */
-	public ICFileTypeResolver getFileTypeResolver(IProject project) {	
-		if (null == project) {
-			return getResolverModel().getResolver();
-		}
-		return getResolverModel().getResolver(project);
-	}
-
-	public IResolverModel getResolverModel() {	
-		return ResolverModel.getDefault();
-	}
-	
 	public CoreModel getCoreModel() {
 		return fCoreModel;
 	}
@@ -864,6 +849,41 @@ public class CCorePlugin extends Plugin {
 		return provider;
 	}
 
+	/**
+	 * Helper function, returning the contenttype for a filename
+	 * Same as: <p><p>
+	 * 	getContentType(null, filename)
+	 * <br>
+	 * @param project
+	 * @param name
+	 * @return
+	 */
+	public static IContentType getContentType(String filename) {
+		return getContentType(null, filename);
+	}
+	
+	/**
+	 * Helper function, returning the contenttype for a filename
+	 * @param project
+	 * @param name
+	 * @return
+	 */
+	public static IContentType getContentType(IProject project, String filename) {
+		// try with the project settings
+		if (project != null) {
+			try {
+				IContentTypeMatcher matcher = project.getContentTypeMatcher();
+				return matcher.findContentTypeFor(filename);
+			} catch (CoreException e) {
+				// ignore. 
+			}
+		}
+		// Try in the workspace.
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		return manager.findContentTypeFor(filename);
+	}
+
+
 	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
 	private static final String INDEXER = CCorePlugin.PLUGIN_ID + "/debug/indexer"; //$NON-NLS-1$
 	private static final String INDEX_MANAGER = CCorePlugin.PLUGIN_ID + "/debug/indexmanager"; //$NON-NLS-1$
@@ -873,7 +893,6 @@ public class CCorePlugin extends Plugin {
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/debug/scanner"; //$NON-NLS-1$
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ; //$NON-NLS-1$
-	private static final String RESOLVER = CCorePlugin.PLUGIN_ID + "/debug/typeresolver" ; //$NON-NLS-1$
 	//private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 
 	/**
@@ -912,9 +931,6 @@ public class CCorePlugin extends Plugin {
 			
 			option = Platform.getDebugOption(MATCH_LOCATOR);
 			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-
-			option = Platform.getDebugOption(RESOLVER);
-			if(option != null) ResolverModel.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
 			if (indexFlag == true){
 			   JobManager.VERBOSE = true; 	

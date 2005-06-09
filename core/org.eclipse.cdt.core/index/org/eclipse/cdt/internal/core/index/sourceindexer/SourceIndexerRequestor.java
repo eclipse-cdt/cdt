@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -199,11 +199,11 @@ public class SourceIndexerRequestor implements ISourceElementRequestor {
 		
 		IProject resourceProject = resourceFile.getProject();
 		/* Check to see if this is a header file */
-		ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject,
+		boolean isHeader = CoreModel.isValidHeaderUnitName(resourceProject,
 				inclusion.getFullFileName());
 
 		/* See if this file has been encountered before */
-		if (type.isHeader())
+		if (isHeader)
 			indexer.haveEncounteredHeader(resourceProject.getFullPath(),new Path(inclusion.getFullFileName()));
 		
 	}

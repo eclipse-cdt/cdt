@@ -217,7 +217,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		for (int i = 0; i < containers.length; ++i) {
 			if (containers[i] instanceof IPathEntryContainerExtension) {
 				IPathEntryContainerExtension extension = (IPathEntryContainerExtension)containers[i];
-                IPathEntry[] incs = (IPathEntry[])extension.getPathEntries(resPath, IPathEntry.CDT_MACRO);
+                IPathEntry[] incs = extension.getPathEntries(resPath, IPathEntry.CDT_MACRO);
 				macroList.addAll(Arrays.asList(incs));
 			}
 		}

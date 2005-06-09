@@ -28,8 +28,6 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.filetype.IResolverChangeListener;
-import org.eclipse.cdt.core.filetype.ResolverChangeEvent;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -61,8 +59,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
+import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 
-public class CModelManager implements IResourceChangeListener, ICDescriptorListener, IResolverChangeListener {
+public class CModelManager implements IResourceChangeListener, ICDescriptorListener, IContentTypeChangeListener {
 
 	public static boolean VERBOSE = false;
 
@@ -80,7 +80,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	protected DeltaProcessor fDeltaProcessor = new DeltaProcessor();
 
-	protected ResolverProcessor fResolverProcessor = new ResolverProcessor();
+	protected ContentTypeProcessor fContentTypeProcessor = new ContentTypeProcessor();
 
 	/**
 	 * Queue of deltas created explicily by the C Model that
@@ -163,9 +163,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			// Register the Core Model on the Descriptor
 			// Manager, it needs to know about changes.
 			CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(factory);
-			// Register the Core Model on the Resolver
-			// Manager, it needs to know about changes.
-			CCorePlugin.getDefault().getResolverModel().addResolverChangeListener(factory);
+			// Register the Core Model on the ContentTypeManager
+			// it needs to know about changes.
+			Platform.getContentTypeManager().addContentTypeChangeListener(factory);
 		}
 		return factory;
 	}
@@ -402,7 +402,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
 				for (int i = 0; i < includeReferences.length; i++) {
 					if (includeReferences[i].isOnIncludeEntry(path)) {
-						return new ExternalTranslationUnit(includeReferences[i], path);
+						String id = CoreModel.getRegistedContentTypeId(cproject.getProject(), path.lastSegment());
+						if (id == null) {
+							// fallback to C Header
+							id = CCorePlugin.CONTENT_TYPE_CHEADER;
+						}
+						return new ExternalTranslationUnit(includeReferences[i], path, id);
 					}
 				}
 			} catch (CModelException e) {
@@ -414,7 +419,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					IPath includePath = includeReferences[i].getPath().append(path);
 					File file = includePath.toFile();
 					if (file != null && file.isFile()) {
-						return new ExternalTranslationUnit(includeReferences[i], includePath);
+						String id = CoreModel.getRegistedContentTypeId(cproject.getProject(), includePath.lastSegment());
+						if (id == null) {
+							// fallbakc to C Header
+							id = CCorePlugin.CONTENT_TYPE_CHEADER;
+						}
+						return new ExternalTranslationUnit(includeReferences[i], includePath, id);
 					}
 				}
 			} catch (CModelException e) {
@@ -756,10 +766,10 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.filetype.IResolverChangeListener#resolverChanged(org.eclipse.cdt.core.filetype.ResolverChangeEvent)
+	 * @see org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeListener#contentTypeChanged()
 	 */
-	public void resolverChanged(ResolverChangeEvent event) {
-		fResolverProcessor.processResolverChanges(event);
+	public void contentTypeChanged(ContentTypeChangeEvent event) {
+		fContentTypeProcessor.processContentTypeChanges(event);
 	}
 
 	public void fire(int eventType) {
@@ -1098,8 +1108,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 		// Remove ourself from the DescriptorManager.
 		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(factory);
-		// Remove ourself from the ResolverManager.
-		CCorePlugin.getDefault().getResolverModel().removeResolverChangeListener(factory);
+		// Remove ourself from the ContentTypeManager
+		Platform.getContentTypeManager().removeContentTypeChangeListener(factory);
 
 		// Do any shutdown of services.
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(factory);

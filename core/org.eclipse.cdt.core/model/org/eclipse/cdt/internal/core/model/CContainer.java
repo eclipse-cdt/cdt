@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
@@ -122,7 +123,8 @@ public class CContainer extends Openable implements ICContainer {
 	}
 
 	public ITranslationUnit getTranslationUnit(IFile file) {
-		return new TranslationUnit(this, file);
+		String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
+		return new TranslationUnit(this, file, id);
 	}
 
 	/*
@@ -234,29 +236,29 @@ public class CContainer extends Openable implements ICContainer {
 	protected ICElement computeChild(IResource res, ICProject cproject) throws CModelException {
 		ICElement celement = null;
 		switch (res.getType()) {
-			case IResource.FILE :
-				{
-					IFile file = (IFile) res;
-					if (CoreModel.isTranslationUnit(file)) {
-						celement = new TranslationUnit(this, file);
-					} else if (cproject.isOnOutputEntry(file)) {
-						IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);
-						if (bin != null) {
-							if (bin.getType() == IBinaryFile.ARCHIVE) {
-								celement = new Archive(this, file, (IBinaryArchive)bin);
-								ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
-								vlib.addChild(celement);
-							} else {
-								celement = new Binary(this, file, (IBinaryObject)bin);
-								if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
-									BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
-									vbin.addChild(celement);
-								}
+			case IResource.FILE : {
+				IFile file = (IFile) res;
+				String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
+				if (id != null) {
+					celement = new TranslationUnit(this, file, id);
+				} else if (cproject.isOnOutputEntry(file)) {
+					IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);
+					if (bin != null) {
+						if (bin.getType() == IBinaryFile.ARCHIVE) {
+							celement = new Archive(this, file, (IBinaryArchive)bin);
+							ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
+							vlib.addChild(celement);
+						} else {
+							celement = new Binary(this, file, (IBinaryObject)bin);
+							if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+								BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+								vbin.addChild(celement);
 							}
 						}
 					}
-					break;
 				}
+				break;
+			}
 			case IResource.FOLDER :
 				celement = new CContainer(this, res);
 				break;

@@ -12,9 +12,8 @@ package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
-import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
@@ -45,10 +44,9 @@ public abstract class AddFileToIndex extends IndexRequest {
 		if (checkEncounteredHeaders) {
 			IProject resourceProject = resource.getProject();
 			/* Check to see if this is a header file */ 
-			ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject,resource.getName());
-			
+			boolean isHeader = CoreModel.isValidHeaderUnitName(resourceProject, resource.getName());
 			/* See if this file has been encountered before */
-			if (type.isHeader() &&
+			if (isHeader &&
 				indexer.haveEncounteredHeader(resourceProject.getFullPath(),resource.getLocation(), true))
 				return true;
 		}

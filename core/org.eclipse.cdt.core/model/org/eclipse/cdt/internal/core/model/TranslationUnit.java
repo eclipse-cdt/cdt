@@ -11,10 +11,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
@@ -27,7 +24,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,6 +34,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	IPath location = null;
+	String fContentTypeID;
 
 	/**
 	 * If set, this is the problem requestor which will be used to notify problems
@@ -48,16 +45,19 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	SourceManipulationInfo sourceManipulationInfo = null;
 
-	public TranslationUnit(ICElement parent, IFile file) {
+	public TranslationUnit(ICElement parent, IFile file, String idType) {
 		super(parent, file, ICElement.C_UNIT);
+		setContentTypeID(idType);
 	}
 
-	public TranslationUnit(ICElement parent, IPath path) {
+	public TranslationUnit(ICElement parent, IPath path, String idType) {
 		super(parent, path, ICElement.C_UNIT);
+		setContentTypeID(idType);
 	}
 
-	public TranslationUnit(ICElement parent, IResource res, String name) {
+	public TranslationUnit(ICElement parent, IResource res, String name, String idType) {
 		super(parent, res, name, ICElement.C_UNIT);
+		setContentTypeID(idType);
 	}
 
 	public ITranslationUnit getTranslationUnit () {
@@ -479,7 +479,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.cdt.internal.core.model.IBufferFactory)
 	 */
 	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory)throws CModelException{
-		WorkingCopy workingCopy = new WorkingCopy(getParent(), getFile(), factory);
+		WorkingCopy workingCopy = new WorkingCopy(getParent(), getFile(), getContentTypeId(), factory);
 		// open the working copy now to ensure contents are that of the current state of this element
 		workingCopy.open(monitor);
 		return workingCopy;
@@ -586,46 +586,48 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isHeaderUnit()
 	 */
 	public boolean isHeaderUnit() {
-		IProject project = getCProject().getProject();
-		return CoreModel.isValidHeaderUnitName(project, getPath().lastSegment());
+		return (
+				CCorePlugin.CONTENT_TYPE_CHEADER.equals(fContentTypeID)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(fContentTypeID)
+				);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isSourceUnit()
 	 */
 	public boolean isSourceUnit() {
-		IProject project = getCProject().getProject();
-		return CoreModel.isValidSourceUnitName(project, getPath().lastSegment());
+		return (
+				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(fContentTypeID)
+				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(fContentTypeID)
+				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(fContentTypeID)
+				);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isCLanguage()
 	 */
 	public boolean isCLanguage() {
-		IProject project = getCProject().getProject();
-		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
-		String lid = type.getLanguage().getId();
-		return lid != null && lid.equals(ICFileTypeConstants.LANG_C);
+		return (
+				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(fContentTypeID)
+				|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(fContentTypeID)
+				);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isCXXLanguage()
 	 */
 	public boolean isCXXLanguage() {
-		IProject project = getCProject().getProject();
-		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
-		String lid = type.getLanguage().getId();
-		return lid != null && lid.equals(ICFileTypeConstants.LANG_CXX);
+		return (
+				CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(fContentTypeID)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(fContentTypeID)
+				);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isASMLanguage()
 	 */
 	public boolean isASMLanguage() {
-		IProject project = getCProject().getProject();
-		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
-		String lid = type.getLanguage().getId();
-		return lid != null && lid.equals(ICFileTypeConstants.LANG_ASM);
+		return CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(fContentTypeID);
 	}
 	
 	
@@ -646,5 +648,15 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getContentTypeId()
+	 */
+	public String getContentTypeId() {
+		return fContentTypeID;
+	}
+
+	protected void setContentTypeID(String id) {
+		fContentTypeID = id;
+	}
 }

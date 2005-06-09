@@ -46,8 +46,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -59,6 +57,7 @@ import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * Utility class to have commonly used algorithms in one place for searching with the DOM. 
@@ -330,12 +329,13 @@ public class DOMSearchUtil {
     */
     public static ParserLanguage getLanguageFromFile(IFile file) {
         IProject project = file.getProject();
-        ICFileType type = CCorePlugin.getDefault().getFileType(project, file.getFullPath().lastSegment());
-        String lid = type.getLanguage().getId();
-        if ( lid != null && lid.equals(ICFileTypeConstants.LANG_CXX) ) {
-            return ParserLanguage.CPP;
-        }
-        
+        IContentType contentType = CCorePlugin.getContentType(project, file.getFullPath().lastSegment());
+        if (contentType != null) {
+        	String lid = contentType.getId();
+        	if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(lid)) {
+        		return ParserLanguage.CPP;
+        	}
+        }        
         return ParserLanguage.C;
     }
 
@@ -443,17 +443,29 @@ public class DOMSearchUtil {
 	 * @return
 	 */
     public static ParserLanguage getLanguage( IPath path, IProject project )
-    {    
-        ICFileType type = CCorePlugin.getDefault().getFileType(project, path.lastSegment());
-        boolean isHeader= type.isHeader();
-        if( isHeader ) 
-            return ParserLanguage.CPP; // assumption
-        String lid = type.getLanguage().getId();
-        if( lid.equals(ICFileTypeConstants.LANG_CXX))
-            return ParserLanguage.CPP;
-        if( lid.equals( ICFileTypeConstants.LANG_C ) )
-            return ParserLanguage.C;
-        return ParserLanguage.CPP;
+    {  
+    	//FIXME: ALAIN, for headers should we assume CPP ??
+    	// The problem is that it really depends on how the header was included.
+    	String id = null;
+    	IContentType contentType = CCorePlugin.getContentType(project, path.lastSegment());
+    	if (contentType != null) {
+    		id = contentType.getId();
+    	}
+    	if (id != null) {
+    		if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+    			return ParserLanguage.CPP;
+    		} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
+    			return ParserLanguage.CPP;
+    		} else if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
+    			return ParserLanguage.CPP; 				// <============== is that right ? should not this be C ?
+    		} else if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
+    			return ParserLanguage.C;
+    		} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
+    			// ???
+    			// What do we do here ?
+    		}
+    	}
+		return ParserLanguage.CPP;
     }
 	
 	/**

@@ -1,3 +1,36 @@
+2005-06-08 Alain Magloire
+	Move to the IContentTypeManager framework: PR 86645
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddFileToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddFolderToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRequestor.java
+	
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/core/model/ITranslationUnit.java
+
+	* model/org/eclipse/cdt/internal/core/model/CContainer.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	+ model/org/eclipse/cdt/internal/core/model/ContentTypeProcessor.java
+	* model/org/eclipse/cdt/internal/core/model/CreateWorkingCopyOperation.java
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* model/org/eclipse/cdt/internal/core/model/ExternalTranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/IncludeReference.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	- model/org/eclipse/cdt/internal/core/model/ResolverProcessor.java
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/WorkingCopy.java
+
+	* plugin.xml
+	- schema/CFileType.exsd
+	- schema//CFileTypeAssociation.exsd
+	- template/cpp_headers
+
+	* search/org/eclipse/cdt/core/search
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+
+	- src/org/eclipse/cdt/core/filetype/*
+	- src/org/eclipse/cdt/core/internal/filetype/*
+	
 2005-06-07 Vladimir Hirsl
 	Fix for a problem with DOM indexer, where external header files in translation unit's
 	inclusion tree were not visited.

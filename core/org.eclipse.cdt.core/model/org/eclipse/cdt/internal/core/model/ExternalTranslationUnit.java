@@ -34,8 +34,8 @@ public class ExternalTranslationUnit extends TranslationUnit {
 	 * @param parent
 	 * @param path
 	 */
-	public ExternalTranslationUnit(ICElement parent, IPath path) {
-		super(parent, (IResource)null, path.toString());
+	public ExternalTranslationUnit(ICElement parent, IPath path, String contentTypeID) {
+		super(parent, (IResource)null, path.toString(), contentTypeID);
 		fPath = path;
 	}
 

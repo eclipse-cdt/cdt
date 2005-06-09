@@ -15,11 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
-import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
-import org.eclipse.cdt.core.filetype.IResolverModel;
-import org.eclipse.cdt.core.filetype.ResolverChangeEvent;
-import org.eclipse.cdt.core.filetype.ResolverDelta;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -28,50 +23,38 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 /**
- * ResolverProcessor
+ * ContentType processor
  */
-public class ResolverProcessor  {
+public class ContentTypeProcessor {
 
 	CModelManager fManager;
 	CElementDelta fCurrentDelta;
 
-	public void processResolverChanges(ResolverChangeEvent event) {
+	public void processContentTypeChanges(ContentTypeChangeEvent event) {
 		ICElement root = CModelManager.getDefault().getCModel();
 		fCurrentDelta = new CElementDelta(root);
 		fManager = CModelManager.getDefault();
+		IContentType contentType = event.getContentType();
 		
-		// Go through the events and generate deltas
-		ResolverDelta[] deltas = event.getDeltas();
-		ICElement[] celements = getAffectedElements(event.getResolver());
-		for (int k = 0; k < celements.length; ++k) {
-			ICElement celement = celements[k];
-			for (int i = 0; i < deltas.length; ++i) {
-				ResolverDelta delta = deltas[i];
-				if (delta.getElementType() == ResolverDelta.ELEMENT_ASSOCIATION) {
-					ICFileTypeAssociation association = (ICFileTypeAssociation)delta.getElement();
-					if (association.getType().isTranslationUnit()) {
-						try {
-							switch (delta.getEventType()) {
-							case ResolverDelta.EVENT_ADD:
-								add(celement, association);
-							break;
-							case ResolverDelta.EVENT_REMOVE:
-								remove(celement, association);
-							break;
-							}
-						} catch (CModelException e) {
-							//
-						}
-					}
-				}
+		// only interested in our contentTypes
+		if (isRegisteredContentTypeId(contentType.getId())) {
+			// Go through the events and generate deltas
+			ICProject[] cprojects = getAffectedProjects(event);
+			for (int k = 0; k < cprojects.length; ++k) {
+				ICProject cproject = cprojects[k];
+				processContentType(cproject, contentType, event.getContext());
 			}
 		}
 		if (fCurrentDelta.getAffectedChildren().length > 0) {
@@ -79,23 +62,50 @@ public class ResolverProcessor  {
 		}
 	}
 
-	void add(ICElement celement, ICFileTypeAssociation association) throws CModelException {
+	boolean isRegisteredContentTypeId(String id) {
+		String[] ids = CoreModel.getRegistedContentTypeIds();
+		for (int i = 0; i < ids.length; i++) {
+			if (ids[i].equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void processContentType(ICElement celement, IContentType contentType, IScopeContext context) {
 		if (celement instanceof IOpenable) {
 			int type = celement.getElementType();
-			if (type < ICElement.C_UNIT) {
+			// if the type is not a TranslationUnit
+			switch (type) {
+			case ICElement.C_PROJECT: {
+				CElementInfo info = (CElementInfo)fManager.peekAtInfo(celement);
+				if (info != null) {
+					ICElement[] celements = info.getChildren();
+					for (int i = 0; i < celements.length; ++i) {
+						processContentType(celements[i], contentType, context);
+					}
+				}
+				break;
+			}
+			case ICElement.C_CCONTAINER: {
 				CElementInfo info = (CElementInfo)fManager.peekAtInfo(celement);
 				if (info != null) {
 					try {
+						ICElement[] celements = info.getChildren();
 						IResource resource = celement.getResource();
 						IResource[] members = null;
 						if (resource instanceof IContainer) {
 							members = ((IContainer)resource).members();
 						}
 						if (members != null) {
+							//IContentTypeMatcher matcher = resource.getProject().getContentTypeMatcher();
 							for (int i = 0; i < members.length; ++i) {
 								if (members[i] instanceof IFile) {
 									IFile file = (IFile) members[i];
-									if (association.matches(file.getName())) {
+									//if (contentType.isAssociatedWith(file.getName(), context)) {
+									IContentType cType = CCorePlugin.getContentType(file.getProject(), file.getName());
+									if (cType != null && cType.equals(contentType)) {
+//									if (CoreModel.isValidTranslationUnitName(file.getProject(), file.getName())) {
 										ICElement newElement = CoreModel.getDefault().create(file);
 										if (newElement != null) {
 											elementAdded(newElement, celement);
@@ -103,39 +113,33 @@ public class ResolverProcessor  {
 									}
 								}
 							}
-							ICElement[] celements = info.getChildren();
-							for (int i = 0; i < celements.length; ++i) {
-								add(celements[i], association);
-							}
+						}
+						for (int i = 0; i < celements.length; ++i) {
+							processContentType(celements[i], contentType, context);
 						}
 					} catch (CoreException e) {
 						//
 					}
 				}
 			}
-		}
-	}
-
-	void remove(ICElement celement, ICFileTypeAssociation association) throws CModelException {
-		if (celement instanceof IOpenable) {
-			int type = celement.getElementType();
-			if (type < ICElement.C_UNIT) {
-				CElementInfo cinfo = (CElementInfo)fManager.peekAtInfo(celement);
-				if (cinfo != null) {
-					ICElement[] celements = cinfo.getChildren();
-					for (int i = 0; i < celements.length; ++i) {
-						if (celements[i].getElementType() == ICElement.C_UNIT) {
-							if (association.matches(celements[i].getElementName())) {
-								elementRemoved(celements[i], celement);
-							}
-						} else {
-							remove(celements[i], association);
+			break;
+			case ICElement.C_UNIT: {
+				String id =  ((ITranslationUnit)celement).getContentTypeId();
+				if (contentType.getId().equals(id)) {
+					try {
+						if (! contentType.isAssociatedWith(celement.getElementName(), context)) {
+							elementRemoved(celement, celement.getParent());
 						}
+					} catch (CoreException e) {
+						//
 					}
 				}
+				break;
 			}
-		}		
+			}
+		}
 	}
+	
 	
 	/**
 	 * Add the resource delta to the right CElementDelta tree.
@@ -217,33 +221,33 @@ public class ResolverProcessor  {
 		}
 	}
 
-	private ICElement[] getAffectedElements(ICFileTypeResolver resolver) {
+	private ICProject[] getAffectedProjects(ContentTypeChangeEvent event) {
 		try {
-			IResolverModel rmodel = CCorePlugin.getDefault().getResolverModel();
 			ICModel cmodel = CoreModel.getDefault().getCModel();
 			ICProject[] cprojects = cmodel.getCProjects();
-			IContainer container = resolver.getContainer();
 
-			if (container instanceof IProject || container instanceof IFolder) {
-				IProject project = container.getProject();
-				for (int i = 0; i < cprojects.length; i++) {
-					if (project.equals(cprojects[i].getProject())) {
-						return new ICElement[] { cprojects[i] };
+			IScopeContext context = event.getContext();
+			if (context != null) {
+				if (ProjectScope.SCOPE.equals((context.getName()))) {
+					IPath location = context.getLocation();
+					for (int i = 0; i < cprojects.length; i++) {
+						if (cprojects[i].getProject().getLocation().isPrefixOf(location)) {
+							return new ICProject[] { cprojects[i] };
+						}
 					}
+					return new ICProject[0];
 				}
-				return CElement.NO_ELEMENTS;
 			}
 			// Assume a workspace resolver
 			List list = new ArrayList(cprojects.length);
 			for (int i = 0; i < cprojects.length; ++i) {
-				if (!rmodel.hasCustomResolver(cprojects[i].getProject())) {
-					list.add(cprojects[i]);
-				}
+				list.add(cprojects[i]);
 			}
-			return (ICElement[]) list.toArray(new ICElement[list.size()]);
+			return (ICProject[]) list.toArray(new ICProject[list.size()]);
 		} catch (CModelException e) {
 			//
 		}
-		return CElement.NO_ELEMENTS;
+		return new ICProject[0];
 	}
+
 }

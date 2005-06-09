@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.model;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
@@ -42,12 +41,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class CoreModel {
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = CModelManager.getDefault();
 	private static PathEntryManager pathEntryManager = PathEntryManager.getDefault();
+	private static String FILE_EXT_PATTERN = "*."; //$NON-NLS-1$
+	private static int FILE_EXT_PATTERN_LENGTH = FILE_EXT_PATTERN.length();
+
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
 	/**
@@ -165,14 +168,78 @@ public class CoreModel {
 	}
 
 	/**
-	 * Return true if IFile is a TranslationUnit.
+	 * Return true if IFile is a possible TranslationUnit.
 	 */
 	public static boolean isTranslationUnit(IFile file) {
 		if (file != null) {
 			IProject p = file.getProject();
 			if (hasCNature(p) || hasCCNature(p)) {
-				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
-				return type.isTranslationUnit();
+				return isValidTranslationUnitName(p, file.getFullPath().lastSegment());
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Return an array of the register contentTypes.
+	 * @return String[] ids
+	 */
+	public static String[] getRegistedContentTypeIds() {
+		return new String[] {
+				CCorePlugin.CONTENT_TYPE_ASMSOURCE,
+				CCorePlugin.CONTENT_TYPE_CHEADER,
+				CCorePlugin.CONTENT_TYPE_CSOURCE,
+				CCorePlugin.CONTENT_TYPE_CXXHEADER,
+				CCorePlugin.CONTENT_TYPE_CXXSOURCE
+		};
+	}
+	/**
+	 * Return true if name is a valid name for a translation unit.
+	 */
+	public static boolean isValidTranslationUnitName(IProject project, String name) {
+		if (isValidHeaderUnitName(project, name)) {
+			return true;
+		} else if (isValidSourceUnitName(project, name)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Return true if name is a valid name for a translation unit.
+	 */
+	public static boolean isValidHeaderUnitName(IProject project, String name) {
+		if (isValidCHeaderUnitName(project, name)) {
+			return true;
+		} else if (isValidCXXHeaderUnitName(project, name)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Return true if name is a valid name for a translation unit.
+	 */
+	public static boolean isValidSourceUnitName(IProject project, String name) {
+		if (isValidCSourceUnitName(project, name)) {
+			return true;
+		} else if (isValidCXXSourceUnitName(project, name)) {
+			return true;
+		} else if (isValidASMSourceUnitName(project, name)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Return true if name is a valid name for a translation unit.
+	 */
+	public static boolean isValidCSourceUnitName(IProject project, String name) {
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
+				return true;
 			}
 		}
 		return false;
@@ -181,26 +248,86 @@ public class CoreModel {
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
-	public static boolean isValidTranslationUnitName(IProject project, String name) {
-		ICFileType type = CCorePlugin.getDefault().getFileType(project, name);
-		return type.isTranslationUnit();
+	public static boolean isValidCXXSourceUnitName(IProject project, String name) {
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
-	public static boolean isValidHeaderUnitName(IProject project, String name) {
-		ICFileType type = CCorePlugin.getDefault().getFileType(project, name);
-		return type.isHeader();
+	public static boolean isValidASMSourceUnitName(IProject project, String name) {
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
-	public static boolean isValidSourceUnitName(IProject project, String name) {
-		ICFileType type = CCorePlugin.getDefault().getFileType(project, name);
-		return type.isSource();
+	public static boolean isValidCXXHeaderUnitName(IProject project, String name) {
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
+
+	/**
+	 * Return true if name is a valid name for a translation unit.
+	 */
+	public static boolean isValidCHeaderUnitName(IProject project, String name) {
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 *  Return the registed content type id, for example:
+	 *  <ul>
+	 *  <li>CONTENT_TYPE_CHEADER
+	 *  <li>CONTENT_TYPE_CXXHEADER
+	 *  <li>CONTENT_TYPE_CSOURCE
+	 *  <li>CONTENT_TYPE_CXXSOURCE
+	 *  <li>CONTENT_TYPE_ASMSOURCE
+	 *  </ul>
+	 *  or null is return if no id match the list
+	 * @param file
+	 * @return the know id or null
+	 */
+	public static String getRegistedContentTypeId(IProject project, String name) {
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			String[] ids = getRegistedContentTypeIds();
+			for (int i = 0; i < ids.length; i++) {
+				if (ids[i].equals(id)) {
+					return id;
+				}
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * Return true if project has C nature.

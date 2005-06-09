@@ -1755,6 +1755,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		getRegisterManager().modifyRegisterGroup( group, descriptors );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#restoreDefaultRegisterGroups()
+	 */
+	public void restoreDefaultRegisterGroups() {
+		getRegisterManager().restoreDefaults();
+	}
+
 	protected void skipBreakpoints( boolean enabled ) {
 		getBreakpointManager().skipBreakpoints( enabled );
 	}

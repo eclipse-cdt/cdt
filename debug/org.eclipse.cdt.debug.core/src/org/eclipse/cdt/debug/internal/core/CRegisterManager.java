@@ -80,7 +80,18 @@ public class CRegisterManager {
 	}
 
 	public void dispose() {
-		removeAllRegisterGroups();
+		DebugPlugin.getDefault().asyncExec( 
+				new Runnable() {
+					public void run() {
+						synchronized( fRegisterGroups ) {
+							Iterator it = fRegisterGroups.iterator();
+							while( it.hasNext() ) {
+								((CRegisterGroup)it.next()).dispose();
+							}
+							fRegisterGroups.clear();
+						}
+					}
+				} );
 	}
 
 	public IRegisterDescriptor[] getAllRegisterDescriptors() throws DebugException {
@@ -154,6 +165,23 @@ public class CRegisterManager {
 			} );
 	}
 
+	public void restoreDefaults() {
+		DebugPlugin.getDefault().asyncExec( 
+				new Runnable() {
+					public void run() {
+						synchronized( fRegisterGroups ) {
+							Iterator it = fRegisterGroups.iterator();
+							while( it.hasNext() ) {
+								((CRegisterGroup)it.next()).dispose();
+							}
+							fRegisterGroups.clear();
+							initializeDefaults();
+						}
+						getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
+					}
+				} );
+	}
+
 	private void createRegisterGroups() {
 		fRegisterGroups = Collections.synchronizedList( new ArrayList( 20 ) );
 		ILaunchConfiguration config = getDebugTarget().getLaunch().getLaunchConfiguration();
@@ -209,7 +237,7 @@ public class CRegisterManager {
 		}
 	}
 
-	private void initializeDefaults() {
+	protected void initializeDefaults() {
 		String current = null;
 		int startIndex = 0;
 		for ( int i = 0; i < fRegisterDescriptors.length; ++i ) {

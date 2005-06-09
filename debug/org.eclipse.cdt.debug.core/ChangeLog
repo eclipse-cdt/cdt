@@ -1,3 +1,10 @@
+2005-06-09 Mikhail Khodjaiants
+	Bug 94139: User-defined register groups.
+	Support fo the "Restore Default Register Groups" action.
+	* ICDebugTarget.java
+	* CRegisterManager.java
+	* CDebugTarget.java
+
 2005-06-07 Mikhail Khodjaiants
 	Bug 94139: User-defined register groups.
 	Support fo the "Edit Register Group" action.

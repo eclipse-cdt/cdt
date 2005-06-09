@@ -126,4 +126,12 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * @since 3.0
 	 */
 	public void modifyRegisterGroup( IPersistableRegisterGroup group, IRegisterDescriptor[] descriptors );
+
+
+	/**
+	 * Removes all user-defined register groups and restores the hardware groups.
+	 * 
+	 * @since 3.0
+	 */
+	public void restoreDefaultRegisterGroups();
 }

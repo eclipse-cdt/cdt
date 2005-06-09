@@ -651,6 +651,20 @@
             </selection>
          </action>
          <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultRegisterGroupsActionDelegate"
+               helpContextId="restore_default_register_groups_action_context"
+               id="org.eclipse.cdt.debug.ui.restoreDefaultRegisterGroupsAction"
+               label="%RestoredefaultRegisterGroupsAction.label"
+               menubarPath="additions"
+               style="push"
+               tooltip="%RestoredefaultRegisterGroupsAction.tooltip">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui.pluginState1"
+                     value="activated"/>
+            </enablement>
+         </action>
+         <action
                class="org.eclipse.cdt.debug.internal.ui.actions.AddRegisterGroupActionDelegate"
                helpContextId="add_register_group_action_context"
                id="org.eclipse.cdt.debug.ui.addRegisterGroupAction"

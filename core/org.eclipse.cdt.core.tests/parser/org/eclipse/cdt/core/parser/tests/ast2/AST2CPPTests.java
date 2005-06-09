@@ -4718,4 +4718,25 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPMethod f = (ICPPMethod) col.getName(9).resolveBinding();
         assertSame( f, col.getName(11).resolveBinding() );
 	}
+	
+	public void testAnonymousStructures() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct A {               \n");
+		buffer.append("   struct { int i; } B;  \n");
+		buffer.append("   struct { int j; } C;  \n");
+		buffer.append("};                       \n");
+		buffer.append("void f(){                \n");
+		buffer.append("   A a;                  \n");
+		buffer.append("   a.B.i; a.C.j;         \n");
+		buffer.append("}                        \n");
+	
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        ICPPField i = (ICPPField) col.getName(12).resolveBinding();
+        ICPPField j = (ICPPField) col.getName(15).resolveBinding();
+        assertSame( i, col.getName(2).resolveBinding() );
+        assertSame( j, col.getName(5).resolveBinding() );
+	}
 }

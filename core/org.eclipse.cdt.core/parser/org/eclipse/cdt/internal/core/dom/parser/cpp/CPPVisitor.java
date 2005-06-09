@@ -374,12 +374,13 @@ public class CPPVisitor {
 			}
 			scope = parentScope;
 		}
-		IBinding binding;
+		IBinding binding = null;
 		if( name instanceof ICPPASTTemplateId ){
 			return CPPTemplates.createClassSpecialization( compType );
 		} 
         try {
-            binding = (scope != null ) ? scope.getBinding( name, false ) : null;
+        	if( name.toCharArray().length > 0 && scope != null ) //can't lookup anonymous things
+        		binding = scope.getBinding( name, false );
             if( binding == null || !(binding instanceof ICPPClassType) ){
             	if( template )
             		binding = new CPPClassTemplate( name );

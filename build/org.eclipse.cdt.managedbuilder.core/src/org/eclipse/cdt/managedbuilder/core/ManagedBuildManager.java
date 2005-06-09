@@ -178,8 +178,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		getEnvironmentVariableProvider().subscribe(
 				fEnvironmentBuildPathsChangeListener = new IEnvironmentBuildPathsChangeListener(){
 					public void buildPathsChanged(IConfiguration configuration, int buildPathType){
-						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE)
+						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
+							initializePathEntries(configuration,null);
 							notifyListeners(configuration,null);
+						}
 					}
 				});
 	}
@@ -245,6 +247,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IProjectType
 	 */
 	public static IProjectType getProjectType(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IProjectType)getExtensionProjectTypeMap().get(id);
 	}
 	
@@ -424,6 +434,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IProjectType
 	 */
 	public static IProjectType getExtensionProjectType(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IProjectType) getExtensionProjectTypeMap().get(id);
 	}
 
@@ -435,6 +453,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IConfiguration
 	 */
 	public static IConfiguration getExtensionConfiguration(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IConfiguration) getExtensionConfigurationMap().get(id);
 	}
 
@@ -446,6 +472,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IResourceConfiguration
 	 */
 	public static IResourceConfiguration getExtensionResourceConfiguration(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IResourceConfiguration) getExtensionResourceConfigurationMap().get(id);
 	}
 
@@ -457,6 +491,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IToolChain
 	 */
 	public static IToolChain getExtensionToolChain(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IToolChain) getExtensionToolChainMap().get(id);
 	}
 
@@ -468,6 +510,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return ITool
 	 */
 	public static ITool getExtensionTool(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (ITool) getExtensionToolMap().get(id);
 	}
 
@@ -479,6 +529,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return ITargetPlatform
 	 */
 	public static ITargetPlatform getExtensionTargetPlatform(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (ITargetPlatform) getExtensionTargetPlatformMap().get(id);
 	}
 
@@ -490,6 +548,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IBuilder
 	 */
 	public static IBuilder getExtensionBuilder(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IBuilder) getExtensionBuilderMap().get(id);
 	}
 
@@ -501,6 +567,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IOption
 	 */
 	public static IOption getExtensionOption(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IOption) getExtensionOptionMap().get(id);
 	}
 
@@ -512,6 +586,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IInputType
 	 */
 	public static IInputType getExtensionInputType(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IInputType) getExtensionInputTypeMap().get(id);
 	}
 
@@ -523,6 +605,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return IOutputType
 	 */
 	public static IOutputType getExtensionOutputType(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (IOutputType) getExtensionOutputTypeMap().get(id);
 	}
 
@@ -534,6 +624,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return ITarget
 	 */
 	public static ITarget getExtensionTarget(String id) {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return (ITarget) getExtensionTargetMap().get(id);
 	}
 	
@@ -684,6 +782,32 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 
+	public static void initializePathEntries(IConfiguration config, IOption option){
+		try{
+			if(option != null
+					&& option.getValueType() != IOption.INCLUDE_PATH
+					&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
+					&& option.getValueType() != IOption.LIBRARIES
+					)
+				return;
+		} catch (BuildException e){
+			return;
+		}
+		IResource rc = config.getOwner();
+		if(rc != null){
+			IManagedBuildInfo info = getBuildInfo(rc);
+			if(info instanceof ManagedBuildInfo && config.equals(info.getDefaultConfiguration()))
+				((ManagedBuildInfo)info).initializePathEntries();
+		}
+			
+	}
+	
+	public static void initializePathEntries(IResourceConfiguration resConfig, IOption option){
+		IConfiguration cfg = resConfig.getParent();
+		if(cfg != null)
+			initializePathEntries(cfg,option);
+	}
+	
 	private static void notifyListeners(IResourceConfiguration resConfig, IOption option) {
 		// Continue if change is something that effect the scanreser
 		try {
@@ -736,6 +860,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			// Request a value change and set dirty if real change results
 			retOpt = config.setOption(holder, option, value);
+			initializePathEntries(config,option);
 			notifyListeners(config, option);
 		} catch (BuildException e) {
 			return null;
@@ -762,6 +887,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			// Request a value change and set dirty if real change results
 			retOpt = resConfig.setOption(holder, option, value);
+			initializePathEntries(resConfig,option);
 			notifyListeners(resConfig, option);
 		} catch (BuildException e) {
 			return null;
@@ -786,6 +912,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = config.setOption(holder, option, value);
+			initializePathEntries(config,option);
 			notifyListeners(config, option);
 		} catch (BuildException e) {
 			return null;
@@ -811,6 +938,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
+			initializePathEntries(resConfig,option);
 			notifyListeners(resConfig, option);
 		} catch (BuildException e) {
 			return null;
@@ -835,6 +963,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = config.setOption(holder, option, value);
+			initializePathEntries(config,option);
 			notifyListeners(config, option);				
 		} catch (BuildException e) {
 			return null;
@@ -860,6 +989,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
+			initializePathEntries(resConfig,option);
 			notifyListeners(resConfig, option);				
 		} catch (BuildException e) {
 			return null;

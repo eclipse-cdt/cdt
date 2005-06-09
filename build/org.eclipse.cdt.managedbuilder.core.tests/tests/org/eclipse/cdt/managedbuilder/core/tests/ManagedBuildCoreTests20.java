@@ -32,20 +32,21 @@ import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -57,11 +58,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 
 /*
  *  These tests exercise CDT 2.0 manifest file functionality 
@@ -231,11 +232,15 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		 final String[] expectedPaths = new String[5];
 
 		 // This first path is a built-in, so it will not be manipulated by build manager
-		 expectedPaths[0] = "/usr/gnu/include";
-		 expectedPaths[1] = (new Path("/usr/include")).toOSString();
-		 expectedPaths[2] = (new Path("/opt/gnome/include")).toOSString();
-		 expectedPaths[3] = (new Path("C:\\home\\tester/include")).toOSString();
-		 expectedPaths[4] = project.getLocation().append( "Sub Config\\\"..\\includes\"" ).toOSString();
+		 expectedPaths[0] = (new Path("/usr/include")).toString();
+		 expectedPaths[1] = (new Path("/opt/gnome/include")).toString();
+		 IPath path = new Path("C:\\home\\tester/include");
+		 if(path.isAbsolute()) // for win32 path is treated as absolute
+			 expectedPaths[2] = path.toString();
+		 else // for Linux path is relative
+			 expectedPaths[2] = project.getLocation().append("Sub Config").append(path).toString();
+		 expectedPaths[3] = project.getLocation().append( "includes" ).toString();
+		 expectedPaths[4] = (new Path("/usr/gnu/include")).toString();
 		 
 		// Create a new managed project based on the sub project type
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.sub");
@@ -1696,7 +1701,10 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), /*MakeCorePlugin.MAKE_PROJECT_ID*/ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
+
+			// Now associate the builder with the project
+			ManagedBuildTestHelper.addManagedBuildNature(project);
 		} else {
 			newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, null);
 			project = newProjectHandle;

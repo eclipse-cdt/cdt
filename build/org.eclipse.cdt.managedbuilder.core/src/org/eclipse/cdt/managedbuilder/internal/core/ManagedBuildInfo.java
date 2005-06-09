@@ -1114,7 +1114,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if (context != 0) {
 			try {
 				s = ManagedBuildManager.getBuildMacroProvider().resolveValue(s, EMPTY, " ", context, obj); //$NON-NLS-1$
-			} catch (BuildMacroException e) { return EMPTY; }
+			} catch (BuildMacroException e) {
+			}
 		}
 		if (s == null) { s = path; }
 

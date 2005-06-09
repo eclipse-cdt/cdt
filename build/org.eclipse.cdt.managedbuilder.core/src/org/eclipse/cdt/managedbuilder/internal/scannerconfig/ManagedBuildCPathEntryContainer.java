@@ -174,16 +174,14 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		}
 		// get the associated scanner config discovery profile id
         String scdProfileId = ManagedBuildManager.getScannerInfoProfileId(defaultConfig);
-        if (scdProfileId == null) {
-            // scanner config profile not defined
-            ManagedBuildCPathEntryContainer.outputError(project.getName(), "Scanner config discovery profile not specified for the configuration");    //$NON-NLS-1$
-            return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+        IScannerInfoCollector collector = null;
+        SCProfileInstance profileInstance = null;
+        if (scdProfileId != null) {
+			// See if we can load a dynamic resolver
+	        profileInstance = ScannerConfigProfileManager.getInstance().
+	                getSCProfileInstance(project, scdProfileId);
+	        collector = profileInstance.createScannerInfoCollector();
         }
-        
-		// See if we can load a dynamic resolver
-        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-                getSCProfileInstance(project, scdProfileId);
-        IScannerInfoCollector collector = profileInstance.createScannerInfoCollector();
         
         synchronized(this) {
 		if (collector instanceof IManagedScannerInfoCollector) {

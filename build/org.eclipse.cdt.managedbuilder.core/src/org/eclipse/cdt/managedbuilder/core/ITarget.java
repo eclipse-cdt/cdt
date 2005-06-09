@@ -34,6 +34,7 @@ public interface ITarget extends IBuildObject {
 	public static final String OS_LIST = "osList";	//$NON-NLS-1$
 	public static final String ARCH_LIST = "archList";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
+	public static final String SCANNER_INFO_COLLECTOR_ID = "scannerInfoCollector";	//$NON-NLS-1$
 	
 	/**
 	 * Creates a configuration for the target populated with the tools and

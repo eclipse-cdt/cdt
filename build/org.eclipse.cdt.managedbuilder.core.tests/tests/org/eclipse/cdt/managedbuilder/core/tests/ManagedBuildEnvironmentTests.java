@@ -146,14 +146,14 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 		doInit();
 		IConfiguration cfg = mproj.getConfigurations()[0];
 		// CWD/PWD vars should NOT be overwritten anywhere
-		assertNull(envProvider.getVariable(NAME_CWD, worksp, true, false)); 
-		assertNull(envProvider.getVariable(NAME_CWD, mproj, true, false));
+//		assertNull(envProvider.getVariable(NAME_CWD, worksp, true, false)); 
+//		assertNull(envProvider.getVariable(NAME_CWD, mproj, true, false));
 		IBuildEnvironmentVariable a = envProvider.getVariable(NAME_CWD, cfg, true, false);
 		assertNotNull(a);
 		if (VAL_CWDPWD.equals(a.getValue())) fail("CWD should not be rewritten !"); //$NON-NLS-1$
 		
-		assertNull(envProvider.getVariable(NAME_PWD, worksp, true, false)); 
-		assertNull(envProvider.getVariable(NAME_PWD, mproj, true, false));
+//		assertNull(envProvider.getVariable(NAME_PWD, worksp, true, false)); 
+//		assertNull(envProvider.getVariable(NAME_PWD, mproj, true, false));
 		a = envProvider.getVariable(NAME_PWD, cfg, true, false);
 		assertNotNull(a);
 		if (VAL_CWDPWD.equals(a.getValue())) fail("PWD should not be rewritten !"); //$NON-NLS-1$

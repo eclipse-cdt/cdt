@@ -65,6 +65,7 @@ public class Target extends BuildObject implements ITarget {
 	private Map toolMap;
 	private List toolReferences;
 	private ProjectType createdProjectType;
+	private String scannerInfoCollectorId;
 
 	/**
 	 * This constructor is called to create a target defined by an extension point in 
@@ -117,6 +118,9 @@ public class Target extends BuildObject implements ITarget {
 
 		// Get the make arguments
 		makeArguments = element.getAttribute(MAKE_ARGS);
+		
+		// Get scannerInfoCollectorId
+		scannerInfoCollectorId = element.getAttribute(SCANNER_INFO_COLLECTOR_ID);
 		
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
@@ -191,6 +195,7 @@ public class Target extends BuildObject implements ITarget {
 		this.defaultExtension = parent.getArtifactExtension();
 		this.isTest = parent.isTestTarget();
 		this.cleanCommand = parent.getCleanCommand();
+		this.scannerInfoCollectorId = ((Target)parent).scannerInfoCollectorId;
 
 		// Hook me up
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner);
@@ -1021,7 +1026,8 @@ public class Target extends BuildObject implements ITarget {
             // In target element had a scannerInfoCollector element here which
             // is now replaced with scanner config discovery profile id.
             // Using the default per project profile for managed make
-            toolChain.setScannerConfigDiscoveryProfileId(ManagedBuildCPathEntryContainer.MM_PP_DISCOVERY_PROFILE_ID);
+			if(scannerInfoCollectorId != null && scannerInfoCollectorId.equals("org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector")) 	//$NON-NLS-1$
+				toolChain.setScannerConfigDiscoveryProfileId(ManagedBuildCPathEntryContainer.MM_PP_DISCOVERY_PROFILE_ID);
 			// Create the Builder
 			subId = id + ".builder"; 	//$NON-NLS-1$
 			subName = name + ".builder"; 	//$NON-NLS-1$

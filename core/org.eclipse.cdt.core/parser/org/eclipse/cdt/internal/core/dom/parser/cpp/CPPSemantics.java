@@ -1720,6 +1720,11 @@ public class CPPSemantics {
 	        	mergeResults( data, bindings, false );
 	        	items = (Object[]) data.foundItems;
 	        	continue;
+	        } else if( temp instanceof CPPCompositeBinding ){
+	        	IBinding [] bindings = ((CPPCompositeBinding)temp).getBindings();
+	        	mergeResults( data, bindings, false );
+	        	items = (Object[]) data.foundItems;
+	        	continue;
 	        } else if( temp instanceof IType ){
 	        	if( type == null ){
 	                type = temp;

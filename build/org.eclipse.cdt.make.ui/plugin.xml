@@ -370,11 +370,10 @@
       <editor
             name="%MakefileEditor.name"
             icon="icons/etool16/makefile.gif"
-            extensions="mk"
-            filenames="Makefile,makefile,GNUMakefile"
             contributorClass="org.eclipse.cdt.make.internal.ui.editor.MakefileEditorActionContributor"
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileEditor"
             id="org.eclipse.cdt.make.editor">
+            <contentTypeBinding contentTypeId="org.eclipse.cdt.make.core.makefile"/>
       </editor>
    </extension>
    <extension

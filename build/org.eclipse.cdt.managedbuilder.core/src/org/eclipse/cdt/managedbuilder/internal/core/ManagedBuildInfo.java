@@ -1251,7 +1251,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// calculate parameters depending of object type
 		if (obj instanceof IResourceConfiguration) {
 			resPath = new Path(((IResourceConfiguration)obj).getResourcePath());
-			t = ((IResourceConfiguration)obj).getTools();
+			t = ((IResourceConfiguration)obj).getToolsToInvoke();
 		} else if (obj instanceof IConfiguration) {
 			t  = ((IConfiguration)obj).getFilteredTools();
 		} else { return entries; } // wrong object passed 

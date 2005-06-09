@@ -3589,5 +3589,246 @@
 			  </toolChain>
          </configuration>
       </projectType>                 
+
+<!-- 
+	Project type for testing Environment variables and Macros features
+	Note: toolchains are cut and cannot be used for real compilation.
+-->
+            <projectType
+                  id="cdt.managedbuild.target.testenv.exe"
+                  isAbstract="false"
+                  isTest="true"
+                  name="testenv.exe"
+                  projectEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                  projectMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro">
+         <configuration
+               name="One"
+               id="cdt.managedbuild.config.testenv.exe.debug"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+               <toolChain
+                     archList="all"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     id="cdt.managedbuild.toolchain.testenv.exe.debug"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     name="Dbg ToolChain"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.testenv.platform.exe.debug"
+		              name="Dbg Platform"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              osList="solaris,linux,hpux,aix,qnx"
+		              archList="all">
+	              </targetPlatform>
+				  <builder
+				      id="cdt.managedbuild.target.testenv.builder.exe.debug"
+		              name="Dbg Builder"
+		              command="make"
+		              arguments="-k"
+		              variableFormat="@="
+		              isVariableCaseSensitive="false"
+		              reservedMacroNames="PATH"		              
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		     	  </builder>               
+                  <tool
+                      id="cdt.managedbuild.tool.testenv.c.compiler.exe.debug"
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
+			  	      <option
+        		          id="macro.test.string"
+        		          defaultValue="000"
+                		  superClass="gnu.c.compiler.option30.optimization.flags"
+                		  value="111"
+        		          valueType="string">
+					  </option>
+					  <option
+		                  valueType="stringList"
+        		          name="ass"
+        		          superClass="gnu.cpp.compiler.option30.preprocessor.undef"
+                		  id="macro.test.list">
+			               <listOptionValue value="x"/>
+            			   <listOptionValue value="y"/>
+			               <listOptionValue value="z"/>
+            		  </option>
+	                  <envVarBuildPath
+        	                  pathType="buildpathInclude"
+                	          variableList="CFGI,CFG0,PRJI">
+	                  </envVarBuildPath>
+        	          <envVarBuildPath
+                	          pathType="buildpathLibrary"
+                        	  variableList="CFGL,PRJL">
+	                  </envVarBuildPath>
+				  </tool>
+				  <tool
+                      id="cdt.managedbuild.tool.testenv.cpp.compiler.exe.debug"
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                         
+                  </tool>
+			  </toolChain>
+         </configuration>
+         <configuration
+               name="Two"
+               id="cdt.managedbuild.config.testenv.exe.release"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+               <toolChain
+                     archList="all"
+                     configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     id="cdt.managedbuild.toolchain.testenv.exe.release"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     name="Rel ToolChain"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.testenv.platform.exe.release"
+		              name="Rel Platform"		             
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              osList="solaris,linux,hpux,aix,qnx"
+		              archList="all">		              
+		          </targetPlatform>
+				  <builder
+				      id="cdt.managedbuild.target.testenv.builder.exe.release"
+		              name="Rel Builder"		              
+		              command="make"
+		              isVariableCaseSensitive="true"
+		              macroInputFileNameValue="$(notdir $&lt;)"
+			          macroInputFileExtValue="$(suffix $(notdir $&lt;))"
+			          macroInputFileBaseNameValue="$(basename $(notdir $&lt;))"
+			          macroInputFileRelPathValue="$&lt;"
+			          macroInputDirRelPathValue="$(dir $&lt;)"
+			          macroOutputFileNameValue="$(notdir $@)"
+			          macroOutputFileExtValue="$(suffix $(notdir $@))"
+			          macroOutputFileBaseNameValue="$(basename $(notdir $@))"
+			          macroOutputFileRelPathValue="$@"
+			          macroOutputDirRelPathValue="$(dir $@)"
+		              arguments="-k">
+				  </builder> 
+                  <tool
+                      id="cdt.managedbuild.tool.testenv.c.compiler.exe.release"
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+	                  <envVarBuildPath
+        	                  pathType="buildpathInclude"
+                	          variableList="CFGI,CFG1,PRJI">
+	                  </envVarBuildPath>
+        	          <envVarBuildPath
+                	          pathType="buildpathLibrary"
+                        	  variableList="CFGL,PRJL">
+	                  </envVarBuildPath>
+                  </tool>
+               </toolChain>
+         </configuration>
+         <configuration
+               name="Three"
+               id="cdt.managedbuild.config.testenv.exe.xz"
+               cleanCommand="rm -rf">
+               <toolChain
+                     configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     id="cdt.managedbuild.toolchain.testenv.exe.xz"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     name="Three ToolChain"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.testenv.platform.exe.xz"
+		              name="xz Platform">
+		          </targetPlatform>
+				  <builder
+				      id="cdt.managedbuild.target.testenv.builder.exe.xz"
+		              name="XZ Builder"		              
+		              command="make"
+		              isVariableCaseSensitive="false"
+		              variableFormat="@="
+		              reservedMacroNameSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+		              arguments="-k">
+				  </builder> 
+                  <tool
+                      id="cdt.managedbuild.tool.testenv.c.compiler.exe.xz"
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                  </tool>
+               </toolChain>
+         </configuration>
+         <configuration
+               name="Four"
+               id="cdt.managedbuild.config.testenv.exe.min">
+               <toolChain
+                     id="cdt.managedbuild.toolchain.testenv.exe.min"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     name="Three ToolChain">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.testenv.platform.exe.min"
+		              name="Rel Platform">
+		          </targetPlatform>
+				  <builder
+				      id="cdt.managedbuild.target.testenv.builder.exe.min"
+		              name="Min Builder"		              
+		              command="make"
+		              isVariableCaseSensitive="true"
+		              variableFormat="@=">
+				  </builder> 
+                  <tool
+                      id="cdt.managedbuild.tool.testenv.c.compiler.exe.min"
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">                          
+                  </tool>
+               </toolChain>
+         </configuration>
+         <configuration
+               name="Five"
+               id="cdt.managedbuild.config.testenv.exe.five"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+               <toolChain
+                     archList="all"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     id="cdt.managedbuild.toolchain.testenv.exe.five"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     name="Dbg ToolChain"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.testenv.platform.exe.five"
+		              name="Dbg Platform"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              osList="solaris,linux,hpux,aix,qnx"
+		              archList="all">
+	              </targetPlatform>
+				  <builder
+				      id="cdt.managedbuild.target.testenv.builder.exe.five"
+		              name="Dbg Builder"
+		              command="make"
+		              arguments="-k"
+		              variableFormat="@="
+		              isVariableCaseSensitive="false"
+		              reservedMacroNames="PATH"		              
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.core.tests.TestMacro">
+		     	  </builder>               
+                  <tool
+                      id="cdt.managedbuild.tool.testenv.c.compiler.exe.five"
+                      superClass="cdt.managedbuild.tool.testgnu.c.compiler">
+			  	      <option
+        		          id="macro.test.string1"
+        		          defaultValue="000"
+                		  superClass="gnu.c.compiler.option30.optimization.flags"
+                		  value="111"
+        		          valueType="string">
+					  </option>
+					  <option
+		                  valueType="stringList"
+        		          name="ass"
+        		          superClass="gnu.cpp.compiler.option30.preprocessor.undef"
+                		  id="macro.test.list1">
+			               <listOptionValue value="x"/>
+            			   <listOptionValue value="y"/>
+			               <listOptionValue value="z"/>
+            		  </option>
+				  </tool>
+				  <tool
+                      id="cdt.managedbuild.tool.testenv.cpp.compiler.exe.five"
+                      superClass="cdt.managedbuild.tool.testgnu.cpp.compiler">                         
+                  </tool>
+			  </toolChain>
+         </configuration>
+         
+      </projectType>     
+
    </extension>
 </plugin>

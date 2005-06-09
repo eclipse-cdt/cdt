@@ -10,18 +10,21 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildTCSupportedTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedCommandLineGeneratorTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProjectUpdateTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  *
@@ -49,6 +52,9 @@ public class AllManagedBuildTests {
 		suite.addTest(ManagedProject21MakefileTests.suite());
 		suite.addTest(ManagedProject30MakefileTests.suite());
 		suite.addTest(ManagedBuildCoreTests_SharedToolOptions.suite());
+		suite.addTest(ManagedBuildEnvironmentTests.suite());
+		suite.addTest(ManagedBuildMacrosTests.suite());
+		suite.addTest(ManagedBuildTCSupportedTest.suite());
 		//$JUnit-END$
 		return suite;
 	}

@@ -1,3 +1,7 @@
+2005-06-08 Alain Magloire
+	Move to the IContentTypeManager framework: PR 86645
+	* src.org.eclipse/cdt/ui/tests/DOMAST/DOMAST.java
+	
 2005-03-13 Bogdan Gheorghe
 	Updated references to IndexManager to reflect new indexing framework.
 	

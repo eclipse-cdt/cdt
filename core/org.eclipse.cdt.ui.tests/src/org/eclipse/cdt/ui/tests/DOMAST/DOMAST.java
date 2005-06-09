@@ -42,8 +42,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -66,6 +64,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -1259,9 +1258,13 @@ public class DOMAST extends ViewPart {
         }
         
        	IProject project = file.getProject();
-    	ICFileType type = CCorePlugin.getDefault().getFileType(project, file.getFullPath().lastSegment());
-    	String lid = type.getLanguage().getId();
-    	if ( lid != null && lid.equals(ICFileTypeConstants.LANG_CXX) ) {
+       	String lid = null;
+    	IContentType type = CCorePlugin.getContentType(project, file.getFullPath().lastSegment());
+    	if (type != null) {
+    		lid = type.getId();
+    	}
+    	if ( lid != null 
+    			&& ( lid.equals(CCorePlugin.CONTENT_TYPE_CXXSOURCE) || lid.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER)) ) {
     		return ParserLanguage.CPP;
     	}
     	

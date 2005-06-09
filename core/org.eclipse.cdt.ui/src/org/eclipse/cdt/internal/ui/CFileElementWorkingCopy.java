@@ -20,7 +20,7 @@ public class CFileElementWorkingCopy extends WorkingCopy {
 	 * Creates a working copy of this element
 	 */
 	public CFileElementWorkingCopy(ITranslationUnit unit) throws CoreException {
-		super(unit.getParent(), unit.getPath(), null);
+		super(unit.getParent(), unit.getPath(), unit.getContentTypeId(), null);
 		this.unit = unit;
 	}
 

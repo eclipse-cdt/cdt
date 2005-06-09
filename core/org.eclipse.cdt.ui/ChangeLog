@@ -1,3 +1,17 @@
+2005-06-08 Alain Magloire
+	Move to the IContentTypeManager framework: PR 86645
+	* src/org/eclipse/cdt/internal/ui/CFileElementWorkingCopy.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	+ src/org/eclipse/cdt/internal/ui/preferences/CFileTypeAssociation.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypeDialog.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPropertyPage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+	* src/org/eclipse/cdt/internal/ui/text/CFormattingStrategy.java
+	* src/org/eclipse/cdt/internal/ui/text/contentassist/SearchCompletionContributor.java
+	* plugin.xml
+	
 2005-06-08 Vladimir Hirsl
 	Fix for NPE in CPElement.java
 	

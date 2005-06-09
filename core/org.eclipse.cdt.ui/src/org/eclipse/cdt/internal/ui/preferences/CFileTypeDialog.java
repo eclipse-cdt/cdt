@@ -10,9 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.IResolverModel;
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -29,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class CFileTypeDialog extends Dialog {
-
+	
 	public CFileTypeDialog(Shell parentShell) {
 		super(parentShell);
 	}
@@ -38,7 +41,7 @@ public class CFileTypeDialog extends Dialog {
 	private Combo		fComboType;
 
 	private String		fPattern;
-	private ICFileType	fType;
+	private IContentType fType;
 	
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -99,23 +102,30 @@ public class CFileTypeDialog extends Dialog {
 		return fPattern;
 	}
 	
-	public void setType(ICFileType type) {
-		fType = type;
-	}
-
-	public ICFileType getType() {
+	public IContentType getContentType() {
 		return fType;
 	}
 
 	private void populateTypesCombo() {
-		ICFileType[]	types = getResolverModel().getFileTypes();
-		int				index = -1;
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		String[]	ids = CoreModel.getRegistedContentTypeIds();
+		ArrayList list = new ArrayList(ids.length);
+		for (int i = 0; i < ids.length; i++) {
+			IContentType ctype = manager.getContentType(ids[i]);
+			if (ctype != null) {
+				list.add(ctype);
+			}
+		}
 
-		for (int i = 0; i < types.length; i++) {
-			fComboType.add(types[i].getName());
+		IContentType[] ctypes = new IContentType[list.size()];
+		list.toArray(ctypes);
+		int	index = -1;
+
+		for (int i = 0; i < ctypes.length; i++) {
+			fComboType.add(ctypes[i].getName());
 		}
 		
-		fComboType.setData(types);
+		fComboType.setData(ctypes);
 
 		if (null != fType) {
 			index = fComboType.indexOf(fType.getName());
@@ -124,10 +134,6 @@ public class CFileTypeDialog extends Dialog {
 		fComboType.select((index < 0) ? 0 : index);
 	}
 
-	private IResolverModel getResolverModel() {
-		return CCorePlugin.getDefault().getResolverModel();
-	}
-	
 	Button getOkayButton() {
 		return getButton(IDialogConstants.OK_ID);
 	}
@@ -136,21 +142,20 @@ public class CFileTypeDialog extends Dialog {
 		return fTextPattern.getText().trim();
 	}
 	
-	private ICFileType getTypeFromControl() {
-		String	typeId	= null;
+	private IContentType getTypeFromControl() {
+		IContentType type	= null;
 		int		index	= fComboType.getSelectionIndex();
 		
 		if (-1 != index) {
 			String			name	= fComboType.getItem(index);
-			ICFileType[]	types	= (ICFileType[]) fComboType.getData();
+			IContentType[]	types	= (IContentType[]) fComboType.getData();
 			for (int i = 0; i < types.length; i++) {
 				if (name.equals(types[i].getName())) {
-					typeId = types[i].getId();
+					type = types[i];
 				}
 			}
 		}
-		
-		return getResolverModel().getFileTypeById(typeId); 
+		return type;
 	}
 	
 	protected void okPressed() {

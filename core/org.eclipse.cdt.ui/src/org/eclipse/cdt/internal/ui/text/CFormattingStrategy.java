@@ -18,8 +18,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.CodeFormatterConstants;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -134,16 +132,14 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 		if(null != activeFile) {
 			IProject currentProject = activeFile.getProject();
 			Assert.isNotNull(currentProject);
+			String filename = activeFile.getFullPath().lastSegment();
 			// pick the language
-			if (CoreModel.hasCCNature(currentProject)) {
+			if (CoreModel.isValidCXXHeaderUnitName(currentProject, filename) 
+					|| CoreModel.isValidCXXSourceUnitName(currentProject, filename)) {
 				language = ParserLanguage.CPP;
 			} else {
 				// for C project try to guess.
-				ICFileType type = CCorePlugin.getDefault().getFileType(currentProject, 
-						activeFile.getFullPath().lastSegment());
-				String lid = type.getLanguage().getId();
-				if(lid != null && lid.equals(ICFileTypeConstants.LANG_C))
-					language = ParserLanguage.C;
+				language = ParserLanguage.C;
 			}
 	        preferences= new HashMap(CoreModel.getDefault().create(
 	                activeFile.getProject()).getOptions(true));

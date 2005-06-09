@@ -15,8 +15,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.filetype.ICFileType;
-import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
@@ -37,11 +35,10 @@ public class SearchCompletionContributor implements ICompletionContributor {
 			IWorkingCopy workingCopy, ASTCompletionNode completionNode,
 			List proposals)
 	{
-		ICFileType fileType = CCorePlugin.getDefault().getFileType(workingCopy.getCProject().getProject(), workingCopy.getElementName());
 		// and only for C source files
-        if (fileType.isHeader() || ! fileType.getLanguage().getId().equals(ICFileTypeConstants.LANG_C))
-            return;
-		
+        if (workingCopy.isHeaderUnit() || !workingCopy.isCLanguage()) {
+        	return;
+        }
 		if (completionNode != null) {
 			IASTName[] names = completionNode.getNames();
 			for (int i = 0; i < names.length; i++) {

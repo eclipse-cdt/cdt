@@ -11,7 +11,6 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -44,6 +43,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -606,8 +606,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		if (originalElement instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) originalElement).getFile();
 			if (file != null) {
-				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
-				oldLanguage = type.getLanguage().getId();
+				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
+				if (type != null) {
+					oldLanguage = type.getId();
+				}
 				if (oldLanguage == null) {
 					return false;
 				}
@@ -618,8 +620,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		if (movedElement instanceof IFileEditorInput) {
 			IFile file = ((IFileEditorInput) movedElement).getFile();
 			if (file != null) {
-				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
-				newLanguage = type.getLanguage().getId();
+				IContentType type = CCorePlugin.getContentType(file.getProject(), file.getName());
+				if (type != null) {
+					newLanguage = type.getId();
+				}
 				if (newLanguage == null) {
 					return false;
 				}

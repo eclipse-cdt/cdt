@@ -3,6 +3,10 @@
 	* CDebugModelPresentation.java
 
 2005-06-09 Mikhail Khodjaiants
+	Warning cleanup.
+	* CBreakpointUpdater.java
+
+2005-06-09 Mikhail Khodjaiants
 	Bug 94139: User-defined register groups.
 	Externalized strings for the "Restore Default Register Groups" action.
 	* RestoreDefaultRegisterGroupsActionDelegate.java

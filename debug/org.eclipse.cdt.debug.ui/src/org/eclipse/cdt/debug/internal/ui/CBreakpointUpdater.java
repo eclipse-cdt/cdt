@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -122,7 +121,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	}
 
 	private void asyncExec( Runnable r ) {
-		Display display = DebugUIPlugin.getStandardDisplay();
+		Display display = Display.getDefault();
 		if ( display != null )
 			display.asyncExec( r );
 	}

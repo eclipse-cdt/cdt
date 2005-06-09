@@ -67,7 +67,6 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -178,7 +177,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				overlays[OverlayImageDescriptor.TOP_RIGHT] = CDebugImages.DESC_OVRS_GLOBAL;
 			return getImageCache().getImageFor( new OverlayImageDescriptor( baseImage, overlays ) );
 		}
-		return getDefaultImage( element );
+		return null;
 	}
 
 	private Image getBaseImage( Object element ) {
@@ -379,7 +378,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		catch( CoreException e ) {
 			CDebugUIPlugin.log( e );
 		}
-		return getDefaultText( element );
+		return null;
 	}
 
 	protected String getModuleText( ICModule module, boolean qualified ) {
@@ -422,21 +421,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	private boolean isEmpty( String string ) {
 		return ( string == null || string.trim().length() == 0 );
 	}
-
-	/**
-	 * Returns a default text label for the debug element
-	 */
-	protected String getDefaultText(Object element) {
-		return DebugUIPlugin.getDefaultLabelProvider().getText( element );
-	}
-
-	/**
-	 * Returns a default image for the debug element
-	 */
-	protected Image getDefaultImage(Object element) {
-		return DebugUIPlugin.getDefaultLabelProvider().getImage( element );
-	}
-
 
 	protected IBreakpoint getBreakpoint( IMarker marker ) {
 		return DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );

@@ -164,6 +164,7 @@
                valueType="string">
          </option>
          <inputType
+            sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
             sources="o"
 			multipleOfType="true"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
@@ -313,6 +314,7 @@
                id="gnu.cpp.link.option.defname">
          </option>
          <inputType
+            sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
             sources="o"
 			multipleOfType="true"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
@@ -353,6 +355,7 @@
                id="gnu.both.lib.option.flags">
          </option>
          <inputType
+            sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
             sources="o"
 			multipleOfType="true"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
@@ -477,6 +480,7 @@
                name="%Option.Gnu.Assembler.version"
                id="gnu.both.asm.option.version"/>
          <inputType
+            sourceContentType="org.eclipse.cdt.core.asmSource"
             sources="s,S"
             id="cdt.managedbuild.tool.gnu.assembler.input">
          </inputType>
@@ -603,6 +607,7 @@
                valueType="boolean">
          </option>
          <inputType
+            sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
             sources="o"
 			multipleOfType="true"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
@@ -732,6 +737,7 @@
                id="macosx.cpp.link.option.shared">
          </option>
          <inputType
+            sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
             sources="o"
 			multipleOfType="true"
             dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
@@ -994,7 +1000,9 @@
 			  valueType="boolean">
 		  </option>
           <inputType
+              sourceContentType="org.eclipse.cdt.core.cSource"
 		      sources="c"
+              dependencyContentType="org.eclipse.cdt.core.cHeader"
 			  dependencyExtensions="h"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
               id="cdt.managedbuild.tool.gnu.c.compiler.input">
@@ -1231,7 +1239,9 @@
 			  valueType="boolean">
 		  </option>
           <inputType
+              sourceContentType="org.eclipse.cdt.core.cxxSource"
 			  sources="c,C,cc,cxx,cpp"
+              dependencyContentType="org.eclipse.cdt.core.cxxHeader"
 			  dependencyExtensions="h,H,hpp"
 			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
               id="cdt.managedbuild.tool.gnu.cpp.compiler.input">

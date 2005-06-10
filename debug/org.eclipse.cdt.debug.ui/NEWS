@@ -1,5 +1,7 @@
 Release CDT-3.0
 
+	* User-defined register groups support is added (Bug 94139)
+
 	* Moved to the Platform Source Lookup framework (bug 80175)
 	
 	* Modules View (former Shared Libraries view) (bug 82264)

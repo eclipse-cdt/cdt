@@ -550,16 +550,6 @@
    <extension point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.internal.core.CCorePreferenceInitializer"/>
    </extension>
-  <extension
-   		 name="%CDTIndexer.originalsourceindexer"
-         id="originalsourceindexer"
-         point="org.eclipse.cdt.core.CIndexer">
-      <cextension>
-         <run 
-               class="org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer">
-         </run>
-      </cextension>
-   </extension>
    <extension
          name="%CDTIndexer.domsourceindexer"
          id="domsourceindexer"
@@ -569,18 +559,6 @@
             	class="org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer">
          </run>
       </cextension>
-   </extension>
-
-<!-- =================================================================================== -->
-<!-- Dynamic Variables                                                          -->	
-<!-- =================================================================================== -->
-   <extension
-         point="org.eclipse.core.variables.dynamicVariables">
-      <variable
-            name="cdt_pathentry_var"
-            resolver="org.eclipse.cdt.internal.core.PathEntryVariableResolver"
-            description="%cdt_pathentry_var.description">
-      </variable>
    </extension>
    <extension
          id="ctagsindexer"
@@ -602,5 +580,27 @@
          </run>
       </cextension>
    </extension>
+  <extension
+   		 name="%CDTIndexer.originalsourceindexer"
+         id="originalsourceindexer"
+         point="org.eclipse.cdt.core.CIndexer">
+      <cextension>
+         <run 
+               class="org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="cdt_pathentry_var"
+            resolver="org.eclipse.cdt.internal.core.PathEntryVariableResolver"
+            description="%cdt_pathentry_var.description">
+      </variable>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Dynamic Variables                                                          -->	
+<!-- =================================================================================== -->
 
 </plugin>

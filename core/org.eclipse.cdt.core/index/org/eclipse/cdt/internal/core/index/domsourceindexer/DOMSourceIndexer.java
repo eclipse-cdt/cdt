@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IPath;
 
 public class DOMSourceIndexer extends SourceIndexer {
 
+    public static String ID = CCorePlugin.PLUGIN_ID + ".domsourceindexer"; //$NON-NLS-1$
+    
     public DOMSourceIndexer() {
         super();
     }

@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
@@ -229,7 +230,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 		String indexerId=prefStore.getString(CCorePlugin.PREF_INDEXER);
 		String preferredIndexer=null;
 		if (indexerId.equals("")) { //$NON-NLS-1$
-			preferredIndexer=getIndexerPageName("org.eclipse.cdt.core.nullindexer"); //$NON-NLS-1$
+			preferredIndexer=getIndexerPageName(DOMSourceIndexer.ID);
 		} else {
 			preferredIndexer=getIndexerPageName(indexerId);
 		}
@@ -237,7 +238,7 @@ public class IndexerBlock extends AbstractCOptionPage {
         String[] indexerList = indexersComboBox.getItems();
         int selectedIndex = 0;
         for (int i=0; i<indexerList.length; i++){
-        	if (indexerList[i].equals(preferredIndexer)) //$NON-NLS-1$
+        	if (indexerList[i].equals(preferredIndexer))
         		selectedIndex = i;
         }
         

@@ -225,6 +225,9 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	 */
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 		// Get my initializer to run
+		if(newProject == null)
+			return;
+
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(newProject);
 		if (initResult.getCode() != IStatus.OK) {
 			// At this point, I can live with a failure

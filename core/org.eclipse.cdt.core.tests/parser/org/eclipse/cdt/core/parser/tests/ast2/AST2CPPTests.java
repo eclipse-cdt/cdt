@@ -4739,4 +4739,21 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( i, col.getName(2).resolveBinding() );
         assertSame( j, col.getName(5).resolveBinding() );
 	}
+	
+    public void testBug99262() throws Exception {
+    	parse("void foo() {void *f; f=__null;}", ParserLanguage.CPP, true, true );
+    }
+    
+    public void testBug99262B() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("int foo2(void *) {\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\n"); //$NON-NLS-1$
+       	buffer.append("}\n"); //$NON-NLS-1$
+	   	buffer.append("int foo3() {\n"); //$NON-NLS-1$
+    	buffer.append("return foo2(__null);\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true ); 
+    	assertTrue(((IASTIdExpression)((IASTFunctionCallExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[1]).getBody()).getStatements()[0]).getReturnValue()).getFunctionNameExpression()).getName().resolveBinding() instanceof IFunction);
+    }
+
 }

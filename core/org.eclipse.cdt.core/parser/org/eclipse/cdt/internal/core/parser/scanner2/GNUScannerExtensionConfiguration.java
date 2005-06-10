@@ -71,6 +71,9 @@ public abstract class GNUScannerExtensionConfiguration implements IScannerExtens
 
     private static final ObjectStyleMacro __imag__ = new ObjectStyleMacro(
             "__imag__".toCharArray(), "(int)".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+    
+    private static final ObjectStyleMacro __null = new ObjectStyleMacro(
+    		"__null".toCharArray(), "(void *)0".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 
     private static final FunctionStyleMacro __attribute__ = new FunctionStyleMacro(
             "__attribute__".toCharArray(), //$NON-NLS-1$
@@ -109,6 +112,7 @@ public abstract class GNUScannerExtensionConfiguration implements IScannerExtens
         realDefinitions.put(__signed__.name, __signed__);
         realDefinitions.put(__complex__.name, __complex__);
         realDefinitions.put(__imag__.name, __imag__);
+        realDefinitions.put( __null.name, __null );
         realDefinitions.put(__real__.name, __real__);
         realDefinitions.put(__builtin_va_arg.name, __builtin_va_arg);
         realDefinitions.put(__builtin_constant_p.name, __builtin_constant_p);

@@ -3160,4 +3160,21 @@ public class AST2Tests extends AST2BaseTest {
         IEnumerator etor = (IEnumerator) col.getName(2).resolveBinding();
         assertSame( etor, col.getName(6).resolveBinding() );
     }
+    
+    public void testBug99262() throws Exception {
+    	parse("void foo() {void *f; f=__null;}", ParserLanguage.C, true, true );
+    }
+
+    public void testBug99262B() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("int foo2(void *) {\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\n"); //$NON-NLS-1$
+       	buffer.append("}\n"); //$NON-NLS-1$
+	   	buffer.append("int foo3() {\n"); //$NON-NLS-1$
+    	buffer.append("return foo2(__null);\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true, true );
+    	assertTrue(((IASTIdExpression)((IASTFunctionCallExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[1]).getBody()).getStatements()[0]).getReturnValue()).getFunctionNameExpression()).getName().resolveBinding() instanceof IFunction);
+    }
+
 }

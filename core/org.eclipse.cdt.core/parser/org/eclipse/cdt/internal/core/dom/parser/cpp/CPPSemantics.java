@@ -1464,8 +1464,8 @@ public class CPPSemantics {
 			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
 				specName = compSpec.getName();
 				
-				//anonymous union?
-				if( declarators.length == 0 && compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&
+				//anonymous union?             //GCC supports anonymous structs too
+				if( declarators.length == 0 && /*compSpec.getKey() == IASTCompositeTypeSpecifier.k_union &&*/
 				    specName.toCharArray().length == 0 )
 				{
 				    Object o = null;

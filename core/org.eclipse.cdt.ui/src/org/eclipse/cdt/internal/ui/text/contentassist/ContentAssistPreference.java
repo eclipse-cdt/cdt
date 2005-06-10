@@ -22,10 +22,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class ContentAssistPreference {
 	
-	// Temporary to use DOM for assist
-	public final static String DONT_USE_DOM = "content_assist_dont_use_dom"; //$NON-NLS-1$
-	public final static String TIME_DOM = "content_assist_time_dom"; //$NON-NLS-1$
-	
 	/** Preference key for content assist auto activation */
 	//public final static String AUTOACTIVATION=  "content_assist_autoactivation";
 	/** Preference key for content assist auto activation delay */
@@ -73,15 +69,15 @@ public class ContentAssistPreference {
 		return getColor(store, key, textTools.getColorManager());
 	}
 	
-	private static CCompletionProcessor getCProcessor(ContentAssistant assistant) {
+	private static CCompletionProcessor2 getCProcessor(ContentAssistant assistant) {
 		IContentAssistProcessor p= assistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
-		if (p instanceof CCompletionProcessor)
-			return  (CCompletionProcessor) p;
+		if (p instanceof CCompletionProcessor2)
+			return  (CCompletionProcessor2) p;
 		return null;
 	}
 	
 	private static void configureCProcessor(ContentAssistant assistant, IPreferenceStore store) {
-		CCompletionProcessor jcp= getCProcessor(assistant);
+		CCompletionProcessor2 jcp= getCProcessor(assistant);
 		if (jcp == null)
 			return;
 
@@ -154,7 +150,7 @@ public class ContentAssistPreference {
 	
 	
 	private static void changeCProcessor(ContentAssistant assistant, IPreferenceStore store, String key) {
-		CCompletionProcessor jcp= getCProcessor(assistant);
+		CCompletionProcessor2 jcp= getCProcessor(assistant);
 		if (jcp == null)
 			return;
 			

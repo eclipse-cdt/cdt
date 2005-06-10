@@ -58,13 +58,11 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer,
 			int offset) {
 		try {
-			long startTime = System.currentTimeMillis();
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 			ASTCompletionNode completionNode = CDOM.getInstance().getCompletionNode(
 				(IFile)workingCopy.getResource(),
 				offset,
 				CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
-			long stopTime = System.currentTimeMillis();
 
 			errorMessage = CUIMessages.getString(noCompletions);
 			
@@ -120,18 +118,6 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				}
 			}
 			
-			if (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.TIME_DOM)) {
-				long propTime = System.currentTimeMillis();
-				System.out.print("Completion Parse: " + (stopTime - startTime) + " + Proposals: " //$NON-NLS-1$ //$NON-NLS-2$
-						+ (propTime - stopTime));
-				if (completionNode != null)
-					System.out.print(" - tokens: " + completionNode.count);
-				else
-					System.out.print(" - no completion node");
-				System.out.println();
-				System.out.flush();
-			}
-			
 			return propsArray;
 			
 		} catch (UnsupportedDialectException e) {
@@ -182,4 +168,13 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 		return new CParameterListValidator();
 	}
 
-}
+    public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
+    }
+    
+    public void orderProposalsAlphabetically(boolean order) {
+    }
+
+    public void allowAddingIncludes(boolean allowAddingIncludes) {
+    }
+    
+}    

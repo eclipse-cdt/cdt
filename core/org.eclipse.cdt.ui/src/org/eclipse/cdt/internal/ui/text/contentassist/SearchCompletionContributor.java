@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;

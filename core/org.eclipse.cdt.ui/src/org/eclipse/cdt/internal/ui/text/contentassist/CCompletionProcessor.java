@@ -52,6 +52,7 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * C completion processor.
+ * @deprecated
  */
 public class CCompletionProcessor implements IContentAssistProcessor {
 

@@ -42,10 +42,6 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList overlayKeys = new ArrayList();
 
-		// temporary
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.DONT_USE_DOM));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.TIME_DOM));
-		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CODEASSIST_PREFIX_COMPLETION));
@@ -81,10 +77,6 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		layout.numColumns = 2;
 		contentAssistComposite.setLayout(layout);
 
-		// temporary use DOM
-		addCheckBox(contentAssistComposite, "Use Old Content Assist (Work in progress)", ContentAssistPreference.DONT_USE_DOM, 0);
-		addCheckBox(contentAssistComposite, "Print Completion Times (Work in progress)", ContentAssistPreference.TIME_DOM, 0);
-		
 		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 		// The following three radio buttons are grouped together
 		String label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupTitle"); //$NON-NLS-1$

@@ -1339,16 +1339,6 @@
    </extension>
    <extension
          point="org.eclipse.cdt.ui.IndexerPage">
-      <indexerUI
-            class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
-            indexerID="org.eclipse.cdt.core.nullindexer"
-            name="%CDTIndexer.nullindexer"
-            id="org.eclipse.cdt.ui.nullindexerUI"/>
-      <indexerUI
-            class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
-            indexerID="org.eclipse.cdt.core.originalsourceindexer"
-            name="%CDTIndexer.originalsourceindexer"
-            id="org.eclipse.cdt.ui.originalSourceIndexerUI"/>
  	  <indexerUI
             class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
@@ -1359,6 +1349,16 @@
             indexerID="org.eclipse.cdt.core.ctagsindexer"
             name="%CDTIndexer.ctagsindexer"
             id="org.eclipse.cdt.ui.ctagsIndexerUI"/>
+      <indexerUI
+            class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
+            indexerID="org.eclipse.cdt.core.nullindexer"
+            name="%CDTIndexer.nullindexer"
+            id="org.eclipse.cdt.ui.nullindexerUI"/>
+      <indexerUI
+            class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
+            indexerID="org.eclipse.cdt.core.originalsourceindexer"
+            name="%CDTIndexer.originalsourceindexer"
+            id="org.eclipse.cdt.ui.originalSourceIndexerUI"/>
 <!--TODO reverse this <indexerUI
             class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"

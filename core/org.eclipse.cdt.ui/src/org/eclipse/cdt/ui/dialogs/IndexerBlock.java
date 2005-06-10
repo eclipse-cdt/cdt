@@ -69,6 +69,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	
     private Combo 					indexersComboBox;
     private HashMap 				indexerPageMap;
+    private List                    indexerPageList;
     private String 					selectedIndexerId = null;
 	private Composite 				parentComposite;
     private ICOptionPage 		 	currentPage;
@@ -252,6 +253,7 @@ public class IndexerBlock extends AbstractCOptionPage {
      */
     private void initializeIndexerPageMap() {
         indexerPageMap = new HashMap(5);
+        indexerPageList = new ArrayList(5);
         
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.getPluginId(), "IndexerPage"); //$NON-NLS-1$
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
@@ -259,6 +261,7 @@ public class IndexerBlock extends AbstractCOptionPage {
             if (infos[i].getName().equals("indexerUI")) { //$NON-NLS-1$
                 String id = infos[i].getAttribute("indexerID"); //$NON-NLS-1$
                 indexerPageMap.put(id, new IndexerPageConfiguration(infos[i]));
+                indexerPageList.add(id);
             }
         }
     }
@@ -268,7 +271,7 @@ public class IndexerBlock extends AbstractCOptionPage {
      * Returns the contributed Indexer Pages as a list
      */
     protected List getIndexerPageIdList() {
-        return new ArrayList(indexerPageMap.keySet());
+        return indexerPageList;
     }
   
     /**

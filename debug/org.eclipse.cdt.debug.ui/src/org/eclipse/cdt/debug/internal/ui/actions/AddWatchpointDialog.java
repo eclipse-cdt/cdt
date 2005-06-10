@@ -47,17 +47,20 @@ public class AddWatchpointDialog extends Dialog {
 
 	private String fExpression = ""; //$NON-NLS-1$
 
+	private boolean fEditable = true;
+
 	/**
 	 * Constructor for AddWatchpointDialog.
 	 * 
 	 * @param parentShell
 	 */
-	public AddWatchpointDialog( Shell parentShell, boolean write, boolean read, String expression ) {
+	public AddWatchpointDialog( Shell parentShell, boolean write, boolean read, String expression, boolean editable ) {
 		super( parentShell );
 		fWrite = write;
 		fRead = read;
 		if ( expression != null )
 			fExpression = expression;
+		fEditable = editable;
 	}
 
 	protected void configureShell( Shell shell ) {
@@ -106,6 +109,7 @@ public class AddWatchpointDialog extends Dialog {
 		GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
 		gridData.widthHint = 300;
 		text.setLayoutData( gridData );
+		text.setEnabled( fEditable );
 		addModifyListener( text );
 		return text;
 	}

@@ -1,4 +1,12 @@
 2005-06-10 Mikhail Khodjaiants
+	Bug 84929: The "Expression to watch" field of the "Add Watchpoint" dialog is editable.
+	* CDebugModelPresentation.java
+	* AddWatchpointActionDelegate.java
+	* AddWatchpointDialog.java
+	* ToggleBreakpointAdapter.java
+	* ModulesView.java
+
+2005-06-10 Mikhail Khodjaiants
 	Bug 83465: Add "Run to line" and "Resume at line" actions to the context menu of Disassembly view.
 	* plugin.xml
 

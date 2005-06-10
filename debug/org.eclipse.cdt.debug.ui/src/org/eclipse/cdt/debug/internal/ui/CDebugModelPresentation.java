@@ -295,7 +295,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	}
 
 	public String getText( Object element ) {
-		StringBuffer baseText = new StringBuffer( getBaseText( element ) );
+		String bt = getBaseText( element );
+		if ( bt == null )
+			return null;
+		StringBuffer baseText = new StringBuffer( bt );
 		if ( element instanceof ICDebugElementStatus && !((ICDebugElementStatus)element).isOK() ) {
 			baseText.append( getFormattedString( " <{0}>", ((ICDebugElementStatus)element).getMessage() ) ); //$NON-NLS-1$
 		}

@@ -77,7 +77,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IWork
 	 */
 	public void run( IAction action ) {
 		String expression = getSelectedExpression();
-		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(), true, false, expression );
+		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(), true, false, expression, true );
 		if ( dlg.open() != Window.OK )
 			return;
 		if ( getTextEditor() != null ) {

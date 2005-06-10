@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IValue;
@@ -40,6 +41,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -87,6 +89,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.texteditor.IUpdate;
  
 /**
@@ -110,7 +113,19 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage( Object element ) {
-			return getModelPresentation().getImage( element );
+			Image image = getModelPresentation().getImage( element );
+			if ( image == null ) {
+				if ( element instanceof IAdaptable ) {
+					IWorkbenchAdapter de = (IWorkbenchAdapter)((IAdaptable)element).getAdapter( IWorkbenchAdapter.class );
+					if ( de != null ) {
+						ImageDescriptor descriptor = de.getImageDescriptor( element );
+						if ( descriptor != null ) {
+							image = descriptor.createImage();
+						}
+					}
+				}
+			}
+			return image;
 		}
 
 		/* (non-Javadoc)
@@ -118,6 +133,17 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		 */
 		public String getText( Object element ) {
 			String text = getModelPresentation().getText( element );
+			if ( text == null ) {
+				if ( element instanceof IAdaptable ) {
+					IWorkbenchAdapter de = (IWorkbenchAdapter)((IAdaptable)element).getAdapter( IWorkbenchAdapter.class );
+					if ( de != null ) {
+						text = de.getLabel( element );
+					}
+					else {
+						text = element.toString();
+					}
+				}
+			}
 			if ( element instanceof ICModule ) {
 				ICModule module = (ICModule)element;
 				text += ( module.areSymbolsLoaded() ) ? ModulesMessages.getString( "ModulesView.11" ) : ModulesMessages.getString( "ModulesView.12" ); //$NON-NLS-1$ //$NON-NLS-2$

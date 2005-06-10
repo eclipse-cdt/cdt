@@ -328,7 +328,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( watchpoint, true );
 		}
 		else {
-			AddWatchpointDialog dlg = new AddWatchpointDialog( part.getSite().getShell(), true, false, expression );
+			AddWatchpointDialog dlg = new AddWatchpointDialog( part.getSite().getShell(), true, false, expression, false );
 			if ( dlg.open() != Window.OK )
 				return;
 			expression = dlg.getExpression();

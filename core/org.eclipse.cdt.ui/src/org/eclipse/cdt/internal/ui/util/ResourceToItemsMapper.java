@@ -74,7 +74,7 @@ public class ResourceToItemsMapper {
 			Object data= item.getData();
 			
 			// If it is an IItemLabelProvider than short circuit: patch Tod (bug 55012)
-			if (lprovider instanceof IViewerLabelProvider) {
+			if (data != null && lprovider instanceof IViewerLabelProvider) {
 				IViewerLabelProvider provider= (IViewerLabelProvider) lprovider;
 				
 				ViewerLabel updateLabel= new ViewerLabel(item.getText(), item.getImage());

@@ -1,4 +1,8 @@
 2005-06-08 Alain Magloire
+	Fix PR 98846
+	* src/org/eclipse/cdt/internal/ui/util/ResourceTOItemsMapper.java
+
+2005-06-08 Alain Magloire
 	Move to the IContentTypeManager framework: PR 86645
 	* src/org/eclipse/cdt/internal/ui/CFileElementWorkingCopy.java
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

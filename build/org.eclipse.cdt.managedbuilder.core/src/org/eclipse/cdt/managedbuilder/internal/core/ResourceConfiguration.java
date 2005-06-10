@@ -192,7 +192,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				ITool[] tools = parent.getTools();
 				for (int i=0; i<tools.length; i++) {
 				    ITool configTool = tools[i];
-				    if (configTool.getSuperClass() == toolChild.getSuperClass().getSuperClass())
+				    if (toolChild.getSuperClass() != null 
+				    		&& configTool.getSuperClass() == toolChild.getSuperClass().getSuperClass())
 				    {
 				        toolSuperClass = configTool;
 				        break;

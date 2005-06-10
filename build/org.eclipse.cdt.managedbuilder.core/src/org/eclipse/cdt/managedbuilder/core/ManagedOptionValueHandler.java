@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.managedbuilder.core;
 
+import java.util.Arrays;
+
 
 /**
  * This class implements the default managed option value handler for MBS.
@@ -49,7 +51,7 @@ public class ManagedOptionValueHandler implements
                    IOption option,
                    String extraArgument, int event)
 	{
-	/*	
+		/*
 		// The following is for debug purposes and thus normally commented out		
 		String configLabel = "???"; //$NON-NLS-1$
 		String holderLabel = "???"; //$NON-NLS-1$
@@ -84,7 +86,7 @@ public class ManagedOptionValueHandler implements
 						   option.getId() + ", " +         //$NON-NLS-1$
 						   "String = " +                   //$NON-NLS-1$
 						   extraArgument + ")");           //$NON-NLS-1$
-	*/	
+        */		
 		// The event was not handled, thus return false
 		return false;
 	}
@@ -95,12 +97,58 @@ public class ManagedOptionValueHandler implements
 	public boolean isDefaultValue(IBuildObject configuration, 
                       IHoldsOptions holder, 
                       IOption option, String extraArgument) {
-		// Implement default behavior
-	   if (option.getDefaultValue() == option.getValue()) {
-		   return true;
-	   } else {
-		   return false;
-	   }
+		// Get the default Value
+	   Object defaultValue = option.getDefaultValue();
+	   
+		try {
+			// Figure out which type the option is and implement default behaviour for it.
+			switch (option.getValueType()) {
+				case IOption.STRING:
+					if (option.getStringValue().equals((String)defaultValue)) {
+						return true;
+					}
+					break;
+				case IOption.BOOLEAN:
+					if (option.getBooleanValue() == ((Boolean)defaultValue).booleanValue()) {
+						return true;
+					}
+					break;
+				case IOption.ENUMERATED:
+					if (option.getValue().toString().equals(defaultValue.toString())) {
+						return true;
+					}
+					break;
+				case IOption.INCLUDE_PATH:
+					if (Arrays.equals(option.getIncludePaths(), (String[])defaultValue)) {
+						return true;
+					}
+					break;
+				case IOption.STRING_LIST:
+					if (Arrays.equals(option.getStringListValue(), (String[])defaultValue)) {
+						return true;
+					}
+					break;
+				case IOption.PREPROCESSOR_SYMBOLS:
+					if (Arrays.equals(option.getDefinedSymbols(), (String[])defaultValue)) {
+						return true;
+					}
+					break;
+				case IOption.LIBRARIES:
+					if (Arrays.equals(option.getLibraries(), (String[])defaultValue)) {
+						return true;
+					}
+					break;
+				case IOption.OBJECTS:
+					if (Arrays.equals(option.getUserObjects(), (String[])defaultValue)) {
+						return true;
+					}
+					break;
+				default:
+					break;
+				}
+		} catch (BuildException e) {
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

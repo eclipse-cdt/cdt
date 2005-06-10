@@ -376,6 +376,13 @@ public interface IOption extends IBuildObject {
 	public String getValueHandlerExtraArgument();
 		
 	/**
+	 * Sets the value handlers extra argument specified for this tool
+	 * @param extraArgument
+	 * @since 3.0
+	 */
+	public void setValueHandlerExtraArgument(String extraArgument);
+
+	/**
 	 * Returns <code>true</code> if this option was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
 	 * 

@@ -195,39 +195,48 @@ public class Option extends BuildObject implements IOption {
 			enumCommands = new HashMap(option.enumCommands);
 			enumNames = new HashMap(option.enumNames);
 		}
+
 		if (option.valueType != null) {
 			valueType = new Integer(option.valueType.intValue());
-			switch (valueType.intValue()) {
-				case BOOLEAN:
-					if (option.value != null) {
-						value = new Boolean(((Boolean)option.value).booleanValue());
-					}
-					if (option.defaultValue != null) {
-						defaultValue = new Boolean(((Boolean)option.defaultValue).booleanValue());
-					}
-					break;
-				case STRING:
-				case ENUMERATED:
-					if (option.value != null) {
-						value = new String((String)option.value);
-					}
-					if (option.defaultValue != null) {
-						defaultValue = new String((String)option.defaultValue);
-					}
-					break;
-				case STRING_LIST:
-				case INCLUDE_PATH:
-				case PREPROCESSOR_SYMBOLS:
-				case LIBRARIES:
-				case OBJECTS:
-					if (option.value != null) {
-						value = new ArrayList((ArrayList)option.value);
-					}
-					if (option.defaultValue != null) {
-						defaultValue = new ArrayList((ArrayList)option.defaultValue);
-					}
-					break;
+		}
+		Integer vType = null;
+		try {
+			vType = new Integer(option.getValueType());
+			if (vType != null) {
+				switch (vType.intValue()) {
+					case BOOLEAN:
+						if (option.value != null) {
+							value = new Boolean(((Boolean)option.value).booleanValue());
+						}
+						if (option.defaultValue != null) {
+							defaultValue = new Boolean(((Boolean)option.defaultValue).booleanValue());
+						}
+						break;
+					case STRING:
+					case ENUMERATED:
+						if (option.value != null) {
+							value = new String((String)option.value);
+						}
+						if (option.defaultValue != null) {
+							defaultValue = new String((String)option.defaultValue);
+						}
+						break;
+					case STRING_LIST:
+					case INCLUDE_PATH:
+					case PREPROCESSOR_SYMBOLS:
+					case LIBRARIES:
+					case OBJECTS:
+						if (option.value != null) {
+							value = new ArrayList((ArrayList)option.value);
+						}
+						if (option.defaultValue != null) {
+							defaultValue = new ArrayList((ArrayList)option.defaultValue);
+						}
+						break;
+				}
 			}
+		} catch (BuildException be) {
+			// TODO: should we ignore this??
 		}
 
 		category = option.category;
@@ -1438,6 +1447,19 @@ public class Option extends BuildObject implements IOption {
 		}
 		return valueHandlerExtraArgument;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValueHandlerExtraArgument(String))
+	 */
+	public void setValueHandlerExtraArgument(String extraArgument) {
+		if (extraArgument == null)
+			extraArgument = ""; //$NON-NLS-1$
+		if (valueHandlerExtraArgument == null || !valueHandlerExtraArgument.equals(extraArgument)) {
+			valueHandlerExtraArgument = extraArgument;
+			setDirty(true);
+		}
+	}
+
 	
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E

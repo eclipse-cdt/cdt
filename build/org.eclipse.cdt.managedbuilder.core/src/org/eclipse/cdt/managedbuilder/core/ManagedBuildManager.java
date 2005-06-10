@@ -2479,7 +2479,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 
 		// Get options associated with tools under toolChain
-		ITool[] tools = toolChain.getTools();
+		ITool[] tools = config.getFilteredTools();
 		for (int i = 0; i < tools.length; ++i) {
 			IOption[] toolOptions = tools[i].getOptions();
 			for (int j = 0; j < toolOptions.length; ++j) {

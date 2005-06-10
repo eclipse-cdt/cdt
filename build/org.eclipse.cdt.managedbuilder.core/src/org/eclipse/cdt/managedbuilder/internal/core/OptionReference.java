@@ -790,6 +790,12 @@ public class OptionReference implements IOption {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValueHandlerExtraArgument(String))
+	 */
+	public void setValueHandlerExtraArgument(String extraArgument) {
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isValid()
 	 */
 	public boolean isValid() {

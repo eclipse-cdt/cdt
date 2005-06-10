@@ -1,4 +1,8 @@
 2005-06-10 Mikhail Khodjaiants
+	Bug 83465: Add "Run to line" and "Resume at line" actions to the context menu of Disassembly view.
+	* plugin.xml
+
+2005-06-10 Mikhail Khodjaiants
 	Bug 81353: automatically opening of the disassembly window.
 	* ToggleInstructionStepModeActionDelegate.java
 	* ICDebugUIConstants.java

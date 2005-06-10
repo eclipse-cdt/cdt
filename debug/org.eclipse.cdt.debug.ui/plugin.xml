@@ -691,13 +691,20 @@
             </and>
          </visibility>
          <action
-               helpContextId="jump_to_line_action_context"
-               enablesFor="1"
-               label="%JumpToLineAction.label"
-               icon="icons/elcl16/jump_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"/>
+               enablesFor="1"
+               helpContextId="jump_to_line_action_context"
+               icon="icons/elcl16/jump_co.gif"
+               id="org.eclipse.cdt.debug.ui.resumeAtLineAction"
+               label="%JumpToLineAction.label"
+               menubarPath="additions"/>
+         <action
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               helpContextId="run_to_line_action_context"
+               id="org.eclipse.cdt.debug.ui.runToLineAction"
+               label="%RunToLineAction.label"
+               menubarPath="additions"/>
       </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICModule"

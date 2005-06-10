@@ -11,6 +11,8 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -21,6 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
@@ -31,6 +34,8 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	private ICDebugTarget fTarget = null;
 	
 	private IAction fAction = null;
+
+	private IViewPart fView;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
@@ -50,6 +55,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init( IViewPart view ) {
+		fView = view;
 	}
 
 	/* (non-Javadoc)
@@ -76,9 +82,18 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run( IAction action ) {
+		boolean enabled = getAction().isChecked();
 		ICDebugTarget target = getTarget();
 		if ( target != null ) {
-			target.enableInstructionStepping( getAction().isChecked() );
+			target.enableInstructionStepping( enabled );
+			if ( enabled ) {
+				try {
+					getView().getSite().getPage().showView( ICDebugUIConstants.ID_DISASSEMBLY_VIEW );
+				}
+				catch( PartInitException e ) {
+					CDebugUIPlugin.log( e.getStatus() );
+				}
+			}
 		}
 	}
 
@@ -134,5 +149,9 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 			return ( target instanceof ICDebugTarget ) ? (ICDebugTarget)target : null;
 		}
 		return null;
+	}
+
+	private IViewPart getView() {
+		return fView;
 	}
 }

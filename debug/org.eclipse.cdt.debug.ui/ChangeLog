@@ -1,4 +1,9 @@
 2005-06-10 Mikhail Khodjaiants
+	Bug 81353: automatically opening of the disassembly window.
+	* ToggleInstructionStepModeActionDelegate.java
+	* ICDebugUIConstants.java
+
+2005-06-10 Mikhail Khodjaiants
 	Warning cleanup.
 	* AddExpressionEditorActionDelegate.java
 	* ExpressionDialog.java

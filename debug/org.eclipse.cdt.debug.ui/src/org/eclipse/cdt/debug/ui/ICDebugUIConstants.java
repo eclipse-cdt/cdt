@@ -22,6 +22,11 @@ public interface ICDebugUIConstants {
 	public static final String PREFIX = PLUGIN_ID + "."; //$NON-NLS-1$
 	
 	/**
+	 * Disassembly view identifier (value <code>"org.eclipse.cdt.debug.ui.DisassemblyView"</code>).
+	 */
+	public static final String ID_DISASSEMBLY_VIEW = PREFIX + "DisassemblyView"; //$NON-NLS-1$
+
+	/**
 	 * Modules view identifier (value <code>"org.eclipse.cdt.debug.ui.ModulesView"</code>).
 	 */
 	public static final String ID_MODULES_VIEW = PREFIX + "ModulesView"; //$NON-NLS-1$

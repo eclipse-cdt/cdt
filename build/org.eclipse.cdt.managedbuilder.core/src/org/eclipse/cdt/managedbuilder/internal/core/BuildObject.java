@@ -80,6 +80,14 @@ public class BuildObject implements IBuildObject {
 		this.version = version;
 	}
 
+	/**
+	 * @return Returns the Id without the version (if any).
+	 */
+	public String getBaseId() {
+		return ManagedBuildManager.getIdFromIdAndVersion(id);
+	}
+
+	
 	public PluginVersionIdentifier getVersionFromId() {
 		String versionNumber;
 		IStatus status = null;

@@ -162,7 +162,7 @@
    <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.managedbuilder.core.sharedLibrary"
-       file-extensions="dll,so"/>
+       file-extensions="dll,so,dylib"/>
    </extension> 
 
 </plugin>

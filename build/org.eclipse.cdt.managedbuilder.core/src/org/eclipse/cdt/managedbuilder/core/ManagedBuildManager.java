@@ -2523,7 +2523,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		// Note: Resource configurations have no toolchain options
 		
 		// Get options associated with the resource configuration
-		ITool[] tools = config.getTools();
+		ITool[] tools = config.getToolsToInvoke();
 		for (int i = 0; i < tools.length; ++i) {
 			IOption[] toolOptions = tools[i].getOptions();
 			for (int j = 0; j < toolOptions.length; ++j) {

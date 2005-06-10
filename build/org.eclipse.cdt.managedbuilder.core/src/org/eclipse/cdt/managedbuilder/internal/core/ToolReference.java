@@ -335,6 +335,17 @@ public class ToolReference implements IToolReference {
 		return parent.getId();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getBaseId()
+	 */
+	public String getBaseId() {
+		if (parent == null) {
+			// bad reference
+			return new String();
+		}
+		return parent.getBaseId();
+	}
+	
  	/* (non-Javadoc)
  	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
  	 */

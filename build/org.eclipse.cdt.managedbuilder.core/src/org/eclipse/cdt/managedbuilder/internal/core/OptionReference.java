@@ -363,6 +363,14 @@ public class OptionReference implements IOption {
 		// A reference has the same id as the option it references
 		return option.getId();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getBaseId()
+	 */
+	public String getBaseId() {
+		// A reference has the same id as the option it references
+		return option.getBaseId();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getIncludePaths()

@@ -121,7 +121,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 				return;
 			List existingValues = parseItemsIntoList(contentTypeNode.get(key, null), PREF_SEPARATOR); //$NON-NLS-1$
 			int index = -1;
-			for (int j = 0; j < existingValues.size(); j++)
+			for (int j = 0; index == -1 && j < existingValues.size(); j++)
 				if (((String) existingValues.get(j)).equalsIgnoreCase(spec))
 					index = j;
 			if (index == -1)

@@ -336,7 +336,7 @@
          <attribute name="targetTool" type="string">
             <annotation>
                <documentation>
-                  Specifies the id of the Tool that creates the final build artifact (the end target of the build).
+                  Specifies a semi-colon separated list of the Tool(s) that can create the final build artifact (the end target of the build).  The first tool found in the configuration is used.  A list is needed, for example, when a tool-chain has different tools for different project natures.
                </documentation>
             </annotation>
          </attribute>
@@ -611,7 +611,7 @@
          <attribute name="advancedInputCategory" type="boolean">
             <annotation>
                <documentation>
-                  Specifies whether the Tool wants the MBS to display the Advanced Input category with the Tool&apos;s property categories.  This allows the user to specify input order and additional inputs.  The default is false.
+                  Specifies whether the Tool wants the MBS to display the Advanced Input category with the Tool&apos;s property categories.  This allows the user to specify input order and additional inputs.  The default is false.  Note:  This attribute is not yet implemented
                </documentation>
             </annotation>
          </attribute>
@@ -747,7 +747,7 @@
          <attribute name="buildVariable" type="string">
             <annotation>
                <documentation>
-                  A variable used in the build file to represent the input files when multipleOfType is True.  The same variable name can be used in an outputType element to identify a set of output files that contribute to this tool&apos;s input.  The default name is chosen by MBS.
+                  A variable used in the build file to represent the input files.  The same variable name can be used in an outputType element to identify a set of output files that contribute to this tool&apos;s input.  This attribute is ignored when multipleOfType is false this is the primary input of the tool.  The default name is chosen by MBS.
                </documentation>
             </annotation>
          </attribute>
@@ -757,7 +757,7 @@
    <element name="inputOrder">
       <annotation>
          <documentation>
-            Describes optional, ordering, information regarding the inputs of an inputType.
+            Describes optional, ordering, information regarding the inputs of an inputType.  Note:  This element is not yet implemented
          </documentation>
       </annotation>
       <complexType>

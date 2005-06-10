@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -139,13 +141,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	// Resource configurations defined in the manifest files
 	private static Map extensionResourceConfigurationMap;
 	// Tool-chains defined in the manifest files
-	private static Map extensionToolChainMap;
+	private static SortedMap extensionToolChainMap;
 	// Tools defined in the manifest files
-	private static Map extensionToolMap;
+	private static SortedMap extensionToolMap;
 	// Target Platforms defined in the manifest files
 	private static Map extensionTargetPlatformMap;
 	// Builders defined in the manifest files
-	private static Map extensionBuilderMap;
+	private static SortedMap extensionBuilderMap;
 	// Options defined in the manifest files
 	private static Map extensionOptionMap;
 	// Option Categories defined in the manifest files
@@ -306,9 +308,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * 
 	 * @return Map
 	 */
-	protected static Map getExtensionToolChainMap() {
+	public static SortedMap getExtensionToolChainMap() {
 		if (extensionToolChainMap == null) {
-			extensionToolChainMap = new HashMap();
+			extensionToolChainMap =  new TreeMap();
 		}
 		return extensionToolChainMap;
 	}
@@ -318,9 +320,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * 
 	 * @return Map
 	 */
-	protected static Map getExtensionToolMap() {
+	public static SortedMap getExtensionToolMap() {
 		if (extensionToolMap == null) {
-			extensionToolMap = new HashMap();
+			extensionToolMap = new TreeMap();
 		}
 		return extensionToolMap;
 	}
@@ -342,9 +344,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * 
 	 * @return Map
 	 */
-	protected static Map getExtensionBuilderMap() {
+	public static SortedMap getExtensionBuilderMap() {
 		if (extensionBuilderMap == null) {
-			extensionBuilderMap = new HashMap();
+			extensionBuilderMap = new TreeMap();
 		}
 		return extensionBuilderMap;
 	}
@@ -1507,21 +1509,61 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
 			if (nodes.getLength() > 0) {
 				Node node = nodes.item(0);
+				
+				//  Create the internal representation of the project's MBS information
 				buildInfo = new ManagedBuildInfo(project, (Element)node, fileVersion);
 				if (fileVersion != null) {
 					buildInfo.setVersion(fileVersion);
 				}
-				if(!UpdateManagedProjectManager.isCompatibleProject(buildInfo)){
-						UpdateManagedProjectManager.updateProject(project,buildInfo);
-				}
+				//  Check to see if all elements could be loaded correctly - for example, 
+				//  if references in the project file could not be resolved to extension
+				//  elements
 				if (buildInfo.getManagedProject() == null ||
 					(!buildInfo.getManagedProject().isValid())) {
 					//  The load failed
 					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 				}
+				
+				// Each ToolChain/Tool/Builder element maintain two separate
+				// converters if available
+				// 0ne for previous Mbs versions and one for current Mbs version
+				// walk through the project hierarchy and call the converters
+				// written for previous mbs versions
+				if ( checkForMigrationSupport(buildInfo, false) != true ) {
+					// display an error message that the project is no loadable
+					if (buildInfo.getManagedProject() == null ||
+							(!buildInfo.getManagedProject().isValid())) {
+							//  The load failed
+							throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+						}
+				}
+
+				//  Upgrade the project's CDT version if necessary
+				if (!UpdateManagedProjectManager.isCompatibleProject(buildInfo)) {
+					UpdateManagedProjectManager.updateProject(project, buildInfo);
+				}
+				//  Check to see if the upgrade (if required) succeeded 
+				if (buildInfo.getManagedProject() == null ||
+					(!buildInfo.getManagedProject().isValid())) {
+					//  The load failed
+					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+				}
+
+				//  Walk through the project hierarchy and call the converters
+				//  written for current mbs version
+				if ( checkForMigrationSupport(buildInfo, true) != true ) {
+					// display an error message.that the project is no loadable
+					if (buildInfo.getManagedProject() == null ||
+							(!buildInfo.getManagedProject().isValid())) {
+							//  The load failed
+							throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+						}
+				}
+				
+				//  Finish up
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 				IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
-				// Send an event to each configuration and if they exist, its resource configurations
+				//  Send an event to each configuration and if they exist, its resource configurations
 				for (int i=0; i < configs.length; ++i) {
 					ManagedBuildManager.performValueHandlerEvent(configs[i], IManagedOptionValueHandler.EVENT_OPEN);
 				}
@@ -2502,6 +2544,105 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				}
 			}
 		}
+	}
+	
+	private static boolean checkForMigrationSupport(ManagedBuildInfo buildInfo,
+			boolean forCurrentMbsVersion) {
+		
+		IProjectType projectType = null;
+		IConfigurationElement element = null;
+
+		// Get the projectType from buildInfo
+		IManagedProject managedProject = buildInfo.getManagedProject();
+		projectType = managedProject.getProjectType();
+
+		// walk through the hierarchy of the projectType and 
+		// call the converters if available for each configuration
+		IConfiguration[] configs = projectType.getConfigurations();
+		for (int i = 0; i < configs.length; i++) {
+			IConfiguration configuration = configs[i];
+			IToolChain toolChain = configuration.getToolChain();
+
+			if (forCurrentMbsVersion) {
+				element = ((ToolChain)toolChain).getCurrentMbsVersionConversionElement();
+			} else {
+				element = ((ToolChain)toolChain).getPreviousMbsVersionConversionElement();
+			}
+			
+			if (element != null) {
+				// If there is a converter element for toolChain, invoke it
+				// toolChain converter should take care of invoking converters of it's children
+				if ( invokeConverter(toolChain, buildInfo, element) != true ) { 
+					buildInfo.getManagedProject().setValid(false);
+					return false;
+				}
+			} else {
+				// If there are no converters for toolChain, walk through it's children
+				ITool[] tools = toolChain.getTools();
+				for (int j = 0; j < tools.length; j++) {
+					ITool tool = tools[j];
+					if (forCurrentMbsVersion) {
+						element = ((Tool)tool).getCurrentMbsVersionConversionElement();
+					} else {
+						element = ((Tool)tool).getPreviousMbsVersionConversionElement();
+					}
+					if (element != null) {
+						if ( invokeConverter(tool, buildInfo, element) != true ) {
+							buildInfo.getManagedProject().setValid(false);
+							return false;
+						}
+					}
+				}
+				IBuilder builder = toolChain.getBuilder();
+				if (forCurrentMbsVersion) {
+					element = ((Builder)builder).getCurrentMbsVersionConversionElement();
+				} else {
+					element = ((Builder)builder).getPreviousMbsVersionConversionElement();
+				}
+
+				if (element != null) {
+					if ( invokeConverter(builder, buildInfo, element) != true ) {
+						buildInfo.getManagedProject().setValid(false);
+						return false;
+					}
+				}
+			}
+		}		
+		// If control comes here, it means either there is no converter element
+		// or converters are invoked successfully
+		return true;
+	}
+
+	private static boolean invokeConverter(IBuildObject buildObject,
+			IManagedBuildInfo buildInfo, IConfigurationElement element) {
+		String toId = null;
+		String fromId = null;
+		IConvertManagedBuildObject convertBuildObject = null;
+
+		if (element != null) {
+			toId = element.getAttribute("toId"); //$NON-NLS-1$
+			fromId = element.getAttribute("fromId"); //$NON-NLS-1$
+
+			try {
+				convertBuildObject = (IConvertManagedBuildObject) element
+						.createExecutableExtension("class"); //$NON-NLS-1$
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			if (convertBuildObject != null) {
+				// invoke the converter
+				if (convertBuildObject
+						.convert(buildObject, fromId, toId, false) != null) {
+					// If it is successful, return 'true'
+					return true;
+				}
+			}
+		}
+		// if control comes here, it means that either 'convertBuildObject' is null or 
+		// converter did not convert the object successfully
+		return false;
 	}
 		
 }

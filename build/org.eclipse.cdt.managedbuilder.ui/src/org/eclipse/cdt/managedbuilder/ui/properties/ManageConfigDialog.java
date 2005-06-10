@@ -14,14 +14,21 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -83,6 +90,11 @@ public class ManageConfigDialog extends Dialog {
 	
 	private Combo conversionTargetSelector;
 	private Button convertTargetBtn;
+	private Composite conversionGroup;
+	
+	// The list of conversion targets for the selected configuration
+	private SortedMap conversionTargets;
+	
 	// Widgets
 	protected List currentConfigList;
 
@@ -173,13 +185,15 @@ public class ManageConfigDialog extends Dialog {
 		});
 		
 //		 Create a composite for the conversion target combo		
-		final Composite conversionGroup = new Composite(configListGroup, SWT.NULL);
+//		final Composite conversionGroup = new Composite(configListGroup, SWT.NULL);
+		conversionGroup = new Composite(configListGroup, SWT.NULL);
 		conversionGroup.setFont(configListGroup.getFont());
 		conversionGroup.setLayout(new GridLayout(2, true));
 		conversionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Create the Tool chain conversion target list
 		Label conversionTargetLabel = ControlFactory.createLabel(conversionGroup, ManagedBuilderUIMessages.getResourceString(CONVERSION_TARGET_LABEL));
+				
 		conversionTargetSelector = new Combo(conversionGroup, SWT.READ_ONLY|SWT.DROP_DOWN);
 		conversionTargetSelector.addListener(SWT.Selection, new Listener () {
 			public void handleEvent(Event e) {
@@ -187,6 +201,7 @@ public class ManageConfigDialog extends Dialog {
 			}
 		});
 		conversionTargetSelector.setToolTipText(ManagedBuilderUIMessages.getResourceString(CONVERSION_TARGET_TIP));
+		conversionTargetSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
 		//		 Create a composite for the buttons		
 		final Composite buttonBar = new Composite(configListGroup, SWT.NULL);
@@ -250,9 +265,38 @@ public class ManageConfigDialog extends Dialog {
 	}
 	
 	private void handleConversionTargetSelection() {
-		return;
+		IConfigurationElement element = null;
+		String selectedConversionTargetName = null;
+						
+		// Determine which conversion target was selected
+		int selectionIndex = conversionTargetSelector.getSelectionIndex();
+		if (selectionIndex != -1) {
+			// Get the converter based on selection
+			selectedConversionTargetName = conversionTargetSelector.getItem(selectionIndex);
+			element = (IConfigurationElement) getConversionTargets().get(selectedConversionTargetName);
+			
+			// Get the confirmation from the user
+			Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
+			boolean shouldConvert = MessageDialog.openQuestion(shell,
+			        ManagedBuilderUIMessages.getResourceString("ConfigurationConvert.confirmdialog.title"), //$NON-NLS-1$
+			        ManagedBuilderUIMessages.getFormattedString("ConfigurationConvert.confirmdialog.message",  //$NON-NLS-1$
+			                new String[] {getSelectedConfiguration().getName(), getSelectedConfiguration().getToolChain().getName(), element.getAttribute("name")}));	//$NON-NLS-1$	
+			if (shouldConvert) {
+				IConvertManagedBuildObject convertBuildObject = null;
+				try {
+					convertBuildObject = (IConvertManagedBuildObject) element.createExecutableExtension("class"); //$NON-NLS-1$
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+				String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
+				String toId = element.getAttribute("toId"); //$NON-NLS-1$
+
+				if(convertBuildObject != null )
+					convertBuildObject.convert( getSelectedConfiguration().getToolChain(), fromId, toId, true);
+			}	
+		}
 	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -289,17 +333,71 @@ public class ManageConfigDialog extends Dialog {
 	}
 
 	private String [] getConversionTargetList(IConfiguration config) {
-		// This is temporary, once I implement backend & converter extension point,
-		// this will be replaced with original code.
-		String [] conversionTargetNames = { "GNU Toolchain version 4.0"};	//$NON-NLS-1$ 
-		return conversionTargetNames;
+	
+		String []emptyList = new String[0];
+		
+		String fromId = null;
+		
+		// Get the id of the toolchain used in the given configuration.
+		String id = config.getToolChain().getId();
+		
+		// Clear the conversionTargets list.
+		getConversionTargets().clear();
+		
+		// Get the Converter Extension Point
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core",	//$NON-NLS-1$
+						"projectConverter");	//$NON-NLS-1$
+		if (extensionPoint != null) {
+			// Get the extensions
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				// Get the configuration elements of each extension
+				IConfigurationElement[] configElements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+					
+					IConfigurationElement element = configElements[j];
+					if (element.getName().equals("converter")) {	//$NON-NLS-1$
+						
+						fromId = element.getAttribute("fromId"); //$NON-NLS-1$
+						// Check whether the current converter can be used for the selected configuration(toolchain)
+						if (hasToolChainConverters(config.getToolChain(), fromId)) {
+							// Add this converter to the display list
+							getConversionTargets().put( element.getAttribute("name"), element); //$NON-NLS-1$
+						}
+					}
+				}
+			}
+		}	
+		if ( getConversionTargets().isEmpty())
+			return (String []) emptyList;
+		else
+			return (String []) getConversionTargets().keySet().toArray(new String[getConversionTargets().size()]);
+	}
+	
+	private boolean hasToolChainConverters(IToolChain toolChain, String fromId) {
+				
+//		Check whether the converter's 'fromId' and the given toolChain 'id' are equal
+		if(fromId == null)
+			return false;
+
+		while( toolChain != null) {
+			String id = toolChain.getId();
+			
+			if (fromId.equals(id))
+				return true;
+			else
+				toolChain = toolChain.getSuperClass();
+		}
+		return false;
 	}
 	
 	private void updateConversionTargets(IConfiguration config) {
 		conversionTargetSelector.setItems( getConversionTargetList(config));
 		conversionTargetSelector.select(0);
-		conversionTargetSelector.setEnabled(conversionTargetSelector.getItemCount() > 1);
-		convertTargetBtn.setEnabled( conversionTargetSelector.getItemCount() > 1);
+		conversionGroup.setEnabled(conversionTargetSelector.getItemCount() > 0);
+		convertTargetBtn.setEnabled( conversionTargetSelector.getItemCount() > 0);
 	}
 	
 	private String [] getConfigurationNamesAndDescriptions() {
@@ -336,6 +434,13 @@ public class ManageConfigDialog extends Dialog {
 		return existingConfigs;
 	}
 	
+	
+	protected SortedMap getConversionTargets() {
+		if (conversionTargets == null) {
+			conversionTargets = new TreeMap(); 
+		}
+		return conversionTargets;
+	}
 	
 	/*
 	 * @return the <code>IProject</code> associated with the managed project
@@ -525,7 +630,7 @@ public class ManageConfigDialog extends Dialog {
 	private void updateButtons() {
 		// Disable the remove button if there is only 1 configuration
 		removeBtn.setEnabled(currentConfigList.getItemCount() > 1);
-		convertTargetBtn.setEnabled( conversionTargetSelector.getItemCount() > 1);
+		convertTargetBtn.setEnabled( conversionTargetSelector.getItemCount() > 0);
 	}
 
 	private void handleConfigSelection() {

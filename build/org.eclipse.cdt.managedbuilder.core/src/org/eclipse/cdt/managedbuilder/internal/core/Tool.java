@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -25,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
@@ -46,8 +48,12 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -111,6 +117,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	private boolean isExtensionTool = false;
 	private boolean isDirty = false;
 	private boolean resolved = resolvedDefault;
+	private IConfigurationElement previousMbsVersionConversionElement = null;
+	private IConfigurationElement currentMbsVersionConversionElement = null;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -558,9 +566,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				setSuperClass( resConfig.getParent().getTool(superClassId) );
 			} else {
 				setSuperClass( ManagedBuildManager.getExtensionTool(superClassId) );
-			}
-			if (getSuperClass() == null) {
-				// TODO:  Report error
+			
+				// Check for migration support
+				checkForMigrationSupport();
 			}
 		}
 
@@ -2408,5 +2416,214 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 			
 		envVarBuildPathList.add(path);
 	}
+
+	/*
+	 * This function checks for migration support for the tool, while
+	 * loading. If migration support is needed, looks for the available
+	 * converters and stores them.
+	 */
+
+	private void checkForMigrationSupport() {
+
+		String tmpId = null;
+		boolean isExists = false;
 	
+		if ( getSuperClass() == null) {
+			// If 'getSuperClass()' is null, then there is no tool available in
+			// plugin manifest file with the same 'id' & version.
+			// Look for the 'versionsSupported' attribute
+			String high = (String) ManagedBuildManager.getExtensionToolMap()
+					.lastKey();
+
+			SortedMap subMap = null;
+			if (superClassId.compareTo(high) <= 0) {
+				subMap = ManagedBuildManager.getExtensionToolMap().subMap(
+						superClassId, high + "\0"); //$NON-NLS-1$
+			} else {
+				// It means there are no entries in the map for the given id.
+				// make the project is invalid
+
+				// It means there are no entries in the map for the given id.
+				// make the project is invalid
+				// If the parent is a tool chain
+				IToolChain parent = (IToolChain) getParent();
+				IConfiguration parentConfig = parent.getParent();
+				IManagedProject managedProject = parentConfig
+						.getManagedProject();
+				if (managedProject != null) {
+					managedProject.setValid(false);
+				}
+				return;
+			}
+
+			// for each element in the 'subMap',
+			// check the 'versionsSupported' attribute whether the given
+			// builder version is supported
+
+			String baseId = ManagedBuildManager
+					.getIdFromIdAndVersion(superClassId);
+			String version = ManagedBuildManager
+					.getVersionFromIdAndVersion(superClassId);
+
+			ITool[] toolElements = (ITool[]) subMap.values().toArray();
+
+			for (int i = 0; i < toolElements.length; i++) {
+				ITool toolElement = toolElements[i];
+
+				if (ManagedBuildManager.getIdFromIdAndVersion(
+						toolElement.getId()).compareTo(baseId) > 0)
+					break;
+
+				// First check if both base ids are equal
+				if (ManagedBuildManager.getIdFromIdAndVersion(
+						toolElement.getId()).equals(baseId)) {
+
+					// Check if 'versionsSupported' attribute is available'
+					String versionsSupported = toolElement
+							.getVersionsSupported();
+
+					if ((versionsSupported != null)
+							&& (!versionsSupported.equals(""))) { //$NON-NLS-1$
+						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
+
+						for (int j = 0; j < tmpVersions.length; j++) {
+							if (new PluginVersionIdentifier(version)
+									.equals(new PluginVersionIdentifier(
+											tmpVersions[j]))) {
+								// version is supported.
+								// Do the automatic conversion without
+								// prompting the user.
+								// Get the supported version
+								String supportedVersion = ManagedBuildManager
+										.getVersionFromIdAndVersion(toolElement
+												.getId());
+								setId(ManagedBuildManager
+										.getIdFromIdAndVersion(getId())
+										+ "_" + supportedVersion); //$NON-NLS-1$
+
+								// If control comes here means that superClass
+								// is null.
+								// So, set the superClass to this tool element
+								setSuperClass(toolElement);
+								superClassId = getSuperClass().getId();
+								isExists = true;
+								break;
+							}
+						}
+						if (isExists)
+							break; // break the outer for loop if 'isExists' is
+									// true
+					}					
+				}
+			}
+		}
+		
+		if (getSuperClass() != null) {
+			// If 'getSuperClass()' is not null, look for 'convertToId'
+			// attribute in plugin
+			// manifest file for this tool.
+			String convertToId = getSuperClass().getConvertToId();
+			if ((convertToId == null) || (convertToId.equals(""))) { //$NON-NLS-1$
+				// It means there is no 'convertToId' attribute available and
+				// the version is still actively
+				// supported by the tool integrator. So do nothing, just return
+				return;
+			} else {
+				// Incase the 'convertToId' attribute is available,
+				// it means that Tool integrator currently does not support this
+				// version of tool.
+				// Look for the converters available for this tool version.
+
+				getConverter(convertToId);
+			}
+
+		} else {
+			// make the project is invalid
+			// 
+			// It means there are no entries in the map for the given id.
+			// make the project is invalid
+			IToolChain parent = (IToolChain) getParent();
+			IConfiguration parentConfig = parent.getParent();
+			IManagedProject managedProject = parentConfig.getManagedProject();
+			if (managedProject != null) {
+				managedProject.setValid(false);
+			}
+		}
+		return;
+	}	
+	
+	
+	private void getConverter(String convertToId) {
+
+		String fromId = null;
+		String toId = null;
+
+		// Get the Converter Extension Point
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+						"projectConverter"); //$NON-NLS-1$
+		if (extensionPoint != null) {
+			// Get the extensions
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				// Get the configuration elements of each extension
+				IConfigurationElement[] configElements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+
+					IConfigurationElement element = configElements[j];
+
+					if (element.getName().equals("converter")) { //$NON-NLS-1$
+
+						fromId = element.getAttribute("fromId"); //$NON-NLS-1$
+						toId = element.getAttribute("toId"); //$NON-NLS-1$
+						// Check whether the current converter can be used for
+						// the selected tool
+
+						if (fromId.equals(getSuperClass().getId())
+								&& toId.equals(convertToId)) {
+							// If it matches
+							String mbsVersion = element
+									.getAttribute("mbsVersion"); //$NON-NLS-1$
+							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
+									.getBuildInfoVersion();
+
+							// set the converter element based on the MbsVersion
+							if (currentMbsVersion
+									.isGreaterThan(new PluginVersionIdentifier(
+											mbsVersion))) {
+								previousMbsVersionConversionElement = element;
+							} else {
+								currentMbsVersionConversionElement = element;
+							}
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		// If control comes here, it means 'Tool Integrator' specified
+		// 'convertToId' attribute in toolchain definition file, but
+		// has not provided any converter.
+		// So, make the project is invalid
+
+		// It means there are no entries in the map for the given id.
+		// make the project is invalid
+		IToolChain parent = (IToolChain) getParent();
+		IConfiguration parentConfig = parent.getParent();
+		IManagedProject managedProject = parentConfig.getManagedProject();
+		if (managedProject != null) {
+			managedProject.setValid(false);
+		}
+		return;
+	}
+
+	public IConfigurationElement getPreviousMbsVersionConversionElement() {
+		return previousMbsVersionConversionElement;
+	}
+
+	public IConfigurationElement getCurrentMbsVersionConversionElement() {
+		return currentMbsVersionConversionElement;
+	}
 }

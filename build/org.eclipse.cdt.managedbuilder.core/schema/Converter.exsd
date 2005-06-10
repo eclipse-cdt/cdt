@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.managedbuilder.core" id="Converter" name="Converter"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a tool integrator to contribute a project-type/tool-chain/tool/builder converter to MBS.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="converter" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="converter">
+      <annotation>
+         <documentation>
+            This extension point allows a tool integrator to contribute a project-type/tool-chain/tool/builder converter to MBS. Converters can be used to upgrade to newer versions, change the project-type, or to perform conversions between different tool chains/tools/buiders.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="fromId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The &apos;fromId&apos; is project-type/tool-chain/tool/builder id - a regular expression.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="toId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The &apos;toId&apos; is project-type/tool-chain/tool/builder id - a regular expression.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="mbsVersion" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The MBS version the converter was written for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class that implements the IConvertManagedBuildObject interface
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the converter
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the converter that is used in User Interface to display to the user
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT version 3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+   &lt;pre&gt;
+      &lt;extension point=&quot;org.eclipse.cdt.managedbuilder.core.converter&quot;&gt;
+         &lt;converter
+            fromId=&quot;project-type/tool-chain/tool/builder id&quot;
+            toId=&quot;project-type/tool-chain/tool/builder id&quot;
+            mbsVersion=&quot;The MBS version the converter was written for&quot;
+            class=&quot;org.eclipse.cdt.managedbuilder.core.GccConverter&quot;&gt;
+         &lt;/converter&gt;
+      &lt;/extension&gt;
+   &lt;/pre&gt;
+   &lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Plugins that want to extend this extension point must implement
+&quot;org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject&quot; interface
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         &quot;Example plugin&quot; has default implementation of the converter
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+ /**********************************************************************
+ * Copyright (c) 2005 Intel Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * Intel Corporation - Initial API and implementation
+ **********************************************************************/
+      </documentation>
+   </annotation>
+
+</schema>

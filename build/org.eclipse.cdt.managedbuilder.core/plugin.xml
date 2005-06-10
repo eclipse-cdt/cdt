@@ -25,6 +25,7 @@
 
    <extension-point id="ManagedBuildInfo" name="Managed Build Tools 2.0 (Deprecated)" schema="schema/ManagedBuildTools.exsd"/>
    <extension-point id="buildDefinitions" name="Managed Build Definitions" schema="schema/buildDefinitions.exsd"/>
+   <extension-point id="projectConverter" name="Managed Build Project Converter" schema="schema/Converter.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Extension Point: IScannerInfoProvider for the managed Builder                       -->

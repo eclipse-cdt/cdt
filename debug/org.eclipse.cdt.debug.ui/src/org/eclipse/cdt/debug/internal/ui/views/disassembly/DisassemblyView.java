@@ -76,6 +76,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
@@ -281,7 +282,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		viewer.configure( new DisassemblyViewerConfiguration() );
 		getSourceViewerDecorationSupport( viewer );
 		
-		EditorsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
+		getEditorPreferenceStore().addPropertyChangeListener( this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 		getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		getSite().setSelectionProvider( viewer.getSelectionProvider() );
@@ -476,7 +477,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		JFaceResources.getFontRegistry().removeListener( this );
 		JFaceResources.getColorRegistry().removeListener( this );
-		EditorsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
+		getEditorPreferenceStore().removePropertyChangeListener( this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
 
 		if ( fSourceViewerDecorationSupport != null ) {
@@ -669,7 +670,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	}
 
 	private IPreferenceStore getEditorPreferenceStore() {
-		return EditorsPlugin.getDefault().getPreferenceStore();
+		return EditorsUI.getPreferenceStore();
 	}
 
 	public DisassemblyDocumentProvider getDocumentProvider() {

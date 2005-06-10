@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -113,7 +113,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewA
 				fPartTarget.resumeAtLine( fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement );
 			}
 			catch( CoreException e ) {
-				DebugUIPlugin.errorDialog( fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString( "ResumeAtLineActionDelegate.1" ), ActionMessages.getString( "ResumeAtLineActionDelegate.2" ), e.getStatus() ); //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError( fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString( "ResumeAtLineActionDelegate.1" ), ActionMessages.getString( "ResumeAtLineActionDelegate.2" ), e.getStatus() ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

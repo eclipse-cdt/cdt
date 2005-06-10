@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jface.text.IDocument;
@@ -73,7 +73,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 								
 								public void run() {
 									try {
-										runToLine.runToLine( fileName, lineNumber, DebugUIPlugin.getDefault().getPluginPreferences().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
+										runToLine.runToLine( fileName, lineNumber, DebugUITools.getPreferenceStore().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
 									}
 									catch( DebugException e ) {
 										failed( e );
@@ -103,7 +103,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 							
 							public void run() {
 								try {
-									runToAddress.runToAddress( address, DebugUIPlugin.getDefault().getPluginPreferences().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
+									runToAddress.runToAddress( address, DebugUITools.getPreferenceStore().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
 								}
 								catch( DebugException e ) {
 									failed( e );

@@ -10,7 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -51,7 +51,7 @@ public class ExpressionDialog extends Dialog {
 	protected void configureShell( Shell shell ) {
 		super.configureShell( shell );
 		shell.setText( ActionMessages.getString( "ExpressionDialog.0" ) ); //$NON-NLS-1$
-		shell.setImage( DebugPluginImages.getImage( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
+		shell.setImage( DebugUITools.getImage( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
 	}
 
 	protected Control createContents( Composite parent ) {

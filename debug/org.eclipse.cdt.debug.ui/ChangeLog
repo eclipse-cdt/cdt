@@ -1,3 +1,17 @@
+2005-06-10 Mikhail Khodjaiants
+	Warning cleanup.
+	* AddExpressionEditorActionDelegate.java
+	* ExpressionDialog.java
+	* ManageFunctionBreakpointActionDelegate.java
+	* ResumeAtLineActionDelegate.java
+	* RetargetAction.java
+	* RunToLineAdapter.java
+	* ToggleBreakpointRulerAction.java
+	* ToggleWatchpointActionDelegate.java
+	* ThreadFilterEditor.java
+	* DisassemblyAnnotationModel.java
+	* DisassemblyView.java
+
 2005-06-09 Mikhail Khodjaiants
 	Warning cleanup.
 	* CDebugModelPresentation.java

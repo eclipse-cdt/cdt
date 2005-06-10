@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICThread;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -24,7 +25,6 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -73,7 +73,7 @@ public class ThreadFilterEditor {
 				threads = target.getThreads();
 			}
 			catch( DebugException exception ) {
-				DebugUIPlugin.log( exception );
+				CDebugUIPlugin.log( exception );
 				return;
 			}
 			for( int i = 0; i < threads.length; i++ ) {
@@ -94,7 +94,7 @@ public class ThreadFilterEditor {
 				threads = target.getThreads();
 			}
 			catch( DebugException exception ) {
-				DebugUIPlugin.log( exception );
+				CDebugUIPlugin.log( exception );
 				return;
 			}
 			int checkedNumber = 0;
@@ -141,7 +141,7 @@ public class ThreadFilterEditor {
 						return ((ICDebugTarget)parent).getThreads();
 					}
 					catch( DebugException e ) {
-						DebugUIPlugin.log( e );
+						CDebugUIPlugin.log( e );
 					}
 				}
 			}
@@ -297,7 +297,7 @@ public class ThreadFilterEditor {
 			}
 		}
 		catch( CoreException e ) {
-			DebugUIPlugin.log( e );
+			CDebugUIPlugin.log( e );
 		}
 	}
 
@@ -323,7 +323,7 @@ public class ThreadFilterEditor {
 				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
 			}
 			catch( CoreException e ) {
-				DebugUIPlugin.log( e );
+				CDebugUIPlugin.log( e );
 			}
 		}
 	}

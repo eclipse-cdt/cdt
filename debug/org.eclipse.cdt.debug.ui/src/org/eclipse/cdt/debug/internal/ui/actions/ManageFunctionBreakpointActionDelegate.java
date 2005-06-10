@@ -11,8 +11,8 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -48,10 +48,10 @@ public class ManageFunctionBreakpointActionDelegate extends ActionDelegate imple
 			getBreakpointAdapter().toggleMethodBreakpoints( getTargetPart(), getSelection() );
 		}
 		catch( CoreException e ) {
-			DebugUIPlugin.errorDialog( getTargetPart().getSite().getShell(), 
-					   				   ActionMessages.getString( "ManageFunctionBreakpointActionDelegate.Error_1" ), //$NON-NLS-1$
-									   ActionMessages.getString( "ManageFunctionBreakpointActionDelegate.Operation_failed_1" ), //$NON-NLS-1$
-									   e.getStatus() );
+			ErrorDialog.openError( getTargetPart().getSite().getShell(),
+								   ActionMessages.getString( "ManageFunctionBreakpointActionDelegate.Error_1" ), //$NON-NLS-1$
+					   			   ActionMessages.getString( "ManageFunctionBreakpointActionDelegate.Operation_failed_1" ), //$NON-NLS-1$
+					   			   e.getStatus() );
 		}
 	}
 

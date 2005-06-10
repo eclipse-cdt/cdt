@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IWatchExpression;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -96,7 +95,7 @@ public class AddExpressionEditorActionDelegate extends ActionDelegate implements
 	}
 
 	private void activateExpressionView() {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 		if ( window != null ) {
 			IWorkbenchPage page = window.getActivePage();
 			if ( page != null ) {

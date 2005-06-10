@@ -15,8 +15,8 @@ import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -72,10 +72,10 @@ public class ToggleBreakpointRulerAction extends Action {
 				fBreakpointAdapter.toggleLineBreakpoints( getTargetPart(), getTargetSelection() );
 		}
 		catch( CoreException e ) {
-			DebugUIPlugin.errorDialog( getTargetPart().getSite().getShell(), 
-									   ActionMessages.getString( "ToggleBreakpointRulerAction.Error_1" ), //$NON-NLS-1$
-									   ActionMessages.getString( "ToggleBreakpointRulerAction.Operation_failed_1" ), //$NON-NLS-1$
-									   e.getStatus() );
+			ErrorDialog.openError( getTargetPart().getSite().getShell(), 
+								   ActionMessages.getString( "ToggleBreakpointRulerAction.Error_1" ), //$NON-NLS-1$
+								   ActionMessages.getString( "ToggleBreakpointRulerAction.Operation_failed_1" ), //$NON-NLS-1$
+								   e.getStatus() );
 		}
 	}
 

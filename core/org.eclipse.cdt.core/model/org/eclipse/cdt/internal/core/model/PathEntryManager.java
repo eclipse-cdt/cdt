@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.PathEntryContainerChanged;
@@ -1400,6 +1401,14 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return false;
 		}
 		if (kind == ICElementDelta.ADDED || kind == ICElementDelta.REMOVED) {
+			// If the element path maps to the some IPathEntry we need to remove that entry
+			// but I'm not sure of the side effects so lets just do this for the ISourceEntry type
+			if (element instanceof ISourceRoot) {
+				ISourceRoot sourceRoot = (ISourceRoot)element;
+				if (kind == ICElementDelta.REMOVED) {
+					updatePathEntryFromDeleteSource(sourceRoot);
+				}
+			}
 			return true; // add/remove we validate all paths
 		}
 		if (type == ICElement.C_MODEL || type == ICElement.C_CCONTAINER || type == ICElement.C_PROJECT) {
@@ -1412,6 +1421,64 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		return false;
 	}
+
+	/**
+	 * The sourceroot been deleted update the path entries
+	 * @param sourceRoot
+	 * @throws CModelException
+	 */
+	void updatePathEntryFromDeleteSource(ISourceRoot sourceRoot) throws CModelException {
+		final ICProject cproject = sourceRoot.getCProject();
+		IPathEntry[] rawEntries = getRawPathEntries(cproject);
+		boolean change = false;
+		ArrayList list = new ArrayList(rawEntries.length);
+		for (int i = 0; i < rawEntries.length; ++i) {
+			if (rawEntries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
+				if (sourceRoot.getPath().equals(rawEntries[i].getPath())) {
+					change = true;
+				} else {
+					list.add(rawEntries[i]);
+				}
+			} else {
+				list.add(rawEntries[i]);
+			}
+		}
+		if (change) {
+			IPathEntry[] newEntries = new IPathEntry[list.size()];
+			list.toArray(newEntries);
+			final IPathEntry[] finalEntries = newEntries;
+			Job updatePathEntry = new Job("PathEntry Update source roots") { //$NON-NLS-1$
+				
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
+							
+							/* (non-Javadoc)
+							 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+							 */
+							public void run(IProgressMonitor mon) throws CoreException {
+								setRawPathEntries(cproject, finalEntries, mon);
+							}
+						}, null);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+					
+					return Status.OK_STATUS;
+				}
+			};
+			IProject project = cproject.getProject();
+			ISchedulingRule rule = project.getWorkspace().getRoot();
+			updatePathEntry.setRule(rule);
+			updatePathEntry.schedule();
+		}
+	}
+		
 
 	public ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
 		return PathEntryUtil.validatePathEntry(cProject, entries);

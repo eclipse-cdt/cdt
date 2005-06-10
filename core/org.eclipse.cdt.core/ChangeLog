@@ -1,4 +1,8 @@
 2005-06-08 Alain Magloire
+	Attempt to fix PR 97554
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
+2005-06-08 Alain Magloire
 	Move to the IContentTypeManager framework: PR 86645
 	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AbstractIndexer.java
 	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddFileToIndex.java

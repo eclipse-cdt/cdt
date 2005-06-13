@@ -4,7 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class CleanEncounteredHeaders implements IIndexJob {
 	
-	SourceIndexer indexer = null;
+	DOMSourceIndexer indexer = null;
 	
-	public CleanEncounteredHeaders(SourceIndexer indexer){
+	public CleanEncounteredHeaders(DOMSourceIndexer indexer){
 		this.indexer = indexer;
 	}
 	/* (non-Javadoc)

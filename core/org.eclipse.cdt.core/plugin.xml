@@ -580,16 +580,6 @@
          </run>
       </cextension>
    </extension>
-  <extension
-   		 name="%CDTIndexer.originalsourceindexer"
-         id="originalsourceindexer"
-         point="org.eclipse.cdt.core.CIndexer">
-      <cextension>
-         <run 
-               class="org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer">
-         </run>
-      </cextension>
-   </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">
       <variable

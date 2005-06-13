@@ -16,7 +16,7 @@ import org.eclipse.cdt.internal.core.index.IIndexEntry;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.INamedEntry;
 import org.eclipse.cdt.internal.core.index.ITypeEntry;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.AbstractIndexerRunner;
 
 /**
  * An indexerOutput is used by an indexer to add files and word references to
@@ -151,8 +151,8 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 	        pos+=tempName.length;               
 	    }
 	    
-	    if (AbstractIndexer.VERBOSE)
-	        AbstractIndexer.verbose(new String(result));
+	    if (AbstractIndexerRunner.VERBOSE)
+	        AbstractIndexerRunner.verbose(new String(result));
 	        
 	    return result;
 	}
@@ -185,8 +185,8 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 	         pos+=tempName.length;               
 	     }
 	     
-	     if (AbstractIndexer.VERBOSE)
-	         AbstractIndexer.verbose(new String(result));
+	     if (AbstractIndexerRunner.VERBOSE)
+	         AbstractIndexerRunner.verbose(new String(result));
 	         
 	     return result;
 	 }

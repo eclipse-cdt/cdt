@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
 
@@ -24,17 +24,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public abstract class AddFileToIndex extends IndexRequest {
+public abstract class DOMAddFileToIndex extends DOMIndexRequest {
 	protected IFile resource;
 	private boolean checkEncounteredHeaders;
 
-	public AddFileToIndex(IFile resource, IPath indexPath, SourceIndexer indexer, boolean checkEncounteredHeaders) {
+	public DOMAddFileToIndex(IFile resource, IPath indexPath, DOMSourceIndexer indexer, boolean checkEncounteredHeaders) {
 		super(indexPath, indexer);
 		this.resource = resource;
 		this.checkEncounteredHeaders = checkEncounteredHeaders;
 	}
 	
-	public AddFileToIndex(IFile resource, IPath indexPath, SourceIndexer indexer) {
+	public DOMAddFileToIndex(IFile resource, IPath indexPath, DOMSourceIndexer indexer) {
 		this(resource,indexPath,indexer,false);
 	}
 	

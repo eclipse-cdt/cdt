@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
 
@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
 import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.SourceRoot;
@@ -30,17 +31,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
-public class IndexAllProject extends IndexRequest {
+public class DOMIndexAllProject extends DOMIndexRequest {
 	IProject project;
 
-	public IndexAllProject(IProject project, SourceIndexer indexer) {
+	public DOMIndexAllProject(IProject project, DOMSourceIndexer indexer) {
 		super(project.getFullPath(), indexer);
 		this.project = project;
 	}
 	
 	public boolean equals(Object o) {
-		if (o instanceof IndexAllProject)
-			return this.project.equals(((IndexAllProject) o).project);
+		if (o instanceof DOMIndexAllProject)
+			return this.project.equals(((DOMIndexAllProject) o).project);
 		return false;
 	}
 	/**
@@ -61,7 +62,7 @@ public class IndexAllProject extends IndexRequest {
 		if (monitor == null) return true; // index got deleted since acquired
 
 		try {
-		    if (AbstractIndexer.TIMING)
+		    if (AbstractIndexerRunner.TIMING)
 		        //reset the total index timer
 		        indexer.setTotalIndexTime(0);
 		    
@@ -92,14 +93,14 @@ public class IndexAllProject extends IndexRequest {
 					ISourceEntry tempEntry = ((SourceRoot) sourceRoot[i]).getSourceEntry();
 					
 					if ((i+1) != sourceRoot.length)
-						indexer.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), indexer));
+						indexer.request(new DOMAddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), indexer));
 					else
-						indexer.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(),indexer,true));
+						indexer.request(new DOMAddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(),indexer,true));
 				}
 			}
 			
 			// request to save index when all cus have been indexed
-			indexer.request(new SaveIndex(this.indexPath, indexer));
+			indexer.request(new DOMSaveIndex(this.indexPath, indexer));
 		} catch (CoreException e) {
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$

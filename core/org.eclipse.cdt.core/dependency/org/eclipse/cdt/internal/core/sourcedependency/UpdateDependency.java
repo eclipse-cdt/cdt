@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
@@ -42,12 +42,12 @@ import org.eclipse.core.runtime.Path;
 public class UpdateDependency implements IIndexJob {
 	PathCollector pathCollector;
 	IFile resource=null;
-	SourceIndexer indexer;
+	DOMSourceIndexer indexer;
 	
 	/**
 	 * @param resource
 	 */
-	public UpdateDependency(IResource resource, SourceIndexer indexer) {
+	public UpdateDependency(IResource resource, DOMSourceIndexer indexer) {
 		if (resource instanceof IFile)
 			this.resource = (IFile) resource;
 		

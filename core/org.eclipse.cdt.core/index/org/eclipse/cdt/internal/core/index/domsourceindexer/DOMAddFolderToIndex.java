@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class AddFolderToIndex extends IndexRequest {
+public class DOMAddFolderToIndex extends DOMIndexRequest {
 	IPath folderPath;
 	IProject project;
 	char[][] exclusionPattern;
@@ -36,7 +36,7 @@ public class AddFolderToIndex extends IndexRequest {
 	ArrayList headerFilesToIndex;
 	boolean cleanEncouteredHeaders;
 	
-	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, SourceIndexer indexer) {
+	public DOMAddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, DOMSourceIndexer indexer) {
 		super(project.getFullPath(), indexer);
 		this.folderPath = folderPath;
 		this.project = project;
@@ -46,7 +46,7 @@ public class AddFolderToIndex extends IndexRequest {
 		this.cleanEncouteredHeaders = false;
 	}
 	
-	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, SourceIndexer indexer, boolean cleanEncounteredHeaders) {
+	public DOMAddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, DOMSourceIndexer indexer, boolean cleanEncounteredHeaders) {
 		super(project.getFullPath(), indexer);
 		this.folderPath = folderPath;
 		this.project = project;

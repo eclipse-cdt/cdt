@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
@@ -32,7 +32,7 @@ public abstract class IndexerJob implements IIndexJob {
 	private IndexManager fIndexManager;
 	private IProject fProject;
 	private IIndex fProjectIndex = null;
-	private SourceIndexer fSourceIndexer = null;
+	private DOMSourceIndexer fSourceIndexer = null;
 	
 	public static final String FAMILY= "BasicTypeIndexerJob"; //$NON-NLS-1$
 
@@ -42,8 +42,8 @@ public abstract class IndexerJob implements IIndexJob {
 		//Get the indexer assigned to this project; check to see if it's 
 		//a Source Indexder
 		ICDTIndexer indexer = indexManager.getIndexerForProject(project);
-		if (indexer instanceof SourceIndexer)
-			fSourceIndexer = (SourceIndexer) indexer;
+		if (indexer instanceof DOMSourceIndexer)
+			fSourceIndexer = (DOMSourceIndexer) indexer;
 	}
 
 	public boolean belongsTo(String family) {

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
@@ -30,7 +29,7 @@ import org.eclipse.core.runtime.IPath;
  * Warning: This interface is still under development - API may change.
  * @since 3.0 
  */
-public interface ICDTIndexer extends IIndexer {
+public interface ICDTIndexer {
 
 	/**
 	 * Indexer Support bit flags

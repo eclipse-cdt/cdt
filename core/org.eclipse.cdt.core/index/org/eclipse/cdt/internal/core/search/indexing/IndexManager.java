@@ -20,10 +20,9 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexRequest;
-import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
-import org.eclipse.cdt.internal.core.index.sourceindexer.IndexRequest;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.IndexRequest;
+import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
@@ -84,19 +83,9 @@ public class IndexManager extends JobManager{
 	 * 
 	 */
 	protected void jobFinishedNotification(IIndexJob job) {
+	
 		if (job instanceof IndexRequest ){
 			IndexRequest indexRequest = (IndexRequest) job;
-			IPath path = indexRequest.getIndexPath();
-			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(path.toOSString()); 
-			ICDTIndexer indexer = getIndexerForProject(project);
-			
-			if (indexer != null)
-				indexer.indexJobFinishedNotification(job);
-		}
-		
-		//TODO: Standardize on jobs
-		if (job instanceof CTagsIndexRequest){
-		    CTagsIndexRequest indexRequest = (CTagsIndexRequest) job;
 			IPath path = indexRequest.getIndexPath();
 			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(path.toOSString()); 
 			ICDTIndexer indexer = getIndexerForProject(project);
@@ -264,8 +253,8 @@ public class IndexManager extends JobManager{
 	 */
 	public void updateDependencies(IProject project, IResource resource) {
 		ICDTIndexer indexer = getIndexerForProject(project);
-		if (indexer instanceof SourceIndexer)
-			((SourceIndexer) indexer).updateDependencies(resource);
+		if (indexer instanceof DOMSourceIndexer)
+			((DOMSourceIndexer) indexer).updateDependencies(resource);
 		
 	}
 	

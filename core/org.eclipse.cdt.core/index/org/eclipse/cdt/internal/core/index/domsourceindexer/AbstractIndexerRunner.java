@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.index.IIndexer;
+import org.eclipse.cdt.internal.core.index.IIndexerRunner;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 
-public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
+public abstract class AbstractIndexerRunner implements IIndexerRunner, ICSearchConstants {
 	
 	public static boolean VERBOSE = false;
 	public static boolean TIMING = false;
@@ -51,7 +51,7 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
     private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
 	protected IFile resourceFile;
 	
-	public AbstractIndexer() {
+	public AbstractIndexerRunner() {
 		super();
 	}
 	
@@ -69,7 +69,7 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
 	}
 
 	/**
-	 * @see IIndexer#index(IFile document, IIndexerOutput output)
+	 * @see IIndexerRunner#index(IFile document, IIndexerOutput output)
 	 */
 	public void index(IFile file, IIndexerOutput output) throws IOException {
 		this.output = output;
@@ -80,7 +80,7 @@ public abstract class AbstractIndexer implements IIndexer, ICSearchConstants {
 	
 	/**
 	 * @param fileToBeIndexed
-	 * @see IIndexer#shouldIndex(IFile file)
+	 * @see IIndexerRunner#shouldIndex(IFile file)
 	 */
 	public boolean shouldIndex(IFile fileToBeIndexed) {
 		if (fileToBeIndexed != null){

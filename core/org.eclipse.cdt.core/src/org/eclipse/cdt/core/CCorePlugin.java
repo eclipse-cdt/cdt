@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.PathEntryVariableManager;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.AbstractIndexerRunner;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
@@ -79,7 +79,7 @@ public class CCorePlugin extends Plugin {
 	public static final String INDEXER_SIMPLE_ID = "CIndexer"; //$NON-NLS-1$
 	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String PREF_INDEXER = "indexer"; //$NON-NLS-1$
-	public final static String DEFAULT_INDEXER_SIMPLE_ID = "originalsourceindexer"; //$NON-NLS-1$
+	public final static String DEFAULT_INDEXER_SIMPLE_ID = "domsourceindexer"; //$NON-NLS-1$
 	public final static String NULL_INDEXER_SIMPLE_ID = "nullindexer"; //$NON-NLS-1$
 	public final static String NULL_INDEXER_UNIQUE_ID = PLUGIN_ID + "." + NULL_INDEXER_SIMPLE_ID ; //$NON-NLS-1$
 	public final static String DEFAULT_INDEXER_UNIQ_ID =  PLUGIN_ID + "." + DEFAULT_INDEXER_SIMPLE_ID; //$NON-NLS-1$
@@ -918,10 +918,10 @@ public class CCorePlugin extends Plugin {
 			} //$NON-NLS-1$
 			
 			option = Platform.getDebugOption(INDEXER);
-			if(option != null) AbstractIndexer.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			if(option != null) AbstractIndexerRunner.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		
 			option = Platform.getDebugOption(INDEXER_TIMES);
-			if (option != null) AbstractIndexer.TIMING =  option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			if (option != null) AbstractIndexerRunner.TIMING =  option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			    
 			option = Platform.getDebugOption(SEARCH);
 			if(option != null) SearchEngine.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$

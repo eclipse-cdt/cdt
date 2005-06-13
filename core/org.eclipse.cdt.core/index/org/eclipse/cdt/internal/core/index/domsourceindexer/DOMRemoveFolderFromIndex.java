@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
 
@@ -24,12 +24,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-public class RemoveFolderFromIndex extends IndexRequest {
+public class DOMRemoveFolderFromIndex extends DOMIndexRequest {
 	IPath folderPath;
 	char[][] exclusionPatterns;
 	IProject project;
 
-	public RemoveFolderFromIndex(IPath folderPath, char[][] exclusionPatterns, IProject project, SourceIndexer indexer) {
+	public DOMRemoveFolderFromIndex(IPath folderPath, char[][] exclusionPatterns, IProject project, DOMSourceIndexer indexer) {
 		super(project.getFullPath(), indexer);
 		this.folderPath = folderPath;
 		this.exclusionPatterns = exclusionPatterns;

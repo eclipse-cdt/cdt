@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
@@ -76,7 +76,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		project.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
 		
 		//Enable indexing on test project
-		project.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
+		project.setSessionProperty(DOMSourceIndexer.activationKey,new Boolean(true));
 
 		if (project==null) fail("Unable to create project");	 //$NON-NLS-1$
 		IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(project.getName());

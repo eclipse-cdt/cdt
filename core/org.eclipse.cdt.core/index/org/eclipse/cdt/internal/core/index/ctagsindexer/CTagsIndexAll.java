@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
-import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
+import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.AbstractIndexerRunner;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
@@ -88,7 +88,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			
 			 
 			if (useInternalCTagsFile()){
-				if (AbstractIndexer.TIMING)
+				if (AbstractIndexerRunner.TIMING)
 				  startTime = System.currentTimeMillis();
 				
 				
@@ -96,7 +96,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 				success = runCTags(project.getLocation());
 				ctagsFileToUse=ctagsFile;
 				
-				if (AbstractIndexer.TIMING){
+				if (AbstractIndexerRunner.TIMING){
 				    cTagsEndTime = System.currentTimeMillis();
 				    System.out.println("CTags Run: " + (cTagsEndTime - startTime)); //$NON-NLS-1$
 				    System.out.flush();
@@ -114,7 +114,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			     // request to save index when all cus have been indexed
 			     indexer.request(new CTagsSaveIndex(this.indexPath, indexer));
 			
-			     if (AbstractIndexer.TIMING){
+			     if (AbstractIndexerRunner.TIMING){
 				     endTime = System.currentTimeMillis();
 				     System.out.println("CTags Encoding Time: " + (endTime - cTagsEndTime)); //$NON-NLS-1$
 				     System.out.println("CTagsIndexer Total Time: " + (endTime - startTime)); //$NON-NLS-1$

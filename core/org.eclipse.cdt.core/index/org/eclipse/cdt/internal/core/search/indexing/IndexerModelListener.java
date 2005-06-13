@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.model.SourceRoot;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -59,10 +59,10 @@ public class IndexerModelListener implements IElementChangedListener {
 		IProject project = element.getCProject().getProject();
 		ICDTIndexer indexer = indexManager.getIndexerForProject(project);
 		
-		if (!(indexer instanceof SourceIndexer))
+		if (!(indexer instanceof DOMSourceIndexer))
 			return;
 		
-		SourceIndexer sourceIndexer = (SourceIndexer) indexer;
+		DOMSourceIndexer sourceIndexer = (DOMSourceIndexer) indexer;
 		
 		switch(kind){		
 			case ICElementDelta.CHANGED:

@@ -1340,7 +1340,7 @@
    <extension
          point="org.eclipse.cdt.ui.IndexerPage">
  	  <indexerUI
-            class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
+            class="org.eclipse.cdt.ui.dialogs.DOMSourceIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
             indexerID="org.eclipse.cdt.core.domsourceindexer"
             name="%CDTIndexer.domsourceindexer"/>
@@ -1354,11 +1354,6 @@
             indexerID="org.eclipse.cdt.core.nullindexer"
             name="%CDTIndexer.nullindexer"
             id="org.eclipse.cdt.ui.nullindexerUI"/>
-      <indexerUI
-            class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
-            indexerID="org.eclipse.cdt.core.originalsourceindexer"
-            name="%CDTIndexer.originalsourceindexer"
-            id="org.eclipse.cdt.ui.originalSourceIndexerUI"/>
 <!--TODO reverse this <indexerUI
             class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"

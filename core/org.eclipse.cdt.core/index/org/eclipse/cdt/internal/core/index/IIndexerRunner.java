@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IFile;
  * the words references to an IIndex. Each IIndexer can index certain types of document, and should
  * not index the other files. 
  */
-public interface IIndexer {
+public interface IIndexerRunner {
 	/**
 	 * Indexes the given file, adding the file name and the word references 
 	 * to this document to the given <code>IIndex</code>.The caller should use 

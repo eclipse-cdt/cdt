@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.IIndexer;
+import org.eclipse.cdt.internal.core.index.IIndexerRunner;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexOutput;
@@ -98,7 +98,7 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 	 * If the document already exists in the index, it overrides the previous one. The changes will be 
 	 * taken into account after a merge.
 	 */
-	public void add(IFile file, IIndexer indexer) throws IOException {
+	public void add(IFile file, IIndexerRunner indexer) throws IOException {
 		if (timeToMerge()) {
 			merge();
 		}
@@ -551,24 +551,22 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 		
 		return bestPrefix( prefix, (char)0, fieldName, containingTypes, matchMode, isCaseSensitive );
 	}  
-	
+
 	public static final char[] bestEnumeratorPrefix( LimitTo limitTo, char[] enumeratorName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = encodeEntry(IIndex.ENUMTOR, ANY, REFERENCE);
 		} else if( limitTo == DECLARATIONS ){
 			prefix = encodeEntry(IIndex.ENUMTOR, ANY, DECLARATION);
+		} else if ( limitTo == DEFINITIONS ) {
+			prefix = encodeEntry(IIndex.ENUMTOR, ANY, DEFINITION);
 		} else if (limitTo == ALL_OCCURRENCES){
 			return encodeEntry(IIndex.ENUMTOR, ANY, ANY);
-		}
-		else {
-			//Definitions
-			return "noEnumtorDefs".toCharArray(); //$NON-NLS-1$
 		}
 		
 		return bestPrefix( prefix, (char)0, enumeratorName, containingTypes, matchMode, isCaseSensitive );
 	}  
-
+	
 	public static final char[] bestMethodPrefix( LimitTo limitTo, char[] methodName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){

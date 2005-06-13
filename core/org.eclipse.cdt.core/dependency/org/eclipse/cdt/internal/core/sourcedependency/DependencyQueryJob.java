@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.index.cindexstorage.IncludeEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
@@ -41,12 +41,12 @@ public class DependencyQueryJob implements IIndexJob {
 	IProject project;
 	IFile file;
 	ArrayList includeFiles;
-	SourceIndexer indexer;
+	DOMSourceIndexer indexer;
 	IndexManager indexManager;
 	protected IndexSelector indexSelector;
 	protected long executionTime = 0;
 	
-	public DependencyQueryJob(IProject project, IFile file, SourceIndexer indexer, List includeFiles) {
+	public DependencyQueryJob(IProject project, IFile file, DOMSourceIndexer indexer, List includeFiles) {
 		this.project = project;
 		this.file = file;
 		this.indexer = indexer;
@@ -123,11 +123,11 @@ public class DependencyQueryJob implements IIndexJob {
 			return COMPLETE;
 		
 		
-		if (!(indexer instanceof SourceIndexer))
+		if (!(indexer instanceof DOMSourceIndexer))
 			return FAILED;
 		
 		
-		SourceIndexer sourceIndexer = (SourceIndexer)indexer;
+		DOMSourceIndexer sourceIndexer = (DOMSourceIndexer)indexer;
 			
 		ReadWriteMonitor monitor = sourceIndexer.getMonitorFor(index);
 		if (monitor == null)

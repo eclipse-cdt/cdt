@@ -11,7 +11,7 @@
 package org.eclipse.cdt.ui.tests.IndexerView;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.index.IIndexer;
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
@@ -53,7 +53,7 @@ public class OpenIndexerViewAction implements IViewActionDelegate,
         if (tempView != null) {
             if (tempView instanceof IndexerView) {
                 ((IndexerView)tempView).clearIndexers();
-                IIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(proj); 
+                ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(proj); 
                 ((IndexerView)tempView).appendIndexer(indexer);
                 ((IndexerView)tempView).setContentProvider(((IndexerView)tempView).new ViewContentProvider());
             }

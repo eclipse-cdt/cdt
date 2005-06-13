@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -81,7 +80,7 @@ public class IndexEncoderUtil {
 				? true : false;
 	}
 
-	public static boolean nodeInVisitedExternalHeader(IASTNode node, SourceIndexer indexer) {
+	public static boolean nodeInVisitedExternalHeader(IASTNode node, DOMSourceIndexer indexer) {
 		String fileName = node.getContainingFilename();
 		IPath filePath = new Path(fileName);
 		IPath projectPath = indexer.getProject().getFullPath();

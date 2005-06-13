@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.IIndexer;
+import org.eclipse.cdt.internal.core.index.IIndexerRunner;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.core.resources.IFile;
@@ -122,7 +122,7 @@ public class CTagsFileReader {
 		} catch (IOException e){}
 	}
 	
-	class MiniIndexer implements IIndexer {
+	class MiniIndexer implements IIndexerRunner {
 		
 	    IIndexerOutput output;
 	    IPath currentFile; //currentFile.getFullPath()

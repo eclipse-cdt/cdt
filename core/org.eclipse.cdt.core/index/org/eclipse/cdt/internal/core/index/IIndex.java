@@ -80,7 +80,7 @@ public interface IIndex {
 	   /**
 		 * Adds the given file to the index.
 		 */
-		void add(IFile file, IIndexer indexer) throws IOException;
+		void add(IFile file, IIndexerRunner indexer) throws IOException;
 		/**
 		 * Empties the index.
 		 */

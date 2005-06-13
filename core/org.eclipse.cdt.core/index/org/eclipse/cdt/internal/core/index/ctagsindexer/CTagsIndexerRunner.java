@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.AbstractIndexerRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * @author Bogdan Gheorghe
  */
-public class CTagsIndexerRunner extends AbstractIndexer {
+public class CTagsIndexerRunner extends AbstractIndexerRunner {
 	private CTagsIndexer indexer;
     /**
      * @param resource
@@ -76,7 +76,7 @@ public class CTagsIndexerRunner extends AbstractIndexer {
 			} catch (CoreException e) {} 
 			
             long startTime=0;
-            if (AbstractIndexer.TIMING)
+            if (AbstractIndexerRunner.TIMING)
                 startTime = System.currentTimeMillis();
             
             CTagsConsoleParser parser = new CTagsConsoleParser(this);
@@ -107,7 +107,7 @@ public class CTagsIndexerRunner extends AbstractIndexer {
             consoleErr.close();
             cos.close();
             
-            if (AbstractIndexer.TIMING){
+            if (AbstractIndexerRunner.TIMING){
                 System.out.println("CTagsIndexer Total Time: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
                 System.out.flush();
             }  

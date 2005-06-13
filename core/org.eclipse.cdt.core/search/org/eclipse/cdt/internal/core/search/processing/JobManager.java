@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.search.processing;
 
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.index.sourceindexer.IndexRequest;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMIndexRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -205,7 +205,7 @@ public abstract class JobManager implements Runnable {
 		if( indexJob != null ){
 			String progressString = null;
 			IIndexJob job = currentJob();
-			if( job instanceof IndexRequest ){
+			if( job instanceof DOMIndexRequest ){
 				progressString = " ("; //$NON-NLS-1$
 				progressString += job.toString();
 				progressString += ")"; //$NON-NLS-1$

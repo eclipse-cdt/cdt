@@ -43,8 +43,6 @@ import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.NamedEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexerOutput;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
-import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -57,17 +55,21 @@ import org.eclipse.core.runtime.Path;
  * 
  * @author vhirsl
  */
-public class DOMSourceIndexerRunner extends AbstractIndexer {
+public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
 
-    private SourceIndexer indexer;
+    private DOMSourceIndexer indexer;
     
+    // for running JUnit tests
+	private static boolean skipScannerInfoTest=false;
+    
+	
     // timing & errors
     static int totalParseTime = 0;
     static int totalVisitTime = 0;
     static int errorCount = 0;
     static Map errors = new HashMap();
 
-    public DOMSourceIndexerRunner(IFile resource, SourceIndexer indexer) {
+    public DOMSourceIndexerRunner(IFile resource, DOMSourceIndexer indexer) {
         this.resourceFile = resource;
         this.indexer = indexer;
     }
@@ -75,7 +77,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     /**
 	 * @return Returns the indexer.
 	 */
-	public SourceIndexer getIndexer() {
+	public DOMSourceIndexer getIndexer() {
 		return indexer;
 	}
 
@@ -86,12 +88,12 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     protected void indexFile(IFile file) throws IOException {
         int problems = indexer.indexProblemsEnabled(resourceFile.getProject());
         // enable inclusion problem markers
-        problems |= SourceIndexer.INCLUSION_PROBLEMS_BIT;
+        problems |= DOMSourceIndexer.INCLUSION_PROBLEMS_BIT;
         setProblemMarkersEnabled(problems);
         requestRemoveMarkers(resourceFile, null);
         
         // do not index the file if there is no scanner info
-        if (isScannerInfoEmpty(resourceFile)) {
+        if (!skipScannerInfoTest && isScannerInfoEmpty(resourceFile)) {
             // generate info marker - file is not indexed
             addInfoMarker(resourceFile, CCorePlugin.getResourceString("DOMIndexerMarker.EmptyScannerInfo")); //$NON-NLS-1$
             if (areProblemMarkersEnabled()) {
@@ -110,13 +112,13 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 		long startTime = 0, parseTime = 0, endTime = 0;
 		String error = null;
         try {
-            if (AbstractIndexer.TIMING)
+            if (AbstractIndexerRunner.TIMING)
                 startTime = System.currentTimeMillis();
             
             tu = CDOM.getInstance().getASTService().getTranslationUnit(resourceFile,
                     CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES));
             
-            if (AbstractIndexer.TIMING)
+            if (AbstractIndexerRunner.TIMING)
                 parseTime = System.currentTimeMillis();
             
             ASTVisitor visitor = null;
@@ -153,7 +155,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 throw (IOException) ex;
         }
         finally {
-           if (AbstractIndexer.TIMING) {
+           if (AbstractIndexerRunner.TIMING) {
                 endTime = System.currentTimeMillis();
 				if (error != null) {
 					errorCount++;
@@ -172,12 +174,12 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 long tempTotaltime = indexer.getTotalIndexTime() + currentTime;
 	            indexer.setTotalIndexTime(tempTotaltime);
                 System.out.println(" \t\tOverall " + tempTotaltime + "=" + totalParseTime + "+" + totalVisitTime + " " + errorCount + " errors "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-                System.out.println( "Attempted Entries " + IndexerOutput.entryCount + " Trimed " + SourceIndexer.trimed + " Added " + SourceIndexer.added);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+                System.out.println( "Attempted Entries " + IndexerOutput.entryCount + " Trimed " + DOMSourceIndexer.trimed + " Added " + DOMSourceIndexer.added);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
                 
                 System.out.flush();
             }
-            if (AbstractIndexer.VERBOSE){
-                AbstractIndexer.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString()); //$NON-NLS-1$
+            if (AbstractIndexerRunner.VERBOSE){
+                AbstractIndexerRunner.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString()); //$NON-NLS-1$
             }   
             // if the user disable problem reporting since we last checked, don't report the collected problems
             if (areProblemMarkersEnabled()) {
@@ -405,9 +407,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 	}
 
     public boolean shouldRecordProblem(IASTProblem problem) {
-        boolean preprocessor = (getProblemMarkersEnabled() & SourceIndexer.PREPROCESSOR_PROBLEMS_BIT ) != 0;
-        boolean semantics = (getProblemMarkersEnabled() & SourceIndexer.SEMANTIC_PROBLEMS_BIT ) != 0;
-        boolean syntax = (getProblemMarkersEnabled() & SourceIndexer.SYNTACTIC_PROBLEMS_BIT ) != 0;
+        boolean preprocessor = (getProblemMarkersEnabled() & DOMSourceIndexer.PREPROCESSOR_PROBLEMS_BIT ) != 0;
+        boolean semantics = (getProblemMarkersEnabled() & DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT ) != 0;
+        boolean syntax = (getProblemMarkersEnabled() & DOMSourceIndexer.SYNTACTIC_PROBLEMS_BIT ) != 0;
         
         if (problem.checkCategory(IASTProblem.PREPROCESSOR_INCLUSION_NOT_FOUND)) {
             return true;
@@ -428,14 +430,14 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
      * @return
      */
     public boolean shouldRecordProblem(IProblemBinding problem) {
-        return (getProblemMarkersEnabled() & SourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0;
+        return (getProblemMarkersEnabled() & DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0;
     }
 
     /**
      * 
      */
     public static void printErrors() {
-        if (AbstractIndexer.TIMING) {
+        if (AbstractIndexerRunner.TIMING) {
             totalParseTime = 0;
             totalVisitTime = 0;
             System.out.println("Errors during indexing"); //$NON-NLS-1$
@@ -445,5 +447,10 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             }
         }
     }
+    
+    public static void setSkipScannerInfoTest(boolean skipScannerInfoTest) {
+    	DOMSourceIndexerRunner.skipScannerInfoTest = skipScannerInfoTest;
+	}
+
 
 }

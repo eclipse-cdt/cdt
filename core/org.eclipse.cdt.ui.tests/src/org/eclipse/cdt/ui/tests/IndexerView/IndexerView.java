@@ -15,7 +15,6 @@ import java.io.IOException;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -81,7 +80,7 @@ public class IndexerView extends ViewPart {
     protected Action sortAction;
     protected Action displayFullNameAction;
     protected Action displayStatsAction;
-    protected IIndexer[] indexers =  new IIndexer[DEFAULT_INDEXER_SIZE]; // support 1 indexer for now new IIndexer[CTestPlugin.getWorkspace().getRoot().getProjects().length];
+    protected ICDTIndexer[] indexers =  new ICDTIndexer[DEFAULT_INDEXER_SIZE]; // support 1 indexer for now new IIndexer[CTestPlugin.getWorkspace().getRoot().getProjects().length];
     protected IProject project = null;
     
     protected static ViewContentProvider.StartInitializingIndexerView initializeIndexerViewJob = null;
@@ -524,7 +523,7 @@ public class IndexerView extends ViewPart {
         }
     }
 
-    public void appendIndexer(IIndexer indexer) {
+    public void appendIndexer(ICDTIndexer indexer) {
 //        indexers = (IIndexer[])ArrayUtil.append(IIndexer.class, indexers, indexer);
         // only support 1 indexer for now
         indexers[0] = indexer;
@@ -532,7 +531,7 @@ public class IndexerView extends ViewPart {
     
     public void clearIndexers() {
         // for now only support 1 indexer at a time
-        indexers = new IIndexer[1];
+        indexers = new ICDTIndexer[1];
     }
     
     public void setContentProvider(ViewContentProvider provider) {

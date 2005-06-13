@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest.FullParseCallback;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -112,7 +112,7 @@ public class SelectionRegressionTest extends BaseTestFramework {
             return;
     
 		try{
-		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( false ) );
+		    project.setSessionProperty( DOMSourceIndexer.activationKey, new Boolean( false ) );
 			project.delete(true,true,new NullProgressMonitor());
 			project = null;
 		} catch ( CoreException e ) { //boo

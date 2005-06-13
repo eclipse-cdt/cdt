@@ -14,29 +14,24 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
+import org.eclipse.cdt.internal.core.index.IndexRequest;
+import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
-import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 /**
  * @author Bogdan Gheorghe
  */
-public abstract class CTagsIndexRequest implements IIndexJob {
-
-	protected boolean isCancelled = false;
-	protected IPath indexPath = null;
+public abstract class CTagsIndexRequest extends IndexRequest {
+	
 	protected CTagsIndexer indexer = null;
 	
 	public CTagsIndexRequest(IPath indexPath, CTagsIndexer indexer) {
-		this.indexPath = indexPath;
+		super(indexPath);
 		this.indexer = indexer;
 	}
-	
-	public boolean belongsTo(String projectName) {
-		return projectName.equals(this.indexPath.segment(0));
-	}
+
 	
 	public void cancel() {
 		this.indexer.jobFinishedNotification( this );

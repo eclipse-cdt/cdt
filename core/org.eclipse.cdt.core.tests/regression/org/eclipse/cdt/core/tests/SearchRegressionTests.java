@@ -23,6 +23,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexDelta;
@@ -38,10 +40,12 @@ import org.eclipse.cdt.core.search.IOffsetLocatable;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexerRunner;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -81,6 +85,13 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
 		} catch ( CoreException e ) { //boo
 		}
 		
+		resetIndexer(CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
+		//The DOM Source Indexer checks to see if a file has any scanner info
+		//set prior to indexing it in order to increase efficiency. We need to let it know
+		//that it is running in test mode in order to allow for this scanner info test to be skipped
+		DOMSourceIndexerRunner.setSkipScannerInfoTest(true);
+		
+		
 		TypeCacheManager typeCacheManager = TypeCacheManager.getInstance();
 		typeCacheManager.setProcessTypeCacheEvents(false);
 		
@@ -88,8 +99,8 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
 		indexDisabled=false;
 		
 		ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(project);
-		if (indexer instanceof SourceIndexer){
-			  ((SourceIndexer)indexer).addIndexChangeListener( this );
+		if (indexer instanceof DOMSourceIndexer){
+			  ((DOMSourceIndexer)indexer).addIndexChangeListener( this );
 		}
       
     }
@@ -101,7 +112,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
         //sourceIndexer.removeIndexChangeListener( this );
 		try{
-		    project.setSessionProperty( SourceIndexer.activationKey, new Boolean( false ) );
+		    project.setSessionProperty( DOMSourceIndexer.activationKey, new Boolean( false ) );
 			project.delete(true,true,new NullProgressMonitor());
 			project = null;
 		} catch ( CoreException e ) { //boo
@@ -160,6 +171,22 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         fail( "Match at offset " + offset + " in \"" + file.getLocation() + "\" not found." );    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
     }
  
+    public void resetIndexer(final String indexerId){
+		if ( project != null) {
+			ICDescriptorOperation op = new ICDescriptorOperation() {
+
+				public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+						descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
+						descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,indexerId);
+				}
+			};
+			try {
+				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, new NullProgressMonitor());
+				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
+			} catch (CoreException e) {}
+		}
+    }
+    
     public static Test suite(){
         return suite( true );
     }

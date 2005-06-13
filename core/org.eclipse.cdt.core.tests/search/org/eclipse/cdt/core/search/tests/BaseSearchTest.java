@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -29,12 +31,14 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexerRunner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -55,7 +59,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	static protected SearchEngine				searchEngine;
 	static protected FileManager 				fileManager;
 	static final 	 String 					sourceIndexerID = "org.eclipse.cdt.core.originalsourceindexer"; //$NON-NLS-1$
-	static protected SourceIndexer				sourceIndexer;
+	static protected DOMSourceIndexer				sourceIndexer;
 	{
 		
 		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
@@ -68,15 +72,19 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 			//Create temp project
 			testProject = createProject("SearchTestProject");
 			
-			testProject.setSessionProperty(SourceIndexer.activationKey,new Boolean(true));
+			testProject.setSessionProperty(DOMSourceIndexer.activationKey,new Boolean(true));
 			
 			//Set the id of the source indexer extension point as a session property to allow
 			//index manager to instantiate it
 			//testProject.setSessionProperty(IndexManager.indexerIDKey, sourceIndexerID);
-			sourceIndexer = (SourceIndexer) CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(testProject);
-			int x=0;
+			sourceIndexer = (DOMSourceIndexer) CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(testProject);
 		} catch (CoreException e) {}
 		
+		 resetIndexer(CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
+		  //The DOM Source Indexer checks to see if a file has any scanner info
+		  //set prior to indexing it in order to increase efficiency. We need to let it know
+		  //that it is running in test mode in order to allow for this scanner info test to be skipped
+		  DOMSourceIndexerRunner.setSkipScannerInfoTest(true);
 		
 		
 		if (testProject == null)
@@ -110,6 +118,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	}
 
 	protected void setUp() throws Exception {
+		
 	}
 
 	protected void tearDown() {
@@ -149,5 +158,21 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 
 		}
 	}
+	
+	public void resetIndexer(final String indexerId){
+		if ( testProject != null) {
+			ICDescriptorOperation op = new ICDescriptorOperation() {
+
+				public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+						descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
+						descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,indexerId);
+				}
+			};
+			try {
+				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(testProject, op, new NullProgressMonitor());
+				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(testProject);
+			} catch (CoreException e) {}
+		}
+    }
 	
 }

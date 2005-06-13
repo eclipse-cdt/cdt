@@ -31,9 +31,8 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
-import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
@@ -204,23 +203,6 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)
-	 */
-	public void index(IFile document, IIndexerOutput output)
-			throws IOException {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IIndexer#shouldIndex(org.eclipse.core.resources.IFile)
-	 */
-	public boolean shouldIndex(IFile file) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	/**
 	 * @param path
 	 * @param reuseIndexFile
@@ -282,7 +264,13 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
      * @param integer
      */
     public void aboutToUpdateIndex(IPath indexPath, Integer indexState) {
-        indexStorage.aboutToUpdateIndex(indexPath, indexState);        
+      	storageMonitor.enterRead();
+		try{
+			indexStorage.aboutToUpdateIndex(indexPath, indexState);
+		}
+		finally {
+			storageMonitor.exitRead();
+		}
     }
 
     /**

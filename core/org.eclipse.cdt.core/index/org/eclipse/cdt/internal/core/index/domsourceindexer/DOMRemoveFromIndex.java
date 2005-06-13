@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
 
@@ -20,10 +20,10 @@ import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class RemoveFromIndex extends IndexRequest {
+public class DOMRemoveFromIndex extends DOMIndexRequest {
 	String resourceName;
 
-	public RemoveFromIndex(String resourceName, IPath indexPath, SourceIndexer indexer) {
+	public DOMRemoveFromIndex(String resourceName, IPath indexPath, DOMSourceIndexer indexer) {
 		super(indexPath, indexer);
 		this.resourceName = resourceName;
 	}

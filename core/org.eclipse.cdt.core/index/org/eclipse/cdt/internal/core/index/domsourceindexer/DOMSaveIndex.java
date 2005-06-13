@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
 
@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /*
  * Save the index of a project.
  */
-public class SaveIndex extends IndexRequest {
-	public SaveIndex(IPath indexPath, SourceIndexer indexer) {
+public class DOMSaveIndex extends DOMIndexRequest {
+	public DOMSaveIndex(IPath indexPath, DOMSourceIndexer indexer) {
 		super(indexPath, indexer);
 	}
 	

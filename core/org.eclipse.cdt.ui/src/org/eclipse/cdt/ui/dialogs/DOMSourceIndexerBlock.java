@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
-import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
 
-public class SourceIndexerBlock extends AbstractIndexerPage {
+public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 	
 	public final static String PREF_INDEX_MARKERS = CUIPlugin.PLUGIN_ID + ".indexmarkers"; //$NON-NLS-1$
 	
@@ -96,8 +96,8 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 
         int indexMarkersInt = Integer.parseInt(indexMarkers);
         if (indexMarkersInt != oldIndexerProblemsValue && indexMarkersInt == 0) 
-            if (indexer instanceof SourceIndexer)
-                ((SourceIndexer) indexer).removeIndexerProblems(currentProject);
+            if (indexer instanceof DOMSourceIndexer)
+                ((DOMSourceIndexer) indexer).removeIndexerProblems(currentProject);
 		
 	}
 	/* (non-Javadoc)
@@ -130,10 +130,10 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 	
 	public String getIndexerProblemsValuesString(){
 		int result = 0;
-		result |= preprocessorProblemsEnabled.getSelection() ? SourceIndexer.PREPROCESSOR_PROBLEMS_BIT : 0;
+		result |= preprocessorProblemsEnabled.getSelection() ? DOMSourceIndexer.PREPROCESSOR_PROBLEMS_BIT : 0;
 		if( syntacticProblemsEnabled != null )
-			result |= syntacticProblemsEnabled.getSelection() ? SourceIndexer.SYNTACTIC_PROBLEMS_BIT : 0;
-		result |= semanticProblemsEnabled.getSelection() ? SourceIndexer.SEMANTIC_PROBLEMS_BIT : 0;
+			result |= syntacticProblemsEnabled.getSelection() ? DOMSourceIndexer.SYNTACTIC_PROBLEMS_BIT : 0;
+		result |= semanticProblemsEnabled.getSelection() ? DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT : 0;
 		Integer tempInt = new Integer(result);
 		
 		return tempInt.toString();
@@ -172,10 +172,10 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 	}
 	
 	public void setIndexerProblemValues( int value ){
-		preprocessorProblemsEnabled.setSelection( (value & SourceIndexer.PREPROCESSOR_PROBLEMS_BIT) != 0 );
+		preprocessorProblemsEnabled.setSelection( (value & DOMSourceIndexer.PREPROCESSOR_PROBLEMS_BIT) != 0 );
 		if( syntacticProblemsEnabled != null ) 
-			syntacticProblemsEnabled.setSelection( (value & SourceIndexer.SYNTACTIC_PROBLEMS_BIT) != 0 );
-		semanticProblemsEnabled.setSelection( (value & SourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0 );
+			syntacticProblemsEnabled.setSelection( (value & DOMSourceIndexer.SYNTACTIC_PROBLEMS_BIT) != 0 );
+		semanticProblemsEnabled.setSelection( (value & DOMSourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0 );
 	}
 	
 	public void loadPreferences() {

@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.internal.core.index.sourceindexer;
+package org.eclipse.cdt.internal.core.index.cindexstorage;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,7 +21,8 @@ import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
+import org.eclipse.cdt.internal.core.index.IndexRequest;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMIndexRequest;
 import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
 import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
@@ -79,7 +80,7 @@ public class CIndexStorage implements IIndexStorage {
 		this.indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	}
 	
-	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
+	public void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
 		// must tag the index as inconsistent, in case we exit before the update job is started
 		String indexName = computeIndexName(path);
@@ -231,7 +232,7 @@ public class CIndexStorage implements IIndexStorage {
 			JobManager.verbose("-> request to rebuild index: "+indexName+" path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 
 		updateIndexState(indexName, REBUILDING_STATE);
-		IndexRequest request = null;
+		DOMIndexRequest request = null;
 		if (target instanceof IProject) {
 			IProject p = (IProject) target;
 			if( p.exists() && indexer.isIndexEnabled( p ) )
@@ -305,8 +306,8 @@ public class CIndexStorage implements IIndexStorage {
 			if (indexPath != null) {
 				for (int i = indexManager.getJobEnd(); i > indexManager.getJobStart(); i--) { // skip the current job
 					IIndexJob job = indexManager.getAwaitingJobAt(i);
-					if (job instanceof IndexRequest)
-						if (((IndexRequest) job).indexPath.equals(indexPath)) return;
+					if (job instanceof DOMIndexRequest)
+						if (((IndexRequest) job).getIndexPath().equals(indexPath)) return;
 				}
 			}
 		}

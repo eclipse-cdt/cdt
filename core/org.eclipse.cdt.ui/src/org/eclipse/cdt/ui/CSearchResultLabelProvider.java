@@ -17,16 +17,12 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.cdt.internal.ui.search.CSearchResultPage;
 import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
@@ -61,19 +57,8 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		IMatch match = null;
 		int elementType = -1;
 		int visibility = -1;
-		if( element instanceof ISearchResultViewEntry ){
-			ISearchResultViewEntry viewEntry = (ISearchResultViewEntry)element;
-			IMarker marker = viewEntry.getSelectedMarker();
-			try {
-				match = (IMatch) marker.getAttribute( CSearchResultCollector.IMATCH );
-				if( match == null )
-					return null;
-				elementType = match.getElementType();
-				visibility = match.getVisibility();
-			} catch (CoreException e) {
-				return null;
-			}
-		} else if ( element instanceof IMatch ){
+		
+		if ( element instanceof IMatch ){
 			match = (IMatch) element;
 			if( match == null )
 				return null;
@@ -162,17 +147,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	public String getText( Object element ) {
 		IMatch match = null;
 		
-		if( element instanceof ISearchResultViewEntry ){
-			ISearchResultViewEntry viewEntry = (ISearchResultViewEntry) element;
-		
-			IMarker marker = viewEntry.getSelectedMarker();
-		
-			try {
-				match = (IMatch) marker.getAttribute(CSearchResultCollector.IMATCH);
-			} catch (CoreException e) {
-				return ""; //$NON-NLS-1$
-			}
-		} else if( element instanceof IMatch ){
+		if( element instanceof IMatch ){
 			match = (IMatch) element;
 		} else if ( element instanceof ICElement){
 			return  getElementText((ICElement) element);

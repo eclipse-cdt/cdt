@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
-import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.OffsetLocatable;
@@ -73,8 +72,8 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	private LimitTo limitTo=null;
 	private ICSearchScope scope=null;
 	
-	public DOMQuery(String displaySearchPattern, IASTName name, LimitTo limitTo, ICSearchScope scope, ICSearchResultCollector collector) {
-		super(CUIPlugin.getWorkspace(), displaySearchPattern, false, null, null, null, displaySearchPattern, collector);
+	public DOMQuery(String displaySearchPattern, IASTName name, LimitTo limitTo, ICSearchScope scope) {
+		super(CUIPlugin.getWorkspace(), displaySearchPattern, false, null, null, null, displaySearchPattern);
 		this.searchName = name;
 		this.limitTo = limitTo;
 		this.scope = scope;

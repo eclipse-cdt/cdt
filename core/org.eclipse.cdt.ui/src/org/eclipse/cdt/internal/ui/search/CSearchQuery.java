@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
-import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
@@ -37,7 +36,6 @@ import org.eclipse.search.ui.ISearchResult;
  */
 public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	
-	private ICSearchResultCollector 	_collector;
 	private IWorkspace 					_workspace;	
 	private ICSearchScope				_scope;
 	private String						_stringPattern;
@@ -47,21 +45,18 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	private List						_searchFor;
 	private CSearchResult  				_result;
 	 
-	public CSearchQuery(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, ICSearchResultCollector collector) {
-		this( workspace, limitTo, scope, scopeDescription, collector );
+	public CSearchQuery(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription) {
+		this( workspace, limitTo, scope, scopeDescription );
 		_stringPattern = pattern;
 		_caseSensitive = caseSensitive;
 		_searchFor = searchFor;
 	}
 
-	public CSearchQuery(IWorkspace workspace, LimitTo limitTo, ICSearchScope scope, String scopeDescription, ICSearchResultCollector collector ){
+	public CSearchQuery(IWorkspace workspace, LimitTo limitTo, ICSearchScope scope, String scopeDescription){
 		_workspace = workspace;
 		_limitTo = limitTo;
 		_scope = scope;
 		_scopeDescription = scopeDescription;
-		_collector = collector;
-		if (_collector instanceof CSearchResultCollector)
-			((CSearchResultCollector)_collector).setOperation( this );
 	}
 
 	/**

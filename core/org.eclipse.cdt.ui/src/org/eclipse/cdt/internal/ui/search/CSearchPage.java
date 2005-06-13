@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -126,7 +125,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			searching = data.searchFor;
 		}
 
-		CSearchQuery job = new CSearchQuery(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, null);
+		CSearchQuery job = new CSearchQuery(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription);
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQueryInBackground(job);
@@ -486,13 +485,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		Object o = selection.getFirstElement();
 		if( o instanceof ICElement ) {
 			return determineInitValuesFrom( (ICElement)o );
-		} else if( o instanceof ISearchResultViewEntry ) {
-			ICElement element = CSearchUtil.getCElement( ((ISearchResultViewEntry)o).getSelectedMarker() );
-			return determineInitValuesFrom( element );
-		//} else if( o instanceof LogicalPackage ) {
-		//	LogicalPackage lp = (LogicalPackage)o;
-		//	return new SearchPatternData( PACKAGE, REFERENCES, fIsCaseSensitive, lp.getElementName(), null );
-		} else if( o instanceof IAdaptable ) {
+		}  else if( o instanceof IAdaptable ) {
 			ICElement element = (ICElement)((IAdaptable)o).getAdapter( ICElement.class );
 			if( element != null ) {
 				return determineInitValuesFrom( element );

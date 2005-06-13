@@ -24,6 +24,8 @@ import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -31,9 +33,10 @@ public class CTagsFileReader {
 	
 	String filename = null;
 	List list = null;
-    IProject project;
-	IIndex index;
-	CTagsIndexer indexer;
+    IProject project = null;
+	IIndex index = null;
+	CTagsIndexer indexer = null;
+	IPath rootDirectory = null;
 	
 	public CTagsFileReader(IProject project,String filename, CTagsIndexer indexer) {
 		this.filename = filename;
@@ -90,9 +93,26 @@ public class CTagsFileReader {
 					
 				  }
 				  
+				  
 				  if (currentFile != null){
-				      indexer = new MiniIndexer(currentFile);
+				      indexer = new MiniIndexer(currentFile.getFullPath());
 				      index.add(currentFile,indexer);
+				  } else {
+					  indexer = new MiniIndexer(rootDirectory.append(fileName));
+					  try {
+						IResource[] resources = project.members();
+						IFile tempFile=null;
+						for (int i=0; i<resources.length; i++){
+							if (resources[i].getType()==IResource.FILE){
+								tempFile = (IFile) resources[i];
+								break;
+							}
+						}
+						if (tempFile != null){
+							  index.add(tempFile,indexer);
+						}
+					} catch (CoreException e) {	}
+					  
 				  }
 			  }
 			  
@@ -105,16 +125,16 @@ public class CTagsFileReader {
 	class MiniIndexer implements IIndexer {
 		
 	    IIndexerOutput output;
-	    IFile currentFile;
+	    IPath currentFile; //currentFile.getFullPath()
 	    /**
          * @param currentFile
          */
-        public MiniIndexer(IFile currentFile) {
+        public MiniIndexer(IPath currentFile) {
             this.currentFile = currentFile;
         }
         public void addToOutput(CTagEntry tagEntry){
         	
-	        IndexedFileEntry mainIndexFile = this.output.getIndexedFile(currentFile.getFullPath().toString());
+	        IndexedFileEntry mainIndexFile = this.output.getIndexedFile(currentFile.toString());
 			int fileNum = 0;
 	        if (mainIndexFile != null)
 				fileNum = mainIndexFile.getFileID();
@@ -125,8 +145,8 @@ public class CTagsFileReader {
          * @see org.eclipse.cdt.internal.core.index.IIndexer#index(org.eclipse.cdt.internal.core.index.IDocument, org.eclipse.cdt.internal.core.index.IIndexerOutput)
          */
         public void index(IFile file, IIndexerOutput output) throws IOException {
-            this.output = output;
-            IndexedFileEntry indFile =output.addIndexedFile(file.getFullPath().toString());
+             this.output = output;
+             IndexedFileEntry indFile =output.addIndexedFile(currentFile.toString());
         }
 
         /* (non-Javadoc)
@@ -143,5 +163,10 @@ public class CTagsFileReader {
     public void setIndex(IIndex index) {
         this.index = index;
     }
+
+	public void setRootDirectory(IPath path) {
+		this.rootDirectory = path;
+		
+	}
 
 }

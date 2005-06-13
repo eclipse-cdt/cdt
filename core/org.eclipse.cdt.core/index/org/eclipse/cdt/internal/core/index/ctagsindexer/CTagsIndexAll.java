@@ -17,7 +17,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
@@ -82,13 +86,14 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			
 			boolean success=false;
 			
+			 
 			if (useInternalCTagsFile()){
 				if (AbstractIndexer.TIMING)
 				  startTime = System.currentTimeMillis();
 				
 				
 				//run CTags over project
-				success = runCTags();
+				success = runCTags(project.getLocation());
 				ctagsFileToUse=ctagsFile;
 				
 				if (AbstractIndexer.TIMING){
@@ -117,6 +122,9 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			     }
 			 }
 			 
+			 //Try to index includes (if any exist)
+			 //cTagsInclude(index);
+				 
 		} catch (IOException e) {
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to index " + this.project + " because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -130,10 +138,32 @@ class CTagsIndexAll extends CTagsIndexRequest {
 		return true;
 	}
 	
+	private void cTagsInclude(IIndex index) {
+		
+		ICProject cProj = CoreModel.getDefault().create(project);
+		IIncludeReference[] refs = new IIncludeReference[0];
+		try {
+			refs = cProj.getIncludeReferences();
+		} catch (CModelException e) {}
+		
+		for (int i=0; i<refs.length; i++){
+		  	runCTags(refs[i].getPath());
+		  	ctagsFileToUse=ctagsFile;
+			 //Parse the CTag File
+		     CTagsFileReader reader = new CTagsFileReader(project,ctagsFileToUse,indexer);
+		     reader.setRootDirectory(refs[i].getPath());
+		     reader.setIndex(index);
+		     reader.parse();
+		}
+		
+	     // request to save index when all cus have been indexed
+	     indexer.request(new CTagsSaveIndex(this.indexPath, indexer));
+	}
+
 	/**
      * @return
      */
-    private boolean runCTags() { 
+    private boolean runCTags(IPath directoryToRunFrom) { 
     	String[] args = {"--excmd=number", //$NON-NLS-1$
 		        "--format=2", //$NON-NLS-1$
 				"--sort=no",  //$NON-NLS-1$
@@ -144,20 +174,20 @@ class CTagsIndexAll extends CTagsIndexRequest {
 				"-f",ctagsFile,"-R"}; //$NON-NLS-1$ //$NON-NLS-2$
     	
     	try{
-    	 //Make sure that there is no ctags file leftover in the metadata
-	    File tagsFile = new File(ctagsFile);
-	    if (tagsFile.exists()){
-	            tagsFile.delete();
-	    }
-		
-         CommandLauncher launcher = new CommandLauncher();
-         // Print the command for visual interaction.
-         launcher.showCommand(true);
-         
-         IPath fileDirectory = project.getLocation();
-         //Process p = launcher.execute(fCompileCommand, args, setEnvironment(launcher), fWorkingDirectory);
-         Process p = launcher.execute(new Path("ctags"), args, null, fileDirectory); //$NON-NLS-1$
-         p.waitFor();
+	    	 //Make sure that there is no ctags file leftover in the metadata
+		    File tagsFile = new File(ctagsFile);
+		    
+		    if (tagsFile.exists()){
+		    	tagsFile.delete();
+		    }
+			
+	         CommandLauncher launcher = new CommandLauncher();
+	         // Print the command for visual interaction.
+	         launcher.showCommand(true);
+	      
+	         //Process p = launcher.execute(fCompileCommand, args, setEnvironment(launcher), fWorkingDirectory);
+	         Process p = launcher.execute(new Path("ctags"), args, null, directoryToRunFrom); //$NON-NLS-1$
+	         p.waitFor();
        
     	} catch (InterruptedException e) {
     	    return false;

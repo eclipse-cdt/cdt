@@ -52,7 +52,7 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
      * 
      */
     public IndexerQuery(IndexerNodeLeaf leaf, String queryLabel, String pattern) {
-        super(CTestPlugin.getWorkspace(), pattern, false, null, null, null, queryLabel, null);
+        super(CTestPlugin.getWorkspace(), pattern, false, null, null, null, queryLabel);
         this.leaf = leaf;
         this.queryLabel = queryLabel;
     }

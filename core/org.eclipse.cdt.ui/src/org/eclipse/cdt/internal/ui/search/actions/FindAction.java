@@ -29,13 +29,11 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
-import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
-import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 import org.eclipse.cdt.internal.ui.search.DOMQuery;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
@@ -74,8 +72,8 @@ public abstract class FindAction extends SelectionParseAction {
      * @param collector
      * @return
      */
-	 public static CSearchQuery createDOMSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope, ICSearchResultCollector collector ){
-		 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope, collector);
+	 public static CSearchQuery createDOMSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope){
+		 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope);
 	 }
 	 
      /**
@@ -88,7 +86,7 @@ public abstract class FindAction extends SelectionParseAction {
       * @return
       */
 	 public static CSearchQuery createSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope ){
-		 return createDOMSearchQueryForName( name, limitTo, scope, null );
+		 return createDOMSearchQueryForName( name, limitTo, scope);
 	 }
 	 
 	public void run() {
@@ -134,11 +132,9 @@ public abstract class FindAction extends SelectionParseAction {
 		List search = new LinkedList();
 		search.add(searchFor);
 		
-		CSearchResultCollector collector= new CSearchResultCollector();
-		
 		LimitTo limitTo = getLimitTo();
 		
-		op = new CSearchQuery(CCorePlugin.getWorkspace(), pattern,true,search,limitTo,scope,scopeDescription,collector);
+		op = new CSearchQuery(CCorePlugin.getWorkspace(), pattern,true,search,limitTo,scope,scopeDescription);
 		return op;
 		
 	}

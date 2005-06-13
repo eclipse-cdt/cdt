@@ -68,7 +68,7 @@ public class DOMDisplaySearchNames extends CSearchQuery implements ISearchQuery 
 	 * 
 	 */
 	public DOMDisplaySearchNames(IASTNode[] nodes, String queryLabel, String pattern) {
-		super(CUIPlugin.getWorkspace(), pattern, false, null, null, null, queryLabel, null);
+		super(CUIPlugin.getWorkspace(), pattern, false, null, null, null, queryLabel);
 		this.nodes = nodes;
 		this.queryLabel = queryLabel;
 	}

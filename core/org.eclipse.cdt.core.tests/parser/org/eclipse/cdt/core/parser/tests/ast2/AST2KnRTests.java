@@ -255,7 +255,7 @@ public class AST2KnRTests extends AST2BaseTest {
 		CVisitor.clearBindings(tu);
 		assertNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("c").toCharArray()) ); //$NON-NLS-1$
 		assertNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("isroot").toCharArray()) ); //$NON-NLS-1$
-		assertNull( ((CScope)((IASTCompoundStatement)isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
+//		assertNull( ((CScope)((IASTCompoundStatement)isroot_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
     }
 
     public void testKRCProblem1() throws Exception {
@@ -547,7 +547,7 @@ public class AST2KnRTests extends AST2BaseTest {
 		CVisitor.clearBindings(tu);
 		assertNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_TAG, new String("A_struct").toCharArray()) ); //$NON-NLS-1$
 		assertNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()) ); //$NON-NLS-1$
-		assertNull( ((CScope)((IASTCompoundStatement)f_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
+//		assertNull( ((CScope)((IASTCompoundStatement)f_def.getBody()).getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("x").toCharArray()) ); //$NON-NLS-1$
 		
     }
     

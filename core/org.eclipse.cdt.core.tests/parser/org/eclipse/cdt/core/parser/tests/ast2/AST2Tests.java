@@ -3177,4 +3177,22 @@ public class AST2Tests extends AST2BaseTest {
     	assertTrue(((IASTIdExpression)((IASTFunctionCallExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[1]).getBody()).getStatements()[0]).getReturnValue()).getFunctionNameExpression()).getName().resolveBinding() instanceof IFunction);
     }
 
+    public void testBug98960() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void f() {                    \n");
+        buffer.append("   int a;                     \n");
+        buffer.append("   { a; int a; }              \n");
+        buffer.append("}                             \n");
+
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        
+        IVariable a1 = (IVariable) col.getName(1).resolveBinding();
+        IVariable a2 = (IVariable) col.getName(2).resolveBinding();
+        IVariable a3 = (IVariable) col.getName(3).resolveBinding();
+        
+        assertSame( a1, a2 );
+        assertNotSame( a2, a3 );
+    }
 }

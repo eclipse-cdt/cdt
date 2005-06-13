@@ -72,14 +72,38 @@ public class CParameter implements IParameter {
 		return type;
 	}
 
+    private IASTName getPrimaryDeclaration(){
+	    if( declarations != null ){
+	        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
+	            IASTNode node = declarations[i].getParent();
+	            while( !(node instanceof IASTDeclaration) )
+	                node = node.getParent();
+	            
+	            if( node.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ||
+	                node instanceof IASTFunctionDefinition )
+	            {
+	                return declarations[i];
+	            }
+	        }
+	        return declarations[0];
+	    }
+	    return null;
+	}
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return declarations[0].toString();
+	    IASTName name = getPrimaryDeclaration();
+	    if( name != null )
+	        return name.toString();
+	    return CVisitor.EMPTY_STRING;
 	}
 	public char[] getNameCharArray(){
-	    return declarations[0].toCharArray();
+	    IASTName name = getPrimaryDeclaration();
+	    if( name != null )
+	        return name.toCharArray();
+	    return CVisitor.EMPTY_CHAR_ARRAY;
 	}
 
 	/* (non-Javadoc)

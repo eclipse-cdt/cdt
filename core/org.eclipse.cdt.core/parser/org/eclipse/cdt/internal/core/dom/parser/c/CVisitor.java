@@ -435,6 +435,8 @@ public class CVisitor {
 	protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	protected static final ASTNodeProperty STRING_LOOKUP_TAGS_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_TAGS_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	private static final String SIZE_T = "size_t"; //$NON-NLS-1$
+	public static final String EMPTY_STRING = "";
+	public static final char [] EMPTY_CHAR_ARRAY = "".toCharArray();
 	//lookup bits
 	private static final int COMPLETE 			= 0;		
 	private static final int CURRENT_SCOPE 		= 1;
@@ -1207,6 +1209,7 @@ public class CVisitor {
 			} else {
 			
 				Object result = null;
+				boolean reachedBlockItem = false;
 				if( nodes != null ){
 				    int idx = -1;
 					IASTNode node = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
@@ -1217,9 +1220,15 @@ public class CVisitor {
 	                    } catch ( DOMException e ) {
 	                        continue;
 	                    }
-				
-						if( result == null && ( includeBlockItem || (node != blockItem) ) )
+				        
+						if( result == null && !reachedBlockItem && 
+							( includeBlockItem || (node != blockItem) ) )
+						{
 						    result = candidate;
+						}
+						if( node == blockItem ){
+	                    	reachedBlockItem = true;
+	                    }
 						
 						if( idx > -1 && ++idx < nodes.length ){
 							node = nodes[idx];

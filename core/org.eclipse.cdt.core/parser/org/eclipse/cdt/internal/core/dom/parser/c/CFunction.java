@@ -256,45 +256,31 @@ public class CFunction implements IFunction, ICInternalFunction {
     
     protected void updateParameterBindings( IASTFunctionDeclarator fdtor ){
         CParameter temp = null;
+        IParameter [] params = getParameters();
         if( fdtor instanceof IASTStandardFunctionDeclarator ){
-            IASTStandardFunctionDeclarator orig = (IASTStandardFunctionDeclarator) getPhysicalNode();
-        	IASTParameterDeclaration [] ops = orig.getParameters();
         	IASTParameterDeclaration [] nps = ((IASTStandardFunctionDeclarator)fdtor).getParameters();
-        	if(ops.length < nps.length )
+        	if(params.length < nps.length )
         	    return; 
         	for( int i = 0; i < nps.length; i++ ){
-        	    IASTName origname = ops[i].getDeclarator().getName();
-        	    if( origname.getBinding() != null ){
-        	        temp = (CParameter) origname.getBinding();
-            		if( temp != null ){
-            		    IASTName name = nps[i].getDeclarator().getName();
-            			name.setBinding( temp );
-            			temp.addDeclaration( name );
-            		}    
-        	    }
-        		
+        		IASTName name = nps[i].getDeclarator().getName();
+        		temp = (CParameter) params[i];
+        		name.setBinding( temp );
+        		temp.addDeclaration( name );
         	}
         } else {
-            IASTParameterDeclaration [] ops = declarators[0].getParameters();
             IASTName [] ns = ((ICASTKnRFunctionDeclarator)fdtor).getParameterNames();
-            if( ops.length > 0 && ops.length != ns.length )
+            if( params.length > 0 && params.length != ns.length )
                 return; //problem
             
-            for( int i = 0; i < ops.length; i++ ){
-        	    IASTName origname = ops[i].getDeclarator().getName();
-        	    if( origname.getBinding() != null ){
-        	        temp = (CParameter) origname.resolveBinding();
-            		if( temp != null ){
-            		    IASTName name = ns[i];
-            			name.setBinding( temp );
-            			
-            			IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) fdtor, name );
-            			if( dtor != null ){
-            			    dtor.getName().setBinding( temp );
-            			    temp.addDeclaration( dtor.getName() );
-            			}
-            		}    
-        	    }
+            for( int i = 0; i < params.length; i++ ){
+            	IASTName name = ns[i];
+            	temp = (CParameter) params[i];
+            	name.setBinding( temp );
+            	IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) fdtor, name );
+    			if( dtor != null ){
+    			    dtor.getName().setBinding( temp );
+    			    temp.addDeclaration( dtor.getName() );
+    			}
         	}
         }
     }

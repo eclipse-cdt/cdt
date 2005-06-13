@@ -6,6 +6,7 @@
 	
 	<target name="build" depends="zips,test"/>
 	<target name="cdtbuild" depends="zips,test,upload"/>
+	<target name="cdtnotest" depends="zips,upload"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />

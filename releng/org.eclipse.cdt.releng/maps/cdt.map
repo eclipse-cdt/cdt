@@ -1,29 +1,29 @@
 ! Cross platform
 
-plugin@org.eclipse.cdt.core=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core
-plugin@org.eclipse.cdt.ui=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui
-plugin@org.eclipse.cdt.refactoring=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.refactoring
+plugin@org.eclipse.cdt.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core
+plugin@org.eclipse.cdt.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui
+plugin@org.eclipse.cdt.refactoring=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.refactoring
 
-plugin@org.eclipse.cdt.make.core=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.core
-plugin@org.eclipse.cdt.make.ui=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.ui
+plugin@org.eclipse.cdt.make.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.core
+plugin@org.eclipse.cdt.make.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.ui
 
-plugin@org.eclipse.cdt.managedbuilder.core=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core
-plugin@org.eclipse.cdt.managedbuilder.ui=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui
-plugin@org.eclipse.cdt.managedbuilder.gnu.ui=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.gnu.ui
+plugin@org.eclipse.cdt.managedbuilder.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core
+plugin@org.eclipse.cdt.managedbuilder.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui
+plugin@org.eclipse.cdt.managedbuilder.gnu.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.gnu.ui
 
-plugin@org.eclipse.cdt.debug.core=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.core
-plugin@org.eclipse.cdt.debug.ui=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui
+plugin@org.eclipse.cdt.debug.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.core
+plugin@org.eclipse.cdt.debug.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui
 
-plugin@org.eclipse.cdt.debug.mi.core=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.core
-plugin@org.eclipse.cdt.debug.mi.ui=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.ui
+plugin@org.eclipse.cdt.debug.mi.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.core
+plugin@org.eclipse.cdt.debug.mi.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.ui
 
-plugin@org.eclipse.cdt.launch=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-launch/org.eclipse.cdt.launch
+plugin@org.eclipse.cdt.launch=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-launch/org.eclipse.cdt.launch
 
-plugin@org.eclipse.cdt.doc.user=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.user
-plugin@org.eclipse.cdt.doc.isv=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.isv
+plugin@org.eclipse.cdt.doc.user=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.user
+plugin@org.eclipse.cdt.doc.isv=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.isv
 
-plugin@org.eclipse.cdt=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt
-feature@org.eclipse.cdt=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt-feature
+plugin@org.eclipse.cdt=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt
+feature@org.eclipse.cdt=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt-feature
 
 ! Platform specific
 

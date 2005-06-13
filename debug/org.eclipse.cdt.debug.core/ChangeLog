@@ -1,3 +1,10 @@
+2005-06-13 Mikhail Khodjaiants
+	Temporary fix for bug 77279: The memory view address should not be cleared on project restart.
+	* ICDTLaunchConfigurationConstants.java
+	* CMemoryBlockRetrievalExtension.java
+	* InternalDebugCoreMessages.properties
+	* CDebugTarget.java
+
 2005-06-12 Mikhail Khodjaiants
 	Temporary fix for bug 79872: Make instruction stepping default in disassembly view.
 	* ICDebugConstants.java

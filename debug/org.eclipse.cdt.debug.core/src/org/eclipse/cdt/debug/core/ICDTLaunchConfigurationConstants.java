@@ -145,6 +145,11 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_GLOBAL_VARIABLES = CDT_LAUNCH_ID + ".GLOBAL_VARIABLES"; //$NON-NLS-1$
 
 	/**
+	 * Launch configuration attribute key. The value is a memory blocks' memento.
+	 */
+	public static final String ATTR_DEBUGGER_MEMORY_BLOCKS = CDT_LAUNCH_ID + ".MEMORY_BLOCKS"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute value. The key is
 	 * ATTR_DEBUGGER_STOP_AT_MAIN.
 	 */

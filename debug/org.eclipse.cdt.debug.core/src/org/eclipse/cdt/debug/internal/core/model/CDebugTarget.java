@@ -256,6 +256,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		initializeRegisters();
 		initializeSourceManager();
 		initializeModuleManager();
+		initializeMemoryBlocks();
 		getLaunch().addDebugTarget( this );
 		fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
 	}
@@ -350,6 +351,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	protected void initializeModuleManager() {
 		getModuleManager().addModules( new ICModule[] { CModule.createExecutable( this, getExecFile().getPath() ) } );
+	}
+
+	protected void initializeMemoryBlocks() {
+		getMemoryBlockRetrieval().initialize();
 	}
 
 	/* (non-Javadoc)
@@ -989,6 +994,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		disposeSignalManager();
 		saveRegisterGroups();
 		disposeRegisterManager();
+		saveMemoryBlocks();
+		disposeMemoryBlockRetrieval();
 		disposeDisassembly();
 		disposeSourceManager();
 		disposeSourceLookupPath();
@@ -1463,6 +1470,14 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				}
 			}
 		}
+	}
+
+	protected void saveMemoryBlocks() {
+		getMemoryBlockRetrieval().save();
+	}
+
+	protected void disposeMemoryBlockRetrieval() {
+		getMemoryBlockRetrieval().dispose();
 	}
 
 	public IFile getCurrentBreakpointFile() {

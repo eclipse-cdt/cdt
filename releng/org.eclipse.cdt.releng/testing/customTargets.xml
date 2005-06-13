@@ -34,9 +34,10 @@
 <!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
 <!-- ===================================================================== -->
 <target name="getMapFiles">
-	<copy todir="${buildDirectory}/maps">
-		<fileset dir="${builder}/../maps"/>
-	</copy>
+	<copy file="${builder}/../maps/cdt.map" todir="${buildDirectory}/maps"/>
+	<replace file="${buildDirectory}/maps/cdt.map"/>
+		<replacefilter token="@cdtTag@" value="${cdtTag}"/>
+	</replace>
 </target>
 
 <!-- ===================================================================== -->

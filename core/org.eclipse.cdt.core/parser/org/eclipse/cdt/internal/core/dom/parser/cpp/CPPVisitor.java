@@ -460,13 +460,15 @@ public class CPPVisitor {
 			name = ns[ ns.length - 1 ];
 		}
 		
+		ASTNodeProperty prop = parent.getPropertyInParent();
 		if( parent instanceof IASTTypeId )
 		    return CPPSemantics.resolveBinding( name );
-		else if( parent.getPropertyInParent() == ICPPASTTemplateSpecialization.OWNED_DECLARATION ||
-		         parent.getPropertyInParent() == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION )
+		else if( prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION ||
+		         prop == ICPPASTExplicitTemplateInstantiation.OWNED_DECLARATION )
 		{
 			return CPPTemplates.createFunctionSpecialization( name );
-		}
+		} else if( prop == ICPPASTTemplateDeclaration.PARAMETER )
+			return CPPTemplates.createBinding( (ICPPASTTemplateParameter) parent );
 		
 		boolean template = false;
 		ICPPScope scope = (ICPPScope) getContainingScope( (IASTNode) name );
@@ -489,7 +491,6 @@ public class CPPVisitor {
 		    }
 		}
 		
-		ASTNodeProperty prop = parent.getPropertyInParent();
 		if( prop == IASTDeclarationStatement.DECLARATION ){
 		    //implicit scope, see 6.4-1
 		    prop = parent.getParent().getPropertyInParent();
@@ -1051,7 +1052,9 @@ public class CPPVisitor {
 					{
 						break;
 					} else if( prop == IASTDeclarator.DECLARATOR_NAME ){
-						IASTNode d = name.getParent().getParent();
+						IASTNode d = name.getParent();
+						while( d.getParent() instanceof IASTDeclarator )
+							d = d.getParent();
 						if( d.getPropertyInParent() == IASTParameterDeclaration.DECLARATOR ){
 							break;
 						}

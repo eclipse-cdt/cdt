@@ -13,6 +13,8 @@ package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
@@ -931,5 +933,25 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 				setViewerInput( DisassemblyEditorInput.PENDING_EDITOR_INPUT );
 			computeInput( input, (ICStackFrame)context, this );
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#partActivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partActivated( IWorkbenchPart part ) {
+		if ( this.equals( part ) ) {
+			CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, true );
+		}
+		super.partActivated( part );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partDeactivated( IWorkbenchPart part ) {
+		if ( this.equals( part ) ) {
+			CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, false );
+		}
+		super.partDeactivated( part );
 	}
 }

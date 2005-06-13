@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
@@ -1564,7 +1565,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#isInstructionSteppingEnabled()
 	 */
 	public boolean isInstructionSteppingEnabled() {
-		return fPreferences.getBoolean( PREF_INSTRUCTION_STEPPING_MODE );
+		return fPreferences.getBoolean( PREF_INSTRUCTION_STEPPING_MODE ) ||
+			   CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON );
 	}
 
 	/* (non-Javadoc)

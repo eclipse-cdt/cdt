@@ -35,5 +35,6 @@ public class CDebugCorePreferenceInitializer extends AbstractPreferenceInitializ
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, false );
 	}
 }

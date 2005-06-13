@@ -1,3 +1,9 @@
+2005-06-12 Mikhail Khodjaiants
+	Temporary fix for bug 79872: Make instruction stepping default in disassembly view.
+	* ICDebugConstants.java
+	* CDebugCorePreferenceInitializer.java
+	* CDebugTarget.java
+
 2005-06-09 Mikhail Khodjaiants
 	Bug 94139: User-defined register groups.
 	Don't save the list of registers for default groups.

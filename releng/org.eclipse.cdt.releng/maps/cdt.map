@@ -27,31 +27,31 @@ feature@org.eclipse.cdt=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,
 
 ! Platform specific
 
-fragment@org.eclipse.cdt.core.aix=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.aix
-fragment@org.eclipse.cdt.core.linux=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux
-fragment@org.eclipse.cdt.core.linux.ia64=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ia64
-fragment@org.eclipse.cdt.core.linux.ppc=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ppc
-fragment@org.eclipse.cdt.core.linux.x86=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86
-fragment@org.eclipse.cdt.core.linux.x86_64=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86_64
-fragment@org.eclipse.cdt.core.macosx=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.macosx
-fragment@org.eclipse.cdt.core.qnx=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.qnx
-fragment@org.eclipse.cdt.core.solaris=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.solaris
-fragment@org.eclipse.cdt.core.win32=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.win32
+fragment@org.eclipse.cdt.core.aix=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.aix
+fragment@org.eclipse.cdt.core.linux=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux
+fragment@org.eclipse.cdt.core.linux.ia64=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ia64
+fragment@org.eclipse.cdt.core.linux.ppc=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ppc
+fragment@org.eclipse.cdt.core.linux.x86=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86
+fragment@org.eclipse.cdt.core.linux.x86_64=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86_64
+fragment@org.eclipse.cdt.core.macosx=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.macosx
+fragment@org.eclipse.cdt.core.qnx=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.qnx
+fragment@org.eclipse.cdt.core.solaris=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.solaris
+fragment@org.eclipse.cdt.core.win32=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.win32
 
 ! Testing feature
 
-plugin@org.eclipse.cdt.core.tests=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.tests
-plugin@org.eclipse.cdt.ui.tests=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui.tests
-plugin@org.eclipse.cdt.refactoring.tests=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.refactoring.tests
-plugin@org.eclipse.cdt.debug.ui.tests=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui.tests
-plugin@org.eclipse.cdt.managedbuilder.core.tests=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core.tests
-plugin@org.eclipse.cdt.managedbuilder.ui.tests=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui.tests
-plugin@org.eclipse.cdt.testing=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing
+plugin@org.eclipse.cdt.core.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.tests
+plugin@org.eclipse.cdt.ui.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui.tests
+plugin@org.eclipse.cdt.refactoring.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.refactoring.tests
+plugin@org.eclipse.cdt.debug.ui.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui.tests
+plugin@org.eclipse.cdt.managedbuilder.core.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core.tests
+plugin@org.eclipse.cdt.managedbuilder.ui.tests=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui.tests
+plugin@org.eclipse.cdt.testing=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing
 plugin@org.eclipse.test=HEAD,:pserver:anonymous@dev.eclipse.org:/home/eclipse,
 fragment@org.eclipse.ant.optional.junit=HEAD,:pserver:anonymous@dev.eclipse.org:/home/eclipse,
-feature@org.eclipse.cdt.testing=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing-feature
+feature@org.eclipse.cdt.testing=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing-feature
 
 ! SDK Feature
 
-plugin@org.eclipse.cdt.sdk=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk
-feature@org.eclipse.cdt.sdk=%cdtTag%,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk-feature
+plugin@org.eclipse.cdt.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk
+feature@org.eclipse.cdt.sdk=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk-feature

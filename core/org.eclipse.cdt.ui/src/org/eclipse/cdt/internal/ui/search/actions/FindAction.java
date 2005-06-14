@@ -219,6 +219,9 @@ public abstract class FindAction extends SelectionParseAction {
 		ICSearchScope searchScope = null;
 		searchScope = getScope();
 
+		if (searchScope == null)
+			return;
+		
 		CSearchQuery job = FindAction.createSearchQueryForName(foundName, limitTo, searchScope);
 		
 		if (job == null)

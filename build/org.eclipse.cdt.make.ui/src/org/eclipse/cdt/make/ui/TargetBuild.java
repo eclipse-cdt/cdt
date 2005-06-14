@@ -19,6 +19,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -103,6 +104,10 @@ public class TargetBuild {
 					monitor.done();
 				}
 				return Status.OK_STATUS;
+			}
+			
+			public boolean belongsTo(Object family) {
+				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 			}
 		};
 		targetJob.schedule();

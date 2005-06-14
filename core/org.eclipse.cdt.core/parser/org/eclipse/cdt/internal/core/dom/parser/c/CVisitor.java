@@ -435,8 +435,8 @@ public class CVisitor {
 	protected static final ASTNodeProperty STRING_LOOKUP_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	protected static final ASTNodeProperty STRING_LOOKUP_TAGS_PROPERTY = new ASTNodeProperty("CVisitor.STRING_LOOKUP_TAGS_PROPERTY - STRING_LOOKUP"); //$NON-NLS-1$
 	private static final String SIZE_T = "size_t"; //$NON-NLS-1$
-	public static final String EMPTY_STRING = "";
-	public static final char [] EMPTY_CHAR_ARRAY = "".toCharArray();
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	public static final char [] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	//lookup bits
 	private static final int COMPLETE 			= 0;		
 	private static final int CURRENT_SCOPE 		= 1;

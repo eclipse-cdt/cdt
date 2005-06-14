@@ -1,3 +1,9 @@
+2005-06-14 David Inglis
+	
+	Support for older cygpaths - bug # 94702
+	
+	* utils/org/eclipse/cdt/utils/CygPath.java
+	
 2005-06-08 Alain Magloire
 	Attempt to fix PR 97554
 	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java

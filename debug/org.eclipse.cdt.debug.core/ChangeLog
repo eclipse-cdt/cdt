@@ -1,3 +1,7 @@
+2005-06-14 Mikhail Khodjaiants
+	Bug 98814: NullPointerException and failed to launch debug session for a project.
+	* CDebugTarget.java
+
 2005-06-13 Mikhail Khodjaiants
 	Temporary fix for bug 77279: The memory view address should not be cleared on project restart.
 	* ICDTLaunchConfigurationConstants.java

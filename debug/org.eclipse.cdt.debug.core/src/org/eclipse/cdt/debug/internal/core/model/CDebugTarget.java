@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -86,6 +87,7 @@ import org.eclipse.cdt.debug.internal.core.CSignalManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupParticipant;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -1725,13 +1727,19 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	private void getSourceLookupPath( List list, ISourceContainer[] containers ) {
 		for ( int i = 0; i < containers.length; ++i ) {
 			if ( containers[i] instanceof ProjectSourceContainer ) {
-				list.add( ((ProjectSourceContainer)containers[i]).getProject().getLocation().toOSString() );
+				IProject project = ((ProjectSourceContainer)containers[i]).getProject();
+				if ( project != null && project.exists() )
+					list.add( project.getLocation().toOSString() );
 			}
 			if ( containers[i] instanceof FolderSourceContainer ) {
-				list.add( ((FolderSourceContainer)containers[i]).getContainer().getLocation().toOSString() );
+				IContainer container = ((FolderSourceContainer)containers[i]).getContainer();
+				if ( container != null && container.exists() )
+					list.add( container.getLocation().toOSString() );
 			}
 			if ( containers[i] instanceof CDirectorySourceContainer ) {
-				list.add( ((CDirectorySourceContainer)containers[i]).getDirectory().getAbsolutePath() );
+				File dir = ((CDirectorySourceContainer)containers[i]).getDirectory();
+				if ( dir != null && dir.exists() )
+					list.add( dir.getAbsolutePath() );
 			}
 			if ( containers[i].isComposite() ) {
 				try {

@@ -60,6 +60,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("test30CopyandDeploy"));
 		suite.addTest(new ManagedProject30MakefileTests("test30DeleteFile"));
 		suite.addTest(new ManagedProject30MakefileTests("test30NoFilesToBuild"));
+		suite.addTest(new ManagedProject30MakefileTests("testFileWithNoExtension"));
 		suite.addTest(new ManagedProject30MakefileTests("testPreAndPostProcessBuildSteps"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_1"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_2"));
@@ -392,6 +393,21 @@ public class ManagedProject30MakefileTests extends TestCase {
 		buildDegenerativeProjects(projects, makefiles);			
 	}
 
+	/**
+	 * (non-Javadoc)
+	 * tests 3.0 managed build system with a project which has a file with no file extesnion
+	 */
+	public void testFileWithNoExtension()
+	{
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		IProject[] projects = createProjects("testFileWithNoExtension", null, null, true);
+		buildProjects(projects, makefiles);
+	}
+	
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration: create pre-build and post-build steps and verify that 
 	 * the proper commands are generated in the makefile which is created by the managedbuild system

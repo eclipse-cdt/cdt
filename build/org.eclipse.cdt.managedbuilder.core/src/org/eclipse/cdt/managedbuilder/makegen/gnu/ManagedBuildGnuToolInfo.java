@@ -228,6 +228,13 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								for (int j=0; j<projResources.length; j++) {
 									if (projResources[j].getType() == IResource.FILE) {
 										String fileExt = projResources[j].getFileExtension();
+										
+										// fix for NPE, bugzilla 99483
+										if(fileExt == null)
+										{
+											fileExt = "";
+										}
+										
 										for (int k=0; k<exts.length; k++) {
 											if (fileExt.equals(exts[k])) {
 												if (!useFileExts) {

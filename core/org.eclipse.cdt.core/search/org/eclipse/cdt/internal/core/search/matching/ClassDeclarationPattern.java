@@ -168,11 +168,13 @@ public class ClassDeclarationPattern extends CSearchPattern {
 					BasicSearchMatch match = new BasicSearchMatch();
 					match.setName(new String(this.decodedSimpleName));
 					//Get qualified names as strings
-					String[] qualifiedName = new String[decodedContainingTypes.length];
-					for (int k=0; k<this.decodedContainingTypes.length; k++){
-						qualifiedName[k] =new String(this.decodedContainingTypes[k]);
+					if (decodedContainingTypes != null){
+						String[] qualifiedName = new String[decodedContainingTypes.length];
+						for (int k=0; k<this.decodedContainingTypes.length; k++){
+							qualifiedName[k] =new String(this.decodedContainingTypes[k]);
+						}
+						match.setQualifiedName(qualifiedName);
 					}
-					match.setQualifiedName(qualifiedName);
 					//Don't forget that offsets are encoded ICIndexStorageConstants
 					//Offsets can either be LINE or OFFSET 
 					int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();

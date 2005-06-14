@@ -68,31 +68,31 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     /**
      * @return Returns the project.
      */
-    protected IProject getProject() {
+    public IProject getProject() {
         return getContainer().getProject();
     }
     /**
      * @return Returns the fPrefs.
      */
-    protected Preferences getPrefs() {
+    public Preferences getPrefs() {
         return fPrefs;
     }
     /**
      * @return Returns the fBuildInfo.
      */
-    protected IScannerConfigBuilderInfo2 getBuildInfo() {
+    public IScannerConfigBuilderInfo2 getBuildInfo() {
         return fBuildInfo;
     }
     /**
      * @return Returns the fInitialized.
      */
-    protected boolean isInitialized() {
+    public boolean isInitialized() {
         return fInitialized;
     }
     /**
      * @param initialized The fInitialized to set.
      */
-    protected void setInitialized(boolean initialized) {
+    public void setInitialized(boolean initialized) {
         fInitialized = initialized;
     }
 
@@ -214,7 +214,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         }
     }
 
-    protected void updateContainer() {
+    public void updateContainer() {
         getContainer().updateContainer();
     }
 

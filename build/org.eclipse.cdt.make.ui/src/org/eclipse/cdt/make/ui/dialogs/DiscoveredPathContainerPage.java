@@ -92,6 +92,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	private static final String CONTAINER_LABEL = PREFIX + ".title"; //$NON-NLS-1$
 	private static final String CONTAINER_DESCRIPTION = PREFIX + ".description"; //$NON-NLS-1$
 	private static final String CONTAINER_LIST_LABEL = PREFIX + ".list.title"; //$NON-NLS-1$
+    private static final String CONTAINER_INITIALIZATION_ERROR = PREFIX +".initialization.error.message";  //$NON-NLS-1$
 	
 	private final int IDX_UP = 0;
 	private final int IDX_DOWN = 1;
@@ -161,7 +162,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
         try {
 			info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fCProject.getProject());
 		} catch (CoreException e) {
-			setErrorMessage("Error initializing Discovered paths container");
+			setErrorMessage(MakeUIPlugin.getResourceString(CONTAINER_INITIALIZATION_ERROR));
 		}
 	}
 
@@ -531,7 +532,6 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	 * @param index
 	 */
 	private void containerPageCustomButtonPressed(TreeListDialogField field, int index) {
-		DiscoveredElement[] containers = null;
 		switch (index) {
 			case IDX_UP:
 				/* move entry up */

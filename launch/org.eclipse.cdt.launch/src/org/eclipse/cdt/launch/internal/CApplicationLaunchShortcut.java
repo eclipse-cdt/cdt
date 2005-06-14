@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -103,7 +102,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				}
 			}
 		} catch (CoreException e) {
-			CDebugUIPlugin.log(e);
+			LaunchUIPlugin.log(e);
 		}
 
 		// If there are no existing configs associated with the IBinary, create one.
@@ -170,7 +169,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 			config = wc.doSave();
 		} catch (CoreException ce) {
-			CDebugUIPlugin.log(ce);
+			LaunchUIPlugin.log(ce);
 		}
 		return config;
 	}
@@ -191,7 +190,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 * Convenience method to get the window that owns this action's Shell.
 	 */
 	protected Shell getShell() {
-		return CDebugUIPlugin.getActiveWorkbenchShell();
+		return LaunchUIPlugin.getActiveWorkbenchShell();
 	}
 
 	/**

@@ -13,7 +13,6 @@ package org.eclipse.cdt.launch.internal.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -74,7 +73,7 @@ public class LaunchImages {
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			CUIPlugin.getDefault().log(e);
+			LaunchUIPlugin.log(e);
 			return null;
 		}
 	}

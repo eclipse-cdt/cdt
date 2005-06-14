@@ -68,27 +68,27 @@ public class IncludePattern extends CSearchPattern {
 			
 			for (int j=0; j<offsets[i].length; j++){
 				BasicSearchMatch match = new BasicSearchMatch();
-				match.name = new String(this.decodedSimpleName);
+				match.setName(new String(this.decodedSimpleName));
 				//Don't forget that offsets are encoded ICIndexStorageConstants
 				//Offsets can either be LINE or OFFSET 
 				int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
 				if (offsetType==IIndex.LINE){
-					match.locatable = new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0);
+					match.setLocatable(new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0));
 				}else if (offsetType==IIndex.OFFSET){
 					int startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
 					int endOffset= startOffset + offsetLengths[i][j];
-					match.locatable = new OffsetLocatable(startOffset, endOffset);
+					match.setLocatable(new OffsetLocatable(startOffset, endOffset));
 				}
-				match.parentName = ""; //$NON-NLS-1$
-				match.type=ICElement.C_INCLUDE;
+				match.setParentName(""); //$NON-NLS-1$
+				match.setType(ICElement.C_INCLUDE);
 				
 			    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
 				if (tempFile != null && tempFile.exists())
-					match.resource =tempFile;
+					match.setResource(tempFile);
 				else {
 					IPath tempPath = PathUtil.getWorkspaceRelativePath(file.getPath());
-					match.path = tempPath;
-					match.referringElement = tempPath;
+					match.setPath(tempPath);
+					match.setReferringElement(tempPath);
 				}
 				requestor.acceptSearchMatch(match);
 			}

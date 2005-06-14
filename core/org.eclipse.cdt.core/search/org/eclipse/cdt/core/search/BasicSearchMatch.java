@@ -24,17 +24,30 @@ import org.eclipse.core.runtime.IPath;
  */
 public class BasicSearchMatch implements IMatch, Comparable {
 
-	public BasicSearchMatch() {
-	}
+	String name 	 = null;
+	String parentName  = null;
+	String[] qualifiedName;
+	
+	String returnType;
 
-	public BasicSearchMatch(BasicSearchMatch basicMatch) {
-		name 		= basicMatch.name;
-		parentName 	= basicMatch.parentName;
-		returnType  = basicMatch.returnType;
-		resource 	= basicMatch.resource;
-		path 		= basicMatch.path;
-		locatable 	= basicMatch.locatable;
-		referringElement = basicMatch.referringElement;
+	IResource resource = null;
+	IPath     path 	  = null;
+
+	int type 		  = 0;
+	int visibility 	  = 0;
+	
+	boolean isConst			  = false;
+	boolean isVolatile		  = false;		
+	boolean isStatic		  = false;
+	
+	private int hashCode = 0;
+
+	IPath referringElement = null;
+	
+	IMatchLocatable locatable = null;
+	
+	
+	public BasicSearchMatch() {
 	}
 	
 	final static private String HASH_SEPERATOR = ":"; //$NON-NLS-1$
@@ -164,27 +177,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		result = getReturnType().compareTo( match.getReturnType() );
 		return result;
 	}
-	
-	public String name 		  = null;
-	public String parentName  = null;
-	public String returnType;
-	
-	public IResource resource = null;
-	public IPath     path 	  = null;
 
-	public int type 		  = 0;
-	public int visibility 	  = 0;
-	
-	boolean isConst			  = false;
-	boolean isVolatile		  = false;		
-	boolean isStatic		  = false;
-	
-	private int hashCode = 0;
-
-	public IPath referringElement = null;
-	
-	public IMatchLocatable locatable = null;
-	
 	public int getElementType() {
 		return type;
 	}
@@ -295,6 +288,38 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	
 	public IMatchLocatable getLocatable() {
 		return locatable;
+	}
+
+	public void setLocatable(IMatchLocatable locatable) {
+		this.locatable = locatable;
+	}
+
+	public void setResource(IResource resource) {
+		this.resource = resource;
+	}
+
+	public IPath getPath() {
+		return path;
+	}
+
+	public void setPath(IPath path) {
+		this.path = path;
+	}
+
+	public IPath getReferringElement() {
+		return referringElement;
+	}
+
+	public void setReferringElement(IPath referringElement) {
+		this.referringElement = referringElement;
+	}
+
+	public String[] getQualifiedName() {
+		return qualifiedName;
+	}
+
+	public void setQualifiedName(String[] qualifiedName) {
+		this.qualifiedName = qualifiedName;
 	}
 
 }

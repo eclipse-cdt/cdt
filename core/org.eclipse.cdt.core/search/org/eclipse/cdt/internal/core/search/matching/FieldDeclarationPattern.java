@@ -153,40 +153,38 @@ public class FieldDeclarationPattern extends CSearchPattern {
 			IndexedFileEntry file = input.getIndexedFile(fileRefs[i]);
 			String path = null;
 			if (file != null && scope.encloses(path =file.getPath())) {
-				requestor.acceptFieldDeclaration(path, decodedSimpleName,decodedQualifications);
-			}
-			
-			for (int j=0; j<offsets[i].length; j++){
-				BasicSearchMatch match = new BasicSearchMatch();
-				match.name = new String(this.decodedSimpleName);
-				//Don't forget that offsets are encoded ICIndexStorageConstants
-				//Offsets can either be LINE or OFFSET 
-				int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
-				if (offsetType==Index.LINE){
-					match.locatable = new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0);
-				}else if (offsetType==Index.OFFSET){
-					int startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
-					int endOffset= startOffset + offsetLengths[i][j];
-					match.locatable = new OffsetLocatable(startOffset, endOffset);
+				for (int j=0; j<offsets[i].length; j++){
+					BasicSearchMatch match = new BasicSearchMatch();
+					match.setName(new String(this.decodedSimpleName));
+					//Don't forget that offsets are encoded ICIndexStorageConstants
+					//Offsets can either be LINE or OFFSET 
+					int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
+					if (offsetType==Index.LINE){
+						match.setLocatable(new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0));
+					}else if (offsetType==Index.OFFSET){
+						int startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
+						int endOffset= startOffset + offsetLengths[i][j];
+						match.setLocatable(new OffsetLocatable(startOffset, endOffset));
+					}
+					match.setParentName(""); //$NON-NLS-1$
+					if (searchFor ==  FIELD){
+						match.setType(ICElement.C_FIELD);
+					} else if (searchFor ==  VAR){
+						match.setType(ICElement.C_VARIABLE);
+					} else if (searchFor ==  ENUMTOR){
+						match.setType(ICElement.C_ENUMERATOR);
+					}
+					
+				    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
+					if (tempFile != null && tempFile.exists())
+						match.setResource(tempFile);
+					else {
+						IPath tempPath = PathUtil.getWorkspaceRelativePath(file.getPath());
+						match.setPath(tempPath);
+						match.setReferringElement(tempPath);
+					}
+					requestor.acceptSearchMatch(match);
 				}
-				match.parentName = ""; //$NON-NLS-1$
-				if (searchFor ==  FIELD){
-					match.type=ICElement.C_FIELD;
-				} else if (searchFor ==  VAR){
-					match.type=ICElement.C_VARIABLE;
-				} else if (searchFor ==  ENUMTOR){
-					match.type=ICElement.C_ENUMERATOR;
-				}
-				
-			    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
-				if (tempFile != null && tempFile.exists())
-					match.resource =tempFile;
-				else {
-					IPath tempPath = PathUtil.getWorkspaceRelativePath(file.getPath());
-					match.path = tempPath;
-					match.referringElement = tempPath;
-				}
-				requestor.acceptSearchMatch(match);
 			}
 		}	
 	}

@@ -128,7 +128,7 @@ class CTagEntry{
 		char[][] fullName = getQualifiedName();
 	
 		if (kind.equals(CTagsConsoleParser.CLASS)){
-			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_CLASS,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_CLASS,IIndex.DEFINITION, fullName, getModifiers(), fileNum);
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.setBaseTypes(getInherits());
 			typeEntry.serialize(output);

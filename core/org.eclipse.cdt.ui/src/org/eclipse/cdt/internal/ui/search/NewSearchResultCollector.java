@@ -84,11 +84,11 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
       if( !super.acceptMatch( match ) )
       		return false;
 
-      if( searchMatch.resource == null &&
-      	  searchMatch.path == null)
+      if( searchMatch.getResource() == null &&
+      	  searchMatch.getPath() == null)
       		return false;
 	 
-      if (searchMatch.resource != null){
+      if (searchMatch.getResource() != null){
 		fMatchCount++;
 		int start =0;
 		int end = 0;

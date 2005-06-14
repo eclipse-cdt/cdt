@@ -115,20 +115,20 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		IEditorPart editor= null;
 		if (match instanceof CSearchMatch){
 			BasicSearchMatch searchMatch = ((CSearchMatch) match).getSearchMatch();
-			if (searchMatch.resource != null){
-				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.resource), false);
-				IMatchLocatable searchLocatable = searchMatch.locatable;
-				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), searchLocatable, currentOffset, currentLength);
+			if (searchMatch.getResource() != null){
+				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.getResource()), false);
+				IMatchLocatable searchLocatable = searchMatch.getLocatable();
+				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.getResource()), searchLocatable, currentOffset, currentLength);
 			}
 			else {
 				//Match is outside of the workspace
 				try {
-					IEditorInput input =EditorUtility.getEditorInput(new ExternalSearchFile(searchMatch.path, searchMatch));
+					IEditorInput input =EditorUtility.getEditorInput(new ExternalSearchFile(searchMatch.getPath(), searchMatch));
 					IWorkbenchPage p= CUIPlugin.getActivePage();
 					IEditorPart editorPart= p.openEditor(input, "org.eclipse.cdt.ui.editor.ExternalSearchEditor"); //$NON-NLS-1$
 					if (editorPart instanceof ITextEditor) {
 						ITextEditor textEditor= (ITextEditor) editorPart;
-						IMatchLocatable searchLocatable = searchMatch.locatable;
+						IMatchLocatable searchLocatable = searchMatch.getLocatable();
 						int startOffset=0;
 						int length=0;
 						if (searchLocatable instanceof IOffsetLocatable){

@@ -194,9 +194,9 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
      public IMatch createMatch( Object fileResource,int offsetType, int start, int end, String name, IPath referringElement ) {
         BasicSearchMatch result = new BasicSearchMatch();
         if( fileResource instanceof IResource )
-            result.resource = (IResource) fileResource;
+            result.setResource((IResource) fileResource);
         else if( fileResource instanceof IPath )
-            result.path = (IPath) fileResource;
+            result.setPath((IPath) fileResource);
          
 		IMatchLocatable locatable=null;
 		if (offsetType == IIndex.LINE)
@@ -206,15 +206,15 @@ public class IndexerQuery extends CSearchQuery implements ISearchQuery {
 		else if (offsetType == IIndex.OFFSET){
 			locatable = new OffsetLocatable(start,end);
 		}
-        result.locatable = locatable;
-        result.parentName = BLANK_STRING; //$NON-NLS-1$
-        result.referringElement = referringElement;
+        result.setLocatable(locatable);
+        result.setParentName(BLANK_STRING); //$NON-NLS-1$
+        result.setReferringElement(referringElement);
         
-        result.name = name;
+        result.setName(name);
 		
-        result.type = ICElement.C_FIELD; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
-        result.visibility = ICElement.CPP_PUBLIC; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
-        result.returnType = BLANK_STRING;
+        result.setType(ICElement.C_FIELD); // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
+        result.setVisibility(ICElement.CPP_PUBLIC); // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
+        result.setReturnType(BLANK_STRING);
         
         return result;
     }    

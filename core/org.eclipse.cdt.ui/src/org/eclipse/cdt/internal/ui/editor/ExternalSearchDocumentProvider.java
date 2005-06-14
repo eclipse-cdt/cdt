@@ -62,7 +62,7 @@ public class ExternalSearchDocumentProvider extends FileDocumentProvider {
 		
 		IProject projectToUseForMarker = null;
 		
-		IFile resourceFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(externalSearchFile.searchMatch.referringElement);
+		IFile resourceFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(externalSearchFile.searchMatch.getReferringElement());
 		
 		if (resourceFile == null){
 			IProject[] proj = CUIPlugin.getWorkspace().getRoot().getProjects();

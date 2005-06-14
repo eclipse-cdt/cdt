@@ -270,7 +270,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		assertEquals( matches.size(), 2 );
 	}
 	
-	public void testBug54169(){
+/*	public void testBug54169(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "e", TYPE, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
@@ -282,6 +282,6 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		matches = resultCollector.getSearchResults();
 		
 		assertEquals( matches.size(), 1 );
-	}
+	}*/
 }
 

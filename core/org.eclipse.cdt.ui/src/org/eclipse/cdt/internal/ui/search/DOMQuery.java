@@ -178,26 +178,26 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	 	BasicSearchMatch result = new BasicSearchMatch();
 		
 		if( fileResource instanceof IResource )
-			result.resource = (IResource) fileResource;
+			result.setResource((IResource) fileResource);
 		else if( fileResource instanceof IPath )
-			result.path = (IPath) fileResource;
+			result.setPath((IPath) fileResource);
 			
-		result.locatable = new OffsetLocatable(start,end);
-		result.parentName = BLANK_STRING; //$NON-NLS-1$
-		result.referringElement = referringElement;
+		result.setLocatable(new OffsetLocatable(start,end));
+		result.setParentName(BLANK_STRING); //$NON-NLS-1$
+		result.setReferringElement(referringElement);
 		
 		if (node instanceof IASTName)
-			result.name = node.toString();
+			result.setName(node.toString());
 		else if (node instanceof IASTProblem)
-			result.name = ((IASTProblem)node).getMessage();
+			result.setName(((IASTProblem)node).getMessage());
 		else
-			result.name = node.toString();
+			result.setName(node.toString());
 	
 		// set the type and visibility of the match
 		if (node instanceof IASTName) {
 			IBinding binding = ((IASTName)node).resolveBinding();
 			if (binding instanceof ICPPClassType) {
-				result.type = ICElement.C_CLASS;
+				result.setType(ICElement.C_CLASS);
 			} else if (binding instanceof ICompositeType) {
 				int key=ICompositeType.k_struct;
 				try {
@@ -205,20 +205,20 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 				} catch (DOMException e) {}
 				switch (key) {
 				case ICompositeType.k_struct:
-					result.type = ICElement.C_STRUCT;
+					result.setType(ICElement.C_STRUCT);
 					break;
 				case ICompositeType.k_union:
-					result.type = ICElement.C_UNION;
+					result.setType(ICElement.C_UNION);
 					break;
 				}
 			} else if (binding instanceof ICPPNamespace) {
-				result.type = ICElement.C_NAMESPACE;
+				result.setType( ICElement.C_NAMESPACE);
 			} else if (binding instanceof IEnumeration) {
-				result.type = ICElement.C_ENUMERATION;
+				result.setType(ICElement.C_ENUMERATION);
 			} else if (binding instanceof IMacroBinding) {
-				result.type = ICElement.C_MACRO;
+				result.setType(ICElement.C_MACRO);
 			} else if (binding instanceof IField) {
-				result.type = ICElement.C_FIELD;
+				result.setType(ICElement.C_FIELD);
 				try {
 					result.setStatic(((IField)binding).isStatic());
 				} catch (DOMException e) {}
@@ -226,10 +226,10 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 					try {
 						switch (((ICPPMember)binding).getVisibility()) {
 						case ICPPMember.v_private:
-							result.visibility = ICElement.CPP_PRIVATE; 
+							result.setVisibility(ICElement.CPP_PRIVATE); 
 							break;
 						case ICPPMember.v_public:
-							result.visibility = ICElement.CPP_PUBLIC;
+							result.setVisibility(ICElement.CPP_PUBLIC);
 							break;
 						// no ICElement.CPP_PROTECTED
 						}
@@ -239,22 +239,22 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 					result.setConst(ASTTypeUtil.isConst(((IField)binding).getType()));
 				} catch (DOMException e) {}
 			} else if (binding instanceof IVariable) {
-				result.type = ICElement.C_VARIABLE;
+				result.setType(ICElement.C_VARIABLE);
 				try {
 					result.setConst(ASTTypeUtil.isConst(((IVariable)binding).getType()));
 				} catch (DOMException e) {}
 			} else if (binding instanceof IEnumerator) {
-				result.type = ICElement.C_ENUMERATOR;
+				result.setType(ICElement.C_ENUMERATOR);
 			} else if (binding instanceof ICPPMethod) {
-				result.type = ICElement.C_METHOD;
+				result.setType(ICElement.C_METHOD);
 				if (binding instanceof ICPPMember) {
 					try {
 						switch (((ICPPMember)binding).getVisibility()) {
 						case ICPPMember.v_private:
-							result.visibility = ICElement.CPP_PRIVATE;
+							result.setVisibility(ICElement.CPP_PRIVATE);
 							break;
 						case ICPPMember.v_public:
-							result.visibility = ICElement.CPP_PUBLIC;
+							result.setVisibility(ICElement.CPP_PUBLIC);
 							break;
 							// there is no ICElement.CPP_PROTECTED
 						}
@@ -264,18 +264,18 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 					result.setConst(ASTTypeUtil.isConst(((ICPPMethod)binding).getType()));
 				} catch (DOMException e) {}
 			} else if (binding instanceof IFunction) {
-				result.type = ICElement.C_FUNCTION;
+				result.setType(ICElement.C_FUNCTION);
 				try {
 					result.setStatic(((IFunction)binding).isStatic());
 				} catch (DOMException e) {}
 			} else if (binding instanceof ITypedef) {
-				result.type = ICElement.C_TYPEDEF;
+				result.setType(ICElement.C_TYPEDEF);
 			}
 		} else { 
-			result.type = ICElement.C_UNKNOWN_DECLARATION;
+			result.setType(ICElement.C_UNKNOWN_DECLARATION);
 		}
 		
-		result.returnType = BLANK_STRING;
+		result.setReturnType(BLANK_STRING);
 		
 		return result;
 	}	 

@@ -163,54 +163,54 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			IndexedFileEntry file = input.getIndexedFile(fileRefs[i]);
 			String path;
 			if (file != null && scope.encloses(path =file.getPath())) {
-				//TODO: BOG Fix this up - even if it's not a class we still care 
-				if (isClass) {
-					requestor.acceptClassDeclaration(path, decodedSimpleName, decodedContainingTypes);
-				}  else {
-					requestor.acceptClassDeclaration(path, decodedSimpleName, decodedContainingTypes);
-				}
 				//For each file, create a new search match for each offset occurrence
 				for (int j=0; j<offsets[i].length; j++){
 					BasicSearchMatch match = new BasicSearchMatch();
-					match.name = new String(this.decodedSimpleName);
+					match.setName(new String(this.decodedSimpleName));
+					//Get qualified names as strings
+					String[] qualifiedName = new String[decodedContainingTypes.length];
+					for (int k=0; k<this.decodedContainingTypes.length; k++){
+						qualifiedName[k] =new String(this.decodedContainingTypes[k]);
+					}
+					match.setQualifiedName(qualifiedName);
 					//Don't forget that offsets are encoded ICIndexStorageConstants
 					//Offsets can either be LINE or OFFSET 
 					int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
 					if (offsetType==IIndex.LINE){
-						match.locatable = new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0);
+						match.setLocatable(new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0));
 					}else if (offsetType==IIndex.OFFSET){
 						int startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
 						int endOffset= startOffset + offsetLengths[i][j];
-						match.locatable = new OffsetLocatable(startOffset, endOffset);
+						match.setLocatable(new OffsetLocatable(startOffset, endOffset));
 					}
 					
-					match.parentName = ""; //$NON-NLS-1$
+					match.setParentName(""); //$NON-NLS-1$
 					
 					switch (decodedType) {
 					case IIndex.TYPE_CLASS: 
-						match.type=ICElement.C_CLASS;
+						match.setType(ICElement.C_CLASS);
 						break;
 					case IIndex.TYPE_STRUCT :
-						match.type=ICElement.C_STRUCT;
+						match.setType(ICElement.C_STRUCT);
 						break;
 					case IIndex.TYPE_UNION :
-						match.type=ICElement.C_UNION;
+						match.setType(ICElement.C_UNION);
 						break;
 					case IIndex.TYPE_ENUM :
-						match.type=ICElement.C_ENUMERATION;
+						match.setType(ICElement.C_ENUMERATION);
 						break;
 					case IIndex.TYPE_TYPEDEF :
-						match.type=ICElement.C_TYPEDEF;
+						match.setType(ICElement.C_TYPEDEF);
 						break;
 					}
 					                                 
 				    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
 					if (tempFile != null && tempFile.exists())
-						match.resource =tempFile;
+						match.setResource(tempFile);
 					else {
 						IPath tempPath = PathUtil.getWorkspaceRelativePath(file.getPath());
-						match.path = tempPath;
-						match.referringElement = tempPath;
+						match.setPath(tempPath);
+						match.setReferringElement(tempPath);
 					}
 					requestor.acceptSearchMatch(match);
 				}

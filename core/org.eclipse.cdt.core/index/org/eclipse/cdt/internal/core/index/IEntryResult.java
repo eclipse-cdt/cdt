@@ -28,6 +28,8 @@ public interface IEntryResult {
 	public int getRefKind();
 	public String getName();
 	
+	public String getDisplayString();
+	
 	public String getStringMetaKind();
 	public String getStringKind();
 	public String getStringRefKind();

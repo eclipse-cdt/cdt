@@ -59,7 +59,8 @@ public class IndexerNodeLeaf implements IAdaptable {
     private class IndexerPropertySource implements IPropertySource {
 
         private static final String IENTRYRESULT = "IEntryResult"; //$NON-NLS-1$
-        private static final String NAME = "Name"; //$NON-NLS-1$
+        private static final String NAME = "Encoded Name"; //$NON-NLS-1$
+        private static final String DNAME = "Display Name"; //$NON-NLS-1$
         private static final String IENTRYRESULT_GETWORD__ = "IEntryResult#getWord()"; //$NON-NLS-1$
         private static final String REFS = "References"; //$NON-NLS-1$
         private static final String OFFSETS_LINE = "Line "; //$NON-NLS-1$
@@ -111,7 +112,11 @@ public class IndexerNodeLeaf implements IAdaptable {
             text = new TextPropertyDescriptor(new TextDescriptorId(NAME, entryResult.getName()), NAME);
             text.setCategory(IENTRYRESULT);
             descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
-            
+   
+            text = new TextPropertyDescriptor(new TextDescriptorId(DNAME, entryResult.getDisplayString()), DNAME);
+            text.setCategory(IENTRYRESULT);
+            descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, text);
+ 
             // add IEntryResult
             text = new TextPropertyDescriptor(new TextDescriptorId("MetaKind", entryResult.getStringMetaKind()), "MetaKind");
             text.setCategory(IENTRYRESULT);
@@ -174,7 +179,7 @@ public class IndexerNodeLeaf implements IAdaptable {
         if (!parent.isDisplayFullName())
             return getShortName();
         
-        return getName();
+        return result.getDisplayString();
     }
     
     public int getFiltersType() {

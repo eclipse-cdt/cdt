@@ -196,5 +196,38 @@ public String getStringRefKind() {
 	return String.valueOf(ICIndexStorageConstants.encodingTypes[reftype]);
 }
 
+public String getDisplayString() {
+	switch (meta_type) {
+	case IIndex.FUNCTION:
+	case IIndex.METHOD:
+		int startReturn = longname.indexOf(")R/"); //$NON-NLS-1$
+		int finishReturn = longname.indexOf("/R("); //$NON-NLS-1$
+		int startParam = longname.indexOf(")/"); //$NON-NLS-1$
+		int finishParam = longname.indexOf("/("); //$NON-NLS-1$
+		
+		String functionName;
+		String arguments = longname.substring(startParam + 2, finishParam);
+
+		// TODO: flip arguments
+		arguments = arguments.replace('/',',');
+		
+		arguments = '(' + arguments + ')';
+		
+		if (startReturn == -1 || finishReturn == -1) {
+			// there is no return type !!!
+			functionName = longname.substring(0, startParam -1);
+			return functionName + arguments ;
+		}
+		else {
+			String returnType = longname.substring(startReturn + 3, finishReturn);
+			functionName = longname.substring(0, startReturn -1);
+			return functionName + arguments + ':' + returnType;
+		}
+		
+	default:
+		return longname;
+	}
+}
+
 }
 

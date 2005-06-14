@@ -73,9 +73,6 @@ public class IndexerViewPluginImages {
     	"union_obj.gif",
     	"derived.gif",
     	"friend.gif",
-    	"fwd_class.gif",
-    	"fwd_struct.gif",
-    	"fwd_union.gif", 
     	"include_obj.gif"
     };
       

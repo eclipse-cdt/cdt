@@ -81,7 +81,13 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			addTab(environmentBlock = new EnvironmentSetBlock((BuildPropertyPage) fParent));
 			addTab(macrosBlock = new MacrosSetBlock((BuildPropertyPage) fParent));
 		} else if (element instanceof IFile) {
-			addTab(toolsSettingsBlock = new ToolsSettingsBlock((ResourceBuildPropertyPage) fParent, element));
+			/*
+			 * If the resource is a known build resource, display the tool settings tab and the rcbs tab.
+			 * If the resource is not a known build resource, only display the rcbs tab.
+			 */
+			if(((ResourceBuildPropertyPage)fParent).isBuildResource((IFile)element)) {
+				addTab(toolsSettingsBlock = new ToolsSettingsBlock((ResourceBuildPropertyPage) fParent, element));
+			}
 			addTab(resCustomBuildStepBlock = new ResourceCustomBuildStepBlock((ResourceBuildPropertyPage) fParent));
 		} else if (element instanceof IWorkspace) {
 			addTab(environmentBlock = new EnvironmentSetBlock((BuildPreferencePage) fParent));

@@ -385,11 +385,16 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	 * @return
 	 */
 	public boolean isBuildResource(IFile file, IConfiguration cfg){
-		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(file.getFullPath().toOSString());
+		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(file.getFullPath().toString());
 		if(rcCfg != null){
-			ITool tools[] = rcCfg.getToolsToInvoke();
-			if(tools != null && tools.length > 0)
-				return true;
+			ITool tools[] = rcCfg.getTools();
+			if(tools == null || tools.length == 0)
+				return false;
+			for (int i = 0; i < tools.length; i++) {
+				ITool tool = tools[i];
+				if (!tool.getCustomBuildStep() || tool.isExtensionElement())
+					return true;
+			}
 		} else {
 			String ext = file.getFileExtension();
 			ITool[] tools = cfg.getFilteredTools();

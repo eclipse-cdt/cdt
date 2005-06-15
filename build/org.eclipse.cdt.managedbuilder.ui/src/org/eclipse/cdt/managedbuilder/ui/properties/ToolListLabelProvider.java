@@ -49,7 +49,7 @@ public class ToolListLabelProvider extends LabelProvider {
 			img = manager.createImageWithDefault(descriptor);			
 			if (img == null) {
 				// Report error by displaying a warning message
-				System.err.println("Couldn't create image from URL \"" + url + "\", to display icon for Tool Options." ); //$NON-NLS-1$
+				System.err.println("Couldn't create image from URL \"" + url + "\", to display icon for Tool Options." ); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return img;

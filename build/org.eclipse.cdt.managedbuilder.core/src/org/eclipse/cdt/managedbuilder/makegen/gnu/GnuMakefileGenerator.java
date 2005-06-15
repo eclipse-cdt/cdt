@@ -2680,7 +2680,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			}
 		} else {
 			if (generatedSource && !sourceLocation.isAbsolute()) {
-				srcName = "./" + relativePath + sourceLocation.lastSegment().toString();	// $NON-NLS-1$
+				srcName = "./" + relativePath + sourceLocation.lastSegment().toString();	//$NON-NLS-1$
 			} else {
 				// TODO:  Should we use relative paths when possible (e.g., see MbsMacroSupplier.calculateRelPath)
 				srcName = sourceLocation.toString();

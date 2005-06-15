@@ -756,7 +756,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		
 		// Build the match name.
 		do {
-			catName = catOrTool.getName() + "|" + catName;
+			catName = catOrTool.getName() + "|" + catName; //$NON-NLS-1$
 			if (catOrTool instanceof ITool) break;
 			else if (catOrTool instanceof IOptionCategory) {
 				catOrTool = ((IOptionCategory)catOrTool).getOwner();					

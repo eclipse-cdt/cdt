@@ -1443,7 +1443,9 @@ public class Option extends BuildObject implements IOption {
 		if (valueHandlerExtraArgument == null) {
 			if (superClass != null) {
 				return superClass.getValueHandlerExtraArgument();
-			}
+			} else {
+ 				return EMPTY_STRING;
+ 			}			
 		}
 		return valueHandlerExtraArgument;
 	}
@@ -1452,11 +1454,12 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValueHandlerExtraArgument(String))
 	 */
 	public void setValueHandlerExtraArgument(String extraArgument) {
-		if (extraArgument == null)
-			extraArgument = ""; //$NON-NLS-1$
-		if (valueHandlerExtraArgument == null || !valueHandlerExtraArgument.equals(extraArgument)) {
+ 		if (extraArgument == null && valueHandlerExtraArgument == null) return;
+ 		if (extraArgument == null || 
+ 				valueHandlerExtraArgument == null ||
+ 				!extraArgument.equals(valueHandlerExtraArgument)) {
 			valueHandlerExtraArgument = extraArgument;
-			setDirty(true);
+ 			isDirty = true;
 		}
 	}
 

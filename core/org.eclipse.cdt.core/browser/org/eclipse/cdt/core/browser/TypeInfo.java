@@ -60,7 +60,9 @@ public class TypeInfo implements ITypeInfo
 	public ITypeReference getResolvedReference() {
 		for (int i = 0; i < fSourceRefsCount; ++i) {
 			ITypeReference location = fSourceRefs[i];
-			if (location.getLength() != 0) {
+			if (location.isLineNumber() )
+                return location;
+            if( location.getLength() != 0) {
 				return location;
 			}
 		}

@@ -10,8 +10,11 @@
  **********************************************************************/
 package org.eclipse.cdt.core.index;
 
+import java.io.IOException;
+
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
+import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -155,6 +158,21 @@ public interface ICDTIndexer {
 	 * @param project
 	 */
 	public void indexerRemoved(IProject project);
+
+    /**
+     * Don't ask.
+     * 
+     * @param index
+     * @return
+     */
+    public ReadWriteMonitor getMonitorFor(IIndex index);
+
+    /**
+     * Don't tell.
+     * 
+     * @param index
+     */
+    public void saveIndex(IIndex index) throws IOException;
 
 	
 }

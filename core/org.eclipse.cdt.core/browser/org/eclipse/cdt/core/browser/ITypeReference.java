@@ -86,4 +86,6 @@ public interface ITypeReference {
 	 * given path.
 	 */
 	public IPath getRelativePath(IPath relativeToPath);
+    
+    boolean isLineNumber();
 }

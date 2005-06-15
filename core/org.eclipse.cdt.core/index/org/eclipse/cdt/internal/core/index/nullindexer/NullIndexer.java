@@ -9,6 +9,7 @@ import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
+import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -18,7 +19,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
 
-	public int getIndexerFeatures() {
+    public int getIndexerFeatures() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -102,5 +103,13 @@ public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
 		// TODO Auto-generated method stub
 		
 	}
+
+    public ReadWriteMonitor getMonitorFor(IIndex index) {
+        return null;
+    }
+
+    public void saveIndex(IIndex index) throws IOException {
+        // TODO Auto-generated method stub
+    }
 
 }

@@ -28,6 +28,7 @@ public class TypeReference implements ITypeReference {
 	private IWorkingCopy fWorkingCopy;
 	private int fOffset;
 	private int fLength;
+    public boolean offsetIsLineNumber = false;
 	
 	public TypeReference(IPath path, IProject project, int offset, int length) {
 		fPath = path;
@@ -170,7 +171,13 @@ public class TypeReference implements ITypeReference {
 		ITranslationUnit unit = getTranslationUnit();
 		if (unit != null) {
 			try {
-				return unit.getElementsAtOffset(fOffset);
+                if( offsetIsLineNumber )
+                {
+                    ICElement [] result = new ICElement[1];
+                    result[0] = unit.getElementAtLine(fOffset);
+                    return result;
+                }
+                return unit.getElementsAtOffset(fOffset);
 			} catch (CModelException e) {
 			}
 		}
@@ -230,4 +237,8 @@ public class TypeReference implements ITypeReference {
 		ITypeReference ref = (ITypeReference)obj;
 		return toString().equals(ref.toString());
 	}
+
+    public boolean isLineNumber() {
+        return offsetIsLineNumber;
+    }
 }

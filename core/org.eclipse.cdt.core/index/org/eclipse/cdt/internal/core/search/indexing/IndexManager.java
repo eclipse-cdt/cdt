@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexRequest;
 import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
@@ -47,6 +48,31 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class IndexManager extends JobManager{
 	
+    public static interface IIndexerSelectionListener
+    {
+        public void indexerSelectionChanged(IProject project);
+    }
+    
+    private IIndexerSelectionListener [] listeners = new IIndexerSelectionListener[1];
+    
+    public synchronized void subscribeForIndexerChangeNotifications( IIndexerSelectionListener listener )
+    {
+        listeners = (IIndexerSelectionListener[]) ArrayUtil.append( IIndexerSelectionListener.class, listeners, listener );
+    }
+    
+    public synchronized void unSubscribeForIndexerChangeNotifications( IIndexerSelectionListener listener )
+    {
+        if( listeners == null ) return;
+        if( listener == null ) return;
+        for( int i = 0; i < listeners.length; ++i )
+        {
+            if( listeners[i] == listener )
+                listeners[i] = null;
+        }
+    }
+    
+    
+    
 	public final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".cdtindexers"; //$NON-NLS-1$
 	public final static String INDEXERID = "indexerID"; //$NON-NLS-1$
 	public final static QualifiedName indexerIDKey = new QualifiedName(INDEX_MODEL_ID, INDEXERID);
@@ -397,6 +423,11 @@ public class IndexManager extends JobManager{
 			};
 
 			job.schedule();
+            
+            if( listeners != null )
+                for( int i = 0; i < listeners.length; ++i )
+                    if( listeners[i] != null )
+                        listeners[i].indexerSelectionChanged(project);
 	    }
 	}
     

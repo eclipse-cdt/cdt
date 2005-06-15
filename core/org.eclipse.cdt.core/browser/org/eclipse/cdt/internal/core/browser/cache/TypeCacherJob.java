@@ -144,7 +144,7 @@ public class TypeCacherJob extends BasicJob {
 	
 		monitor.beginTask("", 100); //$NON-NLS-1$
 		if (project.exists() && project.isOpen()) {
-		    success = doIndexerJob(new IndexerTypesJob(fIndexManager, fTypeCache, scope), monitor);
+		    success = doIndexerJob(new IndexerTypesJob2(fIndexManager, fTypeCache, scope), monitor);
 		}
 		
 		if (!success || monitor.isCanceled()) {
@@ -174,6 +174,27 @@ public class TypeCacherJob extends BasicJob {
 			ICSearchConstants.FORCE_IMMEDIATE_SEARCH, monitor, null);
 	}
 
+    private boolean doIndexerJob(IndexerJob2 job, IProgressMonitor monitor) {
+        if (!fEnableIndexing) {
+            return false;
+        }
+        
+        // check if indexer is busy
+        fIndexerIsBusy = false;
+        try {
+            fIndexManager.performConcurrentJob(new DummyIndexerJob(fIndexManager, fTypeCache.getProject()),
+                ICSearchConstants.CANCEL_IF_NOT_READY_TO_SEARCH, new NullProgressMonitor(), null);
+        } catch (OperationCanceledException e) {
+            fIndexerIsBusy = true;
+        }
+        
+        // do an immediate (but possibly incomplete) search
+        // if fIndexerIsBusy the cache will stay dirty and we'll hit the indexer again next time
+        return fIndexManager.performConcurrentJob(job,
+            ICSearchConstants.FORCE_IMMEDIATE_SEARCH, monitor, null);
+    }
+
+    
 	private static final int PATH_ENTRY_FLAGS = ICElementDelta.F_ADDED_PATHENTRY_SOURCE
 		| ICElementDelta.F_REMOVED_PATHENTRY_SOURCE
 		| ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE
@@ -248,7 +269,7 @@ public class TypeCacherJob extends BasicJob {
 		protected boolean processIndex(IIndex index, IProject project, IProgressMonitor progressMonitor) throws InterruptedException {
 		    return false;
 		}
-	};
+	}
 	
 }
 

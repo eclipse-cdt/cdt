@@ -29,6 +29,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -39,7 +41,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
-public class TypeCacheManager implements ITypeCacheChangedListener {
+public class TypeCacheManager implements ITypeCacheChangedListener, IndexManager.IIndexerSelectionListener {
 	private static final TypeCacheManager fgInstance = new TypeCacheManager();
 	private Map fCacheMap;
 	private IWorkingCopyProvider fWorkingCopyProvider;
@@ -53,11 +55,17 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
     
 	private TypeCacheManager() {
 		fCacheMap = new HashMap();
+        CModelManager.getDefault().getIndexManager().subscribeForIndexerChangeNotifications( this );
 	}
 	
 	public static TypeCacheManager getInstance() {
 		return fgInstance;
 	}
+    
+    protected void finalize() throws Throwable {
+        CModelManager.getDefault().getIndexManager().unSubscribeForIndexerChangeNotifications( this );
+        super.finalize();
+    }
 	
 	public void setWorkingCopyProvider(IWorkingCopyProvider workingCopyProvider) {
 		fWorkingCopyProvider = workingCopyProvider;
@@ -455,4 +463,8 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 	public void setProcessTypeCacheEvents(boolean processTypeCacheEvents) {
 		this.processTypeCacheEvents = processTypeCacheEvents;
 	}
+
+    public void indexerSelectionChanged(IProject project) {
+        addCacheDelta(project, null );
+    }
 }

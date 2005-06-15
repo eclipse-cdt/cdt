@@ -29,6 +29,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -164,7 +166,22 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 			// highlight the type in the editor
 			if (editorPart != null && editorPart instanceof ITextEditor) {
 				ITextEditor editor = (ITextEditor) editorPart;
-				editor.selectAndReveal(location.getOffset(), location.getLength());
+                if( location.isLineNumber() )
+                {
+                    IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
+                    try
+                    {
+                        int startOffset = document.getLineOffset(location.getOffset()-1);
+                        int length=document.getLineLength(location.getOffset()-1);
+                        editor.selectAndReveal(startOffset, length);
+                        return true;
+                    }
+                    catch( BadLocationException ble )
+                    {
+                        return false;
+                    }
+                }
+                editor.selectAndReveal(location.getOffset(), location.getLength());
 				return true;
 			}
 		} catch (CModelException ex) {

@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.core.index.ctagsindexer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
@@ -24,6 +26,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
+import org.eclipse.cdt.internal.core.index.cindexstorage.Util;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.AbstractIndexerRunner;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
@@ -123,7 +126,8 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			 }
 			 
 			 //Try to index includes (if any exist)
-			 //cTagsInclude(index);
+			 if (ctagIndexIncludes())
+				 cTagsInclude(index);
 				 
 		} catch (IOException e) {
 			if (IndexManager.VERBOSE) {
@@ -146,18 +150,56 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			refs = cProj.getIncludeReferences();
 		} catch (CModelException e) {}
 		
+		
+		//Find common base for references
+		String[] pathString = new String[refs.length];
 		for (int i=0; i<refs.length; i++){
-		  	runCTags(refs[i].getPath());
+			pathString[i] = refs[i].getPath().toOSString();
+		}
+		Util.sort(pathString);
+		
+		HashSet finalArray = new HashSet();
+		String currentString = null;
+		for (int i=0; i<refs.length; i++){
+			if (currentString == null){
+				currentString = pathString[i];
+				finalArray.add(currentString);
+			} else {
+				if (pathString[i].startsWith(currentString)){
+					continue;
+				} else {
+					currentString = pathString[i];
+					finalArray.add(currentString);
+				}
+			}
+		}
+		finalArray.add(currentString);
+		
+		Iterator iter = finalArray.iterator();
+		
+		while (iter.hasNext()) {
+			IPath newPath = new Path((String) iter.next());
+			runCTags(newPath);
 		  	ctagsFileToUse=ctagsFile;
 			 //Parse the CTag File
 		     CTagsFileReader reader = new CTagsFileReader(project,ctagsFileToUse,indexer);
-		     reader.setRootDirectory(refs[i].getPath());
+		     reader.setRootDirectory(newPath);
 		     reader.setIndex(index);
 		     reader.parse();
 		}
-		
 	     // request to save index when all cus have been indexed
 	     indexer.request(new CTagsSaveIndex(this.indexPath, indexer));
+	}
+
+	private void sortPathArray(IPath[] paths) {
+		
+		if (paths.length <= 1)
+			return;
+		
+		for (int i=0; i<paths.length; i++){
+			
+		}
+		
 	}
 
 	/**
@@ -229,6 +271,27 @@ class CTagsIndexAll extends CTagsIndexRequest {
 								return true;
 							else if (orig.equals(CTagsIndexer.CTAGS_EXTERNAL))
 								return false;
+						}
+				}
+			}
+		} catch (CoreException e) {}
+		
+		return false;
+	}
+	
+	private boolean ctagIndexIncludes(){
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if (cdesc == null)
+				return true;
+			
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				for (int i = 0; i < cext.length; i++) {
+					String id = cext[i].getID();
+						String orig = cext[i].getExtensionData("ctagsindexincludes"); //$NON-NLS-1$
+						if (orig != null){
+							return new Boolean(orig).booleanValue();
 						}
 				}
 			}

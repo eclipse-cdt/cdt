@@ -43,14 +43,17 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
     protected boolean externalTagsFile = false;
     protected Button internalCTagsFile;
     protected Button externalCTagsFile;
+    protected Button indexIncludePaths;
 	protected Button browseButton;
 	protected Text cTagsFile;
+	
 	
 	private String storedInternalExternal;
 	private String storedTagFile;
 	
 	public final static String PREF_INTOREXT_CTAGS = CUIPlugin.PLUGIN_ID + ".intorextctags"; //$NON-NLS-1$
 	public final static String PREF_CTAGSLOCATION_CTAGS = CUIPlugin.PLUGIN_ID + ".ctagslocation"; //$NON-NLS-1$
+	public final static String PREF_CTAGS_INDEXINCLUDEFILES = CUIPlugin.PLUGIN_ID + ".ctagsindexincludes"; //$NON-NLS-1$
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.index.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
@@ -75,7 +78,8 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 			IProject proj = null;
 	        String internalExternalCTagsString = internalTagsFile ? CTagsIndexer.CTAGS_INTERNAL  : CTagsIndexer.CTAGS_EXTERNAL;
 			String cTagsFileLocation = cTagsFile.getText();
-
+			String indexIncludeFiles = new Boolean(indexIncludePaths.getSelection()).toString();
+			
 			//if external has been chosen, ensure that there is a cTagsFileLocation selected; otherwise default
 			//to internal file
 			if (internalExternalCTagsString.equals(CTagsIndexer.CTAGS_EXTERNAL) && cTagsFileLocation.equals("")) //$NON-NLS-1$
@@ -102,12 +106,17 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 						if (orig == null || !orig.equals(cTagsFileLocation)) {
 							cext[i].setExtensionData("ctagfilelocation", cTagsFileLocation); //$NON-NLS-1$
 						}
+						orig = cext[i].getExtensionData("ctagsindexincludes"); //$NON-NLS-1$
+						if (orig == null || !orig.equals(cTagsFileLocation)) {
+							cext[i].setExtensionData("ctagsindexincludes", indexIncludeFiles); //$NON-NLS-1$
+						}
 					}
 				}
 			} else {
 				if (prefStore != null) {
 					prefStore.setValue(PREF_INTOREXT_CTAGS, internalExternalCTagsString);
 					prefStore.setValue(PREF_CTAGSLOCATION_CTAGS,cTagsFileLocation);
+					prefStore.setValue(PREF_CTAGS_INDEXINCLUDEFILES,indexIncludeFiles);
 				}
 			}
 		}
@@ -128,6 +137,15 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
     public void createControl(Composite parent) {
         Composite page = ControlFactory.createComposite(parent, 1);	
 		
+        Group includeGroup = ControlFactory.createGroup(page,CUIMessages.getString("CTagsIndexerBlock.includeGroup"),1);
+        GridData gd2 = (GridData) includeGroup.getLayoutData();
+        gd2.grabExcessHorizontalSpace = true;
+        gd2.horizontalAlignment = GridData.FILL;
+       
+        indexIncludePaths = ControlFactory.createCheckBox(includeGroup,CUIMessages.getString("CTagsIndexerBlock.indexIncludes"));//$NON-NLS-1$ //$NON-NLS-2$
+		((GridData)indexIncludePaths.getLayoutData()).horizontalSpan =1;
+		((GridData)indexIncludePaths.getLayoutData()).grabExcessHorizontalSpace = true;
+    
 		Group group = ControlFactory.createGroup(page, CUIMessages.getString("CTagsIndexerBlock.blockName"),3); //$NON-NLS-1$
         
         GridData gd = (GridData) group.getLayoutData();
@@ -204,6 +222,14 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 					cTagsFile.setText(orig);
 				}
 				
+				orig = cext[i].getExtensionData("ctagsindexincludes"); //$NON-NLS-1$
+				if (orig != null){
+					if (new Boolean(orig).booleanValue()){
+						indexIncludePaths.setSelection(true);
+					} else {
+						indexIncludePaths.setSelection(false);
+					}
+				}
 			}
 		}
 	

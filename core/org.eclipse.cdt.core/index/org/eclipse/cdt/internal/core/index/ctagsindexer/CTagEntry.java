@@ -187,16 +187,16 @@ class CTagEntry{
 				funEntry.serialize(output);
 			}
     	} else if (kind.equals(CTagsConsoleParser.STRUCT)){
-			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_STRUCT,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_STRUCT,IIndex.DEFINITION, fullName, getModifiers(), fileNum);
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.setBaseTypes(getInherits());
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.TYPEDEF)){
-			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_TYPEDEF,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_TYPEDEF,IIndex.DEFINITION, fullName, getModifiers(), fileNum);
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.UNION)){
-			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_UNION,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_UNION,IIndex.DEFINITION, fullName, getModifiers(), fileNum);
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.VARIABLE)){

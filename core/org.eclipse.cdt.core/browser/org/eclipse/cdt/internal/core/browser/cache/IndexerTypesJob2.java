@@ -99,16 +99,31 @@ public class IndexerTypesJob2 extends IndexerJob2 {
     						addType(entry, getPathForEntry( entry ), index2ICElement( entry.getKind() ), name, entry.getEnclosingNames(), monitor);
     					}
     					break;
-    				case IIndex.TYPE_DERIVED :
-    					if (name.length() != 0) {  // skip anonymous structs
-    						addSuperTypeReference(entry, name, entry.getEnclosingNames(), monitor);
-    					}
-    					break;
     				default:
     					break;
     				}
     			}
     		}
+        }
+        
+        IEntryResult[] typeEntries = fProjectIndex.getEntries( IIndex.TYPE, IIndex.TYPE_DERIVED, IIndex.ANY );
+        for( int j  = 0; j < typeEntries.length; ++j )
+        {
+            if (monitor.isCanceled())
+                throw new InterruptedException();
+            
+            IEntryResult entry = typeEntries[j];
+            String name = entry.extractSimpleName();
+            switch( entry.getKind() )
+            {
+              case IIndex.TYPE_DERIVED :
+                  if (name.length() != 0) {  // skip anonymous structs
+                      addSuperTypeReference(entry, name, entry.getEnclosingNames(), monitor);
+                  }
+                  break;
+              default:
+                  break;
+            }
         }
 	}
 
@@ -176,7 +191,8 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 					throw new InterruptedException();
 
 				IPath path = PathUtil.getWorkspaceRelativePath(getPathForEntry( entry, i ));
-				info.addDerivedReference(new TypeReference(path, fProject));
+
+                info.addDerivedReference(new TypeReference(path, fProject));
 //
 //					// get absolute path
 //					IPath path = new Path(file.getPath());

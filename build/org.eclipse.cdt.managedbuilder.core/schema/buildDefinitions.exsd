@@ -13,14 +13,14 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="projectType"/>
-            <element ref="configuration"/>
-            <element ref="toolChain"/>
-            <element ref="tool"/>
-            <element ref="targetPlatform"/>
-            <element ref="builder"/>
-            <element ref="dynamicElementProvider"/>
-            <element ref="managedBuildRevision"/>
+            <element ref="projectType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="configuration" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="toolChain" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="tool" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="targetPlatform" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="builder" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dynamicElementProvider" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="managedBuildRevision" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -54,7 +54,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="configuration"/>
+            <element ref="configuration" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -139,7 +139,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="configuration"/>
+            <element ref="configuration" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -167,7 +167,7 @@
       <complexType>
          <sequence>
             <element ref="toolChain"/>
-            <element ref="resourceConfiguration"/>
+            <element ref="resourceConfiguration" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -264,11 +264,11 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="tool"/>
+            <element ref="tool" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="targetPlatform"/>
             <element ref="builder"/>
-            <element ref="optionCategory"/>
-            <element ref="option"/>
+            <element ref="optionCategory" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="option" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -402,7 +402,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="tool"/>
+            <element ref="tool" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="resourcePath" type="string" use="required">
             <annotation>
@@ -425,7 +425,7 @@
      1.  Apply rcbs tool before any other tools defined for the resource.
      2.  Apply rcbs tool after any other tools defined for the resource.
      3.  Apply rcbs tool overriding any other tools defined for the resource.
-     4.  Disable (don't apply) the rcbs tool.
+     4.  Disable (don&apos;t apply) the rcbs tool.
                </documentation>
            </annotation>
             <simpleType>
@@ -462,11 +462,11 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="option"/>
-            <element ref="optionCategory"/>
-            <element ref="inputType"/>
-            <element ref="outputType"/>
-            <element ref="envVarBuildPath"/>
+            <element ref="option" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="optionCategory" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="inputType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="outputType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="envVarBuildPath" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -661,8 +661,8 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="inputOrder"/>
-            <element ref="additionalInput"/>
+            <element ref="inputOrder" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="additionalInput" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -977,10 +977,10 @@ Options can also be associated with a toolchain. However in such a case the opti
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="enumeratedOptionValue"/>
-            <element ref="listOptionValue"/>
-         </sequence>
+         <choice>
+            <element ref="enumeratedOptionValue" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="listOptionValue" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -1023,7 +1023,7 @@ Options can also be associated with a toolchain. However in such a case the opti
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="resourceFilter">
+         <attribute name="resourceFilter" use="default" value="all">
             <annotation>
                <documentation>
                   Filter the display (and use) of the option by the type of the resource (currently Project or File). The value &apos;project&apos; causes the option to be used when applied to a project.  The value &apos;file&apos; causes the option to be used when applied to a file. If &apos;all&apos; is selected, the option applies to all types of resources.  The default is &quot;all&quot;.

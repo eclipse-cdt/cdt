@@ -12,4 +12,5 @@ package org.eclipse.cdt.internal.core.index;
 
 public interface IQueryResult {
 	String getPath();
+	int getFileID();
 }

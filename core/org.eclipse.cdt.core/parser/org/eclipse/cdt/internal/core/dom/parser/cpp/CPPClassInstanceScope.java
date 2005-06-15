@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -22,10 +23,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 
@@ -33,11 +36,15 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
  * @author aniefer
  */
 public class CPPClassInstanceScope implements ICPPClassScope {
+	private static final char[] CONSTRUCTOR_KEY = "!!!CTOR!!!".toCharArray();  //$NON-NLS-1$
+
 	private CharArrayObjectMap bindings;
 	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
 	
 	private ICPPTemplateInstance instance;
 	private boolean isFullyCached = false;
+	private boolean doneConstructors = false;
+	
 	/**
 	 * @param instance
 	 */
@@ -60,11 +67,14 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	}
 	
 	public IBinding getBinding( IASTName name, boolean forceResolve ) {
-		//ICPPClassScope scope = (ICPPClassScope) getOriginalClass().getCompositeScope();
 		char [] c = name.toCharArray();
 	    if( bindings == null )
 	        return null;
 	    
+	    if( CharArrayUtils.equals( c, instance.getNameCharArray() ) && CPPClassScope.isConstructorReference( name ) ){
+            c = CONSTRUCTOR_KEY;
+        }
+	        
 	    Object cache = bindings.get( c );
 	    if( cache != null ){
 	    	int i = ( cache instanceof ObjectSet ) ? 0 : -1;
@@ -150,13 +160,17 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 			return;
 		
 		if( bindings == null )
-			bindings = new CharArrayObjectMap(1);
+			bindings = new CharArrayObjectMap(1);		
 		char [] c = name.toCharArray();
+		
+		IASTNode parent = name.getParent();
+		if( parent instanceof IASTDeclarator && CPPVisitor.isConstructor( this, (IASTDeclarator) parent ) ){
+			c = CONSTRUCTOR_KEY;
+		}
 		Object o = bindings.get( c );
 		if( o != null ){
 		    if( o instanceof ObjectSet ){
 		    	((ObjectSet)o).put( name );
-		        //bindings.put( c, ArrayUtil.append( Object.class, (Object[]) o, name ) );
 		    } else {
 		    	ObjectSet temp = new ObjectSet( 2 );
 		    	temp.put( o );
@@ -168,6 +182,36 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 		}
 	}
 
+	protected ICPPConstructor [] getConstructors( ){
+		if( bindings == null ) 
+			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+		
+		if( !doneConstructors ){
+			ICPPConstructor[] ctors;
+			try {
+				ctors = ((ICPPClassType)instance.getTemplateDefinition()).getConstructors();
+				for (int i = 0; i < ctors.length; i++) {
+					addBinding( ctors[i] );
+				}
+				doneConstructors = true;
+			} catch (DOMException e) {
+			}
+		}
+		ICPPConstructor[] ctors =  CPPClassScope.getConstructors( bindings, true );
+		for (int i = 0; i < ctors.length; i++) {
+			if( instanceMap.containsKey( ctors[i] ) ){
+				ctors[i] = (ICPPConstructor) instanceMap.get( ctors[i] );
+			} else {
+				IBinding b = CPPTemplates.createSpecialization( this, ctors[i], instance.getArgumentMap() ); 
+				if( instanceMap == ObjectMap.EMPTY_MAP )
+					instanceMap = new ObjectMap(2);
+        		instanceMap.put( ctors[i], b );
+        		ctors[i] = (ICPPConstructor) b;
+			}
+		}
+		return ctors;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#setFullyCached(boolean)
 	 */
@@ -248,7 +292,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	public void addBinding(IBinding binding) {
         if( bindings == null )
             bindings = new CharArrayObjectMap(1);
-        char [] c = binding.getNameCharArray();
+        char [] c = (binding instanceof ICPPConstructor) ? CONSTRUCTOR_KEY : binding.getNameCharArray();
         Object o = bindings.get( c );
         if( o != null ){
             if( o instanceof ObjectSet ){

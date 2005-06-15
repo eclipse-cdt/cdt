@@ -674,14 +674,17 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
         	
         IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();
         for( int i = 0; i < members.length; i++ ){
-			if( members[i] instanceof IASTSimpleDeclaration ){
-			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+        	IASTDeclaration decl = members[i];
+        	if( decl instanceof ICPPASTTemplateDeclaration )
+        		decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
+			if( decl instanceof IASTSimpleDeclaration ){
+			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
 			    for( int j = 0; j < dtors.length; j++ ){
 			        if( dtors[j] == null ) break;
 		            scope.addName( dtors[j].getName() );
 			    }
-			} else if( members[i] instanceof IASTFunctionDefinition ){
-			    IASTDeclarator dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
+			} else if( decl instanceof IASTFunctionDefinition ){
+			    IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
 			    scope.addName( dtor.getName() );
 			}
         }

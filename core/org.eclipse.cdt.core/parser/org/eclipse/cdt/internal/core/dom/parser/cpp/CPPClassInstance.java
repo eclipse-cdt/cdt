@@ -104,7 +104,10 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		return new ICPPConstructor[0];
+		CPPClassInstanceScope scope = (CPPClassInstanceScope) getCompositeScope();
+		if( scope.isFullyCached() )
+			return scope.getConstructors();
+		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
 	/* (non-Javadoc)

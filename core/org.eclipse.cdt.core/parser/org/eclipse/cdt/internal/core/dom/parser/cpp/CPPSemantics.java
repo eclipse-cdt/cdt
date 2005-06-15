@@ -259,13 +259,17 @@ public class CPPSemantics {
 				return true;
 			if( p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId )
 				return p2.getParent() instanceof ICPPASTNewExpression;
-			else if( p1 instanceof ICPPASTQualifiedName && p2 instanceof ICPPASTFunctionDeclarator ){
-				IASTName[] names = ((ICPPASTQualifiedName)p1).getNames();
-				if( names.length >= 2 && names[ names.length - 1 ] == astName )
-				    return CPPVisitor.isConstructor( names[ names.length - 2 ], (IASTDeclarator) p2 );
-			} else if( p1 instanceof ICPPASTQualifiedName && p2 instanceof ICPPASTNamedTypeSpecifier ){
-				IASTNode p3 = p2.getParent();
-				return p3 instanceof IASTTypeId && p3.getParent() instanceof ICPPASTNewExpression;
+			else if( p1 instanceof ICPPASTQualifiedName ){
+				if( p2 instanceof ICPPASTFunctionDeclarator ){
+					IASTName[] names = ((ICPPASTQualifiedName)p1).getNames();
+					if( names.length >= 2 && names[ names.length - 1 ] == astName )
+					    return CPPVisitor.isConstructor( names[ names.length - 2 ], (IASTDeclarator) p2 );
+				} else if( p2 instanceof ICPPASTNamedTypeSpecifier ){
+					IASTNode p3 = p2.getParent();
+					return p3 instanceof IASTTypeId && p3.getParent() instanceof ICPPASTNewExpression;
+				} else if( p2 instanceof IASTIdExpression ){
+					return p2.getParent() instanceof IASTFunctionCallExpression;
+				}
 			} else if( p1 instanceof IASTFunctionCallExpression || p2 instanceof IASTFunctionCallExpression )
 				return true;
 			return false;
@@ -585,17 +589,24 @@ public class CPPSemantics {
 			}
 		}
         if( binding instanceof ICPPClassType && data.considerConstructors ){
-		    ICPPClassType cls = (ICPPClassType) binding;
-		    try {
-                //force resolution of constructor bindings
-                IBinding [] ctors = cls.getConstructors();
-                if( ctors.length > 0 && !(ctors[0] instanceof IProblemBinding) ){
-	                //then use the class scope to resolve which one.
-	    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( data.astName, true );
-                }
-            } catch ( DOMException e ) {
-                binding = e.getProblem();
-            }
+        	ICPPClassType cls = (ICPPClassType) binding;
+        	if( data.astName instanceof ICPPASTTemplateId && cls instanceof ICPPInternalTemplate ){
+        		ICPPASTTemplateId id = (ICPPASTTemplateId) data.astName;
+        		IType [] args = CPPTemplates.createTypeArray( id.getTemplateArguments() );
+        		cls = (ICPPClassType) ((ICPPInternalTemplate)cls).instantiate( args );
+        	}
+		    if( cls != null ){
+			    try {
+	                //force resolution of constructor bindings
+	                IBinding [] ctors = cls.getConstructors();
+	                if( ctors.length > 0 && !(ctors[0] instanceof IProblemBinding) ){
+		                //then use the class scope to resolve which one.
+		    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( data.astName, true );
+	                }
+	            } catch ( DOMException e ) {
+	                binding = e.getProblem();
+	            }
+		    }
 		    
 		}
 		IASTName name = data.astName;
@@ -2837,7 +2848,7 @@ public class CPPSemantics {
 			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 			//to an rvalue of type "pointer to cv B", where B is a base class of D.
 			else if( tPrev instanceof IPointerType && t instanceof ICPPClassType ){
-				temp = hasBaseClass( (ICPPClassType)s, (ICPPClassType) t, true );
+				temp = hasBaseClass( (ICPPClassType)s, (ICPPClassType) t, false );
 				cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion = ( temp > -1 ) ? temp : 0;
 				cost.detail = 1;
@@ -2872,7 +2883,7 @@ public class CPPSemantics {
 		IType t = getUltimateType( cost.target, true );
 		
 		if( cost.targetHadReference && s instanceof ICPPClassType && t instanceof ICPPClassType ){
-			int temp = hasBaseClass( (ICPPClassType) s, (ICPPClassType) t, true );
+			int temp = hasBaseClass( (ICPPClassType) s, (ICPPClassType) t, false );
 			
 			if( temp > -1 ){
 				cost.rank = Cost.DERIVED_TO_BASE_CONVERSION;

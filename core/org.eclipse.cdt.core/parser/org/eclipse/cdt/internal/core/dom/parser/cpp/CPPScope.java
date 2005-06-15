@@ -141,11 +141,15 @@ abstract public class CPPScope implements ICPPScope{
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#removeBinding(org.eclipse.cdt.core.dom.ast.IBinding)
      */
 	public void removeBinding(IBinding binding) {
-	    char [] name = binding.getNameCharArray();
-	    if( ! bindings.containsKey( name ) )
+	    char [] key = binding.getNameCharArray();
+	    removeBinding( key, binding );
+	}
+	
+	protected void removeBinding( char [] key, IBinding binding ){
+	    if( bindings == null || ! bindings.containsKey( key ) )
 	        return;
 	    
-	    Object obj = bindings.get( name );
+	    Object obj = bindings.get( key );
 	    if( obj instanceof ObjectSet ){
 	        ObjectSet set = (ObjectSet) obj;
 	        for ( int i = set.size() - 1; i > 0; i-- ) {
@@ -157,13 +161,12 @@ abstract public class CPPScope implements ICPPScope{
                 }
             }
 	        if( set.size() == 0 )
-	            bindings.remove( name, 0, name.length );
+	            bindings.remove( key, 0, key.length );
 	    } else if( (obj instanceof IBinding && obj == binding) ||
                    (obj instanceof IASTName && ((IASTName)obj).getBinding() == binding) )
 	    {
-	        bindings.remove( name, 0, name.length );
+	        bindings.remove( key, 0, key.length );
 	    }
-	
 		isfull = false;
 	}
 	

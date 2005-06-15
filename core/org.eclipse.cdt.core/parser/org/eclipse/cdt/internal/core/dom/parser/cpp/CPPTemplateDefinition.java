@@ -261,6 +261,8 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if( templateParameters == null ){
 			ICPPASTTemplateDeclaration template = CPPTemplates.getTemplateDeclaration( getTemplateName() );
+			if( template == null )
+				return ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
 			ICPPASTTemplateParameter [] params = template.getTemplateParameters();
 			ICPPTemplateParameter p = null;
 			ICPPTemplateParameter [] result = null;

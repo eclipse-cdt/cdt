@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -267,8 +269,37 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
-	public ICPPConstructor[] getConstructors() {
-		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+	public ICPPConstructor[] getConstructors() throws DOMException {
+		if( definition == null ){
+            checkForDefinition();
+            if( definition == null ){
+                IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
+                return new ICPPConstructor [] { new CPPConstructor.CPPConstructorProblem( node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
+            }
+        }
+        
+        ICPPClassScope scope = (ICPPClassScope) getCompositeScope();
+        if( scope.isFullyCached() )
+        	return ((CPPClassScope)scope).getConstructors( true );
+        	
+        IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();
+        for( int i = 0; i < members.length; i++ ){
+        	IASTDeclaration decl = members[i];
+        	if( decl instanceof ICPPASTTemplateDeclaration )
+        		decl = ((ICPPASTTemplateDeclaration)decl).getDeclaration();
+			if( decl instanceof IASTSimpleDeclaration ){
+			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
+			    for( int j = 0; j < dtors.length; j++ ){
+			        if( dtors[j] == null ) break;
+		            scope.addName( dtors[j].getName() );
+			    }
+			} else if( decl instanceof IASTFunctionDefinition ){
+			    IASTDeclarator dtor = ((IASTFunctionDefinition)decl).getDeclarator();
+			    scope.addName( dtor.getName() );
+			}
+        }
+        
+        return ((CPPClassScope)scope).getConstructors( true );
 	}
 
 	/* (non-Javadoc)

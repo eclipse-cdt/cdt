@@ -1685,7 +1685,15 @@ public class CPPVisitor {
 	    	
 	    } else if( expression instanceof IASTFunctionCallExpression ){
 	        IBinding binding = resolveBinding( expression );
-	        if( binding instanceof IFunction ){
+	        if( binding instanceof ICPPConstructor ){
+	        	ICPPClassScope scope;
+				try {
+					scope = (ICPPClassScope) ((ICPPConstructor)binding).getScope();
+				} catch (DOMException e) {
+					return e.getProblem();
+				}
+	        	return scope.getClassType();
+	        } else if( binding instanceof IFunction ){
 	            IFunctionType fType;
                 try {
                     fType = ((IFunction)binding).getType();
@@ -1842,6 +1850,8 @@ public class CPPVisitor {
 		} else if( expression instanceof IASTArraySubscriptExpression ){
 			IType t = getExpressionType( ((IASTArraySubscriptExpression) expression).getArrayExpression() );
 			try {
+				if( t instanceof ICPPReferenceType )
+					t = ((ICPPReferenceType)t).getType();
 				while( t instanceof ITypedef ){
 					t = ((ITypedef)t).getType();
 				}

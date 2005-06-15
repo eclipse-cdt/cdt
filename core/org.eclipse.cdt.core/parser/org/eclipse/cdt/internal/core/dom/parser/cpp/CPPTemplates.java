@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -390,7 +391,9 @@ public class CPPTemplates {
 		    } else {
 		    	spec = ((ICPPInternalTemplate)function).getInstance( (IType[])map_types[1] );
 		    	if( spec == null ) {
-					if( function instanceof ICPPMethod )
+		    		if( function instanceof ICPPConstructor )
+		    			spec = new CPPConstructorSpecialization( function, scope, (ObjectMap) map_types[0] );
+					else if( function instanceof ICPPMethod )
 						spec = new CPPMethodSpecialization( function, scope, (ObjectMap) map_types[0] );
 					else 
 						spec = new CPPFunctionSpecialization( function, scope, (ObjectMap) map_types[0] );
@@ -574,11 +577,16 @@ public class CPPTemplates {
 			spec = new CPPClassSpecialization( decl, scope, argMap );
 		} else if( decl instanceof ICPPField ){
 			spec = new CPPFieldSpecialization( decl, scope, argMap );
-		} else if( decl instanceof ICPPFunctionTemplate && decl instanceof ICPPMethod ){
-			spec = new CPPMethodTemplateSpecialization( decl, scope, argMap );
 		} else if( decl instanceof ICPPFunctionTemplate ){
-			spec = new CPPFunctionTemplateSpecialization( decl, scope, argMap );
-		}else if( decl instanceof ICPPMethod ) {
+			if( decl instanceof ICPPConstructor )
+				spec = new CPPConstructorTemplateSpecialization( decl, scope, argMap );
+			else if( decl instanceof ICPPMethod )
+				spec = new CPPMethodTemplateSpecialization( decl, scope, argMap );
+			else
+				spec = new CPPFunctionTemplateSpecialization( decl, scope, argMap );
+		} else if( decl instanceof ICPPConstructor ){
+			spec = new CPPConstructorSpecialization( decl, scope, argMap );
+		} else if( decl instanceof ICPPMethod ) {
 			spec = new CPPMethodSpecialization( decl, scope, argMap );
 		} else if( decl instanceof ICPPFunction ) {
 			spec = new CPPFunctionSpecialization( decl, scope, argMap );

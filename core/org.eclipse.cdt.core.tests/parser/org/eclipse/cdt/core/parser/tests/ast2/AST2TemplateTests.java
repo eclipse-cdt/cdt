@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -1672,5 +1673,79 @@ public class AST2TemplateTests extends AST2BaseTest {
 		tu.accept( col );
 		
 		assertSame( col.getName(5).resolveBinding(), col.getName(6).resolveBinding() );
+	}
+	
+	public void testBug99254() throws Exception{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class T> class A {                  \n");
+		buffer.append("   A( T t );                                  \n");
+		buffer.append("};                                            \n");
+		buffer.append("void f( A<int> a );                           \n");
+		buffer.append("void m(){                                     \n");
+		buffer.append("   f( A<int>(1) );                            \n");
+		buffer.append("}                                             \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
+		ICPPFunction f = (ICPPFunction) col.getName(5).resolveBinding();
+		
+		ICPPSpecialization spec = (ICPPSpecialization) col.getName(11).resolveBinding();
+		assertSame( spec.getSpecializedBinding(), ctor );
+		
+		assertSame( f, col.getName(10).resolveBinding() );
+	}
+	
+	public void testBug99254_2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace core {                                \n");
+		buffer.append("   template<class T> class A {                  \n");
+		buffer.append("      A( T x, T y );                            \n");
+		buffer.append("   };                                           \n");
+		buffer.append("}                                               \n");
+		buffer.append("class B {                                       \n");
+		buffer.append("   int add(const core::A<int> &rect );          \n");
+		buffer.append("};                                              \n");
+		buffer.append("void f( B* b ){                                 \n");
+		buffer.append("   b->add( core::A<int>(10, 2) );               \n");
+		buffer.append("}                                               \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(3).resolveBinding();
+		ICPPMethod add = (ICPPMethod) col.getName(9).resolveBinding();
+		
+		ICPPSpecialization spec = (ICPPSpecialization) col.getName(20).resolveBinding();
+		assertSame( spec.getSpecializedBinding(), ctor );
+		
+		assertSame( add, col.getName(19).resolveBinding() );
+	}
+	
+	public void testBug99254_3() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class T> class A { A( T ); };         \n");
+		buffer.append("typedef signed int s32;                         \n");
+		buffer.append("class B {                                       \n");
+		buffer.append("   int add(const A<s32> &rect );                \n");
+		buffer.append("};                                              \n");
+		buffer.append("void f( B* b ){                                 \n");
+		buffer.append("   b->add( A<int>(10) );                        \n");
+		buffer.append("}                                               \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
+		ICPPMethod add = (ICPPMethod) col.getName(7).resolveBinding();
+		
+		ICPPSpecialization spec = (ICPPSpecialization) col.getName(17).resolveBinding();
+		assertSame( spec.getSpecializedBinding(), ctor );
+		
+		assertSame( add, col.getName(16).resolveBinding() );
 	}
 }

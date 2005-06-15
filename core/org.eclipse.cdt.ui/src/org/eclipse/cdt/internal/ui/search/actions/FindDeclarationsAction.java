@@ -68,6 +68,6 @@ public class FindDeclarationsAction extends FindAction {
 	 */
 	protected LimitTo getLimitTo() {
 		// TODO Auto-generated method stub
-		return ICSearchConstants.DECLARATIONS;
+		return ICSearchConstants.DECLARATIONS_DEFINITIONS;
 	}
 }

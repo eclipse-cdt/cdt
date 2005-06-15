@@ -143,6 +143,10 @@ public interface ICSearchConstants {
 	 */
 	public static final LimitTo ALL_OCCURRENCES = new LimitTo( 3 );
 
+	/**
+	 * The search result is a declaration or a definitoin
+	 */
+	public static final LimitTo DECLARATIONS_DEFINITIONS = new LimitTo( 4 );
 	
 	/* Syntactic match modes */
 	

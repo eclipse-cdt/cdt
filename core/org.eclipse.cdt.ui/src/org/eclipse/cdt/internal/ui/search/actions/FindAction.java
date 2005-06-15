@@ -76,6 +76,7 @@ public abstract class FindAction extends SelectionParseAction {
 		 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope);
 	 }
 	 
+	 
      /**
       * This is a convenience method and is the same as invoking:
       * createDOMSearchQueryForName( name, limitTo, scope, null );
@@ -110,7 +111,7 @@ public abstract class FindAction extends SelectionParseAction {
 
 		ICElement element = (ICElement) obj;
 		
-		CSearchQuery job = createSearchQuery( element.getElementName(), CSearchUtil.getSearchForFromElement(element));
+		CSearchQuery job = createSearchQuery( getFullyQualifiedName(element), CSearchUtil.getSearchForFromElement(element));
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQueryInBackground(job);
@@ -292,6 +293,31 @@ public abstract class FindAction extends SelectionParseAction {
         }
     };
 	
+    
+    private String getFullyQualifiedName(ICElement element){
+      
+    	StringBuffer fullName = new StringBuffer(element.getElementName());
+    	
+    	while (element.getElementType() != 0){
+    		element = element.getParent();
+    		//Keep going up CModel until we hit Translation Unit
+    		//or Working Copy (both represented by C_UNIT) or hit a null
+    		if (element.getElementType() == ICElement.C_UNIT ||
+    			element == null){
+    			fullName.insert(0,"::");
+    			break;
+    		}
+    		else if (element.getElementType() != ICElement.C_ENUMERATION){
+    			//get the parent name as long as it is not an enumeration - enumerators
+    			//don't use the enumeration name as part of the fully qualified name
+    			fullName.insert(0,"::");
+    			fullName.insert(0,element.getElementName());
+    		}
+    	}
+    	
+    	return fullName.toString();
+    }
+    
     abstract protected String getScopeDescription(); 
 
 	abstract protected ICSearchScope getScope();

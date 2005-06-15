@@ -129,7 +129,8 @@ public class CSearchUtil {
 			
 			case ICElement.C_UNION:		searchFor = ICSearchConstants.UNION;			break;
 			
-			case ICElement.C_ENUMERATOR: /* fall through to FIELD    */
+			case ICElement.C_ENUMERATOR: 
+										searchFor = ICSearchConstants.ENUMTOR;			break;
 			case ICElement.C_FIELD:		searchFor = ICSearchConstants.FIELD;			break;
 			
 			case ICElement.C_TEMPLATE_METHOD : 	  /*fall through to METHOD */

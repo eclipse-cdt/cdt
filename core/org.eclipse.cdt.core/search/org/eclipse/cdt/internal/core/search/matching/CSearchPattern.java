@@ -175,6 +175,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
+		if( limitTo == DECLARATIONS_DEFINITIONS ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createNamespacePattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createNamespacePattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
+			return orPattern;
+		}
+		
 		char [] patternArray = patternString.toCharArray();
 		
 		IScanner scanner = null;
@@ -248,6 +255,12 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
+		if( limitTo == DECLARATIONS_DEFINITIONS ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createFieldPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createFieldPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
+			return orPattern;
+		}
 		char [] patternArray = patternString.toCharArray();
 		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
 		IScanner scanner=null;
@@ -286,7 +299,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			orPattern.addPattern( createMethodPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
 			return orPattern;
 		}
-				
+			
+		if( limitTo == DECLARATIONS_DEFINITIONS ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createMethodPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createMethodPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
+			return orPattern;
+		}
 		int index = patternString.indexOf( '(' );
 		String paramString = ( index == -1 ) ? "" : patternString.substring( index ); //$NON-NLS-1$
 		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
@@ -332,6 +351,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			orPattern.addPattern( createClassPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createClassPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createClassPattern( patternString, searchFor, REFERENCES, matchMode, caseSensitive ) );
+			return orPattern;
+		} 
+		
+		if ( limitTo == DECLARATIONS_DEFINITIONS ) {
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createClassPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createClassPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
 			return orPattern;
 		}
 		

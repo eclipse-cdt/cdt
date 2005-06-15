@@ -3,9 +3,13 @@
  * accompanying materials are made available under the terms of the Common Public License v1.0 which
  * accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: QNX Software Systems - initial API and implementation
+ * Contributors: 
+ * 		QNX Software Systems - initial API and implementation
+ * 		Monta Vista - Joanne Woo - Bug 87556
  **************************************************************************************************/
 package org.eclipse.cdt.launch.internal.ui;
+
+import java.io.File;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
@@ -18,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.dialogs.ErrorDialog;
 
 public class CoreFilePrompter implements IStatusHandler {
 
@@ -52,6 +57,14 @@ public class CoreFilePrompter implements IStatusHandler {
 		dialog.setFilterPath(initPath);
 		String res = dialog.open();
 		if (res != null) {
+			File file = new File(res);
+			if (!file.exists() || !file.canRead()) {
+				ErrorDialog.openError(shell, LaunchMessages.getString("CoreFileLaunchDelegate.postmortem_debugging_failed"), //$NON-NLS-1$
+						LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_accessible"), //$NON-NLS-1$
+						new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
+								ICDTLaunchConfigurationConstants.ERR_NO_COREFILE,
+								LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_readable"), null)); //$NON-NLS-1$
+			}
 			return new Path(res);
 		}
 		return null;

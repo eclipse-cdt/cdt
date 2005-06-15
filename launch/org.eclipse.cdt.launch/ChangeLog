@@ -1,3 +1,10 @@
+2005-05-15 Mikhail Khodjaiants
+	Bug 87556: Post-mortem debug fails silently if core file is inaccessible.
+	Applied patch from Joanne Woo (Monta Vista).
+	* CoreFilePrompter.java
+	* CoreFileLaunchDelegate.java
+	* LaunchMessages.properties
+
 2005-05-18 David Inglis
 	Fixed bug 39581 & part of 46746
 	

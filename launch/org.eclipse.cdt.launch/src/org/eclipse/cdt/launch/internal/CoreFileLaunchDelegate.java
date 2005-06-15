@@ -4,9 +4,13 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: QNX Software Systems - Initial API and implementation
+ * Contributors: 
+ * 		QNX Software Systems - Initial API and implementation
+ * 		Monta Vista - Joanne Woo - Bug 87556
  **************************************************************************************************/
 package org.eclipse.cdt.launch.internal;
+
+import java.io.File;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
@@ -37,7 +41,6 @@ import org.eclipse.debug.core.model.IProcess;
 public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -63,12 +66,22 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 					cancel(LaunchMessages.getString("CoreFileLaunchDelegate.No_Corefile_selected"), //$NON-NLS-1$
 							ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 				}
+				File file = new File(corefile.toString());
+				if (!file.exists() || !file.canRead()) {
+					cancel(LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_readable"), //$NON-NLS-1$
+							ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
+				}
 				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, corefile.toString());
 				wc.launch(mode, new SubProgressMonitor(monitor, 9));
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null);
 				cancel("", -1); //$NON-NLS-1$
 			} else {
+				File file = new File(path);
+				if (!file.exists() || !file.canRead()) {
+					abort(LaunchMessages.getString("CoreFileLaunchDelegate.Corefile_not_readable"), null,  //$NON-NLS-1$
+							ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
+				}
 				dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile, new SubProgressMonitor(monitor, 8));
 				try {
 					// set the source locator

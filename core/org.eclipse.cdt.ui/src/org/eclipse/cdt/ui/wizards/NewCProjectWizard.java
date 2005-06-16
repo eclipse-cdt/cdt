@@ -92,8 +92,8 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		op_error = error;
 	}
 
-	/** 
-	 * @see Wizard#createPages
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#addPages()
 	 */		
 	public void addPages() {
 		fMainPage= new NewCProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
@@ -154,8 +154,8 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		return getNewProject();
 	}
 
-	/**
-	 * @see Wizard#performFinish
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */		
 	public boolean performFinish() {
 		if (!invokeRunnable(getRunnable())) {
@@ -208,7 +208,13 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	}
 
 	public IRunnableWithProgress getRunnable() {
-		return new IRunnableWithProgress() {
+		return new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
+				final Exception except[] = new Exception[1];
+				// ugly, need to make the wizard page run in a non ui thread so that this can go away!!!
+				getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				final IProgressMonitor fMonitor;
 				if (monitor == null) {
@@ -217,9 +223,6 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 					fMonitor = monitor;
 				}
 				fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
-				final CoreException except[] = new CoreException[1];
-				getShell().getDisplay().syncExec(new Runnable() {
-					public void run() {
 						doRunPrologue(new SubProgressMonitor(fMonitor, 1));
 						try {
 							doRun(new SubProgressMonitor(fMonitor, 1));
@@ -228,13 +231,29 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 							except[0] = e;
 						}
 						doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
+								fMonitor.done();
+					}
+				});
+						try {
+							getContainer().run(false, true, op);
+						} catch (InvocationTargetException e) {
+							except[0] = e;
+						} catch (InterruptedException e) {
+							except[0] = e;
+						}
 					}
 				});
 				if (except[0] != null) {
+					if (except[0] instanceof InvocationTargetException) {
+						throw (InvocationTargetException)except[0];
+					}
+					if (except[0] instanceof InterruptedException) {
+						throw (InterruptedException)except[0];
+					}
 					throw new InvocationTargetException(except[0]);
 				}
-				fMonitor.done();			}
-		};
+	}
+		});
 	}
 
 	/**

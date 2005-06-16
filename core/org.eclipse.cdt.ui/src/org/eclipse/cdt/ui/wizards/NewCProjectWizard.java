@@ -92,9 +92,9 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		op_error = error;
 	}
 
-	/** 
-	 * @see Wizard#createPages
-	 */		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#addPages()
+	 */
 	public void addPages() {
 		fMainPage= new NewCProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
 		fMainPage.setTitle(wz_title);
@@ -154,9 +154,9 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 		return getNewProject();
 	}
 
-	/**
-	 * @see Wizard#performFinish
-	 */		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
+	 */
 	public boolean performFinish() {
 		if (!invokeRunnable(getRunnable())) {
 			return false;
@@ -208,34 +208,52 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	}
 
 	public IRunnableWithProgress getRunnable() {
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				final IProgressMonitor fMonitor;
-				if (monitor == null) {
-					fMonitor= new NullProgressMonitor();
-				} else {
-					fMonitor = monitor;
-				}
-				fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
-				final CoreException except[] = new CoreException[1];
+		return new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
+				final Exception except[] = new Exception[1];
+				// ugly, need to make the wizard page run in a non ui thread so that this can go away!!!
 				getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						doRunPrologue(new SubProgressMonitor(fMonitor, 1));
+						IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								final IProgressMonitor fMonitor;
+								if (monitor == null) {
+									fMonitor= new NullProgressMonitor();
+								} else {
+									fMonitor = monitor;
+								}
+								fMonitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
+								doRunPrologue(new SubProgressMonitor(fMonitor, 1));
+								try {
+									doRun(new SubProgressMonitor(fMonitor, 1));
+								}
+								catch (CoreException e) {
+									except[0] = e;
+								}
+								doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
+								fMonitor.done();
+							}
+						});
 						try {
-							doRun(new SubProgressMonitor(fMonitor, 1));
-						}
-						catch (CoreException e) {
+							getContainer().run(false, true, op);
+						} catch (InvocationTargetException e) {
+							except[0] = e;
+						} catch (InterruptedException e) {
 							except[0] = e;
 						}
-						doRunEpilogue(new SubProgressMonitor(fMonitor, 1));
 					}
 				});
 				if (except[0] != null) {
+					if (except[0] instanceof InvocationTargetException) {
+						throw (InvocationTargetException)except[0];
+					}
+					if (except[0] instanceof InterruptedException) {
+						throw (InterruptedException)except[0];
+					}
 					throw new InvocationTargetException(except[0]);
 				}
-				fMonitor.done();
 			}
-		};
+		});
 	}
 
 	/**

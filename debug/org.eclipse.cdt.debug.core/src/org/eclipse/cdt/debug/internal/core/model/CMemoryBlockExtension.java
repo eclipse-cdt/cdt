@@ -158,19 +158,19 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 					byte cdiFlags = getCDIBlock().getFlags( i );
 					byte flags = 0;
 					if ( (cdiFlags & ICDIMemoryBlock.VALID) != 0 ) {
-						flags |= MemoryByte.HISTORY_KNOWN;
+						flags |= MemoryByte.HISTORY_KNOWN | MemoryByte.ENDIANESS_KNOWN;
 						if ( (cdiFlags & ICDIMemoryBlock.READ_ONLY) != 0 ) {
 							flags |= MemoryByte.READABLE;
 						}
 						else {
 							flags |= MemoryByte.READABLE | MemoryByte.WRITABLE;
 						}
+						if ( isBigEndian() ) {
+							flags |= MemoryByte.BIG_ENDIAN;
+						}
+						if ( hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) )
+							flags |= MemoryByte.CHANGED;
 					}
-					if ( isBigEndian() ) {
-						flags |= MemoryByte.ENDIANESS_KNOWN | MemoryByte.BIG_ENDIAN;
-					}
-					if ( hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) )
-						flags |= MemoryByte.CHANGED;
 					fBytes[i] = new MemoryByte( bytes[i], flags );
 				}
 			}

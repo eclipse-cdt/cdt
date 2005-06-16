@@ -1,4 +1,8 @@
 2005-06-16 Mikhail Khodjaiants
+	Bug 100471: Signed/Unsigned Integer renderings show '?' for valid memory blocks.
+	* CMemoryBlockExtension.java
+
+2005-06-16 Mikhail Khodjaiants
 	Bug 100445: The endianess of a debug target is reversed.
 	* CMemoryBlockExtension.java
 

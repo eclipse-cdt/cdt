@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.cdt.core.IAddress;
-import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -96,11 +95,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			fCDIBreakpoints.put( cdiBreakpoint, breakpoint );
 		}
 
-		protected synchronized ICDIBreakpoint getCDIBreakpoint( ICBreakpoint breakpoint ) {
+		protected ICDIBreakpoint getCDIBreakpoint( ICBreakpoint breakpoint ) {
 			return (ICDIBreakpoint)fCBreakpoints.get( breakpoint );
 		}
 
-		protected synchronized ICBreakpoint getCBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
+		protected ICBreakpoint getCBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
 			return (ICBreakpoint)fCDIBreakpoints.get( cdiBreakpoint );
 		}
 
@@ -276,18 +275,25 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		return getBreakpointMap().getCBreakpoint( cdiBreakpoint );
 	}
 
-	public IAddress getBreakpointAddress( ICBreakpoint breakpoint ) {
+	public IAddress getBreakpointAddress( ICLineBreakpoint breakpoint ) {
 		if ( breakpoint != null ) {
-			ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
-			if ( cdiBreakpoint instanceof ICDILocationBreakpoint ) {
-				ICDILocator locator = ((ICDILocationBreakpoint)cdiBreakpoint).getLocator();
-				if ( locator != null ) {
-					IAddressFactory factory = getDebugTarget().getAddressFactory();
-					BigInteger address = locator.getAddress();
-					if ( address != null )
-						return factory.createAddress( address );
-				}	
+			try {
+				return fDebugTarget.getAddressFactory().createAddress( breakpoint.getAddress() );
 			}
+			catch( CoreException e ) {
+			}
+			catch( NumberFormatException e ) {
+			}
+//			ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
+//			if ( cdiBreakpoint instanceof ICDILocationBreakpoint ) {
+//				ICDILocator locator = ((ICDILocationBreakpoint)cdiBreakpoint).getLocator();
+//				if ( locator != null ) {
+//					IAddressFactory factory = getDebugTarget().getAddressFactory();
+//					BigInteger address = locator.getAddress();
+//					if ( address != null )
+//						return factory.createAddress( address );
+//				}	
+//			}
 		}
 		return fDebugTarget.getAddressFactory().getZero();
 	}
@@ -426,6 +432,19 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		}
 		if ( breakpoint != null ) {
 			try {
+				if ( breakpoint instanceof ICLineBreakpoint ) {
+					ICDILocator locator = cdiBreakpoint.getLocator();
+					if ( locator != null ) {
+						BigInteger address = locator.getAddress();
+						if ( address != null ) {
+							((ICLineBreakpoint)breakpoint).setAddress( address.toString() );				
+						}
+					}
+				}
+			}
+			catch( CoreException e1 ) {
+			}
+			try {
 				breakpoint.setTargetFilter( getDebugTarget() );
 			}
 			catch( CoreException e ) {
@@ -516,8 +535,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
 			public void run() {
 				try {
+					// FIXME: Shouldn't be doing this. The breakpoint management needs to be redesigned.
+					ICDIBreakpoint cdiBreakpoint = null;
 					synchronized ( getBreakpointMap() ) {
-						ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
+						cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 						if ( cdiBreakpoint == null ) {
 							if ( breakpoint instanceof ICFunctionBreakpoint ) {
 								cdiBreakpoint = target.setFunctionBreakpoint( ICDIBreakpoint.REGULAR,
@@ -530,11 +551,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 								cdiBreakpoint = target.setLineBreakpoint( ICDIBreakpoint.REGULAR,
 										(ICDILineLocation)location, condition, true );
 							}
-							if ( !enabled ) {
-								cdiBreakpoint.setEnabled( false );
-							}
 							getBreakpointMap().put( breakpoint, cdiBreakpoint );
 						}
+					}
+					if ( cdiBreakpoint != null && !enabled ) {
+						cdiBreakpoint.setEnabled( false );
 					}
 				}
 				catch( CDIException e ) {
@@ -578,14 +599,15 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
 			public void run() {
 				try {
+					ICDIWatchpoint cdiWatchpoint = null;
 					synchronized ( getBreakpointMap() ) {
 						if ( getBreakpointMap().getCDIBreakpoint( watchpoint ) == null ) {
-							ICDIWatchpoint cdiWatchpoint = target.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
-							if ( !enabled ) {
-								cdiWatchpoint.setEnabled( false );
-							}
+							cdiWatchpoint = target.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
 							getBreakpointMap().put( watchpoint, cdiWatchpoint );
 						}
+					}
+					if ( !enabled ) {
+						cdiWatchpoint.setEnabled( false );
 					}
 				}
 				catch( CDIException e ) {
@@ -671,6 +693,13 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 																		  cdiBreakpoint.getCondition().getIgnoreCount(), 
 																		  cdiBreakpoint.getCondition().getExpression(), 
 																		  false );
+		ICDILocator locator = cdiBreakpoint.getLocator();
+		if ( locator != null ) {
+			BigInteger address = locator.getAddress();
+			if ( address != null ) {
+				breakpoint.setAddress( address.toString() );				
+			}
+		}
 		getBreakpointMap().put( breakpoint, cdiBreakpoint );
 		((CBreakpoint)breakpoint).register( true );
 		return breakpoint;

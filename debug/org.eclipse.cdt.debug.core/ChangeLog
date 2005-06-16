@@ -1,3 +1,7 @@
+2005-06-16 Mikhail Khodjaiants
+	Partial fix for bug 79371: Setting breakpoints in the left hand side ruler of the disassembly view is sluggish.
+	* CBreakpointManager.java
+
 2005-06-14 Mikhail Khodjaiants
 	Bug 98814: NullPointerException and failed to launch debug session for a project.
 	* CDebugTarget.java

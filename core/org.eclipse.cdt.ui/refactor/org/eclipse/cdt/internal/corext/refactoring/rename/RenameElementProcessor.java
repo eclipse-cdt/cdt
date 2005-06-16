@@ -450,6 +450,8 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 					ICSearchConstants.TYPE,	ICSearchConstants.DECLARATIONS, false ));
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.TYPE,	ICSearchConstants.DEFINITIONS, false ));
 			}
 			IStructure structure = (IStructure) fCElement;
 			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + structure.getElementName(),
@@ -494,9 +496,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-						ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-						ICSearchConstants.METHOD, ICSearchConstants.DEFINITIONS, false ));								
+						ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS_DEFINITIONS, false ));						
 			}
 		} 
 		else if(fCElement instanceof IFunctionDeclaration){
@@ -514,7 +514,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 						ICSearchConstants.ENUM, ICSearchConstants.ALL_OCCURRENCES, false ));
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-						ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false ));				
+						ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS_DEFINITIONS, false ));				
 			}
 		} 		
 		else if(fCElement instanceof IEnumerator){
@@ -523,7 +523,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 						ICSearchConstants.ENUMTOR, ICSearchConstants.ALL_OCCURRENCES, false ));
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-						ICSearchConstants.ENUMTOR, ICSearchConstants.DECLARATIONS, false ));				
+						ICSearchConstants.ENUMTOR, ICSearchConstants.DECLARATIONS_DEFINITIONS, false ));				
 			}
 		} 		
 		else if(fCElement instanceof IField){
@@ -532,7 +532,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 						ICSearchConstants.FIELD, ICSearchConstants.ALL_OCCURRENCES, false ));
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-						ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, false ));				
+						ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS_DEFINITIONS, false ));				
 			}
 		} 
 		else if(fCElement instanceof IVariable){
@@ -541,7 +541,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 						ICSearchConstants.VAR, ICSearchConstants.ALL_OCCURRENCES, false ));
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-						ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));				
+						ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS_DEFINITIONS, false ));				
 			}
 		} 
 		else if(fCElement instanceof INamespace){
@@ -550,7 +550,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 						ICSearchConstants.NAMESPACE, ICSearchConstants.ALL_OCCURRENCES, false ));
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
-						ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, false ));				
+						ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS_DEFINITIONS, false ));				
 			}
 		} 
 		else {
@@ -559,7 +559,8 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 						ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, false ));
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, 
-						ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.DECLARATIONS, false ));				
+						ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.DECLARATIONS, false ));		
+				
 			}
 		} 
 		return orPattern;

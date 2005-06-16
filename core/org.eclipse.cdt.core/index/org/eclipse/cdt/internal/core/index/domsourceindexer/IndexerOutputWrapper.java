@@ -114,9 +114,9 @@ class IndexerOutputWrapper {
 				typeEntry.serialize(indexerOutput);
 				break;
 			case VAR_CONST:
-				typeEntry = new TypeEntry(IIndex.TYPE_VAR ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
-				typeEntry.setNameOffset(offset, length, offsetType);
-				typeEntry.serialize(indexerOutput);
+				namedEntry = new TypeEntry(IIndex.VAR ,entryKind, name, 0 /*getModifiers()*/, fileNumber);
+				namedEntry.setNameOffset(offset, length, offsetType);
+				namedEntry.serialize(indexerOutput);
 				break;
 			case TYPEDEF_CONST:
 				typeEntry = new TypeEntry(IIndex.TYPE_TYPEDEF, entryKind, name, 0 /*getModifiers()*/, fileNumber);

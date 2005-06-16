@@ -107,23 +107,25 @@ public class IndexerTypesJob2 extends IndexerJob2 {
         }
         
         IEntryResult[] typeEntries = fProjectIndex.getEntries( IIndex.TYPE, IIndex.TYPE_DERIVED, IIndex.ANY );
-        for( int j  = 0; j < typeEntries.length; ++j )
-        {
-            if (monitor.isCanceled())
-                throw new InterruptedException();
-            
-            IEntryResult entry = typeEntries[j];
-            String name = entry.extractSimpleName();
-            switch( entry.getKind() )
-            {
-              case IIndex.TYPE_DERIVED :
-                  if (name.length() != 0) {  // skip anonymous structs
-                      addSuperTypeReference(entry, name, entry.getEnclosingNames(), monitor);
-                  }
-                  break;
-              default:
-                  break;
-            }
+        if (typeEntries != null){
+	        for( int j  = 0; j < typeEntries.length; ++j )
+	        {
+	            if (monitor.isCanceled())
+	                throw new InterruptedException();
+	            
+	            IEntryResult entry = typeEntries[j];
+	            String name = entry.extractSimpleName();
+	            switch( entry.getKind() )
+	            {
+	              case IIndex.TYPE_DERIVED :
+	                  if (name.length() != 0) {  // skip anonymous structs
+	                      addSuperTypeReference(entry, name, entry.getEnclosingNames(), monitor);
+	                  }
+	                  break;
+	              default:
+	                  break;
+	            }
+	        }
         }
 	}
 

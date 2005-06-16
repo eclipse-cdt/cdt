@@ -65,16 +65,16 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertTrue( pattern instanceof FieldDeclarationPattern );
 		
 		FieldDeclarationPattern variablePattern = (FieldDeclarationPattern)pattern;
-		assertEquals(  getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.DECLARATION, "c"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
+		assertEquals(  getSearchPattern(IIndex.VAR, IIndex.ANY, IIndex.DECLARATION, "c"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
 		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "rt*", VAR, DECLARATIONS, true ); //$NON-NLS-1$
-		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.DECLARATION, "rt"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.VAR, IIndex.ANY, IIndex.DECLARATION, "rt"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 				
 		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "Ac", VAR, REFERENCES, false ); //$NON-NLS-1$
-		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.REFERENCE, ""), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.VAR, IIndex.ANY, IIndex.REFERENCE, ""), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 		
 		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A?c", VAR, REFERENCES, true ); //$NON-NLS-1$
-		assertEquals( getSearchPattern(IIndex.TYPE, IIndex.TYPE_VAR, IIndex.REFERENCE, "A"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
+		assertEquals( getSearchPattern(IIndex.VAR, IIndex.ANY, IIndex.REFERENCE, "A"), variablePattern.indexEntryPrefix() ); //$NON-NLS-1$
 	}
 	
 	public void testFieldIndexPrefix(){

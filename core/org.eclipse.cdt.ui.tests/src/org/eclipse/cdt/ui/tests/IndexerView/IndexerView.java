@@ -583,6 +583,7 @@ public class IndexerView extends ViewPart {
             	case IIndex.NAMESPACE : return FilterIndexerViewDialog.ENTRY_NAMESPACE_REF;
             	case IIndex.ENUMTOR   : return FilterIndexerViewDialog.ENTRY_ENUMTOR_REF;
             	case IIndex.INCLUDE   : return FilterIndexerViewDialog.ENTRY_INCLUDE_REF;
+            	case IIndex.VAR       : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_VAR;
             	}
             	break;
             case IIndex.DEFINITION :
@@ -594,7 +595,6 @@ public class IndexerView extends ViewPart {
             		case IIndex.TYPE_STRUCT     : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_STRUCT;
             		case IIndex.TYPE_UNION      : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_UNION;
             		case IIndex.TYPE_ENUM       : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_ENUM;
-            		case IIndex.TYPE_VAR        : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_VAR;
             		case IIndex.TYPE_TYPEDEF    : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_TYPEDEF;
             		case IIndex.TYPE_DERIVED    : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_DERIVED;
             		case IIndex.TYPE_FRIEND     : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_FRIEND;
@@ -606,6 +606,7 @@ public class IndexerView extends ViewPart {
             	case IIndex.NAMESPACE : return FilterIndexerViewDialog.ENTRY_NAMESPACE_DECL;
             	case IIndex.ENUMTOR   : return FilterIndexerViewDialog.ENTRY_ENUMTOR_DECL;
             	case IIndex.INCLUDE   : return -1;
+            	case IIndex.VAR       : return FilterIndexerViewDialog.ENTRY_TYPE_DECL_VAR;
             	}
             	break;
             }

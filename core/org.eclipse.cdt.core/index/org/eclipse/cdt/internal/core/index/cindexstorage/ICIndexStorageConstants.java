@@ -26,19 +26,6 @@ public interface ICIndexStorageConstants {
 	
 	final public static char SEPARATOR= '/';
 	
-	// TODO:  Remove these constants.
-	static final public char CLASS_SUFFIX = 'C';		// CLASS
-	static final public char DERIVED_SUFFIX = 'D';		// DERIVED
-	static final public char ENUM_SUFFIX = 'E';			// ENUM 
-	static final public char FRIEND_SUFFIX = 'F';		// FRIEND 
-	static final public char FWD_CLASS_SUFFIX = 'G';	// FWD_CLASS
-	static final public char FWD_STRUCT_SUFFIX = 'H';	// FWD_STRUCT
-	static final public char FWD_UNION_SUFFIX = 'I';	// FWD_UNION
-	static final public char STRUCT_SUFFIX = 'S';		// STRUCT
-	static final public char TYPEDEF_SUFFIX = 'T';		// TYPEDEF 
-	static final public char UNION_SUFFIX = 'U';		// UNION 
-	static final public char VAR_SUFFIX = 'V';			// VAR
-	
 	final static char [][] encodings = {  
 	        "".toCharArray(), 				// not used 		//$NON-NLS-1$
 			"type".toCharArray(), 			// TYPES            //$NON-NLS-1$
@@ -48,7 +35,8 @@ public interface ICIndexStorageConstants {
 			"macro".toCharArray(), 			// MACROS           //$NON-NLS-1$
 			"namespace".toCharArray(), 		// NAMESPACES       //$NON-NLS-1$
 			"enumtor".toCharArray(), 		// ENUMERATORS      //$NON-NLS-1$
-			"include" .toCharArray()		// INCLUDES	        //$NON-NLS-1$
+			"include" .toCharArray(),		// INCLUDES	        //$NON-NLS-1$
+			"variable" .toCharArray()		// VARIABLE	        //$NON-NLS-1$
 	};
 
 	final static char [][] encodingTypes = { 
@@ -62,8 +50,7 @@ public interface ICIndexStorageConstants {
 			'C', // CLASS            
 			'S', // STRUCT          
 			'U', // UNION            
-			'E', // ENUM             
-			'V', // VAR              
+			'E', // ENUM                         
 			'T', // TYPEDEF          
 			'D', // DERIVED          
 			'F' // FRIEND           
@@ -74,7 +61,6 @@ public interface ICIndexStorageConstants {
 		"Struct", //$NON-NLS-1$
 		"Union", //$NON-NLS-1$
 		"Enum", //$NON-NLS-1$
-		"Variable", //$NON-NLS-1$
 		"Typedef", //$NON-NLS-1$
 		"Derived", //$NON-NLS-1$
 		"Friend", //$NON-NLS-1$

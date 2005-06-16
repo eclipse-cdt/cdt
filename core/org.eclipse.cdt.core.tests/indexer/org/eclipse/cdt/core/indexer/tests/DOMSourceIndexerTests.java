@@ -172,7 +172,7 @@ public class DOMSourceIndexerTests extends TestCase implements IIndexChangeListe
 
 		suite.addTest(new DOMSourceIndexerTests("testAddNewFileToIndex")); //$NON-NLS-1$
 		suite.addTest(new DOMSourceIndexerTests("testForwardDeclarations")); //$NON-NLS-1$
-		suite.addTest(new FailingTest(new DOMSourceIndexerTests("testIndexAll"))); //$NON-NLS-1$
+		suite.addTest(new DOMSourceIndexerTests("testIndexAll")); //$NON-NLS-1$
 		suite.addTest(new FailingTest(new DOMSourceIndexerTests("testIndexContents"))); //$NON-NLS-1$
 		suite.addTest(new DOMSourceIndexerTests("testMacros")); //$NON-NLS-1$
 		suite.addTest(new FailingTest(new DOMSourceIndexerTests("testRefs"))); //$NON-NLS-1$
@@ -228,26 +228,21 @@ public class DOMSourceIndexerTests extends TestCase implements IIndexChangeListe
 		assertTrue("Entry Results exist", eresults != null); //$NON-NLS-1$
 		
 		String [] queryResultModel = {"IndexedFile(1: /IndexerTestProject/mail.cpp)"}; //$NON-NLS-1$
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/Mail, refs={ 1 }, offsets={ [ 294] }",  //$NON-NLS-1$
+		String [] entryResultModel ={"EntryResult: word=typeDefn/C/Mail, refs={ 1 }, offsets={ [ 294] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDefn/C/Unknown, refs={ 1 }, offsets={ [ 2738] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDefn/C/container, refs={ 1 }, offsets={ [ 21084] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDefn/C/first_class, refs={ 1 }, offsets={ [ 2506] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDefn/C/postcard, refs={ 1 }, offsets={ [ 2298] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDefn/V/PO_Box, refs={ 1 }, offsets={ [ 21371] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDefn/V/size, refs={ 1 }, offsets={ [ 21927] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDefn/V/temp, refs={ 1 }, offsets={ [ 21964] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDefn/V/x, refs={ 1 }, offsets={ [ 21201, 21526] }"}; //$NON-NLS-1$ 
+		};
 		
 		String [] entryResultDeclsModel = {
 				"EntryResult: word=typeDecl/D/Mail, refs={ 1 }, offsets={ [ 294] }",  //$NON-NLS-1$
 				"EntryResult: word=typeDecl/D/first_class, refs={ 1 }, offsets={ [ 2506] }",  //$NON-NLS-1$ 
 				"EntryResult: word=typeDecl/D/postcard, refs={ 1 }, offsets={ [ 2298] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/index, refs={ 1 }, offsets={ [ 21303, 21846] }",  //$NON-NLS-1$
-				"EntryResult: word=typeDecl/V/mail, refs={ 1 }, offsets={ [ 21336, 21912] }",  //$NON-NLS-1$
 		};
-		String[] entryResultNameModel = {"Mail","Unknown","container","first_class","postcard","PO_Box","size","temp","x"};
+		String[] entryResultNameModel = {"Mail","Unknown","container","first_class","postcard"};
 		int[] entryResultMetaModel = {IIndex.TYPE};
-		int[] entryResultTypeModel = {IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR};
+		int[] entryResultTypeModel = {IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS};
 		int[] entryResultRefModel = {IIndex.DEFINITION};
 		
 		if (qresults.length != queryResultModel.length)
@@ -386,7 +381,7 @@ public class DOMSourceIndexerTests extends TestCase implements IIndexChangeListe
 	 
 	String[] entryResultNameModel = {"CDocumentManager","Mail","Unknown","container","first_class","postcard","PO_Box", "size","temp","x"};
 	int[] entryResultMetaModel = {IIndex.TYPE};
-	int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR, IIndex.TYPE_VAR};
+	int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS,IIndex.TYPE_CLASS, IIndex.TYPE, IIndex.TYPE, IIndex.VAR, IIndex.VAR};
 	int[] entryResultRefModel = {IIndex.DEFINITION};
 		
 	 if (eresults.length != entryResultNameModel.length)
@@ -449,8 +444,8 @@ public class DOMSourceIndexerTests extends TestCase implements IIndexChangeListe
 		String[] entryResultDefnNameModel = {"Mail/Y/X/Z", "Unknown/Y/X/Z", "container/Y/X/Z", "first_class/Y/X/Z", "postcard/Y/X/Z", "PO_Box", "size", "temp", "x", "x/Z" };
 		int[] entryResultMetaModel = {IIndex.TYPE};
 		int[] entryResultDefnTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_CLASS,
-				 					  IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR,IIndex.TYPE_VAR};
-		int[] entryResultDeclTypeModel = {IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_ENUM, IIndex.TYPE_TYPEDEF,IIndex.TYPE_VAR,IIndex.TYPE_VAR}; 
+				 					  IIndex.VAR,IIndex.VAR,IIndex.VAR,IIndex.VAR,IIndex.VAR};
+		int[] entryResultDeclTypeModel = {IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_DERIVED, IIndex.TYPE_ENUM, IIndex.TYPE_TYPEDEF,IIndex.VAR,IIndex.VAR}; 
 		
 		
 		IEntryResult[] typedeclresults =ind.getEntries(IIndex.TYPE, IIndex.ANY, IIndex.DECLARATION);
@@ -593,7 +588,7 @@ public class DOMSourceIndexerTests extends TestCase implements IIndexChangeListe
 
 		 String[] entryResultNameModel = {"C/B/A","ForwardA/A", "e1/B/A",  "x/B/A"};
 		 int[] entryResultMetaModel = {IIndex.TYPE};
-		 int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_ENUM, IIndex.TYPE_VAR};
+		 int[] entryResultTypeModel = {IIndex.TYPE_CLASS, IIndex.TYPE_CLASS, IIndex.TYPE_ENUM, IIndex.VAR};
 		 int[] entryResultRefModel = {IIndex.REFERENCE};
 		
 			

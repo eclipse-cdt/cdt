@@ -124,7 +124,7 @@ public class FilterIndexerViewDialog extends Dialog {
         {IIndex.TYPE,      IIndex.ANY,             IIndex.REFERENCE},
         {IIndex.TYPE,      IIndex.TYPE_TYPEDEF,    IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_CLASS,      IIndex.DECLARATION},      
-        {IIndex.TYPE,      IIndex.TYPE_VAR,        IIndex.DECLARATION},
+        {IIndex.VAR,       IIndex.ANY,             IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_STRUCT,     IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_ENUM,       IIndex.DECLARATION},
         {IIndex.TYPE,      IIndex.TYPE_UNION,      IIndex.DECLARATION},

@@ -167,7 +167,12 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 	     }
 	     //char[] has to be of size - [type length + length of the name (including qualifiers) + 
 	     //separators (need one less than fully qualified name length)
+	     try {
 	     pos = encodings[meta_kind].length + encodingTypes[ref].length;
+	     }
+	     catch (ArrayIndexOutOfBoundsException x) {
+	    	 throw x;
+	     }
 	     char[] result = new char[pos + nameLength + elementName.length - 1 ];
 	     System.arraycopy(encodings[meta_kind], 0, result, 0, encodings[meta_kind].length);
 	     System.arraycopy(encodingTypes[ref], 0, result, encodings[meta_kind].length, encodingTypes[ref].length);
@@ -226,7 +231,7 @@ public class IndexerOutput implements ICIndexStorageConstants, IIndexerOutput {
 			baseClasses.length > 0){
 			for (int i=0; i<baseClasses.length; i++){
 				char[][] baseName= ((INamedEntry) baseClasses[i]).getFullName();
-				addRef(indexedFileNumber, baseName, ICIndexStorageConstants.DERIVED_SUFFIX, IIndex.DECLARATION, nameOffset,nameOffsetLength, nameOffsetType, 1);
+				addRef(indexedFileNumber, baseName, ICIndexStorageConstants.typeConstants[IIndex.TYPE_DERIVED], IIndex.DECLARATION, nameOffset,nameOffsetLength, nameOffsetType, 1);
 			}
 		}
 	}

@@ -284,7 +284,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
                 if (entryKind != IIndex.REFERENCE) {
                     modifiers = IndexVisitorUtil.getModifiers(name, binding);
                 }
-                TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_VAR, entryKind, qualifiedName, modifiers, fileNumber);
+                NamedEntry indexEntry = new NamedEntry(IIndex.VAR, entryKind, qualifiedName, modifiers, fileNumber);
                 indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
     
                 serialize(indexEntry);

@@ -488,19 +488,19 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 		char classType = 0;
 		
 		if( searchFor == ICSearchConstants.CLASS ){
-			classType = CLASS_SUFFIX;
+			classType = typeConstants[IIndex.TYPE_CLASS];
 		} else if ( searchFor == ICSearchConstants.STRUCT ){
-			classType = STRUCT_SUFFIX;
+			classType = typeConstants[IIndex.TYPE_STRUCT];
 		} else if ( searchFor == ICSearchConstants.UNION ){
-			classType = UNION_SUFFIX;
+			classType = typeConstants[IIndex.TYPE_UNION];
 		} else if ( searchFor == ICSearchConstants.ENUM ){
-			classType = ENUM_SUFFIX;
+			classType = typeConstants[IIndex.TYPE_ENUM];
 		} else if ( searchFor == ICSearchConstants.TYPEDEF ){
-			classType = TYPEDEF_SUFFIX;
+			classType = typeConstants[IIndex.TYPE_TYPEDEF];
 		} else if ( searchFor == ICSearchConstants.DERIVED){
-			classType = DERIVED_SUFFIX;
+			classType = typeConstants[IIndex.TYPE_DERIVED];
 		} else if ( searchFor == ICSearchConstants.FRIEND){
-			classType = FRIEND_SUFFIX;
+			classType = typeConstants[IIndex.TYPE_FRIEND];
 		} else {
 			//could be TYPE or CLASS_STRUCT, best we can do for these is the prefix
 			return prefix;
@@ -525,16 +525,16 @@ public class Index implements IIndex, ICIndexStorageConstants, ICSearchConstants
 	public static final char[] bestVariablePrefix( LimitTo limitTo, char[] varName, char[][] containingTypes, int matchMode, boolean isCaseSenstive ){
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
-			prefix = encodeEntry(IIndex.TYPE, ANY, REFERENCE);
+			prefix = encodeEntry(IIndex.VAR, ANY, REFERENCE);
 		} else if( limitTo == DECLARATIONS ){
-			prefix = encodeEntry(IIndex.TYPE, ANY, DECLARATION);
+			prefix = encodeEntry(IIndex.VAR, ANY, DECLARATION);
 		} else if( limitTo == DEFINITIONS ){
-				prefix = encodeEntry(IIndex.TYPE, ANY, DEFINITION);
+				prefix = encodeEntry(IIndex.VAR, ANY, DEFINITION);
 		} else {
-			return encodeEntry(IIndex.TYPE, ANY, ANY);
+			return encodeEntry(IIndex.VAR, ANY, ANY);
 		}
 		
-		return bestPrefix( prefix, VAR_SUFFIX, varName, containingTypes, matchMode, isCaseSenstive );	
+		return bestPrefix( prefix, (char)0, varName, containingTypes, matchMode, isCaseSenstive );	
 	}
 
 	public static final char[] bestFieldPrefix( LimitTo limitTo, char[] fieldName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {

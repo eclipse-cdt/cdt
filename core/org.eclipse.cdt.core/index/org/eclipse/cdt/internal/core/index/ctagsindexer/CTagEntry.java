@@ -200,16 +200,16 @@ class CTagEntry{
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.VARIABLE)){
-			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_VAR,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
-			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
-			typeEntry.serialize(output);
+			NamedEntry namedEntry = new NamedEntry(IIndex.VAR,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
+			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			namedEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.EXTERNALVAR)){
 			//Have to specifically set external bit flag in modifier;
 			int modifiers = getModifiers();
 			modifiers |= 1 << 6;
-			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_VAR,IIndex.DECLARATION, fullName, modifiers, fileNum);
-			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
-			typeEntry.serialize(output);
+			NamedEntry namedEntry = new NamedEntry(IIndex.VAR,IIndex.DECLARATION, fullName, modifiers, fileNum);
+			namedEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
+			namedEntry.serialize(output);
     	}
 	}
 

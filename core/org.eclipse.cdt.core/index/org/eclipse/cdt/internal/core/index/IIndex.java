@@ -41,16 +41,16 @@ public interface IIndex {
 	final static int NAMESPACE = 6;
 	final static int ENUMTOR = 7;
 	final static int INCLUDE = 8;
+	final static int VAR = 9;
 	
 	// kind
 	final static int TYPE_CLASS = 1;
 	final static int TYPE_STRUCT = 2;
 	final static int TYPE_UNION = 3;
 	final static int TYPE_ENUM = 4;
-	final static int TYPE_VAR = 5;
-	final static int TYPE_TYPEDEF = 6;
-	final static int TYPE_DERIVED = 7;
-	final static int TYPE_FRIEND = 8;
+	final static int TYPE_TYPEDEF = 5;
+	final static int TYPE_DERIVED = 6;
+	final static int TYPE_FRIEND = 7;
 
 	
 	// type

@@ -254,10 +254,6 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			if( searchFor == TYPEDEF && decodedType != IIndex.TYPE_TYPEDEF ){
 				return false;
 			}
-			//don't match variable entries
-			if( decodedType == IIndex.TYPE_VAR ){
-				return false;
-			}
 		} else if( classKind == ASTClassKind.CLASS ) {
 			if( decodedType != IIndex.TYPE_CLASS ){
 				return false;

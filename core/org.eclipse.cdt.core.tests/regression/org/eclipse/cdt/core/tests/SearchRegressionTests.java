@@ -210,15 +210,11 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new SearchRegressionTests("testMethodReference") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodReferenceOperator") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new SearchRegressionTests("testMethodReferenceImplicitOperator"), 80117 ) ); //defect80117 //$NON-NLS-1$ 
-        suite.addTest(new SearchRegressionTests("testMethodReferenceInitializer")); //defect76169 //$NON-NLS-1$ 
-        //fails because inline def refers to a member not declared yet
-        suite.addTest(new SearchRegressionTests("testMethodReferenceInline"));       //defect79425//$NON-NLS-1$
-        //method call with constructor call not found 
-        suite.addTest( new FailingTest( new SearchRegressionTests("testMethodReferenceWithCctor"), 79789 ) );       //defect79789//$NON-NLS-1$
-        //constructor call in function argument not found
-        suite.addTest( new SearchRegressionTests("testConstructorReferenceArg"));     //defect79785 //$NON-NLS-1$
-        //constructor call by itself not found
-        suite.addTest(new SearchRegressionTests("testConstructorReferenceAlone"));     //defect79792 //$NON-NLS-1$
+        suite.addTest(new SearchRegressionTests("testMethodReferenceInitializer")); //$NON-NLS-1$ 
+        suite.addTest(new SearchRegressionTests("testMethodReferenceInline"));      //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testMethodReferenceWithCctor") );       //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testConstructorReferenceArg"));     //$NON-NLS-1$
+        suite.addTest(new SearchRegressionTests("testConstructorReferenceAlone"));    //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testDestructorReference") );     //defect79792 //$NON-NLS-1$
         
         //Fixup for DOM Indexer

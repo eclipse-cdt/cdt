@@ -244,7 +244,7 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             }
             FunctionEntry indexEntry = new FunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
+            indexEntry.setSignature(IndexVisitorUtil.getParameters(name));
             indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
             indexEntry.serialize(indexer.getOutput());

@@ -297,7 +297,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             }
             FunctionEntry indexEntry = new FunctionEntry(IIndex.METHOD, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
+            indexEntry.setSignature(IndexVisitorUtil.getParameters(name));
             indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
             serialize(indexEntry);
@@ -313,7 +313,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             }
             FunctionEntry indexEntry = new FunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
+            indexEntry.setSignature(IndexVisitorUtil.getParameters(name));
             indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
             serialize(indexEntry);

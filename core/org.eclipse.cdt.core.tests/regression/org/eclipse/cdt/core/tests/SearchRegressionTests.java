@@ -122,6 +122,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     
     protected Set search( ICSearchPattern pattern ) {
 		try {
+            resultCollector.aboutToStart();
 			searchEngine.search( workspace, pattern, scope, resultCollector, false );
 		} catch (InterruptedException e) {
 		    //boo
@@ -198,29 +199,28 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new SearchRegressionTests("testClassStructDeclaration") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testClassStructReference") ); //$NON-NLS-1$
         
-        //Fix up for DOM Indexer
-        suite.addTest( new FailingTest(new SearchRegressionTests("testNamespaceDeclaration"))); //$NON-NLS-1$
-        //Fix up for DOM Indexer
-        suite.addTest( new FailingTest(new SearchRegressionTests("testNamespaceDefinition"))); //$NON-NLS-1$
+        suite.addTest(new SearchRegressionTests("testNamespaceDeclaration")); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testNamespaceDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testNamespaceReference")); //$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testMethodDeclaration")); //$NON-NLS-1$
-        //Fix up for DOM Indexer
-        suite.addTest( new FailingTest(new SearchRegressionTests("testMethodDefinition"))); //$NON-NLS-1$
+        suite.addTest(new SearchRegressionTests("testMethodDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodReference") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodReferenceOperator") ); //$NON-NLS-1$
         suite.addTest( new FailingTest( new SearchRegressionTests("testMethodReferenceImplicitOperator"), 80117 ) ); //defect80117 //$NON-NLS-1$ 
-        suite.addTest(new SearchRegressionTests("testMethodReferenceInitializer")); //$NON-NLS-1$ 
-        suite.addTest(new SearchRegressionTests("testMethodReferenceInline"));      //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("testMethodReferenceWithCctor") );       //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("testConstructorReferenceArg"));     //$NON-NLS-1$
-        suite.addTest(new SearchRegressionTests("testConstructorReferenceAlone"));    //$NON-NLS-1$
+        suite.addTest(new SearchRegressionTests("testMethodReferenceInitializer")); //defect76169 //$NON-NLS-1$ 
+        //fails because inline def refers to a member not declared yet
+        suite.addTest(new SearchRegressionTests("testMethodReferenceInline"));       //defect79425//$NON-NLS-1$
+        //method call with constructor call not found 
+        suite.addTest( new SearchRegressionTests("testMethodReferenceWithCctor") );       //defect79789//$NON-NLS-1$
+        //constructor call in function argument not found
+        suite.addTest( new SearchRegressionTests("testConstructorReferenceArg"));     //defect79785 //$NON-NLS-1$
+        //constructor call by itself not found
+        suite.addTest(new SearchRegressionTests("testConstructorReferenceAlone"));     //defect79792 //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testDestructorReference") );     //defect79792 //$NON-NLS-1$
         
-        //Fixup for DOM Indexer
-        suite.addTest(  new FailingTest(new SearchRegressionTests("testFunctionDeclaration"))); //$NON-NLS-1$
-        //Fixup for DOM Indexer
-        suite.addTest(  new FailingTest(new SearchRegressionTests("testFunctionDefinition"))); //$NON-NLS-1$
+        suite.addTest(new SearchRegressionTests("testFunctionDeclaration")); //$NON-NLS-1$
+        suite.addTest( new SearchRegressionTests("testFunctionDefinition")); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testFunctionReference") ); //$NON-NLS-1$
         
         suite.addTest( new SearchRegressionTests("testFieldDeclaration") ); //$NON-NLS-1$
@@ -245,7 +245,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new FailingTest(new SearchRegressionTests("testUnionReference"))); //$NON-NLS-1$
         
         suite.addTest( new FailingTest(new SearchRegressionTests("testEnumerationDeclaration"))); //$NON-NLS-1$
-        suite.addTest( new FailingTest(new SearchRegressionTests("testEnumerationReference"))); //$NON-NLS-1$
+        suite.addTest(new SearchRegressionTests("testEnumerationReference")); //$NON-NLS-1$
         //search doesn't distinguish between global and local symbols
         suite.addTest( new FailingTest( new SearchRegressionTests("testEnumerationReferenceGlobal"), 79811 ) );     //defect79811 //$NON-NLS-1$
         
@@ -541,7 +541,7 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     public void testMethodDefinition() throws Exception {
     	Writer writer = new StringWriter();
     	writer.write("class N {									\n" ); //$NON-NLS-1$
-    	writer.write(" N& operator ||(const N &rhs){}			\n" ); //$NON-NLS-1$
+    	writer.write(" N& operator ||(const N &rhs){return *this;}\n" ); //$NON-NLS-1$
     	writer.write(" N& operator|(const N &rhs);				\n" ); //$NON-NLS-1$
     	writer.write(" int m;									\n" ); //$NON-NLS-1$
     	writer.write("};										\n" ); //$NON-NLS-1$
@@ -575,7 +575,8 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
 	    String code = writer.toString();			
         IFile cpp = importFile( "MethodDefinition.cpp", code ); //$NON-NLS-1$
        	//vp1 operator, constructor, destructor, inline, static, const, explicit constructor
-        ICElement[] list = {cproject.findElement(new Path("MethodDefinition.cpp"))}; //$NON-NLS-1$
+        ICElement[] list = new ICElement[1];//{cproject.findElement(new Path("MethodDefinition.cpp"))}; //$NON-NLS-1$
+        list[0] = cproject;
         ICSearchPattern pattern=SearchEngine.createSearchPattern("*", METHOD, DEFINITIONS, true); //$NON-NLS-1$
         Set matches = search(pattern, list);
         assertMatch( matches, cpp, code.indexOf( "operator|/*def1*/" )  ); //$NON-NLS-1$

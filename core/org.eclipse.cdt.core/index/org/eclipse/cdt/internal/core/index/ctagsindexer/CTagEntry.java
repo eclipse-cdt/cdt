@@ -216,11 +216,7 @@ class CTagEntry{
 	private char[][] getFunctionSignature() {
 		String signature =  (String) tagExtensionField.get(CTagsConsoleParser.SIGNATURE);
 		
-		LinkedList list = CSearchPattern.scanForParameters(signature);
-		char [][] parameters = new char [0][];
-		parameters = (char[][])list.toArray( parameters );
-		
-		return parameters;
+		return CSearchPattern.scanForParameters(signature);
 	}
 
 	private int getModifiers() {

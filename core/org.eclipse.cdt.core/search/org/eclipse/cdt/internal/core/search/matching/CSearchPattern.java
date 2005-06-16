@@ -14,16 +14,20 @@
 package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
-import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
@@ -31,22 +35,29 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
-import org.eclipse.cdt.core.parser.ast.ASTUtil;
-import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
+import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -182,28 +193,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
-		char [] patternArray = patternString.toCharArray();
+		char[][] names = scanForNames( patternString );
 		
-		IScanner scanner = null;
-		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
-		try {
-			scanner =
-				ParserFactory.createScanner(
-					new CodeReader(patternArray),
-					new ScannerInfo(),
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP,
-					callback, 
-					nullLog, null);
-		} catch (ParserFactoryError e) {
-
-		}
-		LinkedList list = scanForNames( scanner, callback, null, patternArray );
+		char[] name = names[names.length - 1];
+		char[][] qualifications = new char [names.length - 1][];
+        System.arraycopy(names, 0, qualifications, 0, qualifications.length);
 		
-		char [] name = (char []) list.removeLast();
-		char [][] qualifications = new char [0][];
-		
-		return new NamespaceDeclarationPattern( name, (char[][]) list.toArray( qualifications ), matchMode, limitTo, caseSensitive );
+		return new NamespaceDeclarationPattern( name, qualifications , matchMode, limitTo, caseSensitive );
 	}
 
 //	/**
@@ -261,26 +257,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			orPattern.addPattern( createFieldPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
 			return orPattern;
 		}
-		char [] patternArray = patternString.toCharArray();
-		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
-		IScanner scanner=null;
-		try {
-			scanner =
-				ParserFactory.createScanner(
-					new CodeReader(patternArray),
-					new ScannerInfo(),
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP,
-					callback, nullLog, null);
-		} catch (ParserFactoryError e) {
 
-		}
-		LinkedList list = scanForNames( scanner, callback, null, patternArray );
+		char[][] names = scanForNames( patternString );
 		
-		char [] name = (char []) list.removeLast();
-		char [][] qualifications = new char[0][];
+		char[] name = names[names.length - 1];
+		char[][] qualifications = new char[names.length - 1][];
+        System.arraycopy(names, 0, qualifications, 0, qualifications.length);
 		
-		return new FieldDeclarationPattern( name, (char[][]) list.toArray( qualifications ), matchMode, searchFor, limitTo, caseSensitive );
+		return new FieldDeclarationPattern( name, qualifications, matchMode, searchFor, limitTo, caseSensitive );
 	}
 
 	/**
@@ -309,34 +293,23 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		int index = patternString.indexOf( '(' );
 		String paramString = ( index == -1 ) ? "" : patternString.substring( index ); //$NON-NLS-1$
 		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
-		char [] nameArray = nameString.toCharArray();
-		IScanner scanner=null;
-		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
-		try {
-			scanner =
-				ParserFactory.createScanner(
-					new CodeReader(nameArray),
-					new ScannerInfo(),
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP,
-					callback, nullLog, null);
-		} catch (ParserFactoryError e) {
-		}
 		
-		LinkedList names = scanForNames( scanner, callback, null, nameArray );
-
-		LinkedList params = scanForParameters( paramString );
+		char[][] names = scanForNames( nameString );
+        
+        char[][] parameters = scanForParameters( paramString );
 		
-		char [] name = (char [])names.removeLast();
-		char [][] qualifications = new char[0][];
-		qualifications = (char[][])names.toArray( qualifications );
-		char [][] parameters = new char [0][];
-		parameters = (char[][])params.toArray( parameters );
+        // TODO implement
+		//LinkedList returnType = scanForReturnType();
 		
-		return new MethodDeclarationPattern( name, qualifications, parameters, matchMode, searchFor, limitTo, caseSensitive );
+        char[] name = names[names.length - 1];
+        char[][] qualifications = new char[names.length - 1][];
+        System.arraycopy(names, 0, qualifications, 0, qualifications.length);
+		char[] returnType = new char[0];
+		
+		return new MethodDeclarationPattern( name, qualifications, parameters, returnType, matchMode, searchFor, limitTo, caseSensitive );
 	}
 
-	private static final IParserLogService nullLog = new NullLogService();
+    private static final IParserLogService nullLog = new NullLogService();
 	/**
 	 * @param patternString
 	 * @param limitTo
@@ -367,269 +340,209 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			orPattern.addPattern( createClassPattern( patternString, STRUCT, limitTo, matchMode, caseSensitive ) );
 			return orPattern;
 		}
-		
-		char [] patternArray = patternString.toCharArray();
-		
-		IScanner scanner =null;
-		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
-		try {
-			scanner =
-				ParserFactory.createScanner(
-					new CodeReader(patternArray),
-					new ScannerInfo(),
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP,
-					callback, nullLog, null );
-		} catch (ParserFactoryError e1) {
-		}
-		
-		IToken token = null;
-		
-		try {
-			token = scanner.nextToken();
-		} catch (EndOfFileException e) {
-		}
-		
-		if( token != null ){
-			boolean nullifyToken = true;
-			if( token.getType() == IToken.t_class ){
-				searchFor = CLASS;
-			} else if ( token.getType() == IToken.t_struct ){
-				searchFor = STRUCT;
-			} else if ( token.getType() == IToken.t_union ){
-				searchFor = UNION;
-			} else if ( token.getType() == IToken.t_enum ){
-				searchFor = ENUM;
-			} else if ( token.getType() == IToken.t_typedef ){
-				searchFor = TYPEDEF;
-			} else {
-				nullifyToken = false;
-			}
-			if( nullifyToken ){
-				patternArray = CharOperation.subarray( patternArray, token.getLength() + 1, -1 );
-				token = null;
-			}
-		}
-			
-		LinkedList list = scanForNames( scanner, callback, token, patternArray );
-		
-		char[] name = (char [])list.removeLast();
-		char [][] qualifications = new char[0][];
-		
-		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive);
+
+        String[] tokens = patternString.split("\\s+"); //$NON-NLS-1$
+        if (tokens.length > 0) {
+            boolean removeFirst = true;
+            if (tokens[0].equals("class")) { //$NON-NLS-1$
+                searchFor = CLASS;
+            }
+            else if (tokens[0].equals("struct")) { //$NON-NLS-1$
+                searchFor = STRUCT;
+            }
+            else if (tokens[0].equals("union")) { //$NON-NLS-1$
+                searchFor = UNION;
+            }
+            else if (tokens[0].equals("enum")) { //$NON-NLS-1$
+                searchFor = ENUM;
+            }
+            else if (tokens[0].equals("typedef")) { //$NON-NLS-1$
+                searchFor = TYPEDEF;
+            }
+            else {
+                removeFirst = false;
+            }
+            if (removeFirst) {
+                patternString = patternString.substring(tokens[0].length()).trim(); 
+            }
+        }
+        char[][] names = scanForNames( patternString ); // return type as first element of the array
+        
+        char[] name = names[names.length - 1];
+        char[][] qualifications = new char[names.length - 1][];
+        System.arraycopy(names, 0, qualifications, 0, qualifications.length);
+        
+		return new ClassDeclarationPattern( name, qualifications, searchFor, limitTo, matchMode, caseSensitive);
 	}
 
 	private static CSearchPattern createDerivedPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		char [] patternArray = patternString.toCharArray();
-		
-		IScanner scanner =null;
-		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
-		try {
-			scanner =
-				ParserFactory.createScanner(
-					new CodeReader(patternArray),
-					new ScannerInfo(),
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP,
-					callback, nullLog, null);
-		} catch (ParserFactoryError e1) {
-		}
-		
 		searchFor = DERIVED;
 		
-		LinkedList list = scanForNames( scanner, callback, null, patternArray );
-		
-		char[] name = (char [])list.removeLast();
-		char [][] qualifications = new char[0][];
-		
-		return new DerivedTypesPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive );
+        char[][] names = scanForNames( patternString );
+        
+        char[] name = names[names.length - 1];
+        char[][] qualifications = new char[names.length - 1][];
+        System.arraycopy(names, 0, qualifications, 0, qualifications.length);
+        
+		return new DerivedTypesPattern( name, qualifications, searchFor, limitTo, matchMode, caseSensitive );
 	}
 	
 	private static CSearchPattern createFriendPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		
-		char [] patternArray = patternString.toCharArray();
-		IScanner scanner =null;
-		Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
-		try {
-			scanner =
-				ParserFactory.createScanner(
-					new CodeReader(patternArray),
-					new ScannerInfo(),
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP,
-					callback, nullLog, null);
-		} catch (ParserFactoryError e1) {
-		}
-		
 		searchFor = FRIEND;
 		
-		LinkedList list = scanForNames( scanner, callback, null, patternArray );
-		
-		char[] name = (char [])list.removeLast();
-		char [][] qualifications = new char[0][];
-		
-		return new FriendPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive );
+        char[][] names = scanForNames( patternString );
+        
+        char[] name = names[names.length - 1];
+        char[][] qualifications = new char[names.length - 1][];
+        System.arraycopy(names, 0, qualifications, 0, qualifications.length);
+        
+		return new FriendPattern( name, qualifications, searchFor, limitTo, matchMode, caseSensitive );
 	}
-	/**
+
+    /**
+     * @param nameString
+     * @return
+     */
+    private static char[][] scanForNames(String nameString) {
+        final List nameList = new ArrayList();
+        
+        if (nameString != null && nameString.length() > 0) {
+        
+            Requestor callback = new Requestor( ParserMode.COMPLETE_PARSE );
+            IScanner scanner = createScanner(nameString, callback);
+            if (scanner != null) {
+    
+                String name  = new String(""); //$NON-NLS-1$
+                char[] pattern = nameString.toCharArray();
+                int idx = 0;
+                
+                try {
+                    IToken token = scanner.nextToken();
+                    IToken prev = null;
+        
+                    boolean encounteredWild = false;
+                    boolean lastTokenWasOperator = false;
+                    
+                    while( true ){
+                        switch( token.getType() ){
+                            case IToken.tCOLONCOLON :
+                                nameList.add( name.toCharArray() );
+                                name = new String(""); //$NON-NLS-1$
+                                lastTokenWasOperator = false;
+                                idx += token.getLength();
+                                while( idx < pattern.length && CharOperation.isWhitespace( pattern[idx] ) ){ idx++; }
+                                break;
+                            
+                            case IToken.t_operator :
+                                name += token.getImage();
+                                name += ' ';
+                                lastTokenWasOperator = true;
+                                idx += token.getLength();
+                                while( idx < pattern.length && CharOperation.isWhitespace( pattern[idx] ) ){ idx++; }
+                                break;
+                            
+                            default:
+                                if( token.getType() == IToken.tSTAR || 
+                                        token.getType() == IToken.tQUESTION ) {
+                                    if( idx > 0 && idx < pattern.length && CharOperation.isWhitespace( pattern[ idx - 1 ] ) && !lastTokenWasOperator )
+                                        name += ' ';
+                                    encounteredWild = true;
+                                } 
+                                else if( !encounteredWild && !lastTokenWasOperator && name.length() > 0 &&
+                                            prev.getType() != IToken.tIDENTIFIER &&
+                                            prev.getType() != IToken.tLT &&
+                                            prev.getType() != IToken.tCOMPL &&
+                                            prev.getType() != IToken.tARROW &&
+                                            prev.getType() != IToken.tLBRACKET && 
+                                            token.getType() != IToken.tRBRACKET &&
+                                            token.getType()!= IToken.tGT
+                                         ){
+                                    name += ' ';
+                                } else {
+                                    encounteredWild = false;
+                                }
+                                
+                                name += token.getImage();
+                                
+                                if( encounteredWild && idx < pattern.length - 1 && CharOperation.isWhitespace( pattern[ idx + 1 ] ) )
+                                {
+                                    name += ' ';
+                                }
+                                idx += token.getLength();
+                                while( idx < pattern.length && CharOperation.isWhitespace( pattern[idx] ) ){ idx++; }
+                                
+                                lastTokenWasOperator = false;
+                                break;
+                        }
+                        prev = token;
+                        
+                        token = null;
+                        while( token == null ){
+                            token = scanner.nextToken();
+                            if( callback.badCharacterOffset != -1 && token.getOffset() > callback.badCharacterOffset ){
+                                //TODO : This may not be \\, it could be another bad character
+                                if( !encounteredWild && !lastTokenWasOperator && prev.getType() != IToken.tARROW ) name += " "; //$NON-NLS-1$
+                                name += "\\"; //$NON-NLS-1$
+                                idx++;
+                                encounteredWild = true;
+                                lastTokenWasOperator = false;
+                                prev = null;
+                                callback.badCharacterOffset = -1;
+                            }
+                        }
+                    }
+                } catch (EndOfFileException e) {    
+                    nameList.add( name.toCharArray() );
+                }
+            }
+        }        
+        return (char[][]) nameList.toArray(new char [nameList.size()] []);
+    }
+
+
+    /**
 	 * @param scanner
 	 * @param object
 	 * @return
 	 */
-	public static LinkedList scanForParameters( String paramString ) {
-		LinkedList list = new LinkedList();
-		
+	public static char[][] scanForParameters( String paramString ) {
+	    char[][] rv = new char[0][];
+        
 		if( paramString == null || paramString.equals("") ) //$NON-NLS-1$
-			return list;
+			return rv;
 		
 		String functionString = "void f " + paramString + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 				
-		IScanner scanner=null;
-		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();
-		try {
-			scanner =
-				ParserFactory.createScanner(
-					new CodeReader(functionString.toCharArray()),
-					new ScannerInfo(),
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP,
-					callback,new NullLogService(), null);
-		} catch (ParserFactoryError e1) {
-		}
-					   
-		IParser parser=null;
-		try {
-			parser =
-				ParserFactory.createParser(
-					scanner,
-					callback,
-					ParserMode.QUICK_PARSE,
-					ParserLanguage.CPP, ParserUtil.getParserLogService());
-		} catch (ParserFactoryError e2) {
-		} 
-
-		if( parser.parse() ){
-			IASTCompilationUnit compUnit = callback.getCompilationUnit();
-			Iterator declarations = null;
-			try {
-				declarations = compUnit.getDeclarations();
-			} catch (ASTNotImplementedException e) {
-			}
-			
-			if( declarations == null || ! declarations.hasNext() )
-				return null;
-			
-			IASTDeclaration decl = (IASTDeclaration) declarations.next();
-			if( !(decl instanceof IASTFunction) ){
-				//if the user puts something not so good in the brackets, we might not get a function back
-				return list;
-			}
-			
-			IASTFunction function = (IASTFunction) decl;
-			
-			String [] paramTypes = ASTUtil.getFunctionParameterTypes(function);
-			if( paramTypes.length == 0 )
-			{
-				//This means that no params have been added (i.e. empty brackets - void case)
-				list.add ("void".toCharArray() ); //$NON-NLS-1$ 
-			} else {
-				for( int i = 0; i < paramTypes.length; i++ ){
-					list.add( paramTypes[i].toCharArray() );
-				}
-			}
-		}
-		
-		return list;
+        try {
+            IASTTranslationUnit tu = parse(functionString);
+            if (tu != null) {
+                IASTDeclaration[] decls = tu.getDeclarations();
+                for (int i = 0; i < decls.length; i++) {
+                    IASTDeclaration decl = decls[i];
+                    if (decl instanceof IASTSimpleDeclaration) {
+                        IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) decl;
+                        IASTDeclarator[] declarators = simpleDecl.getDeclarators();
+                        for (int j = 0; j < declarators.length; j++) {
+                            String[] parameters = ASTSignatureUtil.getParameterSignatureArray(declarators[j]);
+                            rv = new char[parameters.length][];
+                            for (int k = 0; k < parameters.length; k++) {
+                                rv[k] = parameters[k].toCharArray();
+                            }
+                            // take first set of parameters only
+                            break;   
+                        }
+                    }
+                    // take first declaration only
+                    break;
+                }
+            }
+        }
+        catch (ParserException e) {
+        }
+        
+		return rv;
 	}
 		
-	static private LinkedList scanForNames( IScanner scanner, Requestor callback, IToken unusedToken, char[] pattern ){
-		LinkedList list = new LinkedList();
-		
-		String name  = new String(""); //$NON-NLS-1$
-		int idx = 0;
-		
-		try {
-			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
-			IToken prev = null;
-
-			boolean encounteredWild = false;
-			boolean lastTokenWasOperator = false;
-			
-			while( true ){
-				switch( token.getType() ){
-					case IToken.tCOLONCOLON :
-						list.addLast( name.toCharArray() );
-						name = new String(""); //$NON-NLS-1$
-						lastTokenWasOperator = false;
-						idx += token.getLength();
-						while( idx < pattern.length && CharOperation.isWhitespace( pattern[idx] ) ){ idx++; }
-						break;
-					
-					case IToken.t_operator :
-						name += token.getImage();
-						name += ' ';
-						lastTokenWasOperator = true;
-						idx += token.getLength();
-						while( idx < pattern.length && CharOperation.isWhitespace( pattern[idx] ) ){ idx++; }
-						break;
-					
-					default:
-						if( token.getType() == IToken.tSTAR || 
-						    token.getType() == IToken.tQUESTION 
-						    )
-						{
-							if( idx > 0 && idx < pattern.length && CharOperation.isWhitespace( pattern[ idx - 1 ] ) && !lastTokenWasOperator )
-								name += ' ';
-							encounteredWild = true;
-						} else if( !encounteredWild && !lastTokenWasOperator && name.length() > 0 &&
-									prev.getType() != IToken.tIDENTIFIER &&
-									prev.getType() != IToken.tLT &&
-									prev.getType() != IToken.tCOMPL &&
-									prev.getType() != IToken.tARROW &&
-									prev.getType() != IToken.tLBRACKET && 
-									token.getType() != IToken.tRBRACKET &&
-									token.getType()!= IToken.tGT
-								 ){
-							name += ' ';
-						} else {
-							encounteredWild = false;
-						}
-						
-						name += token.getImage();
-						
-						if( encounteredWild && idx < pattern.length - 1 && CharOperation.isWhitespace( pattern[ idx + 1 ] ) )
-						{
-							name += ' ';
-						}
-						idx += token.getLength();
-						while( idx < pattern.length && CharOperation.isWhitespace( pattern[idx] ) ){ idx++; }
-						
-						lastTokenWasOperator = false;
-						break;
-				}
-				prev = token;
-				
-				token = null;
-				while( token == null ){
-				    token = scanner.nextToken();
-				    if( callback.badCharacterOffset != -1 && token.getOffset() > callback.badCharacterOffset ){
-				        //TODO : This may not be \\, it could be another bad character
-						if( !encounteredWild && !lastTokenWasOperator && prev.getType() != IToken.tARROW ) name += " "; //$NON-NLS-1$
-						name += "\\"; //$NON-NLS-1$
-						idx++;
-						encounteredWild = true;
-						lastTokenWasOperator = false;
-						prev = null;
-						callback.badCharacterOffset = -1;
-				    }
-				}
-			}
-		} catch (EndOfFileException e) {	
-			list.addLast( name.toCharArray() );
-		} 
-		
-		return list;	
-	}
-	
 	protected boolean matchesName( char[] pattern, char[] name ){
 		if( pattern == null ){
 			return true;  //treat null as "*"
@@ -756,4 +669,70 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	protected int 		_matchMode;
 	protected boolean 	_caseSensitive;
 	protected LimitTo   _limitTo;
+    
+
+    protected static IASTTranslationUnit parse( String code ) throws ParserException {
+        return parse(code, ParserLanguage.CPP);
+    }
+    
+    /**
+     * @param string
+     * @param c
+     * @return
+     * @throws ParserException
+     */
+    protected static IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
+        IParserLogService NULL_LOG = new NullLogService();
+        CodeReader codeReader = new CodeReader(code .toCharArray());
+        ScannerInfo scannerInfo = new ScannerInfo();
+        IScannerExtensionConfiguration configuration = null;
+        if( lang == ParserLanguage.C )
+            configuration = new GCCScannerExtensionConfiguration();
+        else
+            configuration = new GPPScannerExtensionConfiguration();
+        IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, FileCodeReaderFactory.getInstance() );
+        
+        ISourceCodeParser parser2 = null;
+        if( lang == ParserLanguage.CPP )
+        {
+            ICPPParserExtensionConfiguration config = new ANSICPPParserExtensionConfiguration();
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config );
+        }
+        else {
+            ICParserExtensionConfiguration config = new ANSICParserExtensionConfiguration();
+            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config );
+        }
+        
+        IASTTranslationUnit tu = parser2.parse();
+
+        if( parser2.encounteredError())
+            throw new ParserException( "FAILURE"); //$NON-NLS-1$
+         
+        return tu;
+    }
+
+    protected static IScanner createScanner( String code, ISourceElementRequestor callback ) {
+        return createScanner(code, callback, ParserLanguage.CPP);
+    }
+
+    /**
+     * @param code
+     * @param callback 
+     * @param lang
+     * @return
+     */
+    protected static IScanner createScanner( String code, ISourceElementRequestor callback, ParserLanguage lang ) {
+        IScanner scanner = null;
+        try {
+            scanner = ParserFactory.createScanner(
+                    new CodeReader(code.toCharArray()),
+                    new ScannerInfo(),
+                    ParserMode.QUICK_PARSE,
+                    lang, callback, nullLog, null);
+        } 
+        catch (ParserFactoryError e) {
+        }
+        return scanner;
+    }
+
 }

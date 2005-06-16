@@ -176,7 +176,7 @@ public class DOMSourceIndexerTests extends TestCase implements IIndexChangeListe
 		suite.addTest(new FailingTest(new DOMSourceIndexerTests("testIndexContents"))); //$NON-NLS-1$
 		suite.addTest(new DOMSourceIndexerTests("testMacros")); //$NON-NLS-1$
 		suite.addTest(new FailingTest(new DOMSourceIndexerTests("testRefs"))); //$NON-NLS-1$
-		suite.addTest(new FailingTest(new DOMSourceIndexerTests("testExactDeclarations"))); //$NON-NLS-1$
+		suite.addTest(new DOMSourceIndexerTests("testExactDeclarations")); //$NON-NLS-1$
 		suite.addTest(new FailingTest(new DOMSourceIndexerTests("testRemoveFileFromIndex"))); //$NON-NLS-1$
 		suite.addTest(new DOMSourceIndexerTests("testRemoveProjectFromIndex")); //$NON-NLS-1$
 		suite.addTest(new DOMSourceIndexerTests("testIndexShutdown")); //$NON-NLS-1$

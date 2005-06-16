@@ -52,18 +52,21 @@ public class MethodDeclarationPattern extends CSearchPattern {
 	private char[][] parameterNames;
 	private char[]   simpleName;
 	private char[][] qualifications;
-
+	private char[]   returnTypes;
+	
 	private char[]   decodedSimpleName;
 	private char[][] decodedQualifications;
 	private char[][] decodedParameters;
+	private char[]   decodedReturnTypes;
 	
-	public MethodDeclarationPattern(char[] name, char[][] qual, char [][] params, int matchMode, SearchFor search, LimitTo limitTo, boolean caseSensitive) {
+	public MethodDeclarationPattern(char[] name, char[][] qual, char [][] params, char[] returnTypes, int matchMode, SearchFor search, LimitTo limitTo, boolean caseSensitive) {
 		//super( name, params, matchMode, limitTo, caseSensitive );
 		super( matchMode, caseSensitive, limitTo );
 
 		qualifications = qual;
 		simpleName = name;
 		parameterNames = params;
+		this.returnTypes = returnTypes;
 		
 		searchFor = search;
 	}
@@ -167,6 +170,28 @@ public class MethodDeclarationPattern extends CSearchPattern {
 				}
 			}
 			
+			//Check for return type
+			boolean returnTypeExists=false;
+			int returnStart=0;
+			int returnEnd=0;
+			if (end != 0 && 
+				end<missmatch.length){
+				//Make sure that we have a parameter string and that there is still something left
+				//to be decoded
+				
+				for (int j=end; j<missmatch.length; j++){
+				    if (missmatch[j].equals("R(")){	 //$NON-NLS-1$
+				        returnStart=j;
+				        returnTypeExists=true;
+				    }
+				  
+				    if (missmatch[j].equals(")R")){	 //$NON-NLS-1$
+				        returnEnd=j;
+				        break;
+				    }
+				}
+			}
+			
 			if (parmsExist){
 				this.decodedParameters = new char[end - (start + 1)][];
 				
@@ -174,9 +199,9 @@ public class MethodDeclarationPattern extends CSearchPattern {
 				for (int i=start+1; i<end; i++){
 					decodedParameters[counter++]=missmatch[i].toCharArray();
 				}
-				this.decodedQualifications = new char[missmatch.length - (end + 1)][];
+				this.decodedQualifications = new char[missmatch.length - (returnEnd + 1)][];
 				counter=0;
-				for (int i = end + 1; i < missmatch.length; i++)
+				for (int i = returnEnd + 1; i < missmatch.length; i++)
 					this.decodedQualifications[counter++] = missmatch[i].toCharArray();
 			} else {
 				this.decodedParameters = new char[0][];
@@ -185,6 +210,9 @@ public class MethodDeclarationPattern extends CSearchPattern {
 					this.decodedQualifications[i] = missmatch[i].toCharArray();
 			}
 			
+			if (returnTypeExists){
+				this.returnTypes = missmatch[returnStart + 1].toCharArray();
+			}
 		}
 			
 	}
@@ -205,9 +233,25 @@ public class MethodDeclarationPattern extends CSearchPattern {
 			return false;
 		}
 		
+		if (!matchReturnType(returnTypes, decodedReturnTypes)){
+			return false;
+		}
 		return true;
 	}
 	
+	/**
+	 * @param returnTypes
+	 * @param decodedReturnTypes
+	 * @return
+	 */
+	private boolean matchReturnType(char[] returnTypes, char[] decodedReturnTypes) {
+		if( returnTypes == null || decodedReturnTypes == null ){
+			return true;  //treat null as "*"
+		}
+	
+		return CharOperation.equals( returnTypes, decodedReturnTypes, true);
+	}
+
 	private boolean matchParameters(char[][] parameterNames2, char[][] decodedParameters2) {
 		
 		if (parameterNames2.length == 0)

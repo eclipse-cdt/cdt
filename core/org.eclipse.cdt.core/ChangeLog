@@ -1,3 +1,19 @@
+2005-06-16 Vladimir Hirsl
+	Fix for PR 99433: [Search]  Return parms not part of qualification matching
+	Function/methos parameters are now used as a part of search pattern.
+	Note: return parameters are NOT used as a part of search pattern. The PR title
+	is somewhat missleading.
+	
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagEntry.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexEncoderUtil.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexVisitorUtil.java
+	* search/org/eclipse/cdt/core/search/BasicSearchMatch.java
+	* search/org/eclipse/cdt/core/search/DOMSearchUtil.java
+	* search/org/eclipse/cdt/internal/core/search/matching/CSearchPattern.java
+	* search/org/eclipse/cdt/internal/core/search/matching/MethodDeclarationPattern.java
+			
 2005-06-14 David Inglis
 	
 	Support for older cygpaths - bug # 94702

@@ -102,49 +102,15 @@ public class DOMSearchUtil {
 		
         // build the SearchFor/pattern based on the IBinding
         SearchFor searchFor = createSearchFor(binding);
-        if (binding instanceof IFunction) {
-            searchFor = ICSearchConstants.FUNCTION;
-        } else if (binding instanceof ICPPNamespace || binding instanceof ICPPNamespaceAlias) {
-            searchFor = ICSearchConstants.NAMESPACE;
-        } else if (binding instanceof ICPPField) {
-            searchFor = ICSearchConstants.FIELD;
-        } else if (binding instanceof IEnumerator) {
-            searchFor = ICSearchConstants.ENUMTOR;
-        } else if (binding instanceof ICPPMethod) {
-            searchFor = ICSearchConstants.METHOD;
-        } else if (binding instanceof IMacroBinding) {
-            searchFor = ICSearchConstants.MACRO;
-        } else if (binding instanceof ITypedef) {
-            searchFor = ICSearchConstants.TYPEDEF;
-        } else if (binding instanceof IVariable) {
-            searchFor = ICSearchConstants.VAR;
-        } else if (binding instanceof ICPPClassType) {
-            searchFor = ICSearchConstants.CLASS;
-        } else if (binding instanceof ICompositeType) {
-            try {
-                switch(((ICompositeType)binding).getKey()) {
-                case ICompositeType.k_struct:
-                    searchFor = ICSearchConstants.CLASS_STRUCT;
-                    break;
-                case ICompositeType.k_union:
-                    searchFor = ICSearchConstants.UNION;
-                    break;
-                }
-            } catch (DOMException e) {
-                searchFor = ICSearchConstants.UNKNOWN_SEARCH_FOR;
-            }
-        } else if (binding instanceof IEnumeration) {
-            searchFor = ICSearchConstants.ENUM;
-        } else {
-            searchFor = ICSearchConstants.UNKNOWN_SEARCH_FOR;
-        }
         
         return CSearchPattern.createPattern(DOMSearchUtil.getSearchPattern(searchName), searchFor, limitTo, ICSearchConstants.EXACT_MATCH, caseSensitive);
     }
     
     private static SearchFor createSearchFor( IBinding binding ) {
         SearchFor searchFor = null;
-        if (binding instanceof IFunction) {
+    	if (binding instanceof ICPPMethod) {
+    		searchFor = ICSearchConstants.METHOD;
+    	} else if (binding instanceof IFunction) {
             searchFor = ICSearchConstants.FUNCTION;
         } else if (binding instanceof ICPPNamespace || binding instanceof ICPPNamespaceAlias) {
             searchFor = ICSearchConstants.NAMESPACE;
@@ -152,8 +118,6 @@ public class DOMSearchUtil {
             searchFor = ICSearchConstants.FIELD;
         } else if (binding instanceof IEnumerator) {
             searchFor = ICSearchConstants.ENUMTOR;
-        } else if (binding instanceof ICPPMethod) {
-            searchFor = ICSearchConstants.METHOD;
         } else if (binding instanceof IMacroBinding) {
             searchFor = ICSearchConstants.MACRO;
         } else if (binding instanceof ITypedef) {

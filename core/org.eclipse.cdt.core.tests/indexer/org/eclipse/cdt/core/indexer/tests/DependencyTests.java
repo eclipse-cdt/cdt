@@ -82,9 +82,9 @@ import org.eclipse.core.runtime.Platform;
 		//suite.addTest(new DependencyTests("testDepTable"));
 		suite.addTest(new DependencyTests("testDepSourceChangeTree"));
 		suite.addTest(new DependencyTests("testDepHeaderChangeTree"));
-		suite.addTest(new FailingTest(new DependencyTests("testDepHeaderChangeReindex")));
-		suite.addTest(new FailingTest(new DependencyTests("testDepSourceChangeTable")));
-		suite.addTest(new FailingTest(new DependencyTests("testDepHeaderChangeTable")));
+		suite.addTest(new DependencyTests("testDepHeaderChangeReindex"));
+		suite.addTest(new DependencyTests("testDepSourceChangeTable"));
+		suite.addTest(new DependencyTests("testDepHeaderChangeTable"));
 		suite.addTest(new DependencyTests("testUpdateDependancyNPE"));
 		return suite;
 	}

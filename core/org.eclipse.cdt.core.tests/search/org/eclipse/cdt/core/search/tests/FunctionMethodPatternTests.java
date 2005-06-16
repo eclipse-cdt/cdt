@@ -114,7 +114,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( 2, matches.size());
 		
-		pattern = SearchEngine.createSearchPattern( "turn(void)", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
+		pattern = SearchEngine.createSearchPattern( "turn(void)", METHOD, DECLARATIONS_DEFINITIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
@@ -129,7 +129,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 	}
 	
 	public void testOperators_bug43063_bug42979(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "operator \\*", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "operator \\*", METHOD, DECLARATIONS_DEFINITIONS, true ); //$NON-NLS-1$
 		
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
@@ -158,10 +158,15 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 
 		assertTrue( ((IOffsetLocatable)match1.getLocatable()).getNameStartOffset() != ((IOffsetLocatable)match2.getLocatable()).getNameStartOffset() );
 		
-		pattern = SearchEngine.createSearchPattern( "operator *", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
+        pattern = SearchEngine.createSearchPattern( "operator *", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
+        search( workspace, pattern, scope, resultCollector );
+        matches = resultCollector.getSearchResults();
+        assertEquals( matches.size(), 5 ); 
+        
+		pattern = SearchEngine.createSearchPattern( "operator *", METHOD, DECLARATIONS_DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 6 ); //3 in classDecl.cpp
+		assertEquals( matches.size(), 8 ); //2 in classDecl.cpp
 		
 		pattern = SearchEngine.createSearchPattern( "operator ->\\*", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		assertTrue( pattern instanceof MethodDeclarationPattern );		
@@ -214,13 +219,13 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 	}
 	
 	public void testConstructorDestructor(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", METHOD, DECLARATIONS_DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 		
-		pattern = SearchEngine.createSearchPattern( "~A", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
+		pattern = SearchEngine.createSearchPattern( "~A", METHOD, DECLARATIONS_DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 
 		matches = resultCollector.getSearchResults();
@@ -228,7 +233,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 	}
 	
 	public void testLookupForDefinition(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "turn", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "turn", METHOD, DECLARATIONS_DEFINITIONS, true ); //$NON-NLS-1$
 		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 3 );

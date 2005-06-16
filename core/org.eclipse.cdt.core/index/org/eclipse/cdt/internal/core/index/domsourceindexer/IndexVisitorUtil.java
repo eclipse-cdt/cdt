@@ -10,12 +10,11 @@
  ***********************************************************************/
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -180,32 +179,31 @@ public class IndexVisitorUtil {
     }
 
     /**
-     * @param function
+     * @param functionName
      * @return
      */
-    static char[][] getParameters(IFunction function) {
-        List parameterList = new ArrayList();
-        try {
-            IFunctionType functionType = function.getType();
-            IType[] parameterTypes = functionType.getParameterTypes();
-            for (int i = 0; i < parameterTypes.length; i++) {
-                IType parameterType = parameterTypes[i];
-                parameterList.add(ASTTypeUtil.getType(parameterType).toCharArray());
+    public static char[][] getParameters(IASTName functionName) {
+        IASTNode parent = functionName.getParent();
+        if (parent instanceof IASTDeclarator) {
+            IASTDeclarator declarator = (IASTDeclarator) parent;
+            String[] parameters = ASTSignatureUtil.getParameterSignatureArray(declarator);
+            if (parameters.length == 0) {
+                return new char[][] { "void".toCharArray() }; //$NON-NLS-1$
             }
-            if (parameterList.isEmpty()) {
-                parameterList.add("void".toCharArray()); //$NON-NLS-1$
+            char[][] rv = new char[parameters.length][];
+            for (int k = 0; k < parameters.length; k++) {
+                rv[k] = parameters[k].toCharArray();
             }
+            return rv;
         }
-        catch (DOMException e) {
-        }
-        return (char[][]) parameterList.toArray(new char[parameterList.size()][]);
+        return new char[0][];
     }
-    
+            
     /**
      * @param function
      * @return
      */
-    static char[] getReturnType(IFunction function) {
+    public static char[] getReturnType(IFunction function) {
         try {
             IFunctionType functionType = function.getType();
             IType returnType = functionType.getReturnType();

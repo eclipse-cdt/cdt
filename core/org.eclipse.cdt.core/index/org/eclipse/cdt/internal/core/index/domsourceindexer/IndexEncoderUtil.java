@@ -39,14 +39,14 @@ public class IndexEncoderUtil {
             String filePath = ""; //$NON-NLS-1$
             if (tempFile != null){
                 //File is local to workspace
-                filePath = tempFile.getFullPath().toOSString();
+                filePath = tempFile.getFullPath().toString();
             }
             else {
 				//File is external to workspace
                 filePath = fileName;
             }
             
-            if (!filePath.equals(indexer.getResourceFile().getFullPath().toOSString())) {
+            if (!filePath.equals(indexer.getResourceFile().getFullPath().toString())) {
 	            //We are not in the file that has triggered the index. Thus, we need to find the
 	            //file number for the current file (if it has one). If the current file does not
 	            //have a file number, we need to add it to the index.

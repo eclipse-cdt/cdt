@@ -28,6 +28,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	String parentName  = null;
 	String[] qualifiedName;
 	
+    String[] parameters;
 	String returnType;
 
 	IResource resource = null;
@@ -194,7 +195,11 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		return parentName;
 	}
 
-	public String getReturnType() {
+	public String[] getParameters() {
+	    return parameters;   
+    }
+    
+    public String getReturnType() {
 		return returnType;
 	}
 
@@ -266,7 +271,11 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		parentName = string;
 	}
 
-	/**
+	public void setParameters(String[] params) {
+	    parameters = params;
+    }
+    
+    /**
 	 * @param string
 	 */
 	public void setReturnType(String string) {

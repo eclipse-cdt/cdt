@@ -1,3 +1,12 @@
+2005-06-16 Vladimir Hirsl
+	Updated search related tests to reflect function parameters in search pattern.
+	
+	* indexer/org/eclipse/cdt/core/indexer/tests/DependencyTests.java
+	* indexer/org/eclipse/cdt/core/indexer/tests/DOMSourceIndexerTests.java
+	* regression/org/eclipse/cdt/core/tests/SearchRegressionTests.java
+	* search/org/eclipse/cdt/core/search/tests/FunctionMethodPatternTests.java
+	* search/org/eclipse/cdt/core/search/tests/SearchTestSuite.java
+	
 2005-06-08 Alain Magloire
 	Remove the ResolverModelTest
 	- misc/org/eclipse/cdt/core/filetype/tests/ResolverTeste.java

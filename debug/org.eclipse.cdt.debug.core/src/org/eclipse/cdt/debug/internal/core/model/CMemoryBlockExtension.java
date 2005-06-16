@@ -192,7 +192,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	private boolean isBigEndian() {
 		IExecFileInfo info = (IExecFileInfo)getDebugTarget().getAdapter( IExecFileInfo.class );
 		if ( info != null ) {
-			return info.isLittleEndian();
+			return !info.isLittleEndian();
 		}
 		return false;
 	}

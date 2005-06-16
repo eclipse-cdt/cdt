@@ -5311,4 +5311,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTDeclaration simpleDeclaration() throws BacktrackException, EndOfFileException {
         return simpleDeclarationStrategyUnion();
     }
+
+    protected IASTExpression unaryOperatorCastExpression(int operator) throws EndOfFileException, BacktrackException {
+        IToken mark = mark();
+        int offset = consume().getOffset();
+        IASTExpression castExpression = castExpression();
+        if( castExpression instanceof IASTLiteralExpression && ( operator == IASTUnaryExpression.op_amper || operator == IASTUnaryExpression.op_star ) )
+        {
+            IASTLiteralExpression literal = (IASTLiteralExpression) castExpression;
+            if( literal.getKind() != ICPPASTLiteralExpression.lk_this )
+            {
+                backup( mark );
+                throwBacktrack( mark );
+            }
+        }
+        return buildUnaryExpression(operator, castExpression, offset,
+                calculateEndOffset(castExpression));
+    }
 }

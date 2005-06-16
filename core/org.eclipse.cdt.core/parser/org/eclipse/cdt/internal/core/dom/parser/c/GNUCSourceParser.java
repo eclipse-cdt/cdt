@@ -2778,5 +2778,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return result;
     }
 
+    protected IASTExpression unaryOperatorCastExpression(int operator) throws EndOfFileException, BacktrackException {
+        IToken mark = mark();
+        int offset = consume().getOffset();
+        IASTExpression castExpression = castExpression();
+        if( castExpression instanceof IASTLiteralExpression && ( operator == IASTUnaryExpression.op_amper || operator == IASTUnaryExpression.op_star ) )
+        {
+            backup( mark );
+            throwBacktrack( mark );
+        }
+        return buildUnaryExpression(operator, castExpression, offset,
+                calculateEndOffset(castExpression));
+    }
+
 
 }

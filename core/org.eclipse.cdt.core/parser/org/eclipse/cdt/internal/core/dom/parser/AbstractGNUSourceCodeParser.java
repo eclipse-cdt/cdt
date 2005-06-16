@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
-import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -892,20 +891,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @return
      */
     protected abstract IASTConditionalExpression createConditionalExpression();
-
-    protected IASTExpression unaryOperatorCastExpression(int operator)
-            throws EndOfFileException, BacktrackException {
-        IToken mark = mark();
-        int offset = consume().getOffset();
-        IASTExpression castExpression = castExpression();
-        if( castExpression instanceof IASTLiteralExpression && operator == IASTUnaryExpression.op_amper )
-        {
-            backup( mark );
-            throwBacktrack( mark );
-        }
-        return buildUnaryExpression(operator, castExpression, offset,
-                calculateEndOffset(castExpression));
-    }
 
     /**
      * @param operator

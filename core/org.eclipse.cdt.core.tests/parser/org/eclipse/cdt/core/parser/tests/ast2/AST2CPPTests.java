@@ -4756,4 +4756,11 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertTrue(((IASTIdExpression)((IASTFunctionCallExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[1]).getBody()).getStatements()[0]).getReturnValue()).getFunctionNameExpression()).getName().resolveBinding() instanceof IFunction);
     }
 
+    public void testBug100408() throws Exception {
+        IASTTranslationUnit tu = parse( "int foo() { int x=1; (x)*3; }", ParserLanguage.CPP ); 
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        assertNoProblemBindings( col );
+    }
+    
 }

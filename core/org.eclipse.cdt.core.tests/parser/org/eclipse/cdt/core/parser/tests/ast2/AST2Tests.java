@@ -3195,4 +3195,12 @@ public class AST2Tests extends AST2BaseTest {
         assertSame( a1, a2 );
         assertNotSame( a2, a3 );
     }
+    
+    public void testBug100408() throws Exception {
+        IASTTranslationUnit tu = parse( "int foo() { int x=1; (x)*3; }", ParserLanguage.C ); 
+        CNameCollector col = new CNameCollector();
+        tu.accept(  col );
+        assertNoProblemBindings( col );
+    }
+    
 }

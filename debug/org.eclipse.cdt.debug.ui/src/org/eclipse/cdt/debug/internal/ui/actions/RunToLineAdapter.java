@@ -96,7 +96,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
 				final IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				if ( target instanceof IAdaptable ) {
+				if ( address != null && target instanceof IAdaptable ) {
 					final IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
 					if ( runToAddress != null && runToAddress.canRunToAddress( address ) ) {
 						Runnable r = new Runnable() {

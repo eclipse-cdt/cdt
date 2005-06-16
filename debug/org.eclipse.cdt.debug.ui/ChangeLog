@@ -1,4 +1,9 @@
 2005-06-12 Mikhail Khodjaiants
+	Bug 100447: NPE generated when Run To Line in Disassembly view.
+	* ResumeAtLineAdapter.java
+	* RunToLineAdapter.java
+
+2005-06-12 Mikhail Khodjaiants
 	Temporary fix for bug 79872: Make instruction stepping default in disassembly view.
 	* DisassemblyView.java
 

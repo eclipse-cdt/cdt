@@ -93,7 +93,7 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
 				final IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				if ( target instanceof IAdaptable ) {
+				if ( address != null && target instanceof IAdaptable ) {
 					final IJumpToAddress jumpToAddress = (IJumpToAddress)((IAdaptable)target).getAdapter( IJumpToAddress.class );
 					if ( jumpToAddress != null && jumpToAddress.canJumpToAddress( address ) ) {
 						Runnable r = new Runnable() {

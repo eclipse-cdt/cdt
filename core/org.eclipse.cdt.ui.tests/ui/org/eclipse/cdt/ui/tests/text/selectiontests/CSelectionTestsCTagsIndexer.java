@@ -142,15 +142,11 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 			assertEquals(((TextSelection)def).getOffset(), header.indexOf("int x() { return 1; }\n"));
 			assertEquals(((TextSelection)def).getLength(), "int x() { return 1; }\n".length());
 		}
-		try {
-			// TODO raised bug 97079
-			ISelection decl = testF3Selection(file, offset);
-			if (decl instanceof TextSelection) {
-				assertEquals(((TextSelection)decl).getOffset(), header.indexOf("int x() { return 1; }\n"));
-				assertEquals(((TextSelection)decl).getLength(), "int x() { return 1; }\n".length());
-			}
-			assertFalse(true); // when this fails then the test is passing correctly
-		} catch (AssertionFailedError afe) {}
+		ISelection decl = testF3Selection(file, offset);
+		if (decl instanceof TextSelection) {
+			assertEquals(((TextSelection)decl).getOffset(), header.indexOf("int x() { return 1; }\n"));
+			assertEquals(((TextSelection)decl).getLength(), "int x() { return 1; }\n".length());
+		}
 	}
 
 	public void testSimpleOpenDeclaration2() throws Exception {
@@ -165,15 +161,11 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 			assertEquals(((TextSelection)def).getOffset(), header.indexOf("int y() { return 1; }\r\n"));
 			assertEquals(((TextSelection)def).getLength(), "int y() { return 1; }\r\n".length());
 		}
-		try {
-			// TODO raised bug 97079
-			ISelection decl = testF3Selection(file, offset);
-			if (decl instanceof TextSelection) {
-				assertEquals(((TextSelection)decl).getOffset(), header.indexOf("int y() { return 1; }\r\n"));
-				assertEquals(((TextSelection)decl).getLength(), "int y() { return 1; }\r\n".length());
-			}		
-			assertFalse(true); // when this fails then the test is passing correctly
-		} catch (AssertionFailedError afe) {}
+		ISelection decl = testF3Selection(file, offset);
+		if (decl instanceof TextSelection) {
+			assertEquals(((TextSelection)decl).getOffset(), header.indexOf("int y() { return 1; }\r\n"));
+			assertEquals(((TextSelection)decl).getLength(), "int y() { return 1; }\r\n".length());
+		}		
 	}
 	
 	// perform the tests from CSelectionTestsNoIndexer and make sure they work with an indexer as well:
@@ -549,10 +541,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		offset = code.indexOf("anotherX; // declares anotherX"); //$NON-NLS-1$
         def = testF2(file, offset);
         decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96689
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
 
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "anotherX"); //$NON-NLS-1$
@@ -574,10 +563,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         int offset = code.indexOf("a1; // declares a"); //$NON-NLS-1$
         IASTNode def = testF2(file, offset);
         IASTNode decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96689
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
 
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "a1"); //$NON-NLS-1$
@@ -587,10 +573,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		offset = code.indexOf("c1; // declares c"); //$NON-NLS-1$
         def = testF2(file, offset);
         decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96689
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "c1"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 46);
@@ -608,10 +591,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		offset = code.indexOf("S1; // declares S"); //$NON-NLS-1$
         def = testF2(file, offset);
         decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96690
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "S1"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 98);
@@ -643,15 +623,11 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 			assertEquals(((TextSelection)def).getOffset(), header.indexOf(" int y() { return 1; } /* comment */ \r\n")); //$NON-NLS-1$
 			assertEquals(((TextSelection)def).getLength(), " int y() { return 1; } /* comment */ \r\n".length()); //$NON-NLS-1$
 		}
-		try {
-			// TODO raised bug 97079
-			ISelection decl = testF3Selection(file, offset);
-			if (decl instanceof TextSelection) {
-				assertEquals(((TextSelection)decl).getOffset(), header.indexOf(" int y() { return 1; } /* comment */ \r\n"));
-				assertEquals(((TextSelection)decl).getLength(), " int y() { return 1; } /* comment */ \r\n".length());
-			}		
-			assertFalse(true); // when this fails then the test is passing correctly
-		} catch (AssertionFailedError afe) {}
+		ISelection decl = testF3Selection(file, offset);
+		if (decl instanceof TextSelection) {
+			assertEquals(((TextSelection)decl).getOffset(), header.indexOf(" int y() { return 1; } /* comment */ \r\n"));
+			assertEquals(((TextSelection)decl).getLength(), " int y() { return 1; } /* comment */ \r\n".length());
+		}		
 	}
 	
     // REMINDER: see CSelectionTestsCTagsIndexer#suite() when appending new tests to this suite

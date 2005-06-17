@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -50,8 +51,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexVisitorUtil;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
@@ -459,6 +458,8 @@ public class DOMSearchUtil {
 				} catch (DOMException e) {
 					buffer.append(name.toString());
 				}
+			} else {
+				buffer.append(name.toString()); // if it's not an ICPPBinding then just use the name
 			}
 		}
 		// second option - traverse the tree
@@ -483,8 +484,8 @@ public class DOMSearchUtil {
 	            }
 	        }
 	        
-			if (name instanceof CPPASTName && name.getParent() instanceof CPPASTQualifiedName) {
-				IASTName[] names = ((CPPASTQualifiedName)name.getParent()).getNames();
+			if (name.getParent() instanceof ICPPASTQualifiedName) {
+				IASTName[] names = ((ICPPASTQualifiedName)name.getParent()).getNames();
 				for(int i=0; i<names.length; i++) {
 					if (i != 0) buffer.append("::"); //$NON-NLS-1$
 					buffer.append(names[i].toString());

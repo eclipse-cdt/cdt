@@ -132,13 +132,9 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		
 		int offset = code.indexOf("x();\n}\n");
 		IASTNode def = testF2(file, offset);
-		try {
-			// TODO raised bug 97079
-			assertTrue(def instanceof IASTName);
-			assertEquals(((ASTNode)def).getOffset(), header.indexOf("x")); //$NON-NLS-1$
-			assertEquals(((ASTNode)def).getLength(), "x".length()); //$NON-NLS-1$
-			assertTrue(false); // when this fails then the test is passing correctly
-		} catch (AssertionFailedError afe) {}
+		assertTrue(def instanceof IASTName);
+		assertEquals(((ASTNode)def).getOffset(), header.indexOf("x")); //$NON-NLS-1$
+		assertEquals(((ASTNode)def).getLength(), "x".length()); //$NON-NLS-1$
 		IASTNode decl = testF3(file, offset);
 		assertTrue(decl instanceof IASTName);
 		assertEquals(((ASTNode)decl).getOffset(), header.indexOf("x")); //$NON-NLS-1$
@@ -154,13 +150,9 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		
 		int offset = code.indexOf("y();\n}\n");
 		IASTNode def = testF2(file, offset);
-		try {
-			// TODO raised bug 97079
-			assertTrue(def instanceof IASTName);
-			assertEquals(((ASTNode)def).getOffset(), header.indexOf("y")); //$NON-NLS-1$
-			assertEquals(((ASTNode)def).getLength(), "y".length()); //$NON-NLS-1$
-			assertTrue(false); // when this fails then the test is passing correctly
-		} catch (AssertionFailedError afe) {}
+		assertTrue(def instanceof IASTName);
+		assertEquals(((ASTNode)def).getOffset(), header.indexOf("y")); //$NON-NLS-1$
+		assertEquals(((ASTNode)def).getLength(), "y".length()); //$NON-NLS-1$
 		IASTNode decl = testF3(file, offset);
 		assertTrue(decl instanceof IASTName);
 		assertEquals(((ASTNode)decl).getOffset(), header.indexOf("y")); //$NON-NLS-1$
@@ -541,10 +533,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		offset = code.indexOf("anotherX; // declares anotherX"); //$NON-NLS-1$
         def = testF2(file, offset);
         decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96689
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
 
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "anotherX"); //$NON-NLS-1$
@@ -566,10 +555,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
         int offset = code.indexOf("a1; // declares a"); //$NON-NLS-1$
         IASTNode def = testF2(file, offset);
         IASTNode decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96689
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
 
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "a1"); //$NON-NLS-1$
@@ -579,10 +565,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		offset = code.indexOf("c1; // declares c"); //$NON-NLS-1$
         def = testF2(file, offset);
         decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96689
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "c1"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 46);
@@ -600,10 +583,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		offset = code.indexOf("S1; // declares S"); //$NON-NLS-1$
         def = testF2(file, offset);
         decl = testF3(file, offset);
-        try {
-        	assertNull(def); // TODO raised bug 96690
-        	assertTrue(false); // try/catch/assertTrue(false) added to alert the tester when this test passes!
-        } catch (AssertionFailedError e) {}
+       	assertNull(def);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "S1"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 98);
@@ -631,13 +611,9 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		
 		int offset = code.indexOf("y();\n}\n");
 		IASTNode def = testF2(file, offset);
-		try {
-			// TODO raised bug 97079
-			assertTrue(def instanceof IASTName);
-			assertEquals(((ASTNode)def).getOffset(), header.indexOf("y")); //$NON-NLS-1$
-			assertEquals(((ASTNode)def).getLength(), "y".length()); //$NON-NLS-1$
-			assertTrue(false); // when this fails then the test is passing correctly
-		} catch (AssertionFailedError afe) {}
+		assertTrue(def instanceof IASTName);
+		assertEquals(((ASTNode)def).getOffset(), header.indexOf("y")); //$NON-NLS-1$
+		assertEquals(((ASTNode)def).getLength(), "y".length()); //$NON-NLS-1$
 		IASTNode decl = testF3(file, offset);
 		assertTrue(decl instanceof IASTName);
 		assertEquals(((ASTNode)decl).getOffset(), header.indexOf("y")); //$NON-NLS-1$

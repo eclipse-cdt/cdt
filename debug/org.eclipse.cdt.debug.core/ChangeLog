@@ -1,4 +1,10 @@
 2005-06-17 Mikhail Khodjaiants
+	Bug 99217: NPE thrown when fetching deffered children.
+	* CExpression.java
+	* CValueFactory.java
+	* CVariable.java
+
+2005-06-17 Mikhail Khodjaiants
 	Bug 100261: Memory veiw: Renderings content disappears when click on Vairable/Module... view.
 	* CDebugElement.java
 

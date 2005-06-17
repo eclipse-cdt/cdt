@@ -39,7 +39,7 @@ public class CExpression extends CVariable implements IExpression {
 	
 	private CStackFrame fStackFrame;
 
-	private IValue fValue;
+	private IValue fValue = CValueFactory.NULL_VALUE;
 
 	private ICType fType;
 
@@ -116,7 +116,7 @@ public class CExpression extends CVariable implements IExpression {
 	}
 
 	protected synchronized IValue getValue( CStackFrame context ) throws DebugException {
-		if ( fValue == null ) {
+		if ( fValue.equals( CValueFactory.NULL_VALUE ) ) {
 			if ( context.isSuspended() ) {
 				try {
 					ICDIValue value = fCDIExpression.getValue( context.getCDIStackFrame() );
@@ -156,7 +156,7 @@ public class CExpression extends CVariable implements IExpression {
 		if ( fValue instanceof AbstractCValue ) {
 			((AbstractCValue)fValue).reset();
 		}
-		fValue = null;
+		fValue = CValueFactory.NULL_VALUE;
 	}
 
 	/* (non-Javadoc)
@@ -180,7 +180,7 @@ public class CExpression extends CVariable implements IExpression {
 		}
 		if ( fValue instanceof AbstractCValue ) {
 			((AbstractCValue)fValue).dispose();
-			fValue = null;
+			fValue = CValueFactory.NULL_VALUE;
 		}
 		internalDispose( true );
 	}
@@ -190,11 +190,9 @@ public class CExpression extends CVariable implements IExpression {
 	 */
 	public ICType getType() throws DebugException {
 		if ( fType == null ) {
-			if ( fValue != null ) {
-				synchronized( this ) {
-					if ( fType == null ) {
-						fType = ((AbstractCValue)fValue).getType();
-					}
+			synchronized( this ) {
+				if ( fType == null ) {
+					fType = ((AbstractCValue)fValue).getType();
 				}
 			}
 		}

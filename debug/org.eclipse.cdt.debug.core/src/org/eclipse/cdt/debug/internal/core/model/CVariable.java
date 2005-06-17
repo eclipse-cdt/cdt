@@ -74,7 +74,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		/**
 		 * The cache of the current value.
 		 */
-		private ICValue fValue;
+		private ICValue fValue = CValueFactory.NULL_VALUE;
 
 		/**
 		 * The change flag.
@@ -224,7 +224,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		}
 
 		synchronized ICValue getValue() throws DebugException {
-			if ( fValue == null ) {
+			if ( fValue.equals( CValueFactory.NULL_VALUE ) ) {
 				ICDIVariable var = getCDIVariable();
 				if ( var != null ) {
 					try {
@@ -255,7 +255,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		void invalidateValue() {
 			if ( fValue instanceof AbstractCValue ) {
 				((AbstractCValue)fValue).dispose();
-				fValue = null;
+				fValue = CValueFactory.NULL_VALUE;
 			}
 		}
 
@@ -433,7 +433,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 				}
 			}
 		}
-		return null;
+		return CValueFactory.NULL_VALUE;
 	}
 
 	/*

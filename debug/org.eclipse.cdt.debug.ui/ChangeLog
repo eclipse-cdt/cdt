@@ -1,3 +1,7 @@
+2005-06-17 Mikhail Khodjaiants
+	Bug 99217: NPE thrown when fetching deffered children.
+	* CDebugModelPresentation.java
+
 2005-06-12 Mikhail Khodjaiants
 	Bug 100447: NPE generated when Run To Line in Disassembly view.
 	* ResumeAtLineAdapter.java

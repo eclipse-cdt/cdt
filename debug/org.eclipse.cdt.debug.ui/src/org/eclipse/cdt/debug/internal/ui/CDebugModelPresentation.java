@@ -659,13 +659,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			String name = var.getName();
 			if ( name != null )
 				label.append( name.trim() );
-			IValue value = var.getValue();
-			if ( value != null ) {
-				String valueString = getValueText( value );
-				if ( !isEmpty( valueString ) ) {
-					label.append( " = " ); //$NON-NLS-1$
-					label.append( valueString );
-				}
+			String valueString = getValueText( var.getValue() );
+			if ( !isEmpty( valueString ) ) {
+				label.append( " = " ); //$NON-NLS-1$
+				label.append( valueString );
 			}
 		}
 		return label.toString();

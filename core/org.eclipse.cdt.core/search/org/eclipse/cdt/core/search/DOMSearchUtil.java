@@ -19,9 +19,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -30,15 +30,14 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -53,6 +52,7 @@ import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
+import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexVisitorUtil;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -443,60 +443,72 @@ public class DOMSearchUtil {
 	 */
 	public static String getSearchPattern(IASTName name) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("::"); //$NON-NLS-1$
-        
-        String[] namespaces = null;
-        
-        IASTNode parent = name.getParent();
-        while(!(parent instanceof IASTTranslationUnit) && parent != null) {
-            if (parent instanceof ICPPASTNamespaceDefinition) {
-                namespaces = (String[])ArrayUtil.append(String.class, namespaces, ((ICPPASTNamespaceDefinition)parent).getName().toString());
-            }
-            parent = parent.getParent();
-        }
-        
-        if (namespaces != null && namespaces.length > 0) {
-            for( int i=namespaces.length-1; i>=0; i-- ) {
-                if (namespaces[i] != null) {
-                    buffer.append(namespaces[i]);
-                    buffer.append("::"); //$NON-NLS-1$
-                }
-            }
-        }
-        
-		if (name instanceof CPPASTName && name.getParent() instanceof CPPASTQualifiedName) {
-			IASTName[] names = ((CPPASTQualifiedName)name.getParent()).getNames();
-			for(int i=0; i<names.length; i++) {
-				if (i != 0) buffer.append("::"); //$NON-NLS-1$
-				buffer.append(names[i].toString());
-			}
-		} else {
-			buffer.append(name.toString());
-		}
-		
-	 	if( name.resolveBinding() instanceof IFunction ){
-			try {
-				IBinding binding = name.resolveBinding();
-				IFunctionType type = ((IFunction)binding).getType();
-				
-				buffer.append("("); //$NON-NLS-1$
-				if (binding instanceof ICExternalBinding) {
-					buffer.append("..."); //$NON-NLS-1$
-				} else {
-					IType[] parms = type.getParameterTypes();
-					for( int i = 0; i < parms.length; i++ ){
-						if( i != 0 )
-							buffer.append(", "); //$NON-NLS-1$
-						buffer.append(ASTTypeUtil.getType(parms[i]));
+		// first option - use binding to get qualified name
+		IBinding binding = name.resolveBinding();
+		if (! (binding instanceof IProblemBinding)) {
+			if (binding instanceof ICPPBinding) {
+				ICPPBinding cppBinding = (ICPPBinding) binding;
+				try {
+					String[] qualifiedName = cppBinding.getQualifiedName();
+					for (int i = 0; i < qualifiedName.length; i++) {
+						if (i != 0) {
+							buffer.append("::"); //$NON-NLS-1$
+						}
+						buffer.append(qualifiedName[i]);
 					}
+				} catch (DOMException e) {
+					buffer.append(name.toString());
 				}
-				buffer.append(")"); //$NON-NLS-1$
-			} catch (DOMException e) {
-				buffer = new StringBuffer();
+			}
+		}
+		// second option - traverse the tree
+		else {
+	        String[] namespaces = null;
+	        
+	        IASTNode parent = name.getParent();
+	        while(!(parent instanceof IASTTranslationUnit) && parent != null) {
+	            if (parent instanceof ICPPASTNamespaceDefinition) {
+	                namespaces = (String[])ArrayUtil.append(String.class, namespaces,
+	                		((ICPPASTNamespaceDefinition)parent).getName().toString());
+	            }
+	            parent = parent.getParent();
+	        }
+	        
+	        if (namespaces != null && namespaces.length > 0) {
+	            for( int i=namespaces.length-1; i>=0; i-- ) {
+	                if (namespaces[i] != null) {
+	                    buffer.append(namespaces[i]);
+	                    buffer.append("::"); //$NON-NLS-1$
+	                }
+	            }
+	        }
+	        
+			if (name instanceof CPPASTName && name.getParent() instanceof CPPASTQualifiedName) {
+				IASTName[] names = ((CPPASTQualifiedName)name.getParent()).getNames();
+				for(int i=0; i<names.length; i++) {
+					if (i != 0) buffer.append("::"); //$NON-NLS-1$
+					buffer.append(names[i].toString());
+				}
+			} else {
 				buffer.append(name.toString());
 			}
-	 	}
-
+			
+		}
+		// if function, get parameters
+		if (binding instanceof IFunction ||
+				(binding instanceof IProblemBinding &&
+						name.getParent() instanceof IASTFunctionDeclarator)) {
+			char[][] parameters = IndexVisitorUtil.getParameters(name);
+			buffer.append("("); //$NON-NLS-1$
+			for (int i = 0; i < parameters.length; i++) {
+				if (i != 0) {
+					buffer.append(", "); //$NON-NLS-1$
+				}
+				buffer.append(parameters[i]);
+			}
+			buffer.append(")"); //$NON-NLS-1$
+		}
+		
 		return buffer.toString();
 	}
 }

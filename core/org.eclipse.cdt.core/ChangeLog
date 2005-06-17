@@ -1,3 +1,10 @@
+2005-06-17 Vladimir Hirsl
+	Fix for 95174: [Search Engine][DOM AST Indexer] does not find definition of a method
+	
+	* index/org/eclipse/cdt/internal/core/index/cindexstorage/EntryResult.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexVisitorUtil.java
+	* search/org/eclipse/cdt/core/search/DOMSearchUtil.java
+
 2005-06-16 Vladimir Hirsl
 	Fix for PR 99433: [Search]  Return parms not part of qualification matching
 	Function/methos parameters are now used as a part of search pattern.

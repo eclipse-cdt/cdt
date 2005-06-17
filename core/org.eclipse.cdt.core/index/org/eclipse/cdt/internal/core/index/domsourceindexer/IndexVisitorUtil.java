@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -184,6 +185,9 @@ public class IndexVisitorUtil {
      */
     public static char[][] getParameters(IASTName functionName) {
         IASTNode parent = functionName.getParent();
+        if (parent instanceof ICPPASTQualifiedName) {
+        	parent = parent.getParent();
+        }
         if (parent instanceof IASTDeclarator) {
             IASTDeclarator declarator = (IASTDeclarator) parent;
             String[] parameters = ASTSignatureUtil.getParameterSignatureArray(declarator);

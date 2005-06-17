@@ -206,7 +206,10 @@ public String getDisplayString() {
 		int finishParam = longname.indexOf("/("); //$NON-NLS-1$
 		
 		String functionName;
-		String arguments = longname.substring(startParam + 2, finishParam);
+		String arguments = ""; //$NON-NLS-1$
+		if (startParam + 2 < finishParam) {
+			arguments = longname.substring(startParam + 2, finishParam);
+		}
 
 		// TODO: flip arguments
 		arguments = arguments.replace('/',',');
@@ -219,7 +222,10 @@ public String getDisplayString() {
 			return functionName + arguments ;
 		}
 		else {
-			String returnType = longname.substring(startReturn + 3, finishReturn);
+			String returnType = "";
+			if (startReturn + 3 < finishReturn) {
+				returnType = longname.substring(startReturn + 3, finishReturn);
+			}
 			functionName = longname.substring(0, startReturn -1);
 			return functionName + arguments + ':' + returnType;
 		}

@@ -202,14 +202,13 @@ public String getDisplayString() {
 	case IIndex.METHOD:
 		int startReturn = longname.indexOf(")R/"); //$NON-NLS-1$
 		int finishReturn = longname.indexOf("/R("); //$NON-NLS-1$
-		int startParam = longname.indexOf(")/"); //$NON-NLS-1$
-		int finishParam = longname.indexOf("/("); //$NON-NLS-1$
+		int startParam = longname.indexOf("/)", finishReturn); //$NON-NLS-1$
+		int finishParam = longname.indexOf("/(", startParam); //$NON-NLS-1$
 		
 		String functionName;
 		String arguments = ""; //$NON-NLS-1$
-		if (startParam + 2 < finishParam) {
-			arguments = longname.substring(startParam + 2, finishParam);
-		}
+		if (startParam + 2 < finishParam) 
+			arguments = longname.substring(startParam + 3, finishParam);
 
 		// TODO: flip arguments
 		arguments = arguments.replace('/',',');
@@ -222,7 +221,7 @@ public String getDisplayString() {
 			return functionName + arguments ;
 		}
 		else {
-			String returnType = "";
+			String returnType = ""; //$NON-NLS-1$
 			if (startReturn + 3 < finishReturn) {
 				returnType = longname.substring(startReturn + 3, finishReturn);
 			}

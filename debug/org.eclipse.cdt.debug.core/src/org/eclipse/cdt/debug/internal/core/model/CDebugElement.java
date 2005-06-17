@@ -31,6 +31,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 /**
  * The super class of all C/C++ debug model elements.
@@ -301,6 +302,9 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 			return getCDISession();
 		if ( adapter.equals( ICDebugTarget.class ) )
 			return getDebugTarget();
+		// See bug #100261
+		if ( adapter.equals( IMemoryBlockRetrieval.class ) )
+			return getDebugTarget().getAdapter( adapter );
 		return super.getAdapter( adapter );
 	}
 

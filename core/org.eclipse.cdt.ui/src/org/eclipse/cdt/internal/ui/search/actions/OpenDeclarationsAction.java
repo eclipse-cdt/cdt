@@ -166,7 +166,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 						// step 3 starts here
 						ICElement[] scope = new ICElement[1];
 						scope[0] = new CProject(null, fEditor.getInputFile().getProject());
-						Set matches = DOMSearchUtil.getMatchesFromSearchEngine(SearchEngine.createCSearchScope(scope), searchName, ICSearchConstants.DECLARATIONS);
+						Set matches = DOMSearchUtil.getMatchesFromSearchEngine(SearchEngine.createCSearchScope(scope), searchName, ICSearchConstants.DECLARATIONS_DEFINITIONS);
 
 						if (matches != null && matches.size() > 0) {
 							Iterator itr = matches.iterator();

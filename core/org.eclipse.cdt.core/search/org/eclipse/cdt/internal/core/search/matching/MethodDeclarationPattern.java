@@ -175,7 +175,7 @@ public class MethodDeclarationPattern extends CSearchPattern {
 			int returnStart=0;
 			int returnEnd=0;
 			if (end != 0 && 
-				end<missmatch.length){
+				(end+1)<missmatch.length){
 				//Make sure that we have a parameter string and that there is still something left
 				//to be decoded
 				
@@ -199,10 +199,18 @@ public class MethodDeclarationPattern extends CSearchPattern {
 				for (int i=start+1; i<end; i++){
 					decodedParameters[counter++]=missmatch[i].toCharArray();
 				}
-				this.decodedQualifications = new char[missmatch.length - (returnEnd + 1)][];
-				counter=0;
-				for (int i = returnEnd + 1; i < missmatch.length; i++)
-					this.decodedQualifications[counter++] = missmatch[i].toCharArray();
+				
+				if (returnEnd != 0){
+					this.decodedQualifications = new char[missmatch.length - (returnEnd + 1)][];
+					counter=0;
+					for (int i = returnEnd + 1; i < missmatch.length; i++)
+						this.decodedQualifications[counter++] = missmatch[i].toCharArray();
+				} else {
+					this.decodedQualifications = new char[missmatch.length - (end + 1)][];
+					counter=0;
+					for (int i = end + 1; i < missmatch.length; i++)
+						this.decodedQualifications[counter++] = missmatch[i].toCharArray();
+				}
 			} else {
 				this.decodedParameters = new char[0][];
 				this.decodedQualifications = new char[missmatch.length][];

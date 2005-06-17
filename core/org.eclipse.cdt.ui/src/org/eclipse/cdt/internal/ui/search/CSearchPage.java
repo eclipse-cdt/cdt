@@ -333,7 +333,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private void setLimitTo( List searchFor ) {
 		HashSet set = new HashSet();
 		
-		set.add( DECLARATIONS );
+		set.add( DECLARATIONS_DEFINITIONS );
 		set.add( REFERENCES );
 		set.add( ALL_OCCURRENCES );
 				
@@ -662,7 +662,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private Button[] fLimitTo;
 	private final static int LIMIT_TO_ALL = 3;
 	private final static int LIMIT_TO_DEFINITIONS = 1;
-	private LimitTo[] fLimitToValues = { DECLARATIONS, DEFINITIONS, REFERENCES, ALL_OCCURRENCES };
+	private LimitTo[] fLimitToValues = { DECLARATIONS_DEFINITIONS, DEFINITIONS, REFERENCES, ALL_OCCURRENCES };
 	private String[] fLimitToText= {
 		CSearchMessages.getString("CSearchPage.limitTo.declarations"), //$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.limitTo.definitions"), //$NON-NLS-1$

@@ -1255,33 +1255,6 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
-	 [--Start Example(C 6.7.7-6):
-	typedef signed int t;
-	typedef int plain;
-	struct tag {
-	unsigned t:4;
-	const t:5;
-	plain r:5;
-	};
-	t f(t (t));
-	long t;
-	 --End Example]
-	 */
-	public void test6_7_7s6() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("typedef signed int t;\n"); //$NON-NLS-1$
-		buffer.append("typedef int plain;\n"); //$NON-NLS-1$
-		buffer.append("struct tag {\n"); //$NON-NLS-1$
-		buffer.append("unsigned t:4;\n"); //$NON-NLS-1$
-		buffer.append("const t:5;\n"); //$NON-NLS-1$
-		buffer.append("plain r:5;\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("t f(t (t));\n"); //$NON-NLS-1$
-		buffer.append("long t;\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, 0);
-	}
-	
-	/**
 	 [--Start Example(C 6.7.7-7):
 	typedef void fv(int), (*pfv)(int);
 	void (*signal(int, void (*)(int)))(int);

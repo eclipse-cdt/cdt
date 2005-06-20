@@ -1076,9 +1076,9 @@ public class CVisitor {
 				IASTNode parent = node.getParent();
 				if( parent instanceof IASTStandardFunctionDeclarator ){
 					parent = ((IASTDeclarator)parent).getParent();
-					if ( parent instanceof IASTFunctionDefinition ) {
+					if ( parent instanceof IASTFunctionDefinition )
 						return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
-					}
+					return null;
 				}
 		    }
 		    else if( node instanceof IASTEnumerator ){

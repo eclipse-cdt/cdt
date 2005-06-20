@@ -391,7 +391,6 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		final ISymbol finalEnc = enclosing;
 		LookupData data = new LookupData( name ){
 			public ISymbol getStopAt() { return stopAt; }
-			public boolean shouldReturnInvisibleSymbols() {	return true; }
 			final private ISymbol stopAt = finalEnc;
 		};
 

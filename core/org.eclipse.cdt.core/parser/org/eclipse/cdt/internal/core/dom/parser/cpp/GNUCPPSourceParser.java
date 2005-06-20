@@ -2583,12 +2583,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             name.setParent(namespaceDefinition);
             name.setPropertyInParent(ICPPASTNamespaceDefinition.NAMESPACE_NAME);
 
-            namespaceDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
-                int checkToken = LA(1).hashCode();
+            namespaceDeclarationLoop: while (true) {
                 switch (LT(1)) {
                 case IToken.tRBRACE:
+                case IToken.tEOC:
                     break namespaceDeclarationLoop;
                 default:
+                    int checkToken = LA(1).hashCode();
                     try {
                         IASTDeclaration d = declaration();
                         d.setParent(namespaceDefinition);
@@ -2610,13 +2611,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         if (checkToken == LA(1).hashCode())
                             errorHandling();
                     }
+                    if (checkToken == LA(1).hashCode())
+                        failParseWithErrorHandling();
                 }
-                if (checkToken == LA(1).hashCode())
-                    failParseWithErrorHandling();
             }
 
             // consume the }
-            int end = consume(IToken.tRBRACE).getEndOffset();
+            int end = consume().getEndOffset();
             ((CPPASTNode) namespaceDefinition).setLength(end
                     - first.getOffset());
             return namespaceDefinition;

@@ -27,8 +27,6 @@ import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.LineLocatable;
-import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -175,16 +173,9 @@ public class ClassDeclarationPattern extends CSearchPattern {
 						}
 						match.setQualifiedName(qualifiedName);
 					}
-					//Don't forget that offsets are encoded ICIndexStorageConstants
-					//Offsets can either be LINE or OFFSET 
-					int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
-					if (offsetType==IIndex.LINE){
-						match.setLocatable(new LineLocatable(Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue(),0));
-					}else if (offsetType==IIndex.OFFSET){
-						int startOffset=Integer.valueOf(String.valueOf(offsets[i][j]).substring(1)).intValue();
-						int endOffset= startOffset + offsetLengths[i][j];
-						match.setLocatable(new OffsetLocatable(startOffset, endOffset));
-					}
+					//Decode the offsetse
+					//Offsets can either be IIndex.LINE or IIndex.OFFSET 
+					match.setLocatable(getMatchLocatable(offsets[i][j],offsetLengths[i][j]));
 					
 					match.setParentName(""); //$NON-NLS-1$
 					

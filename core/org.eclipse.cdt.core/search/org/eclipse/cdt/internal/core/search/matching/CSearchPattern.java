@@ -39,6 +39,9 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.IMatchLocatable;
+import org.eclipse.cdt.core.search.LineLocatable;
+import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
@@ -638,6 +641,34 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	   }
    }
 
+   /**
+    * Decodes the passed in offset and returns an IMatchLocatable object of the appropriate type
+    * (either IOffsetLocatable or ILineLocatable)
+    */
+   public static IMatchLocatable getMatchLocatable(int offset, int offsetLength){
+	   // pull off the first digit for the offset type
+        int encodedVal = offset;
+        int offsetType = encodedVal;
+        int m = 1;
+	    while (offsetType >= 10) {
+	      offsetType = offsetType / 10;
+	      m *= 10;
+	    }
+	    
+	    int startOffset = encodedVal - offsetType * m;
+	    int endOffset = startOffset + offsetLength;
+	    
+	    IMatchLocatable locatable = null;
+	    
+	    if (offsetType==IIndex.LINE){
+	    	locatable = new LineLocatable(startOffset,0);
+	    }else if (offsetType==IIndex.OFFSET){
+			locatable = new OffsetLocatable(startOffset, endOffset);
+		}
+	    
+	    return locatable;
+   }
+   
    /**
    * Feed the requestor according to the current search pattern
    */

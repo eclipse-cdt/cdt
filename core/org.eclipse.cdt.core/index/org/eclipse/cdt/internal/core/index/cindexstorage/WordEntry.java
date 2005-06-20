@@ -236,8 +236,14 @@ public class WordEntry {
      * @return
      */
     private int getEncodedNumber(int offsetType, int offset) {
-        String offsetString = Integer.toString(offsetType) + Integer.toString(offset);
-        return Integer.parseInt(offsetString);
+       /* String offsetString = Integer.toString(offsetType) + Integer.toString(offset);
+        return Integer.parseInt(offsetString);*/
+        
+        int m = 10;
+        while (m <= offset) {
+        	m = m * 10;
+        }
+        return m * offsetType + offset;
     }
     /**
      * @param filePosition

@@ -294,6 +294,17 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			}
 		}
 
+		boolean isEditable() throws DebugException {
+			ICDIVariable var = getCDIVariable();
+			if ( var != null ) {
+				try {
+					return var.isEditable();
+				}
+				catch( CDIException e ) {
+				}
+			}
+			return false;
+		}
 		/**
 		 * Compares the underlying variable objects.
 		 * @see java.lang.Object#equals(java.lang.Object)
@@ -556,7 +567,12 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
 	public boolean supportsValueModification() {
-		return true;
+		try {
+			return getCurrentInternalVariable().isEditable();
+		}
+		catch( DebugException e ) {
+		}
+		return false;
 	}
 
 	/*

@@ -35,6 +35,7 @@
          point="org.eclipse.debug.ui.debugModelPresentations">
       <debugModelPresentation
             class="org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation"
+            detailsViewerConfiguration="org.eclipse.cdt.debug.internal.ui.DetailsViewerConfiguration"
             id="org.eclipse.cdt.debug.core">
       </debugModelPresentation>
    </extension>

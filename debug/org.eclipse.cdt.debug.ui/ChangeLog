@@ -1,3 +1,8 @@
+2005-06-20 Mikhail Khodjaiants
+	Bug 93855: Changing values in detailed pane doesn't work the first time after the view is loaded.
+	+ DetailsViewerConfiguration.java
+	* plugin.xml
+
 2005-06-17 Mikhail Khodjaiants
 	Bug 99217: NPE thrown when fetching deffered children.
 	* CDebugModelPresentation.java

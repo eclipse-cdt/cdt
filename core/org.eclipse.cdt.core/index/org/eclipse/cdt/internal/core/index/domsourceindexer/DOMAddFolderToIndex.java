@@ -34,7 +34,6 @@ public class DOMAddFolderToIndex extends DOMIndexRequest {
 	char[][] exclusionPattern;
 	ArrayList sourceFilesToIndex;
 	ArrayList headerFilesToIndex;
-	boolean cleanEncouteredHeaders;
 	
 	public DOMAddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, DOMSourceIndexer indexer) {
 		super(project.getFullPath(), indexer);
@@ -43,17 +42,6 @@ public class DOMAddFolderToIndex extends DOMIndexRequest {
 		this.exclusionPattern = exclusionPattern;
 		this.sourceFilesToIndex = new ArrayList();
 		this.headerFilesToIndex = new ArrayList();
-		this.cleanEncouteredHeaders = false;
-	}
-	
-	public DOMAddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, DOMSourceIndexer indexer, boolean cleanEncounteredHeaders) {
-		super(project.getFullPath(), indexer);
-		this.folderPath = folderPath;
-		this.project = project;
-		this.exclusionPattern = exclusionPattern;
-		this.sourceFilesToIndex = new ArrayList();
-		this.headerFilesToIndex = new ArrayList();
-		this.cleanEncouteredHeaders = cleanEncounteredHeaders;
 	}
 	
 	public boolean execute(IProgressMonitor progressMonitor) {
@@ -72,7 +60,7 @@ public class DOMAddFolderToIndex extends DOMIndexRequest {
 		try {
 			monitor.enterRead(); // ask permission to read
 
-			final IPath container = this.indexPath;
+			// final IPath container = this.indexPath;
 			//final IndexManager indexManager = this.manager;
 			final char[][] pattern = exclusionPattern;
 			folder.accept(
@@ -119,11 +107,6 @@ public class DOMAddFolderToIndex extends DOMIndexRequest {
 		
 		for (int i=0;i<headerFilesToIndex.size(); i++)
 			this.indexer.addSource((IFile)headerFilesToIndex.get(i), this.indexPath, true);
-		
-		if (cleanEncouteredHeaders){
-			CleanEncounteredHeaders cleanHeaders = new CleanEncounteredHeaders(this.indexer);
-			this.indexer.request(cleanHeaders);
-		}
 	}
 
 	public String toString() {

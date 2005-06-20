@@ -54,8 +54,6 @@ public class DOMIndexAllProject extends DOMIndexRequest {
 		if (progressMonitor != null && progressMonitor.isCanceled()) return true;
 		if (!project.isAccessible()) return true; // nothing to do
 		
-		String test = this.indexPath.toOSString();
-		
 		IIndex index = indexer.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);
 		if (index == null) return true;
 		ReadWriteMonitor monitor = indexer.getMonitorFor(index);
@@ -86,20 +84,21 @@ public class DOMIndexAllProject extends DOMIndexRequest {
 			if (cProject == null)
 				return false;
 			
+            // first clean encountered headers
+            CleanEncounteredHeaders cleanHeaders = new CleanEncounteredHeaders(this.indexer);
+            this.indexer.request(cleanHeaders);
+
 			//Get the source roots for this project
 			ISourceRoot[] sourceRoot = cProject.getSourceRoots();
 			for (int i=0;i<sourceRoot.length;i++){
 				if (sourceRoot[i] instanceof SourceRoot){
 					ISourceEntry tempEntry = ((SourceRoot) sourceRoot[i]).getSourceEntry();
 					
-					if ((i+1) != sourceRoot.length)
-						indexer.request(new DOMAddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), indexer));
-					else
-						indexer.request(new DOMAddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(),indexer,true));
+					indexer.request(new DOMAddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), indexer));
 				}
 			}
 			
-			// request to save index when all cus have been indexed
+            // request to save index when all cus have been indexed
 			indexer.request(new DOMSaveIndex(this.indexPath, indexer));
 		} catch (CoreException e) {
 			if (IndexManager.VERBOSE) {

@@ -1,3 +1,12 @@
+2005-06-20 Vladimir Hirsl
+	Completed optimization #2 in PR 91801: [Indexer] Optimize header file visiting/indexing
+	Encountered headers are removed before instead of after indexing the whole project, thus
+	enabling 'index external headers only once' optimization to be applied for file/directory
+	indexing.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMAddFolderToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMIndexAllProject.java
+
 2005-06-17 Vladimir Hirsl
 	Fix for 95174: [Search Engine][DOM AST Indexer] does not find definition of a method
 	

@@ -442,7 +442,9 @@ public class BasicTokenDuple implements ITokenDuple {
     	
     	if( i == null )
     		return EMPTY_STRING;
-   	
+    	else if( i.getType() == IToken.t_template )
+    		i = i.getNext();
+    	
     	char[] tempArray = i.getCharImage();
     	
     	if( i == last )

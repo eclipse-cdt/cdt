@@ -30,6 +30,8 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -1747,5 +1749,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame( spec.getSpecializedBinding(), ctor );
 		
 		assertSame( add, col.getName(16).resolveBinding() );
+	}
+	
+	public void testBug98666() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		
+		IASTTranslationUnit tu = parse( "A::template B<T> b;", ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);
+		IASTName [] ns = qn.getNames();
+		assertTrue( ns[1] instanceof ICPPASTTemplateId );
+		assertEquals( ((ICPPASTTemplateId)ns[1]).toString(), "B" );
 	}
 }

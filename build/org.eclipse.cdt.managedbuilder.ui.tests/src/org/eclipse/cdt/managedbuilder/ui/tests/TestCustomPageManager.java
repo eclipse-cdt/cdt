@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.ui.wizards.*;
 import org.eclipse.cdt.managedbuilder.ui.tests.util.TestToolchain;
 
 /**
- *   This class is respnsible for testing the functionality of the custom page manager (MBSCustomPageManager)
+ *   This class is responsible for testing the functionality of the custom page manager (MBSCustomPageManager)
  *   that manages custom wizard pages that are provided by ISVs to supplement the pages in the New Project wizards
  *   for Managed Build.
  *   

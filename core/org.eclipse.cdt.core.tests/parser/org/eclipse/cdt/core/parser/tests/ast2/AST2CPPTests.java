@@ -103,7 +103,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class AST2CPPTests extends AST2BaseTest {
 
     public void testBug86282() throws Exception {
-        IASTTranslationUnit tu = parse( "void foo() { int (* f[])() = new (int (*[10])());  }", ParserLanguage.CPP );
+        IASTTranslationUnit tu = parse( "void foo() { int (* f[])() = new (int (*[10])());  }", ParserLanguage.CPP ); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
@@ -111,11 +111,11 @@ public class AST2CPPTests extends AST2BaseTest {
     
     public void testBug75858() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "bool f() {\n" );
-        buffer.append( "    int first, last;\n" );
-        buffer.append( "if(first < 1 || last > 99 )\n" );
-        buffer.append( "return false;\n" );
-        buffer.append( "}\n" );
+        buffer.append( "bool f() {\n" ); //$NON-NLS-1$
+        buffer.append( "    int first, last;\n" ); //$NON-NLS-1$
+        buffer.append( "if(first < 1 || last > 99 )\n" ); //$NON-NLS-1$
+        buffer.append( "return false;\n" ); //$NON-NLS-1$
+        buffer.append( "}\n" ); //$NON-NLS-1$
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
@@ -123,8 +123,8 @@ public class AST2CPPTests extends AST2BaseTest {
     }
     
     public void testBug95424() throws Exception {
-        IASTTranslationUnit tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, true, true );
-        tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, false, true );
+        IASTTranslationUnit tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, true, true ); //$NON-NLS-1$
+        tu = parse( "void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", ParserLanguage.CPP, false, true ); //$NON-NLS-1$
         IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
         IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
         IASTExpressionStatement es = (IASTExpressionStatement) cs.getStatements()[0];
@@ -154,19 +154,19 @@ public class AST2CPPTests extends AST2BaseTest {
 
     public void testBug95411() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "class A {\n" );
-        buffer.append( "    public:" );
-        buffer.append( "int x;" );
-        buffer.append( "A * next;" );
-        buffer.append( "};" );
-        buffer.append( "A * start;" );
-        buffer.append( "void test() {" );
-        buffer.append( "for(A *y = start; y->x != 0;  y = y->next) {" );
-        buffer.append( "42;" );
-        buffer.append( "}" );
-        buffer.append( "for(int x = 0 ; x < 10; x++ ) {" );
-        buffer.append( "}" );
-        buffer.append( "}" );
+        buffer.append( "class A {\n" ); //$NON-NLS-1$
+        buffer.append( "    public:" ); //$NON-NLS-1$
+        buffer.append( "int x;" ); //$NON-NLS-1$
+        buffer.append( "A * next;" ); //$NON-NLS-1$
+        buffer.append( "};" ); //$NON-NLS-1$
+        buffer.append( "A * start;" ); //$NON-NLS-1$
+        buffer.append( "void test() {" ); //$NON-NLS-1$
+        buffer.append( "for(A *y = start; y->x != 0;  y = y->next) {" ); //$NON-NLS-1$
+        buffer.append( "42;" ); //$NON-NLS-1$
+        buffer.append( "}" ); //$NON-NLS-1$
+        buffer.append( "for(int x = 0 ; x < 10; x++ ) {" ); //$NON-NLS-1$
+        buffer.append( "}" ); //$NON-NLS-1$
+        buffer.append( "}" ); //$NON-NLS-1$
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector nameCol = new CPPNameCollector();
         tu.accept( nameCol );
@@ -4255,7 +4255,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals(d.getDeclarators().length, 1);
         IASTStandardFunctionDeclarator f = (IASTStandardFunctionDeclarator) d
                 .getDeclarators()[0];
-        assertEquals(f.getName().toString(), "");
+        assertEquals(f.getName().toString(), ""); //$NON-NLS-1$
         assertNotNull(f.getNestedDeclarator());
         assertEquals(f.getNestedDeclarator().getName().toString(), "pfi"); //$NON-NLS-1$
     }
@@ -4440,9 +4440,9 @@ public class AST2CPPTests extends AST2BaseTest {
 
     public void testBug94779() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("void f( int t ){\n");
-        buffer.append("int s ( t );\n");
-        buffer.append("}\n");
+        buffer.append("void f( int t ){\n"); //$NON-NLS-1$
+        buffer.append("int s ( t );\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         IASTDeclarationStatement ds = (IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
                 .getDeclarations()[0]).getBody()).getStatements()[0];
@@ -4504,14 +4504,14 @@ public class AST2CPPTests extends AST2BaseTest {
 
     public void testBug86849() throws Exception {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("int f() {\n");
-        buffer.append("    return 5;\n");
-        buffer.append("}\n");
-        buffer.append("int main() {\n");
-        buffer.append("int a( 5 );\n");
-        buffer.append("int b( f() );\n");
-        buffer.append("return a+b;\n");
-        buffer.append("}\n");
+        buffer.append("int f() {\n"); //$NON-NLS-1$
+        buffer.append("    return 5;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        buffer.append("int main() {\n"); //$NON-NLS-1$
+        buffer.append("int a( 5 );\n"); //$NON-NLS-1$
+        buffer.append("int b( f() );\n"); //$NON-NLS-1$
+        buffer.append("return a+b;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
         IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
@@ -4535,7 +4535,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	public void testBug96678() throws Exception {
-		IASTTranslationUnit tu = parse( "int x; // comment \r\n", ParserLanguage.CPP, false, true ); //$NON-NLS-1$
+		parse( "int x; // comment \r\n", ParserLanguage.CPP, false, true ); //$NON-NLS-1$
 	}
 	
 	public void testNewExpressionType() throws Exception {
@@ -4574,16 +4574,16 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	public void testBug91707() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("class C { public: int foo; };                 \n");
-		buffer.append("class B {                                     \n");
-		buffer.append("   C* operator ->();                          \n");
-		buffer.append("   C& operator [] ( int );                    \n");
-		buffer.append("};                                            \n");
-		buffer.append("void f(){                                     \n");
-		buffer.append("   B b;                                       \n");
-		buffer.append("   b->foo;                                    \n");
-		buffer.append("   b[0].foo;                                  \n");
-		buffer.append("}                                             \n");
+		buffer.append("class C { public: int foo; };                 \n"); //$NON-NLS-1$
+		buffer.append("class B {                                     \n"); //$NON-NLS-1$
+		buffer.append("   C* operator ->();                          \n"); //$NON-NLS-1$
+		buffer.append("   C& operator [] ( int );                    \n"); //$NON-NLS-1$
+		buffer.append("};                                            \n"); //$NON-NLS-1$
+		buffer.append("void f(){                                     \n"); //$NON-NLS-1$
+		buffer.append("   B b;                                       \n"); //$NON-NLS-1$
+		buffer.append("   b->foo;                                    \n"); //$NON-NLS-1$
+		buffer.append("   b[0].foo;                                  \n"); //$NON-NLS-1$
+		buffer.append("}                                             \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector col = new CPPNameCollector();
@@ -4597,12 +4597,12 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	public void testBug92425() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("class A;                    \n");
-		buffer.append("class A {                   \n");
-		buffer.append("   class B;                 \n");
-		buffer.append("   class C {};              \n");
-		buffer.append("};                          \n");
-		buffer.append("class A::B{};               \n");
+		buffer.append("class A;                    \n"); //$NON-NLS-1$
+		buffer.append("class A {                   \n"); //$NON-NLS-1$
+		buffer.append("   class B;                 \n"); //$NON-NLS-1$
+		buffer.append("   class C {};              \n"); //$NON-NLS-1$
+		buffer.append("};                          \n"); //$NON-NLS-1$
+		buffer.append("class A::B{};               \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector col = new CPPNameCollector();
@@ -4641,13 +4641,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append( "A< B< C< D< E< F< G< H<int> > > > > > > > a;  \n"); //$NON-NLS-1$
 		buffer.append( "int A::B<int>::* b;                           \n"); //$NON-NLS-1$
-		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		parse( buffer.toString(), ParserLanguage.CPP );
 	}
 	
 	public void testBug_AIOOBE() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("void f();          \n");
-		buffer.append("void f( void ) {}  \n");
+		buffer.append("void f();          \n"); //$NON-NLS-1$
+		buffer.append("void f( void ) {}  \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector col = new CPPNameCollector();
@@ -4661,9 +4661,9 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	public void testRankingQualificationConversions() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("void f( const int );     \n");
-		buffer.append("void f( int );           \n");
-		buffer.append("void g() { f(1); }       \n");
+		buffer.append("void f( const int );     \n"); //$NON-NLS-1$
+		buffer.append("void f( int );           \n"); //$NON-NLS-1$
+		buffer.append("void g() { f(1); }       \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector col = new CPPNameCollector();
@@ -4672,9 +4672,9 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( col.getName(2).resolveBinding(), col.getName(5).resolveBinding() );
         
         buffer = new StringBuffer();
-		buffer.append("void f( const volatile int );     \n");
-		buffer.append("void f( const int );              \n");
-		buffer.append("void g() { f(1); }                \n");
+		buffer.append("void f( const volatile int );     \n"); //$NON-NLS-1$
+		buffer.append("void f( const int );              \n"); //$NON-NLS-1$
+		buffer.append("void g() { f(1); }                \n"); //$NON-NLS-1$
 		
 		tu = parse( buffer.toString(), ParserLanguage.CPP );
         col = new CPPNameCollector();
@@ -4685,21 +4685,21 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	public void testBug98818() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("namespace n {                   \n");
-		buffer.append("   namespace m {                \n");
-		buffer.append("      class A;                  \n");
-		buffer.append("   }                            \n");
-		buffer.append("}                               \n");
-		buffer.append("namespace n {                   \n");
-		buffer.append("   namespace m {                \n");
-		buffer.append("      class A { void f(); };    \n");
-		buffer.append("   }                            \n");
-		buffer.append("}                               \n");
-		buffer.append("namespace n {                   \n");
-		buffer.append("   namespace m {                \n");
-		buffer.append("      void A::f(){}             \n");
-		buffer.append("   }                            \n");
-		buffer.append("}                               \n");
+		buffer.append("namespace n {                   \n"); //$NON-NLS-1$
+		buffer.append("   namespace m {                \n"); //$NON-NLS-1$
+		buffer.append("      class A;                  \n"); //$NON-NLS-1$
+		buffer.append("   }                            \n"); //$NON-NLS-1$
+		buffer.append("}                               \n"); //$NON-NLS-1$
+		buffer.append("namespace n {                   \n"); //$NON-NLS-1$
+		buffer.append("   namespace m {                \n"); //$NON-NLS-1$
+		buffer.append("      class A { void f(); };    \n"); //$NON-NLS-1$
+		buffer.append("   }                            \n"); //$NON-NLS-1$
+		buffer.append("}                               \n"); //$NON-NLS-1$
+		buffer.append("namespace n {                   \n"); //$NON-NLS-1$
+		buffer.append("   namespace m {                \n"); //$NON-NLS-1$
+		buffer.append("      void A::f(){}             \n"); //$NON-NLS-1$
+		buffer.append("   }                            \n"); //$NON-NLS-1$
+		buffer.append("}                               \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector col = new CPPNameCollector();
@@ -4721,14 +4721,14 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	public void testAnonymousStructures() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct A {               \n");
-		buffer.append("   struct { int i; } B;  \n");
-		buffer.append("   struct { int j; } C;  \n");
-		buffer.append("};                       \n");
-		buffer.append("void f(){                \n");
-		buffer.append("   A a;                  \n");
-		buffer.append("   a.B.i; a.C.j;         \n");
-		buffer.append("}                        \n");
+		buffer.append("struct A {               \n"); //$NON-NLS-1$
+		buffer.append("   struct { int i; } B;  \n"); //$NON-NLS-1$
+		buffer.append("   struct { int j; } C;  \n"); //$NON-NLS-1$
+		buffer.append("};                       \n"); //$NON-NLS-1$
+		buffer.append("void f(){                \n"); //$NON-NLS-1$
+		buffer.append("   A a;                  \n"); //$NON-NLS-1$
+		buffer.append("   a.B.i; a.C.j;         \n"); //$NON-NLS-1$
+		buffer.append("}                        \n"); //$NON-NLS-1$
 	
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
         CPPNameCollector col = new CPPNameCollector();
@@ -4741,7 +4741,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 	
     public void testBug99262() throws Exception {
-    	parse("void foo() {void *f; f=__null;}", ParserLanguage.CPP, true, true );
+    	parse("void foo() {void *f; f=__null;}", ParserLanguage.CPP, true, true ); //$NON-NLS-1$
     }
     
     public void testBug99262B() throws Exception {
@@ -4757,7 +4757,7 @@ public class AST2CPPTests extends AST2BaseTest {
     }
 
     public void testBug100408() throws Exception {
-        IASTTranslationUnit tu = parse( "int foo() { int x=1; (x)*3; }", ParserLanguage.CPP ); 
+        IASTTranslationUnit tu = parse( "int foo() { int x=1; (x)*3; }", ParserLanguage.CPP );  //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(  col );
         assertNoProblemBindings( col );

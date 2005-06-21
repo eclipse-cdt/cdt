@@ -1189,7 +1189,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             t = consume();
             // TODO - do we need to return a wrapper?
             IASTExpression lhs = expression();
-            int finalOffset = consume(IToken.tRPAREN).getEndOffset();
+            int finalOffset = 0;
+            switch (LT(1)) {
+            case IToken.tRPAREN:
+            case IToken.tEOC:
+                finalOffset = consume().getEndOffset();
+                break;
+            default:
+                throwBacktrack(LA(1));
+            }
+            
             return buildUnaryExpression(
                     IASTUnaryExpression.op_bracketedPrimary, lhs,
                     t.getOffset(), finalOffset);

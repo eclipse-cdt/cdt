@@ -100,7 +100,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 							Process process = targets[i].getProcess();
 							IProcess iprocess = null;
 							if (process != null) {
-								iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()));
+								iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()), getDefaultProcessMap());
 							}
 							CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i], renderTargetLabel(debugConfig),
 									iprocess, exeFile, true, false, stopInMain, true);

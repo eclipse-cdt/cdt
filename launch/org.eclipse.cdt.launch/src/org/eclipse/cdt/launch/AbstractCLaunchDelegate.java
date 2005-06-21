@@ -16,13 +16,13 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -59,6 +59,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 
 abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegate {
@@ -724,8 +725,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return
 	 * @throws CoreException
 	 */
-	protected IBinaryObject verifyBinary(ICProject project, IPath exePath) throws CoreException {
-		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project.getProject());
+	protected IBinaryObject verifyBinary(ICProject proj, IPath exePath) throws CoreException {
+		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(proj.getProject());
 		for (int i = 0; i < parserRef.length; i++) {
 			try {
 				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
@@ -847,5 +848,16 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			prop.setProperty((String)entry.getKey(), (String)entry.getValue());
 		}
 		return prop;
+	}
+
+	/**
+	 * Returns the default process attribute map for C/C++ processes.
+	 * 
+	 * @return default process attribute map for C/C++ processes
+	 */
+	protected Map getDefaultProcessMap() {
+		Map map = new HashMap();
+		map.put( IProcess.ATTR_PROCESS_TYPE, ICDTLaunchConfigurationConstants.ID_PROGRAM_PROCESS_TYPE );
+		return map;
 	}
 }

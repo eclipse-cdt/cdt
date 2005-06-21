@@ -18,6 +18,14 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ID_LAUNCH_C_APP = "org.eclipse.cdt.launch.localCLaunch"; //$NON-NLS-1$
 
 	/**
+	 * Identifier for the C/C++ program process type, which is annotated on processes created
+	 * by the C/C++ application launch delegate.
+	 * 
+	 * (value <code>"C/C++"</code>).
+	 */
+	public static final String ID_PROGRAM_PROCESS_TYPE = "C/C++"; //$NON-NLS-1$ 
+
+	/**
 	 * Launch configuration attribute key. The value is a name of a C/C++
 	 * project associated with a C/C++ launch configuration.
 	 */

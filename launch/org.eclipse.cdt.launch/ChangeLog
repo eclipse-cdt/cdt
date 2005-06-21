@@ -1,3 +1,9 @@
+2005-05-21 Mikhail Khodjaiants
+	Bug 91374: CDT launch should set ATTR_PROCESS_TYPE.
+	* AbstractCLaunchDelegate.java
+	* CoreFileLaunchDelegate.java
+	* LocalRunLaunchDelegate.java
+
 2005-05-15 Mikhail Khodjaiants
 	Bug 87556: Post-mortem debug fails silently if core file is inaccessible.
 	Applied patch from Joanne Woo (Monta Vista).

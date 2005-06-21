@@ -1,3 +1,7 @@
+2005-05-21 Mikhail Khodjaiants
+	Bug 91374: CDT launch should set ATTR_PROCESS_TYPE.
+	* ICDTLaunchConfigurationConstants.java
+
 2005-06-20 Mikhail Khodjaiants
 	Bug 93856: Variable View: Should disable change value options if selected item is not changeable.
 	* CVariable.java

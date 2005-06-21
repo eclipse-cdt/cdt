@@ -863,8 +863,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         if (LT(1) == IToken.tQUESTION) {
             consume(IToken.tQUESTION);
             IASTExpression secondExpression = expression();
-            consume(IToken.tCOLON);
-            IASTExpression thirdExpression = assignmentExpression();
+            IASTExpression thirdExpression = null;
+            
+            if (LT(1) != IToken.tEOC) {
+                consume(IToken.tCOLON);
+                thirdExpression = assignmentExpression();
+            }
+            
             IASTConditionalExpression result = createConditionalExpression();
             result.setLogicalConditionExpression(firstExpression);
             firstExpression.setParent(result);
@@ -874,13 +879,16 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             secondExpression.setParent(result);
             secondExpression
                     .setPropertyInParent(IASTConditionalExpression.POSITIVE_RESULT);
-            result.setNegativeResultExpression(thirdExpression);
-            thirdExpression.setParent(result);
-            thirdExpression
-                    .setPropertyInParent(IASTConditionalExpression.NEGATIVE_RESULT);
-            ((ASTNode) result).setOffsetAndLength(((ASTNode) firstExpression)
-                    .getOffset(), calculateEndOffset(thirdExpression)
-                    - ((ASTNode) firstExpression).getOffset());
+            if (thirdExpression != null) {
+                result.setNegativeResultExpression(thirdExpression);
+                thirdExpression.setParent(result);
+                thirdExpression
+                        .setPropertyInParent(IASTConditionalExpression.NEGATIVE_RESULT);
+                ((ASTNode) result).setOffsetAndLength(((ASTNode) firstExpression)
+                        .getOffset(), calculateEndOffset(thirdExpression)
+                        - ((ASTNode) firstExpression).getOffset());
+            }
+            
             return result;
         }
         return firstExpression;

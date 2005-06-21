@@ -1243,7 +1243,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             name.setPropertyInParent(IASTEnumerationSpecifier.ENUMERATION_NAME);
 
             consume(IToken.tLBRACE);
-            while (LT(1) != IToken.tRBRACE) {
+            enumLoop: while (true) {
+                
+                switch (LT(1)) {
+                case IToken.tRBRACE:
+                case IToken.tEOC:
+                    break enumLoop;
+                }
+
                 IASTName enumeratorName = null;
 
                 int lastOffset = 0;
@@ -1283,10 +1290,16 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
                     break;
                 }
-                if (LT(1) != IToken.tCOMMA) {
+                
+                switch (LT(1)) {
+                case IToken.tCOMMA:
+                case IToken.tEOC:
+                    consume();
+                    break;
+                default:
                     throwBacktrack(mark.getOffset(), mark.getLength());
                 }
-
+                
                 enumerator = createEnumerator();
                 enumerator.setName(enumeratorName);
                 ((ASTNode) enumerator).setOffsetAndLength(
@@ -1305,10 +1318,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 enumerator.setParent(result);
                 enumerator
                         .setPropertyInParent(IASTEnumerationSpecifier.ENUMERATOR);
-
-                consume(IToken.tCOMMA);
             }
-            int lastOffset = consume(IToken.tRBRACE).getEndOffset();
+            
+            int lastOffset = consume().getEndOffset();
             ((ASTNode) result).setLength(lastOffset - startOffset);
             return result;
         }

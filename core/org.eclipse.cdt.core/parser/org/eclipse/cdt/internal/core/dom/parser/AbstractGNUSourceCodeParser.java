@@ -1946,20 +1946,33 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         int startOffset = consume(IToken.t_while).getOffset();
         consume(IToken.tLPAREN);
         IASTExpression while_condition = condition();
-        consume(IToken.tRPAREN);
-        IASTStatement while_body = statement();
+        switch (LT(1)) {
+        case IToken.tRPAREN:
+            consume();
+            break;
+        case IToken.tEOC:
+            break;
+        default:
+            throwBacktrack(LA(1));
+        }
+        IASTStatement while_body = null;
+        if (LT(1) != IToken.tEOC)
+            while_body = statement();
 
         IASTWhileStatement while_statement = createWhileStatement();
         ((ASTNode) while_statement).setOffsetAndLength(startOffset,
-                calculateEndOffset(while_body) - startOffset);
+                (while_body != null ? calculateEndOffset(while_body) : LA(1).getEndOffset()) - startOffset);
         while_statement.setCondition(while_condition);
         while_condition.setParent(while_statement);
         while_condition
                 .setPropertyInParent(IASTWhileStatement.CONDITIONEXPRESSION);
-        while_statement.setBody(while_body);
-        while_condition.setParent(while_statement);
-        while_condition.setPropertyInParent(IASTWhileStatement.BODY);
-        while_body.setParent(while_statement);
+        
+        if (while_body != null) {
+            while_statement.setBody(while_body);
+            while_body.setParent(while_statement);
+            while_body.setPropertyInParent(IASTWhileStatement.BODY);
+        }
+        
         return while_statement;
     }
 

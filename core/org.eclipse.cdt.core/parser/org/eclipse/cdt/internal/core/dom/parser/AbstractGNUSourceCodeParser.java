@@ -1879,10 +1879,23 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         int startOffset;
         startOffset = consume(IToken.t_do).getOffset();
         IASTStatement do_body = statement();
-        consume(IToken.t_while);
-        consume(IToken.tLPAREN);
-        IASTExpression do_condition = condition();
-        int lastOffset = consume(IToken.tRPAREN).getEndOffset();
+
+        IASTExpression do_condition = null;
+        if (LT(1) != IToken.tEOC) {
+            consume(IToken.t_while);
+            consume(IToken.tLPAREN);
+            do_condition = condition();
+        }
+        
+        int lastOffset;
+        switch (LT(1)) {
+        case IToken.tRPAREN:
+        case IToken.tEOC:
+            lastOffset = consume().getEndOffset();
+            break;
+        default:
+            throw backtrack;
+        }
 
         IASTDoStatement do_statement = createDoStatement();
         ((ASTNode) do_statement).setOffsetAndLength(startOffset, lastOffset
@@ -1890,9 +1903,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         do_statement.setBody(do_body);
         do_body.setParent(do_statement);
         do_body.setPropertyInParent(IASTDoStatement.BODY);
-        do_statement.setCondition(do_condition);
-        do_condition.setParent(do_statement);
-        do_condition.setPropertyInParent(IASTDoStatement.CONDITION);
+        
+        if (do_condition != null) {
+            do_statement.setCondition(do_condition);
+            do_condition.setParent(do_statement);
+            do_condition.setPropertyInParent(IASTDoStatement.CONDITION);
+        }
+        
         return do_statement;
     }
 

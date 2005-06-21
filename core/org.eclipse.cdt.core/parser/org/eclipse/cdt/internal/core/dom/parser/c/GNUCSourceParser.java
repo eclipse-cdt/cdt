@@ -1946,6 +1946,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     parameterDeclarationLoop: for (;;) {
                         switch (LT(1)) {
                         case IToken.tRPAREN:
+                        case IToken.tEOC:
                             last = consume();
                             finalOffset = last.getEndOffset();
                             break parameterDeclarationLoop;

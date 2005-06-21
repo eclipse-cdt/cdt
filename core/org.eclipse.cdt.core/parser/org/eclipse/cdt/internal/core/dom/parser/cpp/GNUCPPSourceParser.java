@@ -3114,8 +3114,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack( e.currToken );
         }
         IASTDeclarator declarator = null;
-        if (LT(1) != IToken.tSEMI)
+        switch (LT(1)) {
+        case IToken.tSEMI:
+        case IToken.tEOC:
+            break;
+        default:
             declarator = initDeclarator(SimpleDeclarationStrategy.TRY_FUNCTION);
+        }
 
         if (current == LA(1)) {
             throwBacktrack(current.getOffset(), figureEndOffset(declSpec,

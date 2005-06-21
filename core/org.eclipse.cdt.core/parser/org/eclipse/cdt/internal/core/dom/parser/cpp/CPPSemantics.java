@@ -1425,13 +1425,15 @@ public class CPPSemantics {
 		else if( node instanceof IASTParameterDeclaration ){
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
 		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();
-		    while( dtor.getNestedDeclarator() != null )
-		    	dtor = dtor.getNestedDeclarator();
-			IASTName declName = dtor.getName();
-			scope.addName( declName );
-			if( !data.typesOnly && nameMatches( data, declName ) ) {
-			    return declName;
-		    }
+            if (dtor != null) { // could be null when content assist in the declSpec
+    		    while( dtor.getNestedDeclarator() != null )
+    		    	dtor = dtor.getNestedDeclarator();
+    			IASTName declName = dtor.getName();
+    			scope.addName( declName );
+    			if( !data.typesOnly && nameMatches( data, declName ) ) {
+    			    return declName;
+    		    }
+            }
 		} else if( node instanceof ICPPASTTemplateParameter ){
 			IASTName name = CPPTemplates.getTemplateParameterName( (ICPPASTTemplateParameter) node );
 			scope.addName( name );

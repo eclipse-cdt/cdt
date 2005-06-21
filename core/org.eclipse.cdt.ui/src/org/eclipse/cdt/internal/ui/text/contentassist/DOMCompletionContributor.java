@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -255,7 +256,9 @@ public class DOMCompletionContributor implements ICompletionContributor {
 				}
 			} else if (binding instanceof IVariable) {
 				imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
-			} else if (binding instanceof ICPPNamespace) {
+            } else if (binding instanceof IEnumerator) {
+                imageDescriptor = CElementImageProvider.getEnumeratorImageDescriptor();
+            } else if (binding instanceof ICPPNamespace) {
 				imageDescriptor = CElementImageProvider.getNamespaceImageDescriptor();
 			} else if (binding instanceof ICPPFunctionTemplate) {
 				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();

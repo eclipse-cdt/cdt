@@ -2034,7 +2034,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             BacktrackException {
         int startOffset = consume(IToken.t_case).getOffset();
         IASTExpression case_exp = constantExpression();
-        int lastOffset = consume(IToken.tCOLON).getEndOffset();
+        int lastOffset = 0;
+        switch (LT(1)) {
+        case IToken.tCOLON:
+        case IToken.tEOC:
+            lastOffset = consume().getEndOffset();
+            break;
+        default:
+            throwBacktrack(LA(1));
+        }
 
         IASTCaseStatement cs = createCaseStatement();
         ((ASTNode) cs)

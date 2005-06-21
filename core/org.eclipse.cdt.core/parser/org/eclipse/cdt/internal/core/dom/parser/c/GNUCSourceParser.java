@@ -1727,13 +1727,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             name.setPropertyInParent(IASTCompositeTypeSpecifier.TYPE_NAME);
         }
 
-        memberDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
-            int checkToken = LA(1).hashCode();
+        int endOffset;
+        memberDeclarationLoop: while (true) {
             switch (LT(1)) {
             case IToken.tRBRACE:
-                consume(IToken.tRBRACE);
+            case IToken.tEOC:
+                endOffset = consume().getEndOffset();
                 break memberDeclarationLoop;
             default:
+                int checkToken = LA(1).hashCode();
                 try {
                     IASTDeclaration d = declaration();
                     d.setParent(result);
@@ -1744,12 +1746,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     if (checkToken == LA(1).hashCode())
                         failParseWithErrorHandling();
                 }
+                if (checkToken == LA(1).hashCode())
+                    failParseWithErrorHandling();
             }
-            if (checkToken == LA(1).hashCode())
-                failParseWithErrorHandling();
         }
-        // consume the }
-        int endOffset = consume(IToken.tRBRACE).getEndOffset();
         ((CASTNode) result).setLength(endOffset - classKey.getOffset());
         return result;
     }

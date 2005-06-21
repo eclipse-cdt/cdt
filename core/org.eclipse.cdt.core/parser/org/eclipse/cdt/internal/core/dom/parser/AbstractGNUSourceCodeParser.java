@@ -1485,9 +1485,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         result.setTypeId(typeId);
         typeId.setParent(result);
         typeId.setPropertyInParent(IASTCastExpression.TYPE_ID);
-        result.setOperand(subExpression);
-        subExpression.setParent(result);
-        subExpression.setPropertyInParent(IASTCastExpression.OPERAND);
+        if (subExpression != null) { // which it can be in a completion
+            result.setOperand(subExpression);
+            subExpression.setParent(result);
+            subExpression.setPropertyInParent(IASTCastExpression.OPERAND);
+        }
+        
         return result;
     }
 

@@ -5115,8 +5115,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IToken mark = mark();
         try {
             IASTExpression e = expression();
-            if (LT(1) != IToken.tRPAREN)
+            switch (LT(1)) {
+            case IToken.tRPAREN:
+            case IToken.tEOC:
+                return e;
+            default:
                 throwBacktrack(LA(1));
+            }
             return e;
         } catch (BacktrackException bt) {
             backup(mark);

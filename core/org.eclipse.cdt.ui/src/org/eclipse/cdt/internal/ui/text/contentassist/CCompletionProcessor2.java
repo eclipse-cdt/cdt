@@ -20,9 +20,12 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -59,10 +62,22 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 			int offset) {
 		try {
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-			ASTCompletionNode completionNode = CDOM.getInstance().getCompletionNode(
-				(IFile)workingCopy.getResource(),
-				offset,
-				CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+			ASTCompletionNode completionNode = null;
+            IFile file = (IFile)workingCopy.getResource();
+            if (file != null)
+                completionNode = CDOM.getInstance().getCompletionNode(
+                        file,
+                        offset,
+                        CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+            else if (editor.getEditorInput() instanceof ExternalEditorInput) {
+                IStorage storage = ((ExternalEditorInput)(editor.getEditorInput())).getStorage();
+                IProject project = workingCopy.getCProject().getProject();
+                completionNode = CDOM.getInstance().getCompletionNode(
+                        storage,
+                        project,
+                        offset,
+                        CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+            }
 
 			errorMessage = CUIMessages.getString(noCompletions);
 			

@@ -42,7 +42,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
@@ -69,14 +68,14 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
      * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit()
      */
     public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException {
-        return getTranslationUnit( fileToParse, fileToParse.getLocation().toOSString(), fileToParse.getProject(), SavedCodeReaderFactory.getInstance(), null );
+        return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, SavedCodeReaderFactory.getInstance(), null );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.cdt.core.dom.ICodeReaderFactory)
      */
     public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
-        return getTranslationUnit( fileToParse, fileToParse.getLocation().toOSString(), fileToParse.getProject(), fileCreator, null );
+        return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, fileCreator, null );
     }
 
     /* (non-Javadoc)
@@ -84,36 +83,31 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
      */
     public IASTTranslationUnit getTranslationUnit(
             IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException {
-		return getTranslationUnit( fileToParse, fileToParse.getLocation().toOSString(), fileToParse.getProject(), fileCreator, configuration );
+		return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, fileCreator, configuration );
     }
     
     public IASTTranslationUnit getTranslationUnit( 
-            IStorage fileToParse, String os_path, IProject project, ICodeReaderFactory fileCreator, IParserConfiguration configuration ) throws UnsupportedDialectException 
+            String filename, IResource infoProvider, ICodeReaderFactory fileCreator, IParserConfiguration configuration ) throws UnsupportedDialectException 
     {
+        IProject project = infoProvider.getProject();
 		IScannerInfo scanInfo = null;
 		
 		if( configuration == null )
 		{
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 			if (provider != null){
-                IScannerInfo buildScanInfo = null;
-                if( fileToParse instanceof IResource )
-                    buildScanInfo = provider.getScannerInformation( (IResource) fileToParse );
-                else
-                    buildScanInfo = provider.getScannerInformation( project);
+                IScannerInfo buildScanInfo = provider.getScannerInformation(infoProvider);
                 
-			  if (buildScanInfo != null){
-			      scanInfo = buildScanInfo;
-			  }
-			  else
-			      scanInfo = new ScannerInfo();
+                if (buildScanInfo != null)
+                    scanInfo = buildScanInfo;
+                else
+                    scanInfo = new ScannerInfo();
 			}
 		}
 		else
 		    scanInfo = configuration.getScannerInfo();
-
 		
-		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit( os_path );
+		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(filename);
         if( reader == null )
             return null;
 		IScanner scanner = null;
@@ -121,7 +115,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 
 		if( configuration == null )
 		{
-		    ParserLanguage l = getLanguage(fileToParse.getFullPath(), project);
+		    ParserLanguage l = getLanguage(filename, project);
 		    IScannerExtensionConfiguration scannerExtensionConfiguration = null;
 		    if( l == ParserLanguage.CPP )
 		       scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
@@ -175,31 +169,34 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		return tu;
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getCompletionNode(org.eclipse.core.resources.IFile, int, org.eclipse.cdt.core.dom.ICodeReaderFactory)
-	 */
-	public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
-			ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+	public ASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
+            ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+        return getCompletionNode(fileToParse.getFullPath().toOSString(), project, offset, fileCreator);
+    }
+    
+    public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
+            ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+        return getCompletionNode(fileToParse.getLocation().toOSString(), fileToParse, offset, fileCreator);
+    }
+    
+    public ASTCompletionNode getCompletionNode(String filename, IResource infoProvider, int offset,
+            ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
 		// Get the scanner info
-		IProject currentProject = fileToParse.getProject();
 		IScannerInfo scanInfo = null;
+        IProject project = infoProvider.getProject();
 
-		IScannerInfoProvider provider = CCorePlugin.getDefault()
-				.getScannerInfoProvider(currentProject);
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		if (provider != null) {
-			IScannerInfo buildScanInfo = provider
-					.getScannerInformation(fileToParse);
+			IScannerInfo buildScanInfo = provider.getScannerInformation(infoProvider);
 			if (buildScanInfo != null)
 				scanInfo = buildScanInfo;
 			else
 				scanInfo = new ScannerInfo();
 		}
 
-		CodeReader reader = fileCreator
-				.createCodeReaderForTranslationUnit(fileToParse.getLocation()
-						.toOSString());
+		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(filename);
 
-		ParserLanguage l = getLanguage(fileToParse.getLocation(), currentProject);
+		ParserLanguage l = getLanguage(filename, project);
 		IScannerExtensionConfiguration scannerExtensionConfiguration = null;
 		if (l == ParserLanguage.CPP)
 			scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
@@ -239,12 +236,12 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
         return dialects;
     }
 
-    private ParserLanguage getLanguage( IPath path, IProject project )
+    private ParserLanguage getLanguage( String filename, IProject project )
     {
     	//FIXME: ALAIN, for headers should we assume CPP ??
     	// The problem is that it really depends on how the header was included.
     	String id = null;
-    	IContentType contentType = CCorePlugin.getContentType(project, path.lastSegment());
+    	IContentType contentType = CCorePlugin.getContentType(project, filename);
     	if (contentType != null) {
     		id = contentType.getId();
     	}
@@ -266,10 +263,10 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     }
 
     public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project, ICodeReaderFactory fileCreator) throws UnsupportedDialectException{
-        return getTranslationUnit( fileToParse, fileToParse.getFullPath().toOSString(), project, fileCreator, null );
+        return getTranslationUnit( fileToParse.getFullPath().toOSString(), project, fileCreator, null );
     }
 
     public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project) throws UnsupportedDialectException {
-        return getTranslationUnit( fileToParse, fileToParse.getFullPath().toOSString(), project, SavedCodeReaderFactory.getInstance(), null );
+        return getTranslationUnit( fileToParse.getFullPath().toOSString(), project, SavedCodeReaderFactory.getInstance(), null );
     }
 }

@@ -139,15 +139,19 @@ public class CDOM implements IASTServiceProvider {
         return defaultService.getTranslationUnit(fileToParse, fileCreator, configuration );
     }
     
-    /* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getCompletionNode(org.eclipse.core.resources.IFile, int, org.eclipse.cdt.core.dom.ICodeReaderFactory)
-	 */
-	public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
-			ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
-    	//TODO - At this time, we purely delegate blindly
-    	//In the future, we may need to delegate based upon context provided 
-		return defaultService.getCompletionNode(fileToParse, offset, fileCreator);
-	}
+    public ASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
+            ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+        //TODO - At this time, we purely delegate blindly
+        //In the future, we may need to delegate based upon context provided 
+        return defaultService.getCompletionNode(fileToParse, offset, fileCreator);
+    }
+
+    public ASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
+            ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+        //TODO - At this time, we purely delegate blindly
+        //In the future, we may need to delegate based upon context provided 
+        return defaultService.getCompletionNode(fileToParse, project, offset, fileCreator);
+    }
 
     /**
      * This method allows a UI component to register its IWorkingCopyProvider to the CDOM.

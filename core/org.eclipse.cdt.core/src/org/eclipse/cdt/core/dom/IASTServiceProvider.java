@@ -97,4 +97,16 @@ public interface IASTServiceProvider {
      */
     public ASTCompletionNode getCompletionNode( IFile fileToParse, int offset, ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
     
+    /**
+     * Returns a parse tree that represents the content provided as parameters.
+     * 
+     * @param fileToParse the file in question
+     * @param project the project containing the scanner info
+     * @param offset the offset at which you require completion at
+     * @param fileCreator @see CDOM#getCodeReaderFactory(int)
+     * @return syntactical parse tree
+     * @throws UnsupportedDialectException
+     */
+    public ASTCompletionNode getCompletionNode( IStorage fileToParse, IProject project, int offset, ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
+    
 }

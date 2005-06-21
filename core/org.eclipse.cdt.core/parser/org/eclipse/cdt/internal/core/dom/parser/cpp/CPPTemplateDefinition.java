@@ -78,6 +78,9 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	public CPPTemplateDefinition( IASTName name ) {
 		if( name != null ){
 			ASTNodeProperty prop = name.getPropertyInParent();
+			if( prop == ICPPASTQualifiedName.SEGMENT_NAME ){
+				prop = name.getParent().getPropertyInParent();
+			}
 			if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ){
 				definition = name;
 			} else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ) {

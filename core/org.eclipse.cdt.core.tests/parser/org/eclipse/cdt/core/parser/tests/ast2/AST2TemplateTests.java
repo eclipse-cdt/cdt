@@ -1763,4 +1763,37 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( ns[1] instanceof ICPPASTTemplateId );
 		assertEquals( ((ICPPASTTemplateId)ns[1]).toString(), "B" );
 	}
+	
+	public void testBug90678() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template <class T> struct A{                          \n");
+		buffer.append("   class C {                                          \n");
+		buffer.append("      template <class T2> struct B {};                \n");
+		buffer.append("   };                                                 \n");
+		buffer.append("};                                                    \n");
+		buffer.append("template <class T> template <class T2>                \n");
+		buffer.append("struct A<T>::C::B<T2*>{};                             \n");
+		buffer.append("A<short>::C::B<int*> ab;                              \n");
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
+		ICPPTemplateParameter T2 = (ICPPTemplateParameter) col.getName(3).resolveBinding();
+		
+		ICPPClassTemplate B = (ICPPClassTemplate) col.getName(4).resolveBinding();
+		
+		assertSame( T, col.getName(5).resolveBinding() );
+		assertSame( T2, col.getName(6).resolveBinding() );
+		assertSame( T, col.getName(10).resolveBinding() );
+		assertSame( T2, col.getName(14).resolveBinding() );
+		
+		ICPPClassTemplatePartialSpecialization spec = (ICPPClassTemplatePartialSpecialization) col.getName(12).resolveBinding();
+		assertSame( spec.getPrimaryClassTemplate(), B );
+		
+		ICPPClassType BI = (ICPPClassType) col.getName(19).resolveBinding();
+		assertTrue( BI instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)BI).getSpecializedBinding(), spec );
+	}
 }

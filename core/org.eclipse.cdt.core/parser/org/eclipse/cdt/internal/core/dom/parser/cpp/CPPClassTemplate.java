@@ -109,6 +109,10 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	        {
 	            IBinding binding = name.resolveBinding();
 	            if( binding == CPPClassTemplate.this ){
+	            	if( name instanceof ICPPASTQualifiedName ){
+	            		IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	            		name = ns[ ns.length - 1 ];
+	            	}
 	                result = name;
 	                return PROCESS_ABORT;
 	            }
@@ -164,7 +168,11 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	
 	private ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(){
 	    if( definition != null ){
-	        return (ICPPASTCompositeTypeSpecifier) definition.getParent();
+	    	IASTNode node = definition.getParent();
+	    	if( node instanceof ICPPASTQualifiedName )
+	    		node = node.getParent();
+	    	if( node instanceof ICPPASTCompositeTypeSpecifier )
+	    		return (ICPPASTCompositeTypeSpecifier) node;
 	    }
 	    return null;
 	}

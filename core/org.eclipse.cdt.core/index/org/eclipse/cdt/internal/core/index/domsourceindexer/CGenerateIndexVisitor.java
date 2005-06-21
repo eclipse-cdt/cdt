@@ -185,10 +185,13 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            TypeEntry indexEntry = new TypeEntry(iEntryType, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-
-            indexEntry.serialize(indexer.getOutput());
+            // guard against cpp entities in c project
+            if (iEntryType != 0) {
+                TypeEntry indexEntry = new TypeEntry(iEntryType, entryKind, qualifiedName, modifiers, fileNumber);
+                indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+    
+                indexEntry.serialize(indexer.getOutput());
+            }
         }
         else if (binding instanceof IEnumeration){
             int modifiers = 0;

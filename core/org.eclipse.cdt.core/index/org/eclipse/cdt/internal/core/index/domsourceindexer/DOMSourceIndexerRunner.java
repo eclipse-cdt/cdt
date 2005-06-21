@@ -105,9 +105,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
         // Add the name of the file to the index
         output.addIndexedFile(file.getFullPath().toString());
       
-        //C or CPP?
-        ParserLanguage language = CoreModel.hasCCNature(resourceFile.getProject()) ? 
-                ParserLanguage.CPP : ParserLanguage.C;
         IASTTranslationUnit tu = null;
 		long startTime = 0, parseTime = 0, endTime = 0;
 		String error = null;
@@ -122,7 +119,8 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
                 parseTime = System.currentTimeMillis();
             
             ASTVisitor visitor = null;
-            if (language == ParserLanguage.CPP) {
+            //C or CPP?
+            if (tu.getParserLanguage() == ParserLanguage.CPP) {
                 visitor = new CPPGenerateIndexVisitor(this);
             } else {
                 visitor = new CGenerateIndexVisitor(this);

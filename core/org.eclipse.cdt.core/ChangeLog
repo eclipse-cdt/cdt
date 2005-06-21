@@ -1,3 +1,10 @@
+2005-06-21 Vladimir Hirsl
+	Fix for 100598: DOM Indexer encodes weird things when indexing a CPP file in a C project
+	Fixed correlation between parser's parser language and indexer visitor.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSoureIndexerRunner.java
+
 2005-06-20 Vladimir Hirsl
 	Completed optimization #2 in PR 91801: [Indexer] Optimize header file visiting/indexing
 	Encountered headers are removed before instead of after indexing the whole project, thus

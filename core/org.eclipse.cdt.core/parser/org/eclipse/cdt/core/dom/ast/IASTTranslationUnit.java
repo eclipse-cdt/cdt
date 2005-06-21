@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
+
 /**
  * The translation unit represents a compilable unit of source.
  * 
@@ -169,8 +171,22 @@ public interface IASTTranslationUnit extends IASTNode {
         public IASTInclusionNode [] getInclusions();
     }
     
+    /**
+     * @return
+     */
     public IDependencyTree getDependencyTree();
 
+	/**
+	 * @param offset
+	 * @return
+	 */
 	public String getContainingFilename(int offset);
+    
+    
+    /**
+     * @return
+     */
+    public ParserLanguage getParserLanguage();
+    
     
 }

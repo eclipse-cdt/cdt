@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -504,5 +505,9 @@ public class CASTTranslationUnit extends CASTNode implements
 			return EMPTY_STRING;
 		return resolver.getContainingFilename( offset );
 	}
+
+    public ParserLanguage getParserLanguage() {
+        return ParserLanguage.C;
+    }
 
 }

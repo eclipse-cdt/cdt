@@ -494,7 +494,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				if( adapter != null ){
 					List searchFor = new LinkedList();
 					searchFor.add( UNKNOWN_SEARCH_FOR );
-					return new SearchPatternData( searchFor, DECLARATIONS, fIsCaseSensitive, adapter.getLabel(o), null );
+					return new SearchPatternData( searchFor, DECLARATIONS_DEFINITIONS, fIsCaseSensitive, adapter.getLabel(o), null );
 				}
 			}
 		}
@@ -521,7 +521,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			
 			List searchFor = new LinkedList();
 			searchFor.add( UNKNOWN_SEARCH_FOR );
-			result= new SearchPatternData( searchFor, DECLARATIONS, fIsCaseSensitive, text, null);
+			result= new SearchPatternData( searchFor, DECLARATIONS_DEFINITIONS, fIsCaseSensitive, text, null);
 		}
 		return result;
 	}
@@ -529,7 +529,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private SearchPatternData getDefaultInitValues() {
 		List searchFor = new LinkedList();
 		searchFor.add( CLASS_STRUCT );
-		return new SearchPatternData( searchFor, DECLARATIONS, fIsCaseSensitive, "", null); //$NON-NLS-1$
+		return new SearchPatternData( searchFor, DECLARATIONS_DEFINITIONS, fIsCaseSensitive, "", null); //$NON-NLS-1$
 	}
 		
 	private String[] getPreviousSearchPatterns() {

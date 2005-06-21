@@ -18,11 +18,11 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTSwitchStatement extends IASTStatement {
 
 	/**
-	 * <code>CONTROLLER</code> represents the relationship between an
+	 * <code>CONTROLLER_EXP</code> represents the relationship between an
 	 * <code>IASTSwitchStatement</code> and it's nested
 	 * <code>IASTExpression</code>.
 	 */
-	public static final ASTNodeProperty CONTROLLER = new ASTNodeProperty(
+	public static final ASTNodeProperty CONTROLLER_EXP = new ASTNodeProperty(
 			"IASTSwitchStatement.CONTROLLER - IASTExpression (controller) for IASTSwitchExpression"); //$NON-NLS-1$
 
 	/**
@@ -37,7 +37,7 @@ public interface IASTSwitchStatement extends IASTStatement {
 	 * 
 	 * @return the controller expression
 	 */
-	public IASTExpression getController();
+	public IASTExpression getControllerExpression();
 
 	/**
 	 * Set the controlling expression for the switch.
@@ -45,7 +45,7 @@ public interface IASTSwitchStatement extends IASTStatement {
 	 * @param controller
 	 *            <code>IASTExpression</code>
 	 */
-	public void setController(IASTExpression controller);
+	public void setControllerExpression(IASTExpression controller);
 
 	/**
 	 * Returns the body of the switch statement.

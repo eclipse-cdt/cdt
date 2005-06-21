@@ -49,7 +49,6 @@ import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -1415,11 +1414,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     /**
      * @return
      */
-    protected abstract IASTSwitchStatement createSwitchStatement();
-
-    /**
-     * @return
-     */
     protected abstract IASTIdExpression createIdExpression();
 
     /**
@@ -1927,32 +1921,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         while_condition.setPropertyInParent(IASTWhileStatement.BODY);
         while_body.setParent(while_statement);
         return while_statement;
-    }
-
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
-    protected IASTStatement parseSwitchStatement() throws EndOfFileException,
-            BacktrackException {
-        int startOffset;
-        startOffset = consume(IToken.t_switch).getOffset();
-        consume(IToken.tLPAREN);
-        IASTExpression switch_condition = condition();
-        consume(IToken.tRPAREN);
-        IASTStatement switch_body = statement();
-
-        IASTSwitchStatement switch_statement = createSwitchStatement();
-        ((ASTNode) switch_statement).setOffsetAndLength(startOffset,
-                calculateEndOffset(switch_body) - startOffset);
-        switch_statement.setController(switch_condition);
-        switch_condition.setParent(switch_statement);
-        switch_condition.setPropertyInParent(IASTSwitchStatement.CONTROLLER);
-        switch_statement.setBody(switch_body);
-        switch_body.setParent(switch_statement);
-        switch_body.setPropertyInParent(IASTSwitchStatement.BODY);
-        return switch_statement;
     }
 
     /**

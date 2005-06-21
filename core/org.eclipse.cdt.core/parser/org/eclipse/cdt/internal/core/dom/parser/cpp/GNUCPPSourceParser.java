@@ -108,6 +108,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -4893,7 +4894,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected IASTSwitchStatement createSwitchStatement() {
+    protected ICPPASTSwitchStatement createSwitchStatement() {
         return new CPPASTSwitchStatement();
     }
 
@@ -5333,5 +5334,39 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         }
         return buildUnaryExpression(operator, castExpression, offset,
                 calculateEndOffset(castExpression));
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseSwitchStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_switch).getOffset();
+        consume(IToken.tLPAREN);
+        IASTNode switch_condition = cppStyleCondition();
+        consume(IToken.tRPAREN);
+        IASTStatement switch_body = statement();
+    
+        ICPPASTSwitchStatement switch_statement = createSwitchStatement();
+        ((ASTNode) switch_statement).setOffsetAndLength(startOffset,
+                calculateEndOffset(switch_body) - startOffset);
+        if( switch_condition instanceof IASTExpression )
+        {
+            switch_statement.setControllerExpression((IASTExpression) switch_condition);
+            switch_condition.setParent(switch_statement);
+            switch_condition.setPropertyInParent(IASTSwitchStatement.CONTROLLER_EXP);
+        }
+        else if( switch_condition instanceof IASTDeclaration )
+        {
+            switch_statement.setControllerDeclaration((IASTDeclaration) switch_condition);
+            switch_condition.setParent(switch_statement);
+            switch_condition.setPropertyInParent(ICPPASTSwitchStatement.CONTROLLER_DECLARATION);
+        }
+        switch_statement.setBody(switch_body);
+        switch_body.setParent(switch_statement);
+        switch_body.setPropertyInParent(IASTSwitchStatement.BODY);
+        return switch_statement;
     }
 }

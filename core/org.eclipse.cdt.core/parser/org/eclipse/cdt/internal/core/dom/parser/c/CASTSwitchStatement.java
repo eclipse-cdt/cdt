@@ -28,14 +28,14 @@ public class CASTSwitchStatement extends CASTNode implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#getController()
      */
-    public IASTExpression getController() {
+    public IASTExpression getControllerExpression() {
         return controller;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#setController(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
-    public void setController(IASTExpression controller) {
+    public void setControllerExpression(IASTExpression controller) {
         this.controller = controller;
     }
 

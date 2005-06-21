@@ -11,32 +11,34 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTSwitchStatement extends CPPASTNode implements
-        IASTSwitchStatement, IASTAmbiguityParent {
+        ICPPASTSwitchStatement, IASTAmbiguityParent {
 
     private IASTExpression controller;
     private IASTStatement body;
+    private IASTDeclaration decl;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#getController()
      */
-    public IASTExpression getController() {
+    public IASTExpression getControllerExpression() {
         return controller;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#setController(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
-    public void setController(IASTExpression controller) {
+    public void setControllerExpression(IASTExpression controller) {
         this.controller = controller;
     }
 
@@ -80,7 +82,21 @@ public class CPPASTSwitchStatement extends CPPASTNode implements
             other.setParent( child.getParent() );
             controller  = (IASTExpression) other;
         }
+        if( child == decl )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            decl  = (IASTDeclaration) other;            
+        }
             
+    }
+
+    public IASTDeclaration getControllerDeclaration() {
+        return decl;
+    }
+
+    public void setControllerDeclaration(IASTDeclaration d) {
+        decl = d;
     }
 
 }

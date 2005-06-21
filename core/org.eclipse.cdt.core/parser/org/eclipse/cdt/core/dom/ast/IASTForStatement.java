@@ -42,7 +42,7 @@ public interface IASTForStatement extends IASTStatement {
 	public static final ASTNodeProperty BODY = new ASTNodeProperty("IASTForStatement.BODY - IASTStatement body of IASTForStatement"); //$NON-NLS-1$
 
     /**
-     * <code>INITDECLARATION</code> represents the relationship between a
+     * <code>INITIALIZER</code> represents the relationship between a
      * <code>IASTForStatement</code> and its <code>IASTDeclaration</code>
      * initializer.
      */

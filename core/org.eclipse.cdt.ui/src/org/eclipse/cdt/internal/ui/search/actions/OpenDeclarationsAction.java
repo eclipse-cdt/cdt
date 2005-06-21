@@ -36,8 +36,6 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -121,7 +119,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
                         return;
                     }
                     lang = DOMSearchUtil.getLanguageFromFile(resourceFile);
-                    projectName = findProjectName(resourceFile);
+                    projectName = resourceFile.getProject().getName();
                 }
                 
                 // step 1 starts here
@@ -195,16 +193,16 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 				return;
 			}
             
-            private String findProjectName(IFile resourceFile) {
-                if( resourceFile == null ) return ""; //$NON-NLS-1$
-                IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-                for( int i = 0; i < projects.length; ++i )
-                {
-                    if( projects[i].contains(resourceFile) )
-                        return projects[i].getName();
-                }
-                return ""; //$NON-NLS-1$
-            }
+//            private String findProjectName(IFile resourceFile) {
+//                if( resourceFile == null ) return ""; //$NON-NLS-1$
+//                IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+//                for( int i = 0; i < projects.length; ++i )
+//                {
+//                    if( projects[i].contains(resourceFile) )
+//                        return projects[i].getName();
+//                }
+//                return ""; //$NON-NLS-1$
+//            }
  		};
 
 		try {

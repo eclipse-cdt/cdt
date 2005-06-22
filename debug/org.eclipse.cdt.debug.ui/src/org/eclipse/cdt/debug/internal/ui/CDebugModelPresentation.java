@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import org.eclipse.cdt.core.resources.FileStorage;
@@ -48,6 +49,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -131,8 +133,29 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		if ( element instanceof IFile ) {
 			return new FileEditorInput( (IFile)element );
 		}
-		if ( element instanceof ICLineBreakpoint ) {
-			IFile file = (IFile)((ICLineBreakpoint)element).getMarker().getResource().getAdapter( IFile.class );
+		if ( element instanceof ICBreakpoint ) {
+			ICBreakpoint b = (ICBreakpoint)element;
+			IFile file = null;
+			try {
+				String handle = b.getSourceHandle();
+				IPath path = new Path( handle );
+				if ( path.isValidPath( handle ) ) {
+					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
+					if ( files.length > 0 ) {
+						file = files[0];
+					}
+					else {
+						File fsfile = new File( handle );
+						if ( fsfile.isFile() && fsfile.exists() ) {
+							return new ExternalEditorInput( new LocalFileStorage( fsfile ) );
+						}
+					}
+				}
+			}
+			catch( CoreException e ) {
+			}
+			if ( file == null )
+				file = (IFile)b.getMarker().getResource().getAdapter( IFile.class );
 			if ( file != null )
 				return new FileEditorInput( file );
 		}

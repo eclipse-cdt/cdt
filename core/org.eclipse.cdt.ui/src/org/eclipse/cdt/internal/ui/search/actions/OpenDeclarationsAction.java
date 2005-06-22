@@ -86,12 +86,13 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
                 IASTName[] selectedNames = BLANK_NAME_ARRAY;
                 IASTTranslationUnit tu=null;
                 ParserLanguage lang=null;
+                ICElement project=null;
                 
                 if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
                     ExternalEditorInput input = (ExternalEditorInput)fEditor.getEditorInput();
                     try {
                         // get the project for the external editor input's translation unit
-                        ICElement project = input.getTranslationUnit();
+                        project = input.getTranslationUnit();
                         while (!(project instanceof ICProject) && project != null) {
                             project = project.getParent();
                         }
@@ -108,6 +109,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
                 } else {
                     IFile resourceFile = null;
                     resourceFile = fEditor.getInputFile();
+                    project = new CProject(null, resourceFile.getProject());
                     
                     try {
                         tu = CDOM.getInstance().getASTService().getTranslationUnit(
@@ -163,7 +165,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 					} else {
 						// step 3 starts here
 						ICElement[] scope = new ICElement[1];
-						scope[0] = new CProject(null, fEditor.getInputFile().getProject());
+						scope[0] = project;
 						Set matches = DOMSearchUtil.getMatchesFromSearchEngine(SearchEngine.createCSearchScope(scope), searchName, ICSearchConstants.DECLARATIONS_DEFINITIONS);
 
 						if (matches != null && matches.size() > 0) {

@@ -1,4 +1,8 @@
 2005-06-22 Alain Magloire
+	Fix PR 99668 from Craig Watson.
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+
+2005-06-22 Alain Magloire
 	Fix PR 100263 from Devin.
 	* src/org/eclipse/cdt/internal/ui/preferences/PrefrencesMessages.properties
 

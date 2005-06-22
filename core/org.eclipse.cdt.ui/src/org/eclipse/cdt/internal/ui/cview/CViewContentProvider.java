@@ -160,7 +160,7 @@ public class CViewContentProvider extends CElementContentProvider {
 			parent = ((IncludeReferenceProxy)element).getIncludeRefContainer();
 		} else if (element instanceof IncludeRefContainer) {
 			parent = ((IncludeRefContainer)element).getCProject();
-		} if (element instanceof ILibraryReference) {
+		} else if (element instanceof ILibraryReference) {
 			if (parent instanceof ICProject) {
 				parent = new LibraryRefContainer((ICProject)parent);
 			}

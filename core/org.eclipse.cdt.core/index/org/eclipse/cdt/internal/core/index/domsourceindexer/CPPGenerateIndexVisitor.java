@@ -297,8 +297,8 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             }
             FunctionEntry indexEntry = new FunctionEntry(IIndex.METHOD, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters(name));
-            indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
+            indexEntry.setSignature(IndexVisitorUtil.getParameters((ICPPMethod) binding));
+            indexEntry.setReturnType(IndexVisitorUtil.getReturnType((ICPPMethod) binding));
 
             serialize(indexEntry);
             // TODO In case we want to add friend method declarations to index
@@ -313,7 +313,7 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             }
             FunctionEntry indexEntry = new FunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
             indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters(name));
+            indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
             indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
             serialize(indexEntry);

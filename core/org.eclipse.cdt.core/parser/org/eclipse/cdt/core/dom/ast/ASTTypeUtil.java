@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
@@ -173,29 +172,30 @@ public class ASTTypeUtil {
 						break;
 				}
 			} catch (DOMException e) {}
-			
+
 		} else if (type instanceof ICompositeType) {
-			if (type instanceof ICPPClassType) {
-				try {
-					switch(((ICPPClassType)type).getKey()) {
-						case ICPPClassType.k_class:
-							result.append(Keywords.CLASS);
-							break;
-					}
-				} catch (DOMException e) {}
-			}
-			
-			try {
-				switch(((ICompositeType)type).getKey()) {
-					case ICompositeType.k_struct:
-						result.append(Keywords.STRUCT);
-						break;
-					case ICompositeType.k_union:
-						result.append(Keywords.UNION);
-						break;
-				}
-			} catch (DOMException e) {}
-			result.append(SPACE);
+//			101114 fix, do not display class, and for consistency don't display struct/union as well
+//			if (type instanceof ICPPClassType) {
+//				try {
+//					switch(((ICPPClassType)type).getKey()) {
+//						case ICPPClassType.k_class:
+//							result.append(Keywords.CLASS);
+//							break;
+//					}
+//				} catch (DOMException e) {}
+//			}
+//			
+//			try {
+//				switch(((ICompositeType)type).getKey()) {
+//					case ICompositeType.k_struct:
+//						result.append(Keywords.STRUCT);
+//						break;
+//					case ICompositeType.k_union:
+//						result.append(Keywords.UNION);
+//						break;
+//				}
+//			} catch (DOMException e) {}
+//			result.append(SPACE);
 			result.append(((ICompositeType)type).getName());
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
@@ -277,8 +277,17 @@ public class ASTTypeUtil {
 
 			if (types[j] != null && result.length() > 0) result.append(SPACE); // only add a space if this is not the first type being added
 			
-			if (types[j] != null)
-				result.append(getTypeString(types[j]));
+			if (types[j] != null) {
+                if (j > 0 && types[j-1] instanceof IQualifierType) {
+                    result.append(getTypeString(types[j-1]));
+                    result.append(SPACE);
+                    result.append(getTypeString(types[j]));
+                    --j;
+                }
+                else {
+                    result.append(getTypeString(types[j]));
+                }
+            }
 		}
 		
 		return result.toString();

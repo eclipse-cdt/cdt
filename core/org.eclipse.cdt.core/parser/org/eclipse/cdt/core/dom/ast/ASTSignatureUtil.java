@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
@@ -23,11 +22,9 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
@@ -180,6 +177,7 @@ public class ASTSignatureUtil {
 		if (ops != null && ops.length > 0) {
 			for(int i=0; i<ops.length; i++) {
 				if (ops[i] != null) {
+                    if (needSpace) { result.append(SPACE); }
 					if (ops[i] instanceof IASTPointer) {
 						result.append(Keywords.cpSTAR); // want to have this before keywords on the pointer
 						needSpace=true;
@@ -388,43 +386,48 @@ public class ASTSignatureUtil {
 		
 		// handle complex cases 
 		if (declSpec instanceof IASTCompositeTypeSpecifier) {
-			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
-				switch(((ICPPASTCompositeTypeSpecifier)declSpec).getKey()) {
-					case ICPPASTCompositeTypeSpecifier.k_class:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.CLASS); needSpace=true;
-						break;
-					case IASTCompositeTypeSpecifier.k_struct:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
-						break;
-					case IASTCompositeTypeSpecifier.k_union:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
-						break;
-				}
-			} else if (declSpec instanceof ICASTCompositeTypeSpecifier) {
-				switch(((ICASTCompositeTypeSpecifier)declSpec).getKey()) {
-					case IASTCompositeTypeSpecifier.k_struct:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
-						break;
-					case IASTCompositeTypeSpecifier.k_union:
-						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
-						break;
-				}
-			}
+			// 101114 fix, do not display class, and for consistency don't display struct/union as well
+//			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+//				switch(((ICPPASTCompositeTypeSpecifier)declSpec).getKey()) {
+//					case ICPPASTCompositeTypeSpecifier.k_class:
+//						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.CLASS); needSpace=true;
+//						break;
+//					case IASTCompositeTypeSpecifier.k_struct:
+//						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
+//						break;
+//					case IASTCompositeTypeSpecifier.k_union:
+//						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
+//						break;
+//				}
+//			} else if (declSpec instanceof ICASTCompositeTypeSpecifier) {
+//				switch(((ICASTCompositeTypeSpecifier)declSpec).getKey()) {
+//					case IASTCompositeTypeSpecifier.k_struct:
+//						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
+//						break;
+//					case IASTCompositeTypeSpecifier.k_union:
+//						if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
+//						break;
+//				}
+//			}
+		
+			result.append(((IASTCompositeTypeSpecifier)declSpec).getName());
 		} else if (declSpec instanceof IASTElaboratedTypeSpecifier) {
-			switch(((IASTElaboratedTypeSpecifier)declSpec).getKind()) {
-				case ICPPASTElaboratedTypeSpecifier.k_class:
-					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.CLASS); needSpace=true;
-					break;
-				case IASTElaboratedTypeSpecifier.k_enum:
-					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.ENUM); needSpace=true;
-					break;
-				case IASTElaboratedTypeSpecifier.k_struct:
-					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
-					break;
-				case IASTElaboratedTypeSpecifier.k_union:
-					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
-					break;
-			}
+//			101114 fix, do not display class, and for consistency don't display struct/union as well
+//			switch(((IASTElaboratedTypeSpecifier)declSpec).getKind()) {
+//				case ICPPASTElaboratedTypeSpecifier.k_class:
+//					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.CLASS); needSpace=true;
+//					break;
+//				case IASTElaboratedTypeSpecifier.k_enum:
+//					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.ENUM); needSpace=true;
+//					break;
+//				case IASTElaboratedTypeSpecifier.k_struct:
+//					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.STRUCT); needSpace=true;
+//					break;
+//				case IASTElaboratedTypeSpecifier.k_union:
+//					if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.UNION); needSpace=true;
+//					break;
+//			}
+			result.append(((IASTElaboratedTypeSpecifier)declSpec).getName());
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
 			if (needSpace) { result.append(SPACE); needSpace=false; } result.append(Keywords.ENUM); needSpace=true;
 		} else if (declSpec instanceof IASTNamedTypeSpecifier) {

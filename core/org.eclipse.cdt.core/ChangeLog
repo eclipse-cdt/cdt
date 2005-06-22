@@ -1,3 +1,16 @@
+2005-06-22 Vladimir Hirsl
+	Fix for PR 93573: "[Indexer] endl references are not added to the DOM index"
+	Fixed different encoding of functions references vs. declarations in the index.
+	Applied Devin's patch for PR 101114: "[AST Util] Inconsistent string representation 
+	of IType elements" with slight modifications.
+	Modified JUnit tests accordingly.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexVisitorUtil.java
+	* parser/org/eclipse/cdt/core/dom/ast/ASTSignatureUtil.java
+	* parser/org/eclipse/cdt/core/dom/ast/ASTTypeUtil.java
+
 2005-06-21 Vladimir Hirsl
 	Fix for 100598: DOM Indexer encodes weird things when indexing a CPP file in a C project
 	Fixed correlation between parser's parser language and indexer visitor.

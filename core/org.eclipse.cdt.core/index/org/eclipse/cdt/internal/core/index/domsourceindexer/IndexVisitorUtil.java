@@ -10,6 +10,9 @@
  ***********************************************************************/
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -22,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -202,7 +206,27 @@ public class IndexVisitorUtil {
         }
         return new char[0][];
     }
-            
+    
+    /**
+     * @param function
+     * @return
+     */
+    public static char[][] getParameters(IFunction function) {
+        List parameterList = new ArrayList();
+        try {
+            IParameter[] parameters = function.getParameters();
+            for (int i = 0; i < parameters.length; i++) {
+                IType paramType = parameters[i].getType();
+                parameterList.add(ASTTypeUtil.getType(paramType).toCharArray());
+            }
+            if (parameterList.isEmpty()) {
+                parameterList.add("void".toCharArray()); //$NON-NLS-1$
+            }
+        }
+        catch (DOMException e) {
+        }
+        return (char[][]) parameterList.toArray(new char[parameterList.size()][]);
+    }            
     /**
      * @param function
      * @return

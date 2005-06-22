@@ -61,39 +61,46 @@ public class AST2UtilTests extends AST2BaseTest {
 		buff.append("int * b(char y, int x);\n"); //$NON-NLS-1$
 		buff.append("void c(int * z, float **b);\n"); //$NON-NLS-1$
 		buff.append("static int d(int a[restrict]);\n"); //$NON-NLS-1$
+        buff.append("void e(const char* const);\n"); //$NON-NLS-1$
 	    
 	    IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C);
 		IASTDeclaration[] d = tu.getDeclarations();
 		
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "(int)"); //$NON-NLS-1$
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "(char, int)"); //$NON-NLS-1$
-		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int *, float **)"); //$NON-NLS-1$
+		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int *, float * *)"); //$NON-NLS-1$
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "(int [restrict])"); //$NON-NLS-1$
+        isParameterSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclarators()[0], "(const char * const)"); //$NON-NLS-1$
 		
 		isSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "int (int)"); //$NON-NLS-1$
 		isSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "int *(char, int)"); //$NON-NLS-1$
-		isSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "void (int *, float **)"); //$NON-NLS-1$
+		isSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "void (int *, float * *)"); //$NON-NLS-1$
 		isSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "static int (int [restrict])"); //$NON-NLS-1$
+        isSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclarators()[0], "void (const char * const)"); //$NON-NLS-1$
 		
 		isSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclSpecifier(), "int"); //$NON-NLS-1$
 		isSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclSpecifier(), "int"); //$NON-NLS-1$
 		isSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclSpecifier(), "void"); //$NON-NLS-1$
 		isSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclSpecifier(), "static int"); //$NON-NLS-1$
+        isSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclSpecifier(), "void"); //$NON-NLS-1$
 		
 		isTypeEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "int (int)"); //$NON-NLS-1$
 		isTypeEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "int * (char, int)"); //$NON-NLS-1$
 		isTypeEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "void (int *, float * *)"); //$NON-NLS-1$
 		isTypeEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "int (int * restrict)"); //$NON-NLS-1$
+        isTypeEqual(((IASTSimpleDeclaration)d[4]).getDeclarators()[0], "void (const char * const)"); //$NON-NLS-1$
 		
 		isTypeEqual(((IFunction)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getName().resolveBinding()).getType(), "int (int)"); //$NON-NLS-1$
 		isTypeEqual(((IFunction)((IASTSimpleDeclaration)d[1]).getDeclarators()[0].getName().resolveBinding()).getType(), "int * (char, int)"); //$NON-NLS-1$
 		isTypeEqual(((IFunction)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getName().resolveBinding()).getType(), "void (int *, float * *)"); //$NON-NLS-1$
 		isTypeEqual(((IFunction)((IASTSimpleDeclaration)d[3]).getDeclarators()[0].getName().resolveBinding()).getType(), "int (int * restrict)"); //$NON-NLS-1$
+        isTypeEqual(((IFunction)((IASTSimpleDeclaration)d[4]).getDeclarators()[0].getName().resolveBinding()).getType(), "void (const char * const)"); //$NON-NLS-1$
 		
 		isParameterTypeEqual(((IFunction)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getName().resolveBinding()).getType(), "(int)"); //$NON-NLS-1$
 		isParameterTypeEqual(((IFunction)((IASTSimpleDeclaration)d[1]).getDeclarators()[0].getName().resolveBinding()).getType(), "(char, int)"); //$NON-NLS-1$
 		isParameterTypeEqual(((IFunction)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getName().resolveBinding()).getType(), "(int *, float * *)"); //$NON-NLS-1$
 		isParameterTypeEqual(((IFunction)((IASTSimpleDeclaration)d[3]).getDeclarators()[0].getName().resolveBinding()).getType(), "(int * restrict)"); //$NON-NLS-1$
+        isParameterTypeEqual(((IFunction)((IASTSimpleDeclaration)d[4]).getDeclarators()[0].getName().resolveBinding()).getType(), "(const char * const)"); //$NON-NLS-1$
 	}
 	
 	public void testSimpleCParameterSignature() throws Exception {
@@ -108,7 +115,7 @@ public class AST2UtilTests extends AST2BaseTest {
 		
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "(int)"); //$NON-NLS-1$
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "(char, int)"); //$NON-NLS-1$
-		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int *, float **)"); //$NON-NLS-1$
+		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int *, float * *)"); //$NON-NLS-1$
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "(int [restrict])"); //$NON-NLS-1$
 	}
 	
@@ -127,12 +134,12 @@ public class AST2UtilTests extends AST2BaseTest {
 		
 		// verify signatures
 		isSignatureEqual( ((IASTTypeIdExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId(), "int"); //$NON-NLS-1$
-		isSignatureEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "union"); //$NON-NLS-1$
+		isSignatureEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "Squaw"); //$NON-NLS-1$
 		isSignatureEqual( ((IASTCastExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId() , "jc"); //$NON-NLS-1$
 		
 		// verify types
 		isTypeEqual( ((IASTTypeIdExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId(), "int"); //$NON-NLS-1$
-		isTypeEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "union Squaw"); //$NON-NLS-1$
+		isTypeEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "Squaw"); //$NON-NLS-1$
 		isTypeEqual( ((IASTCastExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId() , "short int"); //$NON-NLS-1$
 	}
 	

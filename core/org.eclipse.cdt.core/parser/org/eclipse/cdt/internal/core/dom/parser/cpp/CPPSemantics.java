@@ -893,7 +893,7 @@ public class CPPSemantics {
 				    mergeResults( data, lookupInScope( data, scope, blockItem ), true );
 				}
 
-				if( !data.hasResults() && scope instanceof ICPPNamespaceScope ){
+				if( (!data.hasResults() || data.prefixLookup) && scope instanceof ICPPNamespaceScope ){
 					directives = new ArrayWrapper();
 					directives.array = ((ICPPNamespaceScope) scope).getUsingDirectives();
 					if( directives.array != null ){

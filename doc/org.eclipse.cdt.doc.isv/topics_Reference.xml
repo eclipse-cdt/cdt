@@ -19,9 +19,8 @@
 	</topic>
 	<topic label="Extension Points Reference" href="reference/extension-points/index.html">
          <topic label="org.eclipse.cdt.core.CBuildConsole" href="reference/extension-points/org_eclipse_cdt_core_CBuildConsole.html"/>
-         <topic label="org.eclipse.cdt.core.CFileType" href="reference/extension-points/org_eclipse_cdt_core_CFileType.html"/>
-         <topic label="org.eclipse.cdt.core.CFileTypeAssociation" href="reference/extension-points/org_eclipse_cdt_core_CFileTypeAssociation.html"/>
-         <topic label="org.eclipse.cdt.core.CLanguage" href="reference/extension-points/org_eclipse_cdt_core_CLanguage.html"/>
+         <topic label="org.eclipse.cdt.core.CIndexer" href="reference/extension-points/org_eclipse_cdt_core_CIndexer.html"/>
+         <topic label="org.eclipse.cdt.core.CodeFormatter" href="reference/extension-points/org_eclipse_cdt_core_CodeFormatter.html"/>
          <topic label="org.eclipse.cdt.core.CProject" href="reference/extension-points/org_eclipse_cdt_core_CProject.html"/>
          <topic label="org.eclipse.cdt.core.PathEntryContainerInitializer" href="reference/extension-points/org_eclipse_cdt_core_PathEntryContainerInitializer.html"/>
          <topic label="org.eclipse.cdt.core.ProcessList" href="reference/extension-points/org_eclipse_cdt_core_ProcessList.html"/>

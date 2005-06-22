@@ -4770,4 +4770,11 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNoProblemBindings( col );        
     }
     
+    public void testBug84478_4() throws Exception {
+        IASTTranslationUnit tu = parse( "void foo() { for( int i = 0; int j = 0; ++i) {} }", ParserLanguage.CPP ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        assertNoProblemBindings( col );        
+    }
+    
 }

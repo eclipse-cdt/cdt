@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
@@ -1415,12 +1414,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @return
      */
     protected abstract IASTBreakStatement createBreakStatement();
-
-    /**
-     * @return
-     */
-    protected abstract IASTForStatement createForStatement();
-
+    
     /**
      * @return
      */
@@ -1815,81 +1809,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             result.setPropertyInParent(IASTReturnStatement.RETURNVALUE);
         }
         return return_statement;
-    }
-
-    /**
-     * @return
-     * @throws EndOfFileException
-     * @throws BacktrackException
-     */
-    protected IASTStatement parseForStatement() throws EndOfFileException,
-            BacktrackException {
-        int startOffset;
-        startOffset = consume(IToken.t_for).getOffset();
-        consume(IToken.tLPAREN);
-        IASTStatement init = forInitStatement();
-        IASTExpression for_condition = null;
-        switch (LT(1)) {
-        case IToken.tSEMI:
-        case IToken.tEOC:
-            break;
-        default:
-            for_condition = condition();
-        }
-        switch (LT(1)) {
-        case IToken.tSEMI:
-            consume(IToken.tSEMI);
-            break;
-        case IToken.tEOC:
-            break;
-        default:
-            throw backtrack;
-        }
-        IASTExpression iterationExpression = null;
-        switch (LT(1)) {
-        case IToken.tRPAREN:
-        case IToken.tEOC:
-            break;
-        default:
-            iterationExpression = expression();
-        }
-        switch (LT(1)) {
-        case IToken.tRPAREN:
-            consume(IToken.tRPAREN);
-            break;
-        case IToken.tEOC:
-            break;
-        default:
-            throw backtrack;
-        }
-        IASTForStatement for_statement = createForStatement();
-        IASTStatement for_body = null;
-        if (LT(1) != IToken.tEOC) {
-            for_body = statement();
-            ((ASTNode) for_statement).setOffsetAndLength(startOffset,
-                    calculateEndOffset(for_body) - startOffset);
-        }
-
-        for_statement.setInitializerStatement(init);
-        init.setParent(for_statement);
-        init.setPropertyInParent(IASTForStatement.INITIALIZER);
-        
-        if (for_condition != null) {
-            for_statement.setCondition(for_condition);
-            for_condition.setParent(for_statement);
-            for_condition.setPropertyInParent(IASTForStatement.CONDITION);
-        }
-        if (iterationExpression != null) {
-            for_statement.setIterationExpression(iterationExpression);
-            iterationExpression.setParent(for_statement);
-            iterationExpression.setPropertyInParent(IASTForStatement.ITERATION);
-        }
-        if (for_body != null) {
-            for_statement.setBody(for_body);
-            for_body.setParent(for_statement);
-            for_body.setPropertyInParent(IASTForStatement.BODY);
-        }
-        return for_statement;
     }
 
     /**

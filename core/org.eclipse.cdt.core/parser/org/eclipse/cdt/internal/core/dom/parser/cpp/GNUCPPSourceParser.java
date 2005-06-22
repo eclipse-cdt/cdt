@@ -92,6 +92,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
@@ -2869,6 +2870,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         switch (LT(1)) {
         case IToken.tSEMI:
+            if( fromCatchHandler )
+                break;
             semiOffset = consume(IToken.tSEMI).getEndOffset();
             consumedSemi = true;
             break;
@@ -4852,7 +4855,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected IASTForStatement createForStatement() {
+    protected ICPPASTForStatement createForStatement() {
         return new CPPASTForStatement();
     }
 
@@ -5081,7 +5084,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         int startOffset = consume(IToken.t_while).getOffset();
         consume(IToken.tLPAREN);
-        IASTNode while_condition = cppStyleCondition();
+        IASTNode while_condition = cppStyleCondition(true);
         consume(IToken.tRPAREN);
         IASTStatement while_body = statement();
 
@@ -5108,13 +5111,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
+     * @param expectSemi TODO
      * @return
      */
-    protected IASTNode cppStyleCondition() throws BacktrackException,
+    protected IASTNode cppStyleCondition(boolean expectSemi) throws BacktrackException,
             EndOfFileException {
         IToken mark = mark();
         try {
             IASTExpression e = expression();
+            if( ! expectSemi )
+                return e;
             switch (LT(1)) {
             case IToken.tRPAREN:
             case IToken.tEOC:
@@ -5169,7 +5175,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tLPAREN);
             IASTNode condition = null;
             try {
-                condition = cppStyleCondition(); 
+                condition = cppStyleCondition(true); 
                 // condition
                 if (LT(1) == IToken.tEOC) {
                     // Completing in the condition
@@ -5350,7 +5356,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         int startOffset;
         startOffset = consume(IToken.t_switch).getOffset();
         consume(IToken.tLPAREN);
-        IASTNode switch_condition = cppStyleCondition();
+        IASTNode switch_condition = cppStyleCondition(true);
         consume(IToken.tRPAREN);
         IASTStatement switch_body = statement();
     
@@ -5373,5 +5379,87 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         switch_body.setParent(switch_statement);
         switch_body.setPropertyInParent(IASTSwitchStatement.BODY);
         return switch_statement;
+    }
+
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTStatement parseForStatement() throws EndOfFileException, BacktrackException {
+        int startOffset;
+        startOffset = consume(IToken.t_for).getOffset();
+        consume(IToken.tLPAREN);
+        IASTStatement init = forInitStatement();
+        IASTNode for_condition = null;
+        switch (LT(1)) {
+        case IToken.tSEMI:
+        case IToken.tEOC:
+            break;
+        default:
+            for_condition = cppStyleCondition(false);
+        }
+        switch (LT(1)) {
+        case IToken.tSEMI:
+            consume(IToken.tSEMI);
+            break;
+        case IToken.tEOC:
+            break;
+        default:
+            throw backtrack;
+        }
+        IASTExpression iterationExpression = null;
+        switch (LT(1)) {
+        case IToken.tRPAREN:
+        case IToken.tEOC:
+            break;
+        default:
+            iterationExpression = expression();
+        }
+        switch (LT(1)) {
+        case IToken.tRPAREN:
+            consume(IToken.tRPAREN);
+            break;
+        case IToken.tEOC:
+            break;
+        default:
+            throw backtrack;
+        }
+        ICPPASTForStatement for_statement = createForStatement();
+        IASTStatement for_body = null;
+        if (LT(1) != IToken.tEOC) {
+            for_body = statement();
+            ((ASTNode) for_statement).setOffsetAndLength(startOffset,
+                    calculateEndOffset(for_body) - startOffset);
+        }
+    
+        for_statement.setInitializerStatement(init);
+        init.setParent(for_statement);
+        init.setPropertyInParent(IASTForStatement.INITIALIZER);
+        
+        if (for_condition != null) {
+            for_condition.setParent(for_statement);
+            if( for_condition instanceof IASTExpression )
+            {
+                for_statement.setConditionExpression((IASTExpression) for_condition);
+                for_condition.setPropertyInParent(IASTForStatement.CONDITION);
+            }
+            else if( for_condition instanceof IASTDeclaration )
+            {
+                for_statement.setConditionDeclaration((IASTDeclaration) for_condition);
+                for_condition.setPropertyInParent(ICPPASTForStatement.CONDITION_DECLARATION);                
+            }
+        }
+        if (iterationExpression != null) {
+            for_statement.setIterationExpression(iterationExpression);
+            iterationExpression.setParent(for_statement);
+            iterationExpression.setPropertyInParent(IASTForStatement.ITERATION);
+        }
+        if (for_body != null) {
+            for_statement.setBody(for_body);
+            for_body.setParent(for_statement);
+            for_body.setPropertyInParent(IASTForStatement.BODY);
+        }
+        return for_statement;
     }
 }

@@ -1031,7 +1031,7 @@ public class AST2Tests extends AST2BaseTest {
         IASTName name_i = dtor.getName();
         // i < 5;
         IASTBinaryExpression exp = (IASTBinaryExpression) for_stmt
-                .getCondition();
+                .getConditionExpression();
         IASTIdExpression id_i = (IASTIdExpression) exp.getOperand1();
         IASTName name_i2 = id_i.getName();
         IASTLiteralExpression lit_5 = (IASTLiteralExpression) exp.getOperand2();

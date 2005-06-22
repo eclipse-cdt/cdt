@@ -31,14 +31,14 @@ public class CASTForStatement extends CASTNode implements IASTForStatement, IAST
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getCondition()
      */
-    public IASTExpression getCondition() {
+    public IASTExpression getConditionExpression() {
         return condition;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
-    public void setCondition(IASTExpression condition) {
+    public void setConditionExpression(IASTExpression condition) {
         this.condition = condition;
     }
 

@@ -11,34 +11,38 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
-public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, IASTAmbiguityParent {
+public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, IASTAmbiguityParent, ICPPASTForStatement {
     private IScope scope = null;
     
     private IASTExpression condition;
     private IASTExpression iterationExpression;
     private IASTStatement body, init;
 
+    private IASTDeclaration cond_declaration;
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getCondition()
      */
-    public IASTExpression getCondition() {
+    public IASTExpression getConditionExpression() {
         return condition;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
      */
-    public void setCondition(IASTExpression condition) {
+    public void setConditionExpression(IASTExpression condition) {
         this.condition = condition;
     }
 
@@ -108,6 +112,13 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, 
             other.setParent( child.getParent() );
             condition  = (IASTExpression) other;
         }
+        if( child == cond_declaration )
+        {
+            other.setPropertyInParent( child.getPropertyInParent() );
+            other.setParent( child.getParent() );
+            cond_declaration  = (IASTDeclaration) other;
+        }
+        
         if( child == iterationExpression )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
@@ -128,5 +139,13 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, 
 
     public void setInitializerStatement(IASTStatement statement) {
         init = statement;       
+    }
+
+    public void setConditionDeclaration(IASTDeclaration d) {
+        cond_declaration = d;
+    }
+
+    public IASTDeclaration getConditionDeclaration() {
+        return cond_declaration;
     }
 }

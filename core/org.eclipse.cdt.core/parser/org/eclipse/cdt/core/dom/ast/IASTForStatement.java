@@ -64,7 +64,7 @@ public interface IASTForStatement extends IASTStatement {
 	 * 
 	 * @return <code>IASTExpression</code>
 	 */
-	public IASTExpression getCondition();
+	public IASTExpression getConditionExpression();
 
 	/**
 	 * Set the condition expression for the loop.
@@ -72,7 +72,7 @@ public interface IASTForStatement extends IASTStatement {
 	 * @param condition
 	 *            <code>IASTExpression</code>
 	 */
-	public void setCondition(IASTExpression condition);
+	public void setConditionExpression(IASTExpression condition);
 
 	/**
 	 * Get the expression that is evaluated after the completion of an iteration

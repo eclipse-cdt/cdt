@@ -4458,6 +4458,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     protected void catchHandlerSequence(List collection)
             throws EndOfFileException, BacktrackException {
+        if (LT(1) == IToken.tEOC)
+            return;
+        
         if (LT(1) != IToken.t_catch) {
             IToken la = LA(1);
             throwBacktrack(la.getOffset(), la.getLength()); // error, need at
@@ -4479,7 +4482,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     decl = simpleDeclaration(
                             SimpleDeclarationStrategy.TRY_VARIABLE, true);
                 }
-                consume(IToken.tRPAREN);
+                if (LT(1) != IToken.tEOC)
+                    consume(IToken.tRPAREN);
             } catch (BacktrackException bte) {
                 IASTProblem p = failParse(bte);
                 IASTProblemDeclaration pd = createProblemDeclaration();
@@ -4490,22 +4494,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 decl = pd;
             }
 
-            IASTStatement compoundStatement = catchBlockCompoundStatement();
             ICPPASTCatchHandler handler = createCatchHandler();
-            ((ASTNode) handler).setOffsetAndLength(startOffset,
-                    calculateEndOffset(compoundStatement) - startOffset);
-            handler.setIsCatchAll(isEllipsis);
             if (decl != null) {
                 handler.setDeclaration(decl);
                 decl.setParent(handler);
                 decl.setPropertyInParent(ICPPASTCatchHandler.DECLARATION);
             }
-            if (compoundStatement != null) {
-                handler.setCatchBody(compoundStatement);
-                compoundStatement.setParent(handler);
-                compoundStatement
-                        .setPropertyInParent(ICPPASTCatchHandler.CATCH_BODY);
+
+            if (LT(1) != IToken.tEOC) {
+                IASTStatement compoundStatement = catchBlockCompoundStatement();
+                ((ASTNode) handler).setOffsetAndLength(startOffset,
+                        calculateEndOffset(compoundStatement) - startOffset);
+                handler.setIsCatchAll(isEllipsis);
+                if (compoundStatement != null) {
+                    handler.setCatchBody(compoundStatement);
+                    compoundStatement.setParent(handler);
+                    compoundStatement
+                            .setPropertyInParent(ICPPASTCatchHandler.CATCH_BODY);
+                }
             }
+            
             collection.add(handler);
 			
 			try {
@@ -5005,7 +5013,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTStatement parseTryStatement() throws EndOfFileException,
             BacktrackException {
-        int startO = consume().getOffset();
+        int startO = consume(IToken.t_try).getOffset();
         IASTStatement tryBlock = compoundStatement();
         List catchHandlers = new ArrayList(DEFAULT_CATCH_HANDLER_LIST_SIZE);
         catchHandlerSequence(catchHandlers);

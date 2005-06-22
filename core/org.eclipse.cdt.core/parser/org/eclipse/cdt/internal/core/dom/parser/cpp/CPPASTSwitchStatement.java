@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CPPASTSwitchStatement extends CPPASTNode implements
         ICPPASTSwitchStatement, IASTAmbiguityParent {
 
+	private IScope scope;
     private IASTExpression controller;
     private IASTStatement body;
     private IASTDeclaration decl;
@@ -65,6 +67,7 @@ public class CPPASTSwitchStatement extends CPPASTNode implements
 	        }
 		}
         if( controller != null ) if( !controller.accept( action ) ) return false;
+        if( decl != null ) if( !decl.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
         return true;
     }
@@ -97,6 +100,12 @@ public class CPPASTSwitchStatement extends CPPASTNode implements
 
     public void setControllerDeclaration(IASTDeclaration d) {
         decl = d;
+    }
+
+	public IScope getScope() {
+		if( scope == null )
+            scope = new CPPBlockScope( this );
+        return scope;	
     }
 
 }

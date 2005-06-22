@@ -89,6 +89,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -100,6 +101,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -109,6 +111,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -491,13 +494,6 @@ public class CPPVisitor {
 		    }
 		}
 		
-		if( prop == IASTDeclarationStatement.DECLARATION ){
-		    //implicit scope, see 6.4-1
-		    prop = parent.getParent().getPropertyInParent();
-		    if( prop != IASTCompoundStatement.NESTED_STATEMENT )
-		    	scope = null;
-		}
-		
 		IBinding binding;
         try {
             binding = ( scope != null ) ? scope.getBinding( name, false ) : null;
@@ -668,6 +664,12 @@ public class CPPVisitor {
 				    return ((IASTCompositeTypeSpecifier)parent).getScope();
 				} else if( parent instanceof ICPPASTNamespaceDefinition ) {
 					return ((ICPPASTNamespaceDefinition)parent).getScope();
+				} else if( parent instanceof ICPPASTSwitchStatement ){
+					return ((ICPPASTSwitchStatement)parent).getScope();
+				} else if( parent instanceof ICPPASTIfStatement ){
+					return ((ICPPASTIfStatement)parent).getScope();
+				} else if( parent instanceof ICPPASTWhileStatement ){
+					return ((ICPPASTWhileStatement)parent).getScope();
 				}
 			} else if( node instanceof IASTStatement ){
 		        return getContainingScope( (IASTStatement) node ); 
@@ -711,6 +713,12 @@ public class CPPVisitor {
 		    	IASTNode parent = node.getParent();
 			    if( parent instanceof IASTForStatement ){
 			        return ((IASTForStatement)parent).getScope();
+			    } else if( parent instanceof ICPPASTIfStatement ){
+			    	return ((ICPPASTIfStatement)parent).getScope();
+			    } else if( parent instanceof ICPPASTSwitchStatement ){
+			    	return ((ICPPASTSwitchStatement)parent).getScope();
+			    } else if( parent instanceof ICPPASTWhileStatement ){
+			    	return ((ICPPASTWhileStatement)parent).getScope();
 			    } else if( parent instanceof IASTCompoundStatement ){
 			        return ((IASTCompoundStatement)parent).getScope();
 			    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
@@ -822,6 +830,12 @@ public class CPPVisitor {
 		    scope = compound.getScope();
 		} else if( parent instanceof IASTForStatement ){
 		    scope = ((IASTForStatement)parent).getScope();
+		} else if( parent instanceof ICPPASTSwitchStatement ){
+			scope = ((ICPPASTSwitchStatement)parent).getScope();
+		} else if( parent instanceof ICPPASTIfStatement ){
+			scope = ((ICPPASTIfStatement)parent).getScope();
+		} else if( parent instanceof ICPPASTWhileStatement ){
+			scope = ((ICPPASTWhileStatement)parent).getScope();
 		} else if( parent instanceof IASTStatement ){
 			scope = getContainingScope( (IASTStatement)parent );
 		} else if( parent instanceof IASTFunctionDefinition ){

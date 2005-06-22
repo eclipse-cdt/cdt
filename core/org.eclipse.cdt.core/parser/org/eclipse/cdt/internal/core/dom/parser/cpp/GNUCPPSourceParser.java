@@ -5219,7 +5219,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             ICPPASTIfStatement new_if_statement = createIfStatement();
             ((ASTNode) new_if_statement).setOffset(so);
-            if (condition != null && condition instanceof IASTExpression) // shouldn't
+            if (condition != null && (condition instanceof IASTExpression || condition instanceof IASTDeclaration)) // shouldn't
             // be
             // possible
             // but
@@ -5230,8 +5230,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             // it
             // so
             {
-                new_if_statement
-                        .setConditionExpression((IASTExpression) condition);
+            	if( condition instanceof IASTExpression )
+            		new_if_statement.setConditionExpression((IASTExpression) condition);
+            	else if( condition instanceof IASTDeclaration )
+            		new_if_statement.setConditionDeclaration((IASTDeclaration) condition);
                 condition.setParent(new_if_statement);
                 condition.setPropertyInParent(IASTIfStatement.CONDITION);
             }

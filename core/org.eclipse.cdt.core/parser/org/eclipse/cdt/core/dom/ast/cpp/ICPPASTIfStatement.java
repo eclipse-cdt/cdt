@@ -12,10 +12,17 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 public interface ICPPASTIfStatement extends IASTIfStatement {
 
     public IASTDeclaration getConditionDeclaration();
     public void setConditionDeclaration( IASTDeclaration d );
     
+    /**
+	 * Get the implicit <code>IScope</code> represented by this if statement
+	 * 
+	 * @return <code>IScope</code>
+	 */
+	public IScope getScope();
 }

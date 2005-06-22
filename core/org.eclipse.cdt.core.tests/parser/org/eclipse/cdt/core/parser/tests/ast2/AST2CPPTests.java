@@ -4764,12 +4764,12 @@ public class AST2CPPTests extends AST2BaseTest {
     }
     
     public void testBug84478_3() throws Exception {
-        IASTTranslationUnit tu = parse( "void foo() { switch( int x = 4 ) { case 4: break; default: break;} }", ParserLanguage.CPP ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( "void foo() { switch( int x = 4 ) { case 4: x++; break; default: break;} }", ParserLanguage.CPP ); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(  col );
-        assertNoProblemBindings( col );        
+        assertNoProblemBindings( col );
+        assertSame( col.getName(1).resolveBinding(), col.getName(2).resolveBinding() );
     }
-    
     public void testBug84478_4() throws Exception {
         IASTTranslationUnit tu = parse( "void foo() { for( int i = 0; int j = 0; ++i) {} }", ParserLanguage.CPP ); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
@@ -4777,4 +4777,34 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNoProblemBindings( col );        
     }
     
+    public void testBug84478_2() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void f(){                          \n");
+    	buffer.append("   if( int x = 1 )  x++;           \n");
+    	buffer.append("   else             x--;           \n");
+    	buffer.append("   while( int y = 2 )              \n");
+    	buffer.append("      y++;                         \n");
+    	buffer.append("   for( int a = 1; int b = 2; b++){ \n");
+    	buffer.append("      a++; b++;                    \n");
+    	buffer.append("   }                               \n");
+    	buffer.append("}                                  \n");
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        assertNoProblemBindings( col );      
+        IVariable x = (IVariable) col.getName(1).resolveBinding();
+        assertSame( x, col.getName(2).resolveBinding() );
+        assertSame( x, col.getName(3).resolveBinding() );
+        
+        IVariable y = (IVariable) col.getName(4).resolveBinding();
+        assertSame( y, col.getName(5).resolveBinding() );
+                
+        IVariable a = (IVariable) col.getName(6).resolveBinding();
+        IVariable b = (IVariable) col.getName(7).resolveBinding();
+        assertSame( b, col.getName(8).resolveBinding() );
+        assertSame( a, col.getName(9).resolveBinding() );
+        assertSame( b, col.getName(10).resolveBinding() );
+    } 
 }

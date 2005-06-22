@@ -94,6 +94,7 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, 
 		}
         if( init != null ) if( !init.accept( action ) ) return false;
         if( condition != null ) if( !condition.accept( action ) ) return false;
+        if( cond_declaration != null ) if( !cond_declaration.accept( action ) ) return false;
         if( iterationExpression != null ) if( !iterationExpression.accept( action ) ) return false;
         if( body != null ) if( !body.accept( action ) ) return false;
         return true;

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * This inteface accommodates C++ allows for broader while loop syntax.
@@ -42,4 +43,10 @@ public interface ICPPASTWhileStatement extends IASTWhileStatement {
 	 */
 	public void setConditionDeclaration(IASTDeclaration declaration);
 
+	/**
+	 * Get the <code>IScope</code> represented by this while.
+	 * 
+	 * @return <code>IScope</code>
+	 */
+	public IScope getScope();
 }

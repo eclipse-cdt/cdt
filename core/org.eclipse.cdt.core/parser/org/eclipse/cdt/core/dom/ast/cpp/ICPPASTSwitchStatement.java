@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 
 public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 
@@ -38,5 +39,11 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
      */
     public void setControllerDeclaration( IASTDeclaration d );
     
+	/**
+	 * Get the <code>IScope</code> represented by this switch.
+	 * 
+	 * @return <code>IScope</code>
+	 */
+	public IScope getScope();
     
 }

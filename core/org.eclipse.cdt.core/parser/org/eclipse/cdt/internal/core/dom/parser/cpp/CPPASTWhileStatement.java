@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -26,6 +27,7 @@ public class CPPASTWhileStatement extends CPPASTNode implements
     private IASTExpression condition;
     private IASTStatement body;
     private IASTDeclaration condition2;
+    private IScope scope;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#getCondition()
@@ -102,6 +104,12 @@ public class CPPASTWhileStatement extends CPPASTNode implements
             other.setPropertyInParent( child.getPropertyInParent() );
             condition2 = (IASTDeclaration) other;
         }
+    }
+
+	public IScope getScope() {
+		if( scope == null )
+            scope = new CPPBlockScope( this );
+        return scope;	
     }
 
 }

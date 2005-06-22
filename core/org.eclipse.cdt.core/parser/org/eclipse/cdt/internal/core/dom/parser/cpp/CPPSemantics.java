@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -69,7 +68,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -77,12 +78,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -1416,13 +1419,29 @@ public class CPPSemantics {
 	        declaration = (IASTDeclaration) node;
 		else if( node instanceof IASTDeclarationStatement )
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
-		else if( node instanceof IASTForStatement && checkAux )
+		else if( node instanceof ICPPASTForStatement && checkAux )
         {
-			if( ((IASTForStatement)node).getInitializerStatement() instanceof IASTDeclarationStatement )
-                declaration = ((IASTDeclarationStatement)((IASTForStatement)node).getInitializerStatement()).getDeclaration();
-            
-        }
-		else if( node instanceof IASTParameterDeclaration ){
+			ICPPASTForStatement forStatement = (ICPPASTForStatement) node;
+			if( forStatement.getConditionDeclaration() == null ){
+				if( forStatement.getInitializerStatement() instanceof IASTDeclarationStatement )
+					declaration = ((IASTDeclarationStatement)forStatement.getInitializerStatement()).getDeclaration();
+			} else {
+				if( forStatement.getInitializerStatement() instanceof IASTDeclarationStatement ){
+					Object o = collectResult( data, scope, forStatement.getInitializerStatement(), checkAux );
+					if( o instanceof IASTName )
+						resultName = (IASTName) o;
+					else if( o instanceof IASTName[] )
+						resultArray = (IASTName[]) o;
+				}
+				declaration = forStatement.getConditionDeclaration();
+			}
+        } else if( node instanceof ICPPASTSwitchStatement ){
+        	declaration = ((ICPPASTSwitchStatement)node).getControllerDeclaration();
+        } else if( node instanceof ICPPASTIfStatement ) {
+        	declaration = ((ICPPASTIfStatement)node).getConditionDeclaration();
+	    } else if( node instanceof ICPPASTWhileStatement ){
+	    	declaration = ((ICPPASTWhileStatement)node).getConditionDeclaration();
+	    } else if( node instanceof IASTParameterDeclaration ){
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
 		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();
             if (dtor != null) { // could be null when content assist in the declSpec

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -26,6 +27,7 @@ public class CPPASTIfStatement extends CPPASTNode implements ICPPASTIfStatement,
     private IASTStatement thenClause;
     private IASTStatement elseClause;
     private IASTDeclaration condDecl;
+    private IScope scope;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#getCondition()
@@ -112,5 +114,11 @@ public class CPPASTIfStatement extends CPPASTNode implements ICPPASTIfStatement,
 
     public void setConditionDeclaration(IASTDeclaration d) {
         condDecl = d;
+    }
+    
+	public IScope getScope() {
+		if( scope == null )
+            scope = new CPPBlockScope( this );
+        return scope;	
     }
 }

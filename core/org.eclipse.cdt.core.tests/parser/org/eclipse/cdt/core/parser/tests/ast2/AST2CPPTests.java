@@ -4806,5 +4806,20 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( b, col.getName(8).resolveBinding() );
         assertSame( a, col.getName(9).resolveBinding() );
         assertSame( b, col.getName(10).resolveBinding() );
-    } 
+    }
+    
+    public void testBug100415() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void free( void * );         \n");
+    	buffer.append("void f( char **p ){          \n");
+    	buffer.append("   free( p );                \n");
+    	buffer.append("}                            \n");
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        IFunction free = (IFunction) col.getName(0).resolveBinding();
+        assertSame( free, col.getName(4).resolveBinding() );
+    }
 }

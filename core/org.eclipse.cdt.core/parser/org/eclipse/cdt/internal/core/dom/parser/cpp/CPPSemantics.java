@@ -2454,7 +2454,7 @@ public class CPPSemantics {
 		qualificationConversion( cost );
 		
 		//if we can't convert the qualifications, then we can't do anything
-		if( cost.qualification == 0 ){
+		if( cost.qualification == Cost.NO_MATCH_RANK ){
 			return cost;
 		}
 		
@@ -2655,7 +2655,7 @@ public class CPPSemantics {
 	
 	static private void qualificationConversion( Cost cost ) throws DOMException{
 		boolean canConvert = true;
-		int conversionRequired = 1;  //1 means it will work without a conversion, 2 means conversion was needed
+		int requiredConversion = Cost.IDENTITY_RANK;  
 
 		IPointerType op1, op2;
 		IType s = cost.source, t = cost.target;
@@ -2694,6 +2694,7 @@ public class CPPSemantics {
 			 //if const is in cv1,j then const is in cv2,j.  Similary for volatile
 			if( ( op1.isConst() && !op2.isConst() ) || ( op1.isVolatile() && !op2.isVolatile() ) ) {
 				canConvert = false;
+				requiredConversion = Cost.NO_MATCH_RANK;
 				break;
 			}
 			//if cv1,j and cv2,j are different then const is in every cv2,k for 0<k<j
@@ -2701,6 +2702,7 @@ public class CPPSemantics {
 									   op1.isVolatile() != op2.isVolatile() ) )
 			{
 				canConvert = false;
+				requiredConversion = Cost.NO_MATCH_RANK;
 				break; 
 			}
 			constInEveryCV2k &= op2.isConst();
@@ -2711,7 +2713,7 @@ public class CPPSemantics {
 		if( s instanceof IQualifierType ^ t instanceof IQualifierType ){
 		    if( t instanceof IQualifierType ){
 		        canConvert = true;
-		        conversionRequired = 2;
+		        requiredConversion = Cost.CONVERSION_RANK;
 		    } else {
 		    	//4.2-2 a string literal can be converted to pointer to char
 		    	if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_char &&
@@ -2725,22 +2727,24 @@ public class CPPSemantics {
 									  ((IASTLiteralExpression)val).getKind() == IASTLiteralExpression.lk_string_literal );
 		    		} else {
 		    			canConvert = false;
+		    			requiredConversion = Cost.NO_MATCH_RANK;
 		    		}
-		    	}
-		    	else
+		    	} else {
 		    		canConvert = false;
+		    		requiredConversion = Cost.NO_MATCH_RANK;
+		    	}
 		    }
 		} else if( s instanceof IQualifierType && t instanceof IQualifierType ){
 			IQualifierType qs = (IQualifierType) s, qt = (IQualifierType) t;
 			if( qs.isConst() && !qt.isConst() || qs.isVolatile() && !qt.isVolatile() )
-				canConvert = false;
+				requiredConversion = Cost.NO_MATCH_RANK;
 			else if( qs.isConst() == qt.isConst() && qs.isVolatile() == qt.isVolatile() )
-				conversionRequired = 1;
+				requiredConversion = Cost.IDENTITY_RANK;
 			else
-				conversionRequired = 2;
+				requiredConversion = Cost.CONVERSION_RANK;
 		} else if( constInEveryCV2k && !canConvert ){
 			canConvert = true;
-			conversionRequired = 2;
+			requiredConversion = Cost.CONVERSION_RANK;
 			int i = 1;
 			for( IType type = s; canConvert == true && i == 1; type = t, i++  ){
 				while( type instanceof ITypeContainer ){
@@ -2749,18 +2753,18 @@ public class CPPSemantics {
 					else if( type instanceof IPointerType ){
 						canConvert = !((IPointerType)type).isConst() && !((IPointerType)type).isVolatile();
 					}
-					if( !canConvert )
+					if( !canConvert ){
+						requiredConversion = Cost.NO_MATCH_RANK;
 						break;
+					}
 					type = ((ITypeContainer)type).getType();
 				}
 			}
 		}
 
+		cost.qualification = requiredConversion;
 		if( canConvert == true ){
-			cost.qualification = conversionRequired;
 			cost.rank = Cost.LVALUE_OR_QUALIFICATION_RANK;
-		} else {
-			cost.qualification = 0;
 		}
 	}
 	
@@ -2846,7 +2850,7 @@ public class CPPSemantics {
 				} catch( NumberFormatException e ) {
 				}
 			}
-		} else if( sPrev instanceof IPointerType && s instanceof ICPPClassType ){
+		} else if( sPrev instanceof IPointerType ){
 			IType tPrev = trg;
 			while( tPrev instanceof ITypeContainer ){
 				IType next = ((ITypeContainer)tPrev).getType();
@@ -2868,14 +2872,15 @@ public class CPPSemantics {
 			}
 			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 			//to an rvalue of type "pointer to cv B", where B is a base class of D.
-			else if( tPrev instanceof IPointerType && t instanceof ICPPClassType ){
+			else if( s instanceof ICPPClassType && tPrev instanceof IPointerType && t instanceof ICPPClassType ){
 				temp = hasBaseClass( (ICPPClassType)s, (ICPPClassType) t, false );
 				cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
 				cost.conversion = ( temp > -1 ) ? temp : 0;
 				cost.detail = 1;
 				return;
 			}
-		} else if( t instanceof IBasicType && s instanceof IBasicType || s instanceof IEnumeration ){
+		} 
+		if( t instanceof IBasicType && s instanceof IBasicType || s instanceof IEnumeration ){
 			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 			cost.rank = Cost.CONVERSION_RANK;

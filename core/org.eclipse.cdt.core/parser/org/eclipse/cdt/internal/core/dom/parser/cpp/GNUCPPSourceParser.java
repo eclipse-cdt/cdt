@@ -2498,10 +2498,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     for (int i = 0; i < parms.length; ++i) {
                         if (!(parms[i].getDeclSpecifier() instanceof IASTNamedTypeSpecifier))
                             return d1;
-                        if (((ASTNode) parms[i].getDeclarator().getName())
-                                .getLength() > 0)
-                            return d1;
                         IASTDeclarator d = parms[i].getDeclarator();
+                        if (d == null) // must be an EOC
+                            return d1;
+                        if (((ASTNode)d.getName()).getLength() > 0)
+                            return d1;
                         while (d.getNestedDeclarator() != null)
                             d = d.getNestedDeclarator();
                         if (((ASTNode) d.getName()).getLength() > 0)

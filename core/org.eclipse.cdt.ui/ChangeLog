@@ -1,3 +1,7 @@
+2005-06-22 Alain Magloire
+	Fix PR 100263 from Devin.
+	* src/org/eclipse/cdt/internal/ui/preferences/PrefrencesMessages.properties
+
 2005-06-08 Alain Magloire
 	Fix PR 98846
 	* src/org/eclipse/cdt/internal/ui/util/ResourceTOItemsMapper.java

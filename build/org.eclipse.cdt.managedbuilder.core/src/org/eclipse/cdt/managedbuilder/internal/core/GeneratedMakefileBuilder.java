@@ -469,6 +469,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			monitor = new NullProgressMonitor();
 		}
 		
+		checkCancel(monitor);
+		//If the previous builder invocation was cancelled, generated files might be corrupted
+		//in case one or more of the generated makefiles (e.g. dep files) are corrupted, 
+		//the builder invocation might fail because of the possible syntax errors, so e.g. "make clean" will not work 
+		//we need to explicitly clean the generated directories
+		clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+		
 		// Regenerate the makefiles for this project
 		checkCancel(monitor);
 		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.rebuild.makefiles", getProject().getName());	//$NON-NLS-1$

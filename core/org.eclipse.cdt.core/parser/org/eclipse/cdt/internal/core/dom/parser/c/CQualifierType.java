@@ -63,7 +63,9 @@ public class CQualifierType implements ICQualifierType, ITypeContainer {
 		        if( isRestrict() != qt.isRestrict() ) return false;
 		        if( isVolatile() != qt.isVolatile() ) return false;
             
-                return qt.getType().isSameType( getType() );
+		        if( type == null )
+		        	return false;
+                return type.isSameType( qt.getType() );
             } catch ( DOMException e ) {
                 return false;
             }

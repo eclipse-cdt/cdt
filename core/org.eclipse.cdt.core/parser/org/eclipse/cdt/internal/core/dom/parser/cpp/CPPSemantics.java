@@ -2644,9 +2644,8 @@ public class CPPSemantics {
 	
 	static private boolean isCompleteType( IType type ){
 		type = getUltimateType( type, false );
-		if( type instanceof ICPPClassType && ((ICPPInternalBinding)type).getDefinition() == null ){
-			return false;
-		}
+		if( type instanceof ICPPClassType && type instanceof ICPPInternalBinding )
+			return (((ICPPInternalBinding)type).getDefinition() != null );
 		return true;
 	}
 	static private Cost lvalue_to_rvalue( IType source, IType target ) throws DOMException{

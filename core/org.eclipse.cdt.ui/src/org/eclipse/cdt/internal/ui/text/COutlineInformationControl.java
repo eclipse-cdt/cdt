@@ -1,7 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2005 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     QNX Software Systems - initial API and implementation
+ *******************************************************************************/
 /*
  * COutlineInformationControl.java 2004-12-14 / 08:17:41
 
- * $Revision: 1.3 $ $Date: 2005/01/20 22:10:45 $
+ * $Revision: 1.4 $ $Date: 2005/01/24 17:24:14 $
  *
  * @author P.Tomaszewski
  */

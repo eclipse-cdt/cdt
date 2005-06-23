@@ -4822,4 +4822,28 @@ public class AST2CPPTests extends AST2BaseTest {
         IFunction free = (IFunction) col.getName(0).resolveBinding();
         assertSame( free, col.getName(4).resolveBinding() );
     }
+    
+    public void testBug86688() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("class X;                 \n");
+    	buffer.append("void f() {               \n");
+    	buffer.append("   class A {             \n");
+    	buffer.append("      friend class X;    \n");
+    	buffer.append("   };                    \n");
+    	buffer.append("}                        \n");
+    	buffer.append("namespace B {            \n");
+    	buffer.append("   class A {             \n");
+    	buffer.append("      friend class X;    \n");
+    	buffer.append("   };                    \n");
+    	buffer.append("}                        \n");
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
+        assertNotSame( X, col.getName(3).resolveBinding() );
+        assertTrue( col.getName(3).resolveBinding() instanceof ICPPClassType );
+        assertSame( X, col.getName(6).resolveBinding() );
+    }
 }

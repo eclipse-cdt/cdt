@@ -382,6 +382,42 @@ public class CPPSemantics {
             }
             return implied;
         }
+		public boolean forFriendship() {
+			if( astName == null )
+				return false;
+			IASTNode node = astName.getParent();
+			while( node instanceof IASTName )
+				node = node.getParent();
+			
+			IASTDeclaration decl = null;
+			IASTDeclarator dtor = null;
+			if( node instanceof ICPPASTDeclSpecifier && node.getParent() instanceof IASTDeclaration ){
+				decl = (IASTDeclaration) node.getParent();
+			} else if( node instanceof IASTDeclarator ) {
+				dtor = (IASTDeclarator) node;
+				while( dtor.getParent() instanceof IASTDeclarator )
+					dtor = (IASTDeclarator) dtor.getParent();
+				if( !(dtor.getParent() instanceof IASTDeclaration) )
+					return false;
+				decl = (IASTDeclaration) dtor.getParent();
+			} else {
+				return false;
+			}
+			if( decl instanceof IASTSimpleDeclaration ){
+				IASTSimpleDeclaration simple = (IASTSimpleDeclaration) decl;
+				if( ! ((ICPPASTDeclSpecifier)simple.getDeclSpecifier()).isFriend() )
+					return false;
+				if( dtor != null )
+					return true;
+				return simple.getDeclarators().length == 0;
+			} else if( decl instanceof IASTFunctionDefinition ){
+				IASTFunctionDefinition fnDef = (IASTFunctionDefinition) decl;
+				if( ! ((ICPPASTDeclSpecifier)fnDef.getDeclSpecifier()).isFriend() )
+					return false;
+				return ( dtor != null );
+			}
+			return false;
+		}
 	}
 
 	static protected class Cost
@@ -871,6 +907,15 @@ public class CPPSemantics {
 		else
 		    scope = getLookupScope( (IASTName) start );
 		
+		boolean friendInLocalClass = false;
+		if( scope instanceof ICPPClassScope && data.forFriendship() ){
+			try {
+				ICPPClassType cls = ((ICPPClassScope)scope).getClassType();
+				friendInLocalClass = !cls.isGloballyQualified();
+			} catch ( DOMException e ){
+			}
+		}
+		
 		while( scope != null ){
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem( node );
 			
@@ -926,8 +971,11 @@ public class CPPSemantics {
 				}
 			}
 			
-			if( !data.prefixLookup && (data.problem != null || data.hasResults()) )
+			if( (!data.prefixLookup && (data.problem != null || data.hasResults())) ||
+				( friendInLocalClass && !(scope instanceof ICPPClassScope) ) )
+			{
 				return;
+			}
 			
 			if( !data.usingDirectivesOnly && scope instanceof ICPPClassScope ){
 				mergeResults( data, lookupInParents( data, scope ), true );

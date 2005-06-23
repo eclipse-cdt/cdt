@@ -72,7 +72,8 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 			ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
 		Assert.assertTrue("getMatchingFunctions is called before completion contributor gets initialized",fIsInitialized);
-		return CHelpProviderTester.getDefault().generateMatchingFunctions(helpBooks,prefix,fProviderID);
+        return null; // TODO returning null until someone puts in a preference to control it.
+        //return CHelpProviderTester.getDefault().generateMatchingFunctions(helpBooks,prefix,fProviderID);
 	}
 
 	/* (non-Javadoc)

@@ -444,6 +444,9 @@ public class NewClassCodeGenerator {
             if (includePath == null)
                 includePath = baseClassLocation;
             
+            // make the new #include path in the source file only point to a relative file (i.e. now that the path has been included above in the project)
+            includePath = includePath.removeFirstSegments(includePath.segmentCount() - 1);
+            
             if (isSystemIncludePath)
                 systemIncludes.add(includePath);
             else
@@ -498,24 +501,34 @@ public class NewClassCodeGenerator {
         IPath addToResourcePath = cProject.getPath();
         try {
             List pathEntryList = new ArrayList();
+            List checkEntryList = new ArrayList();
+            
+            IPathEntry[] checkEntries = cProject.getResolvedPathEntries();
             IPathEntry[] pathEntries = cProject.getRawPathEntries();
             if (pathEntries != null) {
                 for (int i = 0; i < pathEntries.length; ++i) {
-                    pathEntryList.add(pathEntries[i]);
+                	pathEntryList.add(pathEntries[i]);
                 }
             }
+            for (int i=0; i < checkEntries.length; i++) {
+            	if (checkEntries[i] instanceof IIncludeEntry)
+            		checkEntryList.add(checkEntries[i]);
+            }
+            
             for (Iterator ipIter = newIncludePaths.iterator(); ipIter.hasNext(); ) {
                 IPath folderToAdd = (IPath) ipIter.next();
-                IPath basePath = null;
-                IPath includePath = folderToAdd;
+                
+                // do not add any #includes that are local to the project
+                if (cProject.getPath().segment(0).equals(folderToAdd.segment(0)))
+                	continue;
+                
                 IProject includeProject = PathUtil.getEnclosingProject(folderToAdd);
-                boolean isSystemInclude = (includeProject == null);
-                if (includeProject != null) {
-                    includePath = PathUtil.makeRelativePath(folderToAdd, includeProject.getLocation());
-                    basePath = includeProject.getFullPath().makeRelative();
-                }
-                IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, basePath, includePath, isSystemInclude);
-                pathEntryList.add(entry);
+
+                // make sure that the include is made the same way that build properties for projects makes them, so .contains below is a valid check
+                IIncludeEntry entry = CoreModel.newIncludeEntry(addToResourcePath, null, includeProject.getLocation(), true);
+                
+                if (!checkEntryList.contains(entry)) // if the path already exists in the #includes then don't add it
+                	pathEntryList.add(entry);
             }
             pathEntries = (IPathEntry[]) pathEntryList.toArray(new IPathEntry[pathEntryList.size()]);
             cProject.setRawPathEntries(pathEntries, new SubProgressMonitor(monitor, 80));

@@ -14,19 +14,19 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/overviewExtensionContent.xml"/>  
+            content="$nl$/intro/overviewExtensionContent.xml"/>  
          
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/tutorialsExtensionContent.xml"/>  
+            content="$nl$/intro/tutorialsExtensionContent.xml"/>  
       
       <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/samplesExtensionContent.xml"/>
+            content="$nl$/intro/samplesExtensionContent.xml"/>
             
      <configExtension
             configId="org.eclipse.platform.introConfig"
-            content="$nl$/whatsNewExtensionContent.xml"/>
+            content="$nl$/intro/whatsNewExtensionContent.xml"/>
 
    </extension>
    

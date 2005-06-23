@@ -95,11 +95,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			fCDIBreakpoints.put( cdiBreakpoint, breakpoint );
 		}
 
-		protected ICDIBreakpoint getCDIBreakpoint( ICBreakpoint breakpoint ) {
+		protected synchronized ICDIBreakpoint getCDIBreakpoint( ICBreakpoint breakpoint ) {
 			return (ICDIBreakpoint)fCBreakpoints.get( breakpoint );
 		}
 
-		protected ICBreakpoint getCBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
+		protected synchronized ICBreakpoint getCBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
 			return (ICBreakpoint)fCDIBreakpoints.get( cdiBreakpoint );
 		}
 

@@ -15,6 +15,8 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -33,6 +35,7 @@ import org.eclipse.core.runtime.Path;
  */
 public class CTagsIndexerRunner extends AbstractIndexerRunner {
 	private CTagsIndexer indexer;
+	String ctagsLocation;
     /**
      * @param resource
      * @param indexer
@@ -87,7 +90,16 @@ public class CTagsIndexerRunner extends AbstractIndexerRunner {
             OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
             
             IPath fileDirectory = resourceFile.getRawLocation().removeLastSegments(1);
-            Process p = launcher.execute(new Path("ctags"), args, null, fileDirectory); //$NON-NLS-1$
+            
+            IPath ctagsExecutable = new Path("ctags"); //$NON-NLS-1$
+	         if (!useDefaultCTags()){
+	        	 //try to read the executable path from the descriptor
+	        	 if (getCTagsLocation()){
+	        		 ctagsExecutable = new Path(ctagsLocation);
+	        	 }
+	         }
+	         
+            Process p = launcher.execute(ctagsExecutable, args, null, fileDirectory); //$NON-NLS-1$
             if (p != null) {
                 try {
                     // Close the input of the Process explicitely.
@@ -113,6 +125,50 @@ public class CTagsIndexerRunner extends AbstractIndexerRunner {
             }  
     }
 
+    	private boolean useDefaultCTags(){
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(indexer.getProject(), false);
+			if (cdesc == null)
+				return true;
+			
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				for (int i = 0; i < cext.length; i++) {
+						String orig = cext[i].getExtensionData("ctagslocationtype"); //$NON-NLS-1$
+						if (orig != null){
+							if (orig.equals(CTagsIndexer.CTAGS_PATH_DEFAULT))
+								return true;
+							else if (orig.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED))
+								return false;
+						}
+				}
+			}
+		} catch (CoreException e) {}
+	
+		return false;
+	}
+	
+	private boolean getCTagsLocation() {
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(indexer.getProject(), false);
+			if (cdesc == null)
+				return false;
+			
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				for (int i = 0; i < cext.length; i++) {
+						String orig = cext[i].getExtensionData("ctagslocation"); //$NON-NLS-1$
+						if (orig != null){
+							ctagsLocation=orig;
+							return true;
+						}
+				}
+			}
+		} catch (CoreException e) {}
+		
+		return false;
+	}
+	
     protected void addMarkers(IFile tempFile, IFile originator, Object problem, Object location) {}
 	
 	

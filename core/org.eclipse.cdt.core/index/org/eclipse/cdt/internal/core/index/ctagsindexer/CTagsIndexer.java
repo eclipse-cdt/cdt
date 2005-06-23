@@ -63,7 +63,8 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	
 	public final static String CTAGS_INTERNAL = "ctags_internal"; //$NON-NLS-1$
 	public final static String CTAGS_EXTERNAL = "ctags_external"; //$NON-NLS-1$
-	public final static String CTAGS_LOCATION = "ctags_location"; //$NON-NLS-1$
+	public final static String CTAGS_PATH_DEFAULT = "ctags_path_default"; //$NON-NLS-1$
+	public final static String CTAGS_PATH_SPECIFIED = "ctags_path_specified"; //$NON-NLS-1$
 	
 	protected List indexChangeListeners = Collections.synchronizedList(new ArrayList());
 	public static final String INDEX_NOTIFICATION_NAME = Util.bind( "indexNotificationJob" ); //$NON-NLS-1$

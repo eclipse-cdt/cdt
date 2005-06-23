@@ -45,6 +45,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 	IProject project;
 	private String ctagsFile;
 	private String ctagsFileToUse;
+	private String ctagsLocation;
 	
 	public CTagsIndexAll(IProject project, CTagsIndexer indexer) {
 		super(project.getFullPath(), indexer);
@@ -227,8 +228,15 @@ class CTagsIndexAll extends CTagsIndexRequest {
 	         // Print the command for visual interaction.
 	         launcher.showCommand(true);
 	      
-	         //Process p = launcher.execute(fCompileCommand, args, setEnvironment(launcher), fWorkingDirectory);
-	         Process p = launcher.execute(new Path("ctags"), args, null, directoryToRunFrom); //$NON-NLS-1$
+	         IPath ctagsExecutable = new Path("ctags"); //$NON-NLS-1$
+	         if (!useDefaultCTags()){
+	        	 //try to read the executable path from the descriptor
+	        	 if (getCTagsLocation()){
+	        		 ctagsExecutable = new Path(ctagsLocation);
+	        	 }
+	         }
+	         
+	         Process p = launcher.execute(ctagsExecutable, args, null, directoryToRunFrom); //$NON-NLS-1$
 	         p.waitFor();
        
     	} catch (InterruptedException e) {
@@ -279,6 +287,50 @@ class CTagsIndexAll extends CTagsIndexRequest {
 		return false;
 	}
 	
+	private boolean useDefaultCTags(){
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if (cdesc == null)
+				return true;
+			
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				for (int i = 0; i < cext.length; i++) {
+						String orig = cext[i].getExtensionData("ctagslocationtype"); //$NON-NLS-1$
+						if (orig != null){
+							if (orig.equals(CTagsIndexer.CTAGS_PATH_DEFAULT))
+								return true;
+							else if (orig.equals(CTagsIndexer.CTAGS_PATH_SPECIFIED))
+								return false;
+						}
+				}
+			}
+		} catch (CoreException e) {}
+	
+		return false;
+	}
+	
+	private boolean getCTagsLocation() {
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+			if (cdesc == null)
+				return false;
+			
+			ICExtensionReference[] cext = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID);
+			if (cext.length > 0) {
+				for (int i = 0; i < cext.length; i++) {
+						String orig = cext[i].getExtensionData("ctagslocation"); //$NON-NLS-1$
+						if (orig != null){
+							ctagsLocation=orig;
+							return true;
+						}
+				}
+			}
+		} catch (CoreException e) {}
+		
+		return false;
+	}
+		
 	private boolean ctagIndexIncludes(){
 		try {
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);

@@ -84,7 +84,9 @@ public class ScannerUtility {
         if( ! path.equals( "" )) //$NON-NLS-1$
         {
             newPathBuffer.append( new File(path).getPath() );
-            newPathBuffer.append( File.separatorChar );
+
+			if (fileName.length() > 0 && fileName.toCharArray()[0] != File.separatorChar)
+				newPathBuffer.append( File.separatorChar );
         }
 		newPathBuffer.append( fileName );
 		//remove ".." and "." segments

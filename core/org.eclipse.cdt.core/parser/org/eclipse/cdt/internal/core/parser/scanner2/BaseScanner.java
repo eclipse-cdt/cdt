@@ -2839,6 +2839,23 @@ abstract class BaseScanner implements IScanner {
         }
         
         CodeReader reader = null;
+		// filename is an absolute path or it is a Linux absolute path on a windows machine
+		if (new File(filename).isAbsolute() || filename.startsWith("/")) { //$NON-NLS-1$
+		    reader = createReader( EMPTY_STRING, filename );
+		    if (reader != null) {
+		        pushContext(reader.buffer, new InclusionData(reader,
+		                createInclusionConstruct(fileNameArray,
+		                        reader.filename, local, startOffset,
+		                        startingLine, nameOffset,
+		                        nameEndOffset, nameLine, endOffset,
+		                        endLine, false)));
+		        return;
+		    }
+		    handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
+		            fileNameArray);
+		    return;
+		}
+        
         File currentDirectory = null;
         if (local || include_next) {
             // if the include is eclosed in quotes OR we are in an include_next
@@ -2892,23 +2909,6 @@ abstract class BaseScanner implements IScanner {
                     return;
                 }
             }
-        }
-        
-        // if not found by this point, and the inclusion is local, try just the 
-        // path as is (bug 91086)
-        
-        if( local && !include_next )
-        {
-            reader = createReader( EMPTY_STRING, filename );
-            if (reader != null) {
-                pushContext(reader.buffer, new InclusionData(reader,
-                        createInclusionConstruct(fileNameArray,
-                                reader.filename, local, startOffset,
-                                startingLine, nameOffset,
-                                nameEndOffset, nameLine, endOffset,
-                                endLine, false)));
-                return;
-            }            
         }
         handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
                 fileNameArray);

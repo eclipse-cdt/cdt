@@ -9,6 +9,8 @@
 
 package org.eclipse.cdt.core.parser;
 
+import java.io.File;
+
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.util.ILRUCacheable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
@@ -137,6 +139,11 @@ public class CodeReaderCache implements ICodeReaderCache {
 		
 		// not in the cache
 		if (ret == null) {
+			// for efficiency: check File.exists before ParserUtil#createReader()
+			// bug 100947 fix: don't want to attempt to create a code reader if there is no file for the key
+			if (!(new File(key).exists()))
+				return null;
+			
 			ret = ParserUtil.createReader(key, EmptyIterator.EMPTY_ITERATOR);
 			
 			if (cache.getSpaceLimit() > 0) 

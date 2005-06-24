@@ -48,7 +48,7 @@ public class IncludePattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#decodeIndexEntry(org.eclipse.cdt.internal.core.index.IEntryResult)
 	 */
 	protected void decodeIndexEntry(IEntryResult entryResult) {
-		this.decodedSimpleName = entryResult.extractSimpleName().toCharArray();	
+		this.decodedSimpleName = entryResult.getName().toCharArray();//entryResult.extractSimpleName().toCharArray();	
 	}
 		
 	/* (non-Javadoc)

@@ -420,14 +420,14 @@
          </attribute>
          <attribute name="rcbsApplicability">
             <annotation>
-                <documentation>
+               <documentation>
                   Identifies how the user desires to apply a resource custom build step:
      1.  Apply rcbs tool before any other tools defined for the resource.
      2.  Apply rcbs tool after any other tools defined for the resource.
      3.  Apply rcbs tool overriding any other tools defined for the resource.
      4.  Disable (don&apos;t apply) the rcbs tool.
                </documentation>
-           </annotation>
+            </annotation>
             <simpleType>
                <restriction base="string">
                   <enumeration value="before">
@@ -1340,8 +1340,8 @@ If this attribute is not specified, MBS will assume that there are no reserved m
             <annotation>
                <documentation>
                   Represents the InputFileName macro value. The macro specifies the input file name. The input file has the following meaning:
-1.	If a tool does not accept building multiple files of the primary input type with one tool invocation, the input file is the file of the primary input type being built.
-2.	If a tool accepts building multiple files of the primary input type with one tool invocation the input file is undefined and the macros representing the input file contain information about one of the inputs of the primary input type being built.
+1. If a tool does not accept building multiple files of the primary input type with one tool invocation, the input file is the file of the primary input type being built.
+2. If a tool accepts building multiple files of the primary input type with one tool invocation the input file is undefined and the macros representing the input file contain information about one of the inputs of the primary input type being built.
                </documentation>
             </annotation>
          </attribute>
@@ -1377,8 +1377,8 @@ If this attribute is not specified, MBS will assume that there are no reserved m
             <annotation>
                <documentation>
                   Represents the OutputFileName macro value. The macro specifies the output file name. The output file has the following meaning:
-1.	If a tool is not capable of producing multiple files of the primary output type with one tool invocation the output file is the file of the primary output type that is built with a given tool invocation.
-2.	If a tool is capable of producing multiple files of the primary output type with one tool invocation the output file is undefined and the macros representing the output file contain information about one of the files of the primary output type that are built with a given tool invocation.
+1. If a tool is not capable of producing multiple files of the primary output type with one tool invocation the output file is the file of the primary output type that is built with a given tool invocation.
+2. If a tool is capable of producing multiple files of the primary output type with one tool invocation the output file is undefined and the macros representing the output file contain information about one of the files of the primary output type that are built with a given tool invocation.
                </documentation>
             </annotation>
          </attribute>
@@ -1637,7 +1637,7 @@ If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelim
       </appInfo>
       <documentation>
          Copyright (c) 2003, 2005 IBM Corporation and others.
-All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available on the &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt; Eclipse&lt;/a&gt; website.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available on the &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt; Eclipse&lt;/a&gt; website.
       </documentation>
    </annotation>
 

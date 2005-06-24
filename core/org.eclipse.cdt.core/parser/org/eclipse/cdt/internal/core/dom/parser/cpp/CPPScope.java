@@ -90,21 +90,22 @@ abstract public class CPPScope implements ICPPScope{
 	    Object obj = bindings.get( c );
 	    if( obj != null ){
 	        if( obj instanceof ObjectSet ) {
+	        	ObjectSet os = (ObjectSet) obj;
 	        	if( forceResolve )
-	        		return CPPSemantics.resolveAmbiguities( name,  ((ObjectSet) obj).keyArray() );
+	        		return CPPSemantics.resolveAmbiguities( name,  os.keyArray() );
 	        	IBinding [] bs = null;
-        		Object [] os = ((ObjectSet) obj).keyArray();
-        		for( int i = 0; i < os.length; i++ ){
-        			if( os[i] instanceof IASTName ){
-        				IASTName n = (IASTName) os[i];
+        		for( int i = 0; i < os.size(); i++ ){
+        			Object o = os.keyAt( i );
+        			if( o instanceof IASTName ){
+        				IASTName n = (IASTName) o;
         				if( n instanceof ICPPASTQualifiedName ){
         					IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
         					n = ns[ ns.length - 1 ];
         				}
         				bs = (IBinding[]) ArrayUtil.append( IBinding.class, bs, n.getBinding() );
         			} else
-						bs = (IBinding[]) ArrayUtil.append( IBinding.class, bs, os[i] );
-        		}	    
+						bs = (IBinding[]) ArrayUtil.append( IBinding.class, bs, o );
+        		}
         		return CPPSemantics.resolveAmbiguities( name,  bs );
 	        } else if( obj instanceof IASTName ){
 	        	IBinding binding = null;

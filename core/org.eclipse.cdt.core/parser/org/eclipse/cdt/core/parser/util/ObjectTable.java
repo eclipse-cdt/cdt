@@ -15,6 +15,7 @@
  */
 package org.eclipse.cdt.core.parser.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,5 +141,11 @@ public abstract class ObjectTable extends HashTable implements Cloneable{
 	    Object [] keys = new Object[ size() ];
 	    System.arraycopy( keyTable, 0, keys, 0, keys.length );
 	    return keys;
+	}
+	
+	public Object [] keyArray( Class c ){
+		Object [] keys = (Object[]) Array.newInstance( c, size() );
+        System.arraycopy( keyTable, 0, keys, 0, keys.length );
+        return keys;
 	}
 }

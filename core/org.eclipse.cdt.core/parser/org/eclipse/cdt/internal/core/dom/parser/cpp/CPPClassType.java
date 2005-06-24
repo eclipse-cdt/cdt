@@ -564,7 +564,7 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
 	 */
 	public ICPPMethod[] getMethods() throws DOMException {
-		ObjectSet set = new ObjectSet(2);
+		ObjectSet set = new ObjectSet(4);
 		ICPPMethod [] ms = getDeclaredMethods();
 		set.addAll( ms );
 		ICPPClassScope scope = (ICPPClassScope) getCompositeScope();
@@ -573,7 +573,7 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 		for ( int i = 0; i < bases.length; i++ ) {
 			set.addAll( bases[i].getBaseClass().getMethods() );
         }
-		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, set.keyArray(), true );
+		return (ICPPMethod[]) set.keyArray( ICPPMethod.class );
 	}
 
 	/* (non-Javadoc)
@@ -733,7 +733,7 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 			}
         }
         
-        return (IBinding[]) ArrayUtil.trim( IBinding.class, resultSet.keyArray(), true );
+        return (IBinding[]) resultSet.keyArray( IBinding.class );
     }
 
     /* (non-Javadoc)

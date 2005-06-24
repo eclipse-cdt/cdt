@@ -57,7 +57,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	}
 	public boolean isFullyCached(){
 		if( !isFullyCached ){
-			CPPSemantics.LookupData data = new CPPSemantics.LookupData( CPPSemantics.EMPTY_NAME_ARRAY );
+			CPPSemantics.LookupData data = new CPPSemantics.LookupData();
 			try {
 				CPPSemantics.lookupInScope( data, this, null );
 			} catch (DOMException e) {

@@ -333,7 +333,7 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 					}
 				}
 			}
-			return (IBinding[]) ArrayUtil.trim( IBinding.class, collector.members.keyArray(), true );
+			return (IBinding[]) collector.members.keyArray( IBinding.class );
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}

@@ -75,6 +75,9 @@ public class ScannerConfigProfile {
 				return null;
 			}
 		}
+        public String getCompilerCommands() {
+            return configElem.getAttribute("compilerCommands"); //$NON-NLS-1$
+        }
 	}
 	/**
 	 * tag interface, a placeholder for either run or open element
@@ -242,12 +245,10 @@ public class ScannerConfigProfile {
 	 * loads the profile from the manifest file.
 	 */
 	private void load() {
-		String[] empty = new String[0];
 		IExtensionPoint extension = Platform.getExtensionRegistry().
 				getExtensionPoint(MakeCorePlugin.PLUGIN_ID, ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
-			List rProfileIds = new ArrayList(extensions.length);
 			for (int i = 0; i < extensions.length; ++i) {
 				String rProfileId = extensions[i].getUniqueIdentifier();
 				if (rProfileId != null && rProfileId.equals(getId())) {

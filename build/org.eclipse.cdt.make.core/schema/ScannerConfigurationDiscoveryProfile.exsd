@@ -100,6 +100,15 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="compilerCommands" type="string">
+            <annotation>
+               <documentation>
+                  Comma separated list of compiler commands to use for detecting lines with preprocessor options.
+
+Example: &quot;gcc, g++, cc, c++&quot;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

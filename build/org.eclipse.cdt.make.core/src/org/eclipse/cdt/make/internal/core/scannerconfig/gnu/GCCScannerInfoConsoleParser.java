@@ -36,7 +36,9 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 	private final static String DOUBLE_QUOTE_STRING = "\""; //$NON-NLS-1$
 	private final static char[] matchingChars = {'`', '\'', '\"'};
 	
-	private ScannerInfoConsoleParserUtility fUtil = null;
+    private String[] compilerInvocation;
+
+    private ScannerInfoConsoleParserUtility fUtil = null;
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
@@ -45,6 +47,9 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
                 new ScannerInfoConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
         super.startup(project, collector);
+
+        // check additional compiler commands from extension point manifest
+        compilerInvocation = getCompilerCommands();
     }
 
     /* (non-Javadoc)
@@ -67,7 +72,15 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 			return false;
 		Iterator I = allTokens.iterator();
 		String token = ((String) I.next()).toLowerCase();
-		if (token.indexOf("gcc") != -1 || token.indexOf("g++") != -1) {//$NON-NLS-1$ //$NON-NLS-2$
+        
+        boolean found = false;
+        for (int i = 0; i < compilerInvocation.length; i++) {
+            if (token.indexOf(compilerInvocation[i]) != -1) {
+                found = true;
+                break;
+            }
+        }
+		if (found) {
 			// Recognized gcc or g++ compiler invocation
 			List includes = new ArrayList();
 			List symbols = new ArrayList();

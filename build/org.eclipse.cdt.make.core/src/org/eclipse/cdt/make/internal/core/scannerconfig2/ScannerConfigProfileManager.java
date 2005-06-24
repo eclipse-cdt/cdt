@@ -126,7 +126,6 @@ public class ScannerConfigProfileManager {
 					getExtensionPoint(MakeCorePlugin.PLUGIN_ID, ScannerConfigProfileManager.SI_PROFILE_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
-				List rProfileIds = new ArrayList(extensions.length);
 				for (int i = 0; i < extensions.length; ++i) {
 					String rProfileId = extensions[i].getUniqueIdentifier();
 					profileIds.add(rProfileId);

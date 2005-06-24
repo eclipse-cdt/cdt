@@ -13,6 +13,9 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.BuildOutputProvider;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -21,6 +24,10 @@ import org.eclipse.core.resources.IProject;
  * @author vhirsl
  */
 public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsoleParser {
+    private static final String[] COMPILER_INVOCATION = {
+            "gcc", "g++", "cc", "c++" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    };
+    
     private IProject project;
     private IScannerInfoCollector collector;
     
@@ -45,6 +52,30 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
         this.collector = collector;
     }
 
+    /**
+     * Returns array of additional compiler commands to look for
+     * 
+     * @return String[]
+     */
+    public String[] getCompilerCommands() {
+        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+                getSCProfileInstance(project, ScannerConfigProfileManager.NULL_PROFILE_ID);
+        BuildOutputProvider boProvider = profileInstance.getProfile().getBuildOutputProviderElement();
+        if (boProvider != null) {
+            String compilerCommandsString = boProvider.getScannerInfoConsoleParser().getCompilerCommands();
+            if (compilerCommandsString != null && compilerCommandsString.length() > 0) {
+                String[] compilerCommands = compilerCommandsString.split(",\\s+"); //$NON-NLS-1$
+                if (compilerCommands.length > 0) {
+                    String[] compilerInvocation = new String[COMPILER_INVOCATION.length + compilerCommands.length];
+                    System.arraycopy(COMPILER_INVOCATION, 0, compilerInvocation, 0, COMPILER_INVOCATION.length);
+                    System.arraycopy(compilerCommands, 0, compilerInvocation, COMPILER_INVOCATION.length, compilerCommands.length);
+                    return compilerInvocation;
+                }
+            }
+        }
+        return COMPILER_INVOCATION; 
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#processLine(java.lang.String)
      */

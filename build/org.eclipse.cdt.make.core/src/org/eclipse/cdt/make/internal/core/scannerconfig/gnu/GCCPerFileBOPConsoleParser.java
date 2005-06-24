@@ -35,11 +35,9 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
     private final static String[] FILE_EXTENSIONS = {
         ".c", ".cc", ".cpp", ".cxx", ".C", ".CC", ".CPP", ".CXX" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     };
-    private final static String[] COMPILER_INVOCATION = {
-        "gcc", "g++", "cc", "c++" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    };
     private final static List FILE_EXTENSIONS_LIST = Arrays.asList(FILE_EXTENSIONS);
     
+    private String[] compilerInvocation;
     private GCCPerFileBOPConsoleParserUtility fUtil;
     
     /* (non-Javadoc)
@@ -49,6 +47,9 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
                 new GCCPerFileBOPConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
         super.startup(project, collector);
+        
+        // check additional compiler commands from extension point manifest
+        compilerInvocation = getCompilerCommands();
     }
 
     /* (non-Javadoc)
@@ -65,8 +66,8 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         boolean rc = false;
         // GCC C/C++ compiler invocation 
         int compilerInvocationIndex = -1;
-        for (int cii = 0; cii < COMPILER_INVOCATION.length; ++cii) {
-            compilerInvocationIndex = line.indexOf(COMPILER_INVOCATION[cii]);
+        for (int cii = 0; cii < compilerInvocation.length; ++cii) {
+            compilerInvocationIndex = line.indexOf(compilerInvocation[cii]);
             if (compilerInvocationIndex != -1)
                 break;
         }
@@ -78,8 +79,8 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         String command = split[0];
         // verify that it is compiler invocation
         int cii2 = -1;
-        for (int cii = 0; cii < COMPILER_INVOCATION.length; ++cii) {
-            cii2 = command.indexOf(COMPILER_INVOCATION[cii]);
+        for (int cii = 0; cii < compilerInvocation.length; ++cii) {
+            cii2 = command.indexOf(compilerInvocation[cii]);
             if (cii2 != -1)
                 break;
         }

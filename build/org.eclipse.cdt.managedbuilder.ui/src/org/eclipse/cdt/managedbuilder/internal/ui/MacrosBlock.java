@@ -19,10 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvVarOperationProcessor;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
@@ -51,11 +48,22 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -68,10 +76,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * displays the build macros for the given context
@@ -145,9 +157,12 @@ public class MacrosBlock extends AbstractCOptionPage {
 	//and the changes are not applied to the User Macro Supplier 
 	private boolean fModified = false;
 	//holds the visible state. 
-	private boolean fVisible = false;
+//	private boolean fVisible = false;
 	//specifies whether the "show parent context macros" checkbox should be created
 	private boolean fShowParentViewCheckBox = true;
+	
+	private boolean fIsEditable = true;
+	
 	//inexistent context
 	private static final Object fInexistentContext = new Object();
 	//the context tyte for which the macros are displayed
@@ -166,11 +181,11 @@ public class MacrosBlock extends AbstractCOptionPage {
 	
 	//the user defined macro supplier
 	private UserDefinedMacroSupplier fUserSupplier;
-	//editable list that displayes user-defined macros
-	private ListDialogField fEditableList;
-	//non-editable list that holds all macros other than user-defined ones
-	private ListDialogField fNonEditableList;
-	
+	//editable table viewer
+	private TableViewer fEditableTable;
+	//noneditable table viewer
+	private TableViewer fNonEditableTable;
+
 	/*
 	 * widgets
 	 */
@@ -180,6 +195,31 @@ public class MacrosBlock extends AbstractCOptionPage {
 	private Composite fParent;
 	//status label
 	private Label fStatusLabel;
+	//buttons
+	private Button fNewButton;
+	private Button fEditButton;
+	private Button fDeleteButton;
+
+	
+	private static final String[] fEditableTableColumnProps = new String[] {
+		"editable name",	//$NON-NLS-1$
+		"editable type",	//$NON-NLS-1$
+		"editable value",	//$NON-NLS-1$
+	};
+
+	private static final String[] fNonEditableTableColumnProps = new String[] {
+		"noneditable name",	//$NON-NLS-1$
+		"noneditable type",	//$NON-NLS-1$
+		"noneditable value",	//$NON-NLS-1$
+	};
+
+	private static final String[] fTableColumnNames = new String[] {
+		ManagedBuilderUIMessages.getResourceString(HEADER_NAME),
+		ManagedBuilderUIMessages.getResourceString(HEADER_TYPE),
+		ManagedBuilderUIMessages.getResourceString(HEADER_VALUE),
+	};
+
+	private static final ColumnLayoutData[] fTableColumnLayouts = {new ColumnPixelData(100), new ColumnPixelData(100), new ColumnPixelData(250)};
 
 	
 	private class MacroUIMacroSubstitutor extends DefaultMacroSubstitutor{
@@ -288,9 +328,6 @@ public class MacrosBlock extends AbstractCOptionPage {
 		 */
 		public IBuildMacroSupplier[] getSuppliers(int contextType, Object contextData){
 			IBuildMacroSupplier suppliers[] = super.getSuppliers(contextType,contextData);
-			if(fParentContextInfo == null){
-				int i = 0;
-			}
 			if(suppliers == null || suppliers.length == 0)
 				return suppliers;
 			if(!(suppliers[0] instanceof UserDefinedMacroSupplier))
@@ -340,36 +377,24 @@ public class MacrosBlock extends AbstractCOptionPage {
 		}
 	}
 
-	public class ListAdapter implements IListAdapter, IDialogFieldListener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter#customButtonPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField, int)
-		 */
-		public void customButtonPressed(ListDialogField field, int index) {
-			if(field == fEditableList)
-				handleCustomButtonPressed(index);
+	private class MacroContentProvider implements IStructuredContentProvider{
+
+		public Object[] getElements(Object inputElement) {
+			return (Object[])inputElement;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter#selectionChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
-		public void selectionChanged(ListDialogField field) {
-			handleSelectionChanged(field);
-		}
+		public void dispose() {
+			// TODO Auto-generated method stub
 			
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter#doubleClicked(org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
-		public void doubleClicked(ListDialogField field) {
-			if (isEditable(field) && field.getSelectedElements().size() == 1) 
-				handleCustomButtonPressed(IDX_BUTTON_EDIT);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField)
-		 */
-		public void dialogFieldChanged(DialogField field) {
-		}			
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
+
 	
 	private class MacroLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider , ITableFontProvider, IColorProvider{
 		private boolean fUser;
@@ -528,74 +553,36 @@ public class MacrosBlock extends AbstractCOptionPage {
 		super(title);
 		super.setContainer(parent);
 		
-		ListAdapter adapter = new ListAdapter();
-		
-		if(editable){
-			String[] buttons= new String[] {
-					ManagedBuilderUIMessages.getResourceString(BUTTON_NEW),
-					ManagedBuilderUIMessages.getResourceString(BUTTON_EDIT),
-					ManagedBuilderUIMessages.getResourceString(BUTTON_DELETE),
-				};
-
-			fEditableList= new ListDialogField(adapter, buttons, new MacroLabelProvider(true));
-			fEditableList.setDialogFieldListener(adapter);
-			
-			String[] columnsHeaders= new String[] {
-				ManagedBuilderUIMessages.getResourceString(HEADER_NAME),
-				ManagedBuilderUIMessages.getResourceString(HEADER_TYPE),
-				ManagedBuilderUIMessages.getResourceString(HEADER_VALUE),
-			};
-			
-			fEditableList.setTableColumns(new ListDialogField.ColumnsDescription(columnsHeaders, true));
-			fEditableList.setViewerSorter(new ViewerSorter());
-
-
-		}
-	
-			//create non-editable list
-			fNonEditableList= new ListDialogField(adapter, null, new MacroLabelProvider(false));
-			fNonEditableList.setDialogFieldListener(adapter);
-			
-			String[] columnsHeaders= new String[] {
-				ManagedBuilderUIMessages.getResourceString(HEADER_NAME),
-				ManagedBuilderUIMessages.getResourceString(HEADER_TYPE),
-				ManagedBuilderUIMessages.getResourceString(HEADER_VALUE),
-			};
-			
-			fNonEditableList.setTableColumns(new ListDialogField.ColumnsDescription(columnsHeaders, true));
-			fNonEditableList.setViewerSorter(new ViewerSorter());
-			
-			fShowParentViewCheckBox = showParentViewCheckBox;
-
+		fShowParentViewCheckBox = showParentViewCheckBox;
+		fIsEditable = editable;
 	}
 	
 	/*
 	 * returns the map containing the user-defined macros
 	 */
 	private Map getUserMacros(){
-		if(fUserSupplier == null)
-			return null;
 		Map map = new HashMap();
-		
-		if(!fDeleteAll){
-			IBuildMacro macros[] = fUserSupplier.getMacros(fContextType,fContextData);
-			if(macros != null) {
-				for(int i = 0; i < macros.length; i++){
-					String name = macros[i].getName();
-					map.put(name,macros[i]);
+		if(fUserSupplier != null) {
+			if(!fDeleteAll){
+				IBuildMacro macros[] = fUserSupplier.getMacros(fContextType,fContextData);
+				if(macros != null) {
+					for(int i = 0; i < macros.length; i++){
+						String name = macros[i].getName();
+						map.put(name,macros[i]);
+					}
 				}
-			}
-			
-			Iterator iter = getDeletedUserMacroNames().iterator();
-			while(iter.hasNext()){
-				map.remove((String)iter.next());
-			}
-			
-			iter = getAddedUserMacros().values().iterator();
-			while(iter.hasNext()){
-				IBuildMacro macro = (IBuildMacro)iter.next();
-				String name = macro.getName(); 
-				map.put(name,macro);
+				
+				Iterator iter = getDeletedUserMacroNames().iterator();
+				while(iter.hasNext()){
+					map.remove((String)iter.next());
+				}
+				
+				iter = getAddedUserMacros().values().iterator();
+				while(iter.hasNext()){
+					IBuildMacro macro = (IBuildMacro)iter.next();
+					String name = macro.getName(); 
+					map.put(name,macro);
+				}
 			}
 		}
 		return map;
@@ -756,21 +743,12 @@ public class MacrosBlock extends AbstractCOptionPage {
 	/*
 	 * called when the user macro selection was changed 
 	 */
-	private void handleSelectionChanged(ListDialogField field){
-		if(isEditable(field)){
-			List selectedElements= field.getSelectedElements();
-			field.enableButton(IDX_BUTTON_EDIT, selectedElements.size() == 1);
-			field.enableButton(IDX_BUTTON_DELETE, selectedElements.size() > 0);
-		}
+	private void handleSelectionChanged(SelectionChangedEvent event){
+		int size = ((IStructuredSelection)event.getSelection()).size();
+		fEditButton.setEnabled(size == 1);
+		fDeleteButton.setEnabled(size > 0);
 	}
 	
-	/*
-	 * answers whether the list values can be edited
-	 */
-	private boolean isEditable(ListDialogField field) {
-		return field == fEditableList;
-	}
-
 	/*
 	 * called when a custom button was pressed
 	 */
@@ -824,10 +802,10 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * returnes the selected user-defined macros
 	 */
 	private IBuildMacro[] getSelectedUserMacros(){
-		if(fEditableList == null)
+		if(fEditableTable == null)
 			return null;
 		
-		List list = fEditableList.getSelectedElements();
+		List list = ((IStructuredSelection)fEditableTable.getSelection()).toList();
 		return (IBuildMacro[])list.toArray(new IBuildMacro[list.size()]);
 	}
 
@@ -904,7 +882,6 @@ public class MacrosBlock extends AbstractCOptionPage {
 	}
 	
 	private void updateState(BuildMacroException e){
-		ICOptionContainer container = getContainer();
 		fIncorrectlyDefinedMacrosNames.clear();
 		
 			if(e != null){
@@ -926,16 +903,17 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * apdates a user-defined macros table
 	 */
 	private void updateUserMacros(){
-		if(fEditableList == null || fContextType == 0)
+		if(fEditableTable == null || fContextType == 0)
 			return;
 		
-		fEditableList.selectFirstElement();
-		handleSelectionChanged(fEditableList);
-	
-		if(fUserSupplier != null)
-			fEditableList.setElements(new ArrayList(getUserMacros().values()));
-		else
-			fEditableList.removeAllElements();
+		Collection values = getUserMacros().values();
+		ArrayList list = new ArrayList(values.size());
+		for(Iterator iter = values.iterator(); iter.hasNext();){
+			Object next = iter.next();
+			if(next != null)
+				list.add(next);
+		}
+		fEditableTable.setInput(list.toArray(new IBuildMacro[list.size()]));
 	}
 	
 	
@@ -943,22 +921,19 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * apdates a system-defined macros table
 	 */
 	private void updateSystemMacros(){
-		if(fNonEditableList == null || fContextType == 0)
+		if(fNonEditableTable == null || fContextType == 0)
 			return;
 		
-		List list = null;
+		ArrayList list = new ArrayList();
 		IBuildMacro macros[] = getSystemMacros(fShowParentMacros);
 		if(macros != null && macros.length != 0){
-			list = new ArrayList(macros.length);
 			for(int i = 0; i < macros.length; i++){
-				list.add(macros[i]);
+				if(macros[i] != null)
+					list.add(macros[i]);
 			}
 		}
 		
-		if(list != null)
-			fNonEditableList.setElements(list);
-		else
-			fNonEditableList.removeAllElements();
+		fNonEditableTable.setInput(list.toArray(new IBuildMacro[list.size()]));
 	}
 	
 	/*
@@ -998,7 +973,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(layout);
 
-		if(fEditableList != null){	
+		if(fIsEditable){	
 			Label nameLabel = new Label(composite, SWT.LEFT);
 			nameLabel.setFont(composite.getFont());
 			nameLabel.setText(ManagedBuilderUIMessages.getResourceString(USER_MACROS));
@@ -1007,19 +982,9 @@ public class MacrosBlock extends AbstractCOptionPage {
 			fd.left = new FormAttachment(0,0);
 			nameLabel.setLayoutData(fd);
 
-			listControl= fEditableList.getListControl(composite);
-			fEditableList.getTableViewer().getTable().addKeyListener(new KeyListener(){
-				public void keyPressed(KeyEvent e){
-					if(e.keyCode == SWT.DEL)
-						handleCustomButtonPressed(IDX_BUTTON_DELETE);
-				}
+			listControl= createTableControl(composite,true);
 
-				public void keyReleased(KeyEvent e){
-					
-				}
-			});
-
-			buttonsControl= fEditableList.getButtonBox(composite);
+			buttonsControl= createButtonsControl(composite);
 
 			fd = new FormData();
 			fd.top = new FormAttachment(nameLabel,0);
@@ -1039,7 +1004,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 		nameLabel.setFont(composite.getFont());
 		nameLabel.setText(ManagedBuilderUIMessages.getResourceString(SYSTEM_MACROS));
 		fd = new FormData();
-		if(fEditableList != null)
+		if(fIsEditable)
 			fd.top = new FormAttachment(listControl,2);
 		else
 			fd.top = new FormAttachment(0,2);
@@ -1074,7 +1039,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 			});
 		}
 		
-		listControl= fNonEditableList.getListControl(composite);
+		listControl= createTableControl(composite,false);
 		fd = new FormData();
 		fd.top = new FormAttachment(nameLabel,0);
 		fd.left = new FormAttachment(0,0);
@@ -1092,11 +1057,116 @@ public class MacrosBlock extends AbstractCOptionPage {
 		this.setControl(composite);
 	}
 	
+	private Control createTableControl(Composite parent, boolean editable){
+		Composite listControl= new Composite(parent, SWT.NONE);
+		TableViewer tableViewer;
+		GridLayout gl = new GridLayout();
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.numColumns = 1;
+		listControl.setLayout(gl);
+		tableViewer = new TableViewer(listControl, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
+				| SWT.FULL_SELECTION);
+		
+		Table table = tableViewer.getTable();
+		TableLayout tableLayout = new TableLayout();
+		for (int i = 0; i < fTableColumnNames.length; i++) {
+			tableLayout.addColumnData(fTableColumnLayouts[i]);
+			TableColumn tc = new TableColumn(table, SWT.NONE, i);
+			tc.setResizable(fTableColumnLayouts[i].resizable);
+			tc.setText(fTableColumnNames[i]);
+		}
+		table.setLayout(tableLayout);
+		table.setHeaderVisible(true);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		tableViewer.getControl().setLayoutData(gd);
+		tableViewer.setContentProvider(new MacroContentProvider());
+		tableViewer.setLabelProvider(new MacroLabelProvider(editable));
+		tableViewer.setSorter(new ViewerSorter());
+		
+		if(editable){
+			tableViewer.setColumnProperties(fEditableTableColumnProps);
+			fEditableTable = tableViewer;
+			tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent event) {
+					handleSelectionChanged(event);
+				}
+			});
+			tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+	
+				public void doubleClick(DoubleClickEvent event) {
+					if (!fEditableTable.getSelection().isEmpty()) {
+						handleCustomButtonPressed(IDX_BUTTON_EDIT);
+					}
+				}
+			});
+	
+			table.addKeyListener(new KeyListener(){
+				public void keyPressed(KeyEvent e){
+					if(e.keyCode == SWT.DEL)
+						handleCustomButtonPressed(IDX_BUTTON_DELETE);
+				}
+	
+				public void keyReleased(KeyEvent e){
+					
+				}
+			});
+		} else {
+			tableViewer.setColumnProperties(fNonEditableTableColumnProps);
+			fNonEditableTable = tableViewer;
+		}
+		return listControl;
+	}
+	
+	private Control createButtonsControl(Composite parent){
+		Composite buttonsControl = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout();
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.numColumns = 1;
+		buttonsControl.setLayout(gl);
+
+		GridData gd;
+		fNewButton = createPushButton(buttonsControl,ManagedBuilderUIMessages.getResourceString(BUTTON_NEW),null);
+		fNewButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleCustomButtonPressed(IDX_BUTTON_NEW);
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(fNewButton);
+		gd.widthHint = SWTUtil.getButtonWidthHint(fNewButton);
+		fNewButton.setLayoutData(gd);
+
+		fEditButton = createPushButton(buttonsControl,ManagedBuilderUIMessages.getResourceString(BUTTON_EDIT),null);
+		fEditButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleCustomButtonPressed(IDX_BUTTON_EDIT);
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(fEditButton);
+		gd.widthHint = SWTUtil.getButtonWidthHint(fEditButton);
+		fEditButton.setLayoutData(gd);
+
+		fDeleteButton = createPushButton(buttonsControl,ManagedBuilderUIMessages.getResourceString(BUTTON_DELETE),null);
+		fDeleteButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleCustomButtonPressed(IDX_BUTTON_DELETE);
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(fDeleteButton);
+		gd.widthHint = SWTUtil.getButtonWidthHint(fDeleteButton);
+		fDeleteButton.setLayoutData(gd);
+		return buttonsControl;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible){
-		fVisible = visible;
+//		fVisible = visible;
 //		if(visible)
 //			updateValues();
 		super.setVisible(visible);

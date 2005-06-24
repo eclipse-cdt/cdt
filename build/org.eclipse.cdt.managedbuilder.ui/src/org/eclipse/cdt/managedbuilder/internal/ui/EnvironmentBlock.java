@@ -19,10 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -58,11 +55,22 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -75,10 +83,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * displays the environment for the given context
@@ -137,9 +149,11 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	//and the changes are not applied to the User Variable Supplier 
 	private boolean fModified = false;
 	//holds the visible state. 
-	private boolean fVisible = false;
+//	private boolean fVisible = false;
 	//specifies whether the "show parent level variables" checkbox should be created
 	private boolean fShowParentViewCheckBox = true;
+	
+	private boolean fIsEditable = true;
 	//inexistent context
 	private static final Object fInexistentContext = new Object();
 	//the context for which the variables are displayed
@@ -154,10 +168,29 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	
 	//the user defined variable supplier
 	private UserDefinedEnvironmentSupplier fUserSupplier;
-	//editable list that displayes user-defined variables
-	private ListDialogField fEditableList;
-	//non-editable list that holds all variables other than user-defined ones
-	private ListDialogField fNonEditableList;
+	//editable table viewer
+	private TableViewer fEditableTable;
+	//noneditable table viewer
+	private TableViewer fNonEditableTable;
+
+	private static final String[] fEditableTableColumnProps = new String[] {
+		"editable name",	//$NON-NLS-1$
+		"editable value",	//$NON-NLS-1$
+	};
+
+	private static final String[] fNonEditableTableColumnProps = new String[] {
+		"noneditable name",	//$NON-NLS-1$
+		"noneditable value",	//$NON-NLS-1$
+	};
+
+	private static final String[] fTableColumnNames = new String[] {
+		ManagedBuilderUIMessages.getResourceString(HEADER_NAME),
+		ManagedBuilderUIMessages.getResourceString(HEADER_VALUE),
+	};
+
+	private static final ColumnLayoutData[] fTableColumnLayouts = {new ColumnPixelData(150), new ColumnPixelData(250)};
+
+	
 	//the set of names of the incorrestly defined variables
 	private Set fIncorrectlyDefinedVariablesNames = new HashSet();
 
@@ -171,7 +204,12 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	private Composite fParent;
 	//status label
 	private Label fStatusLabel;
-	
+	//buttons
+	private Button fNewButton;
+	private Button fEditButton;
+	private Button fUndefButton;
+	private Button fDeleteButton;
+
 	private class SystemContextInfo extends DefaultContextInfo{
 		protected SystemContextInfo(Object context){
 			super(context);
@@ -215,9 +253,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		 */
 		public IEnvironmentVariableSupplier[] getSuppliers(Object context){
 			IEnvironmentVariableSupplier suppliers[] = super.getSuppliers(context);
-			if(fParentContextInfo == null){
-				int i = 0;
-			}
+
 			if(suppliers == null || suppliers.length == 0)
 				return suppliers;
 			if(!(suppliers[0] instanceof UserDefinedEnvironmentSupplier))
@@ -267,37 +303,24 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		}
 	}
 
-	public class ListAdapter implements IListAdapter, IDialogFieldListener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter#customButtonPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField, int)
-		 */
-		public void customButtonPressed(ListDialogField field, int index) {
-			if(field == fEditableList)
-				handleCustomButtonPressed(index);
+	private class EnvironmentContentProvider implements IStructuredContentProvider{
+
+		public Object[] getElements(Object inputElement) {
+			return (Object[])inputElement;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter#selectionChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
-		public void selectionChanged(ListDialogField field) {
-			handleSelectionChanged(field);
-		}
+		public void dispose() {
+			// TODO Auto-generated method stub
 			
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter#doubleClicked(org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField)
-		 */
-		public void doubleClicked(ListDialogField field) {
-			if (isEditable(field) && field.getSelectedElements().size() == 1) 
-				handleCustomButtonPressed(IDX_BUTTON_EDIT);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField)
-		 */
-		public void dialogFieldChanged(DialogField field) {
-		}			
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
-	
+
 	private class EnvironmentLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider , ITableFontProvider, IColorProvider{
 		private boolean fUser;
 		public EnvironmentLabelProvider(boolean user){
@@ -427,77 +450,40 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		super(title);
 		super.setContainer(parent);
 
-		ListAdapter adapter = new ListAdapter();
-		
-		if(editable){
-			String[] buttons= new String[] {
-					ManagedBuilderUIMessages.getResourceString(BUTTON_NEW),
-					ManagedBuilderUIMessages.getResourceString(BUTTON_EDIT),
-					ManagedBuilderUIMessages.getResourceString(BUTTON_UNDEF),
-					ManagedBuilderUIMessages.getResourceString(BUTTON_DELETE),
-				};
-
-			fEditableList= new ListDialogField(adapter, buttons, new EnvironmentLabelProvider(true));
-			fEditableList.setDialogFieldListener(adapter);
-			
-			String[] columnsHeaders= new String[] {
-				ManagedBuilderUIMessages.getResourceString(HEADER_NAME),
-				ManagedBuilderUIMessages.getResourceString(HEADER_VALUE),
-			};
-			
-			fEditableList.setTableColumns(new ListDialogField.ColumnsDescription(columnsHeaders, true));
-			fEditableList.setViewerSorter(new ViewerSorter());
-
-
-		}
-	
-			//create non-editable list
-			fNonEditableList= new ListDialogField(adapter, null, new EnvironmentLabelProvider(false));
-			fNonEditableList.setDialogFieldListener(adapter);
-			
-			String[] columnsHeaders= new String[] {
-				ManagedBuilderUIMessages.getResourceString(HEADER_NAME),
-				ManagedBuilderUIMessages.getResourceString(HEADER_VALUE),
-			};
-			
-			fNonEditableList.setTableColumns(new ListDialogField.ColumnsDescription(columnsHeaders, true));
-			fNonEditableList.setViewerSorter(new ViewerSorter());
-			
-			fShowParentViewCheckBox = showParentViewCheckBox;
-
+		fIsEditable = editable;	
+		fShowParentViewCheckBox = showParentViewCheckBox;
 	}
 	
 	/*
 	 * returns the map containing the user-defined variables
 	 */
 	private Map getUserVariables(){
-		if(fUserSupplier == null)
-			return null;
 		Map map = new HashMap();
-		
-		if(!fDeleteAll){
-			IBuildEnvironmentVariable vars[] = fUserSupplier.getVariables(fContext);
-			if(vars != null) {
-				for(int i = 0; i < vars.length; i++){
-					String name = vars[i].getName();
+		if(fUserSupplier != null) {
+			if(!fDeleteAll){
+				IBuildEnvironmentVariable vars[] = fUserSupplier.getVariables(fContext);
+				if(vars != null) {
+					for(int i = 0; i < vars.length; i++){
+						String name = vars[i].getName();
+						if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
+							name = name.toUpperCase();
+						map.put(name,vars[i]);
+					}
+				}
+				
+				Iterator iter = getDeletedUserVariableNames().iterator();
+				while(iter.hasNext()){
+					map.remove((String)iter.next());
+				}
+				
+				iter = getAddedUserVariables().values().iterator();
+				while(iter.hasNext()){
+					IBuildEnvironmentVariable var = (IBuildEnvironmentVariable)iter.next();
+					String name = var.getName(); 
 					if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
 						name = name.toUpperCase();
-					map.put(name,vars[i]);
+					map.put(name,var);
 				}
-			}
-			
-			Iterator iter = getDeletedUserVariableNames().iterator();
-			while(iter.hasNext()){
-				map.remove((String)iter.next());
-			}
-			
-			iter = getAddedUserVariables().values().iterator();
-			while(iter.hasNext()){
-				IBuildEnvironmentVariable var = (IBuildEnvironmentVariable)iter.next();
-				String name = var.getName(); 
-				if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
-					name = name.toUpperCase();
-				map.put(name,var);
 			}
 		}
 		return map;
@@ -632,22 +618,20 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	/*
 	 * called when the user variable selection was changed 
 	 */
-	private void handleSelectionChanged(ListDialogField field){
-		if(isEditable(field)){
-			List selectedElements= field.getSelectedElements();
-			field.enableButton(IDX_BUTTON_EDIT, selectedElements.size() == 1);
-			field.enableButton(IDX_BUTTON_UNDEF, selectedElements.size() > 0);
-			field.enableButton(IDX_BUTTON_DELETE, selectedElements.size() > 0);
-		}
+	private void handleSelectionChanged(SelectionChangedEvent event){
+		int size = ((IStructuredSelection)event.getSelection()).size();
+		fEditButton.setEnabled(size == 1);
+		fUndefButton.setEnabled(size > 0);
+		fDeleteButton.setEnabled(size > 0);
 	}
 	
 	/*
 	 * answers whether the list values can be edited
 	 */
-	private boolean isEditable(ListDialogField field) {
+/*	private boolean isEditable(ListDialogField field) {
 		return field == fEditableList;
 	}
-
+*/
 	/*
 	 * called when a custom button was pressed
 	 */
@@ -709,10 +693,10 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 * returnes the selected user-defined variables
 	 */
 	private IBuildEnvironmentVariable[] getSelectedUserVariables(){
-		if(fEditableList == null)
+		if(fEditableTable == null)
 			return null;
 		
-		List list = fEditableList.getSelectedElements();
+		List list = ((IStructuredSelection)fEditableTable.getSelection()).toList();
 		return (IBuildEnvironmentVariable[])list.toArray(new IBuildEnvironmentVariable[list.size()]);
 	}
 
@@ -822,30 +806,28 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 * apdates a user-defined variables table
 	 */
 	private void updateUserVariables(){
-		if(fEditableList == null || fContext == fInexistentContext)
+		if(fEditableTable == null || fContext == fInexistentContext)
 			return;
 		
-		fEditableList.selectFirstElement();
-		handleSelectionChanged(fEditableList);
+//		fEditableList.selectFirstElement();
+//		handleSelectionChanged(fEditableList);
 	
-		List list = null;
 		if(fUserSupplier != null) {
 			Collection vars = getUserVariables().values();
 			Iterator iter = vars.iterator();
 
-			list = new ArrayList(vars.size());
+			List list = new ArrayList(vars.size());
 			while(iter.hasNext()){
 				IBuildEnvironmentVariable userVar = (IBuildEnvironmentVariable)iter.next();
-				IBuildEnvironmentVariable sysVar = getSystemVariable(userVar.getName(),true);
-				IBuildEnvironmentVariable var =	EnvVarOperationProcessor.performOperation(sysVar,userVar);
-				if(var != null)
-					list.add(var);
+				if(userVar != null){
+					IBuildEnvironmentVariable sysVar = getSystemVariable(userVar.getName(),true);
+					IBuildEnvironmentVariable var =	EnvVarOperationProcessor.performOperation(sysVar,userVar);
+					if(var != null)
+						list.add(var);
+				}
 			}
 			
-			if(list != null)
-				fEditableList.setElements(list);
-			else
-				fEditableList.removeAllElements();
+			fEditableTable.setInput(list.toArray(new IBuildEnvironmentVariable[list.size()]));
 		}
 	}
 	
@@ -853,22 +835,19 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 * apdates a system-defined variables table
 	 */
 	private void updateSystemVariables(){
-		if(fNonEditableList == null || fContext == fInexistentContext)
+		if(fNonEditableTable == null || fContext == fInexistentContext)
 			return;
 		
-		List list = null;
+		List list = new ArrayList();
 		IBuildEnvironmentVariable vars[] = getSystemVariables(fShowParentVariables);
 		if(vars != null && vars.length != 0){
-			list = new ArrayList(vars.length);
 			for(int i = 0; i < vars.length; i++){
-				list.add(vars[i]);
+				if(vars[i] != null)
+					list.add(vars[i]);
 			}
 		}
-		
-		if(list != null)
-			fNonEditableList.setElements(list);
-		else
-			fNonEditableList.removeAllElements();
+
+		fNonEditableTable.setInput(list.toArray(new IBuildEnvironmentVariable[list.size()]));
 	}
 	
 	/*
@@ -908,7 +887,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(layout);
-		if(fEditableList != null){	
+		if(fIsEditable){	
 			Label nameLabel = new Label(composite, SWT.LEFT);
 			nameLabel.setFont(composite.getFont());
 			nameLabel.setText(ManagedBuilderUIMessages.getResourceString(USER_VAR));
@@ -917,19 +896,9 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			fd.left = new FormAttachment(0,0);
 			nameLabel.setLayoutData(fd);
 
-			listControl= fEditableList.getListControl(composite);
-			fEditableList.getTableViewer().getTable().addKeyListener(new KeyListener(){
-				public void keyPressed(KeyEvent e){
-					if(e.keyCode == SWT.DEL)
-						handleCustomButtonPressed(IDX_BUTTON_DELETE);
-				}
+			listControl= createTableControl(composite, true);
 
-				public void keyReleased(KeyEvent e){
-					
-				}
-			});
-
-			buttonsControl= fEditableList.getButtonBox(composite);
+			buttonsControl = createButtonsControl(composite);
 
 			fd = new FormData();
 			fd.top = new FormAttachment(nameLabel,0);
@@ -949,7 +918,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		nameLabel.setFont(composite.getFont());
 		nameLabel.setText(ManagedBuilderUIMessages.getResourceString(SYSTEM_VAR));
 		fd = new FormData();
-		if(fEditableList != null)
+		if(fIsEditable)
 			fd.top = new FormAttachment(listControl,2);
 		else
 			fd.top = new FormAttachment(0,2);
@@ -984,7 +953,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			});
 		}
 		
-		listControl= fNonEditableList.getListControl(composite);
+		listControl= createTableControl(composite,false);
 		fd = new FormData();
 		fd.top = new FormAttachment(nameLabel,0);
 		fd.left = new FormAttachment(0,0);
@@ -1003,11 +972,129 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		this.setControl(composite);
 	}
 	
+	private Control createTableControl(Composite parent, boolean editable){
+		Composite listControl= new Composite(parent, SWT.NONE);
+		TableViewer tableViewer;
+		GridLayout gl = new GridLayout();
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.numColumns = 1;
+		listControl.setLayout(gl);
+		tableViewer = new TableViewer(listControl, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
+				| SWT.FULL_SELECTION);
+		
+		Table table = tableViewer.getTable();
+		TableLayout tableLayout = new TableLayout();
+		for (int i = 0; i < fTableColumnNames.length; i++) {
+			tableLayout.addColumnData(fTableColumnLayouts[i]);
+			TableColumn tc = new TableColumn(table, SWT.NONE, i);
+			tc.setResizable(fTableColumnLayouts[i].resizable);
+			tc.setText(fTableColumnNames[i]);
+		}
+		table.setLayout(tableLayout);
+		table.setHeaderVisible(true);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		tableViewer.getControl().setLayoutData(gd);
+		tableViewer.setContentProvider(new EnvironmentContentProvider());
+		tableViewer.setLabelProvider(new EnvironmentLabelProvider(editable));
+		tableViewer.setSorter(new ViewerSorter());
+		
+		if(editable){
+			tableViewer.setColumnProperties(fEditableTableColumnProps);
+			fEditableTable = tableViewer;
+			tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent event) {
+					handleSelectionChanged(event);
+				}
+			});
+			tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+	
+				public void doubleClick(DoubleClickEvent event) {
+					if (!fEditableTable.getSelection().isEmpty()) {
+						handleCustomButtonPressed(IDX_BUTTON_EDIT);
+					}
+				}
+			});
+	
+			table.addKeyListener(new KeyListener(){
+				public void keyPressed(KeyEvent e){
+					if(e.keyCode == SWT.DEL)
+						handleCustomButtonPressed(IDX_BUTTON_DELETE);
+				}
+	
+				public void keyReleased(KeyEvent e){
+					
+				}
+			});
+		} else {
+			tableViewer.setColumnProperties(fNonEditableTableColumnProps);
+			fNonEditableTable = tableViewer;
+		}
+		return listControl;
+	}
+	
+	private Control createButtonsControl(Composite parent){
+		Composite buttonsControl = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout();
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.numColumns = 1;
+		buttonsControl.setLayout(gl);
+
+		GridData gd;
+		fNewButton = createPushButton(buttonsControl,ManagedBuilderUIMessages.getResourceString(BUTTON_NEW),null);
+		fNewButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleCustomButtonPressed(IDX_BUTTON_NEW);
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(fNewButton);
+		gd.widthHint = SWTUtil.getButtonWidthHint(fNewButton);
+		fNewButton.setLayoutData(gd);
+
+
+		fEditButton = createPushButton(buttonsControl,ManagedBuilderUIMessages.getResourceString(BUTTON_EDIT),null);
+		fEditButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleCustomButtonPressed(IDX_BUTTON_EDIT);
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(fEditButton);
+		gd.widthHint = SWTUtil.getButtonWidthHint(fEditButton);
+		fEditButton.setLayoutData(gd);
+
+
+		fUndefButton  = createPushButton(buttonsControl,ManagedBuilderUIMessages.getResourceString(BUTTON_UNDEF),null);
+		fUndefButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleCustomButtonPressed(IDX_BUTTON_UNDEF);
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(fUndefButton);
+		gd.widthHint = SWTUtil.getButtonWidthHint(fUndefButton);
+		fUndefButton.setLayoutData(gd);
+
+		fDeleteButton = createPushButton(buttonsControl,ManagedBuilderUIMessages.getResourceString(BUTTON_DELETE),null);
+		fDeleteButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				handleCustomButtonPressed(IDX_BUTTON_DELETE);
+			}
+		});
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = SWTUtil.getButtonHeigthHint(fDeleteButton);
+		gd.widthHint = SWTUtil.getButtonWidthHint(fDeleteButton);
+		fDeleteButton.setLayoutData(gd);
+		return buttonsControl;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible){
-		fVisible = visible;
+//		fVisible = visible;
 //		if(visible)
 //			updateValues();
 		super.setVisible(visible);
@@ -1058,7 +1145,6 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	}
 	
 	private void updateState(BuildMacroException e){
-		ICOptionContainer container = getContainer();
 		fIncorrectlyDefinedVariablesNames.clear();
 		
 		if(e != null){

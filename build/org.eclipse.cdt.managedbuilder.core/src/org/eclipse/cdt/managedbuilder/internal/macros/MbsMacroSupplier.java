@@ -97,6 +97,22 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		"HostOsName",	//$NON-NLS-1$
 		"HostArchName",	//$NON-NLS-1$
 	};
+	
+	private class OptionData extends OptionContextData {
+		private IBuildObject fOptionContainer;
+		public OptionData(IOption option, IBuildObject parent) {
+			this(option, parent, parent);
+		}
+
+		public OptionData(IOption option, IBuildObject parent,  IBuildObject optionContainer) {
+			super(option, parent);
+			fOptionContainer = optionContainer;
+		}
+
+		public IBuildObject getOptionContainer(){
+			return fOptionContainer;
+		}
+	}
 
 	public class FileContextMacro extends BuildMacro{
 		private IFileContextData fContextData;
@@ -790,7 +806,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		}
 	}
 
-	private IOptionContextData getParent(IOptionContextData optionContext){
+	private OptionData getParent(IOptionContextData optionContext){
 		if(optionContext == null)
 			return null;
 		IOption option = optionContext.getOption();
@@ -798,14 +814,14 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			return null;
 		IOption parentOption = null;
 			
-		// TODO:  In CDT 3.0. Option.getParent can return a Tool or ToolChain
-		//        We need to decide what to do with the ToolChain case
 		IBuildObject parent = option.getParent();
 		ITool tool = null;
 		if (parent instanceof ITool) {
 			tool = (ITool)parent;
 		}
-		IBuildObject bo = optionContext.getParent();
+		final IBuildObject bo = (optionContext instanceof OptionData) ?
+				((OptionData)optionContext).getOptionContainer() : optionContext.getParent();
+		IBuildObject parentObject = null;
 		if(tool != null && bo instanceof IResourceConfiguration){
 			
 			IToolChain toolChain = null;
@@ -815,6 +831,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			IResourceConfiguration rc = (IResourceConfiguration)bo;
 			cfg = rc.getParent();
 			toolChain = cfg.getToolChain();
+			parentObject = toolChain;
 			if(rc.getTool(tool.getId()) != null){
 				//get the configuration tool
 				tool = tool.getSuperClass();
@@ -864,21 +881,17 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			}
 		} else {
 			parentOption = option.getSuperClass();
+			if(parentOption != null){
+				IBuildObject parentParent = parentOption.getParent();
+				if (parentParent instanceof ITool)
+					parentObject = ((ITool)parentParent).getParent();
+				else if (parentParent instanceof IToolChain)
+					parentObject = parentParent;
+			}
 		}
 		
-		if(parentOption != null){
-			// TODO:  In CDT 3.0. Option.getParent can return a Tool or ToolChain
-			//        We need to decide what to do with the ToolChain case
-			IBuildObject parentObject = null;
-			ITool t = null;  
-			IBuildObject parentParent = parentOption.getParent();
-			if (parentParent instanceof ITool) {
-				t = (ITool)parentParent;
-			}
-			if(t != null)
-				parentObject = t.getParent();
-			return new OptionContextData(parentOption,parentObject);
-		}
+		if(parentOption != null)
+			return new OptionData(parentOption,bo,parentObject);
 
 		return null;
 	}

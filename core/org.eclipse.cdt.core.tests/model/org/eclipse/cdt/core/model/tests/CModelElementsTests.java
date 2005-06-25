@@ -27,15 +27,19 @@ import org.eclipse.cdt.core.model.IEnumerator;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IFunctionTemplateDeclaration;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IMethodTemplate;
+import org.eclipse.cdt.core.model.IMethodTemplateDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.IStructureTemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariable;
@@ -43,9 +47,6 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.internal.core.model.FunctionTemplate;
-import org.eclipse.cdt.internal.core.model.MethodTemplate;
-import org.eclipse.cdt.internal.core.model.StructureTemplate;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -436,8 +437,8 @@ public class CModelElementsTests extends TestCase {
 
 	private void checkTemplates(IParent namespace) throws CModelException{
 		// template function
-		List functionTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION);
-		FunctionTemplate ft = (FunctionTemplate)functionTemplates.get(0);
+		List functionTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION);
+		IFunctionTemplateDeclaration ft = (IFunctionTemplateDeclaration)functionTemplates.get(0);
 		assertEquals(ft.getElementName(), new String("aTemplatedFunction"));
 		checkElementOffset(ft);
 		ft.getTemplateSignature();
@@ -448,8 +449,8 @@ public class CModelElementsTests extends TestCase {
 		List nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);
 		IStructure enclosingClass = (IStructure) nsClasses.get(1);
 		checkLineNumbers(enclosingClass, 115, 120);
-		List methodTemplates = enclosingClass.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
-		MethodTemplate mt = (MethodTemplate)methodTemplates.get(0);
+		List methodTemplates = enclosingClass.getChildrenOfType(ICElement.C_TEMPLATE_METHOD_DECLARATION);
+		IMethodTemplateDeclaration mt = (IMethodTemplateDeclaration)methodTemplates.get(0);
 		assertEquals(mt.getElementName(), new String("aTemplatedMethod"));
 		checkElementOffset(mt);
 		assertEquals(mt.getTemplateSignature(), new String("aTemplatedMethod<A, B>(B) : A"));
@@ -458,7 +459,7 @@ public class CModelElementsTests extends TestCase {
 		
 		// template class
 		List classTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_CLASS);
-		StructureTemplate ct = (StructureTemplate)classTemplates.get(0);
+		IStructureTemplate ct = (IStructureTemplate)classTemplates.get(0);
 		assertEquals(ct.getElementName(), new String("myarray"));
 		checkElementOffset(ct);
 		assertEquals(ct.getTemplateSignature(), new String("myarray<T, Tibor>"));
@@ -466,7 +467,7 @@ public class CModelElementsTests extends TestCase {
 
 		// template struct
 		List structTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
-		StructureTemplate st = (StructureTemplate)structTemplates.get(0);
+		IStructureTemplate st = (IStructureTemplate)structTemplates.get(0);
 		assertEquals(st.getElementName(), new String("mystruct"));
 		checkElementOffset(st);
 		assertEquals(st.getTemplateSignature(), new String("mystruct<T, Tibor>"));

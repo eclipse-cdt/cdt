@@ -57,9 +57,10 @@ public class StructuralTemplateTests extends ITemplateTests {
 			};
 			assertEquals(myExpectedValues.length, arrayElements.size());
 			for(int i=0; i<myExpectedValues.length; i++) {
-				ITemplate myITemplate = (ITemplate) arrayElements.get(i);
+				ICElement celement = (ICElement) arrayElements.get(i);
+				ITemplate myITemplate = (ITemplate)celement;
 				assertNotNull( "Failed on "+i, myITemplate);
-				assertEquals("Failed on "+i, myExpectedValues[i], myITemplate.getElementName());
+				assertEquals("Failed on "+i, myExpectedValues[i], celement.getElementName());
 			}
 		}
 		{
@@ -69,9 +70,10 @@ public class StructuralTemplateTests extends ITemplateTests {
 			};
 			assertEquals(myExpectedValues.length, arrayElements.size());
 			for(int i=0; i<myExpectedValues.length; i++) {
-				ITemplate myITemplate = (ITemplate) arrayElements.get(i);
+				ICElement celement = (ICElement) arrayElements.get(i);
+				ITemplate myITemplate = (ITemplate)celement;
 				assertNotNull( "Failed on "+i, myITemplate);
-				assertEquals("Failed on "+i, myExpectedValues[i], myITemplate.getElementName());
+				assertEquals("Failed on "+i, myExpectedValues[i], celement.getElementName());
 			}
 		}
 		{
@@ -81,9 +83,10 @@ public class StructuralTemplateTests extends ITemplateTests {
 			};
 			assertEquals(myExpectedValues.length, arrayElements.size());
 			for(int i=0; i<myExpectedValues.length; i++) {
-				ITemplate myITemplate = (ITemplate) arrayElements.get(i);
+				ICElement celement = (ICElement) arrayElements.get(i);
+				ITemplate myITemplate = (ITemplate)celement;
 				assertNotNull( "Failed on "+i, myITemplate);
-				assertEquals("Failed on "+i, myExpectedValues[i], myITemplate.getElementName());
+				assertEquals("Failed on "+i, myExpectedValues[i], celement.getElementName());
 			}
 		}
 		{
@@ -93,18 +96,20 @@ public class StructuralTemplateTests extends ITemplateTests {
 			List arrayElements = getTemplateMethods(tu);
 			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION));
 			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
+			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION));
 			String[] myExpectedValues = {
 				"fum",
 				"scrum",
-				"IsGreaterThan",
 				"first",
-				"fum"
+				"fum",
+				"IsGreaterThan",
 			};
 			assertEquals(myExpectedValues.length, arrayElements.size());
 			for(int i=0; i<myExpectedValues.length; i++) {
-				ITemplate myITemplate = (ITemplate) arrayElements.get(i);
+				ICElement celement = (ICElement) arrayElements.get(i);
+				ITemplate myITemplate = (ITemplate)celement;
 				assertNotNull( "Failed on "+i, myITemplate);
-				assertEquals("Failed on "+i, myExpectedValues[i], myITemplate.getElementName());
+				assertEquals("Failed on "+i, myExpectedValues[i], celement.getElementName());
 			}
 		}
 	}
@@ -120,6 +125,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION ) );
 		arrayElements.addAll( getTemplateMethods(tu) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
+		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION ) );
 		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
 		// TEMPLATE_VARIABLE moved to failed tests
 		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
@@ -149,6 +155,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 		arrayElements.addAll( getTemplateMethods(tu) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
 		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
+		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION));
 		// TEMPLATE_VARIABLE moved to failed tests
 		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
@@ -163,12 +170,12 @@ public class StructuralTemplateTests extends ITemplateTests {
 			{"Bar"},
 		  	//"TemplateParameter::scrum"
 			{"int"},
-			//"IsGreaterThan"
-			{"X"},
 			//"nonVector::first"
 			{"T"},
 			//"Foo::fum"
 			{"Bar"},
+			//"IsGreaterThan"
+			{"X"},
 			/*
 			//"default_alloc_template::S_start_free"
 			{"bool", "int"},*/
@@ -198,6 +205,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 		arrayElements.addAll( getTemplateMethods(tu) );
 		arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION ) );
 		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD));
+		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION));
 		// TEMPLATE_VARIABLE moved to failed tests
 		//arrayElements.addAll( tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE ) );
 		
@@ -208,9 +216,9 @@ public class StructuralTemplateTests extends ITemplateTests {
 			"fum<Bar>(int) : void",
 			"scrum<int>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
 			// TODO: shouldn't signature indicate const function as well?
-			"IsGreaterThan<X>(X, X) : bool",
 			"first<T>() : const T&", // TODO: where should <T> be?
 			"fum<Bar>(int) : void",
+			"IsGreaterThan<X>(X, X) : bool",
 			/*"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*",*/
 		};
 		assertEquals(myExpectedValues.length, arrayElements.size());

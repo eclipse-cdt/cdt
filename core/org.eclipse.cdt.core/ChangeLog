@@ -1,4 +1,8 @@
 2005-06-25 Alain Magloire
+	Fix PR 91069: BinaryRunner search improvements from Chris Wiebe.
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+
+2005-06-25 Alain Magloire
 	Fix PR 98788: Dealing with templates
 	* model/org/eclipse/cdt/core/model/ICElement.java
 	+ model/org/eclipse/cdt/core/model/IFunctionTemplate.java

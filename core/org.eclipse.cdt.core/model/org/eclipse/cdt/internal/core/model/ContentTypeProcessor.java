@@ -102,10 +102,8 @@ public class ContentTypeProcessor {
 							for (int i = 0; i < members.length; ++i) {
 								if (members[i] instanceof IFile) {
 									IFile file = (IFile) members[i];
-									//if (contentType.isAssociatedWith(file.getName(), context)) {
 									IContentType cType = CCorePlugin.getContentType(file.getProject(), file.getName());
 									if (cType != null && cType.equals(contentType)) {
-//									if (CoreModel.isValidTranslationUnitName(file.getProject(), file.getName())) {
 										ICElement newElement = CoreModel.getDefault().create(file);
 										if (newElement != null) {
 											elementAdded(newElement, celement);

@@ -1,4 +1,8 @@
 2005-06-25 Alain Magloire
+	Fix PR 98458: extra semicolon in namespace wizard class.
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
+
+2005-06-25 Alain Magloire
 	Fix for PR 98788: Templates
 	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementImageProvider.java
 

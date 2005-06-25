@@ -326,7 +326,7 @@ public class NewClassCodeGenerator {
     private void endNamespace(StringBuffer text) {
         for (int i = 0; i < fNamespace.segmentCount(); ++i) {
             text.append(fLineDelimiter);
-	        text.append("};"); //$NON-NLS-1$
+	        text.append("}"); //$NON-NLS-1$
 	        text.append(fLineDelimiter);
         }
     }

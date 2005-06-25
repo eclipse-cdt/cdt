@@ -177,19 +177,24 @@ public class CElementImageProvider {
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
+			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 				return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
 				
 			case ICElement.C_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION:
 				return CPluginImages.DESC_OBJS_FUNCTION;
 
 			case ICElement.C_STRUCT_DECLARATION:
 			case ICElement.C_CLASS_DECLARATION:
 			case ICElement.C_UNION_DECLARATION:
 			case ICElement.C_VARIABLE_DECLARATION:
+			case ICElement.C_TEMPLATE_CLASS_DECLARATION:
+			case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
+			case ICElement.C_TEMPLATE_UNION_DECLARATION:
 				return CPluginImages.DESC_OBJS_VAR_DECLARARION;
 			
 			case ICElement.C_FUNCTION_DECLARATION:
-			case ICElement.C_TEMPLATE_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
 				return CPluginImages.DESC_OBJS_DECLARARION;
 
 			case ICElement.C_INCLUDE:
@@ -351,6 +356,7 @@ public class CElementImageProvider {
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
+			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 				try {
 					
 					IMethodDeclaration  md= (IMethodDeclaration)celement;
@@ -364,16 +370,20 @@ public class CElementImageProvider {
 				return getVariableImageDescriptor();
 				
 			case ICElement.C_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION:
 				return getFunctionImageDescriptor();
 
 			case ICElement.C_STRUCT_DECLARATION:
 			case ICElement.C_CLASS_DECLARATION:
 			case ICElement.C_UNION_DECLARATION:
 			case ICElement.C_VARIABLE_DECLARATION:
+			case ICElement.C_TEMPLATE_CLASS_DECLARATION:
+			case ICElement.C_TEMPLATE_UNION_DECLARATION:
+			case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
 				return getVariableDeclarationImageDescriptor();
 			
 			case ICElement.C_FUNCTION_DECLARATION:
-			case ICElement.C_TEMPLATE_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
 				return getFunctionDeclarationImageDescriptor();
 
 			case ICElement.C_INCLUDE:

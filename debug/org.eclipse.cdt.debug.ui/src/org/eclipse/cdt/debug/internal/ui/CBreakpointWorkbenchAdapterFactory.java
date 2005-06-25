@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  * Adapter factory for C/C++ breakpoints.
@@ -29,16 +30,7 @@ public class CBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 		if ( adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof ICBreakpoint) ) {
 			return null;
 		}
-		return new IWorkbenchAdapter() {
-
-			public Object[] getChildren( Object o ) {
-				return null;
-			}
-
-			public ImageDescriptor getImageDescriptor( Object object ) {
-				return null;
-			}
-
+		return new WorkbenchAdapter() {
 			public String getLabel( Object o ) {
 				// for now
 				if ( (o instanceof ICLineBreakpoint) ) {
@@ -47,11 +39,7 @@ public class CBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 				if ( (o instanceof ICWatchpoint) ) {
 					return CDebugUIMessages.getString( "CBreakpointWorkbenchAdapterFactory.1" ); //$NON-NLS-1$
 				}
-				return null; 
-			}
-
-			public Object getParent( Object o ) {
-				return null;
+				return super.getLabel(o); 
 			}
 		};
 	}

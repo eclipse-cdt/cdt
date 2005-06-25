@@ -1,3 +1,7 @@
+2005-06-25 Alain Magloire
+	Fix PR 94735: return an empty object.
+	* src/org/eclipse/cdt/debug/internal/ui/CBreapointWorkbencAdapterFactory.java
+
 2005-06-22 Mikhail Khodjaiants
 	Bug 96563: "Go to file" is ghosted on breakpoints (outside projects?).
 	* CDebugModelPresentation.java

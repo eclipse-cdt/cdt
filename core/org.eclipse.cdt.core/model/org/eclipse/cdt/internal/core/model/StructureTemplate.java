@@ -11,16 +11,15 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.IStructureTemplate;
 
-public class StructureTemplate extends Structure implements ITemplate{
-	
-	protected static final String[] fgEmptyList= new String[] {};
-	protected String[] templateParameterTypes;
+public class StructureTemplate extends Structure implements IStructureTemplate {
+
+	protected Template fTemplate;
 	
 	public StructureTemplate(ICElement parent, int kind, String name) {
 		super(parent, kind, name);
-		templateParameterTypes= fgEmptyList;
+		fTemplate = new Template(name);
 	}
 	/**
 	 * Returns the parameterTypes.
@@ -28,7 +27,7 @@ public class StructureTemplate extends Structure implements ITemplate{
 	 * @return String[]
 	 */
 	public String[] getTemplateParameterTypes() {
-		return templateParameterTypes;
+		return fTemplate.getTemplateParameterTypes();
 	}
 
 	/**
@@ -36,36 +35,21 @@ public class StructureTemplate extends Structure implements ITemplate{
 	 * @param fParameterTypes The fParameterTypes to set
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
-		this.templateParameterTypes = templateParameterTypes;
+		fTemplate.setTemplateParameterTypes(templateParameterTypes);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.ITemplate#getNumberOfTemplateParameters()
 	 */
 	public int getNumberOfTemplateParameters() {
-		return templateParameterTypes == null ? 0 : templateParameterTypes.length;
+		return fTemplate.getNumberOfTemplateParameters();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
 	 */	
 	public String getTemplateSignature() {
-		StringBuffer sig = new StringBuffer(getElementName());
-		if(getNumberOfTemplateParameters() > 0){
-			sig.append("<"); //$NON-NLS-1$
-			String[] paramTypes = getTemplateParameterTypes();
-			int i = 0;
-			sig.append(paramTypes[i++]);
-			while (i < paramTypes.length){
-				sig.append(", "); //$NON-NLS-1$
-				sig.append(paramTypes[i++]);
-			}
-			sig.append(">"); //$NON-NLS-1$
-		}
-		else{
-			sig.append("<>"); //$NON-NLS-1$
-		}
-		return sig.toString();
+		return fTemplate.getTemplateSignature();
 	}
 
 }

@@ -13,16 +13,15 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.IMethodTemplate;
 
-public class MethodTemplate extends MethodDeclaration implements ITemplate{
-	
-	protected static final String[] fgEmptyList= new String[] {};
-	protected String[] templateParameterTypes;
+public class MethodTemplate extends Method implements IMethodTemplate {
+
+	protected Template fTemplate;
 	
 	public MethodTemplate(ICElement parent, String name) {
 		super(parent, name, ICElement.C_TEMPLATE_METHOD);
-		templateParameterTypes= fgEmptyList;
+		fTemplate = new Template(name);
 	}
 	
 	/**
@@ -31,7 +30,7 @@ public class MethodTemplate extends MethodDeclaration implements ITemplate{
 	 * @return String[]
 	 */
 	public String[] getTemplateParameterTypes() {
-		return templateParameterTypes;
+		return fTemplate.getTemplateParameterTypes();
 	}
 
 	/**
@@ -39,13 +38,14 @@ public class MethodTemplate extends MethodDeclaration implements ITemplate{
 	 * @param fParameterTypes The fParameterTypes to set
 	 */
 	public void setTemplateParameterTypes(String[] templateParameterTypes) {
-		this.templateParameterTypes = templateParameterTypes;
+		fTemplate.setTemplateParameterTypes(templateParameterTypes);
 	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.ITemplate#getNumberOfTemplateParameters()
 	 */
 	public int getNumberOfTemplateParameters() {
-		return templateParameterTypes == null ? 0 : templateParameterTypes.length;
+		return fTemplate.getNumberOfTemplateParameters();
 	}
 
 	/**
@@ -61,21 +61,7 @@ public class MethodTemplate extends MethodDeclaration implements ITemplate{
 	 */	
 
 	public String getTemplateSignature() throws CModelException {
-		StringBuffer sig = new StringBuffer(getElementName());
-		if(getNumberOfTemplateParameters() > 0){
-			sig.append("<"); //$NON-NLS-1$
-			String[] paramTypes = getTemplateParameterTypes();
-			int i = 0;
-			sig.append(paramTypes[i++]);
-			while (i < paramTypes.length){
-				sig.append(", "); //$NON-NLS-1$
-				sig.append(paramTypes[i++]);
-			}
-			sig.append(">"); //$NON-NLS-1$
-		}
-		else{
-			sig.append("<>"); //$NON-NLS-1$
-		}
+		StringBuffer sig = new StringBuffer(fTemplate.getTemplateSignature());
 		sig.append(this.getParameterClause());
 		if(isConst())
 			sig.append(" const"); //$NON-NLS-1$

@@ -1,3 +1,24 @@
+2005-06-25 Alain Magloire
+	Fix PR 98788: Dealing with templates
+	* model/org/eclipse/cdt/core/model/ICElement.java
+	+ model/org/eclipse/cdt/core/model/IFunctionTemplate.java
+	+ model/org/eclipse/cdt/core/model/IFunctionTemplateDeclaration.java
+	+ model/org/eclipse/cdt/core/model/IMethodTemplate.java
+	+ model/org/eclipse/cdt/core/model/IMethodTemplateDeclaration.java
+	+ model/org/eclipse/cdt/core/model/IStructureTemplate.java
+	+ model/org/eclipse/cdt/core/model/IStructureTemplateDeclaration.java
+	* model/org/eclipse/cdt/core/model/ITemplate.java
+
+	* model/org/eclipse/cdt/internal/core/model/CModelBuilder.java
+	* model/org/eclipse/cdt/internal/core/model/Funtion.java
+	* model/org/eclipse/cdt/internal/core/model/FunctionTemplate.java
+	* model/org/eclipse/cdt/internal/core/model/Method.java
+	* model/org/eclipse/cdt/internal/core/model/MethodTemplate.java
+	+ model/org/eclipse/cdt/internal/core/model/MethodTemplateDeclaration.java
+	* model/org/eclipse/cdt/internal/core/model/StructureTemplate.java
+	+ model/org/eclipse/cdt/internal/core/model/StructureTemplateDeclaration.java
+	* model/org/eclipse/cdt/internal/core/model/Template.java
+
 2005-06-22 Vladimir Hirsl
 	Fix for PR 93573: "[Indexer] endl references are not added to the DOM index"
 	Fixed different encoding of functions references vs. declarations in the index.

@@ -72,133 +72,158 @@ public interface ICElement extends IAdaptable {
 	static final int C_ENUMERATION = 63;
 
 	/**
+	 * Declaration of a class without the definition.
+	 * class C;
+	 */
+	static final int C_CLASS_DECLARATION = 64;
+
+	/**
 	 * Constant representing a class structure.
 	 */
-	static final int C_CLASS = 64;
-
-	/**
-	 * Constant representing a struct structure.
-	 */
-	static final int C_STRUCT = 65;
-
-	/**
-	 * Constant representing a union structure.
-	 */
-	static final int C_UNION = 66;
-
-	/**
-	 * A method definition part of a structure(class, struct, union).
-	 */
-	static final int C_METHOD = 67;
-
-	/**
-	 * A method declaration part of a structure(class, struct, union).
-	 */
-	static final int C_METHOD_DECLARATION = 68;
-
-	/**
-	 * A Field definition part of a structure(class, struct, union).
-	 */
-	static final int C_FIELD = 69;
-
-	/**
-	 * a C/C++ function prototype.
-	 */
-	static final int C_FUNCTION_DECLARATION = 70;
-
-	/**
-	 * a C/C++ function.
-	 */
-	static final int C_FUNCTION = 71;
-
-	/**
-	 * Preprocessor #include directive.
-	 */
-	static final int C_INCLUDE = 72;
-
-	/**
-	 * C++ template class.
-	 */
-	static final int C_TEMPLATE_CLASS = 73;
-
-	/**
-	 * Global variable.
-	 */
-	static final int C_VARIABLE = 74;
-
-	/**
-	 * variable Declaration.
-	 */
-	static final int C_VARIABLE_DECLARATION = 75;
-
-	/**
-	 * Local Variable.
-	 */
-	static final int C_VARIABLE_LOCAL = 76;
-
-	/**
-	 * A preprocessor macro.
-	 */
-	static final int C_MACRO = 77;
-
-	/**
-	 * a Typedef.
-	 */
-	static final int C_TYPEDEF = 78;
-	
-	/**
-	 * Enumerator.
-	 */
-	static final int C_ENUMERATOR = 79;
-
-	/**
-	 * C++ template function.
-	 */
-	static final int C_TEMPLATE_FUNCTION = 80;
-
-	/**
-	 * C++ template method.
-	 */
-	static final int C_TEMPLATE_METHOD = 81;
-
-	/**
-	 * C++ template struct.
-	 */
-	static final int C_TEMPLATE_STRUCT = 82;
-
-	/**
-	 * C++ template union.
-	 */
-	static final int C_TEMPLATE_UNION = 83;
-
-	/**
-	 * C++ template variable.
-	 */
-	static final int C_TEMPLATE_VARIABLE = 84;
+	static final int C_CLASS = 65;
 
 	/**
 	 * Declaration of a structure without the definition.
 	 * struct C;
 	 */
-	static final int C_STRUCT_DECLARATION = 85;
+	static final int C_STRUCT_DECLARATION = 66;
 
 	/**
-	 * Declaration of a class without the definition.
-	 * class C;
+	 * Constant representing a struct structure.
 	 */
-	static final int C_CLASS_DECLARATION = 86;
+	static final int C_STRUCT = 67;
 
 	/**
 	 * Declaration of a union without the definition.
 	 * struct C;
 	 */
-	static final int C_UNION_DECLARATION = 87;
+	static final int C_UNION_DECLARATION = 68;
 	
+	/**
+	 * Constant representing a union structure.
+	 */
+	static final int C_UNION = 69;
+
+	/**
+	 * A method definition part of a structure(class, struct, union).
+	 */
+	static final int C_METHOD = 70;
+
+	/**
+	 * A method declaration part of a structure(class, struct, union).
+	 */
+	static final int C_METHOD_DECLARATION = 71;
+
+	/**
+	 * A Field definition part of a structure(class, struct, union).
+	 */
+	static final int C_FIELD = 72;
+
+	/**
+	 * a C/C++ function prototype.
+	 */
+	static final int C_FUNCTION_DECLARATION = 73;
+
+	/**
+	 * a C/C++ function definition.
+	 */
+	static final int C_FUNCTION = 74;
+
+	/**
+	 * Preprocessor #include directive.
+	 */
+	static final int C_INCLUDE = 75;
+
+	/**
+	 * Global variable.
+	 */
+	static final int C_VARIABLE = 76;
+
+	/**
+	 * variable Declaration.
+	 */
+	static final int C_VARIABLE_DECLARATION = 77;
+
+	/**
+	 * Local Variable.
+	 */
+	static final int C_VARIABLE_LOCAL = 78;
+
+	/**
+	 * A preprocessor macro.
+	 */
+	static final int C_MACRO = 79;
+
+	/**
+	 * a Typedef.
+	 */
+	static final int C_TYPEDEF = 80;
+	
+	/**
+	 * Enumerator.
+	 */
+	static final int C_ENUMERATOR = 81;
+
+	/**
+	 * C++ template class declaration without a definiton.
+	 */
+	static final int C_TEMPLATE_CLASS_DECLARATION = 82;
+
+	/**
+	 * C++ template class with definition.
+	 */
+	static final int C_TEMPLATE_CLASS = 83;
+
+	/**
+	 * C++ template struct.
+	 */
+	static final int C_TEMPLATE_STRUCT_DECLARATION = 84;
+
+	/**
+	 * C++ template struct.
+	 */
+	static final int C_TEMPLATE_STRUCT = 85;
+
+	/**
+	 * C++ template union.
+	 */
+	static final int C_TEMPLATE_UNION_DECLARATION = 86;
+
+	/**
+	 * C++ template union.
+	 */
+	static final int C_TEMPLATE_UNION = 87;
+
+	/**
+	 * C++ template function declaration.
+	 */
+	static final int C_TEMPLATE_FUNCTION_DECLARATION = 88;
+
+	/**
+	 * C++ template function.
+	 */
+	static final int C_TEMPLATE_FUNCTION = 89;
+
+	/**
+	 * C++ template method.
+	 */
+	static final int C_TEMPLATE_METHOD_DECLARATION = 90;
+
+	/**
+	 * C++ template method.
+	 */
+	static final int C_TEMPLATE_METHOD = 91;
+
+	/**
+	 * C++ template variable.
+	 */
+	static final int C_TEMPLATE_VARIABLE = 92;
+
 	/**
 	 * An unknown ICElement.  Mainly used to determine what elements are not yet implemented.
 	 * i.e. the new DOM Parser supports open declaration on labels, while the old parser did not
 	 */
-	static final int C_UNKNOWN_DECLARATION = 88;
+	static final int C_UNKNOWN_DECLARATION = 93;
 
 	/**
 	 * Modifier indicating a class constructor

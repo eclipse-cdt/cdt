@@ -9,17 +9,13 @@ package org.eclipse.cdt.core.model;
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
-public interface ITemplate extends IDeclaration {
+public interface ITemplate {
 	/**
 	 * Returns the template parameter types.
 	 * @return String
 	 */
 	String[] getTemplateParameterTypes();
-	/**
-	 * Sets the template parameter types.
-	 * @param paramTypes
-	 */
-	void setTemplateParameterTypes(String[] templateParameterTypes);
+
 	/**
 	 * Returns the template signature
 	 * The signature depends on the type of template. 
@@ -29,9 +25,9 @@ public interface ITemplate extends IDeclaration {
 	 * name, its  template parameters, followed by its normal parameters.
 	 * @return String
 	 * @throws CModelException
-	 */
-	
+	 */	
 	String getTemplateSignature() throws CModelException;
+
 	/**
 	 * Returns the number of template parameters
 	 * @return int

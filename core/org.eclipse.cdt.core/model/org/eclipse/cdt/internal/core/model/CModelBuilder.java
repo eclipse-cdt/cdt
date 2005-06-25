@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
-import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -111,12 +110,11 @@ public class CModelBuilder {
 			currentProject = translationUnit.getCProject().getProject();
 		}
 		// check the project's nature
-		if( currentProject != null )
-		{
+		if (currentProject != null) {
 			hasCppNature = CoreModel.hasCCNature(currentProject);
 		}
 		// get the code to parse
-		try{
+		try {
 			code = translationUnit.getBuffer().getCharacters();
 		} catch (CModelException e) {
 			
@@ -143,8 +141,7 @@ public class CModelBuilder {
 		
 		// create the parser
 		IParser parser = null;
-		try
-		{
+		try {
 			IScannerInfo scanInfo = new ScannerInfo();
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
 			if (provider != null){
@@ -179,9 +176,7 @@ public class CModelBuilder {
 				mode, 
 				language, 
 				ParserUtil.getParserLogService() );
-		}
-		catch( ParserFactoryError pfe )
-		{
+		} catch(ParserFactoryError pfe) {
 			throw new ParserException( CCorePlugin.getResourceString("CModelBuilder.Parser_Construction_Failure")); //$NON-NLS-1$
 		}
 		// call parse
@@ -200,27 +195,20 @@ public class CModelBuilder {
 
 	public Map parse(boolean quickParseMode) throws Exception {
 		long startTime = System.currentTimeMillis();
-		try
-		{
+		try {
 			parse(quickParseMode, true);		
-		}
-			
-		catch( ParserException e )
-		{
+		} catch( ParserException e ) {
 			Util.debugLog( "Parse Exception in CModelBuilder", IDebugLogConstants.MODEL );  //$NON-NLS-1$
 			//e.printStackTrace();
 		}
 		Util.debugLog("CModel parsing: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		startTime = System.currentTimeMillis();
-		try
-		{ 
+		try { 
 			generateModelElements();
 			// important to know if the unit has parse errors or not
 			translationUnit.getElementInfo().setIsStructureKnown(hasNoErrors && quickParseCallback.hasNoProblems());
-		}
-		catch( NullPointerException npe )
-		{
+		} catch( NullPointerException npe ) {
 			Util.debugLog( "NullPointer exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
 		}
 				 
@@ -314,47 +302,70 @@ public class CModelBuilder {
 
 	private void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws CModelException, ASTNotImplementedException
 	{				
+		CElement element = null;
 		// Template Declaration 
 		IASTDeclaration declaration = templateDeclaration.getOwnedDeclaration();
 		if (declaration instanceof IASTAbstractTypeSpecifierDeclaration){
+			// Class Template Declation ?
 			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;
-			CElement element = createAbstractElement(parent, abstractDeclaration , true, true);
-			if (element instanceof SourceManipulation) {
-				SourceManipulation sourceRef = (SourceManipulation)element;
-				// set the element position		
-				sourceRef.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
-				sourceRef.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
+			element = createAbstractElement(parent, abstractDeclaration , true, true);
+			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
+			if (element instanceof StructureTemplate) {
 				// set the template parameters				
-				String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
-				ITemplate classTemplate = (ITemplate) element;
+				StructureTemplate classTemplate = (StructureTemplate) element;
+				classTemplate.setTemplateParameterTypes(parameterTypes);				
+			} else if (element instanceof StructureTemplate) {
+				// set the template parameters				
+				StructureTemplateDeclaration classTemplate = (StructureTemplateDeclaration) element;
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
 			}
 		} else if (declaration instanceof IASTClassSpecifier){
 			// special case for Structural parse
+			// Class template definiton ?
 			IASTClassSpecifier classSpecifier = (IASTClassSpecifier)declaration ;
-			CElement element = createClassSpecifierElement(parent, classSpecifier , true);
-			if (element instanceof SourceManipulation) {
-				SourceManipulation sourceRef = (SourceManipulation)element;
-				// set the element position		
-				sourceRef.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
-				sourceRef.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
+			element = createClassSpecifierElement(parent, classSpecifier , true);
+			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
+			if (element instanceof StructureTemplate) {
 				// set the template parameters				
-				String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
-				ITemplate classTemplate = (ITemplate) element;
+				StructureTemplate classTemplate = (StructureTemplate) element;
+				classTemplate.setTemplateParameterTypes(parameterTypes);				
+			} else if (element instanceof StructureTemplate) {
+				// set the template parameters				
+				StructureTemplateDeclaration classTemplate = (StructureTemplateDeclaration) element;
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
 			}
+		} else if (declaration instanceof IASTVariable) {
+			// Template variable
+			element = createSimpleElement(parent, declaration, true);			
+			// set the template parameters
+			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
+			VariableTemplate varTemplate = (VariableTemplate) element;
+			varTemplate.setTemplateParameterTypes(parameterTypes);				
+		} else if (declaration instanceof IASTFunction) {
+			// Function template declaration/Definition
+			element = createSimpleElement(parent, declaration, true);
+			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
+			if (element instanceof FunctionTemplate) {
+				// set the template parameters				
+				FunctionTemplate functionTemplate = (FunctionTemplate) element;
+				functionTemplate.setTemplateParameterTypes(parameterTypes);				
+			} else if (element instanceof FunctionTemplateDeclaration) {
+				// set the template parameters				
+				FunctionTemplateDeclaration functionTemplate = (FunctionTemplateDeclaration) element;
+				functionTemplate.setTemplateParameterTypes(parameterTypes);				
+			} else if (element instanceof MethodTemplate) {
+				MethodTemplate methodTemplate = (MethodTemplate) element;
+				methodTemplate.setTemplateParameterTypes(parameterTypes);				
+			} else if (element instanceof MethodTemplateDeclaration) {
+				MethodTemplateDeclaration methodTemplate = (MethodTemplateDeclaration) element;
+				methodTemplate.setTemplateParameterTypes(parameterTypes);				
+			}
 		}
-		ITemplate template = null;
-		template = (ITemplate) createSimpleElement(parent, declaration, true);
-	 	 
- 		if (template instanceof SourceManipulation){
-			SourceManipulation sourceRef = (SourceManipulation)template;
+		if (element instanceof SourceManipulation){
+			SourceManipulation sourceRef = (SourceManipulation)element;
 			// set the element position		
 			sourceRef.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());
 			sourceRef.setLines( templateDeclaration.getStartingLine(), templateDeclaration.getEndingLine() );
-			// set the template parameters
-			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);	
-			template.setTemplateParameterTypes(parameterTypes);				
 		}
 	}
 
@@ -388,16 +399,15 @@ public class CModelBuilder {
 				IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpec;
 				IParent enumElement = createEnumeration (parent, enumSpecifier);
 				element = (CElement) enumElement;
-			}
-			// IASTClassSpecifier
-			else if (typeSpec instanceof IASTClassSpecifier) {
+			} else if (typeSpec instanceof IASTClassSpecifier) {
+				// IASTClassSpecifier
 				IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
 				element = createClassSpecifierElement (parent, classSpecifier, isTemplate);
 			} else if (isDeclaration && typeSpec instanceof IASTElaboratedTypeSpecifier) {
 				// This is not a model element, so we don't create anything here.
 				// However, do we need to do anything else?
 				IASTElaboratedTypeSpecifier elabSpecifier = (IASTElaboratedTypeSpecifier) typeSpec;
-				element = createElaboratedTypeSpecifier(parent, elabSpecifier);				
+				element = createElaboratedTypeSpecifier(parent, elabSpecifier, isTemplate);				
 			}
 		}				
 		return element;		
@@ -418,21 +428,27 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	private StructureDeclaration createElaboratedTypeSpecifier(Parent parent, IASTElaboratedTypeSpecifier typeSpec) throws CModelException{
+	private StructureDeclaration createElaboratedTypeSpecifier(Parent parent, IASTElaboratedTypeSpecifier typeSpec, boolean isTemplate) throws CModelException{
 		// create element
 		ASTClassKind classkind = typeSpec.getClassKind();
 		int kind = -1;
 		if (classkind == ASTClassKind.CLASS) {
-			kind = ICElement.C_CLASS_DECLARATION;
+			kind = (isTemplate) ? ICElement.C_TEMPLATE_CLASS_DECLARATION : ICElement.C_CLASS_DECLARATION;
 		} else if (classkind == ASTClassKind.STRUCT) {
-			kind = ICElement.C_STRUCT_DECLARATION;
+			kind = (isTemplate) ? ICElement.C_TEMPLATE_STRUCT_DECLARATION : ICElement.C_STRUCT_DECLARATION;
 		} else if (classkind == ASTClassKind.UNION) {
-			kind = ICElement.C_UNION_DECLARATION;
+			kind = (isTemplate) ? ICElement.C_TEMPLATE_UNION_DECLARATION : ICElement.C_UNION_DECLARATION;
 		}
 		String className = (typeSpec.getName() == null)
 		? "" //$NON-NLS-1$
-		: typeSpec.getName().toString();				
-		StructureDeclaration element = new StructureDeclaration(parent, className, kind);
+		: typeSpec.getName().toString();		
+
+		StructureDeclaration element;
+		if (isTemplate) {
+			element = new StructureTemplateDeclaration(parent, kind, className);
+		} else {
+			element = new StructureDeclaration(parent, className, kind);
+		}
 
 		// add to parent
 		parent.addChild(element);
@@ -539,36 +555,18 @@ public class CModelBuilder {
 		int kind = ICElement.C_CLASS;
 		ASTClassKind classkind = classSpecifier.getClassKind();
 		if(classkind == ASTClassKind.CLASS){
-			if(!isTemplate)
-				kind = ICElement.C_CLASS;
-			else
-				kind = ICElement.C_TEMPLATE_CLASS;
+			kind = (isTemplate) ? ICElement.C_TEMPLATE_CLASS : ICElement.C_CLASS;
 			type = "class"; //$NON-NLS-1$
-			className = (classSpecifier.getName() == null )
-						? "" //$NON-NLS-1$
-						: classSpecifier.getName().toString();				
-		}
-		if(classkind == ASTClassKind.STRUCT){
-			if(!isTemplate)
-				kind = ICElement.C_STRUCT;
-			else
-				kind = ICElement.C_TEMPLATE_STRUCT;
+		} else if(classkind == ASTClassKind.STRUCT){
+			kind = (isTemplate) ? ICElement.C_TEMPLATE_STRUCT : ICElement.C_STRUCT;
 			type = "struct"; //$NON-NLS-1$
-			className = (classSpecifier.getName() == null ) 
-						? ""  //$NON-NLS-1$
-						: classSpecifier.getName().toString();				
-		}
-		if(classkind == ASTClassKind.UNION){
-			if(!isTemplate)
-				kind = ICElement.C_UNION;
-			else
-				kind = ICElement.C_TEMPLATE_UNION;
+		} else if(classkind == ASTClassKind.UNION){
+			kind = (isTemplate) ? ICElement.C_TEMPLATE_UNION : ICElement.C_UNION;
 			type = "union"; //$NON-NLS-1$
-			className = (classSpecifier.getName() == null )
-						? ""  //$NON-NLS-1$
-						: classSpecifier.getName().toString();				
 		}
 		
+		className = (classSpecifier.getName() == null ) ? "" : classSpecifier.getName().toString();	//$NON-NLS-1$
+
 		Structure element;
 		if(!isTemplate){		
 			Structure classElement = new Structure( parent, kind, className );
@@ -640,19 +638,17 @@ public class CModelBuilder {
 			newElement.setMutable(fieldDeclaration.isMutable());
 			newElement.setVisibility(fieldDeclaration.getVisiblity());
 			element = newElement;			
-		}
-		else {
-			if(isTemplate){
+		} else {
+			if (isTemplate) {
 				// variable
 				VariableTemplate newElement = new VariableTemplate( parent, variableName );
 				element = newElement;									
-			}else {
+			} else {
 				if(varDeclaration.isExtern()){
 					// variableDeclaration
 					VariableDeclaration newElement = new VariableDeclaration( parent, variableName );
 					element = newElement;
-				}
-				else {
+				} else {
 					// variable
 					Variable newElement = new Variable( parent, variableName );
 					element = newElement;				
@@ -712,7 +708,7 @@ public class CModelBuilder {
 					MethodDeclaration newElement = new MethodDeclaration( parent, name );
 					methodElement = newElement;				
 				}else {
-					MethodTemplate newElement = new MethodTemplate(parent, name);
+					MethodTemplateDeclaration newElement = new MethodTemplateDeclaration(parent, name);
 					methodElement = newElement;				
 				}
 				
@@ -754,7 +750,7 @@ public class CModelBuilder {
 					FunctionDeclaration newElement = new FunctionDeclaration( parent, name );
 					functionElement = newElement;				
 				} else {
-					FunctionTemplate newElement = new FunctionTemplate( parent, name );
+					FunctionTemplateDeclaration newElement = new FunctionTemplateDeclaration( parent, name );
 					functionElement = newElement;				
 				}
 			}

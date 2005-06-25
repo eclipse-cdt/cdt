@@ -201,7 +201,7 @@ public class RxThread extends Thread {
 						MIEvent event = new MIErrorEvent(session, rr, oobRecords);
 						list.add(event);
 					}
-				} else if ("done".equals(state)) { //$NON-NLS-1$
+				} else if ("done".equals(state) && cmd instanceof CLICommand) { //$NON-NLS-1$
 					// Done usually mean that gdb returns after some CLI command
 					// Some result record contains informaton specific to oob.
 					// This will happen when CLI-Command is use, for example

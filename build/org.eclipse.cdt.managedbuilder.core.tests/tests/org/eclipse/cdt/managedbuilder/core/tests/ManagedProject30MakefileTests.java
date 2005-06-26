@@ -23,10 +23,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
@@ -62,9 +66,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("test30NoFilesToBuild"));
 		suite.addTest(new ManagedProject30MakefileTests("testFileWithNoExtension"));
 		suite.addTest(new ManagedProject30MakefileTests("testPreAndPostProcessBuildSteps"));
+		suite.addTest(new ManagedProject30MakefileTests("testResourceCustomBuildStep"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_1"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_2"));
-		
 		return suite;
 	}
 
@@ -432,6 +436,41 @@ public class ManagedProject30MakefileTests extends TestCase {
 	}
 
 
+	/* (non-Javadoc)
+	 * tests 3.0 style tool integration: create resource custom build step and verify that 
+	 * the proper commands are generated in the makefile which is created by the managedbuild system
+	 */
+	public void testResourceCustomBuildStep(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("subdir.mk"),
+				 Path.fromOSString("sources.mk")}; 		
+		ITool rcbsTool;
+		IInputType rcbsToolInputType;
+		IAdditionalInput rcbsToolInputTypeAdditionalInput;
+		IOutputType rcbsToolOutputType;
+
+		IProject[] projects = createProjects("rcbsBasicTest", null, null, true);				
+		IProject project = projects[0];
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		IConfiguration config = info.getDefaultConfiguration();
+		IFile projfile = project.getFile("rcbsBasicTest.c");
+		IResourceConfiguration rconfig = config.createResourceConfiguration(projfile);
+		rcbsTool = rconfig.createTool(null,"rcbsBasicTestTool","rcbs Basic Test Tool",false);
+		rcbsToolInputType = rcbsTool.createInputType(null,"rcbsToolInputTypeId","rcbsToolInputTypeName",false);
+		rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput("");
+		rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
+		rcbsToolOutputType = rcbsTool.createOutputType(null,"rcbsToolOutputTypeId","rcbsToolOutputTypeName",false);
+		rcbsToolOutputType.setOutputNames("rcbsBasicTest.o");
+		rcbsTool.setCustomBuildStep(true);
+		rcbsTool.setToolCommand("gcc -g -c ../rcbsBasicTest.c -o ./rcbsBasicTest.o");
+		rcbsTool.setAnnouncement("Now executing custom build step for rcbsBasicTest debug config");
+		rconfig.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+		buildProjects(projects, makefiles);
+	}
+
+	
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration with pre and post process steps added to typical compile & link
 	 */

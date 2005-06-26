@@ -93,18 +93,20 @@ public interface IOutputType extends IBuildObject {
 	 * is specified and registered with Eclipse.  Otherwise the  
 	 * outputs attribute will be used.
 	 * 
+     * @param tool  the tool that contains the output-type
 	 * @return String[]
 	 */
-	public String[] getOutputExtensions();
+	public String[] getOutputExtensions(ITool tool);
 	
 	/**
 	 * Answers <code>true</code> if the output type considers the file extension to be 
 	 * one associated with an output file.
 	 * 
-	 * @param ext file extension
+     * @param tool  the tool that contains the output-type
+	 * @param ext  file extension
 	 * @return boolean
 	 */
-	public boolean isOutputExtension(String ext);
+	public boolean isOutputExtension(ITool tool, String ext);
 
 	/**
 	 * Returns the id of the option that is associated with this

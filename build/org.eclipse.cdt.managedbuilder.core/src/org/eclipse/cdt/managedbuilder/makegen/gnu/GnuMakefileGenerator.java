@@ -119,7 +119,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			// What kind of resource change has occurred
 			if (resource.getType() == IResource.FILE) {
 				String ext = resource.getFileExtension();
-				boolean moved = false;
 				switch (delta.getKind()) {
 					case IResourceDelta.ADDED:
 						if (!generator.isGeneratedResource(resource)) {
@@ -232,11 +231,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 	// String constants for makefile contents and messages
 	private static final String COMMENT = "MakefileGenerator.comment";	//$NON-NLS-1$
-	private static final String AUTO_DEP = COMMENT + ".autodeps";	//$NON-NLS-1$
-	private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
-	private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
+	//private static final String AUTO_DEP = COMMENT + ".autodeps";	//$NON-NLS-1$
+	//private static final String MESSAGE = "ManagedMakeBuilder.message";	//$NON-NLS-1$
+	//private static final String BUILD_ERROR = MESSAGE + ".error";	//$NON-NLS-1$
 	
-	private static final String DEP_INCL = COMMENT + ".module.dep.includes";	//$NON-NLS-1$
+	//private static final String DEP_INCL = COMMENT + ".module.dep.includes";	//$NON-NLS-1$
 	private static final String HEADER = COMMENT + ".header"; //$NON-NLS-1$
 	
 	protected static final String MESSAGE_FINISH_BUILD = ManagedMakeMessages.getResourceString("MakefileGenerator.message.finish.build");	//$NON-NLS-1$
@@ -244,7 +243,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	protected static final String MESSAGE_START_BUILD = ManagedMakeMessages.getResourceString("MakefileGenerator.message.start.build");	//$NON-NLS-1$
 	protected static final String MESSAGE_START_FILE = ManagedMakeMessages.getResourceString("MakefileGenerator.message.start.file");	//$NON-NLS-1$
 	protected static final String MESSAGE_NO_TARGET_TOOL = ManagedMakeMessages.getResourceString("MakefileGenerator.message.no.target");	//$NON-NLS-1$
-	private static final String MOD_INCL = COMMENT + ".module.make.includes";	//$NON-NLS-1$	
+	//private static final String MOD_INCL = COMMENT + ".module.make.includes";	//$NON-NLS-1$	
 	private static final String MOD_LIST = COMMENT + ".module.list";	//$NON-NLS-1$	
 	private static final String MOD_VARS = COMMENT + ".module.variables";	//$NON-NLS-1$	
 	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
@@ -1601,7 +1600,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		//  Generate a build rule for any tool that consumes the output of this tool
 		IOutputType[] outTypes = generatingTool.getOutputTypes();
 		for (int i=0; i<outTypes.length; i++) {
-			String[] outExts = outTypes[i].getOutputExtensions();
+			String[] outExts = outTypes[i].getOutputExtensions(generatingTool);
 			String outVariable = outTypes[i].getBuildVariable();
 			if (outExts != null) {
 				for (int j=0; j<outExts.length; j++) {
@@ -1863,7 +1862,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					tool = buildTools[j];
 				}
 				// look for the extension in the map
-				StringBuffer bufferForExtension = new StringBuffer();
 				if (varName == null) {
 					varName = getSourceMacroName(ext).toString();
 					//  Add the resource to the list of all resources associated with a variable.
@@ -2347,7 +2345,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());
 				//if (primaryOutput && ignorePrimary) continue;
 				String outputPrefix = type.getOutputPrefix();
-				String variable = type.getBuildVariable();
 				boolean multOfType = type.getMultipleOfType();
 				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
 				IManagedOutputNameProvider nameProvider = type.getNameProvider();

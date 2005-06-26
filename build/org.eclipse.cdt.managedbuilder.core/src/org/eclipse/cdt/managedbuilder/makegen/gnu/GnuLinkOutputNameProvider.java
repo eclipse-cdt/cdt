@@ -83,7 +83,7 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 				fileName = outputPrefix + fileName;
 			}
 			//  Add the primary output type extension
-			String[] exts = tool.getPrimaryOutputType().getOutputExtensions();
+			String[] exts = tool.getPrimaryOutputType().getOutputExtensions(tool);
 			if (exts != null && exts[0].length() > 0) {
 				fileName += IManagedBuilderMakefileGenerator.DOT + exts[0];
 			}

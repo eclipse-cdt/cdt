@@ -13,18 +13,26 @@ package org.eclipse.cdt.managedbuilder.projectconverter;
 
 import java.io.File;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.core.runtime.content.IContentTypeSettings;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 class UpdateManagedProject21 {
 	
@@ -46,10 +54,38 @@ class UpdateManagedProject21 {
 		monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject20.0", projectName), 1); //$NON-NLS-1$
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		UpdateManagedProjectManager.backupFile(file, "_21backup", monitor, project); //$NON-NLS-1$
+
 		// No physical conversion is need since the 3.0 model is a superset of the 2.1 model 
-		// Just upgrade the version
+		// We need to upgrade the version
 		((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
 		info.setValid(true);
+		// Also we check for this special case.  If the project is a C++ project, and it contains .c files, we add
+		// the .c extension to the project-specific list of C++ file extensions so that these projects build as they
+		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using 
+		// Eclipse content types.
+		if (CoreModel.hasCCNature(project)) {
+			IResource[] files = project.members();
+			for (int i=0; i<files.length; i++) {
+				String ext = files[i].getFileExtension();
+				if (ext != null && ext.equals("c")) {						//$NON-NLS-1$
+/*					
+ *  What to do here is not yet decided
+ 					try {
+						IContentTypeManager manager = Platform.getContentTypeManager();
+						IContentType contentType = manager.getContentType("org.eclipse.cdt.core.cxxSource");	//$NON-NLS-1$
+						IScopeContext projectScope = new ProjectScope(project);
+						IContentTypeSettings settings = contentType.getSettings(projectScope);
+						// TODO: we need to add the default extensions too...
+						settings.addFileSpec("c", IContentType.FILE_EXTENSION_SPEC);	//$NON-NLS-1$
+					} catch (CoreException e) {
+						// TODO: Issue message??
+					}
+*/					
+					
+					break;
+				}
+			}
+		}
 
 		// Save the updated file
 		// If the tree is locked spawn a job to this.

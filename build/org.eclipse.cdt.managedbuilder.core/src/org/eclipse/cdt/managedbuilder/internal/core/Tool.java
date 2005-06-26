@@ -70,8 +70,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
 
 	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
-	private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
-	private static final IOption[] EMPTY_OPTIONS = new IOption[0];
+	//private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
+	//private static final IOption[] EMPTY_OPTIONS = new IOption[0];
 	private static final String EMPTY_STRING = new String();
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final String DEFAULT_ANNOUNCEMENT_PREFIX = "Tool.default.announcement";	//$NON-NLS-1$
@@ -1341,7 +1341,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		// Find the primary input type
 		IInputType type = getPrimaryInputType();
 		if (type != null) {
-			String[] exts = type.getSourceExtensions();
+			String[] exts = type.getSourceExtensions(this);
 			// Use the first entry in the list
 			if (exts.length > 0) return exts[0];
 		}
@@ -1358,7 +1358,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	public String[] getPrimaryInputExtensions() {
 		IInputType type = getPrimaryInputType();
 		if (type != null) {
-			String[] exts = type.getSourceExtensions();
+			String[] exts = type.getSourceExtensions(this);
 			// Use the first entry in the list
 			if (exts.length > 0) return exts;
 		}
@@ -1379,7 +1379,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (types != null && types.length > 0) {
 			List allExts = new ArrayList();
 			for (int i=0; i<types.length; i++) {
-				String[] exts = types[i].getSourceExtensions();
+				String[] exts = types[i].getSourceExtensions(this);
 				for (int j=0; j<exts.length; j++) {
 					allExts.add(exts[j]);
 				}
@@ -1419,7 +1419,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		IInputType[] types = getInputTypes();
 		if (types != null && types.length > 0) {
 			for (int i=0; i<types.length; i++) {
-				if (types[i].isSourceExtension(inputExtension)) {
+				if (types[i].isSourceExtension(this, inputExtension)) {
 					type = types[i];
 					break;
 				}
@@ -1506,7 +1506,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (types != null && types.length > 0) {
 			List allExts = new ArrayList();
 			for (int i=0; i<types.length; i++) {
-				String[] exts = types[i].getDependencyExtensions();
+				String[] exts = types[i].getDependencyExtensions(this);
 				for (int j=0; j<exts.length; j++) {
 					allExts.add(exts[j]);
 				}
@@ -1740,7 +1740,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		IInputType[] types = getInputTypes();
 		if (types != null) {
 			for (int i=0; i<types.length; i++) {
-				if (types[i].isSourceExtension(sourceExt)) {
+				if (types[i].isSourceExtension(this, sourceExt)) {
 					return ((InputType)types[i]).getDependencyGeneratorElement();
 				}
 			}
@@ -1830,7 +1830,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (types != null && types.length > 0) {
 			List allExts = new ArrayList();
 			for (int i=0; i<types.length; i++) {
-				String[] exts = types[i].getOutputExtensions();
+				String[] exts = types[i].getOutputExtensions(this);
 				if (exts != null) {
 					for (int j=0; j<exts.length; j++) {
 						allExts.add(exts[j]);
@@ -1882,8 +1882,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (types != null) {
 			for (i=0; i<types.length; i++) {
 				IInputType inputType = types[i].getPrimaryInputType();
-				if (inputType != null && inputType.isSourceExtension(inputExtension)) {
-					String[] exts = types[i].getOutputExtensions();
+				if (inputType != null && inputType.isSourceExtension(this, inputExtension)) {
+					String[] exts = types[i].getOutputExtensions(this);
 					if (exts != null && exts.length > 0) {
 						return exts[0]; 
 					}
@@ -1893,7 +1893,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 			if (getInputType(inputExtension) != null) {
 				//  Return the first extension of the primary output type
 				IOutputType outType = getPrimaryOutputType();
-				String[] exts = outType.getOutputExtensions();
+				String[] exts = outType.getOutputExtensions(this);
 				if (exts != null && exts.length > 0) {
 					return exts[0]; 
 				}				
@@ -1924,7 +1924,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		IOutputType[] types = getOutputTypes();
 		if (types != null && types.length > 0) {
 			for (int i=0; i<types.length; i++) {
-				if (types[i].isOutputExtension(outputExtension)) {
+				if (types[i].isOutputExtension(this, outputExtension)) {
 					type = types[i];
 					break;
 				}
@@ -2425,7 +2425,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 
 	private void checkForMigrationSupport() {
 
-		String tmpId = null;
 		boolean isExists = false;
 	
 		if ( getSuperClass() == null) {

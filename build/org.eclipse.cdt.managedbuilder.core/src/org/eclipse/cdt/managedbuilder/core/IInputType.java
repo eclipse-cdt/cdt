@@ -183,18 +183,20 @@ public interface IInputType extends IBuildObject {
 	 * is specified and registered with Eclipse.  Otherwise the  
 	 * sourceExtensions attribute will be used.
 	 * 
+     * @param tool  the tool that contains the input-type
 	 * @return String[]
 	 */
-	public String[] getSourceExtensions();
+	public String[] getSourceExtensions(ITool tool);
 	
 	/**
 	 * Answers <code>true</code> if the input type considers the file extension to be 
 	 * one associated with a source file.
 	 * 
-	 * @param ext file extension of the source
+     * @param tool  the tool that contains the input-type
+	 * @param ext  file extension of the source
 	 * @return boolean
 	 */
-	public boolean isSourceExtension(String ext);
+	public boolean isSourceExtension(ITool tool, String ext);
 
 	/**
 	 * Returns the Eclipse <code>IContentType</code> that describes the
@@ -242,18 +244,20 @@ public interface IInputType extends IBuildObject {
 	 * is specified and registered with Eclipse.  Otherwise the  
 	 * dependencyExtensions attribute will be used.
 	 * 
+     * @param tool  the tool that contains the input-type
 	 * @return String[]
 	 */
-	public String[] getDependencyExtensions();
+	public String[] getDependencyExtensions(ITool tool);
 	
 	/**
 	 * Answers <code>true</code> if the input type considers the file extension to be 
 	 * one associated with a dependency file.
 	 * 
-	 * @param ext file extension of the source
+     * @param tool  the tool that contains the input-type
+	 * @param ext  file extension of the source
 	 * @return boolean
 	 */
-	public boolean isDependencyExtension(String ext);
+	public boolean isDependencyExtension(ITool tool, String ext);
 
 	/**
 	 * Returns the id of the option that is associated with this

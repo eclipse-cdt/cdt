@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -414,6 +419,22 @@ public class OutputType extends BuildObject implements IOutputType {
 		return parent;
 	}
 
+	/* (non-Javadoc)
+	 * Returns the project that uses this IOutputType 
+	 */
+	public IProject getProject(ITool tool) {
+		IProject project = null;
+		IBuildObject toolParent = tool.getParent();
+		if (toolParent != null) {
+			if (toolParent instanceof IToolChain) {
+				return (IProject)((IToolChain)toolParent).getParent().getOwner();
+			} else if (toolParent instanceof IResourceConfiguration) {
+				return (IProject)((IResourceConfiguration)toolParent).getOwner();
+			}
+		}
+		return project;
+	}
+
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
 	 */
@@ -637,10 +658,26 @@ public class OutputType extends BuildObject implements IOutputType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOuputType#getOutputExtensions()
 	 */
-	public String[] getOutputExtensions() {
+	public String[] getOutputExtensions(ITool tool) {
 		//  Use content type if specified and registered with Eclipse
 		IContentType type = getOutputContentType();
 		if (type != null) {
+			IContentTypeSettings settings = null;
+			IProject project = getProject(tool);
+			if (project != null) {
+				IScopeContext projectScope = new ProjectScope(project);
+				try {
+					settings = type.getSettings(projectScope);
+				} catch (Exception e) {}
+				if (settings != null) {
+					String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+					//  TODO: There doesn't seem to be any way to distinguish between these 2 cases:
+					//      1. No project specific entries have been set so getFileSpecs returns an empty list
+					//      2. There are project specific entries and all of the "default" entries have been removed
+					//    For now, we have to assume the first case.
+					if (specs.length > 0) return specs;
+				}
+			}
 			return type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 		}
 		return getOutputExtensionsAttribute();
@@ -649,8 +686,8 @@ public class OutputType extends BuildObject implements IOutputType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOutputType#isOutputExtension()
 	 */
-	public boolean isOutputExtension(String ext) {
-		String[] exts = getOutputExtensions();
+	public boolean isOutputExtension(ITool tool, String ext) {
+		String[] exts = getOutputExtensions(tool);
 		if (exts != null) {
 			for (int i=0; i<exts.length; i++) {
 				if (ext.equals(exts[i])) return true;

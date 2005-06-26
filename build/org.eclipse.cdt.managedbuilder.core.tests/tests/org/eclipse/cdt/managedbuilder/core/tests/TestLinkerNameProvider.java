@@ -51,7 +51,7 @@ public class TestLinkerNameProvider implements IManagedOutputNameProvider {
 				fileName = fileName.substring(2,fileName.length()-1);
 			}
 		}
-		String[] exts = tool.getPrimaryOutputType().getOutputExtensions();
+		String[] exts = tool.getPrimaryOutputType().getOutputExtensions(tool);
 		if (exts != null && exts[0].length() > 0) {
 			fileName += IManagedBuilderMakefileGenerator.DOT + exts[0];
 		}

@@ -42,8 +42,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	
-	private static final String EMPTY_STRING = new String();
-	private static final String OBJS_MACRO = "OBJS";			//$NON-NLS-1$
+	//private static final String EMPTY_STRING = new String();
+	//private static final String OBJS_MACRO = "OBJS";			//$NON-NLS-1$
 	private static final String DEPS_MACRO = "DEPS";			//$NON-NLS-1$
 
 	/*
@@ -223,7 +223,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							//        it gives us an input resource for generating default names
 							// Determine the set of source input macros to use
 					 		HashSet handledInputExtensions = new HashSet();
-							String[] exts = type.getSourceExtensions();
+							String[] exts = type.getSourceExtensions(tool);
 							if (projResources != null) {
 								for (int j=0; j<projResources.length; j++) {
 									if (projResources[j].getType() == IResource.FILE) {
@@ -232,7 +232,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										// fix for NPE, bugzilla 99483
 										if(fileExt == null)
 										{
-											fileExt = "";
+											fileExt = "";  //$NON-NLS-1$
 										}
 										
 										for (int k=0; k<exts.length; k++) {
@@ -475,7 +475,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						String namePattern = type.getNamePattern();
 						if (namePattern == null || namePattern.length() == 0) {
 							namePattern = outputPrefix + IManagedBuilderMakefileGenerator.WILDCARD;
-							String outExt = (type.getOutputExtensions())[0];
+							String outExt = (type.getOutputExtensions(tool))[0];
 							if (outExt != null && outExt.length() > 0) {
 								namePattern += DOT + outExt;
 							}
@@ -597,7 +597,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					switch (calcType) {
 					case IManagedDependencyGenerator.TYPE_COMMAND:
 			 			// iterate over all extensions that the tool knows how to handle
-						String[] extensionsList = type.getSourceExtensions();
+						String[] extensionsList = type.getSourceExtensions(tool);
 			 			for (int j=0; j<extensionsList.length; j++) {
 			 				String extensionName = extensionsList[j];
 			 				

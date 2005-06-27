@@ -1079,6 +1079,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 		table.setLayout(tableLayout);
 		table.setHeaderVisible(true);
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 50;
 		tableViewer.getControl().setLayoutData(gd);
 		tableViewer.setContentProvider(new MacroContentProvider());
 		tableViewer.setLabelProvider(new MacroLabelProvider(editable));

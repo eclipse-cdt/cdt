@@ -14,6 +14,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
@@ -151,10 +152,14 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 				IOptionContextData optionContext = (IOptionContextData)fData;
 				IBuildObject buildObj = optionContext.getParent();
 				IConfiguration cfg = null;
+				if(buildObj instanceof ITool)
+					buildObj = ((ITool)buildObj).getParent();
 				if(buildObj instanceof IToolChain)
 					cfg = ((IToolChain)buildObj).getParent();
 				else if(buildObj instanceof IResourceConfiguration)
 					cfg = ((IResourceConfiguration)buildObj).getParent();
+				else if(buildObj instanceof IConfiguration)
+					cfg = (IConfiguration)buildObj;
 					
 				if(cfg != null){
 					return new DefaultMacroContextInfo(

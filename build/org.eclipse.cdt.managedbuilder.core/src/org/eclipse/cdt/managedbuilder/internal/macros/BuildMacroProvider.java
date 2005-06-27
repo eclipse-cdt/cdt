@@ -62,7 +62,7 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 * @return
 	 */
 	static public IBuildMacro getMacro(String macroName, IMacroContextInfo contextInfo, boolean includeParentContexts) {
-		if(contextInfo == null || macroName == null)
+ 		if(contextInfo == null || macroName == null)
 			return null;
 		
 		do{
@@ -223,7 +223,7 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
 		if(info != null)
-			MacroResolver.resolveToStringList(value,getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
+			return MacroResolver.resolveToStringList(value,getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter));
 		return null;
 	}
 

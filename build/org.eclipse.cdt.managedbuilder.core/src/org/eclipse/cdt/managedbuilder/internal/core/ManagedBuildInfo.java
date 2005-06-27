@@ -425,8 +425,25 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 								String[] allLibs = option.getLibraries();
 								for (int j = 0; j < allLibs.length; j++)
 								{
-									String string = allLibs[j];
-									libs.add(command + string);
+									try {
+										String resolved[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValueToMakefileFormat(
+												allLibs[j],
+												"", //$NON-NLS-1$
+												" ", //$NON-NLS-1$
+												IBuildMacroProvider.CONTEXT_OPTION,
+												new OptionContextData(option, getDefaultConfiguration().getToolChain()));
+										if(resolved != null && resolved.length > 0){
+											for(int k = 0; k < resolved.length; k++){
+												String string = resolved[k];
+												if(string.length() > 0)
+													libs.add(command + string);
+											}
+										}
+									} catch (BuildMacroException e) {
+										// TODO: report error
+										continue;
+									}
+									
 								}
 							}
 						}
@@ -734,7 +751,24 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					IOption option = opts[i];
 					try {
 						if (option.getValueType() == IOption.OBJECTS) {
-							objs.addAll(Arrays.asList(option.getUserObjects()));
+							String unresolved[] = option.getUserObjects();
+							if(unresolved != null && unresolved.length > 0){
+								for(int k = 0; k < unresolved.length; k++){
+									try {
+										String resolved[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValueToMakefileFormat(
+												unresolved[k],
+												"", //$NON-NLS-1$
+												" ", //$NON-NLS-1$
+												IBuildMacroProvider.CONTEXT_OPTION,
+												new OptionContextData(option, getDefaultConfiguration().getToolChain()));
+										if(resolved != null && resolved.length > 0)
+											objs.addAll(Arrays.asList(resolved));
+									} catch (BuildMacroException e) {
+										// TODO: report error
+										continue;
+									}
+								}
+							}
 						}
 					} catch (BuildException e) {
 						// TODO: report error

@@ -134,6 +134,11 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			IOptionContextData optionContext = fContextData.getOptionContextData();
 			if(optionContext != null){
 				IBuildObject buildObject = optionContext.getParent();
+				if(buildObject instanceof ITool){
+					buildObject = ((ITool)buildObject).getParent();
+				} else if(buildObject instanceof IConfiguration){
+					buildObject = ((IConfiguration)buildObject).getToolChain();
+				}
 				if(buildObject instanceof IToolChain){
 					IToolChain toolChain = (IToolChain)buildObject;
 					builder = toolChain.getBuilder();
@@ -819,9 +824,14 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		if (parent instanceof ITool) {
 			tool = (ITool)parent;
 		}
-		final IBuildObject bo = (optionContext instanceof OptionData) ?
+		IBuildObject bo = (optionContext instanceof OptionData) ?
 				((OptionData)optionContext).getOptionContainer() : optionContext.getParent();
 		IBuildObject parentObject = null;
+		if(bo instanceof ITool)
+			bo = ((ITool)bo).getParent();
+		else if(bo instanceof IConfiguration)
+			bo = ((IConfiguration)bo).getToolChain();
+		
 		if(tool != null && bo instanceof IResourceConfiguration){
 			
 			IToolChain toolChain = null;

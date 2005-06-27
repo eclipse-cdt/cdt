@@ -162,9 +162,13 @@ public class CPPVisitor {
 			parent instanceof ICPPASTTemplateId ) 
 		{
 			binding = CPPSemantics.resolveBinding( name ); 
-			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName && 
-			    ((IProblemBinding)binding).getID() != IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND )
+			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName )
 			{
+				if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND ){
+					IASTNode node = getContainingBlockItem( name.getParent() );
+					if( node.getPropertyInParent() != IASTCompositeTypeSpecifier.MEMBER_DECLARATION )
+						return binding;
+				}
 			    IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
 			    if( ns[ ns.length - 1 ] == name )
 					parent = parent.getParent();
@@ -881,7 +885,7 @@ public class CPPVisitor {
 					return p;
 			} else if ( parent instanceof IASTStatement || parent instanceof IASTTranslationUnit ) {
 				return parent;
-			} else if( parent instanceof IASTFunctionDeclarator ){
+			} else if( parent instanceof IASTFunctionDeclarator && node.getPropertyInParent() == IASTStandardFunctionDeclarator.FUNCTION_PARAMETER ){
 			    return node;
 			} else if( parent instanceof IASTEnumerationSpecifier.IASTEnumerator ){
 			    return parent;

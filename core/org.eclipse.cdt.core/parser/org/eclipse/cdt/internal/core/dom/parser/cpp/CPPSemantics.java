@@ -113,7 +113,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -175,7 +174,7 @@ public class CPPSemantics {
 		public boolean includeBlockItem( IASTNode item ){
 		    if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 		    if( ( astName != null && astName.getParent() instanceof IASTIdExpression ) || 
-		        item instanceof IASTNamespaceDefinition  ||
+		        item instanceof ICPPASTNamespaceDefinition  ||
 	           (item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) ||
 			    item instanceof ICPPASTTemplateDeclaration )
 		    {

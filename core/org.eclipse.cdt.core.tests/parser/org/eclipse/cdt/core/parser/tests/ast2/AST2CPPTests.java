@@ -4779,15 +4779,15 @@ public class AST2CPPTests extends AST2BaseTest {
     
     public void testBug84478_2() throws Exception {
     	StringBuffer buffer = new StringBuffer();
-    	buffer.append("void f(){                          \n");
-    	buffer.append("   if( int x = 1 )  x++;           \n");
-    	buffer.append("   else             x--;           \n");
-    	buffer.append("   while( int y = 2 )              \n");
-    	buffer.append("      y++;                         \n");
-    	buffer.append("   for( int a = 1; int b = 2; b++){ \n");
-    	buffer.append("      a++; b++;                    \n");
-    	buffer.append("   }                               \n");
-    	buffer.append("}                                  \n");
+    	buffer.append("void f(){                          \n"); //$NON-NLS-1$
+    	buffer.append("   if( int x = 1 )  x++;           \n"); //$NON-NLS-1$
+    	buffer.append("   else             x--;           \n"); //$NON-NLS-1$
+    	buffer.append("   while( int y = 2 )              \n"); //$NON-NLS-1$
+    	buffer.append("      y++;                         \n"); //$NON-NLS-1$
+    	buffer.append("   for( int a = 1; int b = 2; b++){ \n"); //$NON-NLS-1$
+    	buffer.append("      a++; b++;                    \n"); //$NON-NLS-1$
+    	buffer.append("   }                               \n"); //$NON-NLS-1$
+    	buffer.append("}                                  \n"); //$NON-NLS-1$
     	
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
     	CPPNameCollector col = new CPPNameCollector();
@@ -4810,10 +4810,10 @@ public class AST2CPPTests extends AST2BaseTest {
     
     public void testBug100415() throws Exception {
     	StringBuffer buffer = new StringBuffer();
-    	buffer.append("void free( void * );         \n");
-    	buffer.append("void f( char **p ){          \n");
-    	buffer.append("   free( p );                \n");
-    	buffer.append("}                            \n");
+    	buffer.append("void free( void * );         \n"); //$NON-NLS-1$
+    	buffer.append("void f( char **p ){          \n"); //$NON-NLS-1$
+    	buffer.append("   free( p );                \n"); //$NON-NLS-1$
+    	buffer.append("}                            \n"); //$NON-NLS-1$
     	
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
     	CPPNameCollector col = new CPPNameCollector();
@@ -4825,17 +4825,17 @@ public class AST2CPPTests extends AST2BaseTest {
     
     public void testBug86688() throws Exception {
     	StringBuffer buffer = new StringBuffer();
-    	buffer.append("class X;                 \n");
-    	buffer.append("void f() {               \n");
-    	buffer.append("   class A {             \n");
-    	buffer.append("      friend class X;    \n");
-    	buffer.append("   };                    \n");
-    	buffer.append("}                        \n");
-    	buffer.append("namespace B {            \n");
-    	buffer.append("   class A {             \n");
-    	buffer.append("      friend class X;    \n");
-    	buffer.append("   };                    \n");
-    	buffer.append("}                        \n");
+    	buffer.append("class X;                 \n"); //$NON-NLS-1$
+    	buffer.append("void f() {               \n"); //$NON-NLS-1$
+    	buffer.append("   class A {             \n"); //$NON-NLS-1$
+    	buffer.append("      friend class X;    \n"); //$NON-NLS-1$
+    	buffer.append("   };                    \n"); //$NON-NLS-1$
+    	buffer.append("}                        \n"); //$NON-NLS-1$
+    	buffer.append("namespace B {            \n"); //$NON-NLS-1$
+    	buffer.append("   class A {             \n"); //$NON-NLS-1$
+    	buffer.append("      friend class X;    \n"); //$NON-NLS-1$
+    	buffer.append("   };                    \n"); //$NON-NLS-1$
+    	buffer.append("}                        \n"); //$NON-NLS-1$
     	
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
     	CPPNameCollector col = new CPPNameCollector();
@@ -4845,5 +4845,20 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNotSame( X, col.getName(3).resolveBinding() );
         assertTrue( col.getName(3).resolveBinding() instanceof ICPPClassType );
         assertSame( X, col.getName(6).resolveBinding() );
+    }
+    
+    public void testBug100403() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("class m {                  \n"); //$NON-NLS-1$
+    	buffer.append("   int m::f();             \n"); //$NON-NLS-1$
+    	buffer.append("};                         \n"); //$NON-NLS-1$
+    	buffer.append("int m::f(){}               \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPMethod f = (ICPPMethod) col.getName(3).resolveBinding();
+        assertSame( f, col.getName(6).resolveBinding() );
     }
 }

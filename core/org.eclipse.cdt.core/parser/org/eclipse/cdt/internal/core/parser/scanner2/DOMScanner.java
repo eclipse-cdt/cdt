@@ -230,6 +230,12 @@ public class DOMScanner extends BaseScanner {
      */
     protected Object popContext() {
         Object result = super.popContext();
+        int delta_pos = 0;
+        if( bufferPos[bufferStackPos + 1] > bufferLimit[ bufferStackPos + 1 ] )
+            delta_pos += bufferLimit[ bufferStackPos + 1 ];
+        else
+            delta_pos += bufferPos[ bufferStackPos + 1 ];
+
         if (result instanceof CodeReader) {
             if( isInitialized )
                 locationMap.endTranslationUnit(bufferDelta[0]
@@ -245,8 +251,8 @@ public class DOMScanner extends BaseScanner {
                 log.traceLog(buffer.toString());
             }
 
-            locationMap.endInclusion(getGlobalCounter(bufferStackPos + 1)
-                    + bufferPos[bufferStackPos + 1]);
+            int value = getGlobalCounter(bufferStackPos + 1) + delta_pos;                                      
+            locationMap.endInclusion(value);
             bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
                     + codeReader.buffer.length;
         } else if (result instanceof MacroData) {
@@ -255,17 +261,17 @@ public class DOMScanner extends BaseScanner {
 
                 locationMap
                         .endFunctionStyleExpansion(getGlobalCounter(bufferStackPos + 1)
-                                + bufferPos[bufferStackPos + 1] + 1); // functionstyle
+                                + delta_pos + 1); // functionstyle
                 // macro)
                 // ;
                 bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
-                        + bufferPos[bufferStackPos + 1] + 1;
+                        + delta_pos + 1;
             } else if (data.macro instanceof ObjectStyleMacro && fsmCount == 0) {
                 locationMap
                         .endObjectStyleMacroExpansion(getGlobalCounter(bufferStackPos + 1)
-                                + bufferPos[bufferStackPos + 1]);
+                                + delta_pos );
                 bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
-                        + bufferPos[bufferStackPos + 1];
+                        + delta_pos;
 
             }
         }
@@ -277,7 +283,12 @@ public class DOMScanner extends BaseScanner {
             return 0;
         int result = bufferDelta[value];
         for (int i = value - 1; i >= 0; --i)
-            result += bufferPos[i] + bufferDelta[i];
+        {
+            if( bufferPos[i] > bufferLimit[i] )
+                result += bufferLimit[i] + bufferDelta[i];
+            else
+                result += bufferPos[i] + bufferDelta[i];
+        }
 
         return result;
 

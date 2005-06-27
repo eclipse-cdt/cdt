@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corp. - Rational Software - initial implementation
+ *     IBM Corporation - initial implementation
  *     QNX Software Systems - adapted for type cache
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser.cache;

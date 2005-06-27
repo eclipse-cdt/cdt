@@ -143,10 +143,18 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	public boolean equals(ICDIStackFrame stackframe) {
 		if (stackframe instanceof StackFrame) {
 			StackFrame stack = (StackFrame)stackframe;
-			return  cthread != null &&
+			boolean equal =  cthread != null &&
 				cthread.equals(stack.getThread()) &&
-				getLevel() == stack.getLevel() &&
-				getLocator().equals(stack.getLocator());
+				getLevel() == stack.getLevel();
+			if (equal) {
+				ICDILocator otherLocator = stack.getLocator();
+				ICDILocator myLocator = getLocator();
+				if (Locator.equalString(myLocator.getFile(), otherLocator.getFile())) {
+					if (Locator.equalString(myLocator.getFunction(), otherLocator.getFunction())) {
+						return true;
+					}
+				}
+			}
 		}
 		return super.equals(stackframe);
 	}

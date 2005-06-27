@@ -1,4 +1,10 @@
 2005-06-27 Alain Magloire
+	Fix PR 100069
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Location.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Locator.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/StackFrame.java
+
+2005-06-27 Alain Magloire
 	Refactor the class extending CLICommand to CLIXXXX for more clarity.
 	Pass the MIVersion in all of the class extending MICommand, this is
 	necessary some command option will not be accepted depending on the version.

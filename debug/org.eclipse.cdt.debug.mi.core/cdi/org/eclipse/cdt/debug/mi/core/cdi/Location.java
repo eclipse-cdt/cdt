@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 
 /**
  */
-public class Location /*implements ICDIFunctionLocation, ICDIAddressLocation */{
+public abstract class Location {
 
 	BigInteger fAddress = null;
 	String fFile = null;

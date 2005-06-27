@@ -43,7 +43,7 @@ public class Locator extends Location implements ICDILocator {
 		return false;
 	}
 
-	boolean equalString(String f1, String f2) {
+	public static boolean equalString(String f1, String f2) {
 		if (f1 != null && f1.length() > 0 && f2 != null && f2.length() > 0) {
 			return f1.equals(f2);
 		} else if ((f1 == null || f1.length() == 0) && (f2 == null || f2.length() == 0)) {

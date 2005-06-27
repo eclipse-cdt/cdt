@@ -199,8 +199,23 @@ public abstract class AbstractIndexerRunner implements IIndexerRunner, ICSearchC
 	            mark = markers[ i ];
 	            try {
 	                orig = (String) mark.getAttribute(INDEXER_MARKER_ORIGINATOR);
-	                if( orig != null && orig.equals(origPath )) {
-	                    mark.delete();
+	                if (orig != null) {
+	                	if (orig.equals(origPath)) {
+	                		mark.delete();
+	                	}
+	                	else {
+	                		// if a originator of the original marker is a header file and request to
+	                		// remove markers is coming from a c/c++ file then remove the marker
+	            	    	String id = null;
+	            	    	IContentType contentType = CCorePlugin.getContentType(resource.getProject(), orig);
+	            	    	if (contentType != null) {
+	            	    		id = contentType.getId();
+	            	    		if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)
+		            	    			|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
+	    		                    mark.delete();
+	            	    		}
+	            	    	}
+	                	}
 	                }
 	            } catch (CoreException e) {
 	            }

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -118,6 +119,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
             if (AbstractIndexerRunner.TIMING)
                 parseTime = System.currentTimeMillis();
             
+        	// first clear all problem markers on non-external include files
+        	clearProblemMarkers(tu.getIncludeDirectives());
+        	
             ASTVisitor visitor = null;
             //C or CPP?
             if (tu.getParserLanguage() == ParserLanguage.CPP) {
@@ -194,7 +198,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
         }
     }
 
-    /**
+	/**
      * @param IFile
      * @return boolean
      */
@@ -228,6 +232,22 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
     }
 
     /**
+	 * @param includeDirectives
+	 */
+	private void clearProblemMarkers(IASTPreprocessorIncludeStatement[] includeDirectives) {
+		if (areProblemMarkersEnabled()) {
+			for (int i = 0; i < includeDirectives.length; i++) {
+				IPath includePath = new Path(includeDirectives[i].getPath());
+				IFile includeFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(includePath); 
+				if (includeFile != null) {
+					// include file in workspace; remove problem markers
+					requestRemoveMarkers(includeFile, resourceFile);
+				}
+			}
+		}
+	}
+
+    /**
      * @param tree
      */
     private void processIncludeDirectives(IDependencyTree tree) {
@@ -251,14 +271,14 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
 
             String include = inclusion.getIncludeDirective().getPath();
 
-            if (areProblemMarkersEnabled()) {
-                IPath newPath = new Path(include);
-                IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(newPath);
-                if (tempFile != null) {
-                    //File is in the workspace
-                    requestRemoveMarkers(tempFile, resourceFile);
-                }
-            }
+//            if (areProblemMarkersEnabled()) {
+//                IPath newPath = new Path(include);
+//                IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(newPath);
+//                if (tempFile != null) {
+//                    //File is in the workspace
+//                    requestRemoveMarkers(tempFile, resourceFile);
+//                }
+//            }
 
             getOutput().addIncludeRef(fileNumber, include);
             getOutput().addRelatives(fileNumber, include, 

@@ -1,3 +1,11 @@
+2005-06-26 Vladimir Hirsl
+	Fix for 101344: problem markers are not being removed from header files
+	Fixed removing indexer problem markers originally created by indexing 
+	header files not included by any source files.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/AbstractIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+
 2005-06-25 Alain Magloire
 	Fix PR 91069: BinaryRunner search improvements from Chris Wiebe.
 	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java

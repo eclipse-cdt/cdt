@@ -129,6 +129,9 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		}
 
 		private ICDIVariableDescriptor getCDIVariableObject() {
+			if (fCDIVariable != null) {
+				return fCDIVariable;
+			}
 			return fCDIVariableObject;
 		}
 

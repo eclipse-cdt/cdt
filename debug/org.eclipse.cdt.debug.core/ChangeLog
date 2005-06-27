@@ -1,3 +1,7 @@
+2005-05-27 Alain Magloire
+	Use the fCDIVariable instead of fCDIVariableObject when possible.
+	* src/org/eclipse/cdt/debug/internal/core/model/CVariable.java
+
 2005-05-23 Mikhail Khodjaiants
 	Bug 100756: Breakpoints listed twice in Breakpoints view.
 	* CBreakpointManager.java

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation */
+ * IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.parser.ast.complete;

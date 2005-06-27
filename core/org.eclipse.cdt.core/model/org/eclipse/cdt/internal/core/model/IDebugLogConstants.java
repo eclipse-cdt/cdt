@@ -6,13 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * import org.eclipse.cdt.core.parser.Enum;
- * /**
- * @author bgheorgh
- *
- * /
+ * IBM Corporation - Initial API and implementation
  *******************************************************************************/
+package org.eclipse.cdt.internal.core.model;
+
+import org.eclipse.cdt.core.parser.Enum;
+
 public interface IDebugLogConstants {
 	public class DebugLogConstant extends Enum {
 			protected DebugLogConstant( int value )

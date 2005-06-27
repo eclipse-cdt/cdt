@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation */
- *******************************************************************************/
+ * IBM Rational Software - Initial API and implementation 
+ ******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu;
 
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;

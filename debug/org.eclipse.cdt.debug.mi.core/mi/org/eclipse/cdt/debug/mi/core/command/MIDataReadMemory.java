@@ -58,6 +58,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIDataReadMemory extends MICommand {
 
 	public MIDataReadMemory(
+		String miVersion,
 		long offset,
 		String address,
 		int wordFormat,
@@ -65,7 +66,7 @@ public class MIDataReadMemory extends MICommand {
 		int rows,
 		int cols,
 		Character asChar) {
-		super("-data-read-memory"); //$NON-NLS-1$
+		super(miVersion, "-data-read-memory"); //$NON-NLS-1$
 		if (offset != 0) {
 			setOptions(new String[] { "-o", Long.toString(offset)}); //$NON-NLS-1$
 		}

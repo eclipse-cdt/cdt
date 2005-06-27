@@ -15,13 +15,16 @@ package org.eclipse.cdt.debug.mi.core.command;
 
 /**
  * 
- *    handle SIGUSR1 nostop noignore
+ *    sharedlibrary filename
  *
  */
-public class MIHandle extends CLICommand {
+public class CLISharedLibrary extends CLICommand {
 
-	public MIHandle(String arg) {
-		super("handle " + arg); //$NON-NLS-1$
+	public CLISharedLibrary() {
+		super("sharedlibrary"); //$NON-NLS-1$
 	}
 
+	public CLISharedLibrary(String name) {
+		super("sharedlibrary " + name); //$NON-NLS-1$
+	}
 }

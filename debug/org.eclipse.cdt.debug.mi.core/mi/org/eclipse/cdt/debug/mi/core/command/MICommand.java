@@ -16,24 +16,57 @@ package org.eclipse.cdt.debug.mi.core.command;
  * Represents a MI command.
  */
 public class MICommand extends Command {
-	final String[] empty = new String[0];
+	final static String[] empty = new String[0];
 	String[] options = empty;
 	String[] parameters = empty;
-	String operation = ""; //$NON-NLS-1$
+	String operation = new String();
+	String fMIVersion;
 
-	public MICommand(String oper) {
-		this.operation = oper;
+	public MICommand(String miVersion, String oper) {
+		this(miVersion, oper, empty);
 	}
 
-	public MICommand(String oper, String[] param) {
-		this.operation = oper;
-		this.parameters = param;
+	public MICommand(String miVersion, String oper, String[] params) {
+		this(miVersion, oper, empty, params);
 	}
 
-	public MICommand(String oper, String[] opt, String[] param) {
+	public MICommand(String miVersion, String oper, String[] opt, String[] params) {
+		fMIVersion = miVersion;
 		this.operation = oper;
 		this.options = opt;
-		this.parameters = param;
+		this.parameters = params;
+	}
+
+	/**
+	 * Return the MI version for this command
+	 * @return
+	 */
+	public String getMIVersion() {
+		return fMIVersion;
+	}
+
+	/**
+	 * Set the MI version for this command
+	 * @param miVersion
+	 */
+	public void setMIVersion(String miVersion) {
+		fMIVersion = miVersion;
+	}
+
+	/**
+	 * whether the MI version is "mi1"
+	 * @return
+	 */
+	public boolean isMI1() {
+		return "mi1".equalsIgnoreCase(fMIVersion); //$NON-NLS-1$
+	}
+	
+	/**
+	 * whether the MI version is "mi2"
+	 * @return
+	 */
+	public boolean isMI2() {
+		return "mi2".equalsIgnoreCase(fMIVersion); //$NON-NLS-1$
 	}
 
 	/**

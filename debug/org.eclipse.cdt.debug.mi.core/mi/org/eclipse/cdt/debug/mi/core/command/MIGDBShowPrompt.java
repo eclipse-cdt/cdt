@@ -19,7 +19,7 @@ public class MIGDBShowPrompt extends MIGDBShow {
 	/**
 	 * @param params
 	 */
-	public MIGDBShowPrompt() {
-		super(new String[] { "prompt" }); //$NON-NLS-1$
+	public MIGDBShowPrompt(String miVersion) {
+		super(miVersion, new String[] { "prompt" }); //$NON-NLS-1$
 	}
 }

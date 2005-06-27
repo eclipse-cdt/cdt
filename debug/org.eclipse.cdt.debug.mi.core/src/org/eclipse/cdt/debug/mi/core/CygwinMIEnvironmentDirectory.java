@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class CygwinMIEnvironmentDirectory extends MIEnvironmentDirectory {
 
-	CygwinMIEnvironmentDirectory(boolean reset, String[] paths) {
-		super(reset, paths);
+	CygwinMIEnvironmentDirectory(String miVersion, boolean reset, String[] paths) {
+		super(miVersion, reset, paths);
 
 		String[] newpaths = new String[paths.length];
 		for (int i = 0; i < paths.length; i++) {

@@ -20,8 +20,8 @@ public class MIInterpreterExecConsole extends MIInterpreterExec {
 	 * @param interpreter
 	 * @param cmd
 	 */
-	public MIInterpreterExecConsole(String cmd) {
-		super("console", cmd); //$NON-NLS-1$
+	public MIInterpreterExecConsole(String miVersion, String cmd) {
+		super(miVersion, "console", cmd); //$NON-NLS-1$
 	}
 
 }

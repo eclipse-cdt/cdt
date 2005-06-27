@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowPrompt;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -96,6 +97,9 @@ public class MISession extends Observable {
 	 */
 	public MISession(MIProcess process, IMITTY tty, int timeout, int type, int launchTimeout) throws MIException {
 
+		// Assume mi1 for now
+		String miVersion = "mi1"; //$NON-NLS-1$
+
 		gdbProcess = process;
 		inChannel = process.getInputStream();
 		outChannel = process.getOutputStream();
@@ -104,7 +108,6 @@ public class MISession extends Observable {
 
 		sessionType = type;
 
-		factory = new CommandFactory();
 
 		parser = new MIParser();
 
@@ -147,21 +150,21 @@ public class MISession extends Observable {
 		// Like confirmation and screen size.
 
 		try {
-			MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"}); //$NON-NLS-1$ //$NON-NLS-2$
+			MIGDBSet confirm = new MIGDBSet(miVersion, new String[]{"confirm", "off"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(confirm, launchTimeout);
 			confirm.getMIInfo(); 
 
-			MIGDBSet width = new MIGDBSet(new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+			MIGDBSet width = new MIGDBSet(miVersion, new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(width, launchTimeout);
 			width.getMIInfo(); 
 
-			MIGDBSet height = new MIGDBSet(new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+			MIGDBSet height = new MIGDBSet(miVersion, new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(height, launchTimeout);
 			height.getMIInfo();
 
 			// Try to discover is "-interpreter-exec" is supported.
 			try {
-				MIInterpreterExecConsole echo = new  MIInterpreterExecConsole("echo"); //$NON-NLS-1$
+				MIInterpreterExecConsole echo = new  MIInterpreterExecConsole(miVersion, "echo"); //$NON-NLS-1$
 				postCommand(echo, launchTimeout);
 				echo.getMIInfo();
 				useInterpreterExecConsole = true;
@@ -170,13 +173,18 @@ public class MISession extends Observable {
 			}
 
 			// Get GDB's prompt
-			MIGDBShowPrompt prompt = new MIGDBShowPrompt();
+			MIGDBShowPrompt prompt = new MIGDBShowPrompt(miVersion);
 			postCommand(prompt);
 			MIGDBShowInfo infoPrompt = prompt.getMIGDBShowInfo();
 			String value = infoPrompt.getValue();
 			if (value != null && value.length() > 0) {
 				parser.cliPrompt = value.trim();
 			}
+			if (useInterpreterExecConsole) {
+				miVersion = "mi2"; //$NON-NLS-1$
+			}
+			
+			factory = new CommandFactory(miVersion); //$NON-NI
 		} catch (MIException exc) {
 			// Kill the Transmition thread.
 			if (txThread.isAlive()) {
@@ -340,6 +348,14 @@ public class MISession extends Observable {
 			// Let it throught:
 			if (!(cmd instanceof MIExecInterrupt)) {
 				throw new MIException(MIPlugin.getResourceString("src.MISession.Target_not_suspended")); //$NON-NLS-1$
+			}
+		}
+
+		if (inferior.isTerminated()) {
+			// the only thing that can call postCommand when the inferior is in a TERMINATED
+			// state is MIGDBShowExitCode, for when MIInferior is computing error code.
+			if (!(cmd instanceof MIGDBShowExitCode)) {
+				throw new MIException(MIPlugin.getResourceString("src.MISession.Inferior_Terminated")); //$NON-NLS-1$
 			}
 		}
 
@@ -553,7 +569,7 @@ public class MISession extends Observable {
 		return eventQueue;
 	}
 
-	RxThread getRxThread() {
+	public RxThread getRxThread() {
 		return rxThread;
 	}
 

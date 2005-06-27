@@ -47,12 +47,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
  */
 public class MIStackListFrames extends MICommand 
 {
-	public MIStackListFrames() {
-		super("-stack-list-frames"); //$NON-NLS-1$
+	public MIStackListFrames(String miVersion) {
+		super(miVersion, "-stack-list-frames"); //$NON-NLS-1$
 	}
 
-	public MIStackListFrames(int low, int high) {
-		super("-stack-list-frames", new String[]{Integer.toString(low), //$NON-NLS-1$
+	public MIStackListFrames(String miVersion, int low, int high) {
+		super(miVersion, "-stack-list-frames", new String[]{Integer.toString(low), //$NON-NLS-1$
 			Integer.toString(high)});
 	}
 

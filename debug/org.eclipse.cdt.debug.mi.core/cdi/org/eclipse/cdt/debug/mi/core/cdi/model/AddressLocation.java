@@ -20,7 +20,6 @@ public class AddressLocation extends Location implements ICDIAddressLocation {
 
 	public AddressLocation(BigInteger address) {
 		super(address);
-		// TODO Auto-generated constructor stub
 	}
 
 }

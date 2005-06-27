@@ -20,10 +20,13 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIEnvironmentDirectory extends MICommand 
 {
-	public MIEnvironmentDirectory(boolean reset, String[] paths) {
-		super("-environment-directory", paths); //$NON-NLS-1$
-		if (reset) {
-			setOptions(new String[] {"-r"}); //$NON-NLS-1$
+	public MIEnvironmentDirectory(String miVersion, boolean reset, String[] paths) {
+		super(miVersion, "-environment-directory", paths); //$NON-NLS-1$
+		if (isMI2()) {
+			// earlier version do no accept the "-r" option.
+			if (reset) {
+				setOptions(new String[] {"-r"}); //$NON-NLS-1$
+			}
 		}
 	}
 

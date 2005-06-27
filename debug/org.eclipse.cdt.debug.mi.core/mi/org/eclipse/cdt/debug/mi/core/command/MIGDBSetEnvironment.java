@@ -20,8 +20,8 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIGDBSetEnvironment extends MIGDBSet {
 
-	public MIGDBSetEnvironment(String[] paths) {
-		super(paths);
+	public MIGDBSetEnvironment(String miVersion, String[] paths) {
+		super(miVersion, paths);
 		// Overload the parameter
 		String[] newPaths = new String[paths.length + 1];
 		newPaths[0] = "environment"; //$NON-NLS-1$

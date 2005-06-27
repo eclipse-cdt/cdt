@@ -13,11 +13,11 @@ package org.eclipse.cdt.debug.mi.core.output;
 /**
  * GDB/MI whatis parsing.
  */
-public class MIPTypeInfo extends MIInfo {
+public class CLIPTypeInfo extends MIInfo {
 
 	String type;
 
-	public MIPTypeInfo(MIOutput out) {
+	public CLIPTypeInfo(MIOutput out) {
 		super(out);
 		parse();
 	}

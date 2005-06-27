@@ -11,20 +11,17 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
-
-
 /**
  * 
- *    sharedlibrary filename
  *
+ *     -target-attach PID | FILE
+ *
+ *  Attach to a process PID or a file FILE outside of GDB.
+ * 
  */
-public class MISharedLibrary extends CLICommand {
-
-	public MISharedLibrary() {
-		super("sharedlibrary"); //$NON-NLS-1$
-	}
-
-	public MISharedLibrary(String name) {
-		super("sharedlibrary " + name); //$NON-NLS-1$
+public class CLITargetAttach extends CLICommand 
+{
+	public CLITargetAttach(int pid) {
+		super("attach " + Integer.toString(pid)); //$NON-NLS-1$
 	}
 }

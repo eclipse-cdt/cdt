@@ -27,8 +27,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIDataEvaluateExpression extends MICommand 
 {
-	public MIDataEvaluateExpression(String expr) {
-		super("-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
+	public MIDataEvaluateExpression(String miVersion, String expr) {
+		super(miVersion, "-data-evaluate-expression", new String[]{expr}); //$NON-NLS-1$
 	}
 
 	public MIDataEvaluateExpressionInfo getMIDataEvaluateExpressionInfo() throws MIException {

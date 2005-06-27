@@ -22,8 +22,8 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIBreakEnable extends MICommand
 {
-	public MIBreakEnable (int[] array) {
-		super("-break-enable"); //$NON-NLS-1$
+	public MIBreakEnable (String miVersion, int[] array) {
+		super(miVersion, "-break-enable"); //$NON-NLS-1$
 		if (array != null && array.length > 0) {
 			String[] brkids = new String[array.length];
 			for (int i = 0; i < array.length; i++) {

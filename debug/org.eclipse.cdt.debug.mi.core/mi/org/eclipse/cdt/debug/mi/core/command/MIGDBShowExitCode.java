@@ -26,8 +26,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIGDBShowExitCode extends MIDataEvaluateExpression {
 
-	public MIGDBShowExitCode() {
-		super("$_exitcode"); //$NON-NLS-1$
+	public MIGDBShowExitCode(String miVersion) {
+		super(miVersion, "$_exitcode"); //$NON-NLS-1$
 	}
 
 	public MIGDBShowExitCodeInfo getMIGDBShowExitCodeInfo() throws MIException {

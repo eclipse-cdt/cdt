@@ -32,8 +32,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
  */
 public class MIStackListArguments extends MICommand 
 {
-	public MIStackListArguments(boolean showValues) {
-		super("-stack-list-arguments"); //$NON-NLS-1$
+	public MIStackListArguments(String miVersion, boolean showValues) {
+		super(miVersion, "-stack-list-arguments"); //$NON-NLS-1$
 		if (showValues) {
 			setParameters(new String[]{"1"}); //$NON-NLS-1$
 		} else {
@@ -41,8 +41,8 @@ public class MIStackListArguments extends MICommand
 		}
 	}
 
-	public MIStackListArguments(boolean showValues, int low, int high) {
-		super("-stack-list-arguments"); //$NON-NLS-1$
+	public MIStackListArguments(String miVersion, boolean showValues, int low, int high) {
+		super(miVersion, "-stack-list-arguments"); //$NON-NLS-1$
 		String[] params = new String[3];
 		if (showValues) {
 			params[0] = "1"; //$NON-NLS-1$

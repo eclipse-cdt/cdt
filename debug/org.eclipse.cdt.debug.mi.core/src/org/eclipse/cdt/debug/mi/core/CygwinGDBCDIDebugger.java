@@ -26,7 +26,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * Cygwin debugger extension point.
  */
 public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
-	static final CygwinCommandFactory commandFactory = new CygwinCommandFactory();
 
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CoreException {
 		// the "search-solib-path" and "stop-on-solib-events" options are not supported in CygWin
@@ -38,7 +37,8 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		for (int i = 0; i < targets.length; ++i) {
 			Target target = (Target)targets[i];
 			MISession miSession = target.getMISession();
-			miSession.setCommandFactory(commandFactory);
+			String miVersion = miSession.getCommandFactory().getMIVersion();
+			miSession.setCommandFactory(new CygwinCommandFactory(miVersion));
 			// For windows we need to start the inferior in a new console window
 			// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
 			try {
@@ -62,7 +62,9 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
 			Target target = (Target)targets[i];
-			target.getMISession().setCommandFactory(commandFactory);
+			MISession miSession = target.getMISession();
+			String miVersion = miSession.getCommandFactory().getMIVersion();
+			miSession.setCommandFactory(new CygwinCommandFactory(miVersion));
 		}
 		initializeLibraries(config, session);
 		return session;
@@ -73,7 +75,9 @@ public class CygwinGDBCDIDebugger extends GDBCDIDebugger {
 		ICDITarget[] targets = session.getTargets();
 		for (int i = 0; i < targets.length; ++i) {
 			Target target = (Target)targets[i];
-			target.getMISession().setCommandFactory(commandFactory);
+			MISession miSession = target.getMISession();
+			String miVersion = miSession.getCommandFactory().getMIVersion();
+			miSession.setCommandFactory(new CygwinCommandFactory(miVersion));
 		}
 		initializeLibraries(config, session);
 		return session;

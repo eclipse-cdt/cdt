@@ -13,11 +13,11 @@ package org.eclipse.cdt.debug.mi.core.output;
 /**
  * GDB/MI whatis parsing.
  */
-public class MIWhatisInfo extends MIInfo {
+public class CLIWhatisInfo extends MIInfo {
 
 	String type;
 
-	public MIWhatisInfo(MIOutput out) {
+	public CLIWhatisInfo(MIOutput out) {
 		super(out);
 		parse();
 	}

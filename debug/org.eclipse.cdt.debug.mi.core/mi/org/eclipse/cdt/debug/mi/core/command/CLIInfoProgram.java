@@ -11,38 +11,35 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
-
 
 /**
  * 
- *    jump LINESPEC
+ *    info threads
  *
  */
-public class MIJump extends CLICommand {
-
-	MIOutput out;
-
-	public MIJump(String loc) {
-		super("jump " + loc); //$NON-NLS-1$
+public class CLIInfoProgram extends CLICommand 
+{
+	public CLIInfoProgram() {
+		super("info program"); //$NON-NLS-1$
 	}
 
-	/**
-	 *  This is a CLI command contraly to
-	 *  the -exec-continue or -exec-run
-	 *  it does not return so we have to fake
-	 *  a return value. We return "^running"
-	 */
-	public MIOutput getMIOutput() {
-		if (out == null) {
-			out =  new MIOutput();
-			MIResultRecord rr = new MIResultRecord();
-			rr.setToken(getToken());
-			rr.setResultClass(MIResultRecord.RUNNING);
-			out.setMIResultRecord(rr);
+	public CLIInfoProgramInfo getMIInfoProgramInfo() throws MIException {
+		return (CLIInfoProgramInfo)getMIInfo();
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new CLIInfoProgramInfo(out);
+			if (info.isError()) {
+				throwMIException(info, out);
+			}
 		}
-		return out;
+		return info;
 	}
-
 }

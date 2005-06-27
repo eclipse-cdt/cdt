@@ -51,8 +51,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIBreakList extends MICommand
 {
-	public MIBreakList () {
-		super("-break-list"); //$NON-NLS-1$
+	public MIBreakList (String miVersion) {
+		super(miVersion, "-break-list"); //$NON-NLS-1$
 	}
 
 	public MIBreakListInfo getMIBreakListInfo() throws MIException {

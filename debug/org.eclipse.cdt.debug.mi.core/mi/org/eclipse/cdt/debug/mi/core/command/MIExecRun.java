@@ -22,11 +22,11 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecRun extends MICommand 
 {
-	public MIExecRun() {
-		super("-exec-run"); //$NON-NLS-1$
+	public MIExecRun(String miVersion) {
+		super(miVersion, "-exec-run"); //$NON-NLS-1$
 	}
 	
-	public MIExecRun(String[] args) {
-		super("-exec-run", args); //$NON-NLS-1$
+	public MIExecRun(String miVersion, String[] args) {
+		super(miVersion, "-exec-run", args); //$NON-NLS-1$
 	}
 }

@@ -25,8 +25,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIDataListChangedRegisters extends MICommand 
 {
-	public MIDataListChangedRegisters() {
-		super("-data-list-changed-registers" ); //$NON-NLS-1$
+	public MIDataListChangedRegisters(String miVersion) {
+		super(miVersion, "-data-list-changed-registers" ); //$NON-NLS-1$
 	}
 
 	public MIDataListChangedRegistersInfo getMIDataListChangedRegistersInfo() throws MIException {

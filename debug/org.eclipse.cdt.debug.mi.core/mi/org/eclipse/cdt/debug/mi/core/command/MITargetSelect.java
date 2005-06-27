@@ -33,7 +33,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MITargetSelect extends MICommand 
 {
-	public MITargetSelect(String[] params) {
-		super("-target-select", params); //$NON-NLS-1$
+	public MITargetSelect(String miVersion, String[] params) {
+		super(miVersion, "-target-select", params); //$NON-NLS-1$
 	}
 }

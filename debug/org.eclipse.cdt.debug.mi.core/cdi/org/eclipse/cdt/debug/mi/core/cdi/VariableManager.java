@@ -26,6 +26,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorageDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Argument;
 import org.eclipse.cdt.debug.mi.core.cdi.model.ArgumentDescriptor;
 import org.eclipse.cdt.debug.mi.core.cdi.model.GlobalVariable;
@@ -42,7 +43,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.ThreadStorageDescriptor;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIPType;
+import org.eclipse.cdt.debug.mi.core.command.CLIPType;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
@@ -53,7 +54,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIArg;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
-import org.eclipse.cdt.debug.mi.core.output.MIPTypeInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIPTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
@@ -174,16 +175,21 @@ public class VariableManager extends Manager {
 			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 			try {
 				MISession miSession = target.getMISession();
+				RxThread rxThread = miSession.getRxThread();
+				rxThread.setEnableConsole(false);
 				CommandFactory factory = miSession.getCommandFactory();
-				MIPType ptype = factory.createMIPType(type);
+				CLIPType ptype = factory.createCLIPType(type);
 				miSession.postCommand(ptype);
-				MIPTypeInfo info = ptype.getMIPtypeInfo();
+				CLIPTypeInfo info = ptype.getMIPtypeInfo();
 				if (info == null) {
 					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
+				MISession miSession = target.getMISession();
+				RxThread rxThread = miSession.getRxThread();
+				rxThread.setEnableConsole(true);
 				target.setCurrentThread(currentThread, false);
 				currentThread.setCurrentStackFrame(currentFrame, false);
 			}

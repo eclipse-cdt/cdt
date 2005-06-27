@@ -26,8 +26,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadListIdsInfo;
  */
 public class MIThreadListIds extends MICommand 
 {
-	public MIThreadListIds() {
-		super("-thread-list-ids"); //$NON-NLS-1$
+	public MIThreadListIds(String miVersion) {
+		super(miVersion, "-thread-list-ids"); //$NON-NLS-1$
 	}
 
 	public MIThreadListIdsInfo getMIThreadListIdsInfo() throws MIException {

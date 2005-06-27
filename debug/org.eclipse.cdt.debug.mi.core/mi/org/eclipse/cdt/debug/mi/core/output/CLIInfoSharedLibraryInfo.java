@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 
  */
-public class MIInfoSharedLibraryInfo extends MIInfo {
+public class CLIInfoSharedLibraryInfo extends MIInfo {
 
 	MIShared[] shared;
 	boolean isUnixFormat = true;
@@ -26,7 +26,7 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 	private boolean isHPUXFormat;
 	static String mergestr=null;
 
-	public MIInfoSharedLibraryInfo(MIOutput out) {
+	public CLIInfoSharedLibraryInfo(MIOutput out) {
 		super(out);
 		parse();
 	}

@@ -27,8 +27,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
  */
 public class MIStackListLocals extends MICommand 
 {
-	public MIStackListLocals(boolean printValues) {
-		super("-stack-list-locals"); //$NON-NLS-1$
+	public MIStackListLocals(String miVersion, boolean printValues) {
+		super(miVersion, "-stack-list-locals"); //$NON-NLS-1$
 		if (printValues) {
 			setParameters(new String[]{"1"}); //$NON-NLS-1$
 		} else {

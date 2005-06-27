@@ -42,6 +42,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.CoreProcess;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
@@ -63,10 +64,10 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecRun;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
-import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
-import org.eclipse.cdt.debug.mi.core.command.MIJump;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
+import org.eclipse.cdt.debug.mi.core.command.CLIJump;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowEndian;
-import org.eclipse.cdt.debug.mi.core.command.MISignal;
+import org.eclipse.cdt.debug.mi.core.command.CLISignal;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
@@ -75,7 +76,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowEndianInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
@@ -260,16 +261,18 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public Thread[] getCThreads() throws CDIException {
 		Thread[] cthreads = noThreads;
-		CommandFactory factory = miSession.getCommandFactory();
-		MIInfoThreads tids = factory.createMIInfoThreads();
 		try {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(false);
+			CommandFactory factory = miSession.getCommandFactory();
+			CLIInfoThreads tids = factory.createCLIInfoThreads();
 			// HACK/FIXME: gdb/mi thread-list-ids does not
 			// show any newly create thread, we workaround by
 			// issuing "info threads" instead.
 			//MIThreadListIds tids = factory.createMIThreadListIds();
 			//MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 			miSession.postCommand(tids);
-			MIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
+			CLIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
 			int [] ids;
 			String[] names;
 			if (info == null) {
@@ -304,6 +307,9 @@ public class Target extends SessionObject implements ICDITarget {
 		} catch (MIException e) {
 			// Do not throw anything in this case.
 			throw new CDIException(e.getMessage());
+		} finally {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(true);
 		}
 		return cthreads;
 	}
@@ -651,7 +657,7 @@ public class Target extends SessionObject implements ICDITarget {
 			throw new CDIException (CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
 		}
 
-		MIJump jump = factory.createMIJump(loc);
+		CLIJump jump = factory.createCLIJump(loc);
 		try {
 			miSession.postCommand(jump);
 			MIInfo info = jump.getMIInfo();
@@ -668,7 +674,7 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public void signal() throws CDIException {
 		CommandFactory factory = miSession.getCommandFactory();
-		MISignal signal = factory.createMISignal("0"); //$NON-NLS-1$
+		CLISignal signal = factory.createCLISignal("0"); //$NON-NLS-1$
 		try {
 			miSession.postCommand(signal);
 			MIInfo info = signal.getMIInfo();
@@ -685,7 +691,7 @@ public class Target extends SessionObject implements ICDITarget {
 	 */
 	public void signal(ICDISignal signal) throws CDIException {
 		CommandFactory factory = miSession.getCommandFactory();
-		MISignal sig = factory.createMISignal(signal.getName());
+		CLISignal sig = factory.createCLISignal(signal.getName());
 		try {
 			miSession.postCommand(sig);
 			MIInfo info = sig.getMIInfo();

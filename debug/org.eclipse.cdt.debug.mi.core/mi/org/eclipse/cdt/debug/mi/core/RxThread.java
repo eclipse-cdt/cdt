@@ -67,6 +67,7 @@ public class RxThread extends Thread {
 	List oobList;
 	CLIProcessor cli;
 	int prompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
+	boolean fEnableConsole = true;
 
 	public RxThread(MISession s) {
 		super("MI RX Thread"); //$NON-NLS-1$
@@ -140,6 +141,14 @@ public class RxThread extends Thread {
 		return prompt == 2;
 	}
 
+	public void setEnableConsole(boolean enable) {
+		fEnableConsole = enable;
+	}
+
+	public boolean isEnableConsole() {
+		return fEnableConsole;
+	}
+
 	/**
 	 * Search for the command in the RxQueue, set the MIOutput
 	 * and notify() the other end.
@@ -152,7 +161,6 @@ public class RxThread extends Thread {
 			List list = new ArrayList();
 			CommandQueue rxQueue = session.getRxQueue();
 
-			// Notify any command waiting for a ResultRecord.
 			MIResultRecord rr = response.getMIResultRecord();
 			if (rr != null) {
 				int id = rr.getToken();
@@ -160,7 +168,8 @@ public class RxThread extends Thread {
 
 				// Clear the accumulate oobList on each new Result Command
 				// response.
-				MIOOBRecord[] oobRecords = (MIOOBRecord[]) oobList.toArray(new MIOOBRecord[0]);
+				MIOOBRecord[] oobRecords = new MIOOBRecord[oobList.size()];
+				oobList.toArray(oobRecords);
 
 				// Check if the state changed.
 				String state = rr.getResultClass();
@@ -202,14 +211,15 @@ public class RxThread extends Thread {
 						list.add(event);
 					}
 				} else if ("done".equals(state) && cmd instanceof CLICommand) { //$NON-NLS-1$
-					// Done usually mean that gdb returns after some CLI command
-					// Some result record contains informaton specific to oob.
+					// "done" usually mean that gdb returns after some CLI command
+					// The result record may contains informaton specific to oob.
 					// This will happen when CLI-Command is use, for example
 					// doing "run" will block and return a breakpointhit
 					processMIOOBRecord(rr, list);
 				}
 
 				// Notify the waiting command.
+				// Notify any command waiting for a ResultRecord.
 				if (cmd != null) {
 					// Process the Command line to recognise patterns we may need to fire event.
 					if (cmd instanceof CLICommand) {
@@ -319,7 +329,7 @@ public class RxThread extends Thread {
 				String str = out.getString();
 				// Process the console stream too.
 				setPrompt(str);
-				if (str != null) {
+				if (str != null && isEnableConsole()) {
 					try {
 						console.write(str.getBytes());
 						console.flush();
@@ -349,7 +359,7 @@ public class RxThread extends Thread {
 			if (log != null) {
 				MILogStreamOutput out = (MILogStreamOutput) stream;
 				String str = out.getString();
-				if (str != null) {
+				if (str != null && isEnableConsole()) {
 					try {
 						log.write(str.getBytes());
 						log.flush();

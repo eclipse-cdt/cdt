@@ -29,8 +29,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
  */
 public class MIVarShowAttributes extends MICommand 
 {
-	public MIVarShowAttributes(String name) {
-		super("-var-show-attributes", new String[]{name}); //$NON-NLS-1$
+	public MIVarShowAttributes(String miVersion, String name) {
+		super(miVersion, "-var-show-attributes", new String[]{name}); //$NON-NLS-1$
 	}
 
 	public MIVarShowAttributesInfo getMIVarShowAttributesInfo() throws MIException {

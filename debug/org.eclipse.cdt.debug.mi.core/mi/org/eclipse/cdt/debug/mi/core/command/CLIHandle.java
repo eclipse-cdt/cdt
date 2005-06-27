@@ -11,17 +11,17 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+
+
 /**
  * 
+ *    handle SIGUSR1 nostop noignore
  *
- *     -target-attach PID | FILE
- *
- *  Attach to a process PID or a file FILE outside of GDB.
- * 
  */
-public class MITargetAttach extends CLICommand 
-{
-	public MITargetAttach(int pid) {
-		super("attach " + Integer.toString(pid)); //$NON-NLS-1$
+public class CLIHandle extends CLICommand {
+
+	public CLIHandle(String arg) {
+		super("handle " + arg); //$NON-NLS-1$
 	}
+
 }

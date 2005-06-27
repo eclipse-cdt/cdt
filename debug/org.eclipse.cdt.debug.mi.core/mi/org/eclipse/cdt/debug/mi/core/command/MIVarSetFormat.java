@@ -28,8 +28,8 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
  */
 public class MIVarSetFormat extends MICommand 
 {
-	public MIVarSetFormat(String name, int fmt) {
-		super("-var-set-format"); //$NON-NLS-1$
+	public MIVarSetFormat(String miVersion, String name, int fmt) {
+		super(miVersion, "-var-set-format"); //$NON-NLS-1$
 		String format = "hexadecimal"; //$NON-NLS-1$
 		switch (fmt) {
 		case MIFormat.NATURAL:

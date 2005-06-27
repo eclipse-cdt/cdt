@@ -25,7 +25,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecInterrupt extends MICommand 
 {
-	public MIExecInterrupt() {
-		super("-exec-interrupt"); //$NON-NLS-1$
+	public MIExecInterrupt(String miVersion) {
+		super(miVersion, "-exec-interrupt"); //$NON-NLS-1$
 	}
 }

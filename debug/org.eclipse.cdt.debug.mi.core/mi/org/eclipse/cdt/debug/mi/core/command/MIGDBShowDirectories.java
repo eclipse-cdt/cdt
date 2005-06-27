@@ -24,8 +24,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  * 
  */
 public class MIGDBShowDirectories extends MIGDBShow {
-	public MIGDBShowDirectories() {
-		super(new String[] { "directories" }); //$NON-NLS-1$
+	public MIGDBShowDirectories(String miVersion) {
+		super(miVersion, new String[] { "directories" }); //$NON-NLS-1$
 	}
 
 	public MIGDBShowDirectoriesInfo getMIGDBShowDirectoriesInfo() throws MIException {

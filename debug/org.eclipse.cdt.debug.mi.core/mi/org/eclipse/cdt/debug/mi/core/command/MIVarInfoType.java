@@ -28,8 +28,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarInfoTypeInfo;
  */
 public class MIVarInfoType extends MICommand 
 {
-	public MIVarInfoType(String name) {
-		super("-var-info-type", new String[]{name}); //$NON-NLS-1$
+	public MIVarInfoType(String miVersion, String name) {
+		super(miVersion, "-var-info-type", new String[]{name}); //$NON-NLS-1$
 	}
 
 	public MIVarInfoTypeInfo getMIVarInfoTypeInfo() throws MIException {

@@ -23,11 +23,11 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Signal;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIHandle;
-import org.eclipse.cdt.debug.mi.core.command.MIInfoSignals;
+import org.eclipse.cdt.debug.mi.core.command.CLIHandle;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoSignals;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalChangedEvent;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoSignalsInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoSignalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MISigHandle;
 
 /**
@@ -55,10 +55,10 @@ public class SignalManager extends Manager  {
 	MISigHandle[] getMISignals(MISession miSession) throws CDIException {
 		MISigHandle[] miSigs;
 		CommandFactory factory = miSession.getCommandFactory();
-		MIInfoSignals sigs = factory.createMIInfoSignals();
+		CLIInfoSignals sigs = factory.createCLIInfoSignals();
 		try {
 			miSession.postCommand(sigs);
-			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
+			CLIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
@@ -72,10 +72,10 @@ public class SignalManager extends Manager  {
 	MISigHandle getMISignal(MISession miSession, String name) throws CDIException {
 		MISigHandle sig = null;
 		CommandFactory factory = miSession.getCommandFactory();
-		MIInfoSignals sigs = factory.createMIInfoSignals(name);
+		CLIInfoSignals sigs = factory.createCLIInfoSignals(name);
 		try {
 			miSession.postCommand(sigs);
-			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
+			CLIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
@@ -156,7 +156,7 @@ public class SignalManager extends Manager  {
 		} else  {
 			buffer.append("nostop"); //$NON-NLS-1$
 		}
-		MIHandle handle = factory.createMIHandle(buffer.toString());
+		CLIHandle handle = factory.createCLIHandle(buffer.toString());
 		try {
 			miSession.postCommand(handle);
 			handle.getMIInfo();

@@ -24,11 +24,11 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecUntil extends MICommand 
 {
-	public MIExecUntil() {
-		super("-exec-until"); //$NON-NLS-1$
+	public MIExecUntil(String miVersion) {
+		super(miVersion, "-exec-until"); //$NON-NLS-1$
 	}
 
-	public MIExecUntil(String loc) {
-		super("-exec-until", new String[]{loc}); //$NON-NLS-1$
+	public MIExecUntil(String miVersion, String loc) {
+		super(miVersion, "-exec-until", new String[]{loc}); //$NON-NLS-1$
 	}
 }

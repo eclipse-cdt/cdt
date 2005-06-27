@@ -26,6 +26,7 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.LocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
@@ -37,8 +38,8 @@ import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetStopOnSolibEvents;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShow;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
-import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
-import org.eclipse.cdt.debug.mi.core.command.MISharedLibrary;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoSharedLibrary;
+import org.eclipse.cdt.debug.mi.core.command.CLISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
@@ -48,7 +49,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowSolibSearchPathInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoSharedLibraryInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIShared;
 
 /**
@@ -78,16 +79,21 @@ public class SharedLibraryManager extends Manager {
 	MIShared[] getMIShareds(MISession miSession) throws CDIException {
 		MIShared[] miLibs = new MIShared[0];
 		CommandFactory factory = miSession.getCommandFactory();
-		MIInfoSharedLibrary infoShared = factory.createMIInfoSharedLibrary();
+		CLIInfoSharedLibrary infoShared = factory.createCLIInfoSharedLibrary();
 		try {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(false);
 			miSession.postCommand(infoShared);
-			MIInfoSharedLibraryInfo info = infoShared.getMIInfoSharedLibraryInfo();
+			CLIInfoSharedLibraryInfo info = infoShared.getMIInfoSharedLibraryInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			miLibs = info.getMIShared();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(true);
 		}
 		return miLibs;
 	}
@@ -320,7 +326,7 @@ public class SharedLibraryManager extends Manager {
 	public void loadSymbols(Target target) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MISharedLibrary sharedlibrary = factory.createMISharedLibrary();
+		CLISharedLibrary sharedlibrary = factory.createCLISharedLibrary();
 		try {
 			mi.postCommand(sharedlibrary);
 			MIInfo info = sharedlibrary.getMIInfo();
@@ -340,7 +346,7 @@ public class SharedLibraryManager extends Manager {
 			if (libs[i].areSymbolsLoaded()) {
 				continue;
 			}
-			MISharedLibrary sharedlibrary = factory.createMISharedLibrary(libs[i].getFileName());
+			CLISharedLibrary sharedlibrary = factory.createCLISharedLibrary(libs[i].getFileName());
 			try {
 				miSession.postCommand(sharedlibrary);
 				MIInfo info = sharedlibrary.getMIInfo();

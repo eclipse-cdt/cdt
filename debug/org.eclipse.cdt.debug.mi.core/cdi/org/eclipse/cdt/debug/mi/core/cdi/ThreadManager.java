@@ -19,8 +19,8 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoThreadsInfo;
 
 
 /**
@@ -75,9 +75,9 @@ public class ThreadManager extends Manager { //implements ICDIThreadManager {
 			//MIThreadListIds tids = factory.createMIThreadListIds();
 			//MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 
-			MIInfoThreads tids = factory.createMIInfoThreads();
+			CLIInfoThreads tids = factory.createCLIInfoThreads();
 			mi.postCommand(tids);
-			MIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
+			CLIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
 			int [] ids;
 			if (info == null) {
 				ids = new int[0];

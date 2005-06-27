@@ -32,8 +32,8 @@ public class MIInterpreterExec extends MICommand {
 	/**
 	 * @param oper
 	 */
-	public MIInterpreterExec(String interpreter, String cmd) {
-		super("-interpreter-exec", new String[]{interpreter}, new String[] {cmd}); //$NON-NLS-1$
+	public MIInterpreterExec(String miVersion, String interpreter, String cmd) {
+		super(miVersion, "-interpreter-exec", new String[]{interpreter}, new String[] {cmd}); //$NON-NLS-1$
 	}
 
 }

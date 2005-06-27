@@ -13,29 +13,29 @@ package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.CLIWhatisInfo;
 
 /**
  * 
- *    info threads
+ *    whatis type
  *
  */
-public class MIInfoSharedLibrary extends CLICommand 
+public class CLIWhatis extends CLICommand 
 {
-	public MIInfoSharedLibrary() {
-		super("info sharedlibrary"); //$NON-NLS-1$
+	public CLIWhatis(String var) {
+		super("whatis " + var); //$NON-NLS-1$
 	}
 
-	public MIInfoSharedLibraryInfo getMIInfoSharedLibraryInfo() throws MIException {
-		return (MIInfoSharedLibraryInfo)getMIInfo();
+	public CLIWhatisInfo getMIWhatisInfo() throws MIException {
+		return (CLIWhatisInfo)getMIInfo();
 	}
 
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
 		if (out != null) {
-			info = new MIInfoSharedLibraryInfo(out);
+			info = new CLIWhatisInfo(out);
 			if (info.isError()) {
 				throwMIException(info, out);
 			}

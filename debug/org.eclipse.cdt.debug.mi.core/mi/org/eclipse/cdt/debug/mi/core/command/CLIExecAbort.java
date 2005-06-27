@@ -20,9 +20,9 @@ package org.eclipse.cdt.debug.mi.core.command;
  *  the function.
  * 
  */
-public class MIExecAbort extends CLICommand 
+public class CLIExecAbort extends CLICommand 
 {
-	public MIExecAbort() {
+	public CLIExecAbort() {
 		super("kill"); //$NON-NLS-1$
 	}
 }

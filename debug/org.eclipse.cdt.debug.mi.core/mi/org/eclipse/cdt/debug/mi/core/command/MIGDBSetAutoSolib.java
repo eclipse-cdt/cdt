@@ -19,7 +19,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  * 
  */
 public class MIGDBSetAutoSolib extends MIGDBSet {
-	public MIGDBSetAutoSolib(boolean isSet) {
-		super(new String[] {"auto-solib-add", (isSet) ? "on" : "off"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	public MIGDBSetAutoSolib(String miVersion, boolean isSet) {
+		super(miVersion, new String[] {"auto-solib-add", (isSet) ? "on" : "off"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

@@ -21,12 +21,12 @@ import java.util.List;
 ~"* 1 Thread 1024 (LWP 29353)  "
 
  */
-public class MIInfoThreadsInfo extends MIInfo {
+public class CLIInfoThreadsInfo extends MIInfo {
 
 	protected int[] threadIds;
 	protected int currentThreadId;
 
-	public MIInfoThreadsInfo(MIOutput out) {
+	public CLIInfoThreadsInfo(MIOutput out) {
 		super(out);
 		parse();
 	}

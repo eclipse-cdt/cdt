@@ -25,8 +25,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIEnvironmentPWD extends MICommand 
 {
-	public MIEnvironmentPWD() {
-		super("-environment-pwd"); //$NON-NLS-1$
+	public MIEnvironmentPWD(String miVersion) {
+		super(miVersion, "-environment-pwd"); //$NON-NLS-1$
 	}
 
 	public MIInfo getMIInfo() throws MIException {
@@ -39,6 +39,6 @@ public class MIEnvironmentPWD extends MICommand
 			}
 		}
 		return info;
-        }
+	}
 
 }

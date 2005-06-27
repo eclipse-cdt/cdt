@@ -18,8 +18,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIGDBShowEndianInfo;
 
 public class MIGDBShowEndian extends MIGDBShow {
 
-	public MIGDBShowEndian() {
-		super(new String[] {"endian"}); //$NON-NLS-1$
+	public MIGDBShowEndian(String miVersion) {
+		super(miVersion, new String[] {"endian"}); //$NON-NLS-1$
 	}
 
 	public MIGDBShowEndianInfo getMIShowEndianInfo() throws MIException {

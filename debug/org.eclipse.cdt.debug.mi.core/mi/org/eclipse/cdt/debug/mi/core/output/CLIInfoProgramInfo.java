@@ -26,11 +26,11 @@ info program
 (gdb) 
 
  */
-public class MIInfoProgramInfo extends MIInfo {
+public class CLIInfoProgramInfo extends MIInfo {
 
 	int pid;
 
-	public MIInfoProgramInfo(MIOutput out) {
+	public CLIInfoProgramInfo(MIOutput out) {
 		super(out);
 		parse();
 	}

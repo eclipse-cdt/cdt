@@ -28,11 +28,11 @@ import java.util.StringTokenizer;
  ~"SIGABRT       Yes\tYes\tYes\t\tAborted\n"
  ~"SIGEMT        Yes\tYes\tYes\t\tEmulation trap\n"
  */
-public class MIInfoSignalsInfo extends MIInfo {
+public class CLIInfoSignalsInfo extends MIInfo {
 
 	MISigHandle[] signals;
 
-	public MIInfoSignalsInfo(MIOutput out) {
+	public CLIInfoSignalsInfo(MIOutput out) {
 		super(out);
 		parse();
 	}

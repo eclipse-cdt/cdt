@@ -24,8 +24,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  * 
  */
 public class MIGDBShow extends MICommand {
-	public MIGDBShow(String[] params) {
-		super("-gdb-show", params); //$NON-NLS-1$
+	public MIGDBShow(String miVersion, String[] params) {
+		super(miVersion, "-gdb-show", params); //$NON-NLS-1$
 	}
 
 	public MIGDBShowInfo getMIGDBShowInfo() throws MIException {

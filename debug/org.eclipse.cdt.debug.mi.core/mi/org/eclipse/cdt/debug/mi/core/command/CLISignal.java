@@ -11,35 +11,39 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
-import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoProgramInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+
+
 
 /**
  * 
- *    info threads
+ *    signal SIGUSR1
  *
  */
-public class MIInfoProgram extends CLICommand 
-{
-	public MIInfoProgram() {
-		super("info program"); //$NON-NLS-1$
+public class CLISignal extends CLICommand {
+
+	MIOutput out;
+
+	public CLISignal(String arg) {
+		super("signal " + arg); //$NON-NLS-1$
 	}
 
-	public MIInfoProgramInfo getMIInfoProgramInfo() throws MIException {
-		return (MIInfoProgramInfo)getMIInfo();
-	}
-
-	public MIInfo getMIInfo() throws MIException {
-		MIInfo info = null;
-		MIOutput out = getMIOutput();
-		if (out != null) {
-			info = new MIInfoProgramInfo(out);
-			if (info.isError()) {
-				throwMIException(info, out);
-			}
+	/**
+	 *  This is a CLI command contraly to
+	 *  the -exec-continue or -exec-run
+	 *  it does not return so we have to fake
+	 *  a return value. We return "^running"
+	 */
+	public MIOutput getMIOutput() {
+		if (out == null) {
+			out =  new MIOutput();
+			MIResultRecord rr = new MIResultRecord();
+			rr.setToken(getToken());
+			rr.setResultClass(MIResultRecord.RUNNING);
+			out.setMIResultRecord(rr);
 		}
-		return info;
+		return out;
 	}
+
 }

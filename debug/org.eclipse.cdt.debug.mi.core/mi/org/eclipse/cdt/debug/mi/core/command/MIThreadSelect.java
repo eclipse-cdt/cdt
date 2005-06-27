@@ -26,8 +26,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
  */
 public class MIThreadSelect extends MICommand 
 {
-	public MIThreadSelect(int threadNum) {
-		super("-thread-select", new String[]{Integer.toString(threadNum)}); //$NON-NLS-1$
+	public MIThreadSelect(String miVersion, int threadNum) {
+		super(miVersion, "-thread-select", new String[]{Integer.toString(threadNum)}); //$NON-NLS-1$
 	}
 
 	public MIThreadSelectInfo getMIThreadSelectInfo() throws MIException {

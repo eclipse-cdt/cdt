@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.Command;
-import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.RawCommand;
 
 /**
@@ -92,7 +92,8 @@ public class SessionProcess extends Process {
 						cmd = new RawCommand(str);
 					} else if (session.useExecConsole() && str.length() > 0 
 							&& !CLIProcessor.isSteppingOperation(str)) {
-						cmd = new MIInterpreterExecConsole(str);
+						CommandFactory factory = session.getCommandFactory();
+						cmd = factory.createMIInterpreterExecConsole(str);
 					} else {
 						cmd = new CLICommand(str);
 					}

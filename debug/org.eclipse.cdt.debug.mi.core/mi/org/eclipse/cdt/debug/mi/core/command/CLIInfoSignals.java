@@ -13,29 +13,33 @@ package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoSignalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
-import org.eclipse.cdt.debug.mi.core.output.MIPTypeInfo;
 
 /**
  * 
- *    ptype type
+ *    info threads
  *
  */
-public class MIPType extends CLICommand 
+public class CLIInfoSignals extends CLICommand 
 {
-	public MIPType(String var) {
-		super("ptype " + var); //$NON-NLS-1$
+	public CLIInfoSignals() {
+		super("info signals"); //$NON-NLS-1$
 	}
 
-	public MIPTypeInfo getMIPtypeInfo() throws MIException {
-		return (MIPTypeInfo)getMIInfo();
+	public CLIInfoSignals(String name) {
+		super("info signal " + name); //$NON-NLS-1$
+	}
+
+	public CLIInfoSignalsInfo getMIInfoSignalsInfo() throws MIException {
+		return (CLIInfoSignalsInfo)getMIInfo();
 	}
 
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
 		if (out != null) {
-			info = new MIPTypeInfo(out);
+			info = new CLIInfoSignalsInfo(out);
 			if (info.isError()) {
 				throwMIException(info, out);
 			}

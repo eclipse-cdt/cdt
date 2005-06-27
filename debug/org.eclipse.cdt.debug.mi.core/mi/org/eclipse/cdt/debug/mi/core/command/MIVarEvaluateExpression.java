@@ -28,8 +28,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
  * 
  */
 public class MIVarEvaluateExpression extends MICommand {
-	public MIVarEvaluateExpression(String expression) {
-		super("-var-evaluate-expression", new String[] { expression }); //$NON-NLS-1$
+	public MIVarEvaluateExpression(String miVersion, String expression) {
+		super(miVersion, "-var-evaluate-expression", new String[] { expression }); //$NON-NLS-1$
 	}
 
 	public MIVarEvaluateExpressionInfo getMIVarEvaluateExpressionInfo()

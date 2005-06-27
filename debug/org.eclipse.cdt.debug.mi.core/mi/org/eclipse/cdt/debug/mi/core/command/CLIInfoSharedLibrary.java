@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
@@ -21,21 +21,21 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  *    info threads
  *
  */
-public class MIInfoThreads extends CLICommand 
+public class CLIInfoSharedLibrary extends CLICommand 
 {
-	public MIInfoThreads() {
-		super("info threads"); //$NON-NLS-1$
+	public CLIInfoSharedLibrary() {
+		super("info sharedlibrary"); //$NON-NLS-1$
 	}
 
-	public MIInfoThreadsInfo getMIInfoThreadsInfo() throws MIException {
-		return (MIInfoThreadsInfo)getMIInfo();
+	public CLIInfoSharedLibraryInfo getMIInfoSharedLibraryInfo() throws MIException {
+		return (CLIInfoSharedLibraryInfo)getMIInfo();
 	}
 
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
 		if (out != null) {
-			info = new MIInfoThreadsInfo(out);
+			info = new CLIInfoSharedLibraryInfo(out);
 			if (info.isError()) {
 				throwMIException(info, out);
 			}

@@ -30,12 +30,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIDataListRegisterValues extends MICommand 
 {
-	public MIDataListRegisterValues(int fmt) {
-		this(fmt, null);
+	public MIDataListRegisterValues(String miVersion, int fmt) {
+		this(miVersion, fmt, null);
 	}
 
-	public MIDataListRegisterValues(int fmt, int [] regnos) {
-		super("-data-list-register-values"); //$NON-NLS-1$
+	public MIDataListRegisterValues(String miVersion, int fmt, int [] regnos) {
+		super(miVersion, "-data-list-register-values"); //$NON-NLS-1$
 
 		String format = "x"; //$NON-NLS-1$
 		switch (fmt) {

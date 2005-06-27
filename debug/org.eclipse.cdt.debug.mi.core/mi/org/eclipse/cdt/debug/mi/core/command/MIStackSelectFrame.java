@@ -23,7 +23,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIStackSelectFrame extends MICommand 
 {
-	public MIStackSelectFrame(int frameNum) {
-		super("-stack-select-frame", new String[]{Integer.toString(frameNum)}); //$NON-NLS-1$
+	public MIStackSelectFrame(String miVersion, int frameNum) {
+		super(miVersion, "-stack-select-frame", new String[]{Integer.toString(frameNum)}); //$NON-NLS-1$
 	}
 }

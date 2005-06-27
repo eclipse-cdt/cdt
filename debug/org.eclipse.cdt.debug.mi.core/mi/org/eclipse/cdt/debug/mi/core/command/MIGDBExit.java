@@ -20,7 +20,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIGDBExit extends MICommand 
 {
-	public MIGDBExit() {
-		super("-gdb-exit"); //$NON-NLS-1$
+	public MIGDBExit(String miVersion) {
+		super(miVersion, "-gdb-exit"); //$NON-NLS-1$
 	}
 }

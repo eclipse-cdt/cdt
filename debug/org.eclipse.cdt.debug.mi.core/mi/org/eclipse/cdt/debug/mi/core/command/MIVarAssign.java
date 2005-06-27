@@ -21,7 +21,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIVarAssign extends MICommand 
 {
-	public MIVarAssign(String name, String expression) {
-		super("-var-assign", new String[]{name, expression}); //$NON-NLS-1$
+	public MIVarAssign(String miVersion, String name, String expression) {
+		super(miVersion, "-var-assign", new String[]{name, expression}); //$NON-NLS-1$
 	}
 }

@@ -17,13 +17,13 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
+import org.eclipse.cdt.debug.mi.core.command.CLIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
-import org.eclipse.cdt.debug.mi.core.command.MIInfoProgram;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoProgram;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIInfoProgramInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoProgramInfo;
 
 /**
  */
@@ -180,7 +180,7 @@ public class MIInferior extends Process {
 			if (isSuspended()) {
 				try {
 					CommandFactory factory = session.getCommandFactory();
-					MIExecAbort abort = factory.createMIExecAbort();
+					CLIExecAbort abort = factory.createCLIExecAbort();
 					session.postCommand0(abort, -1);
 					// do not wait for the answer.
 					//abort.getMIInfo();
@@ -330,10 +330,10 @@ public class MIInferior extends Process {
 			if (!isConnected()) {
 				// Try to discover the pid
 				CommandFactory factory = session.getCommandFactory();
-				MIInfoProgram prog = factory.createMIInfoProgram();
+				CLIInfoProgram prog = factory.createCLIInfoProgram();
 				try {
 					session.postCommand(prog);
-					MIInfoProgramInfo info = prog.getMIInfoProgramInfo();
+					CLIInfoProgramInfo info = prog.getMIInfoProgramInfo();
 					pid = info.getPID();
 				} catch (MIException e) {
 					// no rethrown.

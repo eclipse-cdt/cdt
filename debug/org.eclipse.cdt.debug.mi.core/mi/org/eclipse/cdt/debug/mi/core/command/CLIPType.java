@@ -14,28 +14,28 @@ package org.eclipse.cdt.debug.mi.core.command;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
-import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIPTypeInfo;
 
 /**
  * 
- *    whatis type
+ *    ptype type
  *
  */
-public class MIWhatis extends CLICommand 
+public class CLIPType extends CLICommand 
 {
-	public MIWhatis(String var) {
-		super("whatis " + var); //$NON-NLS-1$
+	public CLIPType(String var) {
+		super("ptype " + var); //$NON-NLS-1$
 	}
 
-	public MIWhatisInfo getMIWhatisInfo() throws MIException {
-		return (MIWhatisInfo)getMIInfo();
+	public CLIPTypeInfo getMIPtypeInfo() throws MIException {
+		return (CLIPTypeInfo)getMIInfo();
 	}
 
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
 		if (out != null) {
-			info = new MIWhatisInfo(out);
+			info = new CLIPTypeInfo(out);
 			if (info.isError()) {
 				throwMIException(info, out);
 			}

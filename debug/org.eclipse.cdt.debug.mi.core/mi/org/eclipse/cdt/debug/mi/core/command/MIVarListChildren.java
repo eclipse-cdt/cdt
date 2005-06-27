@@ -28,8 +28,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
  */
 public class MIVarListChildren extends MICommand 
 {
-	public MIVarListChildren(String name) {
-		super("-var-list-children", new String[]{name}); //$NON-NLS-1$
+	public MIVarListChildren(String miVersion, String name) {
+		super(miVersion, "-var-list-children", new String[]{name}); //$NON-NLS-1$
 	}
 
 	public MIVarListChildrenInfo getMIVarListChildrenInfo() throws MIException {

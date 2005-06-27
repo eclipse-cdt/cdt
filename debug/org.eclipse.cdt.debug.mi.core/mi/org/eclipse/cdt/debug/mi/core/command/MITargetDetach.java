@@ -21,7 +21,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MITargetDetach extends MICommand 
 {
-	public MITargetDetach() {
-		super("-target-detach"); //$NON-NLS-1$
+	public MITargetDetach(String miVersion) {
+		super(miVersion, "-target-detach"); //$NON-NLS-1$
 	}
 }

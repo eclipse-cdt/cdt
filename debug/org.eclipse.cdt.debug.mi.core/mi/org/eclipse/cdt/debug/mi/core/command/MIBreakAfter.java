@@ -25,8 +25,8 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIBreakAfter extends MICommand
 {
-	public MIBreakAfter(int brknum, int count) {
-		super("-break-after",new String[]{Integer.toString(brknum), //$NON-NLS-1$
+	public MIBreakAfter(String miVersion, int brknum, int count) {
+		super(miVersion, "-break-after",new String[]{Integer.toString(brknum), //$NON-NLS-1$
 		 	 Integer.toString(count)});
 		 
 	}

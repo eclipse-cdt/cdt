@@ -21,7 +21,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecContinue extends MICommand 
 {
-	public MIExecContinue() {
-		super("-exec-continue"); //$NON-NLS-1$
+	public MIExecContinue(String miVersion) {
+		super(miVersion, "-exec-continue"); //$NON-NLS-1$
 	}
 }

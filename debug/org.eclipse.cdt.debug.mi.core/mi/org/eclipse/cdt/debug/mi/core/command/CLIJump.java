@@ -15,18 +15,17 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
 
 
-
 /**
  * 
- *    signal SIGUSR1
+ *    jump LINESPEC
  *
  */
-public class MISignal extends CLICommand {
+public class CLIJump extends CLICommand {
 
 	MIOutput out;
 
-	public MISignal(String arg) {
-		super("signal " + arg); //$NON-NLS-1$
+	public CLIJump(String loc) {
+		super("jump " + loc); //$NON-NLS-1$
 	}
 
 	/**

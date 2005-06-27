@@ -22,8 +22,8 @@ package org.eclipse.cdt.debug.mi.core.command;
  *  ^done
  */
 public class MIBreakCondition extends MICommand {
-	public MIBreakCondition(int brknum, String expr) {
-		super("-break-condition", new String[] { Integer.toString(brknum), expr }); //$NON-NLS-1$
+	public MIBreakCondition(String miVersion, int brknum, String expr) {
+		super(miVersion, "-break-condition", new String[] { Integer.toString(brknum), expr }); //$NON-NLS-1$
 	}
 
 	/**

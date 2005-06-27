@@ -30,12 +30,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIDataListRegisterNames extends MICommand 
 {
-	public MIDataListRegisterNames() {
-		super("-data-list-register-names"); //$NON-NLS-1$
+	public MIDataListRegisterNames(String miVersion) {
+		super(miVersion, "-data-list-register-names"); //$NON-NLS-1$
 	}
 
-	public MIDataListRegisterNames(int [] regnos) {
-		this();
+	public MIDataListRegisterNames(String miVersion, int [] regnos) {
+		this(miVersion);
 		if (regnos != null && regnos.length > 0) {
 			String[] array = new String[regnos.length];
 			for (int i = 0; i < regnos.length; i++) {

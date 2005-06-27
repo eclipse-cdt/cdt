@@ -25,8 +25,8 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
  */
 public class MIDataWriteRegisterValues extends MICommand {
 
-	public MIDataWriteRegisterValues(int fmt, int[] regnos, String[] values) {
-		super("-data-write-register-values"); //$NON-NLS-1$
+	public MIDataWriteRegisterValues(String miVersion, int fmt, int[] regnos, String[] values) {
+		super(miVersion, "-data-write-register-values"); //$NON-NLS-1$
 
 		String format = "x"; //$NON-NLS-1$
 		switch (fmt) {

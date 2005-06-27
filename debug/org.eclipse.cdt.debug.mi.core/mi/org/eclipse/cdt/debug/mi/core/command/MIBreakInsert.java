@@ -60,13 +60,13 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIBreakInsert extends MICommand 
 {
-	public MIBreakInsert(String func) {
-		this(false, false, null, 0, func, 0);
+	public MIBreakInsert(String miVersion, String func) {
+		this(miVersion, false, false, null, 0, func, 0);
 	}
 
-	public MIBreakInsert(boolean isTemporary, boolean isHardware,
+	public MIBreakInsert(String miVersion, boolean isTemporary, boolean isHardware,
 			 String condition, int ignoreCount, String line, int tid) {
-		super("-break-insert"); //$NON-NLS-1$
+		super(miVersion, "-break-insert"); //$NON-NLS-1$
 
 		int i = 0;
 		if (isTemporary || isHardware) {

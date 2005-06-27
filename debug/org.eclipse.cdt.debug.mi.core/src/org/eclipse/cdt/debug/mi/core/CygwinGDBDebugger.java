@@ -23,8 +23,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class CygwinGDBDebugger extends GDBDebugger {
 
-	static final CygwinCommandFactory commandFactory = new CygwinCommandFactory();
-
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 		// the "search-solib-path" and "stop-on-solib-events" options are not supported in CygWin
 	}
@@ -38,7 +36,8 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			for (int i = 0; i < targets.length; ++i) {
 				Target target = (Target)targets[i];
 				MISession miSession = target.getMISession();
-				miSession.setCommandFactory(commandFactory);
+				String miVersion = miSession.getCommandFactory().getMIVersion();
+				miSession.setCommandFactory(new CygwinCommandFactory(miVersion));
 				// For windows we need to start the inferior in a new console window
 				// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
 				try {
@@ -79,7 +78,9 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			ICDITarget[] targets = session.getTargets();
 			for (int i = 0; i < targets.length; ++i) {
 				Target target = (Target)targets[i];
-				target.getMISession().setCommandFactory(commandFactory);
+				MISession miSession = target.getMISession();
+				String miVersion = miSession.getCommandFactory().getMIVersion();
+				miSession.setCommandFactory(new CygwinCommandFactory(miVersion));
 			}
 			initializeLibraries(config, session);
 			return session;
@@ -107,7 +108,9 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			ICDITarget[] targets = session.getTargets();
 			for (int i = 0; i < targets.length; ++i) {
 				Target target = (Target)targets[i];
-				target.getMISession().setCommandFactory(commandFactory);
+				MISession miSession = target.getMISession();
+				String miVersion = miSession.getCommandFactory().getMIVersion();
+				miSession.setCommandFactory(new CygwinCommandFactory(miVersion));
 			}
 			initializeLibraries(config, session);
 			return session;

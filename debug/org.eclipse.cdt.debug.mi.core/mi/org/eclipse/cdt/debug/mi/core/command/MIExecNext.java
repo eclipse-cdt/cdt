@@ -21,11 +21,11 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecNext extends MICommand 
 {
-	public MIExecNext() {
-		super("-exec-next"); //$NON-NLS-1$
+	public MIExecNext(String miVersion) {
+		super(miVersion, "-exec-next"); //$NON-NLS-1$
 	}
 
-	public MIExecNext(int count) {
-		super("-exec-next", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+	public MIExecNext(String miVersion, int count) {
+		super(miVersion, "-exec-next", new String[] { Integer.toString(count) }); //$NON-NLS-1$
 	}
 }

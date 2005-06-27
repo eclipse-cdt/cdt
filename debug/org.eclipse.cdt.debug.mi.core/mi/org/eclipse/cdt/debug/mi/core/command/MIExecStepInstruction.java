@@ -26,11 +26,11 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecStepInstruction extends MICommand 
 {
-	public MIExecStepInstruction() {
-		super("-exec-step-instruction"); //$NON-NLS-1$
+	public MIExecStepInstruction(String miVersion) {
+		super(miVersion, "-exec-step-instruction"); //$NON-NLS-1$
 	}
 
-	public MIExecStepInstruction(int count) {
-		super("-exec-step-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+	public MIExecStepInstruction(String miVersion, int count) {
+		super(miVersion, "-exec-step-instruction", new String[] { Integer.toString(count) }); //$NON-NLS-1$
 	}
 }

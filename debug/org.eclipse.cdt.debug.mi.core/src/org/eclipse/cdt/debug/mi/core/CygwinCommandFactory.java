@@ -16,14 +16,18 @@ import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
  */
 public class CygwinCommandFactory extends CommandFactory {
 
+	public CygwinCommandFactory(String miVersion) {
+		super(miVersion);
+	}
+
 	public MIEnvironmentDirectory createMIEnvironmentDirectory(boolean reset, String[] pathdirs) {
-		return new CygwinMIEnvironmentDirectory(reset, pathdirs);
+		return new CygwinMIEnvironmentDirectory(getMIVersion(), reset, pathdirs);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.command.CommandFactory#createMIEnvironmentCD(java.lang.String)
 	 */
 	public MIEnvironmentCD createMIEnvironmentCD(String pathdir) {
-		return new CygwinMIEnvironmentCD(pathdir);
+		return new CygwinMIEnvironmentCD(getMIVersion(), pathdir);
 	}
 }

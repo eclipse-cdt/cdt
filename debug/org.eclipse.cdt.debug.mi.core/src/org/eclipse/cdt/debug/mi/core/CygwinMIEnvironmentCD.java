@@ -26,8 +26,8 @@ public class CygwinMIEnvironmentCD extends MIEnvironmentCD {
 	/**
 	 * @param path
 	 */
-	public CygwinMIEnvironmentCD(String path) {
-		super(path);
+	public CygwinMIEnvironmentCD(String miVersion, String path) {
+		super(miVersion, path);
 
 		// Use the cygpath utility to convert the path
 		CommandLauncher launcher = new CommandLauncher();

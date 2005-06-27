@@ -28,7 +28,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MITargetDownload extends MICommand 
 {
-	public MITargetDownload() {
-		super("-target-download"); //$NON-NLS-1$
+	public MITargetDownload(String miVersion) {
+		super(miVersion, "-target-download"); //$NON-NLS-1$
 	}
 }

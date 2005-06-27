@@ -1,3 +1,10 @@
+2005-06-27 Alain Magloire
+	Refactor the class extending CLICommand to CLIXXXX for more clarity.
+	Pass the MIVersion in all of the class extending MICommand, this is
+	necessary some command option will not be accepted depending on the version.
+	Too much file to enumerate.
+	* ...
+
 2005-06-25 Alain Magloire
 	We should consider a "^done" like a suspended only for CLICommands, for example:
 	(gdb) run

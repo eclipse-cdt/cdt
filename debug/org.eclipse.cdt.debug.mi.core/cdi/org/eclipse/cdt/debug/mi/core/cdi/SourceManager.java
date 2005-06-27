@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBDerivedType;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
@@ -48,14 +49,14 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataDisassemble;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowDirectories;
-import org.eclipse.cdt.debug.mi.core.command.MIPType;
-import org.eclipse.cdt.debug.mi.core.command.MIWhatis;
+import org.eclipse.cdt.debug.mi.core.command.CLIPType;
+import org.eclipse.cdt.debug.mi.core.command.CLIWhatis;
 import org.eclipse.cdt.debug.mi.core.output.MIAsm;
 import org.eclipse.cdt.debug.mi.core.output.MIDataDisassembleInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowDirectoriesInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIPTypeInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIPTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MISrcAsm;
-import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIWhatisInfo;
 
 
 /**
@@ -435,16 +436,23 @@ public class SourceManager extends Manager {
 	public String getDetailTypeName(Target target, String typename) throws CDIException {
 		try {
 			MISession mi = target.getMISession();
+			RxThread rxThread = mi.getRxThread();
+			rxThread.setEnableConsole(false);
 			CommandFactory factory = mi.getCommandFactory();
-			MIPType ptype = factory.createMIPType(typename);
+			CLIPType ptype = factory.createCLIPType(typename);
 			mi.postCommand(ptype);
-			MIPTypeInfo info = ptype.getMIPtypeInfo();
+			CLIPTypeInfo info = ptype.getMIPtypeInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			return info.getType();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			MISession mi = target.getMISession();
+			RxThread rxThread = mi.getRxThread();
+			rxThread.setEnableConsole(true);
+
 		}
 	}
 
@@ -466,9 +474,9 @@ public class SourceManager extends Manager {
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			MIWhatis whatis = factory.createMIWhatis(variable);
+			CLIWhatis whatis = factory.createCLIWhatis(variable);
 			mi.postCommand(whatis);
-			MIWhatisInfo info = whatis.getMIWhatisInfo();
+			CLIWhatisInfo info = whatis.getMIWhatisInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}

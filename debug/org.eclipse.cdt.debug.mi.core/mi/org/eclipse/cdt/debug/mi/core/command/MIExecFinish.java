@@ -22,7 +22,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecFinish extends MICommand 
 {
-	public MIExecFinish() {
-		super("-exec-finish"); //$NON-NLS-1$
+	public MIExecFinish(String miVersion) {
+		super(miVersion, "-exec-finish"); //$NON-NLS-1$
 	}
 }

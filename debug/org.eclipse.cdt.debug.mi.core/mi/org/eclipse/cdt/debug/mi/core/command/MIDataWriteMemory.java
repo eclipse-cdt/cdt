@@ -39,10 +39,10 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
  */
 public class MIDataWriteMemory extends MICommand {
 
-	public MIDataWriteMemory(long offset, String address, int wordFormat, int wordSize,
+	public MIDataWriteMemory(String miVersion, long offset, String address, int wordFormat, int wordSize,
 		String value) {
 
-		super ("-data-write-memory"); //$NON-NLS-1$
+		super (miVersion, "-data-write-memory"); //$NON-NLS-1$
 
 		if (offset != 0) {
 			setOptions(new String[] { "-o", Long.toString(offset)}); //$NON-NLS-1$

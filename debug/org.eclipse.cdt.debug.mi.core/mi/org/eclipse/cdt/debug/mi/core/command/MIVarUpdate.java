@@ -27,12 +27,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
  */
 public class MIVarUpdate extends MICommand {
 
-	public MIVarUpdate() {
-		this("*"); //$NON-NLS-1$
+	public MIVarUpdate(String miVersion) {
+		this(miVersion, "*"); //$NON-NLS-1$
 	}
 	
-	public MIVarUpdate(String name) {
-		super("-var-update", new String[] { name }); //$NON-NLS-1$
+	public MIVarUpdate(String miVersion, String name) {
+		super(miVersion, "-var-update", new String[] { name }); //$NON-NLS-1$
 	}
 	
 	public MIVarUpdateInfo getMIVarUpdateInfo() throws MIException {

@@ -19,8 +19,8 @@ package org.eclipse.cdt.debug.mi.core.command;
  * 
  */
 public class MIGDBSetSolibSearchPath extends MIGDBSet {
-	public MIGDBSetSolibSearchPath(String[] paths) {
-		super(paths);
+	public MIGDBSetSolibSearchPath(String miVersion, String[] paths) {
+		super(miVersion, paths);
 		// Overload the parameter
 		String sep = System.getProperty("path.separator", ":"); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuffer buffer = new StringBuffer();

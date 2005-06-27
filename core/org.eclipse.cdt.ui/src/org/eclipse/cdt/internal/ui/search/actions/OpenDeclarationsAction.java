@@ -130,7 +130,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 				if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
 					IASTName searchName = selectedNames[0];
 					// step 2 starts here
-					IASTName[] domNames = DOMSearchUtil.getNamesFromDOM(searchName, ICSearchConstants.DECLARATIONS);
+					IASTName[] domNames = DOMSearchUtil.getNamesFromDOM(searchName, ICSearchConstants.DECLARATIONS_DEFINITIONS);
                     
                     // make sure the names are clean (fix for 95202)
                     boolean modified=false;

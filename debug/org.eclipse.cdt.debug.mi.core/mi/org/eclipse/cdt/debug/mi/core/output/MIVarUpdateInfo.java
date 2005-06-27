@@ -44,6 +44,8 @@ public class MIVarUpdateInfo extends MIInfo {
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MITuple) {
 							parseChangeList((MITuple)value, aList);
+						} else if (value instanceof MIList) {
+							parseChangeList((MIList)value, aList);
 						}
 					}
 				}
@@ -52,6 +54,22 @@ public class MIVarUpdateInfo extends MIInfo {
 		changeList = (MIVarChange[])aList.toArray(new MIVarChange[aList.size()]);
 	}
 
+	/**
+	 * For MI2 the format is now a MIList.
+	 * @param tuple
+	 * @param aList
+	 */
+	void parseChangeList(MIList miList, List aList) {
+		MIValue[] values = miList.getMIValues();
+		for (int i = 0; i < values.length; ++i) {
+			if (values[i] instanceof MITuple) {
+				parseChangeList((MITuple)values[i], aList);
+			} else if (values[i] instanceof MIList) {
+				parseChangeList((MIList)values[i], aList);
+			}
+		}
+	} 
+	
 	void parseChangeList(MITuple tuple, List aList) {
 		MIResult[] results = tuple.getMIResults();
 		MIVarChange change = null;

@@ -85,8 +85,7 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	 * @see org.eclipse.cdt.core.index.ICDTIndexer#getIndexerFeatures()
 	 */
 	public int getIndexerFeatures() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ICDTIndexer._DECLARATIONS | ICDTIndexer._DEFINITIONS | ICDTIndexer._LINENUMBERS | ICDTIndexer._C | ICDTIndexer._CPP;
 	}
 
 	/* (non-Javadoc)

@@ -410,8 +410,7 @@ public class DOMSourceIndexer extends AbstractCExtension implements ICDTIndexer 
 	 * @see org.eclipse.cdt.core.index2.IIndexer#getIndexerFeatures()
 	 */
 	public int getIndexerFeatures() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ICDTIndexer._DECLARATIONS | ICDTIndexer._DEFINITIONS | ICDTIndexer._REFERENCES | ICDTIndexer._OFFSETINFO | ICDTIndexer._C | ICDTIndexer._CPP;
 	}
 
 	/* (non-Javadoc)

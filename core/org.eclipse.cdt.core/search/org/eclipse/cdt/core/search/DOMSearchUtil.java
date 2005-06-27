@@ -337,7 +337,8 @@ public class DOMSearchUtil {
 	
 	private static IASTName[] getNames(IASTTranslationUnit tu, IBinding binding, LimitTo limitTo) {
         IASTName[] names = null;
-		if (limitTo == ICSearchConstants.DECLARATIONS) {
+		if (limitTo == ICSearchConstants.DECLARATIONS ||
+			limitTo == ICSearchConstants.DECLARATIONS_DEFINITIONS) {
             names = tu.getDeclarations(binding);
         } else if (limitTo == ICSearchConstants.REFERENCES) {
             names = tu.getReferences(binding);

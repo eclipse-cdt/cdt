@@ -513,8 +513,19 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 			String text;
 			try {
 				text= reader.readLine();
-				if (text == null)
+				if (text == null){
 					text= ""; //$NON-NLS-1$
+				} else {
+					//The user has selected something - we don't want to "redo" too much of the selection
+					//but we need to ensure that it has the maximum chance of matching something in the index.
+					//So we need to: i) get rid of any semi-colons if there are any
+					
+					int indexSemi = text.indexOf(';');
+					//Check to see if there are any semi-colons in the selected string, if there are select up to the semi colon
+					if (indexSemi != -1){
+						text = text.substring(0, indexSemi);
+					}
+				}
 			} catch (IOException ex) {
 				text= ""; //$NON-NLS-1$
 			}

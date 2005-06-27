@@ -78,15 +78,20 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackInfoDepthInfo;
 public class EventManager extends SessionObject implements ICDIEventManager, Observer {
 
 	List list = Collections.synchronizedList(new ArrayList(1));
-	List tokenList = new ArrayList(1); 
 	MIRunningEvent lastRunningEvent;
 	Command lastUserCommand = null;
-
+	boolean fAllowProcessingEvents = true;
 	/**
 	 * Process the event from MI, do any state work on the CDI,
 	 * and fire the corresponding CDI event.
 	 */
 	public void update(Observable o, Object arg) {
+		
+		// Bailout early if we do not want to process any events.
+		if (!isAllowingProcessingEvents()) {
+			return;
+		}
+
 		MIEvent miEvent = (MIEvent)arg;
 		Session session = (Session)getSession();
 		Target currentTarget = session.getTarget(miEvent.getMISession());
@@ -95,9 +100,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 		List cdiList = new ArrayList(1);
 
-		if (ignoreEventToken(miEvent.getToken())) {
-			// Ignore the event if it is on the ignore list.
-		} else if (miEvent instanceof MIStoppedEvent) {
+		if (miEvent instanceof MIStoppedEvent) {
 			if (processSuspendedEvent((MIStoppedEvent)miEvent)) {
 				cdiList.add(new SuspendedEvent(session, miEvent));
 			}
@@ -506,43 +509,11 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		return true;
 	}
 
-
-	/**
-	 * Ignore Event with token id.
-	 */
-	void disableEventToken(int token) {
-		tokenList.add(new Integer(token));
+	public boolean isAllowingProcessingEvents() {
+		return fAllowProcessingEvents;
 	}
 
-	/**
-	 * Ignore events with token ids.
-	 */
-	void disableEventTokens(int [] tokens) {
-		for (int i = 0; i < tokens.length; i++) {
-			disableEventToken(tokens[i]);
-		}
-	}
-
-	/**
-	 * Reenable sending events with this token.
-	 */
-	void enableEventToken(int token) {
-		Integer t = new Integer(token);
-		if (tokenList.contains(t)) {
-			tokenList.remove(t);
-		}
-	}
-
-	/**
-	 * Reenable sending events with this token.
-	 */
-	void enableEventTokens(int [] tokens) {
-		for (int i = 0; i < tokens.length; i++) {
-			enableEventToken(tokens[i]);
-		}
-	}
-
-	private boolean ignoreEventToken(int token) {
-		return tokenList.contains(new Integer(token));
+	public void allowProcessingEvents(boolean allowed) {
+		fAllowProcessingEvents = allowed;
 	}
 }

@@ -142,18 +142,19 @@ public class BreakpointManager extends Manager {
 	boolean suspendInferior(Target target) throws CDIException {
 		boolean shouldRestart = false;
 		// Stop the program
-		if (allowInterrupt) {
+		if (allowInterrupt && target.isRunning()) {
 			// Disable events.
-			if (target.isRunning()) {
-				target.suspend();
-				shouldRestart = true;
-			}
+			((EventManager)getSession().getEventManager()).allowProcessingEvents(false);
+			target.suspend();
+			shouldRestart = true;
 		}
 		return shouldRestart;
 	}
 
 	void resumeInferior(Target target, boolean shouldRestart) throws CDIException {
 		if (shouldRestart) {
+			// Enable events again.
+			((EventManager)getSession().getEventManager()).allowProcessingEvents(true);
 			target.resume();
 		}
 	}
@@ -223,11 +224,13 @@ public class BreakpointManager extends Manager {
 		for (int i = 0; i < miBreakpoints.length; i++) {
 			numbers[i] = miBreakpoints[i].getNumber();
 		}
-		boolean state = suspendInferior(target);
+
+		boolean restart = false;
 		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakEnable breakEnable = factory.createMIBreakEnable(numbers);
 		try {
+			restart = suspendInferior(target);
 			miSession.postCommand(breakEnable);
 			MIInfo info = breakEnable.getMIInfo();
 			if (info == null) {
@@ -237,7 +240,7 @@ public class BreakpointManager extends Manager {
 			throw new MI2CDIException(e);
 		} finally {
 			// Resume the program and enable events.
-			resumeInferior(target, state);
+			resumeInferior(target, restart);
 		}
 		for (int i = 0; i < miBreakpoints.length; i++) {
 			miBreakpoints[i].setEnabled(true);
@@ -282,11 +285,12 @@ public class BreakpointManager extends Manager {
 			numbers[i] = miBreakpoints[i].getNumber();
 		}
 
-		boolean state = suspendInferior(target);
+		boolean restart = false;
 		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakDisable breakDisable = factory.createMIBreakDisable(numbers);
 		try {
+			restart = suspendInferior(target);
 			miSession.postCommand(breakDisable);
 			MIInfo info = breakDisable.getMIInfo();
 			if (info == null) {
@@ -295,7 +299,7 @@ public class BreakpointManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			resumeInferior(target, state);
+			resumeInferior(target, restart);
 		}
 		for (int i = 0; i < miBreakpoints.length; i++) {
 			miBreakpoints[i].setEnabled(false);
@@ -548,11 +552,12 @@ public class BreakpointManager extends Manager {
 		for (int i = 0; i < miBreakpoints.length; ++i) {
 			numbers[i] = miBreakpoints[i].getNumber();
 		}
-		boolean state = suspendInferior(target);
+		boolean restart = false;
 		try {
+			restart = suspendInferior(target);
 			deleteMIBreakpoints(miSession, numbers);
 		} finally {
-			resumeInferior(target, state);
+			resumeInferior(target, restart);
 		}
 	}
 
@@ -682,10 +687,11 @@ public class BreakpointManager extends Manager {
 	public void setLocationBreakpoint (LocationBreakpoint bkpt) throws CDIException {
 		Target target = (Target)bkpt.getTarget();
 		MISession miSession = target.getMISession();
-		boolean state = suspendInferior(target);
 		MIBreakInsert[] breakInserts = createMIBreakInsert(bkpt);
 		List pointList = new ArrayList();
+		boolean restart = false;
 		try {
+			restart = suspendInferior(target);
 			CommandFactory factory = miSession.getCommandFactory();
 			boolean enable = bkpt.isEnabled();
 			for (int i = 0; i < breakInserts.length; i++) {
@@ -730,7 +736,7 @@ public class BreakpointManager extends Manager {
 			}
 			throw new MI2CDIException(e);
 		} finally {
-			resumeInferior(target, state);
+			resumeInferior(target, restart);
 		}
 		MIBreakpoint[] allPoints = (MIBreakpoint[]) pointList.toArray(new MIBreakpoint[pointList.size()]);
 		bkpt.setMIBreakpoints(allPoints);
@@ -743,12 +749,13 @@ public class BreakpointManager extends Manager {
 		String expression = watchpoint.getWatchExpression();
 
 		MISession miSession = target.getMISession();
-		boolean state = suspendInferior(target);
 		CommandFactory factory = miSession.getCommandFactory();
 		MIBreakWatch breakWatch =
 			factory.createMIBreakWatch(access, read, expression);
 		MIBreakpoint[] points = null;
+		boolean restart = false;
 		try {
+			restart = suspendInferior(target);
 			miSession.postCommand(breakWatch);
 			MIBreakWatchInfo winfo = breakWatch.getMIBreakWatchInfo();
 			if (winfo == null) {
@@ -793,7 +800,7 @@ public class BreakpointManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			resumeInferior(target, state);
+			resumeInferior(target, restart);
 		}
 		watchpoint.setMIBreakpoints(points);
 	}

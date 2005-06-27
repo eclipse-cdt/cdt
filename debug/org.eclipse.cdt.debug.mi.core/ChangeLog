@@ -1,4 +1,9 @@
 2005-06-27 Alain Magloire
+	Base on a patch from Chris Wiebe.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+
+2005-06-27 Alain Magloire
 	Fix PR 100069
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Location.java
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Locator.java

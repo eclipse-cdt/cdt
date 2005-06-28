@@ -32,6 +32,7 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
     private boolean sort=true;
     private boolean displayFullName=true;
     private boolean navigate=false;
+    private int totalNumberOfFilesIndexed=0;
     
     public IndexerNodeParent(IEntryResult result, String [] fileMap, IndexerView.ViewContentProvider view) {
         super(result, fileMap);
@@ -271,4 +272,12 @@ public class IndexerNodeParent extends IndexerNodeLeaf {
     public void setNavigate(boolean navigate) {
         this.navigate = navigate;
     }
+
+	public int getTotalNumberOfFilesIndexed() {
+		return totalNumberOfFilesIndexed;
+	}
+
+	public void setTotalNumberOfFilesIndexed(int totalNumberOfFilesIndexed) {
+		this.totalNumberOfFilesIndexed = totalNumberOfFilesIndexed;
+	}
 }

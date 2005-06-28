@@ -59,8 +59,9 @@ public class IndexerView extends ViewPart {
     private static final String SWITCH_FULL_NAMES = "Switch Full Names"; //$NON-NLS-1$
     private static final String SORT_RESULTS = "Sort Results"; //$NON-NLS-1$
     private static final String SEARCH_LOCATIONS = "Search Locations"; //$NON-NLS-1$
-    private static final String _TOTAL_IENTRYRESULTS = " total IEntryResults"; //$NON-NLS-1$
+    private static final String _TOTAL_IENTRYRESULTS = " total IEntryResults\n"; //$NON-NLS-1$
     private static final String _FILTERED_IENTRY_RESULTS_ = " filtered IEntry Results\n"; //$NON-NLS-1$
+    private static final String _TOTAL_INDEXEDFILES = " total files indexed"; //$NON-NLS-1$
     private static final String INDEXER_STATS = "Indexer Stats"; //$NON-NLS-1$
     private static final String DISPLAY_INDEX_STATS = "Display Index Stats"; //$NON-NLS-1$
     private static final String INDEXER_VIEW___ = "Indexer View - "; //$NON-NLS-1$
@@ -130,6 +131,8 @@ public class IndexerView extends ViewPart {
 							
                             if (results == null) return Status.CANCEL_STATUS;
 							String [] fileMap = index.getDocumentList();
+							//Subtract 1 to take into account null in position 0
+							invisibleRoot.setTotalNumberOfFilesIndexed(fileMap.length - 1);
 							
                             int size = results.length; 
                             IndexerNodeLeaf[] children = new IndexerNodeLeaf[size];
@@ -440,7 +443,7 @@ public class IndexerView extends ViewPart {
                             IndexerNodeParent root = ((ViewContentProvider)viewer.getContentProvider()).getInvisibleRoot();
                             
                             MessageDialog.openInformation(getSite().getShell(), INDEXER_STATS,
-                                    root.getFilteredCount() + _FILTERED_IENTRY_RESULTS_ + root.getFullLength() + _TOTAL_IENTRYRESULTS);
+                                    root.getFilteredCount() + _FILTERED_IENTRY_RESULTS_ + root.getFullLength() + _TOTAL_IENTRYRESULTS + root.getTotalNumberOfFilesIndexed() + _TOTAL_INDEXEDFILES);
                         }
                     }
                 });

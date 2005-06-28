@@ -471,11 +471,13 @@ public class SourceManager extends Manager {
 	}
 
 	public String getTypeName(Target target, String variable) throws CDIException {
+		MISession miSession = target.getMISession();
 		try {
-			MISession mi = target.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(false);
+			CommandFactory factory = miSession.getCommandFactory();
 			CLIWhatis whatis = factory.createCLIWhatis(variable);
-			mi.postCommand(whatis);
+			miSession.postCommand(whatis);
 			CLIWhatisInfo info = whatis.getMIWhatisInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
@@ -483,6 +485,9 @@ public class SourceManager extends Manager {
 			return info.getType();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(true);
 		}
 	}
 

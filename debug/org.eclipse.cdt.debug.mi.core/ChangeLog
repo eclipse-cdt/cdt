@@ -1,4 +1,21 @@
 2005-06-27 Alain Magloire
+	Bug when parsing "int *&" corrected.
+	Change in ICDIReferenceValue.
+	Use the type in the response of the var-create instead of reissuing -var-info-type
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/CdiResource.properties
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SignalManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ SourceManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Value.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/CharValue.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/IntergralValue.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/PointerValue.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/ReferenceValue.java
+	* mi/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+	* mi/org/eclipse/cdt/debug/mi/core/MIInferior.java
+
+2005-06-27 Alain Magloire
 	Base on a patch from Chris Wiebe.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java

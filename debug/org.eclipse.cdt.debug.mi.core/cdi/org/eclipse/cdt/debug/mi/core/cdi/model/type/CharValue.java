@@ -30,8 +30,7 @@ public class CharValue extends IntegralValue implements ICDICharValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDICharValue#getValue()
 	 */
 	public char getValue() throws CDIException {
-		// TODO Auto-generated method stub
-		return 0;
+		return (char)intValue();
 	}
 
 }

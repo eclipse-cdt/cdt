@@ -332,11 +332,16 @@ public class MIInferior extends Process {
 				CommandFactory factory = session.getCommandFactory();
 				CLIInfoProgram prog = factory.createCLIInfoProgram();
 				try {
+					RxThread rxThread = session.getRxThread();
+					rxThread.setEnableConsole(false);
 					session.postCommand(prog);
 					CLIInfoProgramInfo info = prog.getMIInfoProgramInfo();
 					pid = info.getPID();
 				} catch (MIException e) {
 					// no rethrown.
+				} finally {
+					RxThread rxThread = session.getRxThread();
+					rxThread.setEnableConsole(true);					
 				}
 			}
 			// We fail permantely.

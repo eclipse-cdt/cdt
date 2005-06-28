@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Signal;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -57,6 +58,8 @@ public class SignalManager extends Manager  {
 		CommandFactory factory = miSession.getCommandFactory();
 		CLIInfoSignals sigs = factory.createCLIInfoSignals();
 		try {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(false);
 			miSession.postCommand(sigs);
 			CLIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
@@ -65,6 +68,9 @@ public class SignalManager extends Manager  {
 			miSigs =  info.getMISignals();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(true);
 		}
 		return miSigs;
 	}
@@ -74,6 +80,8 @@ public class SignalManager extends Manager  {
 		CommandFactory factory = miSession.getCommandFactory();
 		CLIInfoSignals sigs = factory.createCLIInfoSignals(name);
 		try {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(false);
 			miSession.postCommand(sigs);
 			CLIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
@@ -85,6 +93,9 @@ public class SignalManager extends Manager  {
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
+		} finally {
+			RxThread rxThread = miSession.getRxThread();
+			rxThread.setEnableConsole(true);
 		}
 		return sig;
 	}

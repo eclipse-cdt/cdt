@@ -15,7 +15,6 @@ import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
-import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -33,15 +32,6 @@ public class PointerValue extends DerivedValue implements ICDIPointerValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
 	 */
 	public BigInteger pointerValue() throws CDIException {
-		String valueString = getValueString().trim();
-		int space = valueString.indexOf(' ');
-		if (space != -1) {
-			valueString = valueString.substring(0, space).trim();
-		}
-		try {
-			return MIFormat.getBigInteger(valueString);
-		} catch(Exception e) {
-			return null;
-		}
+		return IntegralValue.bigIntegerValue(getValueString());
 	}
 }

@@ -426,18 +426,21 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	 */
 	public String getTypeName() throws CDIException {
 		if (fTypename == null) {
-			MISession mi = ((Target) getTarget()).getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			MIVarInfoType infoType = factory.createMIVarInfoType(fMiVar.getVarName());
-			try {
-				mi.postCommand(infoType);
-				MIVarInfoTypeInfo info = infoType.getMIVarInfoTypeInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			fTypename = fMiVar.getType();
+			if (fTypename == null || fTypename.length() == 0) {
+				MISession mi = ((Target) getTarget()).getMISession();
+				CommandFactory factory = mi.getCommandFactory();
+				MIVarInfoType infoType = factory.createMIVarInfoType(fMiVar.getVarName());
+				try {
+					mi.postCommand(infoType);
+					MIVarInfoTypeInfo info = infoType.getMIVarInfoTypeInfo();
+					if (info == null) {
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+					}
+					fTypename = info.getType();
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
 				}
-				fTypename = info.getType();
-			} catch (MIException e) {
-				throw new MI2CDIException(e);
 			}
 		}
 		return fTypename;

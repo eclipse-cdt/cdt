@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -21,6 +22,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.KeywordSetKey;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -161,7 +165,12 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			IEditorInput input= editor.getEditorInput();
 			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
 			IWorkingCopy copy = manager.getWorkingCopy(input);
-
+			
+			//Before trying a search lets make sure that the user is not hovering over a keyword (which will
+			//result in null being returned)
+			if (selectionIsKeyword(name))
+				return null;
+			
 			if (copy != null) {
 				try {
 					BasicSearchResultCollector searchResultCollector = new BasicSearchResultCollector();			
@@ -237,6 +246,15 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 		return null;
 	}
 
+
+	private boolean selectionIsKeyword(String name) {
+		
+		Set keywords =ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP );
+		if (keywords.contains(name))
+			return true;
+		
+		return false;
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()

@@ -839,8 +839,11 @@ public class CVisitor {
         if( parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ){
 		    IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) parent.getParent();
 		    IBinding temp = fdtor.getName().resolveBinding();
-		    if( temp != null && temp instanceof IFunction ){
+		    if( temp != null && temp instanceof CFunction ){
 		        binding = ((CFunction) temp).resolveParameter( name );
+		    } else if( temp instanceof IFunction ){
+		    	 //problems with the function, still create binding for the parameter
+			    binding = new CParameter( name );
 		    }
 		    try {
 				if( scope != null && scope.getPhysicalNode() instanceof IASTTranslationUnit ){

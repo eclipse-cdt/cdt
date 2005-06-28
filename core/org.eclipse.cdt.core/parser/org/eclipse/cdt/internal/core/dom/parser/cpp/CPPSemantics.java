@@ -2384,8 +2384,11 @@ public class CPPSemantics {
 				return CPPVisitor.createType( dtor );
 			} else if( prop == IASTInitializerExpression.INITIALIZER_EXPRESSION ){
                 IASTInitializerExpression initExp = (IASTInitializerExpression) node.getParent();
-                IASTDeclarator dtor = (IASTDeclarator) initExp.getParent();
-                return CPPVisitor.createType( dtor );
+                if( initExp.getParent() instanceof IASTDeclarator ){
+	                IASTDeclarator dtor = (IASTDeclarator) initExp.getParent();
+	                return CPPVisitor.createType( dtor );
+                }
+                return null;
             }
             //target is the left side of an assignment
             else if( prop == IASTBinaryExpression.OPERAND_TWO && 

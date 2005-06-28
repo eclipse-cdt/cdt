@@ -255,7 +255,6 @@ public class CFunction implements IFunction, ICInternalFunction {
 
     
     protected void updateParameterBindings( IASTFunctionDeclarator fdtor ){
-        CParameter temp = null;
         IParameter [] params = getParameters();
         if( fdtor instanceof IASTStandardFunctionDeclarator ){
         	IASTParameterDeclaration [] nps = ((IASTStandardFunctionDeclarator)fdtor).getParameters();
@@ -263,9 +262,9 @@ public class CFunction implements IFunction, ICInternalFunction {
         	    return; 
         	for( int i = 0; i < nps.length; i++ ){
         		IASTName name = nps[i].getDeclarator().getName();
-        		temp = (CParameter) params[i];
-        		name.setBinding( temp );
-        		temp.addDeclaration( name );
+        		name.setBinding( params[i] );
+        		if( params[i] instanceof CParameter )
+        			((CParameter)params[i]).addDeclaration( name );
         	}
         } else {
             IASTName [] ns = ((ICASTKnRFunctionDeclarator)fdtor).getParameterNames();
@@ -274,12 +273,12 @@ public class CFunction implements IFunction, ICInternalFunction {
             
             for( int i = 0; i < params.length; i++ ){
             	IASTName name = ns[i];
-            	temp = (CParameter) params[i];
-            	name.setBinding( temp );
+            	name.setBinding( params[i] );
             	IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) fdtor, name );
     			if( dtor != null ){
-    			    dtor.getName().setBinding( temp );
-    			    temp.addDeclaration( dtor.getName() );
+    			    dtor.getName().setBinding( params[i] );
+    			    if( params[i] instanceof CParameter )
+    			    	((CParameter)params[i]).addDeclaration( dtor.getName() );
     			}
         	}
         }

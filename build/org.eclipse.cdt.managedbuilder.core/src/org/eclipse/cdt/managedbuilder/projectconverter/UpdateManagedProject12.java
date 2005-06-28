@@ -734,7 +734,7 @@ class UpdateManagedProject12 {
 			}
 			
 			// Upgrade the version
-			((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
+			((ManagedBuildInfo)info).setVersion("2.1.0");
 			info.setValid(true);
 		} catch (CoreException e){
 			throw e;

@@ -339,7 +339,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Hook me up
 		managedProject.addConfiguration(this);
 		setDirty(true);
-		setRebuildState(true);
+		rebuildNeeded = true;
 	}
 
 	/*
@@ -1096,7 +1096,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (extension == null && artifactExtension == null) return;
 		if (artifactExtension == null || extension == null || !artifactExtension.equals(extension)) {
 			artifactExtension = extension;
-			setRebuildState(true);
+			rebuildNeeded = true;
 			isDirty = true;
 		}
 	}
@@ -1108,7 +1108,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (name == null && artifactName == null) return;
 		if (artifactName == null || name == null || !artifactName.equals(name)) {
 			artifactName = name;
-			setRebuildState(true);
+			rebuildNeeded = true;
 			isDirty = true;
 		}
 	}
@@ -1184,7 +1184,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (step == null && prebuildStep == null) return; 
         if (prebuildStep == null || step == null || !prebuildStep.equals(step)) { 
             prebuildStep = step; 
-            setRebuildState(true); 
+            rebuildNeeded = true;
             isDirty = true; 
         } 
     } 
@@ -1197,7 +1197,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (step == null && postbuildStep == null) return; 
         if (postbuildStep == null || step == null || !postbuildStep.equals(step)) { 
             postbuildStep = step; 
-            setRebuildState(true); 
+    		rebuildNeeded = true;
             isDirty = true; 
         }       
     } 
@@ -1209,7 +1209,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (announceStep == null && preannouncebuildStep == null) return; 
         if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
             preannouncebuildStep = announceStep; 
-            setRebuildState(true); 
+    		rebuildNeeded = true;
             isDirty = true; 
         } 
     } 
@@ -1221,7 +1221,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (announceStep == null && postannouncebuildStep == null) return; 
         if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
             postannouncebuildStep = announceStep; 
-            setRebuildState(true); 
+    		rebuildNeeded = true;
             isDirty = true; 
         } 
     } 

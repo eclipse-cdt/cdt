@@ -1514,28 +1514,33 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				buildInfo = new ManagedBuildInfo(project, (Element)node, fileVersion);
 				if (fileVersion != null) {
 					buildInfo.setVersion(fileVersion);
-				}
-				//  Check to see if all elements could be loaded correctly - for example, 
-				//  if references in the project file could not be resolved to extension
-				//  elements
-				if (buildInfo.getManagedProject() == null ||
-					(!buildInfo.getManagedProject().isValid())) {
-					//  The load failed
-					throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
-				}
-				
-				// Each ToolChain/Tool/Builder element maintain two separate
-				// converters if available
-				// 0ne for previous Mbs versions and one for current Mbs version
-				// walk through the project hierarchy and call the converters
-				// written for previous mbs versions
-				if ( checkForMigrationSupport(buildInfo, false) != true ) {
-					// display an error message that the project is no loadable
-					if (buildInfo.getManagedProject() == null ||
+					PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
+					PluginVersionIdentifier version21 = new PluginVersionIdentifier("2.1");		//$NON-NLS-1$
+					//  CDT 2.1 is the first version using the new MBS model
+					if (version.isGreaterOrEqualTo(version21)) {
+						//  Check to see if all elements could be loaded correctly - for example, 
+						//  if references in the project file could not be resolved to extension
+						//  elements
+						if (buildInfo.getManagedProject() == null ||
 							(!buildInfo.getManagedProject().isValid())) {
 							//  The load failed
 							throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 						}
+						
+						// Each ToolChain/Tool/Builder element maintain two separate
+						// converters if available
+						// 0ne for previous Mbs versions and one for current Mbs version
+						// walk through the project hierarchy and call the converters
+						// written for previous mbs versions
+						if ( checkForMigrationSupport(buildInfo, false) != true ) {
+							// display an error message that the project is not loadable
+							if (buildInfo.getManagedProject() == null ||
+									(!buildInfo.getManagedProject().isValid())) {
+									//  The load failed
+									throw  new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
+							}
+						}
+					}
 				}
 
 				//  Upgrade the project's CDT version if necessary

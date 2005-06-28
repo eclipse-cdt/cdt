@@ -80,7 +80,7 @@ public class ProjectType extends BuildObject implements IProjectType {
 		// Load the configuration children
 		IManagedConfigElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		
-		String [] usedConfigNames = new String[0];
+		String [] usedConfigNames = new String[configs.length];
 		IConfigurationNameProvider configurationNameProvder = getConfigurationNameProvider();
 		
 		if (  configurationNameProvder != null ) {

@@ -94,7 +94,7 @@ class UpdateManagedProject20 {
 				}
 			}
 			// Upgrade the version
-			((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
+			((ManagedBuildInfo)info).setVersion("2.1.0");
 			info.setValid(true);
 		}catch (CoreException e){
 			throw e;
@@ -377,7 +377,7 @@ class UpdateManagedProject20 {
 		for(int i = 0; i < options.length; i++){
 			IOption curOption = options[i]; 
 			IOption parent = curOption.getSuperClass();
-			String curOptionId = curOption.getId();
+			//String curOptionId = curOption.getId();
 			
 			if(parent == null)
 				continue;

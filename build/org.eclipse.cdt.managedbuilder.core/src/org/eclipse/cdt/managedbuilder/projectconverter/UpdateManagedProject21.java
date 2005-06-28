@@ -64,26 +64,31 @@ class UpdateManagedProject21 {
 		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using 
 		// Eclipse content types.
 		if (CoreModel.hasCCNature(project)) {
-			IResource[] files = project.members();
-			for (int i=0; i<files.length; i++) {
-				String ext = files[i].getFileExtension();
-				if (ext != null && ext.equals("c")) {						//$NON-NLS-1$
-/*					
- *  What to do here is not yet decided
- 					try {
+			try {
+				IResource[] files = project.members(IProject.EXCLUDE_DERIVED);
+				for (int i=0; i<files.length; i++) {
+					String ext = files[i].getFileExtension();
+					if (ext != null && ext.equals("c")) {						//$NON-NLS-1$
 						IContentTypeManager manager = Platform.getContentTypeManager();
 						IContentType contentType = manager.getContentType("org.eclipse.cdt.core.cxxSource");	//$NON-NLS-1$
 						IScopeContext projectScope = new ProjectScope(project);
 						IContentTypeSettings settings = contentType.getSettings(projectScope);
-						// TODO: we need to add the default extensions too...
+						// First, copy the extensions from the "global" content type
+						String[] specs = contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+						for (int j = 0; j < specs.length; j++) {
+							settings.addFileSpec(specs[j], IContentType.FILE_EXTENSION_SPEC);
+						}
+						specs = contentType.getFileSpecs(IContentType.FILE_NAME_SPEC);
+						for (int j = 0; j < specs.length; j++) {
+							settings.addFileSpec(specs[j], IContentType.FILE_NAME_SPEC);
+						}				
+						// Add the .c extension
 						settings.addFileSpec("c", IContentType.FILE_EXTENSION_SPEC);	//$NON-NLS-1$
-					} catch (CoreException e) {
-						// TODO: Issue message??
+						break;
 					}
-*/					
-					
-					break;
 				}
+			} catch (CoreException e) {
+				// Ignore errors.  User will need to manually add .c extension if necessary
 			}
 		}
 

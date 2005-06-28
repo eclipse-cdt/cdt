@@ -45,6 +45,8 @@ public class ManagedProjectUpdateTests extends TestCase {
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_NoUpdate"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_NoUpdate"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_NoUpdate"));
+		// TODO:  This is affected by the TODO in UpdateManagedProjectManager
+		//suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21CPP_Update"));
 		
 		return suite;
 	}
@@ -122,8 +124,16 @@ public class ManagedProjectUpdateTests extends TestCase {
 			
 			if(isCompatible){
 				//check for correct update
-				if(!updateProject){
+				if (!updateProject) {
 					//TODO: if the user has chosen not to update the project the .cdtbuild file should not change
+				} else {
+					//  Make sure that we have a valid project
+					if (info == null ||
+						info.getManagedProject() == null ||
+						info.getManagedProject().isValid() == false)
+					{
+						fail("the project \"" + curProject.getName() + "\" was not properly converted");
+					}
 				}
 
 				//check whether the project builds without errors
@@ -190,6 +200,19 @@ public class ManagedProjectUpdateTests extends TestCase {
 				 Path.fromOSString("subdir.mk"), 
 				 Path.fromOSString("Functions/subdir.mk")};
 		doTestProjectUpdate("2.1", true, true, makefiles);
+	}
+
+	/* (non-Javadoc)
+	 * tests project v2.1 update of a C++ project with C source files 
+	 */
+	public void testProjectUpdate21CPP_Update(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk"), 
+				 Path.fromOSString("Functions/subdir.mk")};
+		doTestProjectUpdate("2.1CPP", true, true, makefiles);
 	}
 
 	/* (non-Javadoc)

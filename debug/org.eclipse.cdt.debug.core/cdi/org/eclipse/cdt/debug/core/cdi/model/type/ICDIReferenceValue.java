@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
-import java.math.BigInteger;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 
 /**
  */
 public interface ICDIReferenceValue extends ICDIDerivedValue {
 
-	BigInteger referenceValue() throws CDIException;
+	/**
+	 * Return the reference value.
+	 * @return ICDIValue
+	 * @throws CDIException
+	 */
+	ICDIValue referenceValue() throws CDIException;
 }

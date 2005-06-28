@@ -1,3 +1,8 @@
+2005-06-27 Alain Magloire
+	Change in ICDIReferenceValue.
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/type/ICDIReferenceValue.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CValue.java
+	
 2005-05-27 Alain Magloire
 	Use the fCDIVariable instead of fCDIVariableObject when possible.
 	* src/org/eclipse/cdt/debug/internal/core/model/CVariable.java

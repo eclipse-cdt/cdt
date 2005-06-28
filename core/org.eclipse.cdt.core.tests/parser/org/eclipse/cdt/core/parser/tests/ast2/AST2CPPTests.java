@@ -4861,4 +4861,32 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPMethod f = (ICPPMethod) col.getName(3).resolveBinding();
         assertSame( f, col.getName(6).resolveBinding() );
     }
+    
+	public void testBug90609() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct A {                      \n"); //$NON-NLS-1$
+		buffer.append("   typedef int AT;              \n"); //$NON-NLS-1$
+		buffer.append("   void f1(AT);                 \n"); //$NON-NLS-1$
+		buffer.append("   void f2(float);              \n"); //$NON-NLS-1$
+		buffer.append("};                              \n"); //$NON-NLS-1$
+		buffer.append("struct B {                      \n"); //$NON-NLS-1$
+		buffer.append("   typedef float BT;            \n"); //$NON-NLS-1$
+		buffer.append("   friend void A::f1(AT);       \n"); //$NON-NLS-1$
+		buffer.append("   friend void A::f2(BT);       \n"); //$NON-NLS-1$
+		buffer.append("};                              \n"); //$NON-NLS-1$
+
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ITypedef AT = (ITypedef) col.getName(1).resolveBinding();
+        ICPPMethod f1 = (ICPPMethod) col.getName(2).resolveBinding();
+        ICPPMethod f2 = (ICPPMethod) col.getName(5).resolveBinding();
+        ITypedef BT = (ITypedef) col.getName(8).resolveBinding();
+        
+        assertSame( f1, col.getName(11).resolveBinding() );
+        assertSame( AT, col.getName(12).resolveBinding() );
+        assertSame( f2, col.getName(16).resolveBinding() );
+        assertSame( BT, col.getName(17).resolveBinding() );
+	}
 }

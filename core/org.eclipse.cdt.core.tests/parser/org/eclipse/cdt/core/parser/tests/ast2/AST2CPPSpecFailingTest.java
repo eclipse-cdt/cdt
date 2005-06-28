@@ -42,39 +42,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 3.4.1-10):
-	struct A {
-	typedef int AT;
-	void f1(AT);
-	void f2(float);
-	};
-	struct B {
-	typedef float BT;
-	friend void A::f1(AT); // parameter type is A::AT
-	friend void A::f2(BT); // parameter type is B::BT
-	};
-	 --End Example]
-	 */
-	public void test3_4_1s10()  { // TODO raised bug 90609
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct A {\n"); //$NON-NLS-1$
-		buffer.append("typedef int AT;\n"); //$NON-NLS-1$
-		buffer.append("void f1(AT);\n"); //$NON-NLS-1$
-		buffer.append("void f2(float);\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("struct B {\n"); //$NON-NLS-1$
-		buffer.append("typedef float BT;\n"); //$NON-NLS-1$
-		buffer.append("friend void A::f1(AT); // parameter type is A::AT\n"); //$NON-NLS-1$
-		buffer.append("friend void A::f2(BT); // parameter type is B::BT\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 6.4-3):
 	int foo() {
 	if (int x = f()) {

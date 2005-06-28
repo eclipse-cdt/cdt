@@ -419,6 +419,47 @@ public class CPPSemantics {
 			}
 			return false;
 		}
+		
+		public boolean checkAssociatedScopes() {
+			if( astName == null || astName instanceof ICPPASTQualifiedName )
+				return false;
+			IASTNode parent = astName.getParent();
+			if( parent instanceof ICPPASTQualifiedName ){
+				IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
+				if( ns[ ns.length - 1] != astName )
+					return false;
+			}
+			return functionCall() && (associated.size() > 0);
+		}
+		public boolean checkClassContainingFriend() {
+			if( astName == null || astName instanceof ICPPASTQualifiedName )
+				return false;
+			
+			IASTNode p = astName.getParent();
+			ASTNodeProperty prop = null;
+			while( p != null ){
+				prop = p.getPropertyInParent();
+				if( prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT || prop == IASTDeclarator.DECLARATOR_NAME )
+					return false;
+				if( p instanceof IASTDeclarator && !(((IASTDeclarator)p).getName() instanceof ICPPASTQualifiedName) )
+					return false;
+				if( p instanceof IASTDeclaration ){
+					if( prop == IASTCompositeTypeSpecifier.MEMBER_DECLARATION ){
+						if( p instanceof IASTSimpleDeclaration ){
+							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)p).getDeclSpecifier();
+							return declSpec.isFriend();
+						} else if( p instanceof IASTFunctionDefinition ){
+							ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)p).getDeclSpecifier();
+							return declSpec.isFriend();
+						}
+					} else {
+						return false;
+					}
+				}
+				p = p.getParent();
+			}
+			return false;
+		}
 	}
 
 	static protected class Cost
@@ -586,11 +627,11 @@ public class CPPSemantics {
      * @return
      */
     private static IBinding postResolution( IBinding binding, LookupData data ) {
-        if( !(data.astName instanceof ICPPASTQualifiedName) && data.functionCall() ){
+        if( data.checkAssociatedScopes() ){
             //3.4.2 argument dependent name lookup, aka Koenig lookup
             try {
                 IScope scope = (binding != null ) ? binding.getScope() : null;
-                if( data.associated.size() > 0 && ( scope == null|| !(scope instanceof ICPPClassScope) ) ){
+                if( scope == null || !(scope instanceof ICPPClassScope) ){
                     data.ignoreUsingDirectives = true;
                     data.forceQualified = true;
                     for( int i = 0; i < data.associated.size(); i++ ){
@@ -601,6 +642,22 @@ public class CPPSemantics {
             } catch ( DOMException e ) {
                 binding = e.getProblem();
             }
+        }
+        if( binding == null && data.checkClassContainingFriend() ){
+        	//3.4.1-10 if we don't find a name used in a friend declaration in the member declaration's class
+        	//we should look in the class granting friendship
+        	IASTNode parent = data.astName.getParent();
+        	while( parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier) )
+        		parent = parent.getParent();
+        	if( parent instanceof ICPPASTCompositeTypeSpecifier ){
+        		IScope scope = ((ICPPASTCompositeTypeSpecifier)parent).getScope();
+        		try {
+		    		lookup( data, scope );
+		    		binding = resolveAmbiguities( data, data.astName );
+        		} catch( DOMException e ){
+        			binding = e.getProblem();
+        		}
+        	}
         }
 		if( binding instanceof ICPPClassTemplate ){
 			ASTNodeProperty prop = data.astName.getPropertyInParent();

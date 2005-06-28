@@ -448,6 +448,36 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 
 	/**
+	 [--Start Example(CPP 3.4.1-10):
+	struct A {
+	typedef int AT;
+	void f1(AT);
+	void f2(float);
+	};
+	struct B {
+	typedef float BT;
+	friend void A::f1(AT); // parameter type is A::AT
+	friend void A::f2(BT); // parameter type is B::BT
+	};
+	 --End Example]
+	 */
+	public void test3_4_1s10() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct A {\n"); //$NON-NLS-1$
+		buffer.append("typedef int AT;\n"); //$NON-NLS-1$
+		buffer.append("void f1(AT);\n"); //$NON-NLS-1$
+		buffer.append("void f2(float);\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+		buffer.append("struct B {\n"); //$NON-NLS-1$
+		buffer.append("typedef float BT;\n"); //$NON-NLS-1$
+		buffer.append("friend void A::f1(AT); // parameter type is A::AT\n"); //$NON-NLS-1$
+		buffer.append("friend void A::f2(BT); // parameter type is B::BT\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
+	
+	/**
 	 [--Start Example(CPP 3.4.2-2):
 	namespace NS {
 	class T { };
@@ -12524,12 +12554,12 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
      */
     public void test8_5s2() throws ParserException  { // 90641
         StringBuffer buffer = new StringBuffer();
-        buffer.append( "int z() { ");
+        buffer.append( "int z() { "); //$NON-NLS-1$
         buffer.append("int f(int);\n"); //$NON-NLS-1$
         buffer.append("int a = 2;\n"); //$NON-NLS-1$
         buffer.append("int b = f(a);\n"); //$NON-NLS-1$
         buffer.append("int c(b);\n"); //$NON-NLS-1$
-        buffer.append( "}"); 
+        buffer.append( "}");  //$NON-NLS-1$
         parse(buffer.toString(), ParserLanguage.CPP, true, 0);
     }
     

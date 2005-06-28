@@ -220,6 +220,10 @@ public class CommandFactory {
 		return new MIGDBSetSolibSearchPath(getMIVersion(), params);
 	}
 
+	public MIGDBSetBreakpointPending createMIGDBSetBreakpointPending(boolean set) {
+		return new MIGDBSetBreakpointPending(getMIVersion(), set);
+	}
+
 	public MIGDBShow createMIGDBShow(String[] params) {
 		return new MIGDBShow(getMIVersion(), params);
 	}

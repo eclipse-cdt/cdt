@@ -52,6 +52,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIBreakEnable;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakInsert;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakList;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakWatch;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetBreakpointPending;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
@@ -153,9 +154,9 @@ public class BreakpointManager extends Manager {
 
 	void resumeInferior(Target target, boolean shouldRestart) throws CDIException {
 		if (shouldRestart) {
+			target.resume();
 			// Enable events again.
 			((EventManager)getSession().getEventManager()).allowProcessingEvents(true);
-			target.resume();
 		}
 	}
 
@@ -863,6 +864,27 @@ public class BreakpointManager extends Manager {
 			miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
 		}
 		return excp;
+	}
+
+	/**
+	 * Call -gdb-set breakpoint pending set
+	 * @param target
+	 * @param set
+	 * @throws CDIException
+	 */
+	public void setBreakpointPending(Target target, boolean set) throws CDIException { 
+		MISession miSession = target.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIGDBSetBreakpointPending bpp = factory.createMIGDBSetBreakpointPending(set);
+		try {
+			miSession.postCommand(bpp);
+			MIInfo info = bpp.getMIInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 	public Condition createCondition(int ignoreCount, String expression, String[] tids) {

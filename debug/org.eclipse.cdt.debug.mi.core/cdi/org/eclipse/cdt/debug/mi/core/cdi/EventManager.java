@@ -87,11 +87,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 */
 	public void update(Observable o, Object arg) {
 		
-		// Bailout early if we do not want to process any events.
-		if (!isAllowingProcessingEvents()) {
-			return;
-		}
-
 		MIEvent miEvent = (MIEvent)arg;
 		Session session = (Session)getSession();
 		Target currentTarget = session.getTarget(miEvent.getMISession());
@@ -265,6 +260,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		Session session = (Session)getSession();
 		MISession miSession = stopped.getMISession();
 		Target currentTarget = session.getTarget(miSession);
+		currentTarget.setSupended(true);
+
+		// Bailout early if we do not want to process any events.
+		if (!isAllowingProcessingEvents()) {
+			return false;
+		}
+
+
 		if (processSharedLibEvent(stopped)) {
 			// Event was consumed by the shared lib processing bailout
 			return false;
@@ -506,6 +509,17 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 */
 	boolean processRunningEvent(MIRunningEvent running) {
 		lastRunningEvent = running;
+
+		Session session = (Session)getSession();
+		MISession miSession = running.getMISession();
+		Target currentTarget = session.getTarget(miSession);
+		currentTarget.setSupended(false);
+
+		// Bailout early if we do not want to process any events.
+		if (!isAllowingProcessingEvents()) {
+			return false;
+		}
+
 		return true;
 	}
 

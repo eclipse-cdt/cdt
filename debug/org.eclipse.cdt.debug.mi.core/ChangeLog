@@ -1,4 +1,14 @@
 2005-06-27 Alain Magloire
+	New command from newer version of gdb "set breakpoint pending"
+	better handling of the breakpoint while the target is running.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java
+	+ mi/org/eclipse/cdt/debug/mi/core/ccommand/MIGDBSetBreakpoinPending.java
+
+2005-06-27 Alain Magloire
 	Bug when parsing "int *&" corrected.
 	Change in ICDIReferenceValue.
 	Use the type in the response of the var-create instead of reissuing -var-info-type

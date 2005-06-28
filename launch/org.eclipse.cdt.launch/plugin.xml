@@ -91,7 +91,7 @@
       <launchConfigurationTabGroup
             type="org.eclipse.cdt.launch.coreFileCLaunch"
             class="org.eclipse.cdt.launch.internal.ui.CoreFileLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.launch.voreFileCLaunchTabGroup">
+            id="org.eclipse.cdt.launch.coreFileCLaunchTabGroup">
       </launchConfigurationTabGroup>
    </extension>
    <extension

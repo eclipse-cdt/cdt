@@ -1,3 +1,7 @@
+2005-06-28 Mikhail Khodjaiants
+	Bug 89276: Typo in org.eclipse.cdt.launch/plugin.xml.
+	* plugin.xml
+
 2005-05-21 Mikhail Khodjaiants
 	Bug 91374: CDT launch should set ATTR_PROCESS_TYPE.
 	* AbstractCLaunchDelegate.java

@@ -2596,6 +2596,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     previousWasIdentifier = true;
                     parmCount++;
                 } else if (LT(1) == IToken.tRPAREN) {
+                	if (!previousWasIdentifier) { 
+                		// if the first token encountered is tRPAREN then it's not K&R C
+                		// the first token when counting K&R C parms is always an identifier
+                		backup(mark);
+                		return 0;
+                	}
                     consume();
                     break;
                 } else {
@@ -2613,10 +2619,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
             // look ahead for the start of the function body, if end of file is
             // found then return 0 parameters found (implies not KnR C)
-            IToken previous=null;
-            IToken next=null;
+            int previous=-1;
+            int next=LA(1).hashCode();
             while (LT(1) != IToken.tLBRACE) {
-               	next = consume();
+            	// fix for 100104: check if the parameter declaration is a valid one
+            	try {
+            		simpleDeclaration();
+				} catch (BacktrackException e) {
+					backup(mark);
+					return 0;
+				}            	
+            	
+               	next = LA(1).hashCode();
                	if (next == previous) { // infinite loop detected
                		break;
                	}

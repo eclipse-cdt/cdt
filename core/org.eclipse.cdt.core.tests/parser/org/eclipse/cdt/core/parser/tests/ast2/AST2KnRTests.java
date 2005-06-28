@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -25,11 +26,13 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -264,28 +267,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
     	
-    	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[0];
-    	assertTrue(f.getDeclarator() instanceof ICASTKnRFunctionDeclarator);
-    	ICASTKnRFunctionDeclarator f_kr = (ICASTKnRFunctionDeclarator)f.getDeclarator();
-    	assertEquals(f_kr.getName().toString(), "f"); //$NON-NLS-1$
-    	assertEquals(f_kr.getParameterNames()[0].toString(), "x"); //$NON-NLS-1$
-    	assertTrue(f_kr.getParameterDeclarations()[0] instanceof IASTProblemDeclaration);
-    	assertTrue(f.getBody() instanceof IASTCompoundStatement);
-    	assertTrue(((IASTCompoundStatement)f.getBody()).getStatements()[0] instanceof IASTReturnStatement);
-    	assertTrue(((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue() instanceof IASTBinaryExpression);
-    	assertTrue(((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1() instanceof IASTIdExpression);
-    	assertEquals(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().toString(), "x"); //$NON-NLS-1$
-    	assertTrue(((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2() instanceof IASTLiteralExpression);
-    	assertEquals(((IASTLiteralExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2()).toString(), "0"); //$NON-NLS-1$
-    	
-    	// TODO problem bindings, right now both bindings for x are null, similarly for the below KRCProblem tests
-//    	f_kr.getParameterNames()[0].resolveBinding();
-//    	((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding();
-    	
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
-		assertEquals( decls.length, 0 );
-    	
+    	assertTrue( tu.getDeclarations()[0] instanceof IASTProblemDeclaration );
     }
     
     public void testKRCProblem2() throws Exception {
@@ -295,29 +277,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
     	
-    	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[1];
-    	assertTrue(f.getDeclarator() instanceof ICASTKnRFunctionDeclarator);
-    	ICASTKnRFunctionDeclarator f_kr = (ICASTKnRFunctionDeclarator)f.getDeclarator();
-    	assertEquals(f_kr.getName().toString(), "f"); //$NON-NLS-1$
-    	assertEquals(f_kr.getParameterNames()[0].toString(), "x"); //$NON-NLS-1$
-    	assertTrue(f_kr.getParameterDeclarations()[0] instanceof IASTProblemDeclaration);
-    	assertTrue(f.getBody() instanceof IASTCompoundStatement);
-    	assertTrue(((IASTCompoundStatement)f.getBody()).getStatements()[0] instanceof IASTReturnStatement);
-    	assertTrue(((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue() instanceof IASTBinaryExpression);
-    	assertTrue(((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1() instanceof IASTIdExpression);
-    	assertEquals(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().toString(), "x"); //$NON-NLS-1$
-    	assertTrue(((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2() instanceof IASTLiteralExpression);
-    	assertEquals(((IASTLiteralExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand2()).toString(), "0"); //$NON-NLS-1$
-
-		// test tu.getDeclarations(IBinding)
-		IASTName[] decls = tu.getDeclarations(((IASTIdExpression)((IASTBinaryExpression)((IASTReturnStatement)((IASTCompoundStatement)f.getBody()).getStatements()[0]).getReturnValue()).getOperand1()).getName().resolveBinding()); 
-		assertEquals( decls.length, 0 );
-		
-		assertNotNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()) ); //$NON-NLS-1$
-		assertNotNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()) ); //$NON-NLS-1$
-		CVisitor.clearBindings(tu);
-		assertNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("i").toCharArray()) ); //$NON-NLS-1$
-		assertNull( ((CScope)tu.getScope()).getBinding(CScope.NAMESPACE_TYPE_OTHER, new String("f").toCharArray()) ); //$NON-NLS-1$
+		assertTrue( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
+		assertTrue( tu.getDeclarations()[2] instanceof IASTProblemDeclaration );
 	}
 
     public void testKRCProblem3() throws Exception {
@@ -653,8 +614,8 @@ public class AST2KnRTests extends AST2BaseTest {
     
     public void testBug97447() throws Exception {
     	StringBuffer buffer = new StringBuffer();
-    	buffer.append("void f( a ) int a; {} \n");
-    	buffer.append("void f( int );        \n");
+    	buffer.append("void f( a ) int a; {} \n"); //$NON-NLS-1$
+    	buffer.append("void f( int );        \n"); //$NON-NLS-1$
     	
 		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
         CNameCollector col = new CNameCollector();
@@ -663,5 +624,26 @@ public class AST2KnRTests extends AST2BaseTest {
         IFunction def = (IFunction) col.getName(0).resolveBinding();
         IFunction f1 = (IFunction) col.getName(3).resolveBinding();
         IParameter a = (IParameter) col.getName(4).resolveBinding();
+    }
+    
+    public void testBug100104() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("typedef int ush;\n"); //$NON-NLS-1$
+    	buffer.append("int f()\n"); //$NON-NLS-1$
+    	buffer.append("{\n"); //$NON-NLS-1$
+    	buffer.append("int a=1;\n"); //$NON-NLS-1$
+    	buffer.append("((ush)(a)*(ush)(a) * a);\n"); //$NON-NLS-1$
+    	buffer.append("{\n"); //$NON-NLS-1$
+    	buffer.append("};\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true, true);
+        assertTrue( tu.getDeclarations()[0] instanceof IASTSimpleDeclaration );
+        assertTrue( tu.getDeclarations()[1] instanceof IASTFunctionDefinition );
+        IASTStatement[] stmts = ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[1]).getBody()).getStatements();
+        assertTrue( stmts[0] instanceof IASTDeclarationStatement );
+        assertTrue( stmts[1] instanceof IASTExpressionStatement );
+        assertTrue( stmts[2] instanceof IASTCompoundStatement );
+        assertTrue( stmts[3] instanceof IASTNullStatement );
     }
 }

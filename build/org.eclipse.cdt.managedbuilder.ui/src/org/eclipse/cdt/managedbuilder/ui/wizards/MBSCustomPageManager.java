@@ -102,14 +102,10 @@ public final class MBSCustomPageManager
 	 */
 	private static Set pageSet = null;
 
-	private static boolean extensionsLoaded = false;
-
 	/**
 	 * Maps page IDs to the properties that page has set.
 	 */
 	private static java.util.Map pageIDtoPagePropertiesMap = null;
-
-	private static boolean initialized = false;
 
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.managedbuilder.ui.newWizardPages"; //$NON-NLS-1$
 
@@ -121,20 +117,12 @@ public final class MBSCustomPageManager
 	 */
 	public static void loadExtensions() throws BuildException
 	{
-		if (extensionsLoaded)
-			return;
-
 		loadExtensionsSynchronized();
 	}
 
 	private synchronized static void loadExtensionsSynchronized()
 			throws BuildException
 	{
-		// Do this once
-		if (extensionsLoaded)
-			return;
-		extensionsLoaded = true;
-
 		// Get the extensions
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
 				.getExtensionPoint(EXTENSION_POINT_ID);
@@ -716,21 +704,16 @@ public final class MBSCustomPageManager
 	/**
 	 *  Initializes the manager.
 	 *  
-	 *  This method should be called before any other operations are performed using this class.
-	 *  
-	 *  Initialization is only performed once.
+	 *  This method should be called before any other operations are performed using this class, and should
+	 *  be called every time pages are added to the wizard.
 	 *  
 	 *  @since 3.0
 	 */
 	public static void init()
 	{
-      if(!initialized)
-	  {
-		initialized = true;
 		idToPageDataMap = new TreeMap();
 		pageIDtoPagePropertiesMap = new TreeMap();
 		pageSet = new LinkedHashSet();
-	  }
 	}
 
 	// singleton class - do not use

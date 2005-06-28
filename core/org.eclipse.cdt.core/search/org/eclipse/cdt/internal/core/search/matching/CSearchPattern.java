@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.search.IMatchLocatable;
 import org.eclipse.cdt.core.search.LineLocatable;
 import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.core.search.OrPattern;
+import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -74,6 +75,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	public static final int POSSIBLE_MATCH   = 1;
 	public static final int ACCURATE_MATCH   = 2;
 	public static final int INACCURATE_MATCH = 3;
+	
+	private static SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE };
 	
 	protected static class Requestor extends NullSourceElementRequestor
 	{
@@ -141,6 +144,12 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			pattern = createMacroPattern( patternString, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == INCLUDE){
 			pattern = createIncludePattern( patternString, limitTo, matchMode, caseSensitive);
+		} else if ( searchFor == UNKNOWN_SEARCH_FOR ) {
+			OrPattern orPattern = new OrPattern();
+			for( int i=0; i<fSearchForValues.length; i++) {
+				orPattern.addPattern( SearchEngine.createSearchPattern( patternString, fSearchForValues[i], limitTo, caseSensitive ) );
+			}
+			pattern = orPattern;
 		}
 	
 		return pattern;

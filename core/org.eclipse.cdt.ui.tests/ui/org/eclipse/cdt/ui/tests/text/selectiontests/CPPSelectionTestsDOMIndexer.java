@@ -124,6 +124,7 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testNoDefinitions")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug95202")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug95229")); //$NON-NLS-1$
+		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug101287")); //$NON-NLS-1$
 	
 		return suite;
 	}
@@ -992,6 +993,29 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
         assertEquals(((ASTNode)decl).getOffset(), 11);
         assertEquals(((ASTNode)decl).getLength(), 14);
     }
+    
+	public void testBug101287() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("int abc;\n"); //$NON-NLS-1$
+		buffer.append("int main(int argc, char **argv) {\n"); //$NON-NLS-1$
+		buffer.append("abc\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		
+        String code = buffer.toString();
+        IFile file = importFile("testBug101287.c", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("abc\n"); //$NON-NLS-1$
+        IASTNode def = testF2(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "abc"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 3);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "abc"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 3);
+	}
 
     // REMINDER: see CPPSelectionTestsDomIndexer#suite() when appending new tests to this suite
 }

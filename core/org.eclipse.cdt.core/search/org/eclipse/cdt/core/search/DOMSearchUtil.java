@@ -93,6 +93,30 @@ public class DOMSearchUtil {
             
         return results.getSearchResults();
     }
+
+    /**
+     * This is a convenience method that uses the SearchEngine to find everything in the index 
+     * that matches to a String.
+     * 
+     * @param scope the scope to search within the index
+     * @param searchPattern the string used to search the index with
+     * @return
+     */
+    public static Set getMatchesFromSearchEngine(ICSearchScope scope, String searchPattern, LimitTo limitTo) {
+        SearchEngine engine = new SearchEngine();
+        BasicSearchResultCollector results = new BasicSearchResultCollector();
+            
+        ICSearchPattern pattern = SearchEngine.createSearchPattern( searchPattern, ICSearchConstants.UNKNOWN_SEARCH_FOR, limitTo, true );
+            
+        try {
+        	engine.setWaitingPolicy(ICSearchConstants.FORCE_IMMEDIATE_SEARCH);
+            engine.search(CCorePlugin.getWorkspace(), pattern, scope, results, false);
+        } catch (InterruptedException e) {
+            return EMPTY_MATCHES;
+        }
+            
+        return results.getSearchResults();
+    }
     
     private static CSearchPattern createPattern( IASTName searchName, LimitTo limitTo, boolean caseSensitive) {
 		IBinding binding = searchName.resolveBinding();

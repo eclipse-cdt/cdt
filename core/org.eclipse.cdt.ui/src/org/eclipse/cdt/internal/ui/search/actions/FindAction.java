@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
+import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
@@ -72,8 +73,15 @@ public abstract class FindAction extends SelectionParseAction {
      * @param collector
      * @return
      */
-	 public static CSearchQuery createDOMSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope){
-		 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope);
+	 public CSearchQuery createDOMSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope, String searchPattern){
+		 if (name != null) {
+			 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope);
+		 } else {
+			 if (searchPattern != null)
+				 return  createSearchQuery(searchPattern, ICSearchConstants.UNKNOWN_SEARCH_FOR);
+			 else 
+				 return null;
+		 }
 	 }
 	 
 	 
@@ -86,8 +94,8 @@ public abstract class FindAction extends SelectionParseAction {
       * @param scope
       * @return
       */
-	 public static CSearchQuery createSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope ){
-		 return createDOMSearchQueryForName( name, limitTo, scope);
+	 public CSearchQuery createSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope, String searchPattern ){
+		 return createDOMSearchQueryForName( name, limitTo, scope, searchPattern );
 	 }
 	 
 	public void run() {
@@ -188,32 +196,29 @@ public abstract class FindAction extends SelectionParseAction {
 			} else {
 				collector = new DOMSearchUtil.CNameCollector();
 			}
-			
-			if (foundNode == null) { // nothing found
-				operationNotAvailable(CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE);
-				return;
+
+			if (foundNode != null) { // nothing found
+				foundNode.accept( collector );
+				
+				List names = null;
+				if (collector instanceof DOMSearchUtil.CPPNameCollector) {
+					names = ((DOMSearchUtil.CPPNameCollector)collector).nameList;
+				} else {
+					names = ((DOMSearchUtil.CNameCollector)collector).nameList;
+				}
+				
+				if (names.size() == 1) { // just right
+					clearStatusLine();
+				} else if (names.size() == 0) { // no names selected
+					operationNotAvailable(CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE);
+					return;
+				} else if (names.size() > 1) { // too many names selected
+					operationNotAvailable(CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE);
+					return;
+				}
+				
+				foundName = (IASTName)names.get(0);
 			}
-			
-			foundNode.accept( collector );
-			
-			List names = null;
-			if (collector instanceof DOMSearchUtil.CPPNameCollector) {
-				names = ((DOMSearchUtil.CPPNameCollector)collector).nameList;
-			} else {
-				names = ((DOMSearchUtil.CNameCollector)collector).nameList;
-			}
-			
-			if (names.size() == 1) { // just right
-				clearStatusLine();
-			} else if (names.size() == 0) { // no names selected
-				operationNotAvailable(CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE);
-				return;
-			} else if (names.size() > 1) { // too many names selected
-				operationNotAvailable(CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE);
-				return;
-			}
-			
-			foundName = (IASTName)names.get(0);
 		}
 		
 		LimitTo limitTo = getLimitTo();
@@ -223,7 +228,7 @@ public abstract class FindAction extends SelectionParseAction {
 		if (searchScope == null)
 			return;
 		
-		CSearchQuery job = FindAction.createSearchQueryForName(foundName, limitTo, searchScope);
+		CSearchQuery job = createSearchQueryForName(foundName, limitTo, searchScope, selNode.selText);
 		
 		if (job == null)
 			return; 

@@ -185,8 +185,27 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
                         }
 					}
 				} else if (selectedNames.length == 0){
-					operationNotAvailable(CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE);
-					return;
+                	// last try: search the index for the selected string, even if no name was found for that selection
+                	ICElement[] scope = new ICElement[1];
+                   	scope[0] = project;
+                	Set matches = DOMSearchUtil.getMatchesFromSearchEngine( SearchEngine.createCSearchScope(scope), selNode.selText, ICSearchConstants.DECLARATIONS_DEFINITIONS ); 
+                	
+                	if (matches != null && matches.size() > 0) {
+                        Iterator itr = matches.iterator();
+                        while(itr.hasNext()) {
+                            Object match = itr.next();
+                            if (match instanceof IMatch) {
+                                IMatch theMatch = (IMatch)match;
+                                storage.setFileName(theMatch.getLocation().toOSString());
+								storage.setLocatable(theMatch.getLocatable());
+                                storage.setResource(ParserUtil.getResourceForFilename(theMatch.getLocation().toOSString()));
+                                break;
+                            }
+                        }
+                    } else {
+                        operationNotAvailable(CSEARCH_OPERATION_NO_DECLARATION_MESSAGE);
+                        return;
+                    }
 				} else {
 					operationNotAvailable(CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE);
 					return;

@@ -12,7 +12,6 @@ package org.eclipse.cdt.ui.tests.text.selectiontests;
 
 import java.io.File;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -32,7 +31,6 @@ import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -121,6 +119,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		suite.addTest(new CSelectionTestsCTagsIndexer("testCPPSpecDeclsDefs")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsCTagsIndexer("testNoDefinitions")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsCTagsIndexer("testOpenFileDiffDir")); //$NON-NLS-1$
+		suite.addTest(new CSelectionTestsCTagsIndexer("testBug101287")); //$NON-NLS-1$
 	
 		return suite;
 	}
@@ -628,6 +627,25 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 			assertEquals(((TextSelection)decl).getOffset(), header.indexOf(" int y() { return 1; } /* comment */ \r\n"));
 			assertEquals(((TextSelection)decl).getLength(), " int y() { return 1; } /* comment */ \r\n".length());
 		}		
+	}
+	
+	public void testBug101287() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("int abc;\n"); //$NON-NLS-1$
+		buffer.append("int main(int argc, char **argv) {\n"); //$NON-NLS-1$
+		buffer.append("abc\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		
+        String code = buffer.toString();
+        IFile file = importFile("testBug101287.c", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("abc\n"); //$NON-NLS-1$
+
+        ISelection decl = testF3Selection(file, offset);
+		if (decl instanceof TextSelection) {
+			assertEquals(((TextSelection)decl).getOffset(), code.indexOf("int abc;\n"));
+			assertEquals(((TextSelection)decl).getLength(), "int abc;\n".length());
+		}
 	}
 	
     // REMINDER: see CSelectionTestsCTagsIndexer#suite() when appending new tests to this suite

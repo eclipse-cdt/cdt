@@ -12,7 +12,6 @@ package org.eclipse.cdt.ui.tests.text.selectiontests;
 
 import java.io.File;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -115,7 +114,8 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		suite.addTest(new CSelectionTestsDOMIndexer("testCPPSpecDeclsDefs")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsDOMIndexer("testNoDefinitions")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsDOMIndexer("testOpenFileDiffDir")); //$NON-NLS-1$
-	
+		suite.addTest(new CSelectionTestsDOMIndexer("testBug101287")); //$NON-NLS-1$
+		
 		return suite;
 	}
 
@@ -619,6 +619,29 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		assertEquals(((ASTNode)decl).getOffset(), header.indexOf("y")); //$NON-NLS-1$
 		assertEquals(((ASTNode)decl).getLength(), "y".length()); //$NON-NLS-1$
 		
+	}
+
+	public void testBug101287() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("int abc;\n"); //$NON-NLS-1$
+		buffer.append("int main(int argc, char **argv) {\n"); //$NON-NLS-1$
+		buffer.append("abc\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		
+        String code = buffer.toString();
+        IFile file = importFile("testBug101287.c", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("abc\n"); //$NON-NLS-1$
+        IASTNode def = testF2(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "abc"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 3);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "abc"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 3);
 	}
 	
     // REMINDER: see CSelectionTestsDomIndexer#suite() when appending new tests to this suite

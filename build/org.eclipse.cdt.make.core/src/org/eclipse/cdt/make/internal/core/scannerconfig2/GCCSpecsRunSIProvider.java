@@ -19,7 +19,6 @@ import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * Runs a command to retrieve compiler intrinsic scanner info from 'specs' file.
@@ -43,10 +42,6 @@ public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
                 }
                 else if (project.hasNature(CProjectNature.C_NATURE_ID)) {
                     targetFile = GCCScannerConfigUtil.C_SPECS_FILE;
-                }
-                IPath path2File = MakeCorePlugin.getWorkingDirectory().append(targetFile);
-                if (!path2File.toFile().exists()) {
-                    GCCScannerConfigUtil.createSpecs();
                 }
                 // replace string variables in compile arguments
                 // TODO Vmir - use string variable replacement

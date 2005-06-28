@@ -30,6 +30,7 @@ import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefile;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathManager;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigInfoFactory;
+import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -311,6 +312,8 @@ public class MakeCorePlugin extends Plugin {
 		
 		//Set debug tracing options
 		configurePluginDebugOptions();
+        // Scanner config discovery setup
+        GCCScannerConfigUtil.createSpecs();
 	}
 
 	private static final String SCANNER_CONFIG = MakeCorePlugin.getUniqueIdentifier() + "/debug/scdiscovery"; //$NON-NLS-1$

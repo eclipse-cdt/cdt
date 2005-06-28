@@ -411,6 +411,40 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
         return suite;
     }
 
+//    public void testBug97967() throws Exception {
+//        IFile imacro_file = importFile(
+//                "macro.h", "#define JEDEN 1\n#define DVA 2\n#define TRI 3\n"); //$NON-NLS-1$ //$NON-NLS-2$
+//        StringBuffer buffer = new StringBuffer();
+//        buffer.append("#ifndef _INCLUDE_H_\n"); //$NON-NLS-1$
+//        buffer.append("#define _INCLUDE_H_\n"); //$NON-NLS-1$
+//        buffer.append("typedef void (*vfp)();\n"); //$NON-NLS-1$
+//        buffer.append("typedef int (*ifp)();\n"); //$NON-NLS-1$
+//        buffer.append("struct Include {\n"); //$NON-NLS-1$
+//        buffer.append("int i;\n"); //$NON-NLS-1$
+//        buffer.append("};\n"); //$NON-NLS-1$
+//        buffer.append("#endif /*_INCLUDE_H_*/\n"); //$NON-NLS-1$
+//        final String inc_file_code = buffer.toString();
+//        IFile include_file = importFile("include.h", inc_file_code); //$NON-NLS-1$ //$NON-NLS-2$
+//        String[] macros = { imacro_file.getLocation().toOSString() };
+//        String[] includes = { include_file.getLocation().toOSString() };
+//        IExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(
+//                Collections.EMPTY_MAP, EMPTY_STRING_ARRAY, macros, includes);
+//        String code = "int main() { return BEAST * sizeof( Include ); } "; //$NON-NLS-1$
+//        for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+//                : null) {
+//            String filename = ( p == ParserLanguage.CPP ) ? "main.cc" : "main.c"; //$NON-NLS-1$ //$NON-NLS-2$
+//            IFile c = importFile(
+//                    filename, code); //$NON-NLS-1$ //$NON-NLS-2$
+//
+//            IASTTranslationUnit tu = parse(c, scannerInfo); //$NON-NLS-1$
+//            IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[3];
+//            IASTFileLocation floc = fd.getFileLocation();
+//            assertEquals( floc.getNodeOffset(), code.indexOf( "int main() { return BEAST * sizeof( Include ); }")); //$NON-NLS-1$
+//            assertEquals( floc.getNodeLength(), "int main() { return BEAST * sizeof( Include ); }".length() ); //$NON-NLS-1$
+//        }
+//    }
+
+    
     public void testBug97603() throws Exception {
         IFile imacro_file = importFile(
                 "macro.h", "#define JEDEN 1\n#define DVA 2\n#define TRI 3\n"); //$NON-NLS-1$ //$NON-NLS-2$

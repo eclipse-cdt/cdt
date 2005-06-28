@@ -94,8 +94,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
@@ -1729,17 +1731,19 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			if ( containers[i] instanceof ProjectSourceContainer ) {
 				IProject project = ((ProjectSourceContainer)containers[i]).getProject();
 				if ( project != null && project.exists() )
-					list.add( project.getLocation().toOSString() );
+					list.add( project.getLocation().toPortableString() );
 			}
 			if ( containers[i] instanceof FolderSourceContainer ) {
 				IContainer container = ((FolderSourceContainer)containers[i]).getContainer();
 				if ( container != null && container.exists() )
-					list.add( container.getLocation().toOSString() );
+					list.add( container.getLocation().toPortableString() );
 			}
 			if ( containers[i] instanceof CDirectorySourceContainer ) {
 				File dir = ((CDirectorySourceContainer)containers[i]).getDirectory();
-				if ( dir != null && dir.exists() )
-					list.add( dir.getAbsolutePath() );
+				if ( dir != null && dir.exists() ) {
+					IPath path = new Path( dir.getAbsolutePath() );
+					list.add( path.toPortableString() );
+				}
 			}
 			if ( containers[i].isComposite() ) {
 				try {

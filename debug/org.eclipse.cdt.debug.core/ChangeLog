@@ -1,3 +1,8 @@
+2005-06-28 Mikhail Khodjaiants
+	Bug 101188: Breakpoints don't work with MingW gdb.
+	Use "toPortableString" instead of "toOsString" when setting the source search paths.
+	* CDebugTarget.java
+
 2005-06-27 Alain Magloire
 	Change in ICDIReferenceValue.
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/type/ICDIReferenceValue.java

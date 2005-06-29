@@ -156,6 +156,7 @@ abstract class BaseScanner implements IScanner {
     protected Iterator preIncludeFiles = EmptyIterator.EMPTY_ITERATOR;
 
     protected boolean isInitialized = false;
+    protected boolean macroFilesInitialized = false;
 
     protected final char[] suffixes;
 
@@ -1259,6 +1260,7 @@ abstract class BaseScanner implements IScanner {
         if (info instanceof IExtendedScannerInfo) {
             extendedScannerInfoSetup(reader, info);
         } else {
+            macroFilesInitialized = true;
             pushContext(reader.buffer, reader);
             isInitialized = true;
         }
@@ -1286,6 +1288,7 @@ abstract class BaseScanner implements IScanner {
                 }
             }
 
+        macroFilesInitialized = true;
         if (einfo.getIncludeFiles() != null
                 && einfo.getIncludeFiles().length > 0)
             preIncludeFiles = Arrays.asList(einfo.getIncludeFiles()).iterator();

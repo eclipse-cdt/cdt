@@ -217,6 +217,11 @@ public class DOMScanner extends BaseScanner {
                 bufferDelta[bufferStackPos + 1] = 0;
             }
         }
+        else if( data instanceof CodeReader && !macroFilesInitialized )
+        {
+            int resolved = getGlobalCounter(0);
+            locationMap.startInclusion( (CodeReader) data, resolved, resolved );
+        }
 
         super.pushContext(buffer, data);
     }
@@ -241,7 +246,10 @@ public class DOMScanner extends BaseScanner {
                 locationMap.endTranslationUnit(bufferDelta[0]
                         + ((CodeReader) result).buffer.length);
             else
+            {
                 bufferDelta[0] += bufferDelta[bufferStackPos + 1] + ((CodeReader) result).buffer.length;
+                locationMap.endInclusion( getGlobalCounter(0) );
+            }
 
         } else if (result instanceof InclusionData) {
             CodeReader codeReader = ((InclusionData) result).reader;

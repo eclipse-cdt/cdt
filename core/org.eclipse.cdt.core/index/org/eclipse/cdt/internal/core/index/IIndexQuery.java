@@ -15,7 +15,8 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Generic indexer query interface to allow for queries of any existing indexer storage mechanism
- * To be considered in development.
+ * To be considered in development - not currently hooked up, but as a placeholder for future clients.
+ * See Bugzilla # 96775 for more details.
  * @author bgheorgh
  * @since 3.0
  */

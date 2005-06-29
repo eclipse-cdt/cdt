@@ -192,7 +192,7 @@ class CTagEntry{
 			typeEntry.setBaseTypes(getInherits());
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.TYPEDEF)){
-			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_TYPEDEF,IIndex.DEFINITION, fullName, getModifiers(), fileNum);
+			TypeEntry typeEntry = new TypeEntry(IIndex.TYPE_TYPEDEF,IIndex.DECLARATION, fullName, getModifiers(), fileNum);
 			typeEntry.setNameOffset(lineNumber, 1, IIndex.LINE);
 			typeEntry.serialize(output);
     	} else if (kind.equals(CTagsConsoleParser.UNION)){

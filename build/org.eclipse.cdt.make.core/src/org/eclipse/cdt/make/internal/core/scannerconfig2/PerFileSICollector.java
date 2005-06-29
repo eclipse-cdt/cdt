@@ -417,8 +417,12 @@ public class PerFileSICollector implements IScannerInfoCollector2, IScannerInfoC
                 // update scanner configuration
 //                MakeCorePlugin.getDefault().getDiscoveryManager().
 //                        updateDiscoveredInfo(createPathInfoObject(), siChangedForFileList);
+                IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
+                if (!(pathInfo instanceof IPerFileDiscoveredPathInfo)) {
+                	pathInfo = createPathInfoObject();
+                }
                 MakeCorePlugin.getDefault().getDiscoveryManager().
-                		updateDiscoveredInfo(createPathInfoObject(), new ArrayList(siChangedForFileMap.keySet()));
+                		updateDiscoveredInfo(pathInfo, new ArrayList(siChangedForFileMap.keySet()));
                 monitor.worked(50);
             } catch (CoreException e) {
                 MakeCorePlugin.log(e);

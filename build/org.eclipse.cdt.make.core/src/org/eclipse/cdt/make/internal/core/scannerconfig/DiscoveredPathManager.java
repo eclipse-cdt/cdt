@@ -125,7 +125,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#updateDiscoveredInfo(org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo, java.util.List)
      */
     public void updateDiscoveredInfo(IDiscoveredPathInfo info, List changedResources) throws CoreException {
-		if (fDiscoveredMap.get(info.getProject()) != info) {
+		if (fDiscoveredMap.get(info.getProject()) != null) {
             IDiscoveredScannerInfoSerializable serializable = info.getSerializable();
 			if (serializable != null) {
                 IProject project = info.getProject();

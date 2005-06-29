@@ -61,6 +61,7 @@ public class GDBTypeParser {
 			s = new String();
 		}
 		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
+		s = Pattern.compile("\\bvolatile\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
 		s = s.trim();
 
 		// Initialize.

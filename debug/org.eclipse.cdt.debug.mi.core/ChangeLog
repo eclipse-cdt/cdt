@@ -1,3 +1,7 @@
+2005-06-29 Alain Magloire
+	Fix PR 100602
+	* mi/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2005-06-28 Alain Magloire
 	Fix PR 94612: addr =<PENDING>
 	* mi/org/eclipse/cdt/debug/mi/core/MIFormat.java

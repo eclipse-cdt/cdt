@@ -1,3 +1,7 @@
+2005-06-29 Mikhail Khodjaiants
+	Removed unused imports.
+	* CBreapointWorkbencAdapterFactory.java
+
 2005-06-25 Alain Magloire
 	Fix PR 94735: return an empty object.
 	* src/org/eclipse/cdt/debug/internal/ui/CBreapointWorkbencAdapterFactory.java

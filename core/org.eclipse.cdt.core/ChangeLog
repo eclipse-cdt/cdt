@@ -1,3 +1,7 @@
+2005-06-29 Alain Magloire
+	Patch From Chris Wiebe fix PR 101386
+	* utils/org/eclipse/cdt/utils/macho/MachO.java
+
 2005-06-26 Vladimir Hirsl
 	Fix for 101344: problem markers are not being removed from header files
 	Fixed removing indexer problem markers originally created by indexing 

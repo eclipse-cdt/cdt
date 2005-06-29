@@ -245,6 +245,9 @@ public class MachO {
 		public int cmdsize;
 	}
 	
+	public class UnknownCommand extends LoadCommand {
+	}
+	
 	public class LCStr {
 		public long offset;
 		public long ptr;
@@ -1337,6 +1340,7 @@ public class MachO {
 
 					case LoadCommand.LC_LOAD_DYLIB:
 					case LoadCommand.LC_ID_DYLIB:
+					case LoadCommand.LC_LOAD_WEAK_DYLIB:
 						DyLibCommand dylcmd = new DyLibCommand();
 						dylcmd.cmd = cmd;
 						dylcmd.cmdsize = efile.readIntE();
@@ -1457,6 +1461,14 @@ public class MachO {
 						pbccmd.cmdsize = efile.readIntE();
 						pbccmd.cksum = efile.readIntE();
 						loadcommands[i] = pbccmd;
+						break;
+						
+					default:
+						// fallback, just in case we don't recognize the command
+						UnknownCommand unknowncmd = new UnknownCommand();
+						unknowncmd.cmd = cmd;
+						unknowncmd.cmdsize = 0;
+						loadcommands[i] = unknowncmd;
 						break;
 				}
 			}

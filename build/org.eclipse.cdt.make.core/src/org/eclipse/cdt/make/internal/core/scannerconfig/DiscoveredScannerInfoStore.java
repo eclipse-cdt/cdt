@@ -105,8 +105,7 @@ public class DiscoveredScannerInfoStore {
 
 	private Document getDocument(IProject project) throws CoreException {
 		// Get the document
-		Document document = null;
-		document = (Document) fDocumentMap.get(project);
+		Document document = (Document) fDocumentMap.get(project);
 		if (document == null) {
 		    try {
 		        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -154,9 +153,8 @@ public class DiscoveredScannerInfoStore {
 	/**
 	* @param document
 	* @param project 
-	* @throws CoreException 
 	*/
-	private void upgradeDocument(Document document, IProject project) throws CoreException {
+	private void upgradeDocument(Document document, IProject project) {
 		Element rootElem = (Element) document.getElementsByTagName(SI_ELEM).item(0); //$NON-NLS-1$
 		ProcessingInstruction pi = document.createProcessingInstruction(SCD_STORE_VERSION, "version=\"2.0\""); //$NON-NLS-1$
 		document.insertBefore(pi, rootElem);
@@ -173,9 +171,8 @@ public class DiscoveredScannerInfoStore {
 	* @param scannerInfo
 	* @param rootElement
 	* @param doc
-	* @throws CoreException 
 	*/
-	private void saveDiscoveredScannerInfo(IDiscoveredScannerInfoSerializable serializable, Document doc) throws CoreException {
+	private void saveDiscoveredScannerInfo(IDiscoveredScannerInfoSerializable serializable, Document doc) {
 		NodeList rootList = doc.getElementsByTagName(SI_ELEM);
 		if (rootList.getLength() > 0) {
 			Element rootElem = (Element) rootList.item(0);
@@ -295,6 +292,8 @@ public class DiscoveredScannerInfoStore {
                                 // project deleted
                                 scProjectDeleted(project);
                             }
+                            // remove from cache
+                            fDocumentMap.put(project, null);
                         }
                         return false;
                     }

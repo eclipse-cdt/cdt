@@ -54,11 +54,20 @@ public interface ICBreakpoint extends IBreakpoint {
 	public static final String THREAD_ID = "org.eclipse.cdt.debug.core.threadId"; //$NON-NLS-1$	
 
 	/**
-	 * Breakpoint attribute storing a source handle this breakpoint
+	 * Breakpoint attribute storing the source handle of the file this breakpoint
 	 * is set in (value <code>"org.eclipse.cdt.debug.core.sourceHandle"</code>). 
 	 * This attribute is a <code>String</code>.
 	 */
 	public static final String SOURCE_HANDLE = "org.eclipse.cdt.debug.core.sourceHandle"; //$NON-NLS-1$	
+
+	/**
+	 * Breakpoint attribute storing the module name this breakpoint
+	 * is set in (value <code>"org.eclipse.cdt.debug.core.module"</code>). 
+	 * This attribute is a <code>String</code>.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String MODULE = "org.eclipse.cdt.debug.core.module"; //$NON-NLS-1$	
 
 	/**
 	 * Returns whether this breakpoint is installed in at least one debug
@@ -133,6 +142,24 @@ public interface ICBreakpoint extends IBreakpoint {
 	 *  underlying marker
 	 */
 	public void setThreadId( String threadId ) throws CoreException;
+
+	/**
+	 * Returns the module name this breakpoint is set in.
+	 * 
+	 * @return the module name
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
+	 */
+	public String getModule() throws CoreException;
+
+	/**
+	 * Sets the module name of this breakpoint.
+	 * 
+	 * @param module the module name
+	 * @exception CoreException if unable to access the property on this breakpoint's
+	 *  underlying marker
+	 */
+	public void setModule( String module ) throws CoreException;
 
 	/**
 	 * Returns the source handle this breakpoint is set in.

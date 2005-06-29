@@ -1,4 +1,13 @@
 2005-06-29 Mikhail Khodjaiants
+	Bug 41725: I can't set a breakpoint in a function where I used attach source.
+	Bug 45514: Breakpoints made is assembly view do not show in C view.
+	+ DebugMarkerAnnotationModel.java
+	+ DebugMarkerAnnotationModelFactory.java
+	* ToggleBreakpointAdapter.java
+	* DisassemblyEditorInput.java
+	* plugin.xml
+
+2005-06-29 Mikhail Khodjaiants
 	Removed unused imports.
 	* CBreapointWorkbencAdapterFactory.java
 

@@ -30,6 +30,15 @@ public interface IDisassemblyBlock {
 	 */
 	String getModuleFile();
 
+
+	/**
+	 * Returns the source element (<code>IFile</code> or <code>File></code>) 
+	 * of the source file associated with this segment or null if no source file is associated.
+	 * 
+	 * @return the source element
+	 */
+	Object getSourceElement();
+
 	/**
 	 * Returns whether this block contains given stack frame.
 	 *  

@@ -174,6 +174,7 @@ public class CDIDebugModel {
 	 * given source handle, at the given address. The marker associated with the
 	 * breakpoint will be created on the specified resource.
 	 * 
+	 * @param module the module name the breakpoint is set in
 	 * @param sourceHandle the handle to the breakpoint source
 	 * @param resource the resource on which to create the associated breakpoint marker
 	 * @param address the address on which the breakpoint is set
@@ -189,17 +190,44 @@ public class CDIDebugModel {
 	 *             failure.</li>
 	 *             </ul>
 	 */
-	public static ICAddressBreakpoint createAddressBreakpoint( String sourceHandle, IResource resource, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		return createAddressBreakpoint( module, sourceHandle, resource, -1, address, enabled, ignoreCount, condition, register );
+	}
+
+	/**
+	 * Creates and returns an address breakpoint for the source defined by the
+	 * given source handle, at the given address. The marker associated with the
+	 * breakpoint will be created on the specified resource.
+	 * 
+	 * @param module the module name the breakpoint is set in
+	 * @param sourceHandle the handle to the breakpoint source
+	 * @param resource the resource on which to create the associated breakpoint marker
+	 * @param lineNumber the line number in the source file
+	 * @param address the address on which the breakpoint is set
+	 * @param enabled whether to enable or disable this breakpoint
+	 * @param ignoreCount the number of times this breakpoint will be ignored
+	 * @param condition the breakpoint condition
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @return an address breakpoint
+	 * @throws CoreException if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure creating underlying marker. The exception's
+	 *             status contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
+	 */
+	public static ICAddressBreakpoint createAddressBreakpoint( String module, String sourceHandle, IResource resource, int lineNumber, IAddress address, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
-		attributes.put( IMarker.CHAR_START, new Integer( 0 ) );
-		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
-		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
+		attributes.put( IMarker.CHAR_START, new Integer( -1 ) );
+		attributes.put( IMarker.CHAR_END, new Integer( -1 ) );
+		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( ICLineBreakpoint.ADDRESS, address.toHexAddressString() );
 		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
+		attributes.put( ICBreakpoint.MODULE, module );
 		return new CAddressBreakpoint( resource, attributes, register );
 	}
 

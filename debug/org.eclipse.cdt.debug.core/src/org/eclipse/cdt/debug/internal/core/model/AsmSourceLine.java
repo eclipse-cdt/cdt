@@ -24,15 +24,32 @@ public class AsmSourceLine implements IAsmSourceLine {
 
 	private IAsmInstruction[] fInstructions = null;
 
+	private int fLineNumber;
+
 	/**
 	 * Constructor for AsmSourceLine.
 	 */
 	public AsmSourceLine( IAddressFactory factory, String text, ICDIInstruction[] cdiInstructions ) {
+		this( factory, text, -1, cdiInstructions );
+	}
+
+	/**
+	 * Constructor for AsmSourceLine.
+	 */
+	public AsmSourceLine( IAddressFactory factory, String text, int lineNumber, ICDIInstruction[] cdiInstructions ) {
 		fText = text;
+		fLineNumber = lineNumber;
 		fInstructions = new IAsmInstruction[cdiInstructions.length];
 		for ( int i = 0; i < fInstructions.length; ++i ) {
 			fInstructions[i] = new AsmInstruction( factory, cdiInstructions[i] );
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IAsmSourceLine#getLineNumber()
+	 */
+	public int getLineNumber() {
+		return fLineNumber;
 	}
 
 	/* (non-Javadoc)

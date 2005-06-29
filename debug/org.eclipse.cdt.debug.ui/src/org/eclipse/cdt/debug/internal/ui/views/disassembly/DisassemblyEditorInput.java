@@ -21,6 +21,8 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -184,6 +186,34 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 	public String getModuleFile() {
 		return ( fBlock != null ) ? fBlock.getModuleFile() : null;
+	}
+
+	public String getSourceFile() {
+		if ( fBlock != null ) {
+			Object element = fBlock.getSourceElement();
+			if ( element instanceof IFile ) {
+				return ((IFile)element).getLocation().toOSString();
+			}
+			else if ( element instanceof IStorage ) {
+				return ((IStorage)element).getFullPath().toOSString();
+			}
+		}
+		return null;
+	}
+
+	public int getSourceLine( int instrNumber ) {
+		if ( fBlock != null ) {
+			IAsmSourceLine[] sl = fBlock.getSourceLines();
+			int current = 0;
+			for ( int i = 0; i < sl.length; ++i ) {
+				++current;
+				IAsmInstruction[] ins = sl[i].getInstructions();
+				if ( instrNumber >= current && instrNumber <= current + ins.length )
+					return sl[i].getLineNumber();
+				current += ins.length;
+			}
+		}
+		return -1;
 	}
 
 	public static DisassemblyEditorInput create( ICStackFrame frame ) throws DebugException {

@@ -33,7 +33,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
@@ -125,10 +127,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
 						}
 						else {
-							IResource resource = ResourcesPlugin.getWorkspace().getRoot();
+							String module = ((DisassemblyEditorInput)input).getModuleFile();
+							IResource resource = getAddressBreakpointResource( ((DisassemblyEditorInput)input).getSourceFile() );
 							String sourceHandle = getSourceHandle( input );
-							CDIDebugModel.createAddressBreakpoint( sourceHandle, 
-																   resource, 
+							CDIDebugModel.createAddressBreakpoint( module,
+																   sourceHandle, 
+																   resource,
+																   ((DisassemblyEditorInput)input).getSourceLine( lineNumber ),
 																   address, 
 																   true, 
 																   0, 
@@ -314,6 +319,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
 		}
 		if ( input instanceof DisassemblyEditorInput ) {
+			String sourceFile = ((DisassemblyEditorInput)input).getSourceFile();
+			if ( sourceFile != null ) {
+				return sourceFile;
+			}
 			return ((DisassemblyEditorInput)input).getModuleFile();
 		}
 		return ""; //$NON-NLS-1$
@@ -464,5 +473,15 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 													"", //$NON-NLS-1$
 													true );
 		}
+	}
+
+	private IResource getAddressBreakpointResource( String fileName ) {
+		IPath path = new Path( fileName );
+		if ( path.isValidPath( fileName ) ) {
+			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
+			if ( files.length > 0 )
+				return files[0];
+		}
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 }

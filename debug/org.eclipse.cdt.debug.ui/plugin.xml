@@ -1240,5 +1240,11 @@
             icon="icons/obj16/folder_obj.gif"
             id="org.eclipse.cdt.debug.ui.containerPresentation.directory"/>
    </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+            class="org.eclipse.cdt.debug.internal.ui.DebugMarkerAnnotationModelFactory"
+            contentTypeId="org.eclipse.cdt.core.cSource"/>
+   </extension>
 
 </plugin>

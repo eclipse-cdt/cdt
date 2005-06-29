@@ -39,7 +39,9 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 
 	private IDisassembly fDisassembly;
-	
+
+	private Object fSourceElement;
+
 	private IAsmSourceLine[] fSourceLines;
 
 	private IAddress fStartAddress = null;
@@ -57,21 +59,29 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 
 	public static DisassemblyBlock create( IDisassembly disassembly, ICDIMixedInstruction[] instructions ) {
 		DisassemblyBlock block = new DisassemblyBlock( disassembly );
-		block.setMixedMode( true );
 		ISourceLocator locator = disassembly.getDebugTarget().getLaunch().getSourceLocator();
 		IAddressFactory factory = ((CDebugTarget)disassembly.getDebugTarget()).getAddressFactory();
-		block.setSourceLines( createSourceLines( factory, locator, instructions ) );
-		block.initializeAddresses();
+		block.initialize( factory, locator, instructions );
 		return block;
 	}
 
 	public static DisassemblyBlock create( IDisassembly disassembly, ICDIInstruction[] instructions ) {
 		DisassemblyBlock block = new DisassemblyBlock( disassembly );
 		IAddressFactory factory = ((CDebugTarget)disassembly.getDebugTarget()).getAddressFactory();
-		block.setMixedMode( false );
-		block.setSourceLines( createSourceLines( factory, instructions ) );
-		block.initializeAddresses();
+		block.initialize( factory, instructions );
 		return block;
+	}
+
+	private void initialize( IAddressFactory factory, ICDIInstruction[] instructions ) {
+		setMixedMode( false );
+		createSourceLines( factory, instructions );
+		initializeAddresses();
+	}
+
+	private void initialize( IAddressFactory factory, ISourceLocator locator, ICDIMixedInstruction[] mi ) {
+		setMixedMode( true );
+		createSourceLines( factory, locator, mi );
+		initializeAddresses();
 	}
 
 	/* (non-Javadoc)
@@ -93,6 +103,13 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 			}
 		}
 		return ""; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#getSourceElement()
+	 */
+	public Object getSourceElement() {
+		return fSourceElement;
 	}
 
 	/* (non-Javadoc)
@@ -133,7 +150,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	public void dispose() {
 	}
 
-	private static IAsmSourceLine[] createSourceLines( IAddressFactory factory, ISourceLocator locator, ICDIMixedInstruction[] mi ) {
+	private void createSourceLines( IAddressFactory factory, ISourceLocator locator, ICDIMixedInstruction[] mi ) {
 		IAsmSourceLine[] result = new IAsmSourceLine[mi.length];
 		LineNumberReader reader = null;
 		if ( result.length > 0 && locator != null ) {
@@ -145,6 +162,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 			if ( locator instanceof ICSourceLocator ) {
 				element = ((ICSourceLocator)locator).findSourceElement( fileName );
 			}
+			fSourceElement = element;
 			File file= null;
 			if ( element instanceof IFile ) {
 				file = ((IFile)element).getLocation().toFile();
@@ -162,8 +180,8 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 		}
 		for ( int i = 0; i < result.length; ++i ) {
 			String text = null;
+			int lineNumber = mi[i].getLineNumber();
 			if ( reader != null ) {
-				int lineNumber = mi[i].getLineNumber();
 				while( reader.getLineNumber() + 1 < lineNumber ) {
 					try {
 						reader.readLine();
@@ -179,13 +197,13 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 					}
 				}
 			}
-			result[i] = new AsmSourceLine( factory, text, mi[i].getInstructions() );
+			result[i] = new AsmSourceLine( factory, text, lineNumber, mi[i].getInstructions() );
 		}
-		return result;
+		fSourceLines = result;
 	}
 
-	private static IAsmSourceLine[] createSourceLines( IAddressFactory factory, ICDIInstruction[] instructions ) {
-		return new IAsmSourceLine[] { new AsmSourceLine( factory, "", instructions ) }; //$NON-NLS-1$
+	private void createSourceLines( IAddressFactory factory, ICDIInstruction[] instructions ) {
+		fSourceLines = new IAsmSourceLine[] { new AsmSourceLine( factory, "", instructions ) }; //$NON-NLS-1$
 	}
 
 	private void initializeAddresses() {
@@ -201,9 +219,5 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 
 	private void setMixedMode( boolean mixedMode ) {
 		this.fMixedMode = mixedMode;
-	}
-
-	private void setSourceLines( IAsmSourceLine[] sourceLines ) {
-		this.fSourceLines = sourceLines;
 	}
 }

@@ -1,3 +1,15 @@
+2005-06-29 Mikhail Khodjaiants
+	Bug 41725: I can't set a breakpoint in a function where I used attach source.
+	Bug 45514: Breakpoints made is assembly view do not show in C view.
+	* CDIDebugModel.java
+	* IAsmSourceLine.java
+	* ICBreakpoint.java
+	* IDisassemblyBlock.java
+	* CBreakpointManager.java
+	* CBreakpoint.java
+	* AsmSourceLine.java
+	* DisassemblyBlock.java
+
 2005-06-28 Mikhail Khodjaiants
 	Bug 101188: Breakpoints don't work with MingW gdb.
 	Use "toPortableString" instead of "toOsString" when setting the source search paths.

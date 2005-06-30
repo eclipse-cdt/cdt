@@ -25,8 +25,9 @@ public class EnvironmentReader {
 
 	public static Properties getEnvVars() {
 
-		if (null != envVars)
+		if (null != envVars) {
 			return (Properties)envVars.clone();
+		}
 
 		String OS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		Process p = null;
@@ -42,8 +43,7 @@ public class EnvironmentReader {
 			//The buffered stream doesn't always like windows 98
 			check_ready = true;
 			isWin32 = true;
-		} else 
-		if (OS.startsWith("windows ")) { //$NON-NLS-1$
+		} else if (OS.startsWith("windows ")) { //$NON-NLS-1$
 			command = "cmd.exe /u /c  set"; //$NON-NLS-1$
 			isWin32 = true;
 			charSet = "UTF-16" + (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder()) ? "BE" : "LE");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
@@ -52,22 +52,46 @@ public class EnvironmentReader {
 			p = ProcessFactory.getFactory().exec(command);
 			in = p.getInputStream();
 			BufferedReader br;
-			if(null == charSet) 
+			if (null == charSet) { 
 				br = new BufferedReader(new InputStreamReader(in));
-			else
+			} else {
 				br = new BufferedReader(new InputStreamReader(in, charSet));
+			}
 			String line;
+			String prev_key = null; // previous key read and saved in envVars
+			String prev_value = null; // value of previous key
 			while ((line = br.readLine()) != null) {
 				rawVars.add(line);
 				int idx = line.indexOf('=');
 				if (idx != -1) {
 					String key = line.substring(0, idx);
-					if (isWin32) //Since windows env ignores case let normalize to Upper here.
+					if (isWin32) { //Since windows env ignores case let normalize to Upper here.
 						key = key.toUpperCase();
+					}
 					String value = line.substring(idx + 1);
 					envVars.setProperty(key, value);
+					// Save key and value in case we're dealing with a variable with
+					// a multi-line value; i.e., it contains embedded new lines (\n).
+					prev_key = key;
+					prev_value = value;
 				} else {
-					envVars.setProperty(line, ""); //$NON-NLS-1$
+					// Any variable setting that contains '\n' will be read as 
+					// separate lines into the line variable.  Subsequent lines
+					// after the first line (which contains '=') takes us to
+					// this else case.  We try to restore the original setting
+					// by concatenating the value of line with previous value,
+					// with a \n replaced in between, and saving the new value with
+					// the previous key.
+					if (prev_key != null) {
+						if (prev_value != null) {
+							prev_value = prev_value + '\n' + line;
+						} else {
+							prev_value = line;
+						}
+						envVars.setProperty(prev_key, prev_value);
+					} else {
+						envVars.setProperty(line, ""); //$NON-NLS-1$
+					}
 				}
 				if (check_ready && br.ready() == false) {
 					break;
@@ -82,8 +106,9 @@ public class EnvironmentReader {
 			} catch (IOException e) {
 			}
 			try {
-				if (p != null)
+				if (p != null) {
 					p.waitFor();
+				}
 			} catch (InterruptedException e) {
 			}
 		}

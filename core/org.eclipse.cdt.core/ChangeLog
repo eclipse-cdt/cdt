@@ -1,4 +1,8 @@
 2005-06-29 Alain Magloire
+	Fix for PR 102174 patch from Johane Woo.
+	* utils/org/eclipse/cdt/utils/spawner/EnvironmentReader.java
+
+2005-06-29 Alain Magloire
 	Patch From Chris Wiebe fix PR 101386
 	* utils/org/eclipse/cdt/utils/macho/MachO.java
 

@@ -21,8 +21,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -58,13 +60,59 @@ class UpdateManagedProject21 {
 		// No physical conversion is need since the 3.0 model is a superset of the 2.1 model 
 		// We need to upgrade the version
 		((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
-		info.setValid(true);
+		info.setValid(true);		
+
+		// Save the updated file.
+		// But first, check for this special case.  If the project is a C++ project, and it contains .c files, we add
+		// the .c extension to the project-specific list of C++ file extensions so that these projects build as they
+		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using 
+		// Eclipse content types.
+		// If the tree is locked spawn a job to this.
+		IWorkspace workspace = project.getWorkspace();
+		boolean treeLock = workspace.isTreeLocked();
+		ISchedulingRule rule1 = workspace.getRuleFactory().createRule(project);
+		ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(project);
+		ISchedulingRule rule = MultiRule.combine(rule1, rule2);
+		if (treeLock) {
+			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+					checkForCPPWithC(monitor, project);
+					ManagedBuildManager.saveBuildInfo(project, true);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setRule(rule);
+			job.schedule();
+		} else {
+			checkForCPPWithC(monitor, project);
+			ManagedBuildManager.saveBuildInfo(project, true);
+		}
+		monitor.done();
+	}
+
+	/**
+	 * @param monitor the monitor to allow users to cancel the long-running operation
+	 * @param project the <code>IProject</code> that needs to be upgraded
+	 */
+	static void checkForCPPWithC(IProgressMonitor monitor, final IProject project) {
 		// Also we check for this special case.  If the project is a C++ project, and it contains .c files, we add
 		// the .c extension to the project-specific list of C++ file extensions so that these projects build as they
 		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using 
 		// Eclipse content types.
 		if (CoreModel.hasCCNature(project)) {
 			try {
+				try {
+					// Refresh the project here since we may be called before an import operation has fully 
+					// completed setting up the project's resources
+					IWorkspace workspace = project.getWorkspace();
+					IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+						public void run(IProgressMonitor monitor) throws CoreException {
+							project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+						}
+					};
+					workspace.run(runnable, project, IWorkspace.AVOID_UPDATE, monitor);
+				} catch (Exception e) {}	// Ignore the error - the user may have to add .c extensions to
+								// the local definition of C++ file extensions				
 				IResource[] files = project.members(IProject.EXCLUDE_DERIVED);
 				for (int i=0; i<files.length; i++) {
 					String ext = files[i].getFileExtension();
@@ -91,24 +139,5 @@ class UpdateManagedProject21 {
 				// Ignore errors.  User will need to manually add .c extension if necessary
 			}
 		}
-
-		// Save the updated file
-		// If the tree is locked spawn a job to this.
-		IWorkspace workspace = project.getWorkspace();
-		boolean treeLock = workspace.isTreeLocked();
-		ISchedulingRule rule = workspace.getRuleFactory().createRule(project);
-		if (treeLock) {
-			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
-				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					ManagedBuildManager.saveBuildInfo(project, true);
-					return Status.OK_STATUS;
-				}
-			};
-			job.setRule(rule);
-			job.schedule();
-		} else {
-			ManagedBuildManager.saveBuildInfo(project, true);
-		}
-		monitor.done();
 	}
 }

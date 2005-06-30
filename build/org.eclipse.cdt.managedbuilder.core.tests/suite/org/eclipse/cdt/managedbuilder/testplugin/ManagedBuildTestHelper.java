@@ -35,6 +35,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -58,16 +59,21 @@ public class ManagedBuildTestHelper {
 	 * @return 
 	 * @throws CoreException
 	 */
-	static public IProject createProject(String name, IPath location, String projectId, String projectTypeId) throws CoreException {
+	static public IProject createProject(
+			final String name, 
+			final IPath location, 
+			final String projectId, 
+			final String projectTypeId) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject newProjectHandle = root.getProject(name);
+		final IProject newProjectHandle = root.getProject(name);
 		IProject project = null;
 		
 		if (!newProjectHandle.exists()) {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			if (projectId.equals(ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID)) {
-				project = createNewManagedProject(newProjectHandle, name, location, projectId, projectTypeId);
+				createNewManagedProject(newProjectHandle, name, location, projectId, projectTypeId);
+				project = newProjectHandle;
 			} else {
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IWorkspaceDescription workspaceDesc = workspace.getDescription();
 				workspaceDesc.setAutoBuilding(false);
 				workspace.setDescription(workspaceDesc);
@@ -76,7 +82,15 @@ public class ManagedBuildTestHelper {
 				project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
 			}
 		} else {
-			newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, null);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				}
+			};
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			// TODO: Why is this necessary?
+			//workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
 			project = newProjectHandle;
 		}
         
@@ -96,19 +110,21 @@ public class ManagedBuildTestHelper {
 	 */
 	static public void removeProject(String name) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(name);
+		final IProject project = root.getProject(name);
 		if (project.exists()) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-			} finally {
-				try {
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
 					System.gc();
 					System.runFinalization();
 					project.delete(true, true, null);
-				} catch (CoreException e2) {
-					Assert.assertTrue(false);
 				}
+			};
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			try {
+				workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
+			} catch (CoreException e2) {
+				Assert.assertTrue(false);
 			}
 		}
 	}
@@ -144,49 +160,63 @@ public class ManagedBuildTestHelper {
 		}
 	}
 
-	static public IProject createNewManagedProject(IProject newProjectHandle, String name, IPath location, 
-			String projectId, String projectTypeId) throws CoreException {
-		// Create the base project
-		IProject project = null;
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceDescription workspaceDesc = workspace.getDescription();
-		workspaceDesc.setAutoBuilding(false);
-		workspace.setDescription(workspaceDesc);
-		IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
-		if (location != null) {
-			description.setLocation(location);
-		}
-		project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), projectId);
-		// Add the managed build nature and builder
-		addManagedBuildNature(project);
-		
-		// Find the base project type definition
-		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
-		IProjectType projType = ManagedBuildManager.getProjectType(projectTypeId);
-		Assert.assertNotNull(projType);
-		
-		// Create the managed-project (.cdtbuild) for our project that builds an executable.
-		IManagedProject newProject = null;
-		try {
-			newProject = ManagedBuildManager.createManagedProject(project, projType);
-		} catch (Exception e) {
-			Assert.fail("Failed to create managed project for: " + project.getName());
-		}
-		Assert.assertEquals(newProject.getName(), projType.getName());
-		Assert.assertFalse(newProject.equals(projType));
-		ManagedBuildManager.setNewProjectVersion(project);
-		// Copy over the configs
-		IConfiguration defaultConfig = null;
-		IConfiguration[] configs = projType.getConfigurations();
-		for (int i = 0; i < configs.length; ++i) {
-			// Make the first configuration the default 
-			if (i == 0) {
-				defaultConfig = newProject.createConfiguration(configs[i], projType.getId() + "." + i);
-			} else {
-				newProject.createConfiguration(configs[i], projType.getId() + "." + i);
+	static public IProject createNewManagedProject(IProject newProjectHandle, 
+			final String name, 
+			final IPath location, 
+			final String projectId, 
+			final String projectTypeId) throws CoreException {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		final IProject project = newProjectHandle;
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				// Create the base project
+				IWorkspaceDescription workspaceDesc = workspace.getDescription();
+				workspaceDesc.setAutoBuilding(false);
+				workspace.setDescription(workspaceDesc);
+				IProjectDescription description = workspace.newProjectDescription(project.getName());
+				if (location != null) {
+					description.setLocation(location);
+				}
+				CCorePlugin.getDefault().createCProject(description, project, new NullProgressMonitor(), projectId);
+				// Add the managed build nature and builder
+				addManagedBuildNature(project);
+				
+				// Find the base project type definition
+				IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
+				IProjectType projType = ManagedBuildManager.getProjectType(projectTypeId);
+				Assert.assertNotNull(projType);
+				
+				// Create the managed-project (.cdtbuild) for our project that builds an executable.
+				IManagedProject newProject = null;
+				try {
+					newProject = ManagedBuildManager.createManagedProject(project, projType);
+				} catch (Exception e) {
+					Assert.fail("Failed to create managed project for: " + project.getName());
+				}
+				Assert.assertEquals(newProject.getName(), projType.getName());
+				Assert.assertFalse(newProject.equals(projType));
+				ManagedBuildManager.setNewProjectVersion(project);
+				// Copy over the configs
+				IConfiguration defaultConfig = null;
+				IConfiguration[] configs = projType.getConfigurations();
+				for (int i = 0; i < configs.length; ++i) {
+					// Make the first configuration the default 
+					if (i == 0) {
+						defaultConfig = newProject.createConfiguration(configs[i], projType.getId() + "." + i);
+					} else {
+						newProject.createConfiguration(configs[i], projType.getId() + "." + i);
+					}
+				}
+				ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
 			}
+		};
+		NullProgressMonitor monitor = new NullProgressMonitor();
+		try {
+			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
+		} catch (CoreException e2) {
+			Assert.assertTrue(false);
 		}
-		ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
 
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
@@ -224,9 +254,16 @@ public class ManagedBuildTestHelper {
 			Assert.fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
 	}
 	
-	static public boolean compareBenchmarks(IProject project, IPath testDir, IPath[] files) {
+	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath[] files) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			}
+		};
 		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			workspace.run(runnable, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 		} catch (Exception e) {
 			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
 		}
@@ -242,9 +279,16 @@ public class ManagedBuildTestHelper {
 		return true;
 	}
 
-	static public boolean verifyFilesDoNotExist(IProject project, IPath testDir, IPath[] files) {
+	static public boolean verifyFilesDoNotExist(final IProject project, IPath testDir, IPath[] files) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			}
+		};
 		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			workspace.run(runnable, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 		} catch (Exception e) {
 			Assert.fail("File " + files[0].lastSegment() + " - project refresh failed.");
 		}

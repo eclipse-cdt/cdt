@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -328,18 +327,7 @@ public class UpdateManagedProjectManager {
 	static public void updateProject(final IProject project, ManagedBuildInfo info) 
 						throws CoreException{
 		try {
-			// Refresh the project here since we may be called before an import operation has fully 
-			// completed setting up the project's resources
-			IWorkspace workspace = project.getWorkspace();
-			final ManagedBuildInfo mbsInfo = info;
-			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-				}
-			};
-			// TODO:  This is causing a "workspace locked" error (sometimes), but I don't know why...
-			//workspace.run(runnable, project, IWorkspace.AVOID_UPDATE, null);
-			getUpdateManager(project).doProjectUpdate(mbsInfo);
+			getUpdateManager(project).doProjectUpdate(info);
 		} finally {
 			removeUpdateManager(project);
 			// We have to this here since we use java.io.File to handle the update.

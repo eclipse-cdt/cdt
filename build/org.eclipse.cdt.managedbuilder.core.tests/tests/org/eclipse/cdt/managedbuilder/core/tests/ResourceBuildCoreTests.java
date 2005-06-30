@@ -38,8 +38,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -569,7 +571,7 @@ public class ResourceBuildCoreTests extends TestCase {
 	
 	private IProject createProject(String name) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject newProjectHandle = root.getProject(name);
+		final IProject newProjectHandle = root.getProject(name);
 		IProject project = null;
 		
 		if (!newProjectHandle.exists()) {
@@ -581,7 +583,14 @@ public class ResourceBuildCoreTests extends TestCase {
 			//description.setLocation(root.getLocation());
 			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
 		} else {
-			newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, null);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				}
+			};
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
 			project = newProjectHandle;
 		}
         

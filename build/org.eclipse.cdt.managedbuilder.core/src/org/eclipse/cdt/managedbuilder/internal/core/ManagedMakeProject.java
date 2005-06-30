@@ -19,6 +19,12 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICOwner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 
 /**
  * @since 2.0
@@ -27,7 +33,7 @@ public class ManagedMakeProject implements ICOwner {
 
 	/**
 	 * Zero-argument constructor to fulfill the contract for 
-	 * implementation calsses supplied via an extension point 
+	 * implementation classes supplied via an extension point 
 	 */
 	public ManagedMakeProject() {
 		super();
@@ -39,24 +45,55 @@ public class ManagedMakeProject implements ICOwner {
 	public void configure(ICDescriptor cproject) throws CoreException {
 		cproject.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 		cproject.remove(CCorePlugin.BUILDER_MODEL_ID);
-		cproject.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-		
+		updateBinaryParsers(cproject);
 		updateIndexers(cproject);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICOwner#update(org.eclipse.cdt.core.ICDescriptor, java.lang.String)
 	 */
-	public void update(ICDescriptor cproject, String extensionID)
-			throws CoreException {
-		
+	public void update(ICDescriptor cproject, String extensionID) throws CoreException {
+		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
+			updateBinaryParsers(cproject);
+		}
+				
 		if (extensionID.equals(CCorePlugin.INDEXER_UNIQ_ID)) {
 			updateIndexers(cproject);
 		}
-
 	}
 	
-	private void updateBinaryParsers(ICDescriptor cproject) throws CoreException {
+	private void updateBinaryParsers(ICDescriptor cDescriptor) throws CoreException {
+		IManagedBuildInfo buildInfo = null;
+		String[] ids = null;
+		try {
+			IProject project = cDescriptor.getProject();
+			buildInfo = ManagedBuildManager.getBuildInfo(project);
+			if (buildInfo != null) {
+				IConfiguration config = buildInfo.getDefaultConfiguration();
+				if (config == null && buildInfo.getManagedProject() != null) {
+					IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
+					if (configs != null && configs.length > 0)
+						config = configs[0];
+				}
+				if (config != null) {
+					//  Get the values from the current configuration
+					IToolChain toolChain = config.getToolChain();
+					if (toolChain != null) {
+						ITargetPlatform targPlatform = toolChain.getTargetPlatform();
+						if (targPlatform != null) {
+							ids = targPlatform.getBinaryParserList();
+						}
+					}
+				}
+			}
+		} catch (Exception e) {return;}
+		
+		cDescriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+		if (ids != null) {
+			for (int i = 0; i < ids.length; i++) {
+				cDescriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, ids[i]);
+			}
+		}
 	}
 	
 	private void updateIndexers(ICDescriptor cDescriptor) throws CoreException {

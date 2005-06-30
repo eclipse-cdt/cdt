@@ -37,6 +37,8 @@ import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -362,14 +364,20 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("sources.mk")}; 		
 
 		IProject[] projects = createProjects("deleteFile", null, null, true);
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		ArrayList resourceList = new ArrayList(1);
 		IProject project = projects[0];
 		IFile projfile = project.getFile("filetobedeleted.cxx");
 		resourceList.add(projfile);
-		IResource[] fileResource = (IResource[])resourceList.toArray(new IResource[resourceList.size()]);
+		final IResource[] fileResource = (IResource[])resourceList.toArray(new IResource[resourceList.size()]);
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+			    workspace.delete(fileResource, false, null);
+			}
+		};
 		try {
-		    workspace.delete(fileResource, false, null);
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			workspace.run(runnable, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 		} catch (Exception e) { 
 		    fail("could not delete file in project " + project.getName());
 		}

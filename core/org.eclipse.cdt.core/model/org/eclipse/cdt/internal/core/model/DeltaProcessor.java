@@ -618,19 +618,7 @@ public class DeltaProcessor {
 		 	break;
 		 	
 		 	case ICElement.C_UNIT:
-			//if the element has changed check to see if file is header, if it is don't schedule for index - update dependencies will
-			//take care of it.
-			//otherwise just schedule element for index
-			boolean shouldAddFile=false;
-			IProject project = element.getCProject().getProject();
-			if (elementHasChanged){
-				if (CoreModel.isValidSourceUnitName(project, element.getElementName()))
-					shouldAddFile=true;
-			} else {
-				shouldAddFile = true;
-			}
-			if (shouldAddFile)
-				indexManager.addResourceEvent(project,delta, ICDTIndexer.COMPILATION_UNIT);
+			indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.COMPILATION_UNIT);
 		 	break;
 		}
 		

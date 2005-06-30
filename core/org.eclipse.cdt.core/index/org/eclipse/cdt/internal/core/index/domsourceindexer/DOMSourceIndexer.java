@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -428,8 +429,21 @@ public class DOMSourceIndexer extends AbstractCExtension implements ICDTIndexer 
 			break;
 			
 			case ICDTIndexer.COMPILATION_UNIT:
+				//if the element has changed check to see if file is header, if it is don't schedule for index - update dependencies will
+				//take care of it.
+				//otherwise just schedule element for index
+				boolean shouldAddFile=false;
 				IFile file = (IFile) delta.getResource();
-				this.addSource(file, project.getFullPath());
+		
+				if (delta.getKind()==IResourceDelta.CHANGED){
+					if (CoreModel.isValidSourceUnitName(project, file.getName()))
+						shouldAddFile=true;
+				} else {
+					shouldAddFile = true;
+				}
+				if (shouldAddFile){
+					this.addSource(file, project.getFullPath());
+				}
 				break;						
 		}
 		

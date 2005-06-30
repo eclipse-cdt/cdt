@@ -236,6 +236,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		if (fProjectionModelUpdater != null) {
 			fProjectionModelUpdater.initialize();
 		}
+		if (fCEditorErrorTickUpdater != null) {
+			fCEditorErrorTickUpdater.updateEditorImage(getInputCElement());
+		}
 	}
 
 	/**
@@ -247,10 +250,24 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	}
 
 	/**
-	 * Gets the current input
-     * @return IFile Input file.
+	 * Returns the C element wrapped by this editors input.
+	 *
+	 * @return the C element wrapped by this editors input.
+	 * @since 3.0
 	 */
-	public IFile getInputFile() {
+	public ICElement getInputCElement () {
+		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(getEditorInput());
+	}
+
+	/**
+	 * Gets the current IFile input.
+	 * This method will be remove after cdt-3.0.
+	 * We can not guaranty that the input is an IFile, it may
+	 * an external file.  Clients should test for <code>null<code> or use getInputCElement()
+	 * @deprecated use <code>CEditor.getInputCElement()</code>.
+     * @return IFile Input file or null if input is not and IFileEditorInput.
+	 */
+	public IFile getInputFile() {		
 		IEditorInput editorInput = getEditorInput();
 		if (editorInput != null) {
 			if ((editorInput instanceof IFileEditorInput)) {

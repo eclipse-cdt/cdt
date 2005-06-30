@@ -83,8 +83,9 @@ public class ReferencesSearchGroup extends ActionGroup {
 		}
 		
 		if (fEditor != null){
-			IFile fileInput= fEditor.getInputFile();
-			ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(fileInput.getProject());
+			//IFile fileInput= fEditor.getInputFile();
+			ICElement celement = fEditor.getInputCElement();
+			ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(celement.getCProject().getProject());
 			if (indexer != null){
 				setReferenceMenuEnabled(indexer.getIndexerFeatures());
 			}

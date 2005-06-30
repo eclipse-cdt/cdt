@@ -1,3 +1,8 @@
+2005-06-29 Alain Magloire
+	Fix PR 102159: NPE in the referencesSearchGroup: fillcontextMenu.
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/ReferencesSearchGroup.java
+
 2005-06-25 Alain Magloire
 	Fix PR 98458: extra semicolon in namespace wizard class.
 	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java

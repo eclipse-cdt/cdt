@@ -476,11 +476,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	}
 
 	private IResource getAddressBreakpointResource( String fileName ) {
-		IPath path = new Path( fileName );
-		if ( path.isValidPath( fileName ) ) {
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
-			if ( files.length > 0 )
-				return files[0];
+		if ( fileName != null ) {
+			IPath path = new Path( fileName );
+			if ( path.isValidPath( fileName ) ) {
+				IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
+				if ( files.length > 0 )
+					return files[0];
+			}
 		}
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}

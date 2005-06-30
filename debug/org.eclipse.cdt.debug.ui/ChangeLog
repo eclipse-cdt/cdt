@@ -1,3 +1,7 @@
+2005-06-30 Mikhail Khodjaiants
+	Bug 102386: double-clicking on a disassembly line in the disassembly view does not add a breakpoint.
+	* ToggleBreakpointAdapter.java
+
 2005-06-29 Mikhail Khodjaiants
 	Bug 41725: I can't set a breakpoint in a function where I used attach source.
 	Bug 45514: Breakpoints made is assembly view do not show in C view.

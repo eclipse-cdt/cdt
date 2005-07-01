@@ -120,6 +120,15 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		optionPage.updateProjectTypeProperties();
 	}
 
+	protected void addNature(IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("", 2);
+		monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_NATURE));
+		ManagedCProjectNature.addManagedNature(newProject, new SubProgressMonitor(monitor, 1));
+		monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_BUILDER));
+		ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
+		monitor.done();
+	}
+	
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -130,10 +139,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 
 		// Add the managed build nature and builder
 		try {
-			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_NATURE));
-			ManagedCProjectNature.addManagedNature(newProject, new SubProgressMonitor(monitor, 1));
-			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_BUILDER));
-			ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
+			addNature(new SubProgressMonitor(monitor, 2));
 		} catch (CoreException e) {
 			ManagedBuilderUIPlugin.log(e);
 		}
@@ -143,10 +149,10 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		IManagedBuildInfo info = null;
 		try {
 			info = ManagedBuildManager.createBuildInfo(newProject);
-			IProjectType parent = projectConfigurationPage.getSelectedProjectType();
+			IProjectType parent = getSelectedProjectType();
 			newManagedProject = ManagedBuildManager.createManagedProject(newProject, parent);
 			if (newManagedProject != null) {
-				IConfiguration [] selectedConfigs = projectConfigurationPage.getSelectedConfigurations();
+				IConfiguration [] selectedConfigs = getSelectedConfigurations();
 				for (int i = 0; i < selectedConfigs.length; i++) {
 					IConfiguration config = selectedConfigs[i];
 					int id = ManagedBuildManager.getRandomNumber();
@@ -257,4 +263,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		return projectConfigurationPage.getSelectedProjectType();
 	}
 
+	public IConfiguration[] getSelectedConfigurations() {
+		return projectConfigurationPage.getSelectedConfigurations();
+	}
 }

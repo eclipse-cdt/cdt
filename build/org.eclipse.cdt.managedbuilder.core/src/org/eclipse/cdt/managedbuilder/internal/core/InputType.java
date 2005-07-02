@@ -25,6 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IInputOrder;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
@@ -687,16 +688,17 @@ public class InputType extends BuildObject implements IInputType {
 	 * Returns the project that uses this IInputType 
 	 */
 	public IProject getProject(ITool tool) {
-		IProject project = null;
 		IBuildObject toolParent = tool.getParent();
 		if (toolParent != null) {
 			if (toolParent instanceof IToolChain) {
-				return (IProject)((IToolChain)toolParent).getParent().getOwner();
+				IConfiguration config = ((IToolChain)toolParent).getParent();
+				if (config == null) return null;
+				return (IProject)config.getOwner();
 			} else if (toolParent instanceof IResourceConfiguration) {
 				return (IProject)((IResourceConfiguration)toolParent).getOwner();
 			}
 		}
-		return project;
+		return null;
 	}
 	
 	/* (non-Javadoc)

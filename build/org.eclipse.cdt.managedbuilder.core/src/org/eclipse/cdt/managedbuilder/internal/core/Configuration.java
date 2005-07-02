@@ -309,9 +309,9 @@ public class Configuration extends BuildObject implements IConfiguration {
 			// the selected configuration element, create a tool element child of 
 			// the cloned configuration's tool-chain element that specifies the 
 			// original tool element as its superClass.
-			Iterator iter = superChain.getToolList().listIterator();
-			while (iter.hasNext()) {
-			    Tool toolChild = (Tool) iter.next();
+			ITool[] tools = superChain.getTools();
+			for (int i=0; i<tools.length; i++) {
+			    Tool toolChild = (Tool)tools[i];
 				nnn = ManagedBuildManager.getRandomNumber();
 				tmpId = toolChild.getId();
 				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);

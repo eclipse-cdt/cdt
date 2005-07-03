@@ -18,6 +18,7 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -26,11 +27,15 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
@@ -71,18 +76,19 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("testResourceCustomBuildStep"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_1"));
 		suite.addTest(new ManagedProject30MakefileTests("test30_2"));
+		suite.addTest(new ManagedProject30MakefileTests("testTopTC"));
 		return suite;
 	}
 
 	private IProject[] createProject(String projName, IPath location, String projectTypeId, boolean containsZip){
-		File testDir = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/" + projName));
-		if(testDir == null) {
-			fail("Test project directory " + testDir.getName() + " is missing.");
-			return null;
-		}
-
 		ArrayList projectList = null;
 		if (containsZip) {
+			File testDir = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/" + projName));
+			if(testDir == null) {
+				fail("Test project directory " + projName + " is missing.");
+				return null;
+			}
+
 			File projectZips[] = testDir.listFiles(new FileFilter(){
 				public boolean accept(File pathname){
 					if(pathname.isDirectory())
@@ -503,5 +509,37 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("test30_2", null, null, true);
 		buildProjects(projects, makefiles);
+	}
+	
+	/* (non-Javadoc)
+	 * tests 3.0 top-level tool-chain definition
+	 */
+	public void testTopTC(){
+		IProject[] projects = createProjects("TopTC", null, "TopTC.target.exe", false);
+		//  There should be only one project.
+		assertNotNull(projects);
+		assertEquals(1, projects.length);
+		IProject project = projects[0];
+		//  Verify a number of other attributes
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		assertNotNull(info);
+		IManagedProject managedProj = info.getManagedProject();
+		assertNotNull(managedProj);
+		IConfiguration[] configs = managedProj.getConfigurations();
+		assertNotNull(configs);
+		assertEquals(2, configs.length);
+		//  Make sure that each configuration has a tool-chain with all 5 tools
+		for (int i=0; i<configs.length; i++) {
+			IConfiguration config = configs[i];
+			ToolChain tc = (ToolChain)config.getToolChain();
+			Iterator iter = tc.getToolList().listIterator();
+			int j = 0;
+			while (iter.hasNext()) {
+				Tool toolChild = (Tool) iter.next();
+				j++;
+			}
+			assertEquals(5, j);
+		}
+		buildDegenerativeProjects(projects, null);
 	}
 }

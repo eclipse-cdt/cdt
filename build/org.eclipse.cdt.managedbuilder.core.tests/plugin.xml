@@ -3830,5 +3830,130 @@
          
       </projectType>     
 
+  	  <!-- Test tool-chain defined at top level -->
+
+      <toolChain
+      	id="TopTC.toolchain.base"
+      	name="TopLevel Toolchain"
+      	isAbstract="true"
+      	scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+      		<targetPlatform
+      			id="TopTC.platform"
+      			name="TopTC Platform"
+      			binaryParser="org.eclipse.cdt.core.PE"/>
+      		<builder
+      			id="TopTC.managedbuilder"
+      			name="TopTC Builder"/>
+      		<tool
+      			id="TopTC.tool.assembler"
+      			superClass="cdt.managedbuild.tool.gnu.assembler"/>
+      </toolChain>
+      <toolChain
+      	id="TopTC.toolchain.release"
+      	name="TopTC Release Toolchain"
+      	isAbstract="true"
+      	superClass="TopTC.toolchain.base">
+      		<tool
+      			id="TopTC.c.compiler.release"
+      			superClass="cdt.managedbuild.tool.gnu.c.compiler"
+      			command="$(CC)">
+      				<option
+      					id="TopTC.c.compiler.release.option.optimization.level"
+      					superClass="gnu.c.compiler.option.optimization.level"
+      					defaultValue="gnu.c.optimization.level.most"/>
+      				<option
+      					id="TopTC.c.compiler.release.option.debugging.level"
+      					superClass="gnu.c.compiler.option.debugging.level"
+      					defaultValue="gnu.c.debugging.level.none"/>
+      		</tool>
+      		<tool
+      			id="TopTC.tool.cpp.compiler.release"
+      			superClass="cdt.managedbuild.tool.gnu.cpp.compiler"
+      			command="$(CXX)">
+      				<option
+      					id="TopTC.cpp.compiler.release.option.optimization.level"
+      					superClass="gnu.cpp.compiler.option.optimization.level"
+      					defaultValue="gnu.cpp.compiler.optimization.level.most"/>
+      				<option
+      					id="TopTC.cpp.compiler.release.option.debugging.level"
+      					superClass="gnu.cpp.compiler.option.debugging.level"
+      					defaultValue="gnu.cpp.compiler.debugging.level.none"/>
+      		</tool>
+      </toolChain>
+      <toolChain
+      	id="TopTC.toolchain.debug"
+      	name="TopTC Debug Toolchain"
+      	isAbstract="true"
+      	superClass="TopTC.toolchain.base">
+      		<tool
+      			id="TopTC.c.compiler.debug"
+      			superClass="cdt.managedbuild.tool.gnu.c.compiler"
+      			command="$(CC)">
+      				<option
+      					id="TopTC.c.compiler.debug.option.optimization.level"
+      					superClass="gnu.c.compiler.option.optimization.level"
+      					defaultValue="gnu.c.optimization.level.none"/>
+      				<option
+      					id="TopTC.c.compiler.debug.option.debugging.level"
+      					superClass="gnu.c.compiler.option.debugging.level"
+      					defaultValue="gnu.c.debugging.level.max"/>
+      		</tool>
+      		<tool
+      			id="TopTC.cpp.compiler.debug"
+      			superClass="cdt.managedbuild.tool.gnu.cpp.compiler"
+      			command="$(CXX)">
+      				<option
+      					id="TopTC.cpp.compiler.debug.option.optimization.level"
+      					superClass="gnu.cpp.compiler.option.optimization.level"
+      					defaultValue="gnu.cpp.compiler.optimization.level.none"/>
+      				<option
+      					id="TopTC.cpp.compiler.debug.option.debugging.level"
+      					superClass="gnu.cpp.compiler.option.debugging.level"
+      					defaultValue="gnu.cpp.compiler.debugging.level.max"/>
+      		</tool>
+      </toolChain>
+      <projectType
+      	isAbstract="false"
+      	isTest="true"
+        name="TopTC exe"
+        id="TopTC.target.exe">   
+            <configuration
+            	id="TopTC.config.exe.debug"
+            	name="Debug"
+		      	errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+		      	cleanCommand="rm -rf">
+		      		<toolChain
+		      			id="TopTC.toolchain.exe.debug"
+		      			superClass="TopTC.toolchain.debug">
+		      				<tool
+		      					id="TopTC..c.linker.exe.debug"
+		      					superClass="cdt.managedbuild.tool.gnu.c.linker"
+		      					command="$(CC)"/>
+		      				<tool
+		      					id="TopTC.cpp.linker.exe.debug"
+		      					superClass="cdt.managedbuild.tool.gnu.cpp.linker"
+		      					command="$(CXX)"/>
+		      		</toolChain>
+		    </configuration>
+            <configuration
+            	id="TopTC.config.exe.release"
+            	name="Release"
+		      	errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+		      	cleanCommand="rm -rf">
+		      		<toolChain
+		      			id="TopTC.toolchain.exe.release"
+		      			superClass="TopTC.toolchain.release">
+		      				<tool
+		      					id="TopTC..c.linker.exe.release"
+		      					superClass="cdt.managedbuild.tool.gnu.c.linker"
+		      					command="$(CC)"/>
+		      				<tool
+		      					id="TopTC..cpp.linker.exe.release"
+		      					superClass="cdt.managedbuild.tool.gnu.cpp.linker"
+		      					command="$(CXX)"/>
+		      		</toolChain>
+		    </configuration>
+	  </projectType>
+
    </extension>
 </plugin>

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -22,7 +23,6 @@ public interface ICDebugTarget extends IDebugTarget,
 									   IRestart,
 									   IResumeWithoutSignal,
 									   ICDebugElement,
-									   IBreakpointTarget,
 									   ISteppingModeTarget,
 									   ITargetProperties {
 
@@ -134,4 +134,12 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * @since 3.0
 	 */
 	public void restoreDefaultRegisterGroups();
+
+	/**
+	 * Returns the target address of the given breakpoint.
+	 * 
+	 * @return the target address of the given breakpoint
+	 * @throws DebugException if the address is not available
+	 */
+	public IAddress getBreakpointAddress( ICLineBreakpoint breakpoint ) throws DebugException;
 }

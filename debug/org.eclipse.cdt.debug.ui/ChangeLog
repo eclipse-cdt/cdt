@@ -1,3 +1,7 @@
+2005-07-04 Mikhail Khodjaiants
+	Removed the "IBreakpointTarget" interface.
+	* DisassemblyEditorInput.java
+
 2005-06-30 Mikhail Khodjaiants
 	Bug 102386: double-clicking on a disassembly line in the disassembly view does not add a breakpoint.
 	* ToggleBreakpointAdapter.java

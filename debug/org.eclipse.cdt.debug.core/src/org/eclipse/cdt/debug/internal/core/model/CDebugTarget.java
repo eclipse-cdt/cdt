@@ -1567,13 +1567,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.IBreakpointTarget#isTargetBreakpoint(org.eclipse.cdt.debug.core.model.ICBreakpoint)
-	 */
-	public boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
-		return (getBreakpointManager() != null) ? getBreakpointManager().isTargetBreakpoint( breakpoint ) : false;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#enableInstructionStepping(boolean)
 	 */
 	public void enableInstructionStepping( boolean enabled ) {

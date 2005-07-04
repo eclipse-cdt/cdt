@@ -856,7 +856,7 @@ public class Elf {
 		if (sec != null) {
 			for (int i = 0; i < sec.length; i++) {
 				String s = sec[i].toString();
-				if (s.equals(".debug_info")) { //$NON-NLS-1$
+				if (s.startsWith(".debug")) { //$NON-NLS-1$
 					attrib.debugType = Attribute.DEBUG_TYPE_DWARF;
 					break;
 				} else if (s.equals(".stab")) { //$NON-NLS-1$

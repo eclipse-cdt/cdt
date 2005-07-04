@@ -2265,6 +2265,20 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		// If I need saving, just say yes
 		if (isDirty) return true;
 		
+		// Check my children
+		List typeElements = getInputTypeList();
+		Iterator iter = typeElements.listIterator();
+		while (iter.hasNext()) {
+			InputType type = (InputType) iter.next();
+			if (type.isDirty()) return true;
+		}
+		typeElements = getOutputTypeList();
+		iter = typeElements.listIterator();
+		while (iter.hasNext()) {
+			OutputType type = (OutputType) iter.next();
+			if (type.isDirty()) return true;
+		}
+		
 		// Otherwise see if any options need saving
 		if (super.isDirty()) {
 			return true;

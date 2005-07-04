@@ -1105,6 +1105,19 @@ public class InputType extends BuildObject implements IInputType {
 	public boolean isDirty() {
 		// This shouldn't be called for an extension InputType
  		if (isExtensionInputType) return false;
+ 		
+ 		// Check my children
+		Iterator typeIter = getInputOrderList().iterator();
+		while (typeIter.hasNext()) {
+			InputOrder current = (InputOrder)typeIter.next();
+			if (current.isDirty()) return true;
+		}
+		typeIter = getAdditionalInputList().iterator();
+		while (typeIter.hasNext()) {
+			AdditionalInput current = (AdditionalInput)typeIter.next();
+			if (current.isDirty()) return true;
+		}
+ 		
 		return isDirty;
 	}
 
@@ -1113,6 +1126,19 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
+		// Propagate "false" to the children
+		if (!isDirty) {
+			Iterator typeIter = getInputOrderList().iterator();
+			while (typeIter.hasNext()) {
+				InputOrder current = (InputOrder)typeIter.next();
+				current.setDirty(false);
+			}
+			typeIter = getAdditionalInputList().iterator();
+			while (typeIter.hasNext()) {
+				AdditionalInput current = (AdditionalInput)typeIter.next();
+				current.setDirty(false);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)

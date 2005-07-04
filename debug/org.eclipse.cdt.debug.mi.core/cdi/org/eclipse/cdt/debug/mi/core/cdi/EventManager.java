@@ -78,9 +78,9 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackInfoDepthInfo;
 public class EventManager extends SessionObject implements ICDIEventManager, Observer {
 
 	List list = Collections.synchronizedList(new ArrayList(1));
-	List tokenList = new ArrayList(1); 
 	MIRunningEvent lastRunningEvent;
 	Command lastUserCommand = null;
+	boolean fAllowProcessingEvents = true;
 
 	/**
 	 * Process the event from MI, do any state work on the CDI,
@@ -95,9 +95,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 		List cdiList = new ArrayList(1);
 
-		if (ignoreEventToken(miEvent.getToken())) {
-			// Ignore the event if it is on the ignore list.
-		} else if (miEvent instanceof MIStoppedEvent) {
+		if (miEvent instanceof MIStoppedEvent) {
 			if (processSuspendedEvent((MIStoppedEvent)miEvent)) {
 				cdiList.add(new SuspendedEvent(session, miEvent));
 			}
@@ -262,6 +260,13 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		Session session = (Session)getSession();
 		MISession miSession = stopped.getMISession();
 		Target currentTarget = session.getTarget(miSession);
+		currentTarget.setSupended(true);
+
+		// Bailout early if we do not want to process any events.
+		if (!isAllowingProcessingEvents()) {
+			return false;
+		}
+
 		if (processSharedLibEvent(stopped)) {
 			// Event was consumed by the shared lib processing bailout
 			return false;
@@ -506,46 +511,24 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 */
 	boolean processRunningEvent(MIRunningEvent running) {
 		lastRunningEvent = running;
+
+		Session session = (Session)getSession();
+		MISession miSession = running.getMISession();
+		Target currentTarget = session.getTarget(miSession);
+		currentTarget.setSupended(false);
+
+		if (!isAllowingProcessingEvents()) {
+			return false;
+		}
 		return true;
 	}
 
-
-	/**
-	 * Ignore Event with token id.
-	 */
-	void disableEventToken(int token) {
-		tokenList.add(new Integer(token));
+	public boolean isAllowingProcessingEvents() {
+		return fAllowProcessingEvents;
 	}
 
-	/**
-	 * Ignore events with token ids.
-	 */
-	void disableEventTokens(int [] tokens) {
-		for (int i = 0; i < tokens.length; i++) {
-			disableEventToken(tokens[i]);
-		}
+	public void allowProcessingEvents(boolean allowed) {
+		fAllowProcessingEvents = allowed;
 	}
 
-	/**
-	 * Reenable sending events with this token.
-	 */
-	void enableEventToken(int token) {
-		Integer t = new Integer(token);
-		if (tokenList.contains(t)) {
-			tokenList.remove(t);
-		}
-	}
-
-	/**
-	 * Reenable sending events with this token.
-	 */
-	void enableEventTokens(int [] tokens) {
-		for (int i = 0; i < tokens.length; i++) {
-			enableEventToken(tokens[i]);
-		}
-	}
-
-	private boolean ignoreEventToken(int token) {
-		return tokenList.contains(new Integer(token));
-	}
 }

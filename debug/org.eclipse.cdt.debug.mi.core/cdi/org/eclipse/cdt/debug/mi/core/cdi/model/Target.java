@@ -81,7 +81,8 @@ public class Target extends SessionObject implements ICDITarget {
 	Thread[] noThreads = new Thread[0];
 	Thread[] currentThreads;
 	int currentThreadId;
-	
+	boolean suspended = true;
+
 	public Target(Session s, MISession mi) {
 		super(s);
 		miSession = mi;
@@ -119,6 +120,11 @@ public class Target extends SessionObject implements ICDITarget {
 		} else {
 			throw new CDIException(CdiResources.getString("cdi.model.Target.Unknown_thread")); //$NON-NLS-1$
 		}
+	}
+
+	public synchronized void setSupended(boolean state) {
+		suspended = state;
+		notifyAll();
 	}
 
 	/**
@@ -495,6 +501,15 @@ public class Target extends SessionObject implements ICDITarget {
 	public void suspend() throws CDIException {
 		try {
 			miSession.getMIInferior().interrupt();
+			// Wait till the EventManager tell us the go ahead
+			synchronized (this) {
+				for (int i = 0; !suspended && i < 6; i++) {
+					try {
+						wait(1000);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}

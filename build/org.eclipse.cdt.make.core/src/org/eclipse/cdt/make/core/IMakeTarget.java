@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.core;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,6 +22,8 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 
 	String getName();
 	String getTargetBuilderID();
+	
+	IProject getProject();
 	
 	/**
 	 * @deprecated

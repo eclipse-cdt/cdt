@@ -19,6 +19,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -68,18 +69,15 @@ public class AddBuildTargetAction extends Action {
 					sbMakefileTarget.append(' ').append(name);
 				}
 			}
-			String buildName = sbBuildName.toString();
+			String buildName = generateUniqueName(file.getParent(), sbBuildName.toString());
 			String makefileTarget = sbMakefileTarget.toString();
-			IMakeTarget target;
+			IMakeTarget target = null;
 			try {
-				target = manager.findTarget(file.getParent(), buildName);
-				if (target == null) {
-					String[] ids = manager.getTargetBuilders(file.getProject());
-					if (ids.length > 0) {
-						target = manager.createTarget(file.getProject(), buildName, ids[0]);
-						target.setBuildTarget(makefileTarget);
-						manager.addTarget(file.getParent(), target);
-					}
+				String[] ids = manager.getTargetBuilders(file.getProject());
+				if (ids.length > 0) {
+					target = manager.createTarget(file.getProject(), buildName, ids[0]);
+					target.setBuildAttribute(IMakeTarget.BUILD_TARGET, makefileTarget);
+					target.setContainer(file.getParent());
 				}
 			} catch (CoreException e) {
 				MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddBuildTargetAction.exception.internal"), e.toString(), e); //$NON-NLS-1$
@@ -99,6 +97,20 @@ public class AddBuildTargetAction extends Action {
 		}
 	}
 
+	private String generateUniqueName(IContainer container, String targetString) {
+		String newName = targetString;
+		int i = 0;
+		IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();
+		try {
+			while (manager.findTarget(container, newName) != null) {
+				i++;
+				newName = targetString + " (" + Integer.toString(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		} catch (CoreException e) {
+		}
+		return newName;
+	}
+	
 	public boolean canActionBeAdded(ISelection selection) {
 		ITargetRule[] rules = getTargetRules(selection);
 		for (int i = 0; i < rules.length; i++) {

@@ -91,7 +91,7 @@ public class MakeTargetDialog extends Dialog {
 		buildCommand = target.getBuildCommand();
 		buildArguments = target.getBuildArguments();
 		targetName = target.getName();
-		targetString = target.getBuildTarget();
+		targetString = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, "all");
 		targetBuildID = target.getTargetBuilderID();
 		runAllBuilders = target.runAllBuilders();
 	}
@@ -125,7 +125,7 @@ public class MakeTargetDialog extends Dialog {
 
 	private String getTitle() {
 		String title;
-		if (fTarget == null) {
+		if (fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget)) {
 			title = MakeUIPlugin.getResourceString("MakeTargetDialog.title.createMakeTarget"); //$NON-NLS-1$
 		} else {
 			title = MakeUIPlugin.getResourceString("MakeTargetDialog.title.modifyMakeTarget"); //$NON-NLS-1$
@@ -298,10 +298,10 @@ public class MakeTargetDialog extends Dialog {
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-		if (fTarget != null) {
-			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.update"), true); //$NON-NLS-1$
-		} else {
+		if (fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget)) {
 			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.create"), true); //$NON-NLS-1$
+		} else {
+			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.update"), true); //$NON-NLS-1$
 		}
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		//do this here because setting the text will set enablement on the ok
@@ -333,7 +333,7 @@ public class MakeTargetDialog extends Dialog {
 	}
 
 	protected boolean targetHasChanged() {
-		if (initializing || fTarget == null)
+		if (initializing || fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget))
 			return true;
 		if (isStopOnError != isStopOnError())
 			return true;
@@ -421,16 +421,16 @@ public class MakeTargetDialog extends Dialog {
 				} else {
 					path = new Path(bldLine.substring(start, end));
 				}
-				target.setBuildCommand(path);
+				target.setBuildAttribute(IMakeTarget.BUILD_COMMAND, path.toString());
 				String args = ""; //$NON-NLS-1$
 				if (end != -1) {
 					args = bldLine.substring(end + 1);
 				}
-				target.setBuildArguments(args);
+				target.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, args);
 			}
-			target.setBuildTarget(getTarget());
+			target.setBuildAttribute(IMakeTarget.BUILD_TARGET, getTarget());
 
-			if (fTarget == null) {
+			if (fTarget == null || !MakeCorePlugin.getDefault().getTargetManager().targetExists(fTarget)) {
 				fTargetManager.addTarget(fContainer, target);
 			} else {
 				if (!target.getName().equals(getTargetName())) {

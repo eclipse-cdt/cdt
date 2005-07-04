@@ -59,19 +59,19 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return new MakeTarget(this, project, targetBuilderID, name);
 	}
 
+	public void addTarget(IMakeTarget target) throws CoreException {
+		addTarget(null, target);
+	}
+	
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
-		if (target.getContainer() != null) {
-			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_temporary_target"), null)); //$NON-NLS-1$
-		}
-		IProject project = container.getProject();
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
 		if (projectTargets == null) {
-			projectTargets = readTargets(project);
+			projectTargets = readTargets(target.getProject());
 		}
-		((MakeTarget) target).setContainer(container);
+		((MakeTarget) target).setContainer(container == null ? target.getProject() : container);
 		projectTargets.add((MakeTarget) target);
 		try {
 			writeTargets(projectTargets);
@@ -82,11 +82,18 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
 	}
 
-	public void removeTarget(IMakeTarget target) throws CoreException {
-		IProject project = target.getContainer().getProject();
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
+	public boolean targetExists(IMakeTarget target) {
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
 		if (projectTargets == null) {
-			projectTargets = readTargets(project);
+			projectTargets = readTargets(target.getProject());
+		}
+		return projectTargets.contains((MakeTarget) target);
+	}
+	
+	public void removeTarget(IMakeTarget target) throws CoreException {
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
+		if (projectTargets == null) {
+			projectTargets = readTargets(target.getProject());
 		}
 		if (projectTargets.remove((MakeTarget) target)) {
 			try {
@@ -100,10 +107,9 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
-		IProject project = target.getContainer().getProject();
-		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
+		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
 		if (projectTargets == null) {
-			projectTargets = readTargets(project);
+			projectTargets = readTargets(target.getProject());
 		}
 		if (!projectTargets.contains((MakeTarget)target)) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
@@ -250,8 +256,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void updateTarget(MakeTarget target) throws CoreException {
 	    if  (target.getContainer() != null ) { // target has not been added to manager.
-	    	IProject project = target.getContainer().getProject();
-			ProjectTargets projectTargets = (ProjectTargets)projectMap.get(project);
+			ProjectTargets projectTargets = (ProjectTargets)projectMap.get(target.getProject());
 	    	if (projectTargets == null || !projectTargets.contains(target)) {
 	    		return; // target has not been added to manager.
 	    	}

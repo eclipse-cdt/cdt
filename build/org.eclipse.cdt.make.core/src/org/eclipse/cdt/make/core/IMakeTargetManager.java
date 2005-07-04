@@ -16,10 +16,25 @@ import org.eclipse.core.runtime.CoreException;
 
 public interface IMakeTargetManager {
 	IMakeTarget createTarget(IProject project, String targetName, String targetBuilderID) throws CoreException;
+	/**
+	 * Adds target to manager.
+	 * @param target
+	 * @throws CoreException
+	 */
+	void addTarget(IMakeTarget target) throws CoreException;
+	
+	/**
+	 * Adds target to manager on a specific projects folder. 
+	 * @param container
+	 * @param target
+	 * @throws CoreException
+	 */
 	void addTarget(IContainer container, IMakeTarget target) throws CoreException;
 	void removeTarget(IMakeTarget target) throws CoreException;
 	void renameTarget(IMakeTarget target, String name) throws CoreException;
-
+	
+	boolean targetExists(IMakeTarget target);
+	
 	IMakeTarget[] getTargets(IContainer container) throws CoreException;
 	IMakeTarget findTarget(IContainer container, String name) throws CoreException;
 

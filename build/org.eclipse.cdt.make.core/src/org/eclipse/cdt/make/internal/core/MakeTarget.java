@@ -38,6 +38,7 @@ import org.eclipse.osgi.service.environment.Constants;
 public class MakeTarget extends PlatformObject implements IMakeTarget {
 
 	private final MakeTargetManager manager;
+	private final IProject project;
 	private String name;
 	private boolean isDefaultBuildCmd;
 	private boolean isStopOnError;
@@ -50,6 +51,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 
 	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
+		this.project = project; 
 		this.targetBuilderID = targetBuilderID;
 		this.name = name;
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(project, manager.getBuilderID(targetBuilderID));
@@ -61,6 +63,10 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		buildEnvironment = info.getEnvironment();
 	}
 
+	public IProject getProject() {
+		return project;
+	}
+	
 	public void setContainer(IContainer container) {
 		this.container = container;
 	}
@@ -103,7 +109,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		if (isDefaultBuildCmd()) {
 			IMakeBuilderInfo info;
 			try {
-				info = MakeCorePlugin.createBuildInfo(container.getProject(), manager.getBuilderID(targetBuilderID));
+				info = MakeCorePlugin.createBuildInfo(getProject(), manager.getBuilderID(targetBuilderID));
 				return info.getBuildCommand();
 			} catch (CoreException e) {
 			}
@@ -176,7 +182,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	public String[] getErrorParsers() {
 		IMakeBuilderInfo projectInfo;
 		try {
-			projectInfo = MakeCorePlugin.createBuildInfo(container.getProject(), manager.getBuilderID(targetBuilderID));
+			projectInfo = MakeCorePlugin.createBuildInfo(getProject(), manager.getBuilderID(targetBuilderID));
 			return projectInfo.getErrorParsers();
 		} catch (CoreException e) {
 		}
@@ -249,7 +255,6 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	}
 
 	public void build(IProgressMonitor monitor) throws CoreException {
-		final IProject project = container.getProject();
 		final String builderID = manager.getBuilderID(targetBuilderID);
 		final HashMap infoMap = new HashMap();
 
@@ -265,7 +270,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		if (container != null) {
 			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, container.getFullPath().toString());
 		}
-		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(project, builderID);
+		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), builderID);
 		info.setErrorParsers(projectInfo.getErrorParsers());
 		IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
@@ -301,7 +306,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IProject.class)) {
-			return container.getProject();
+			return getProject();
 		} else if (adapter.equals(IResource.class)) {
 			return container;
 		}

@@ -3512,7 +3512,7 @@ abstract class BaseScanner implements IScanner {
                 if (pos + 1 < limit) {
                     if (buffer[pos + 1] == '/') {
                         // C++ comment, skip rest of line
-                        skipToNewLine();
+                        skipToNewLine(true);
                         // leave the new line there
                         --bufferPos[bufferStackPos];
                         return false;
@@ -3856,6 +3856,10 @@ abstract class BaseScanner implements IScanner {
     }
 
     protected void skipToNewLine() {
+    	skipToNewLine(false);
+    }
+    
+    protected void skipToNewLine(boolean insideComment) {
         char[] buffer = bufferStack[bufferStackPos];
         int limit = bufferLimit[bufferStackPos];
         int pos = ++bufferPos[bufferStackPos];
@@ -3868,6 +3872,9 @@ abstract class BaseScanner implements IScanner {
         while (++bufferPos[bufferStackPos] < limit) {
             switch (buffer[bufferPos[bufferStackPos]]) {
             case '/':
+            	if (insideComment)
+            		break;
+            	
                 pos = bufferPos[bufferStackPos];
                 if (pos + 1 < limit && buffer[pos + 1] == '*') {
                     ++bufferPos[bufferStackPos];

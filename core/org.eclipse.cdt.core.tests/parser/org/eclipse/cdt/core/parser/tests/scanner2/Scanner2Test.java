@@ -2294,4 +2294,21 @@ public class Scanner2Test extends BaseScanner2Test
     	validateDefinition("TEST", "'y'"); //$NON-NLS-1$ //$NON-NLS-2$
     	validateDefinition("TRUE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
    }
+    
+   public void testBug102568A() throws Exception {
+	   initializeScanner("///*\r\nint x;\r\n");
+	   validateToken( IToken.t_int );
+	   validateIdentifier( "x" ); //$NON-NLS-1$
+	   validateToken( IToken.tSEMI );
+	   validateEOF();
+   }
+
+   public void testBug102568B() throws Exception {
+	   initializeScanner("// bla some thing /* ... \r\nint x;\r\n");
+	   validateToken( IToken.t_int );
+	   validateIdentifier( "x" ); //$NON-NLS-1$
+	   validateToken( IToken.tSEMI );
+	   validateEOF();
+   }
+   
 }

@@ -39,7 +39,7 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 
 /**
- * Test F2/F3 with the CTags Indexer for a C project.
+ * Test Ctrl_F3/F3 with the CTags Indexer for a C project.
  * 
  * @author dsteffle
  */
@@ -136,7 +136,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		IFile file = importFile("test.c", code); //$NON-NLS-1$
 		
 		int offset = code.indexOf("x();\n}\n"); //$NON-NLS-1$
-		ISelection def = testF2Selection(file, offset); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ISelection def = testCtrl_F3Selection(file, offset); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (def instanceof TextSelection) {
 			assertEquals(((TextSelection)def).getOffset(), header.indexOf("int x() { return 1; }\n"));
 			assertEquals(((TextSelection)def).getLength(), "int x() { return 1; }\n".length());
@@ -155,7 +155,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		IFile file = importFile("test.c", code); //$NON-NLS-1$
 		
 		int offset = code.indexOf("y();\n}\n"); //$NON-NLS-1$
-		ISelection def = testF2Selection(file, offset);
+		ISelection def = testCtrl_F3Selection(file, offset);
 		if (def instanceof TextSelection) {
 			assertEquals(((TextSelection)def).getOffset(), header.indexOf("int y() { return 1; }\r\n"));
 			assertEquals(((TextSelection)def).getLength(), "int y() { return 1; }\r\n".length());
@@ -184,7 +184,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         IFile file = importFile("testBasicDefinition.c", code); //$NON-NLS-1$
         
         int offset = code.indexOf("MyInt;\n") + 2; //$NON-NLS-1$
-        IASTNode def = testF2(file, offset);
+        IASTNode def = testCtrl_F3(file, offset);
         IASTNode decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -196,7 +196,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 5);
         
         offset = code.indexOf("MyConst = 42") + 2; //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -208,7 +208,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 7);
         
         offset = code.indexOf("MyFunc(int a)") + 2; //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -220,7 +220,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 6);
         
         offset = code.indexOf("MyStruct {") + 2; //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -274,7 +274,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         IFile file = importFile("testCPPSpecDeclsDefs.c", code); //$NON-NLS-1$
         
         int offset = code.indexOf("a; // defines a"); //$NON-NLS-1$
-        IASTNode def = testF2(file, offset);
+        IASTNode def = testCtrl_F3(file, offset);
         IASTNode decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -286,7 +286,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("c = 1; // defines c"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -298,7 +298,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("f(int x) { return x+a; } // defines f and defines x"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -310,7 +310,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("x) { return x+a; } // defines f and defines x"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -322,7 +322,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("x+a; } // defines f and defines x"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -334,7 +334,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("x+a; } // defines f and defines x"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -346,7 +346,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("a; } // defines f and defines x"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -358,7 +358,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("S { int a; int b; }; // defines S, S::a, and S::b"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -370,7 +370,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("a; int b; }; // defines S, S::a, and S::b"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -382,7 +382,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("b; }; // defines S, S::a, and S::b"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -394,7 +394,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("X { // defines X"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -406,7 +406,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("x; // defines nonstatic data member x"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -418,7 +418,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("up, down }; // defines up and down"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -430,7 +430,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 2);
 		
 		offset = code.indexOf("down }; // defines up and down"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -442,7 +442,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 4);
 		
 		offset = code.indexOf("X anX; // defines anX"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -454,7 +454,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("anX; // defines anX"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -466,7 +466,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 3);
 		
 		offset = code.indexOf("a; // declares a"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -478,7 +478,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("c; // declares c"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -490,7 +490,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("f(int); // declares f"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -502,7 +502,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("S; // declares S"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -514,7 +514,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("Int; // declares Int"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -526,7 +526,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 3);
         
 		offset = code.indexOf("X anotherX; // declares anotherX"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -538,7 +538,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)def).getLength(), 1);
 		
 		offset = code.indexOf("anotherX; // declares anotherX"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
        	assertNull(def);
 
@@ -560,7 +560,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         IFile file = importFile("testNoDefinitions.c", code); //$NON-NLS-1$
         
         int offset = code.indexOf("a1; // declares a"); //$NON-NLS-1$
-        IASTNode def = testF2(file, offset);
+        IASTNode def = testCtrl_F3(file, offset);
         IASTNode decl = testF3(file, offset);
        	assertNull(def);
 
@@ -570,7 +570,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)decl).getLength(), 2);
 		
 		offset = code.indexOf("c1; // declares c"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
        	assertNull(def);
         assertTrue(decl instanceof IASTName);
@@ -579,7 +579,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)decl).getLength(), 2);
 		
 		offset = code.indexOf("f1(int); // declares f"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertNull(def);
         assertTrue(decl instanceof IASTName);
@@ -588,7 +588,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)decl).getLength(), 2);
 		
 		offset = code.indexOf("S1; // declares S"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
        	assertNull(def);
         assertTrue(decl instanceof IASTName);
@@ -597,7 +597,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
         assertEquals(((ASTNode)decl).getLength(), 2);
 		
 		offset = code.indexOf("Int; // declares Int"); //$NON-NLS-1$
-        def = testF2(file, offset);
+        def = testCtrl_F3(file, offset);
         decl = testF3(file, offset);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
@@ -617,7 +617,7 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		IFile file = importFile("test.c", code);
 		
 		int offset = code.indexOf("y();\n}\n"); //$NON-NLS-1$
-		ISelection def = testF2Selection(file, offset);
+		ISelection def = testCtrl_F3Selection(file, offset);
 		if (def instanceof TextSelection) {
 			assertEquals(((TextSelection)def).getOffset(), header.indexOf(" int y() { return 1; } /* comment */ \r\n")); //$NON-NLS-1$
 			assertEquals(((TextSelection)def).getLength(), " int y() { return 1; } /* comment */ \r\n".length()); //$NON-NLS-1$

@@ -44,7 +44,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 import junit.framework.TestCase;
 
 /**
- * Base test class for testing F2/F3 with the indexers.
+ * Base test class for testing Ctrl_F3/F3 with the indexers.
  *  
  * @author dsteffle
  */
@@ -207,11 +207,11 @@ public class BaseSelectionTestsIndexer extends TestCase {
         return null;
     }
     
-	protected IASTNode testF2(IFile file, int offset) throws ParserException {
-		return testF2(file, offset, 0);
+	protected IASTNode testCtrl_F3(IFile file, int offset) throws ParserException {
+		return testCtrl_F3(file, offset, 0);
 	}
 	
-    protected IASTNode testF2(IFile file, int offset, int length) throws ParserException {
+    protected IASTNode testCtrl_F3(IFile file, int offset, int length) throws ParserException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
 		
@@ -254,11 +254,11 @@ public class BaseSelectionTestsIndexer extends TestCase {
         return null;
     }
     
-    protected ISelection testF2Selection(IFile file, int offset) throws ParserException {
-    	return testF2Selection(file, offset, 0);
+    protected ISelection testCtrl_F3Selection(IFile file, int offset) throws ParserException {
+    	return testCtrl_F3Selection(file, offset, 0);
     }
     
-    protected ISelection testF2Selection(IFile file, int offset, int length) throws ParserException {
+    protected ISelection testCtrl_F3Selection(IFile file, int offset, int length) throws ParserException {
 		if (offset < 0)
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
 		

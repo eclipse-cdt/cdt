@@ -43,7 +43,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Open Definition Action (F2).
+ * Open Definition Action (Ctrl+F3).
  * 
  * @author dsteffle
  */

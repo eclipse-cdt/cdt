@@ -885,7 +885,7 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
      <key
-            sequence="F2"
+            sequence="Ctrl+F3"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.opendef"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>

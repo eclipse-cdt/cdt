@@ -17,10 +17,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
-	
 	public final static String BUILD_TARGET = ARGS_PREFIX + ".build.target"; //$NON-NLS-1$
 
 	String getName();
+	
 	String getTargetBuilderID();
 	
 	IProject getProject();
@@ -37,6 +37,7 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	String getBuildTarget() ;
 	
 	void setRunAllBuilders(boolean runAllBuilders) throws CoreException;
+
 	boolean runAllBuilders();
 	
 	/**
@@ -52,6 +53,10 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	 * @param container
 	 */
 	void setContainer(IContainer container);
+	
+	void setAppendProjectEnvironment(boolean append);
+	
+	boolean appendProjectEnvironment();
 	
 	void build(IProgressMonitor monitor) throws CoreException;
 }

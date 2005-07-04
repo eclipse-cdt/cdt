@@ -56,7 +56,7 @@ public interface IMakeCommonBuildInfo {
 	String[] getErrorParsers();
 	void setErrorParsers(String[] parsers) throws CoreException;
 
-	Map getExpandedEnvironment();
+	Map getExpandedEnvironment() throws CoreException;
 
 	Map getEnvironment();
 	void setEnvironment(Map env) throws CoreException;

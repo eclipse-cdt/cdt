@@ -36,7 +36,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.service.environment.Constants;
 
 public class MakeTarget extends PlatformObject implements IMakeTarget {
-
+	private final static int USE_PROJECT_ENV_SETTING = 3;
 	private final MakeTargetManager manager;
 	private final IProject project;
 	private String name;
@@ -45,8 +45,9 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	boolean runAllBuidlers = true;
 	private String targetBuilderID;
 	private IContainer container;
-	private boolean appendEnvironment;
-	private Map buildEnvironment;
+	private int appendEnvironment = USE_PROJECT_ENV_SETTING;
+	private boolean appendProjectEnvironment = true;
+	private Map buildEnvironment = new HashMap();
 	private Map targetAttributes = new HashMap();
 
 	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
@@ -59,8 +60,6 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, info.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
 		isDefaultBuildCmd = info.isDefaultBuildCmd();
 		isStopOnError = info.isStopOnError();
-		appendEnvironment = info.appendEnvironment();
-		buildEnvironment = info.getEnvironment();
 	}
 
 	public IProject getProject() {
@@ -193,8 +192,18 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		throw new UnsupportedOperationException();
 	}
 
-	public Map getExpandedEnvironment() {
-		Map env = getEnvironment();
+	public Map getExpandedEnvironment() throws CoreException {
+		Map env = null;
+		if (appendProjectEnvironment()) {
+			IMakeBuilderInfo projectInfo;
+			projectInfo = MakeCorePlugin.createBuildInfo(getProject(), manager.getBuilderID(targetBuilderID));
+			env = projectInfo.getEnvironment();
+		}
+		if (env == null) {
+			env = getEnvironment();
+		} else {
+			env.putAll(getEnvironment());
+		}
 		HashMap envMap = new HashMap(env.entrySet().size());
 		Iterator iter = env.entrySet().iterator();
 		boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
@@ -209,14 +218,19 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 			String value = (String)entry.getValue();
 			// translate any string substitution variables
 			String translated = value;
-			try {
-				translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value, false);
-			} catch (CoreException e) {
-			}
+			translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value, false);
 			envMap.put(key, translated);
 		}
 		return envMap;
 	}
+	
+	public boolean appendProjectEnvironment() {
+		return appendProjectEnvironment;
+	}
+
+	public void setAppendProjectEnvironment(boolean append) {
+		appendProjectEnvironment = append;
+	}	
 
 	public Map getEnvironment() {
 		return buildEnvironment;
@@ -228,14 +242,24 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	}
 
 	public void setAppendEnvironment(boolean append) throws CoreException {	
-		appendEnvironment = append;
+		appendEnvironment = append ? 1 : 0;
 		manager.updateTarget(this);
 	}	
 
 	public boolean appendEnvironment() {
-		return appendEnvironment;
+		return appendEnvironment == USE_PROJECT_ENV_SETTING ? getProjectEnvSetting(): appendEnvironment == 1;
 	}
 	
+	private boolean getProjectEnvSetting() {
+		IMakeBuilderInfo projectInfo;
+		try {
+			projectInfo = MakeCorePlugin.createBuildInfo(getProject(), manager.getBuilderID(targetBuilderID));
+			return projectInfo.appendEnvironment();
+		} catch (CoreException e) {
+		}
+		return false;
+	}
+
 	public IContainer getContainer() {
 		return container;
 	}
@@ -261,12 +285,12 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
 		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "make")); //$NON-NLS-1$
 		info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
-		info.setUseDefaultBuildCmd(isDefaultBuildCmd);
-		info.setStopOnError(isStopOnError);
+		info.setUseDefaultBuildCmd(isDefaultBuildCmd());
+		info.setStopOnError(isStopOnError());
 		info.setFullBuildEnable(true);
 		info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, getBuildAttribute(IMakeTarget.BUILD_TARGET, "")); //$NON-NLS-1$
-		info.setEnvironment(buildEnvironment);
-		info.setAppendEnvironment(appendEnvironment);
+		info.setEnvironment(getExpandedEnvironment());
+		info.setAppendEnvironment(appendEnvironment());
 		if (container != null) {
 			info.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, container.getFullPath().toString());
 		}

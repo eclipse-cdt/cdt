@@ -1,3 +1,8 @@
+2005-07-04 Alain Magloire
+	Change in ICDIReferenceValue.
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/type/ICDIReferenceValue.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CValue.java
+
 2005-05-12 Mikhail Khodjaiants
 	Bug 94905: Error examining structure contents in debugger.
 	The structure's elements should inherit the enablement flag from parents.

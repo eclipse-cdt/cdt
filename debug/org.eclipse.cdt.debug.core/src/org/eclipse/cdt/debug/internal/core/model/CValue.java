@@ -215,7 +215,7 @@ public class CValue extends AbstractCValue {
 			else if ( cdiValue instanceof ICDIPointerValue )
 				return getPointerValueString( (ICDIPointerValue)cdiValue );
 			else if ( cdiValue instanceof ICDIReferenceValue )
-				return getReferenceValueString( (ICDIReferenceValue)cdiValue );
+			    return processUnderlyingValue(((ICDIReferenceValue)cdiValue).referenceValue());
 			else if ( cdiValue instanceof ICDIWCharValue )
 				return getWCharValueString( (ICDIWCharValue)cdiValue );
 			else
@@ -383,23 +383,23 @@ public class CValue extends AbstractCValue {
 		return null;
 	}
 
-  	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException {
-		//NOTE: Reference should be displayed identically to address
-		//TODO:IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
-		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
-		BigInteger refValue = value.referenceValue();
-		if ( refValue == null )
-			return ""; //$NON-NLS-1$
-		IAddress address = factory.createAddress( refValue );
-		if ( address == null )
-			return ""; //$NON-NLS-1$
-		CVariableFormat format = getParentVariable().getFormat();
-		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) )
-			return address.toHexAddressString();
-		if ( CVariableFormat.DECIMAL.equals( format ) )
-			return address.toString();
-		return null;
-	}
+//  	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException {
+//		//NOTE: Reference should be displayed identically to address
+//		//TODO:IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
+//		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
+//		BigInteger refValue = value.referenceValue();
+//		if ( refValue == null )
+//			return ""; //$NON-NLS-1$
+//		IAddress address = factory.createAddress( refValue );
+//		if ( address == null )
+//			return ""; //$NON-NLS-1$
+//		CVariableFormat format = getParentVariable().getFormat();
+//		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) )
+//			return address.toHexAddressString();
+//		if ( CVariableFormat.DECIMAL.equals( format ) )
+//			return address.toString();
+//		return null;
+//	}
 
 	private String getWCharValueString( ICDIWCharValue value ) throws CDIException {
 		if ( getParentVariable() instanceof CVariable ) {

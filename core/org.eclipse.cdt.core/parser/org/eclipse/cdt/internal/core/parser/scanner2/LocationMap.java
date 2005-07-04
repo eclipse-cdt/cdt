@@ -1619,6 +1619,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         if (tu == null)
             return EMPTY_LOCATION_ARRAY;
         _Context c = findContextForOffset(offset);
+        if( c == null )
+            return EMPTY_LOCATION_ARRAY;
         int offset1 = offset + length;
         if ((offset1 >= c.context_directive_start && offset1 <= c.context_ends)) {
             if (c instanceof _CompositeContext) {

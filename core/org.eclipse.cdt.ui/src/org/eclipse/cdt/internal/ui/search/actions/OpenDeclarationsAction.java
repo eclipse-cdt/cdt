@@ -150,9 +150,12 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
                         
                         if ( domNames[0].getTranslationUnit() != null ) {
                             IASTFileLocation location = domNames[0].getFileLocation();
-                            fileName = location.getFileName();
-                            start = location.getNodeOffset();
-                            end = location.getNodeOffset() + location.getNodeLength();
+                            if( location != null )
+                            {
+                                fileName = location.getFileName();
+                                start = location.getNodeOffset();
+                                end = location.getNodeOffset() + location.getNodeLength();
+                            }
                         }
                         
                         if (fileName != null) {

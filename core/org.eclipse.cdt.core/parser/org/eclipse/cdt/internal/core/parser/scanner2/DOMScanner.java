@@ -77,6 +77,8 @@ public class DOMScanner extends BaseScanner {
         for( int i = 0; i < definitions.size(); ++i )
         {
             IMacro m = (IMacro) definitions.get( definitions.keyAt(i) );
+            if( m instanceof ObjectStyleMacro && ((ObjectStyleMacro)m).attachment != null ) 
+                continue;
             
             if( m instanceof DynamicStyleMacro )
             {

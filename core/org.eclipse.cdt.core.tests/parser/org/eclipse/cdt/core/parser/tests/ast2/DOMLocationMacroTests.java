@@ -250,7 +250,6 @@ public class DOMLocationMacroTests extends AST2BaseTest {
             assertEquals( flat.getNodeLength(), "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));".length() ); //$NON-NLS-1$
             
             IASTDeclarator d = memchr.getDeclarators()[0];
-            final IASTNodeLocation[] declaratorLocations = d.getNodeLocations();
             IASTFileLocation f = d.getFileLocation();
             assertEquals( code.indexOf( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t))"), f.getNodeOffset() ); //$NON-NLS-1$
             assertEquals( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t))".length(), f.getNodeLength() ); //$NON-NLS-1$
@@ -325,9 +324,9 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     }
     
     public void testBug94933() throws Exception {
-        StringBuffer buffer = new StringBuffer( "#define API extern\n" );
-        buffer.append( "#define MYAPI API\n");
-        buffer.append( "MYAPI void func() {}" );
+        StringBuffer buffer = new StringBuffer( "#define API extern\n" ); //$NON-NLS-1$
+        buffer.append( "#define MYAPI API\n"); //$NON-NLS-1$
+        buffer.append( "MYAPI void func() {}" ); //$NON-NLS-1$
         String code = buffer.toString();
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
                 : null) {

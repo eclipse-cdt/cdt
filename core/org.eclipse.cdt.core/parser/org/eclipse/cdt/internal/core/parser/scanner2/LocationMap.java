@@ -1925,7 +1925,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     public IMacroDefinition defineObjectStyleMacro(ObjectStyleMacro m,
             int startOffset, int nameOffset, int nameEndOffset, int endOffset) {
-        final _ObjectMacroDefinition objectMacroDefinition = new _ObjectMacroDefinition(
+        _ObjectMacroDefinition objectMacroDefinition = new _ObjectMacroDefinition(
                 currentContext, startOffset, endOffset, m.name, nameOffset,
                 m.expansion);
         currentContext.addSubContext(objectMacroDefinition);
@@ -2479,13 +2479,18 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     private IASTName[] createNameArray(_MacroDefinition definition) {
+        if( definition == null ) return EMPTY_NAME_ARRAY;
         IASTName [] result = new IASTName[1];
         if( definition.astNode == null )
         {
             IASTPreprocessorMacroDefinition astNode = createASTMacroDefinition(definition);
             definition.astNode = astNode;
+            result[0] = definition.astNode.getName();
         }
-        result[0] = definition.astNode.getName();
+        else
+        {
+            result[0] = definition.astNode.getName();
+        }
         return result;
     }
 

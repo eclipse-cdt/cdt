@@ -150,10 +150,10 @@ public class DisassemblyEditorInput implements IEditorInput {
 		if ( fBlock != null ) {
 			IDisassembly dis = fBlock.getDisassembly();
 			if ( dis != null ) {
-				IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
-				if ( bt != null ) {
+				ICDebugTarget target = (ICDebugTarget)dis.getDebugTarget().getAdapter( ICDebugTarget.class );
+				if ( target != null ) {
 					try {
-						IAddress address = bt.getBreakpointAddress( breakpoint );
+						IAddress address = target.getBreakpointAddress( breakpoint );
 						if ( ! address.isZero()  )
 							return getInstructionLine( address );
 					}

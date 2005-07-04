@@ -60,7 +60,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
-import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
@@ -818,8 +817,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( adapter.equals( IDebuggerProcessSupport.class ) )
 			return this;
 		if ( adapter.equals( IExecFileInfo.class ) )
-			return this;
-		if ( adapter.equals( IBreakpointTarget.class ) )
 			return this;
 		if ( adapter.equals( CBreakpointManager.class ) )
 			return getBreakpointManager();

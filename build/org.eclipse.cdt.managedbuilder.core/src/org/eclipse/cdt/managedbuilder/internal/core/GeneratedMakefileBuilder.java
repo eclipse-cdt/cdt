@@ -304,6 +304,17 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}		
 	}
 
+	/**
+	 * 
+	 * This method has been created so that subclasses can override how the builder obtains its
+	 * build info.  The default implementation retrieves the info from the build manager.
+	 * 
+	 * @return An IManagedBuildInfo object representing the build info.
+	 */
+	protected IManagedBuildInfo getBuildInfo() {
+		return ManagedBuildManager.getBuildInfo(getProject());
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -312,7 +323,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		referencedProjects = getProject().getReferencedProjects();
 
 		// Get the build information
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		IManagedBuildInfo info = getBuildInfo();
 		if (info == null) {
 			outputError(getProject().getName(), "Build information was not found");	//$NON-NLS-1$
 			return referencedProjects;
@@ -380,7 +391,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		referencedProjects = getProject().getReferencedProjects();
 		outputTrace(getProject().getName(), "Clean build requested");	//$NON-NLS-1$
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		IManagedBuildInfo info = getBuildInfo();
 		if (info == null) {
 			outputError(getProject().getName(), "Build information was not found");	//$NON-NLS-1$
 			return;

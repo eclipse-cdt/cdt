@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmSourceLine;
-import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
@@ -325,7 +324,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 		Assert.isTrue( address != null );
 		IDisassembly dis = getDisassembly();
 		if ( dis != null ) {
-			IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
+			ICDebugTarget bt = (ICDebugTarget)dis.getDebugTarget().getAdapter( ICDebugTarget.class );
 			if ( bt != null ) {
 				String modelId = CDIDebugModel.getPluginIdentifier();
 				IBreakpoint[] bps = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints( modelId );

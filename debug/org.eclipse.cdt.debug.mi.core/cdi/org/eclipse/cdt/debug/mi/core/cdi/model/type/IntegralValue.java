@@ -36,11 +36,24 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#biIntegerValue()
 	 */
 	public BigInteger bigIntegerValue() throws CDIException {
-		String valueString = getValueString();
-		int space = valueString.indexOf(' ');
-		if (space != -1) {
-			valueString = valueString.substring(0, space).trim();
+		return bigIntegerValue(getValueString());
+	}
+
+	public static BigInteger bigIntegerValue(String valueString) {
+		// Coming from a reference
+		if (valueString.startsWith("@")) { //$NON-NLS-1$
+			valueString = valueString.substring(1);
+			int colon = valueString.indexOf(':');
+			if (colon != -1) {
+				valueString = valueString.substring(colon + 1); 
+			}
+		} else {
+			int space = valueString.indexOf(' ');
+			if (space != -1) {
+				valueString = valueString.substring(0, space).trim();
+			}			
 		}
+
 		try {
 			return MIFormat.getBigInteger(valueString);
 		} catch (NumberFormatException e) {
@@ -52,68 +65,28 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#longValue()
 	 */
 	public long longValue() throws CDIException {
-		long value = 0;
-		String valueString = getValueString();
-		int space = valueString.indexOf(' ');
-		if (space != -1) {
-			valueString = valueString.substring(0, space).trim();
-		}
-		try {
-			value = MIFormat.getBigInteger(valueString).longValue();
-		} catch (NumberFormatException e) {
-		}
-		return value;
+		return bigIntegerValue().longValue();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#longValue()
 	 */
 	public int intValue() throws CDIException {
-		int value = 0;
-		String valueString = getValueString();
-		int space = valueString.indexOf(' ');
-		if (space != -1) {
-			valueString = valueString.substring(0, space).trim();
-		}
-		try {
-			value = MIFormat.getBigInteger(valueString).intValue();
-		} catch (NumberFormatException e) {
-		}
-		return value;
+		return bigIntegerValue().intValue();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#shortValue()
 	 */
 	public short shortValue() throws CDIException {
-		short value = 0;
-		String valueString = getValueString();
-		int space = valueString.indexOf(' ');
-		if (space != -1) {
-			valueString = valueString.substring(0, space).trim();
-		}
-		try {
-			value = MIFormat.getBigInteger(valueString).shortValue();
-		} catch (NumberFormatException e) {
-		}
-		return value;
+		return bigIntegerValue().shortValue();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#byteValue()
 	 */
 	public int byteValue() throws CDIException {
-		byte value = 0;
-		String valueString = getValueString();
-		int space = valueString.indexOf(' ');
-		if (space != -1) {
-			valueString = valueString.substring(0, space).trim();
-		}
-		try {
-			value = MIFormat.getBigInteger(valueString).byteValue();
-		} catch (NumberFormatException e) {
-		}
-		return value;
+		return bigIntegerValue().byteValue();
 	}
 
 }

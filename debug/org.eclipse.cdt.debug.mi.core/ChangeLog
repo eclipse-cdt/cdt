@@ -1,3 +1,15 @@
+2005-06-27 Alain Magloire
+	Bug when parsing "int *&" corrected.
+	Change in ICDIReferenceValue.
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/CdiResource.properties
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/CharValue.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/IntergralValue.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/PointerValue.java
+	* cdi;/org/eclipse/cdt/debug/mi/core/cdi/model/ReferenceValue.java
+	* mi/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2005-05-16 Alain Magloire
 	Fix PR 91975
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java

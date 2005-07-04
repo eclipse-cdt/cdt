@@ -96,6 +96,12 @@ public final class MIFormat {
 		if (negative) {
 			address = "-" + address; //$NON-NLS-1$
 		}
-		return new BigInteger(address, radix);
+		try {
+			return new BigInteger(address, radix);
+		} catch (NumberFormatException e) {
+			// ...
+			// What can we do ???
+		}
+		return BigInteger.ZERO;
 	}
 }

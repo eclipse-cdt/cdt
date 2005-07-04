@@ -31,7 +31,11 @@ public class Value extends CObject implements ICDIValue {
 		super((Target)v.getTarget());
 		variable = v;
 	}
-	
+
+	protected Variable getVariable() {
+		return variable;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getTypeName()
 	 */

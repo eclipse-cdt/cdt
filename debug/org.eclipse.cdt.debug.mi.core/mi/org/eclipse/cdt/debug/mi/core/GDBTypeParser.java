@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -61,6 +61,7 @@ public class GDBTypeParser {
 			s = new String();
 		}
 		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
+		s = Pattern.compile("\\bvolatile\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
 		s = s.trim();
 
 		// Initialize.
@@ -412,6 +413,8 @@ public class GDBTypeParser {
 				}
 			}
 			insertingChild(GDBType.ARRAY, len);
+		} else if (tokenType == '&') {
+			insertingChild(GDBType.REFERENCE);
 		} else {
 			// oops bad declaration ?
 			return;
@@ -436,6 +439,24 @@ public class GDBTypeParser {
 	public static void main(String[] args) {
 
 		GDBTypeParser parser = new GDBTypeParser();
+
+		System.out.println("int *&"); //$NON-NLS-1$
+		parser.parse("int *&"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
+		System.out.println("int (&rg)(int)"); //$NON-NLS-1$
+		parser.parse("int (&rg)(int)"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
+		System.out.println("int (&ra)[3]"); //$NON-NLS-1$
+		parser.parse("int (&rg)[3]"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("struct link { int i; int j; struct link * next;} *"); //$NON-NLS-1$
 		parser.parse("struct link { int i; int j; struct link * next} *"); //$NON-NLS-1$

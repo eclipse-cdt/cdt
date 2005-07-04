@@ -11,11 +11,26 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import java.math.BigInteger;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIBoolType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIEnumType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
-import org.eclipse.cdt.debug.mi.core.MIFormat;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Value;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -35,21 +50,43 @@ public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue#referenceValue()
 	 */
-	public BigInteger referenceValue() throws CDIException {
-		String valueString = getValueString().trim();
-		if (valueString.startsWith("@")) { //$NON-NLS-1$
-			valueString = valueString.substring(1);
+	public ICDIValue referenceValue() throws CDIException {
+		Value value = null;
+		ICDIReferenceType rt = (ICDIReferenceType)getType();
+		ICDIType t = rt.getComponentType();
+		if (t instanceof ICDIBoolType) {
+			value = new BoolValue(getVariable());
+		} else if (t instanceof ICDICharType) {
+			value = new CharValue(getVariable());
+		} else if (t instanceof ICDIWCharType) {
+			value = new WCharValue(getVariable());
+		} else if (t instanceof ICDIShortType) {
+			value = new ShortValue(getVariable());
+		} else if (t instanceof ICDIIntType) {
+			value = new IntValue(getVariable());
+		} else if (t instanceof ICDILongType) {
+			value = new LongValue(getVariable());
+		} else if (t instanceof ICDILongLongType) {
+			value = new LongLongValue(getVariable());
+		} else if (t instanceof ICDIEnumType) {
+			value = new EnumValue(getVariable());
+		} else if (t instanceof ICDIFloatType) {
+			value = new FloatValue(getVariable());
+		} else if (t instanceof ICDIDoubleType) {
+			value = new DoubleValue(getVariable());
+		} else if (t instanceof ICDIFunctionType) {
+			value = new FunctionValue(getVariable());
+		} else if (t instanceof ICDIPointerType) {
+			value = new PointerValue(getVariable());
+//		} else if (t instanceof ICDIReferenceType) {
+//			value = new ReferenceValue(getVariable());
+		} else if (t instanceof ICDIArrayType) {
+			value = new ArrayValue(getVariable());
+		} else if (t instanceof ICDIStructType) {
+			value = new StructValue(getVariable());
+		} else {
+			value = new Value(getVariable());
 		}
-		int space = valueString.indexOf(":"); //$NON-NLS-1$
-		if (space != -1) {
-			valueString = valueString.substring(0, space).trim();
-		}
-		try {
-			
-			return MIFormat.getBigInteger(valueString);
-		} catch(Exception e){
-			return null;
-		}
-		
+		return value;		
 	}
 }

@@ -125,10 +125,27 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         if (fUtil != null) {
             IPath pFilePath = fUtil.getAbsolutePath(filePath);
             String shortFileName = pFilePath.removeFileExtension().lastSegment();
-            String genericLine = line.replaceAll(filePath, "LONG_NAME"); //$NON-NLS-1$
-            genericLine = genericLine.replaceAll(shortFileName+"\\.", "SHORT_NAME\\."); //$NON-NLS-1$ //$NON-NLS-2$
 
-            CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine, extensionsIndex > 0);
+            // generalize occurances of the file name
+            StringBuffer genericLine = new StringBuffer();
+            for (int i = 0; i < split.length; i++) {
+				String token = split[i];
+				if (token.equals("-include") || token.equals("-imacros")) { //$NON-NLS-1$ //$NON-NLS-2$
+					++i;
+					genericLine.append(token);
+					genericLine.append(' ');
+				}
+				else if (token.equals(filePath)) {
+					split[i] = "LONG_NAME"; //$NON-NLS-1$
+				}
+				else if (token.startsWith(shortFileName)) {
+					split[i] = token.replaceFirst(shortFileName, "SHORT_NAME"); //$NON-NLS-1$
+				}
+				genericLine.append(split[i]);
+				genericLine.append(' ');
+			}
+            
+            CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine.toString(), extensionsIndex > 0);
             if (getProject().getLocation().isPrefixOf(pFilePath)) {
 	            List cmdList = new ArrayList();
 	            cmdList.add(cmd);

@@ -58,21 +58,23 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
      * @return String[]
      */
     public String[] getCompilerCommands() {
-        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-                getSCProfileInstance(project, ScannerConfigProfileManager.NULL_PROFILE_ID);
-        BuildOutputProvider boProvider = profileInstance.getProfile().getBuildOutputProviderElement();
-        if (boProvider != null) {
-            String compilerCommandsString = boProvider.getScannerInfoConsoleParser().getCompilerCommands();
-            if (compilerCommandsString != null && compilerCommandsString.length() > 0) {
-                String[] compilerCommands = compilerCommandsString.split(",\\s+"); //$NON-NLS-1$
-                if (compilerCommands.length > 0) {
-                    String[] compilerInvocation = new String[COMPILER_INVOCATION.length + compilerCommands.length];
-                    System.arraycopy(COMPILER_INVOCATION, 0, compilerInvocation, 0, COMPILER_INVOCATION.length);
-                    System.arraycopy(compilerCommands, 0, compilerInvocation, COMPILER_INVOCATION.length, compilerCommands.length);
-                    return compilerInvocation;
-                }
-            }
-        }
+    	if (project != null) {
+	        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+	                getSCProfileInstance(project, ScannerConfigProfileManager.NULL_PROFILE_ID);
+	        BuildOutputProvider boProvider = profileInstance.getProfile().getBuildOutputProviderElement();
+	        if (boProvider != null) {
+	            String compilerCommandsString = boProvider.getScannerInfoConsoleParser().getCompilerCommands();
+	            if (compilerCommandsString != null && compilerCommandsString.length() > 0) {
+	                String[] compilerCommands = compilerCommandsString.split(",\\s+"); //$NON-NLS-1$
+	                if (compilerCommands.length > 0) {
+	                    String[] compilerInvocation = new String[COMPILER_INVOCATION.length + compilerCommands.length];
+	                    System.arraycopy(COMPILER_INVOCATION, 0, compilerInvocation, 0, COMPILER_INVOCATION.length);
+	                    System.arraycopy(compilerCommands, 0, compilerInvocation, COMPILER_INVOCATION.length, compilerCommands.length);
+	                    return compilerInvocation;
+	                }
+	            }
+	        }
+    	}
         return COMPILER_INVOCATION; 
     }
     

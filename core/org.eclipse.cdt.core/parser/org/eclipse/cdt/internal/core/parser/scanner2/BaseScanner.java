@@ -1289,7 +1289,7 @@ abstract class BaseScanner implements IScanner {
             }
 
         macroFilesInitialized = true;
-        if (einfo.getIncludeFiles() != null
+        if (parserMode != ParserMode.QUICK_PARSE && einfo.getIncludeFiles() != null
                 && einfo.getIncludeFiles().length > 0)
             preIncludeFiles = Arrays.asList(einfo.getIncludeFiles()).iterator();
 

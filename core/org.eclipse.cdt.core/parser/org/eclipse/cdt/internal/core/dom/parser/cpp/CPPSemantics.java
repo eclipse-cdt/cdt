@@ -958,8 +958,10 @@ public class CPPSemantics {
 		ICPPScope scope = null;
 		if( start instanceof ICPPScope )
 		    scope = (ICPPScope) start;
-		else
+		else if( start instanceof IASTName )
 		    scope = getLookupScope( (IASTName) start );
+		else 
+			return;
 		
 		boolean friendInLocalClass = false;
 		if( scope instanceof ICPPClassScope && data.forFriendship() ){
@@ -3091,6 +3093,9 @@ public class CPPSemantics {
 		} catch (DOMException e1) {
 			return null;
 		}
+		if( scope == null )
+			return null;
+		
 		CPPASTName astName = new CPPASTName();
 		astName.setParent( exp );
 	    astName.setPropertyInParent( STRING_LOOKUP_PROPERTY );

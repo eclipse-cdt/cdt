@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
@@ -31,7 +32,6 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
@@ -142,7 +142,7 @@ public class CModelBuilder {
 		// create the parser
 		IParser parser = null;
 		try {
-			IScannerInfo scanInfo = new ScannerInfo();
+			IScannerInfo scanInfo = null;
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
 			if (provider != null){
 				IScannerInfo buildScanInfo = null;
@@ -156,8 +156,11 @@ public class CModelBuilder {
 					buildScanInfo = provider.getScannerInformation(currentProject);
 				}
 				if (buildScanInfo != null){
-					scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
+					scanInfo = new ExtendedScannerInfo(buildScanInfo);
 				}
+			}
+			if (scanInfo == null) {
+				scanInfo = new ExtendedScannerInfo();
 			}
 
 			CodeReader reader =

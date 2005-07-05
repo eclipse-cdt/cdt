@@ -19,7 +19,7 @@ import java.util.Map;
 public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScannerInfo {
 
 	private static final String [] EMPTY_STRING_ARRAY = new String[ 0 ];
-	private String [] m, i;
+	private String [] m, i, localIncludePaths;
 	
 	public ExtendedScannerInfo()
 	{
@@ -37,7 +37,16 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 		i = includes;
 	}
 	
-
+	public ExtendedScannerInfo( IScannerInfo info )
+	{
+		super(info.getDefinedSymbols(), info.getIncludePaths());
+		if (info instanceof IExtendedScannerInfo) {
+			IExtendedScannerInfo einfo = (IExtendedScannerInfo)info;
+			m = einfo.getMacroFiles();
+			i = einfo.getIncludeFiles();
+			localIncludePaths = einfo.getLocalIncludePath();
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IExtendedScannerInfo#getMacroFiles()
@@ -59,6 +68,7 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	 * @see org.eclipse.cdt.core.parser.IExtendedScannerInfo#getLocalIncludePath()
 	 */
 	public String[] getLocalIncludePath() {
-		return EMPTY_STRING_ARRAY; //TODO add impl
+		if ( localIncludePaths == null ) return EMPTY_STRING_ARRAY;
+		return localIncludePaths;
 	}
 }

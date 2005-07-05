@@ -193,8 +193,19 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
 	 */
 	public IType getType() {
 		if( type == null ){
-		    IASTDeclarator dtor = (IASTDeclarator) ( (definition != null) ? definition.getParent() : declarations[0].getParent() );
-		    type = CPPVisitor.createType( dtor );
+			IASTName n = null;
+			if( definition != null )
+				n = definition;
+			else if( declarations != null && declarations.length > 0 )
+				n = declarations[0];
+			
+			if( n != null ){
+				while( n.getParent() instanceof IASTName )
+					n = (IASTName) n.getParent();
+				IASTNode node = n.getParent();
+				if( node instanceof IASTDeclarator )
+					type = CPPVisitor.createType( (IASTDeclarator)node );
+			}
 		}
 		return type;
 	}

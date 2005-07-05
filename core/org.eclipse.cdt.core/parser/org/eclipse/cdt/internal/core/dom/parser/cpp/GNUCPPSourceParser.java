@@ -960,9 +960,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         forNewExpression);
         } catch (BacktrackException bt) {
             backup(mark);
-            throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
+            if (declarator != null || declSpecifier != null)
+            	throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
                     declarator)
                     - startingOffset);
+            else
+            	throwBacktrack(startingOffset, bt.getLength());
         }
         if (declarator != null) {
             if (declarator.getName().toCharArray().length > 0) {
@@ -1585,13 +1588,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 break;
             case IToken.tDOT:
                 // member access
-                consume(IToken.tDOT);
+                IToken dot = consume(IToken.tDOT);
                 if (LT(1) == IToken.t_template) {
                     consume(IToken.t_template);
                     isTemplate = true;
                 }
 
                 IASTName name = idExpression();
+                
+                if (name == null)
+                	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
+                			((ASTNode) firstExpression).getLength() + dot.getLength());
 
                 ICPPASTFieldReference fieldReference = createFieldReference();
                 ((ASTNode) fieldReference).setOffsetAndLength(
@@ -1612,7 +1619,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 break;
             case IToken.tARROW:
                 // member access
-                consume(IToken.tARROW);
+                IToken arrow = consume(IToken.tARROW);
 
                 if (LT(1) == IToken.t_template) {
                     consume(IToken.t_template);
@@ -1620,7 +1627,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
 
                 name = idExpression();
-
+                
+                if (name == null)
+                	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
+                			((ASTNode) firstExpression).getLength() + arrow.getLength());
+                
                 fieldReference = createFieldReference();
                 ((ASTNode) fieldReference).setOffsetAndLength(
                         ((ASTNode) firstExpression).getOffset(),

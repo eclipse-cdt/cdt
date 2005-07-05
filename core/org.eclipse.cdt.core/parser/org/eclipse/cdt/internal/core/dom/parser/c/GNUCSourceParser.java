@@ -1047,8 +1047,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 break;
             case IToken.tDOT:
                 // member access
-                consume(IToken.tDOT);
+                IToken dot = consume(IToken.tDOT);
                 IASTName name = createName(identifier());
+                if (name == null)
+                	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
+                			((ASTNode) firstExpression).getLength() + dot.getLength());
                 IASTFieldReference result = createFieldReference();
                 ((ASTNode) result).setOffsetAndLength(
                         ((ASTNode) firstExpression).getOffset(),
@@ -1066,8 +1069,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 break;
             case IToken.tARROW:
                 // member access
-                consume(IToken.tARROW);
+                IToken arrow = consume(IToken.tARROW);
                 name = createName(identifier());
+                if (name == null)
+                	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
+                			((ASTNode) firstExpression).getLength() + arrow.getLength());
                 result = createFieldReference();
                 ((ASTNode) result).setOffsetAndLength(
                         ((ASTNode) firstExpression).getOffset(),

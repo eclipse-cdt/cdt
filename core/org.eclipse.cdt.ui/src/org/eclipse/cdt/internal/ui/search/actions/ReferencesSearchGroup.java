@@ -16,13 +16,11 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -41,8 +39,6 @@ public class ReferencesSearchGroup extends ActionGroup {
 	
 	private CEditor fEditor;
 	private IWorkbenchSite fSite;
-	
-	private ArrayList actions;
 	
 	public ReferencesSearchGroup(IWorkbenchSite site) {
 		fFindRefsAction= new FindRefsAction(site);
@@ -83,7 +79,6 @@ public class ReferencesSearchGroup extends ActionGroup {
 		}
 		
 		if (fEditor != null){
-			//IFile fileInput= fEditor.getInputFile();
 			ICElement celement = fEditor.getInputCElement();
 			ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(celement.getCProject().getProject());
 			if (indexer != null){
@@ -98,13 +93,12 @@ public class ReferencesSearchGroup extends ActionGroup {
 				 Object cElement = structSel.getFirstElement();
 				 if (cElement instanceof ICElement){
 					 ICElement el = (ICElement) cElement;
-					 //ICProject p= el.getCProject();
 					 IProject proj = el.getCProject().getProject();
 					 ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(proj);
 					 setReferenceMenuEnabled(indexer.getIndexerFeatures());
 				 }
 			 }
-		 }  catch (NullPointerException err){}
+		 }  catch (NullPointerException err){/* Safety */}
 		}
 		
 		

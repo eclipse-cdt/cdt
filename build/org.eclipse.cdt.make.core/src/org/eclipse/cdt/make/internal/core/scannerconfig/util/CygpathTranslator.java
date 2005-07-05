@@ -86,6 +86,21 @@ public class CygpathTranslator {
      * @return
      */
     public static List translateIncludePaths(IProject project, List sumIncludes) {
+    	// first check if cygpath translation is needed at all
+    	boolean translationNeeded = false;
+    	if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	for (Iterator i = sumIncludes.iterator(); i.hasNext(); ) {
+				String include = (String) i.next();
+				if (include.startsWith("/")) { //$NON-NLS-1$
+					translationNeeded = true;
+					break;
+				}
+			}
+    	}
+    	if (!translationNeeded) {
+    		return sumIncludes;
+    	}
+    	
         CygpathTranslator cygpath = new CygpathTranslator(project);
         if (cygpath.cygPath == null) return sumIncludes;
         

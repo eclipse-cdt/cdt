@@ -72,9 +72,12 @@ public abstract class CASTAmbiguity extends CASTNode  {
                     if( b == null || b instanceof IProblemBinding )
                         ++issues[i];
                     IScope scope = CPPVisitor.getContainingScope( names[j] );
-                    try {
-                        scope.flushCache();
-                    } catch (DOMException e) {
+                    if( scope != null )
+                    {
+                        try {
+                            scope.flushCache();
+                        } catch (DOMException e) {
+                        }
                     }
                 }
                 catch( Throwable t )

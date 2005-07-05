@@ -73,9 +73,12 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
             }
             if (names.length > 0) {
                 IScope scope = CPPVisitor.getContainingScope(names[0]);
-                try {
-                    scope.flushCache();
-                } catch (DOMException de) {}
+                if( scope != null )
+                {
+                    try {
+                        scope.flushCache();
+                    } catch (DOMException de) {}
+                }
             }
         }
         int bestIndex = 0;

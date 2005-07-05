@@ -52,8 +52,8 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 		if (monitor.isCanceled())
 			throw new InterruptedException();
 
-		IEntryResult[] namespaceEntries = fProjectIndex.getEntries( IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION );
-        IQueryResult[] namespacePaths = fProjectIndex.getPrefix(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION );
+		IEntryResult[] namespaceEntries = fProjectIndex.getEntries( IIndex.NAMESPACE, IIndex.ANY, IIndex.DEFINITION );
+        IQueryResult[] namespacePaths = fProjectIndex.getPrefix(IIndex.NAMESPACE, IIndex.ANY, IIndex.DEFINITION );
 //            input.queryEntriesPrefixedBy(Index.encodeEntry(IIndex.NAMESPACE, IIndex.ANY, IIndex.DECLARATION));
 		if (namespaceEntries != null) {
 			//TODO subprogress monitor

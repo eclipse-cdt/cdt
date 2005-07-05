@@ -34,59 +34,70 @@ import org.eclipse.swt.graphics.Image;
 public class SearchCompletionContributor implements ICompletionContributor {
 
 	public void contributeCompletionProposals(ITextViewer viewer, int offset,
-			IWorkingCopy workingCopy, ASTCompletionNode completionNode,
+			IWorkingCopy workingCopy, ASTCompletionNode completionNode, String prefix,
 			List proposals)
 	{
-		// and only for C source files
-        if (workingCopy.isHeaderUnit() || !workingCopy.isCLanguage()) {
-        	return;
-        }
-		if (completionNode != null) {
-			IASTName[] names = completionNode.getNames();
-			for (int i = 0; i < names.length; i++) {
-				IASTName name = names[i];
+	    if (!validContext(completionNode))
+            return;
+            
+		// Create search engine
+		SearchEngine searchEngine = new SearchEngine();
+		searchEngine.setWaitingPolicy( ICSearchConstants.FORCE_IMMEDIATE_SEARCH );
 				
-				// not hooked up, ignore
-				if (name.getTranslationUnit() == null)
-					continue;
+		// Create search scope
+		ICElement[] projects = new ICElement[] { workingCopy.getCProject() };
+		//ICSearchScope scope = SearchEngine.createCSearchScope(projects, true);
+        ICSearchScope scope = SearchEngine.createWorkspaceScope();
+			
+		// Create the pattern
+		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false); //$NON-NLS-1$
 				
-				// ignore if this is a member access
-				if (name.getParent() instanceof IASTFieldReference)
-					continue;
-				
-				// Create search engine
-				SearchEngine searchEngine = new SearchEngine();
-				searchEngine.setWaitingPolicy( ICSearchConstants.FORCE_IMMEDIATE_SEARCH );
-				
-				// Create search scope
-				ICElement[] projects = new ICElement[] { workingCopy.getCProject() };
-				ICSearchScope scope = SearchEngine.createCSearchScope(projects, true);
-				
-				// Create the pattern
-				String prefix = new String(name.toCharArray()) + "*"; //$NON-NLS-1$
-				ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false);
-				
-				// Run the search
-				BasicSearchResultCollector collector = new BasicSearchResultCollector();
-				try {
-					searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, collector, false);
-				} catch (InterruptedException e) {
-					return;
-				}
-				
-				Set results = collector.getSearchResults();
-				Iterator iResults = results.iterator();
-				while (iResults.hasNext()) {
-					BasicSearchMatch match = (BasicSearchMatch)iResults.next();
-					handleFunction(match.getName(), viewer, completionNode, offset, proposals);
-				}
-			}
+		// Run the search
+		BasicSearchResultCollector collector = new BasicSearchResultCollector();
+		try {
+			searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, collector, false);
+		} catch (InterruptedException e) {
+			return;
 		}
-		// TODO else search the prefix text
+			
+		Set results = collector.getSearchResults();
+		Iterator iResults = results.iterator();
+		while (iResults.hasNext()) {
+			BasicSearchMatch match = (BasicSearchMatch)iResults.next();
+			handleFunction(match.getName(), viewer, prefix, offset, proposals);
+		}
 	}
 
-	private void handleFunction(String name, ITextViewer viewer, ASTCompletionNode completionNode, int offset, List proposals) {
-		int repLength = completionNode.getLength();
+    private boolean validContext(ASTCompletionNode completionNode) {
+        if (completionNode == null)
+            // No completion node, assume true
+            return true;
+
+        boolean valid = true;
+        IASTName[] names = completionNode.getNames();
+        for (int i = 0; i < names.length; i++) {
+            IASTName name = names[i];
+            
+            // not hooked up, not a valid name, ignore
+            if (name.getTranslationUnit() == null)
+                continue;
+            
+            // member access currently isn't valid
+            if (name.getParent() instanceof IASTFieldReference) {
+                valid = false;
+                continue;
+            }
+            
+            // found one that was valid
+            return true;
+        }
+
+        // Couldn't find a valid context
+        return valid;
+    }
+
+	private void handleFunction(String name, ITextViewer viewer, String prefix, int offset, List proposals) {
+		int repLength = prefix.length();
 		int repOffset = offset - repLength;
 		Image image = CUIPlugin.getImageDescriptorRegistry().get(CElementImageProvider.getFunctionImageDescriptor());
 		String repString = name + "()"; //$NON-NLS-1$

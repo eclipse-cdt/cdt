@@ -31,6 +31,7 @@ public interface ICompletionContributor {
 									   int offset,
 									   IWorkingCopy workingCopy,
 									   ASTCompletionNode completionNode,
+                                       String prefix,
 									   List proposals);
 	
 }

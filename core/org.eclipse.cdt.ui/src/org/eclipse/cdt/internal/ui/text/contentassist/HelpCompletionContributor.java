@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.Image;
 public class HelpCompletionContributor implements ICompletionContributor {
 
 	public void contributeCompletionProposals(ITextViewer viewer, int offset,
-			IWorkingCopy workingCopy, ASTCompletionNode completionNode,
+			IWorkingCopy workingCopy, ASTCompletionNode completionNode, String prefix,
 			List proposals)
 	{
 		final IWorkingCopy fWorkingCopy = workingCopy;
@@ -60,8 +60,6 @@ public class HelpCompletionContributor implements ICompletionContributor {
 				if (name.getParent() instanceof IASTFieldReference)
 					continue;
 
-				String prefix = new String(name.toCharArray());
-				
 				IFunctionSummary[] summaries = CHelpProviderManager.getDefault().getMatchingFunctions(context, prefix);
 				if (summaries == null )
 					continue;

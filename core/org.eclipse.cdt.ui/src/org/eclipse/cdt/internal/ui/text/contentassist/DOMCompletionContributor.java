@@ -51,6 +51,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 											  int offset,
 											  IWorkingCopy workingCopy,
 											  ASTCompletionNode completionNode,
+                                              String prefix,
 											  List proposals) {
 		if (completionNode != null) {
 			IASTName[] names = completionNode.getNames();
@@ -82,7 +83,6 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			}
 			
 			// Find all macros if there is a prefix
-			String prefix = completionNode.getPrefix();
 			if (prefix.length() > 0) {
 				IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
 				if (macros != null)

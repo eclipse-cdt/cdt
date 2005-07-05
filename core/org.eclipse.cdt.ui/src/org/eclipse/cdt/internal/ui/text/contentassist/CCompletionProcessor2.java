@@ -30,6 +30,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
@@ -58,27 +61,40 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 	 */
-	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer,
-			int offset) {
+	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, int offset) {
 		try {
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 			ASTCompletionNode completionNode = null;
-            IFile file = (IFile)workingCopy.getResource();
-            if (file != null)
-                completionNode = CDOM.getInstance().getCompletionNode(
-                        file,
-                        offset,
-                        CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
-            else if (editor.getEditorInput() instanceof ExternalEditorInput) {
-                IStorage storage = ((ExternalEditorInput)(editor.getEditorInput())).getStorage();
-                IProject project = workingCopy.getCProject().getProject();
-                completionNode = CDOM.getInstance().getCompletionNode(
-                        storage,
-                        project,
-                        offset,
-                        CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
-            }
+            String prefix = null;
+            
+            IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+            boolean fileScope = store.getBoolean(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE);
+            boolean projectScope = store.getBoolean(ContentAssistPreference.PROJECT_SEARCH_SCOPE);
 
+            if (fileScope) { // do a full parse
+                IFile file = (IFile)workingCopy.getResource();
+                if (file != null)
+                    completionNode = CDOM.getInstance().getCompletionNode(
+                            file,
+                            offset,
+                            CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+                else if (editor.getEditorInput() instanceof ExternalEditorInput) {
+                    IStorage storage = ((ExternalEditorInput)(editor.getEditorInput())).getStorage();
+                    IProject project = workingCopy.getCProject().getProject();
+                    completionNode = CDOM.getInstance().getCompletionNode(
+                            storage,
+                            project,
+                            offset,
+                            CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+                }
+                
+                if (completionNode != null)
+                    prefix = completionNode.getPrefix();
+                
+            } else if (projectScope) { // find the prefix from the document
+                prefix = scanPrefix(viewer.getDocument(), offset);
+            }
+            
 			errorMessage = CUIMessages.getString(noCompletions);
 			
 			List proposals = new ArrayList();
@@ -97,7 +113,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					if (!(contribObject instanceof ICompletionContributor))
 						continue;
 					ICompletionContributor contributor = (ICompletionContributor)contribObject;
-					contributor.contributeCompletionProposals(viewer, offset, workingCopy, completionNode, proposals);
+					contributor.contributeCompletionProposals(viewer, offset, workingCopy, completionNode, prefix, proposals);
 				}
 			}
 
@@ -144,6 +160,21 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 		return null;
 	}
 
+    private String scanPrefix(IDocument document, int end) {
+        try {
+            int start = end;
+            while ((start != 0) && Character.isUnicodeIdentifierPart(document.getChar(start - 1)))
+                start--;
+            
+            if ((start != 0) && Character.isUnicodeIdentifierStart(document.getChar(start - 1)))
+                start--;
+
+            return document.get(start, end - start);
+        } catch (BadLocationException e) {
+            return null;
+        }
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
 	 */

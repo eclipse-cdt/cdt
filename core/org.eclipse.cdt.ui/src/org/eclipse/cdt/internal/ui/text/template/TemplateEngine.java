@@ -151,6 +151,7 @@ public class TemplateEngine implements ICompletionContributor {
 											  int offset,
 											  IWorkingCopy workingCopy,
 											  ASTCompletionNode completionNode,
+                                              String prefix,
 											  List proposals)
 	{
 		// TODO We should use the completion node to determine the proper context for the templates

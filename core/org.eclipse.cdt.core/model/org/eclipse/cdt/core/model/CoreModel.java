@@ -1240,16 +1240,18 @@ public class CoreModel {
 					if (pe.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 						IPathEntryContainer peContainer = CoreModel.getPathEntryContainer(
 								pe.getPath(), cProject);
-						if (peContainer instanceof IPathEntryContainerExtension) {
-							IPathEntryContainerExtension contExt = (IPathEntryContainerExtension) peContainer;
-							if (!contExt.isEmpty(resPath)) {
+						if (peContainer != null) {
+							if (peContainer instanceof IPathEntryContainerExtension) {
+								IPathEntryContainerExtension contExt = (IPathEntryContainerExtension) peContainer;
+								if (!contExt.isEmpty(resPath)) {
+									rc = false;
+									break;
+								}
+							}
+							else if (peContainer.getPathEntries().length > 0) {
 								rc = false;
 								break;
 							}
-						}
-						else if (peContainer.getPathEntries().length > 0) {
-							rc = false;
-							break;
 						}
 					}
 					// then the user specified scanner info

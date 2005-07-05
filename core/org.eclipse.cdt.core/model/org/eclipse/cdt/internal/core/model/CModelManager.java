@@ -565,7 +565,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (hints > 0) {
 			try {
 				InputStream is = file.getContents();
-				int count = is.read(bytes);
+				int count = 0;
+				// Make sure we read up to 'hints' bytes if we possibly can
+				while (count < hints) {
+					int bytesRead = is.read(bytes, count, hints - count);
+					if (bytesRead < 0)
+						break;
+					count += bytesRead;
+				}
 				is.close();
 				if (count > 0 && count < bytes.length) {
 					byte[] array = new byte[count];
@@ -584,9 +591,11 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		for (int i = 0; i < parsers.length; i++) {
 			try {
 				IBinaryParser parser = parsers[i].getBinaryParser();
-				IBinaryFile binFile = parser.getBinary(bytes, location);
-				if (binFile != null) {
-					return binFile;
+				if (parser.isBinary(bytes, location)) {
+    			    IBinaryFile binFile = parser.getBinary(bytes, location);
+    			    if (binFile != null) {
+    			    	return binFile;
+    			    }
 				}
 			} catch (IOException e) {
 			} catch (CoreException e) {

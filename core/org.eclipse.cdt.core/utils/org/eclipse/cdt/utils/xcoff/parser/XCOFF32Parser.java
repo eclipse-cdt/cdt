@@ -43,44 +43,42 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 		}
 
 		IBinaryFile binary = null;
-		if (isBinary(hints, path)) {
-			try {
-				XCoff32.Attribute attribute = null;
-				if (hints != null && hints.length > 0) {
-					try {
-						attribute = XCoff32.getAttributes(hints);
-					} catch (EOFException eof) {
-						// continue, the array was to small.
-					}
+		try {
+			XCoff32.Attribute attribute = null;
+			if (hints != null && hints.length > 0) {
+				try {
+					attribute = XCoff32.getAttributes(hints);
+				} catch (EOFException eof) {
+					// continue, the array was to small.
 				}
-
-				//Take a second run at it if the data array failed.
-				if (attribute == null) {
-					attribute = XCoff32.getAttributes(path.toOSString());
-				}
-
-				if (attribute != null) {
-					switch (attribute.getType()) {
-						case XCoff32.Attribute.XCOFF_TYPE_EXE :
-							binary = createBinaryExecutable(path);
-							break;
-
-						case XCoff32.Attribute.XCOFF_TYPE_SHLIB :
-							binary = createBinaryShared(path);
-							break;
-
-						case XCoff32.Attribute.XCOFF_TYPE_OBJ :
-							binary = createBinaryObject(path);
-							break;
-
-						case XCoff32.Attribute.XCOFF_TYPE_CORE :
-							binary = createBinaryCore(path);
-							break;
-					}
-				}
-			} catch (IOException e) {
-				binary = createBinaryArchive(path);
 			}
+			
+			//Take a second run at it if the data array failed.
+			if (attribute == null) {
+				attribute = XCoff32.getAttributes(path.toOSString());
+			}
+			
+			if (attribute != null) {
+				switch (attribute.getType()) {
+				case XCoff32.Attribute.XCOFF_TYPE_EXE :
+					binary = createBinaryExecutable(path);
+					break;
+					
+				case XCoff32.Attribute.XCOFF_TYPE_SHLIB :
+					binary = createBinaryShared(path);
+					break;
+					
+				case XCoff32.Attribute.XCOFF_TYPE_OBJ :
+					binary = createBinaryObject(path);
+					break;
+					
+				case XCoff32.Attribute.XCOFF_TYPE_CORE :
+					binary = createBinaryCore(path);
+					break;
+				}
+			}
+		} catch (IOException e) {
+			binary = createBinaryArchive(path);
 		}
 		return binary;
 	}

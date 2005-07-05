@@ -1,3 +1,11 @@
+2005-07-05  Robert O'Callahan <robert@ocallahan.org>
+
+	fix for bug# 102434
+	
+	* model/org/eclipse/cdt/internal/model/CModelManager.java
+	* util/org/eclipse/cdt/utils/som/parser/SOMParser.java
+	* util/org/eclipse/cdt/utils/xcoff/parser/XCOFF32Parser.java
+	
 2005-07-04 David Inglis
 	fix for bug# 101647
 	

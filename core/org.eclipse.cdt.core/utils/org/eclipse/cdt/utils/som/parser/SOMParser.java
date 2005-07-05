@@ -39,44 +39,42 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 		}
 
 		IBinaryFile binary = null;
-		if (isBinary(hints, path)) {
-			try {
-				SOM.Attribute attribute = null;
-				if (hints != null && hints.length > 0) {
-					try {
-						attribute = SOM.getAttributes(hints);
-					} catch (EOFException eof) {
-						// continue, the array was to small.
-					}
+		try {
+			SOM.Attribute attribute = null;
+			if (hints != null && hints.length > 0) {
+				try {
+					attribute = SOM.getAttributes(hints);
+				} catch (EOFException eof) {
+					// continue, the array was to small.
 				}
-	
-				//Take a second run at it if the data array failed. 			
-	 			if(attribute == null) {
-					attribute = SOM.getAttributes(path.toOSString());
-	 			}
-	
-				if (attribute != null) {
-					switch (attribute.getType()) {
-						case SOM.Attribute.SOM_TYPE_EXE :
-							binary = createBinaryExecutable(path);
-							break;
-	
-						case SOM.Attribute.SOM_TYPE_SHLIB :
-							binary = createBinaryShared(path);
-							break;
-	
-						case SOM.Attribute.SOM_TYPE_OBJ :
-							binary = createBinaryObject(path);
-							break;
-	
-						case SOM.Attribute.SOM_TYPE_CORE :
-							binary = createBinaryCore(path);
-							break;
-					}
-				}
-			} catch (IOException e) {
-				binary = createBinaryArchive(path);
 			}
+			
+			//Take a second run at it if the data array failed. 			
+			if(attribute == null) {
+				attribute = SOM.getAttributes(path.toOSString());
+			}
+			
+			if (attribute != null) {
+				switch (attribute.getType()) {
+				case SOM.Attribute.SOM_TYPE_EXE :
+					binary = createBinaryExecutable(path);
+					break;
+					
+				case SOM.Attribute.SOM_TYPE_SHLIB :
+					binary = createBinaryShared(path);
+					break;
+					
+				case SOM.Attribute.SOM_TYPE_OBJ :
+					binary = createBinaryObject(path);
+					break;
+					
+				case SOM.Attribute.SOM_TYPE_CORE :
+					binary = createBinaryCore(path);
+					break;
+				}
+			}
+		} catch (IOException e) {
+			binary = createBinaryArchive(path);
 		}
 		return binary;
 	}

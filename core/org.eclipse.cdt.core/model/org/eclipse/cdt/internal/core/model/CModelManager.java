@@ -594,10 +594,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 		return null;
 	}
-	/**
-	 * TODO: this is a temporary hack until, the CDescriptor manager is
-	 * in place and could fire deltas of Parser change.
-	 */
+
 	public void resetBinaryParser(IProject project) {
 		if (project != null) {
 			ICProject cproject = create(project);

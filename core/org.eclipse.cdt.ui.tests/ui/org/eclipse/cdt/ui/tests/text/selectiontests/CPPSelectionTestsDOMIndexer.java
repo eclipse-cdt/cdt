@@ -125,6 +125,7 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug95202")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug95229")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug101287")); //$NON-NLS-1$
+		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug102258")); //$NON-NLS-1$
 	
 		return suite;
 	}
@@ -1015,6 +1016,35 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
         assertEquals(((IASTName)decl).toString(), "abc"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 4);
         assertEquals(((ASTNode)decl).getLength(), 3);
+	}
+	
+	public void testBug102258() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct RTBindingEnd\n"); //$NON-NLS-1$
+		buffer.append("{\n"); //$NON-NLS-1$
+		buffer.append("int          index;\n"); //$NON-NLS-1$
+		buffer.append("};\n"); //$NON-NLS-1$
+
+		importFile("testBug102258.h", buffer.toString()); //$NON-NLS-1$
+        
+        buffer = new StringBuffer();
+        buffer.append("#include \"testBug102258.h\"\n"); //$NON-NLS-1$
+        buffer.append("void f(RTBindingEnd & end) {\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        String code = buffer.toString();
+        IFile file = importFile("testBug102258.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("RTBindingEnd"); //$NON-NLS-1$
+        IASTNode def = testCtrl_F3(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "RTBindingEnd"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 7);
+        assertEquals(((ASTNode)decl).getLength(), 12);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "RTBindingEnd"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 7);
+        assertEquals(((ASTNode)decl).getLength(), 12);
 	}
 
     // REMINDER: see CPPSelectionTestsDomIndexer#suite() when appending new tests to this suite

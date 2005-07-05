@@ -147,17 +147,19 @@ public class DOMSearchUtil {
             searchFor = ICSearchConstants.TYPEDEF;
         } else if (binding instanceof IVariable) {
             searchFor = ICSearchConstants.VAR;
-        } else if (binding instanceof ICPPClassType) {
-            searchFor = ICSearchConstants.CLASS;
         } else if (binding instanceof ICompositeType) {
             try {
                 switch(((ICompositeType)binding).getKey()) {
                 case ICompositeType.k_struct:
+                case ICPPClassType.k_class:
                     searchFor = ICSearchConstants.CLASS_STRUCT;
                     break;
                 case ICompositeType.k_union:
                     searchFor = ICSearchConstants.UNION;
                     break;
+                default:
+                	searchFor = ICSearchConstants.TYPE;
+                	break;
                 }
             } catch (DOMException e) {
                 searchFor = ICSearchConstants.UNKNOWN_SEARCH_FOR;

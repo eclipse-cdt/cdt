@@ -1,4 +1,8 @@
 2005-07-06  Alain Magloire
+	PR 102622: OpenIncludeAction improvement, patch from: Robert O'Callahan
+	* src/org/eclipse/cdt/internal/ui/OpenIncludeAction.java
+
+2005-07-06  Alain Magloire
 	PR 102619: Performance improvement patch from: Robert O'Callahan
 	* src/org/eclipse/cdt/ui/CElementContentProvider.java
 

@@ -6,7 +6,10 @@ package org.eclipse.cdt.internal.ui.editor;
  */
  
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -74,7 +77,7 @@ public class OpenIncludeAction extends Action {
 		
 		try {
 			IResource res = include.getUnderlyingResource();
-			ArrayList filesFound= new ArrayList(4);
+			ArrayList filesFound = new ArrayList(4);
 			if (res != null) {
 				IProject proj = res.getProject();
 				String includeName = include.getElementName();
@@ -88,7 +91,8 @@ public class OpenIncludeAction extends Action {
 					}
 					if (info != null) {
 						String[] includePaths = info.getIncludePaths();
-						findFile(includePaths, includeName, filesFound);
+						HashSet found = new HashSet();
+						findFile(includePaths, includeName, filesFound, found);
 					}
 					if (filesFound.size() == 0) {
 						// Fall back and search the project
@@ -135,13 +139,44 @@ public class OpenIncludeAction extends Action {
 		errorMsg.setMessage (CUIPlugin.getResourceString("OpenIncludeAction.error.description")); //$NON-NLS-1$
 		errorMsg.open();
 	}
-
-	private void findFile(String[] includePaths,  String name, ArrayList list)  throws CoreException {
+	
+	private boolean isInProject(IPath path) {
+		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path) != null;		
+	}
+	
+	// If 'path' is not a resource in the current workspace and
+	// it is a symlink to a resource that is in the current workspace,
+	// use the symlink target instead
+	private IPath resolveIncludeLink(File file, IPath path) {
+		if (isInProject(path))
+			return path;
+		
+		try {
+			String canon = file.getCanonicalPath();
+			if (canon.equals(file.getAbsolutePath()))
+				return path;
+			
+			IPath p = Path.fromOSString(canon);
+			if (isInProject(p))
+			    return p;
+		} catch (IOException e) {
+			// Do nothing; the path is not resolved
+		}
+		
+		return path;
+	}
+	
+	private void findFile(String[] includePaths,  String name, ArrayList list,
+			HashSet foundSet)  throws CoreException {
 		for (int i = 0; i < includePaths.length; i++) {
 			IPath path = new Path(includePaths[i] + "/" + name); //$NON-NLS-1$
 			File file = path.toFile();
 			if (file.exists()) {
-				list.add(path);
+				IPath p = resolveIncludeLink(file, path);
+				if (!foundSet.contains(p)) {
+					foundSet.add(p);
+					list.add(p);
+				}
 			} 
 		}
 	}

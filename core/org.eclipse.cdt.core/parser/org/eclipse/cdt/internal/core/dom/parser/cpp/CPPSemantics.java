@@ -1881,7 +1881,9 @@ public class CPPSemantics {
 	        	if( type == null ){
 	                type = temp;
 	        	} else if( (temp instanceof ICPPDelegate && ((ICPPDelegate)temp).getBinding() == type) ||
-		        	       (type instanceof ICPPDelegate && ((ICPPDelegate)type).getBinding() == temp) )
+		        	       (type instanceof ICPPDelegate && ((ICPPDelegate)type).getBinding() == temp) ||
+		        	       (type instanceof ICPPDelegate && temp instanceof ICPPDelegate && 
+		        	    	((ICPPDelegate)type).getBinding() == ((ICPPDelegate)temp).getBinding()) )
 	        	{
 	        	    //ok, delegates are synonyms
 	        	} else if( type instanceof ICPPClassTemplate && temp instanceof ICPPSpecialization &&

@@ -45,7 +45,8 @@ public class ManagedMakeProject implements ICOwner {
 	public void configure(ICDescriptor cproject) throws CoreException {
 		cproject.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 		cproject.remove(CCorePlugin.BUILDER_MODEL_ID);
-		updateBinaryParsers(cproject);
+		cproject.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+		
 		updateIndexers(cproject);
 	}
 

@@ -53,7 +53,7 @@ public class SearchCompletionContributor implements ICompletionContributor {
         ICSearchScope scope = SearchEngine.createWorkspaceScope();
 			
 		// Create the pattern
-		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, false); //$NON-NLS-1$
+		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, true); //$NON-NLS-1$
 
 		// Run the search
 		BasicSearchResultCollector collector = new BasicSearchResultCollector();

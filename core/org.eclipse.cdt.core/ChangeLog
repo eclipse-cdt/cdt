@@ -1,3 +1,10 @@
+2005-07-06 David Inglis
+	fixed bug#102546
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/internal/core/SystemBuildConsole.java
+	* plugins.xml
+
 2005-07-05  Alain Magloire
 	Fix for PR 102327: ContentType framework.
 	* model/org/eclipse/cdt/core/model/CoreModel.java

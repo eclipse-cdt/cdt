@@ -477,8 +477,8 @@ public class CCorePlugin extends Plugin {
 				for (int i = 0; i < extensions.length; i++) {
 					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					for (int j = 0; j < configElements.length; j++) {
-						String builderID = configElements[j].getAttribute("id"); //$NON-NLS-1$
-						if ((id == null && builderID == null) || (id != null && id.equals(builderID))) {
+						String consoleID = configElements[j].getAttribute("id"); //$NON-NLS-1$
+						if ((id == null && consoleID == null) || (id != null && id.equals(consoleID))) {
 							return (IConsole) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 						}
 					}
@@ -513,7 +513,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public IConsole getConsole() {
-		return getConsole(null);
+		String consoleID = System.getProperty("org.eclipse.cdt.core.console"); //$NON-NLS-1$
+		return getConsole(consoleID);
 	}
 
 	public ICExtensionReference[] getBinaryParserExtensions(IProject project) throws CoreException {

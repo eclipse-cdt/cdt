@@ -588,6 +588,12 @@
             description="%cdt_pathentry_var.description">
       </variable>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            class="org.eclipse.cdt.internal.core.SystemBuildConsole"
+            id="org.eclipse.cdt.core.systemConsole"/>
+   </extension>
 
 <!-- =================================================================================== -->
 <!-- Dynamic Variables                                                          -->	

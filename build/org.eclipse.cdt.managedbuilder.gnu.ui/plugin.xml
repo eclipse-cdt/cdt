@@ -93,7 +93,7 @@
                category="gnu.c.link.category.libs"
                command="-l"
                id="gnu.c.link.option.libs"
-               browseType="file"
+               browseType="none"
                valueType="libs">
          </option>
          <option
@@ -243,7 +243,7 @@
                category="gnu.cpp.link.category.libs"
                command="-l"
                id="gnu.cpp.link.option.libs"
-               browseType="file"
+               browseType="none"
                valueType="libs">
          </option>
          <option
@@ -557,7 +557,7 @@
                category="macosx.c.link.category.libs"
                command="-l"
                id="macosx.c.link.option.libs"
-               browseType="file"
+               browseType="none"
                valueType="libs">
          </option>
          <option
@@ -687,7 +687,7 @@
                category="macosx.cpp.link.category.libs"
                command="-l"
                id="macosx.cpp.link.option.libs"
-               browseType="file"
+               browseType="none"
                valueType="libs">
          </option>
          <option

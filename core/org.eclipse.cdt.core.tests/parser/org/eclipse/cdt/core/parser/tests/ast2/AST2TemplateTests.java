@@ -1657,7 +1657,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IType type = t.getType();
 		assertTrue( type instanceof ICPPSpecialization );
 		assertSame( ((ICPPSpecialization)type).getSpecializedBinding(), _T );
-		
+		assertSame( ((IPointerType)((ITypedef)type).getType()).getType(), B );
 		assertSame( i, col.getName(14).resolveBinding() );
 	}
 	
@@ -1752,8 +1752,6 @@ public class AST2TemplateTests extends AST2BaseTest {
 	}
 	
 	public void testBug98666() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		
 		IASTTranslationUnit tu = parse( "A::template B<T> b;", ParserLanguage.CPP );
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept( col );
@@ -1795,5 +1793,35 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPClassType BI = (ICPPClassType) col.getName(19).resolveBinding();
 		assertTrue( BI instanceof ICPPTemplateInstance );
 		assertSame( ((ICPPTemplateInstance)BI).getSpecializedBinding(), spec );
+	}
+	
+	public void testBug95208() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "template <class T> int f(T); // #1\n"); //$NON-NLS-1$
+		buffer.append( "int f(int);                  // #2\n"); //$NON-NLS-1$
+		buffer.append( "int k = f(1);           // uses #2\n"); //$NON-NLS-1$
+		buffer.append( "int l = f<>(1);         // uses #1\n"); //$NON-NLS-1$
+
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+		
+        ICPPFunctionTemplate f1 = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
+        ICPPFunction f2 = (ICPPFunction) col.getName(4).resolveBinding();
+        
+        assertSame( f2, col.getName(7).resolveBinding() );
+        
+		IBinding b = col.getName(9).resolveBinding(); // resolve the binding of the ICPPASTTemplateId first
+		assertTrue( b instanceof ICPPTemplateInstance );
+		assertSame( ((ICPPTemplateInstance)b).getSpecializedBinding(), f1 );
+		assertSame( f1, col.getName(10).resolveBinding() );
+		
+		
+		tu = parse( buffer.toString(),ParserLanguage.CPP );
+        col = new CPPNameCollector();
+        tu.accept(col);
+		
+        f1 = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
+        assertSame( f1, col.getName(10).resolveBinding() );
 	}
 }

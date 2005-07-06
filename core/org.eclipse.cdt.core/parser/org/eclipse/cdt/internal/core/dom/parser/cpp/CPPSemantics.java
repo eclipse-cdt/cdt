@@ -106,6 +106,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
@@ -460,6 +461,11 @@ public class CPPSemantics {
 			}
 			return false;
 		}
+		public boolean preferTemplateFunctions() {
+			if( astName == null )
+				return false;
+			return (astName instanceof ICPPASTTemplateId || astName.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME );
+		}
 	}
 
 	static protected class Cost
@@ -703,8 +709,17 @@ public class CPPSemantics {
 		    
 		}
 		IASTName name = data.astName;
-		if( name.getParent() instanceof ICPPASTTemplateId )
-			name = (IASTName) name.getParent();
+		if( name.getParent() instanceof ICPPASTTemplateId ){
+			if( binding instanceof ICPPTemplateInstance ){
+				IBinding b = binding;
+				binding = ((ICPPTemplateInstance)binding).getSpecializedBinding();
+				name.setBinding( binding );
+				name = (IASTName) name.getParent();
+				name.setBinding( b );
+			} else {
+				name = (IASTName) name.getParent();
+			}
+		}
 		if( name.getParent() instanceof ICPPASTQualifiedName ){
 			IASTName [] ns = ((ICPPASTQualifiedName)name.getParent()).getNames();
 			if( name == ns [ ns.length - 1] )
@@ -2281,15 +2296,16 @@ public class CPPSemantics {
 				}
 				//we prefer normal functions over template functions, unless we specified template arguments
 				else if( bestIsTemplate && !currIsTemplate ){
-					if( data.templateArguments == null )
-						hasBetter = true;
-					else
+					if( data.preferTemplateFunctions() )
 						ambiguous = false;
+					else
+						hasBetter = true;
 				} else if( !bestIsTemplate && currIsTemplate ){
-					if( data.templateArguments == null )
-						ambiguous = false;
-					else
+					if( data.preferTemplateFunctions() )
 						hasBetter = true;
+					else
+						ambiguous = false;
+						
 				} 
 				if( hasBetter ){
 					//the new best function.

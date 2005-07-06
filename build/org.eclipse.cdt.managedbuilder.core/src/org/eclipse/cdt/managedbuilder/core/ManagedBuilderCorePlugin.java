@@ -11,8 +11,12 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
+import org.eclipse.cdt.managedbuilder.internal.core.ResourceChangeHandler;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ISavedState;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
@@ -35,7 +39,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	//  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
 	//  ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 	//  elements
-	//private static ResourceChangeHandler listener;
+	private static ResourceChangeHandler listener;
 
 	/**
 	 * @param descriptor
@@ -75,14 +79,14 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//      elements
 		
 		// Set up a listener for resource change events
-		//listener = new ResourceChangeHandler();
-		//ResourcesPlugin.getWorkspace().addResourceChangeListener(
-		//	  listener, IResourceChangeEvent.POST_CHANGE /*| IResourceChangeEvent.POST_BUILD*/);
-	    //ISavedState lastState =
-	    //    ResourcesPlugin.getWorkspace().addSaveParticipant(plugin, listener);
-	    //if (lastState != null) {
-	    //    lastState.processResourceChangeEvents(listener);
-	    //}
+		listener = new ResourceChangeHandler();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+			  listener, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE /*| IResourceChangeEvent.POST_BUILD*/);
+	    ISavedState lastState =
+	        ResourcesPlugin.getWorkspace().addSaveParticipant(this, listener);
+	    if (lastState != null) {
+	        lastState.processResourceChangeEvents(listener);
+	    }
 
 	}
 
@@ -93,7 +97,9 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//	  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
 		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 		//      elements
-		//ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+		listener = null;
+		super.stop(context);
 	}
 	
 	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$

@@ -2133,7 +2133,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			jobManager.endRule(rule);
 		}
 
-		if (!buildInfo.isContainerInited()) {
+		if (buildInfo != null && !buildInfo.isContainerInited()) {
 			//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
 			//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
 			//         

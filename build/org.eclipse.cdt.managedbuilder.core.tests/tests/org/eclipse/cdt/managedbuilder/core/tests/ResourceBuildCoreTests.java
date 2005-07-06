@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -19,19 +20,20 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -44,6 +46,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 
 public class ResourceBuildCoreTests extends TestCase {
@@ -54,8 +57,8 @@ public class ResourceBuildCoreTests extends TestCase {
 	
 	
 	private static final String projectName = "T1";
-	
-		
+	private static final String renamedProjectName1 = "T1_1";
+	private static final String renamedProjectName2 = "T1_2";
 	
 	public ResourceBuildCoreTests(String name) {
 		super(name);
@@ -66,6 +69,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurations"));
 		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationReset"));
 		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationBuildInfo"));
+		suite.addTest(new ResourceBuildCoreTests("testResourceRename"));
 		return suite;
 	}
 
@@ -719,6 +723,203 @@ public class ResourceBuildCoreTests extends TestCase {
 		// Now test the information the makefile builder needs
 	//	checkBuildTestSettings(info);
 		ManagedBuildManager.removeBuildInfo(project);
+	}
+	
+	public void testResourceRename() throws Exception {
+		// Create a new project
+		IProject project = null;
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		
+		try {
+			project = createProject(projectName);
+			
+			// Now associate the builder with the project
+			ManagedBuildTestHelper.addManagedBuildNature(project);
+			IProjectDescription description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
+
+		} catch (CoreException e) {
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
+	
+		// Find the base project type definition
+		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
+		IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testgnu21.exe");
+		assertNotNull(projType);
+		
+		// Create the managed-project (.cdtbuild) for our project that builds an executable.
+		IManagedProject newProject = ManagedBuildManager.createManagedProject(project, projType);
+		assertEquals(newProject.getName(), projType.getName());
+		assertFalse(newProject.equals(projType));
+		ManagedBuildManager.setNewProjectVersion(project);
+			
+		// Create a couple of resources ( 'main.c' & 'bar.c')
+		IFile mainFile = project.getProject().getFile( "main.c" );
+		if( !mainFile.exists() ){
+			mainFile.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
+		}
+		
+		IFile aFile = project.getProject().getFile( "a.c" );
+		if( !aFile.exists() ){
+			aFile.create( new ByteArrayInputStream( "#include <stdio.h>\n void bar() { \nprintf(\"Hello, bar()!!\");\n return; }".getBytes() ), false, null );
+		}
+
+		IFolder dirFolder = project.getProject().getFolder( "dir" );
+		if(!dirFolder.exists())
+			dirFolder.create(true,true,null);
+		IFile bFile = dirFolder.getFile( "b.c" );
+		if( !bFile.exists() ){
+			bFile.create( new ByteArrayInputStream( "#include <stdio.h>\n void bar1() { \nprintf(\"Hello, bar1()!!\");\n return; }".getBytes() ), false, null );
+		}
+
+		// Get the configurations and make one of them as default configuration.
+		IConfiguration defaultConfig = null;
+		IConfiguration[] configs = projType.getConfigurations();
+		for (int i = 0; i < configs.length; ++i) {
+			// Make the first configuration the default 
+			if (i == 0) {
+				defaultConfig = newProject.createConfiguration(configs[i], projType.getId() + "." + i);
+			} else {
+				newProject.createConfiguration(configs[i], projType.getId() + "." + i);
+			}
+		}
+		ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
+
+		// Create Resource Configurations for files main.c and bar.c
+		IResourceConfiguration resMainConfig = defaultConfig.createResourceConfiguration(mainFile);
+		IResourceConfiguration resAConfig = defaultConfig.createResourceConfiguration(aFile);
+		IResourceConfiguration resBConfig = defaultConfig.createResourceConfiguration(bFile);
+		
+		// Check whether defaultConfig has three resource configurations or not.
+		IResourceConfiguration resConfigs[] = defaultConfig.getResourceConfigurations();
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(resAConfig,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(resBConfig,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		assertEquals(3,resConfigs.length);
+
+		
+		mainFile.move(mainFile.getFullPath().removeLastSegments(1).append("main1.c"),true,false,null);
+		mainFile = (IFile)project.findMember("main1.c");
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(resAConfig,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(resBConfig,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		resConfigs = defaultConfig.getResourceConfigurations();
+		assertEquals(3,resConfigs.length);
+
+		dirFolder.move(dirFolder.getFullPath().removeLastSegments(1).append("dir1"),true,false,null);
+		dirFolder = (IFolder)project.findMember("dir1");
+		bFile = (IFile)dirFolder.findMember("b.c");
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(resAConfig,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(resBConfig,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		resConfigs = defaultConfig.getResourceConfigurations();
+		assertEquals(3,resConfigs.length);
+
+		bFile.move(bFile.getFullPath().removeLastSegments(1).append("b1.c"),true,false,null);
+		bFile = (IFile)dirFolder.findMember("b1.c");
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(resAConfig,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(resBConfig,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		resConfigs = defaultConfig.getResourceConfigurations();
+		assertEquals(3,resConfigs.length);
+
+		IProjectDescription des = project.getDescription();
+		des.setName(renamedProjectName1);
+		project.move(des,true,null);
+		project = (IProject)root.findMember(renamedProjectName1);
+		mainFile = (IFile)project.findMember("main1.c");
+		aFile = (IFile)project.findMember("a.c");
+		dirFolder = (IFolder)project.findMember("dir1");
+		bFile = (IFile)dirFolder.findMember("b1.c");
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(resAConfig,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(resBConfig,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		resConfigs = defaultConfig.getResourceConfigurations();
+		assertEquals(3,resConfigs.length);
+		
+		final IResource rcBuf[] = new IResource[5]; 
+		rcBuf[0] = project;
+		rcBuf[1] = mainFile;
+		rcBuf[2] = aFile;
+		rcBuf[3] = dirFolder;
+		rcBuf[4] = bFile;
+
+		ResourcesPlugin.getWorkspace().run( new IWorkspaceRunnable(){
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IProject project = (IProject)rcBuf[0];
+				IFile mainFile = (IFile)rcBuf[1];
+				IFile aFile = (IFile)rcBuf[2];
+				IFolder dirFolder = (IFolder)rcBuf[3];
+				IFile bFile = (IFile)rcBuf[4];
+				// TODO Auto-generated method stub
+				mainFile.move(mainFile.getFullPath().removeLastSegments(1).append("main2.c"),true,false,null);
+				mainFile = (IFile)project.findMember("main2.c");
+
+				dirFolder.move(dirFolder.getFullPath().removeLastSegments(1).append("dir2"),true,false,null);
+				dirFolder = (IFolder)project.findMember("dir2");
+				bFile = (IFile)dirFolder.findMember("b1.c");
+
+				bFile.move(bFile.getFullPath().removeLastSegments(1).append("b2.c"),true,false,null);
+				bFile = (IFile)dirFolder.findMember("b2.c");
+
+//				project.move(project.getFullPath().removeLastSegments(1).append(renamedProjectName2),true,null);
+				IProjectDescription des = project.getDescription();
+				des.setName(renamedProjectName2);
+				project.move(des,true,null);
+				project = (IProject)ResourcesPlugin.getWorkspace().getRoot().findMember(renamedProjectName2);
+
+				mainFile = (IFile)project.findMember("main2.c");
+				aFile = (IFile)project.findMember("a.c");
+				dirFolder = (IFolder)project.findMember("dir2");
+				bFile = (IFile)dirFolder.findMember("b2.c");
+				
+				rcBuf[0] = project;
+				rcBuf[1] = mainFile;
+				rcBuf[2] = aFile;
+				rcBuf[3] = dirFolder;
+				rcBuf[4] = bFile;
+			}
+			
+			}, 
+			root,
+			IWorkspace.AVOID_UPDATE,
+			null);
+		
+		project = (IProject)rcBuf[0];
+		mainFile = (IFile)rcBuf[1];
+		aFile = (IFile)rcBuf[2];
+		dirFolder = (IFolder)rcBuf[3];
+		bFile = (IFile)rcBuf[4];
+
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(resAConfig,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(resBConfig,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		resConfigs = defaultConfig.getResourceConfigurations();
+		assertEquals(3,resConfigs.length);
+		
+		aFile.delete(true,null);
+		// Check whether defaultConfig has two resource configurations or not.
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(null,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(resBConfig,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		resConfigs = defaultConfig.getResourceConfigurations();
+		assertEquals(2,resConfigs.length);
+		
+		dirFolder.delete(true, null);
+		// Check whether defaultConfig has one resource configuration or not.
+		assertEquals(resMainConfig,defaultConfig.getResourceConfiguration(mainFile.getFullPath().toString()));
+		assertEquals(null,defaultConfig.getResourceConfiguration(aFile.getFullPath().toString()));
+		assertEquals(null,defaultConfig.getResourceConfiguration(bFile.getFullPath().toString()));
+		resConfigs = defaultConfig.getResourceConfigurations();
+		assertEquals(1,resConfigs.length);
+
+		// Close and remove project.
+		project.close(null);
+		removeProject(renamedProjectName2);
 	}
 	
 }	

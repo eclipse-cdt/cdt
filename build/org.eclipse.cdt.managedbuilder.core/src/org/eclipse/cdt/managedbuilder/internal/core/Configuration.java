@@ -852,7 +852,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	public void removeResourceConfiguration(IResourceConfiguration resConfig) {
-		getResourceConfigurationList().remove((ResourceConfiguration)resConfig);
+		getResourceConfigurationList().remove(resConfig);
+		getResourceConfigurationMap().remove(resConfig.getResourcePath());
 	}
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S

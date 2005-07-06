@@ -71,7 +71,6 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
 
     private TreeListDialogField fIncludeSymPathsList;
     private SelectionButtonDialogField fShowInheritedPaths;
-    private SelectionButtonDialogField fShowUnrelatedResources;
     private ICElement fCurrCElement;
     private ICProject fCurrCProject;
     private CPElementFilter fFilter;
@@ -91,7 +90,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
 
     private static final String[] buttonLabel = new String[]{
 
-    /* 0 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addFolderFile"), //$NON-NLS-1$
+    		/* 0 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addFolderFile"), //$NON-NLS-1$
             null,
             /* 2 */CPathEntryMessages.getString("IncludeSymbolEntryPage.addUserSymbol"), //$NON-NLS-1$
             null,
@@ -115,39 +114,35 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
      * @author vhirsl
      */
     private class CPElementPerFileFilter extends CPElementFilter {
-        private boolean fShowUnrelated;
 
-        public CPElementPerFileFilter(int[] kind, boolean exportedOnly, boolean showInherited, boolean showUnrelated) {
+        public CPElementPerFileFilter(int[] kind, boolean exportedOnly, boolean showInherited) {
             super(kind, exportedOnly, showInherited);
-            fShowUnrelated = showUnrelated;
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.cdt.internal.ui.dialogs.cpaths.CPElementFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
         public boolean select(Viewer viewer, Object parent, Object element) {
-            if (!fShowUnrelated) {
-                IResource res = null;
-                if (element instanceof CPElement) {
-                    CPElement cpElem = (CPElement) element;
-                    res = cpElem.getResource();
-                } else if (element instanceof CPElementGroup) {
-                    CPElementGroup cpElemGroup = (CPElementGroup) element;
-                    res = cpElemGroup.getResource();
-                }
-                if (res != null && !res.equals(fCurrCElement.getResource())) {
-                    IPath currResPath = fCurrCElement.getResource().getFullPath();
-                    IPath resPath = res.getFullPath();
-                    boolean found = false;
-                    for (int i = currResPath.segmentCount() - 1; i >= 0; --i) {
-                        if (resPath.equals(currResPath.uptoSegment(i))) {
-                            found = true;
-                            break;
-                        }
+            IResource res = null;
+            if (element instanceof CPElement) {
+                CPElement cpElem = (CPElement) element;
+                res = cpElem.getResource();
+            } else if (element instanceof CPElementGroup) {
+                CPElementGroup cpElemGroup = (CPElementGroup) element;
+                res = cpElemGroup.getResource();
+            }
+            if (res != null && !res.equals(fCurrCElement.getResource())) {
+                IPath currResPath = fCurrCElement.getResource().getFullPath();
+                IPath resPath = res.getFullPath();
+                boolean found = false;
+                for (int i = currResPath.segmentCount() - 1; i >= 0; --i) {
+                    if (resPath.equals(currResPath.uptoSegment(i))) {
+                        found = true;
+                        break;
                     }
-                    if (found == false) 
-                        return false;
                 }
+                if (found == false) 
+                    return false;
             }
             return super.select(viewer, parent, element);
         }
@@ -222,6 +217,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
             }
         };
         fIncludeSymPathsList.setLabelText(CPathEntryMessages.getString("IncludeSymbolEntryPage.label")); //$NON-NLS-1$
+        fIncludeSymPathsList.enableButton(IDX_ADD_FOLDER_FILE, false);
         fIncludeSymPathsList.enableButton(IDX_REMOVE, false);
         fIncludeSymPathsList.enableButton(IDX_EDIT, false);
         fIncludeSymPathsList.enableButton(IDX_ADD_CONTRIBUTED, true);
@@ -236,14 +232,10 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         fShowInheritedPaths.setSelection(true);
         fShowInheritedPaths.setLabelText(CPathEntryMessages.getString("IncludeSymbolsEntryPage.show_inherited.check")); //$NON-NLS-1$
         fShowInheritedPaths.setDialogFieldListener(adapter);
-        fShowUnrelatedResources = new SelectionButtonDialogField(SWT.CHECK);
-        fShowUnrelatedResources.setSelection(false);
-        fShowUnrelatedResources.setLabelText(CPathEntryMessages.getString("IncludeSymbolsEntryPage.show_unrelated.check")); //$NON-NLS-1$
-        fShowUnrelatedResources.setDialogFieldListener(adapter);
 
         fFilter = new CPElementPerFileFilter(new int[]{-1, IPathEntry.CDT_INCLUDE, IPathEntry.CDT_INCLUDE_FILE, 
                     IPathEntry.CDT_MACRO, IPathEntry.CDT_MACRO_FILE, IPathEntry.CDT_CONTAINER},
-                false, true, false);
+                false, true);
     }
 
     public void createControl(Composite parent) {
@@ -252,7 +244,7 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        LayoutUtil.doDefaultLayout(composite, new DialogField[]{fIncludeSymPathsList, fShowInheritedPaths, fShowUnrelatedResources}, true);
+        LayoutUtil.doDefaultLayout(composite, new DialogField[]{fIncludeSymPathsList, fShowInheritedPaths}, true);
         LayoutUtil.setHorizontalGrabbing(fIncludeSymPathsList.getTreeControl(null));
 
         int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
@@ -738,14 +730,13 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
 
     protected void listPageDialogFieldChanged(DialogField field) {
         boolean showInherited = fShowInheritedPaths.isSelected();
-        boolean showUnrelated = fShowUnrelatedResources.isSelected();
-        if (field == fShowInheritedPaths || field == fShowUnrelatedResources) {
+        if (field == fShowInheritedPaths) {
             if (fFilter != null) {
                 fIncludeSymPathsList.getTreeViewer().removeFilter(fFilter);
             }
             fFilter = new CPElementPerFileFilter(new int[]{-1, IPathEntry.CDT_INCLUDE, IPathEntry.CDT_INCLUDE_FILE,
                         IPathEntry.CDT_MACRO, IPathEntry.CDT_MACRO_FILE, IPathEntry.CDT_CONTAINER},
-                    false, showInherited, showUnrelated); 
+                    false, showInherited); 
             fIncludeSymPathsList.getTreeViewer().addFilter(fFilter);
             fIncludeSymPathsList.setTreeExpansionLevel(fTreeExpansionLevel);
             fIncludeSymPathsList.refresh();

@@ -1,3 +1,9 @@
+2005-07-06 Vladimir Hirsl
+	Disabled Add Folder/File button in CPathIncludeSymbolEntryPerFilePage.
+
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.properties
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeSymbolEntryPerFilePage.java
+
 2005-07-06 Alain Magloire
 	Fix PR 99130: no leading underscore in the guard header name
 	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewSourceFIleGenerator.java

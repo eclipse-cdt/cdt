@@ -250,7 +250,8 @@ public class MethodDeclarationPattern extends CSearchPattern {
 	 * @return
 	 */
 	private boolean matchReturnType(char[] tempReturnTypes, char[] tempDecodedReturnTypes) {
-		if( tempReturnTypes == null || tempDecodedReturnTypes == null ){
+		if( (tempReturnTypes == null || tempReturnTypes.length == 0)
+			|| tempDecodedReturnTypes == null ){
 			return true;  //treat null as "*"
 		}
 	

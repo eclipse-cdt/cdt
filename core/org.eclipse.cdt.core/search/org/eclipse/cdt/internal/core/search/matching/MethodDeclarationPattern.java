@@ -216,7 +216,7 @@ public class MethodDeclarationPattern extends CSearchPattern {
 			}
 			
 			if (returnTypeExists){
-				this.returnTypes = missmatch[returnStart + 1].toCharArray();
+				this.decodedReturnTypes = missmatch[returnStart + 1].toCharArray();
 			}
 		}
 			
@@ -249,12 +249,12 @@ public class MethodDeclarationPattern extends CSearchPattern {
 	 * @param decodedReturnTypes
 	 * @return
 	 */
-	private boolean matchReturnType(char[] returnTypes, char[] decodedReturnTypes) {
-		if( returnTypes == null || decodedReturnTypes == null ){
+	private boolean matchReturnType(char[] tempReturnTypes, char[] tempDecodedReturnTypes) {
+		if( tempReturnTypes == null || tempDecodedReturnTypes == null ){
 			return true;  //treat null as "*"
 		}
 	
-		return CharOperation.equals( returnTypes, decodedReturnTypes, true);
+		return CharOperation.equals( tempReturnTypes, tempDecodedReturnTypes, true);
 	}
 
 	private boolean matchParameters(char[][] parameterNames2, char[][] decodedParameters2) {
@@ -291,7 +291,7 @@ public class MethodDeclarationPattern extends CSearchPattern {
 				for (int j=0; j<offsets[i].length; j++){
 					BasicSearchMatch match = new BasicSearchMatch();
 					match.setName(new String(this.decodedSimpleName));
-					//Decode the offsetse
+					//Decode the offsets
 					//Offsets can either be IIndex.LINE or IIndex.OFFSET 
 					match.setLocatable(getMatchLocatable(offsets[i][j],offsetLengths[i][j]));
 					match.setParentName(""); //$NON-NLS-1$
@@ -300,6 +300,19 @@ public class MethodDeclarationPattern extends CSearchPattern {
 					} else if (searchFor == FUNCTION ){
 						match.setType(ICElement.C_FUNCTION);
 					}
+					
+					if (this.decodedParameters.length > 0){
+						String[] parms = new String[decodedParameters.length];
+						for (int k=0; k<this.decodedParameters.length; k++){
+							parms[k]=new String(decodedParameters[k]);
+						}
+						match.setParameters(parms);
+					}
+					
+					if (this.decodedReturnTypes != null){
+						match.setReturnType(new String(this.decodedReturnTypes));
+					}
+					
 					
 				    IFile tempFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path));
 					if (tempFile != null && tempFile.exists())

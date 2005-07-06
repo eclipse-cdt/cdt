@@ -120,6 +120,10 @@ public abstract class FindAction extends SelectionParseAction {
 		ICElement element = (ICElement) obj;
 		
 		CSearchQuery job = createSearchQuery( getFullyQualifiedName(element), CSearchUtil.getSearchForFromElement(element));
+		
+		if (job == null)
+			return;
+		
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQueryInBackground(job);
@@ -309,13 +313,13 @@ public abstract class FindAction extends SelectionParseAction {
     		//or Working Copy (both represented by C_UNIT) or hit a null
     		if (element.getElementType() == ICElement.C_UNIT ||
     			element == null){
-    			fullName.insert(0,"::");
+    			fullName.insert(0,"::"); //$NON-NLS-1$
     			break;
     		}
     		else if (element.getElementType() != ICElement.C_ENUMERATION){
     			//get the parent name as long as it is not an enumeration - enumerators
     			//don't use the enumeration name as part of the fully qualified name
-    			fullName.insert(0,"::");
+    			fullName.insert(0,"::"); //$NON-NLS-1$
     			fullName.insert(0,element.getElementName());
     		}
     	}

@@ -49,6 +49,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	
 	
 	public BasicSearchMatch() {
+		//Create empty BasicSearchMatch
 	}
 	
 	final static private String HASH_SEPERATOR = ":"; //$NON-NLS-1$

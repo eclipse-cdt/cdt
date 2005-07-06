@@ -396,7 +396,7 @@ public class CFileTypesPreferenceBlock {
 		}
 	}
 
-	private IContentType[] getRegistedContentTypes() {
+	public IContentType[] getRegistedContentTypes() {
 		if (fContentTypes == null) {
 			String [] ids = CoreModel.getRegistedContentTypeIds();
 			IContentTypeManager manager = Platform.getContentTypeManager();

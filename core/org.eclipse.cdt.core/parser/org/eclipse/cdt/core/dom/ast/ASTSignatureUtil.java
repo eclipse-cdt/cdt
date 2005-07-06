@@ -144,7 +144,13 @@ public class ASTSignatureUtil {
 			IASTParameterDeclaration[] parms = null;
 			parms = ((IASTStandardFunctionDeclarator)decltor).getParameters();
 			
-			result = new String[parms.length];
+			if (((IASTStandardFunctionDeclarator) decltor).takesVarArgs()) {
+				result = new String[parms.length + 1];
+				result[parms.length] = "..."; //$NON-NLS-1$
+			}
+			else {
+				result = new String[parms.length];
+			}
 			
 			for(int i=0; i<parms.length; i++) {
 				if (parms[i] != null) {

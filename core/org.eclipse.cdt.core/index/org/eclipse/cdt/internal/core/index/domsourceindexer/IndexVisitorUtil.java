@@ -17,9 +17,10 @@ import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -192,13 +193,21 @@ public class IndexVisitorUtil {
         if (parent instanceof ICPPASTQualifiedName) {
         	parent = parent.getParent();
         }
-        if (parent instanceof IASTDeclarator) {
-            IASTDeclarator declarator = (IASTDeclarator) parent;
-            String[] parameters = ASTSignatureUtil.getParameterSignatureArray(declarator);
-            if (parameters.length == 0) {
+        if (parent instanceof IASTFunctionDeclarator) {
+        	IASTFunctionDeclarator fDecl = (IASTFunctionDeclarator) parent;
+            String[] parameters = ASTSignatureUtil.getParameterSignatureArray(fDecl);
+            char[][] rv;
+            if (fDecl instanceof IASTStandardFunctionDeclarator &&
+	            	((IASTStandardFunctionDeclarator) fDecl).takesVarArgs()) {
+           		rv = new char[parameters.length + 1][];
+           		rv[parameters.length] = "...".toCharArray(); //$NON-NLS-1$
+            }
+            else {
+                rv = new char[parameters.length][];
+            }
+            if (rv.length == 0) {
                 return new char[][] { "void".toCharArray() }; //$NON-NLS-1$
             }
-            char[][] rv = new char[parameters.length][];
             for (int k = 0; k < parameters.length; k++) {
                 rv[k] = parameters[k].toCharArray();
             }
@@ -219,10 +228,12 @@ public class IndexVisitorUtil {
                 IType paramType = parameters[i].getType();
                 parameterList.add(ASTTypeUtil.getType(paramType).toCharArray());
             }
-            if (function.takesVarArgs())
+            if (function.takesVarArgs()) {
                 parameterList.add("...".toCharArray()); //$NON-NLS-1$
-            else if (parameters.length == 0)
-                parameterList.add("void".toCharArray()); //$NON-NLS-1$
+            }
+            if (parameterList.isEmpty()) {
+            	parameterList.add("void".toCharArray()); //$NON-NLS-1$
+            }
         }
         catch (DOMException e) {
         }

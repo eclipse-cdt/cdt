@@ -1,4 +1,9 @@
 2005-07-06  Alain Magloire
+	PR 102789: Add Include dialog typo
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+
+2005-07-06  Alain Magloire
 	PR 102622: OpenIncludeAction improvement, patch from: Robert O'Callahan
 	* src/org/eclipse/cdt/internal/ui/OpenIncludeAction.java
 

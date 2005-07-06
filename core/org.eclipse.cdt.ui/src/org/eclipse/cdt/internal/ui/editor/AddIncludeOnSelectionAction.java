@@ -61,7 +61,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -108,7 +107,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		setDescription(CEditorMessages.getString("AddIncludeOnSelection.description")); //$NON-NLS-1$
 		
 		fEditor= editor;
-		WorkbenchHelp.setHelp(this, ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);	
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.ADD_INCLUDE_ON_SELECTION_ACTION);
 	}
 	
 	private void addInclude(ITranslationUnit tu) {

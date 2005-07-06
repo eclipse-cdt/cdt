@@ -20,6 +20,10 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IMatch {
 	
+	/**
+	 * Returns ICElement constant describing the element type
+	 * @return
+	 */
 	int getElementType();
 
 	int getVisibility();

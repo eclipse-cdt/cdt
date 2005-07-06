@@ -76,7 +76,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	public static final int ACCURATE_MATCH   = 2;
 	public static final int INACCURATE_MATCH = 3;
 	
-	private static SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE };
+	private static SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE, TYPEDEF, MACRO};
 	
 	protected static class Requestor extends NullSourceElementRequestor
 	{

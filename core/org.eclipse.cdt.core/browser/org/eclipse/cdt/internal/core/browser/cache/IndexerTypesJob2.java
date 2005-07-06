@@ -160,8 +160,18 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 //				}				
 				final IPath workspaceRelativePath = PathUtil.getWorkspaceRelativePath(pth);
                 int offset = entry.getOffsets()[0][0];
-                int offsetType = Integer.valueOf(String.valueOf(offset).substring(0,1)).intValue();
-                int value = Integer.valueOf(String.valueOf(offset).substring(1)).intValue();
+//                int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
+                int offsetType = offset;
+                int m = 1;
+                while (offsetType >= 10) {
+                    offsetType = offsetType / 10;
+                    m *= 10;
+                }
+                int mod = 1;
+                while( offset / ( mod * 10 )> 0 )
+                    mod *= 10;
+                int value = offset % mod;
+//                int value = Integer.valueOf(String.valueOf(offset).substring(1)).intValue();
                 
                 TypeReference typeReference = null;
                 if (offsetType==IIndex.LINE){

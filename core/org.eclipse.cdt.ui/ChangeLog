@@ -1,3 +1,7 @@
+2005-07-06  Alain Magloire
+	PR 102619: Performance improvement patch from: Robert O'Callahan
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java
+
 2005-07-05  Alain Magloire
 	Fix for PR 102327: ContentType framework.
 	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java

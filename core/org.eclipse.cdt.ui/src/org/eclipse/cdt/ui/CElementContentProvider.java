@@ -12,6 +12,8 @@ package org.eclipse.cdt.ui;
 
 
 
+import java.util.HashSet;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -67,6 +69,9 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
     protected ITextEditor fEditor;
     protected StructuredViewer fViewer;
 	protected Object fInput;
+	
+	/** Remember what refreshes we already have pending so we don't post them again. */
+	protected HashSet pendingRefreshes = new HashSet();
 
     /**
      * Creates a new content provider for C elements.
@@ -258,97 +263,108 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 		return false;
 	}
-
+	
+	// Tree refresh system
+	// We keep track of what we're going to refresh and avoid posting multiple refresh
+	// messages for the same elements. This avoids major performance issues where
+	// we update tree views hundreds or thousands of times.
+	interface IRefreshable {
+	    public void refresh();
+	}
+	final class RefreshContainer implements IRefreshable {
+		private IParent container;
+		private ICProject cproject;
+		public RefreshContainer(IParent container, ICProject cproject) {
+			this.container = container;
+			this.cproject = cproject;
+		}
+	    public void refresh() {
+			if (container.hasChildren()) {
+				if (fViewer.testFindItem(container) != null) {
+					fViewer.refresh(container);
+				} else {
+					fViewer.refresh(cproject);
+				}
+			} else {
+				fViewer.refresh(cproject);
+			}
+	    }
+	    public boolean equals(Object o) {
+	    	if (o instanceof RefreshContainer) {
+	    		RefreshContainer c = (RefreshContainer)o;
+	    		return c.container.equals(container) && c.cproject.equals(cproject);
+	    	}
+	        return false;
+	    }
+	    public int hashCode() {
+	    	return container.hashCode()*10903143 + 31181;
+	    }
+	}
+	final class RefreshElement implements IRefreshable {
+		private Object element;
+		public RefreshElement(Object element) {
+			this.element = element;
+		}
+		public void refresh() {
+			if (element instanceof IWorkingCopy){
+				if (fViewer.testFindItem(element) != null){
+					fViewer.refresh(element);													
+				} else {
+					fViewer.refresh(((IWorkingCopy)element).getOriginalElement());
+				}
+			} else if (element instanceof IBinary) {
+				fViewer.refresh(element, true);
+			} else {
+				fViewer.refresh(element);						
+			}
+		}
+	    public boolean equals(Object o) {
+	    	if (o instanceof RefreshElement) {
+	    		RefreshElement c = (RefreshElement)o;
+	    		return c.element.equals(element);
+	    	}
+	        return false;
+	    }
+	    public int hashCode() {
+	    	return element.hashCode()*7 + 490487;
+	    }
+	}
+	
 	private void postContainerRefresh(final IParent container, final ICProject cproject) {
 		//System.out.println("UI Container:" + cproject + " " + container);
-		postRunnable(new Runnable() {
-			public void run () {
-				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					if (container.hasChildren()) {
-						if (fViewer.testFindItem(container) != null) {
-							fViewer.refresh(container);
-						} else {
-							fViewer.refresh(cproject);
-						}
-					} else {
-						fViewer.refresh(cproject);
-					}
-				}
-			}
-		});
+		postRefreshable(new RefreshContainer(container, cproject));
 	}
 
 	private void postRefresh(final Object element) {
 		//System.out.println("UI refresh:" + root);
-		postRunnable(new Runnable() {
-			public void run() {
-				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
-				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()){
-					if (element instanceof IWorkingCopy){
-						if (fViewer.testFindItem(element) != null){
-							fViewer.refresh(element);													
-						} else {
-							fViewer.refresh(((IWorkingCopy)element).getOriginalElement());
-						}
-					} else if (element instanceof IBinary) {
-						fViewer.refresh(element, true);
-					} else {
-						fViewer.refresh(element);						
-					}
-				}
-			}
-		});
+		postRefreshable(new RefreshElement(element));
 	}
 
 	private void postAdd(final Object parent, final Object element) {
 		//System.out.println("UI add:" + parent + " " + element);
-		postRunnable(new Runnable() {
-			public void run() {
-				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
-				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()){
-					if(parent instanceof IWorkingCopy){
-						if (fViewer.testFindItem(parent) != null){
-							fViewer.refresh(parent);													
-						} else {
-							fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
-						}
-					} else {
-						fViewer.refresh(parent);						
-					}
-				}
-			}
-		});
+		postRefreshable(new RefreshElement(parent));
 	}
 
 	private void postRemove(final Object element) {
 		//System.out.println("UI remove:" + element);
-		postRunnable(new Runnable() {
-			public void run() {
-				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
-				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					Object parent = internalGetParent(element);
-					if (parent instanceof IWorkingCopy){
-						if (fViewer.testFindItem(parent) != null){
-							fViewer.refresh(parent);													
-						} else {
-							fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
-						}
-					} else {
-						fViewer.refresh(parent);						
-					}
-				}
-			}
-		});
+		postRefreshable(new RefreshElement(internalGetParent(element)));
 	}
 
-	private void postRunnable(final Runnable r) {
+	private void postRefreshable(final IRefreshable r) {
 		Control ctrl= fViewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
-			ctrl.getDisplay().asyncExec(r); 
+			if (pendingRefreshes.contains(r))
+				return;
+			pendingRefreshes.add(r);
+			ctrl.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					pendingRefreshes.remove(r);
+					Control ctrl= fViewer.getControl();
+					if (ctrl != null && !ctrl.isDisposed()) {
+						r.refresh();
+					}
+				}
+			});
 		}
 	}
 

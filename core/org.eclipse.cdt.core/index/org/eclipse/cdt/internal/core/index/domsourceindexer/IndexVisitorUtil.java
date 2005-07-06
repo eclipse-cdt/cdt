@@ -219,9 +219,8 @@ public class IndexVisitorUtil {
                 IType paramType = parameters[i].getType();
                 parameterList.add(ASTTypeUtil.getType(paramType).toCharArray());
             }
-            if (parameterList.isEmpty()) {
-                parameterList.add("void".toCharArray()); //$NON-NLS-1$
-            }
+            if (function.takesVarArgs())
+                parameterList.add("...".toCharArray()); //$NON-NLS-1$
         }
         catch (DOMException e) {
         }

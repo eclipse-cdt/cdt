@@ -118,7 +118,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( 2, matches.size());
+		assertEquals( 0, matches.size()); // The pattern must match the use of the void in the code
 		
 		pattern = SearchEngine.createSearchPattern( "turnAgain()", METHOD, DECLARATIONS, true ); //$NON-NLS-1$
 		

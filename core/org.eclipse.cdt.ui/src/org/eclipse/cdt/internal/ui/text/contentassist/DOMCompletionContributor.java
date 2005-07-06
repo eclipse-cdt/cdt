@@ -125,7 +125,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					
 					args.append(ASTTypeUtil.getType(paramType));
 					String paramName = params[i].getName();
-					if (paramName != null) {
+					if (paramName != null && paramName.length() > 0) {
 						args.append(' ');
 						args.append(paramName);
 					}

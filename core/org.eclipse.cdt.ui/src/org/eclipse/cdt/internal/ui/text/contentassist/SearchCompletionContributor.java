@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.ICElement;
@@ -39,6 +38,9 @@ public class SearchCompletionContributor implements ICompletionContributor {
 			List proposals)
 	{
 	    if (!validContext(completionNode))
+            return;
+        
+        if (prefix == null || prefix.length() == 0)
             return;
             
 		// Create search engine

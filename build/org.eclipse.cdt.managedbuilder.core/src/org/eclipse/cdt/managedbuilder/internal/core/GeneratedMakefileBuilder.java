@@ -154,9 +154,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					if (changedResource instanceof IFolder) {
 						return true;
 					} else {
-						String name = changedResource.getName();
-						String ext = changedResource.getFileExtension();
-						
+						String name = changedResource.getName();						
 						if ((!name.equals(buildGoalName) &&
 							// TODO:  Also need to check for secondary outputs
 							(changedResource.isDerived() || 
@@ -358,10 +356,31 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				delta.accept(visitor);
 				if (visitor.shouldBuildFull()) {
 					outputTrace(getProject().getName(), "Incremental build requested, full build needed");	//$NON-NLS-1$
-					fullBuild(info, generator, monitor);						
+					fullBuild(info, generator, monitor);
 				} else if (visitor.shouldBuildIncr()) {
 					outputTrace(getProject().getName(), "Incremental build requested");	//$NON-NLS-1$
 					incrementalBuild(delta, info, generator, monitor);
+				}
+				else if (referencedProjects != null) {
+					//  Also check to see is any of the dependent projects changed
+					for (int i=0; i<referencedProjects.length; i++) {
+						IProject ref = referencedProjects[i];
+						IResourceDelta refDelta = getDelta(ref);
+						if (refDelta == null) {
+							outputTrace(getProject().getName(), "Incremental build because of changed referenced project");	//$NON-NLS-1$
+							incrementalBuild(delta, info, generator, monitor);
+						} else {
+							int refKind = refDelta.getKind(); 
+							if (refKind != IResourceDelta.NO_CHANGE) {
+								int refFlags = refDelta.getFlags();
+								if (!(refKind == IResourceDelta.CHANGED &&
+									  refFlags == IResourceDelta.OPEN)) {
+									outputTrace(getProject().getName(), "Incremental build because of changed referenced project");	//$NON-NLS-1$
+									incrementalBuild(delta, info, generator, monitor);
+								}
+							}
+						}						
+					}
 				}
 			}
 		}
@@ -815,7 +834,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						// then: don't invoke the prebuild step, which should be run only if 
 						//       something needs to be built in the main build 
 						// else: invoke the prebuild step and the main build step 
-						boolean quit = false;
 						premakeArgs.add("-q"); //$NON-NLS-1$ 
 						premakeArgs.add("main-build"); //$NON-NLS-1$ 
 						premakeTargets = (String[]) premakeArgs.toArray(new String[premakeArgs.size()]);

@@ -66,12 +66,10 @@ public class TemplateEngine implements ICompletionContributor {
 			super(template, context, region, image, 90);
 		}
 
-//		/* (non-Javadoc)
-//		 * @see org.eclipse.cdt.ui.text.ICCompletionProposal#getRelevance()
-//		 */
-//		public int getRelevance() {
-//			return 90;
-//		}
+        public String getIdString() {
+            return getDisplayString();
+        }
+        
 	}
 	/**
 	 * Creates the template engine for a particular context type.

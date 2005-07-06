@@ -24,5 +24,13 @@ public interface ICCompletionProposal extends ICompletionProposal {
 	 */
 	int getRelevance();
 
+    /**
+     * Returns an id string that uniquely identifies this proposal. For most things this is the
+     * same as the display name. For functions, this strips off the parameter names and the
+     * return type.
+     * 
+     * @return the string that uniquely identifies this proposal
+     */
+    String getIdString();
 }
 

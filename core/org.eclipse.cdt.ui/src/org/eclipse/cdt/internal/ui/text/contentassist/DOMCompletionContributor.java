@@ -142,7 +142,10 @@ public class DOMCompletionContributor implements ICompletionContributor {
                 }
                 dispargs.append(" ..."); //$NON-NLS-1$
                 idargs.append(" ..."); //$NON-NLS-1$
-			}
+			} else if (params.length == 0) { // force the void in
+			    dispargs.append("void"); //$NON-NLS-1$
+                idargs.append("void"); //$NON-NLS-1$
+            }
 			
 			IType returnType = function.getType().getReturnType();
 			if (returnType != null)

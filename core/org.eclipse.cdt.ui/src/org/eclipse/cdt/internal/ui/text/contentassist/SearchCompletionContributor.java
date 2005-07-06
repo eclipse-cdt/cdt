@@ -129,29 +129,31 @@ public class SearchCompletionContributor implements ICompletionContributor {
         if (params != null)
             for (int i = 0; i < params.length; ++i) {
                 if (i > 0)
-                    args.append(", "); //$NON-NLS-1$
+                    args.append(',');
                 args.append(params[i]);
             }
             
         String returnType = match.getReturnType();
         String argString = args.toString();
         
-        StringBuffer descStringBuff = new StringBuffer(repStringBuff.toString());
-        descStringBuff.append(argString);
-        descStringBuff.append(')');
-        
-        if (returnType != null) {
-            descStringBuff.append(' ');
-            descStringBuff.append(returnType);
-        }
-        
+        StringBuffer dispStringBuff = new StringBuffer(repStringBuff.toString());
+        dispStringBuff.append(argString);
+        dispStringBuff.append(')');
+
         repStringBuff.append(')');
         String repString = repStringBuff.toString();
-        String descString = descStringBuff.toString();
-        
+
+        String idString = null;
+        if (returnType != null) {
+            idString = dispStringBuff.toString();
+            dispStringBuff.append(' ');
+            dispStringBuff.append(returnType);
+        }
+        String dispString = dispStringBuff.toString();
+
         int repLength = prefix.length();
         int repOffset = offset - repLength;
-        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, descString, 1, viewer);
+        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, dispString, idString, 1, viewer);
         proposal.setCursorPosition(repString.length() - 1);
         
         if (argString.length() > 0) {
@@ -159,6 +161,7 @@ public class SearchCompletionContributor implements ICompletionContributor {
             info.setContextInformationPosition(offset);
             proposal.setContextInformation(info);
         }
+        
         proposals.add(proposal);
     }
 }

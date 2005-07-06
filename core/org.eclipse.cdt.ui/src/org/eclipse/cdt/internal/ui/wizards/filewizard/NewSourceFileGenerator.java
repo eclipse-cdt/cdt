@@ -80,7 +80,8 @@ public class NewSourceFileGenerator {
             //convert to upper case and remove invalid characters
             //eg convert foo.h --> _FOO_H_
             StringBuffer buf = new StringBuffer();
-            buf.append('_');
+            // Do not do this, leading underscores are discourage by the std.
+            //buf.append('_');
             for (int i = 0; i < name.length(); ++i) {
                 char ch = name.charAt(i);
                 if (Character.isLetterOrDigit(ch)) {

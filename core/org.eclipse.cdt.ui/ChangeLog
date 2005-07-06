@@ -1,3 +1,7 @@
+2005-07-06 Alain Magloire
+	Fix PR 99130: no leading underscore in the guard header name
+	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewSourceFIleGenerator.java
+
 2005-07-06  Alain Magloire
 	PR 102789: Add Include dialog typo
 	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java

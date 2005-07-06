@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
@@ -49,14 +50,13 @@ public class ContentTypeProcessor {
 		IContentType contentType = event.getContentType();
 		
 		// only interested in our contentTypes
-		if (isRegisteredContentTypeId(contentType.getId())) {
-			// Go through the events and generate deltas
-			ICProject[] cprojects = getAffectedProjects(event);
-			for (int k = 0; k < cprojects.length; ++k) {
-				ICProject cproject = cprojects[k];
-				processContentType(cproject, contentType, event.getContext());
-			}
+		// Go through the events and generate deltas
+		ICProject[] cprojects = getAffectedProjects(event);
+		for (int k = 0; k < cprojects.length; ++k) {
+			ICProject cproject = cprojects[k];
+			processContentType(cproject, contentType, event.getContext());
 		}
+
 		if (fCurrentDelta.getAffectedChildren().length > 0) {
 			fManager.fire(fCurrentDelta, ElementChangedEvent.POST_CHANGE);
 		}
@@ -98,15 +98,29 @@ public class ContentTypeProcessor {
 							members = ((IContainer)resource).members();
 						}
 						if (members != null) {
-							//IContentTypeMatcher matcher = resource.getProject().getContentTypeMatcher();
 							for (int i = 0; i < members.length; ++i) {
 								if (members[i] instanceof IFile) {
 									IFile file = (IFile) members[i];
-									IContentType cType = CCorePlugin.getContentType(file.getProject(), file.getName());
+									String name = file.getName();
+									IContentType cType = CCorePlugin.getContentType(file.getProject(), name);
 									if (cType != null && cType.equals(contentType)) {
-										ICElement newElement = CoreModel.getDefault().create(file);
-										if (newElement != null) {
-											elementAdded(newElement, celement);
+										boolean found = false;
+										for (int j = 0; j < celements.length; ++j) {
+											if (celements[j].getElementName().equals(name)
+													&& celements[j].getElementType() == ICElement.C_UNIT) {
+												ITranslationUnit unit = (ITranslationUnit)celements[j];
+												if (!cType.getId().equals(unit.getContentTypeId())) {
+													elementChanged(celements[j]);
+												}
+												found = true;
+												break;
+											}
+										}
+										if (! found) {
+											ICElement newElement = CoreModel.getDefault().create(file);
+											if (newElement != null) {
+												elementAdded(newElement, celement);
+											}
 										}
 									}
 								}
@@ -126,7 +140,12 @@ public class ContentTypeProcessor {
 				if (contentType.getId().equals(id)) {
 					try {
 						if (! contentType.isAssociatedWith(celement.getElementName(), context)) {
-							elementRemoved(celement, celement.getParent());
+							IContentType cType = CCorePlugin.getContentType(celement.getCProject().getProject(), celement.getElementName());
+							if (cType != null && isRegisteredContentTypeId(cType.getId())) {
+								elementChanged(celement);
+							} else {
+								elementRemoved(celement, celement.getParent());
+							}
 						}
 					} catch (CoreException e) {
 						//
@@ -205,6 +224,21 @@ public class ContentTypeProcessor {
 		fManager.releaseCElement(celement);
 	}
 
+	protected void elementChanged(ICElement element) throws CModelException {
+		// For Binary/Archive We can not call close() to do the work
+		// closing will remove the element from the {Binary,Archive}Container
+		// We neef to clear the cache explicitely
+//		if (element instanceof IBinary || element instanceof IArchive) {
+//			closeBinary(element);
+//		} else if (element instanceof Openable) {
+//			close((Openable)element);
+//		}
+//		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
+		if (element instanceof IOpenable) {
+			((IOpenable)element).close();
+		}
+		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
+	}
 	/**
 	 * Removes the given element from its parents cache of children. If the
 	 * element does not have a parent, or the parent is not currently open,

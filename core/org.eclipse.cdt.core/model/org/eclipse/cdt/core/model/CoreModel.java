@@ -193,14 +193,25 @@ public class CoreModel {
 				CCorePlugin.CONTENT_TYPE_CXXSOURCE
 		};
 	}
+
 	/**
 	 * Return true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidTranslationUnitName(IProject project, String name) {
-		if (isValidHeaderUnitName(project, name)) {
-			return true;
-		} else if (isValidSourceUnitName(project, name)) {
-			return true;
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
+				return true;
+			} else if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+				return true;
+			} else if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
+				return true;
+			} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
+				return true;
+			} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -209,10 +220,14 @@ public class CoreModel {
 	 * Return true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidHeaderUnitName(IProject project, String name) {
-		if (isValidCHeaderUnitName(project, name)) {
-			return true;
-		} else if (isValidCXXHeaderUnitName(project, name)) {
-			return true;
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
+				return true;
+			} else if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -221,12 +236,16 @@ public class CoreModel {
 	 * Return true if name is a valid name for a translation unit.
 	 */
 	public static boolean isValidSourceUnitName(IProject project, String name) {
-		if (isValidCSourceUnitName(project, name)) {
-			return true;
-		} else if (isValidCXXSourceUnitName(project, name)) {
-			return true;
-		} else if (isValidASMSourceUnitName(project, name)) {
-			return true;
+		IContentType contentType = CCorePlugin.getContentType(project, name);
+		if (contentType != null) {
+			String id = contentType.getId();
+			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
+				return true;
+			} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
+				return true;
+			} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
+				return true;
+			}
 		}
 		return false;
 	}

@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -45,102 +43,6 @@ import org.osgi.service.prefs.Preferences;
  * type associations for a project
  */
 public class CFileTypesPropertyPage extends PropertyPage {
-
-	/**
-	 * FIXME: This class should be remove when PR #99060
-	 * Since ContentTypeSettings.removeFileSpec() is buggy.
-	 */
-	class FixCFileTypesPreferenceBlock extends CFileTypesPreferenceBlock {
-
-		public FixCFileTypesPreferenceBlock() {
-			super();
-		}
-
-		public FixCFileTypesPreferenceBlock(IProject input) {
-			super(input);
-		}
-
-		String toListString(Object[] list, String separator) {
-			if (list == null || list.length == 0) {
-				return null;
-			}
-
-			StringBuffer result = new StringBuffer();
-			for (int i = 0; i < list.length; i++) {
-				if (i != 0) {
-					result.append(separator);
-				}
-				result.append(list[i]);
-			}
-			// ignore last comma
-			return result.toString();
-		}
-
-		List parseItemsIntoList(String string, String separator) {
-			ArrayList list = new ArrayList();
-			if (string != null) {
-				String[] items = string.split(separator);
-				list.addAll(Arrays.asList(items));
-			}
-			return list;
-		}
-
-		String getPreferenceKey(int type) {
-			if ((type & IContentType.FILE_EXTENSION_SPEC) != 0)
-				return PREF_FILE_EXTENSIONS;
-			if ((type & IContentType.FILE_NAME_SPEC) != 0)
-				return PREF_FILE_NAMES;
-			throw new IllegalArgumentException("Unknown type: "); //$NON-NLS-1$
-		}
-
-		private IContentTypeManager.ContentTypeChangeEvent newContentTypeChangeEvent(IContentType source, IScopeContext context) {
-			return new IContentTypeManager.ContentTypeChangeEvent(source, context);
-		}
-	
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferenceBlock#addAssociation(org.eclipse.core.runtime.preferences.IScopeContext, org.eclipse.core.runtime.content.IContentType, java.lang.String, int)
-		 */
-		protected void addAssociation(IScopeContext context, IContentType contentType, String spec, int type) {
-			super.addAssociation(context, contentType, spec, type);
-			// We do not call flush here it will be call in the perform OK.
-			//contentTypeNode.flush();
-			CModelManager.getDefault().contentTypeChanged(newContentTypeChangeEvent(contentType, context));
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferenceBlock#removeAssociation(org.eclipse.core.runtime.preferences.IScopeContext, org.eclipse.core.runtime.content.IContentType, java.lang.String, int)
-		 */
-		protected void removeAssociation(IScopeContext context, IContentType contentType, String spec, int type) {
-			String contentTypeId = contentType.getId();
-			
-			Preferences contentTypeNode = context.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE).node(contentTypeId);
-			String key = getPreferenceKey(type);
-			String existing = contentTypeNode.get(key, null);
-			if (existing == null)
-				// content type has no settings - nothing to do
-				return;
-			List existingValues = parseItemsIntoList(contentTypeNode.get(key, null), PREF_SEPARATOR); //$NON-NLS-1$
-			int index = -1;
-			for (int j = 0; index == -1 && j < existingValues.size(); j++)
-				if (((String) existingValues.get(j)).equalsIgnoreCase(spec))
-					index = j;
-			if (index == -1)
-				// did not find the file spec to be removed - nothing to do
-				return;
-			existingValues.remove(index);
-			// set new preference value
-			String newValue = toListString(existingValues.toArray(), PREF_SEPARATOR);
-			if (newValue == null) {
-				contentTypeNode.remove(key);
-			} else {
-				contentTypeNode.put(key, newValue);
-			}
-			// We do not call flush here it will be call in the perform OK.
-			//contentTypeNode.flush();
-			CModelManager.getDefault().contentTypeChanged(newContentTypeChangeEvent(contentType, context));
-		}
-		
-	}
 
 	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
 	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
@@ -187,7 +89,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		
+
 		final IProject project = getProject(); 
 		boolean custom = isProjectSpecificContentType(project.getName());
 
@@ -196,11 +98,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseProject.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				if (fUseProject.getSelection()) {
-					if (isProjectSpecificContentType(project.getName())) {
-						fPrefsBlock.setInput(project);
-					} else {
-						fPrefsBlock.setInputWithCopy(project);
-					}
+					fPrefsBlock.setInput(project);
 					fPrefsBlock.setEnabled(true);
 				}
 			}
@@ -212,9 +110,9 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		blockPane.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		if (custom) {
-			fPrefsBlock = new FixCFileTypesPreferenceBlock(project);
+			fPrefsBlock = new CFileTypesPreferenceBlock(project);
 		} else {
-			fPrefsBlock = new FixCFileTypesPreferenceBlock();
+			fPrefsBlock = new CFileTypesPreferenceBlock();
 		}
 
 		fPrefsBlock.createControl(blockPane);
@@ -250,11 +148,9 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			if (! isProjectSpecificContentType(project.getName())) {
 				// enable project-specific settings for this project
 				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, true);
-
-				// Copy the InstanceScope information to the projectScope
-				copyInstanceToProjectScope(project);
 			}
 			fPrefsBlock.performOk();
+			computeEvents(project);
 			try {
 				contentTypePrefs.flush();
 			} catch (BackingStoreException e) {
@@ -263,16 +159,16 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		} else if (fUseWorkspace.getSelection()) {
 			IProject project = getProject();
 			if (isProjectSpecificContentType(project.getName())) {
-//				ProjectScope projectScope = new ProjectScope(project);
-//				Preferences contentTypePrefs = projectScope.getNode(FULLPATN_CONTENT_TYPE_PREF_NODE);
-//				// enable project-specific settings for this project
-//				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
-//				try {
-//				contentTypePrefs.flush();
-//			} catch (BackingStoreException e) {
-//				// ignore ??
-//			}
-				clearSpecs(project);
+				ProjectScope projectScope = new ProjectScope(project);
+				Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
+				// enable project-specific settings for this project
+				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
+				try {
+					contentTypePrefs.flush();
+				} catch (BackingStoreException e) {
+					// ignore ??
+				}
+				computeEvents(project);
 			}
 		}
 		return super.performOk();
@@ -312,7 +208,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		return false;
 	}
 
-	void clearSpecs(IProject project) {
+	void computeEvents(IProject project) {
 		IScopeContext projectScope = new ProjectScope(project);
 
 		// Calculate the events to tell the clients of changes
@@ -338,19 +234,6 @@ public class CFileTypesPropertyPage extends PropertyPage {
 				// ignore ?
 			}
 		}
-
-		// Delete the "content-type" node.
-		Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
-		try {
-			Preferences parent = contentTypePrefs.parent();
-			contentTypePrefs.removeNode();
-			parent.flush();
-		} catch (BackingStoreException e) {
-			// ignore ??
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		}
-
 		// fire the events
 		for (int i = 0; i < list.size(); ++i) {
 			IContentType source = (IContentType)list.get(i);
@@ -378,28 +261,6 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			}
 		}
 		return false;
-	}
-
-	void copyInstanceToProjectScope(IProject project) {
-		IScopeContext projectScope = new ProjectScope(project);
-		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentType[] globalTypes = manager.getAllContentTypes();
-		for (int i = 0; i < globalTypes.length; i++) {
-			IContentType globalType = globalTypes[i];
-			try {
-				IContentTypeSettings settings = globalType.getSettings(projectScope);
-				String[] specs = globalType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-				for (int j = 0; j < specs.length; j++) {
-					settings.addFileSpec(specs[j], IContentType.FILE_EXTENSION_SPEC);
-				}
-				specs = globalType.getFileSpecs(IContentType.FILE_NAME_SPEC);
-				for (int j = 0; j < specs.length; j++) {
-					settings.addFileSpec(specs[j], IContentType.FILE_NAME_SPEC);
-				}				
-			} catch (CoreException e) {
-				// ignore ?
-			}
-		}
 	}
 
 }

@@ -305,17 +305,6 @@ public class CFileTypesPreferenceBlock {
 		setDirty(true);
 	}
 
-	public void setInputWithCopy(IProject input) {
-		fAddAssoc.clear();
-		fRemoveAssoc.clear();
-		fInput = null;
-		if (null != fAssocViewer) {
-			fAssocViewer.setInput(getCFileTypeAssociations());
-		}
-		fInput = input;
-		setDirty(true);
-	}
-
 	private void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}

@@ -1,3 +1,8 @@
+2005-07-05  Alain Magloire
+	Fix for PR 102327: ContentType framework.
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPropertyPage.java
+
 2005-06-29 Alain Magloire
 	Fix PR 102159: NPE in the referencesSearchGroup: fillcontextMenu.
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

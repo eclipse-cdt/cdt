@@ -62,16 +62,25 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
     					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
     				}
         		}
-                if ((mask & IPathEntry.CDT_INCLUDE_FILE) != 0) {
+        		// compare the resource with include and macros files
+            	IPath fullResPath = fProject.getWorkspace().getRoot().getFile(path).getLocation();
+            	if (fullResPath == null) {
+            		fullResPath = path;
+            	}
+        		if ((mask & IPathEntry.CDT_INCLUDE_FILE) != 0) {
                     IPath[] includeFiles = filePathInfo.getIncludeFiles(path);
                     for (int i = 0; i < includeFiles.length; i++) {
-                        entries.add(CoreModel.newIncludeFileEntry(path, includeFiles[i]));
+                    	if (!includeFiles[i].equals(fullResPath)) {
+                            entries.add(CoreModel.newIncludeFileEntry(path, includeFiles[i]));
+                    	}
                     }
                 }
                 if ((mask & IPathEntry.CDT_MACRO_FILE) != 0) {
                     IPath[] imacrosFiles = filePathInfo.getMacroFiles(path);
                     for (int i = 0; i < imacrosFiles.length; i++) {
-                        entries.add(CoreModel.newMacroFileEntry(path, imacrosFiles[i]));
+                    	if (!imacrosFiles[i].equals(fullResPath)) {
+                    		entries.add(CoreModel.newMacroFileEntry(path, imacrosFiles[i]));
+                    	}
                     }
                 }
             }

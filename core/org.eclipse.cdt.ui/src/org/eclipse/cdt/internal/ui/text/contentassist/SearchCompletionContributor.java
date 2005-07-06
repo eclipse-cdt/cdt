@@ -15,15 +15,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -50,8 +51,8 @@ public class SearchCompletionContributor implements ICompletionContributor {
         ICSearchScope scope = SearchEngine.createWorkspaceScope();
 			
 		// Create the pattern
-		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false); //$NON-NLS-1$
-				
+		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, false); //$NON-NLS-1$
+
 		// Run the search
 		BasicSearchResultCollector collector = new BasicSearchResultCollector();
 		try {
@@ -59,12 +60,21 @@ public class SearchCompletionContributor implements ICompletionContributor {
 		} catch (InterruptedException e) {
 			return;
 		}
-			
+
 		Set results = collector.getSearchResults();
 		Iterator iResults = results.iterator();
 		while (iResults.hasNext()) {
-			BasicSearchMatch match = (BasicSearchMatch)iResults.next();
-			handleFunction(match.getName(), viewer, prefix, offset, proposals);
+			IMatch match = (IMatch)iResults.next();
+            switch (match.getElementType()) {
+            case ICElement.C_FUNCTION:
+            case ICElement.C_FUNCTION_DECLARATION:
+            case ICElement.C_METHOD:
+            case ICElement.C_METHOD_DECLARATION:
+                handleFunction(match, viewer, prefix, offset, proposals);
+                break;
+            default:
+                handleMatch(match, viewer, prefix, offset, proposals);
+            }
 		}
 	}
 
@@ -96,14 +106,57 @@ public class SearchCompletionContributor implements ICompletionContributor {
         return valid;
     }
 
-	private void handleFunction(String name, ITextViewer viewer, String prefix, int offset, List proposals) {
-		int repLength = prefix.length();
-		int repOffset = offset - repLength;
-		Image image = CUIPlugin.getImageDescriptorRegistry().get(CElementImageProvider.getFunctionImageDescriptor());
-		String repString = name + "()"; //$NON-NLS-1$
-		CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, repString, 1, viewer);
-		proposal.setCursorPosition(repString.length() - 1);
-		proposals.add(proposal);
-	}
-
+    private void handleMatch(IMatch match, ITextViewer viewer, String prefix, int offset, List proposals) {
+        int repLength = prefix.length();
+        int repOffset = offset - repLength;
+        Image image = CUIPlugin.getImageDescriptorRegistry().get(CElementImageProvider.getImageDescriptor(match.getElementType()));
+        String repString = match.getName();
+        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, repString, 1, viewer);
+        proposals.add(proposal);
+    }
+    
+	private void handleFunction(IMatch match, ITextViewer viewer, String prefix, int offset, List proposals) {
+		Image image = CUIPlugin.getImageDescriptorRegistry().get(CElementImageProvider.getImageDescriptor(match.getElementType()));
+        
+        StringBuffer repStringBuff = new StringBuffer();
+        repStringBuff.append(match.getName());
+        repStringBuff.append('(');
+        
+        StringBuffer args = new StringBuffer();
+        String[] params = match.getParameters();
+        if (params != null)
+            for (int i = 0; i < params.length; ++i) {
+                if (i > 0)
+                    args.append(", "); //$NON-NLS-1$
+                args.append(params[i]);
+            }
+            
+        String returnType = match.getReturnType();
+        String argString = args.toString();
+        
+        StringBuffer descStringBuff = new StringBuffer(repStringBuff.toString());
+        descStringBuff.append(argString);
+        descStringBuff.append(')');
+        
+        if (returnType != null) {
+            descStringBuff.append(' ');
+            descStringBuff.append(returnType);
+        }
+        
+        repStringBuff.append(')');
+        String repString = repStringBuff.toString();
+        String descString = descStringBuff.toString();
+        
+        int repLength = prefix.length();
+        int repOffset = offset - repLength;
+        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, descString, 1, viewer);
+        proposal.setCursorPosition(repString.length() - 1);
+        
+        if (argString.length() > 0) {
+            CProposalContextInformation info = new CProposalContextInformation(repString, argString);
+            info.setContextInformationPosition(offset);
+            proposal.setContextInformation(info);
+        }
+        proposals.add(proposal);
+    }
 }

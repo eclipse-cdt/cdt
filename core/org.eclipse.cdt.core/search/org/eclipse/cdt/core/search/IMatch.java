@@ -30,6 +30,20 @@ public interface IMatch {
 
 	String getName();
 
+    /**
+     * Returns the list of parameters if this matched a function or a method.
+     * 
+     * @return array of Strings for the parameters
+     */
+    String[] getParameters();
+
+    /**
+     * Returns the return type if this matched a function or a method.
+     * 
+     * @return the return type
+     */
+    String getReturnType();
+    
 	String getParentName();
 
 	IResource getResource();

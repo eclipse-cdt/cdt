@@ -237,16 +237,16 @@ class CTagsIndexAll extends CTagsIndexRequest {
 	         }
 	         
 	         Process p = launcher.execute(ctagsExecutable, args, null, directoryToRunFrom); //$NON-NLS-1$
+             if (p == null) {
+                //CTags not installed
+                indexer.createProblemMarker(CCorePlugin.getResourceString("CTagsIndexMarker.CTagsMissing"), project); //$NON-NLS-1$
+                return false;
+             }
 	         p.waitFor();
        
     	} catch (InterruptedException e) {
     	    return false;
         }
-		catch (NullPointerException e){
-			//CTags not installed
-			indexer.createProblemMarker(CCorePlugin.getResourceString("CTagsIndexMarker.CTagsMissing"), project); //$NON-NLS-1$
-			return false;
-		}
      
         return true;
     }

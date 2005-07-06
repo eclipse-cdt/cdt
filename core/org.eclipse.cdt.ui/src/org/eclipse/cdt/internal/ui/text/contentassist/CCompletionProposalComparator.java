@@ -36,13 +36,18 @@ public class CCompletionProposalComparator implements Comparator {
 	public int compare(Object o1, Object o2) {
 		ICCompletionProposal c1= (ICCompletionProposal) o1;
 		ICCompletionProposal c2= (ICCompletionProposal) o2;
+        
 		if (!fOrderAlphabetically) {
 			int relevanceDif= c2.getRelevance() - c1.getRelevance();
 			if (relevanceDif != 0) {
 				return relevanceDif;
 			}
 		}
-		return c1.getDisplayString().compareToIgnoreCase(c2.getDisplayString());
+        
+        String id1 = c1.getIdString();
+        String id2 = c2.getIdString();
+        
+		return id1.compareToIgnoreCase(id2);
 	}	
 	
 }

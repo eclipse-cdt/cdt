@@ -113,28 +113,35 @@ public class DOMCompletionContributor implements ICompletionContributor {
 		repStringBuff.append(function.getName());
 		repStringBuff.append('(');
 		
-		StringBuffer args = new StringBuffer();
+		StringBuffer dispargs = new StringBuffer(); // for the displayString
+        StringBuffer idargs = new StringBuffer();   // for the idString
 		String returnTypeStr = null;
 		try {
 			IParameter[] params = function.getParameters();
 			if (params != null)
 				for (int i = 0; i < params.length; ++i) {
 					IType paramType = params[i].getType();
-					if (i > 0)
-						args.append(',');
-					
-					args.append(ASTTypeUtil.getType(paramType));
+					if (i > 0) {
+                        dispargs.append(',');
+                        idargs.append(',');
+                    }
+
+					dispargs.append(ASTTypeUtil.getType(paramType));
+                    idargs.append(ASTTypeUtil.getType(paramType));
 					String paramName = params[i].getName();
 					if (paramName != null && paramName.length() > 0) {
-						args.append(' ');
-						args.append(paramName);
+						dispargs.append(' ');
+						dispargs.append(paramName);
 					}
 				}
 			
 			if (function.takesVarArgs()) {
-				if (args.length() > 0)
-					args.append(',');
-				args.append(" ..."); //$NON-NLS-1$
+				if (params.length > 0) {
+                    dispargs.append(',');
+                    idargs.append(',');
+                }
+                dispargs.append(" ..."); //$NON-NLS-1$
+                idargs.append(" ..."); //$NON-NLS-1$
 			}
 			
 			IType returnType = function.getType().getReturnType();
@@ -142,26 +149,35 @@ public class DOMCompletionContributor implements ICompletionContributor {
 				returnTypeStr = ASTTypeUtil.getType(returnType);
 		} catch (DOMException e) {
 		}
-		String argString = args.toString();
+        
+        String dispargString = dispargs.toString();
+        String idargString = idargs.toString();
 		
-		StringBuffer descStringBuff = new StringBuffer(repStringBuff.toString());
-		descStringBuff.append(argString);
-		descStringBuff.append(')');
+        StringBuffer dispStringBuff = new StringBuffer(repStringBuff.toString());
+		dispStringBuff.append(dispargString);
+        dispStringBuff.append(')');
+        if (returnTypeStr != null) {
+            dispStringBuff.append(' ');
+            dispStringBuff.append(returnTypeStr);
+        }
+        String dispString = dispStringBuff.toString();
+
+        StringBuffer idStringBuff = new StringBuffer(repStringBuff.toString());
+        idStringBuff.append(idargString);
+        idStringBuff.append(')');
+        String idString = idStringBuff.toString();
 		
-		if (returnTypeStr != null) {
-			descStringBuff.append(' ');
-			descStringBuff.append(returnTypeStr);
-		}
-		
-		repStringBuff.append(')');
-		String repString = repStringBuff.toString();
-		String descString = descStringBuff.toString();
-		
-		CCompletionProposal proposal = createProposal(repString, descString, image, completionNode, offset, viewer);
+        repStringBuff.append(')');
+        String repString = repStringBuff.toString();
+
+        int repLength = completionNode.getLength();
+        int repOffset = offset - repLength;
+        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, image, dispString, idString, 1, viewer);
+
 		proposal.setCursorPosition(repString.length() - 1);
 		
-		if (argString.length() > 0) {
-			CProposalContextInformation info = new CProposalContextInformation(repString, argString);
+		if (dispargString.length() > 0) {
+			CProposalContextInformation info = new CProposalContextInformation(repString, dispargString);
 			info.setContextInformationPosition(offset);
 			proposal.setContextInformation(info);
 		}

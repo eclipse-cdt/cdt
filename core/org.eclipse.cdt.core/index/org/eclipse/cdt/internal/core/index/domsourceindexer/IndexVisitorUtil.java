@@ -221,6 +221,8 @@ public class IndexVisitorUtil {
             }
             if (function.takesVarArgs())
                 parameterList.add("...".toCharArray()); //$NON-NLS-1$
+            else if (parameters.length == 0)
+                parameterList.add("void".toCharArray()); //$NON-NLS-1$
         }
         catch (DOMException e) {
         }

@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -117,30 +118,39 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				}
 			}
 
-			ICompletionProposal[] propsArray = null;
+			ICCompletionProposal[] propsArray = null;
 			
 			if (!proposals.isEmpty()) {
 				errorMessage = null;
-				propsArray = (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+				propsArray = (ICCompletionProposal[])proposals.toArray(new ICCompletionProposal[proposals.size()]);
 				CCompletionProposalComparator propsComp = new CCompletionProposalComparator();
 				propsComp.setOrderAlphabetically(true);
 				Arrays.sort(propsArray, propsComp); 
 				
-				// remove duplicates
-				ICompletionProposal last = propsArray[0];
+				// remove duplicates but leave the ones with return types
+                
+				int last = 0;
 				int removed = 0;
 				for (int i = 1; i < propsArray.length; ++i) {
-					if (propsComp.compare(last, propsArray[i]) == 0) {
-						// Remove the duplicate
-						++removed;
+					if (propsComp.compare(propsArray[last], propsArray[i]) == 0) {
+                        // We want to leave the one that has the return string if any
+                        boolean lastReturn = propsArray[last].getIdString() != propsArray[last].getDisplayString();
+                        boolean iReturn = propsArray[i].getIdString() != propsArray[i].getDisplayString();
+
+                        if (!lastReturn && iReturn)
+                            // flip i down to last
+                            propsArray[last] = propsArray[i];
+
+                        // Remove the duplicate
 						propsArray[i] = null;
+                        ++removed;
 					} else
 						// update last
-						last = propsArray[i];
+						last = i;
 				}
 				if (removed > 0) {
 					// Strip out the null entries
-					ICompletionProposal[] newArray = new ICompletionProposal[propsArray.length - removed];
+					ICCompletionProposal[] newArray = new ICCompletionProposal[propsArray.length - removed];
 					int j = 0;
 					for (int i = 0; i < propsArray.length; ++i)
 						if (propsArray[i] != null)

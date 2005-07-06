@@ -55,6 +55,7 @@ import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
 public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 	
 	private String fDisplayString;
+    private String fIdString;
 	private String fReplacementString;
 	private int fReplacementOffset;
 	private int fReplacementLength;
@@ -81,39 +82,57 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * If set to <code>null</code>, the replacement string will be taken as display string.
 	 */
 	public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance) {
-		this(replacementString, replacementOffset, replacementLength, image, displayString, relevance, null);
+        this(replacementString, replacementOffset, replacementLength, image, displayString, null, relevance, null);
 	}
 
-	/**
-	 * Creates a new completion proposal. All fields are initialized based on the provided information.
-	 *
-	 * @param replacementString the actual string to be inserted into the document
-	 * @param replacementOffset the offset of the text to be replaced
-	 * @param replacementLength the length of the text to be replaced
-	 * @param image the image to display for this proposal
-	 * @param displayString the string to be displayed for the proposal
-	 * @param viewer the text viewer for which this proposal is computed, may be <code>null</code>
-	 * If set to <code>null</code>, the replacement string will be taken as display string.
-	 */
-	public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance, ITextViewer viewer) {
-		Assert.isNotNull(replacementString);
+    /**
+     * Creates a new completion proposal. All fields are initialized based on the provided information.
+     *
+     * @param replacementString the actual string to be inserted into the document
+     * @param replacementOffset the offset of the text to be replaced
+     * @param replacementLength the length of the text to be replaced
+     * @param image the image to display for this proposal
+     * @param displayString the string to be displayed for the proposal
+     * @param viewer the text viewer for which this proposal is computed, may be <code>null</code>
+     * If set to <code>null</code>, the replacement string will be taken as display string.
+     */
+    public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, int relevance, ITextViewer viewer) {
+        this(replacementString, replacementOffset, replacementLength, image, displayString, null, relevance, viewer);
+    }
+
+    /**
+     * Creates a new completion proposal. All fields are initialized based on the provided information.
+     *
+     * @param replacementString the actual string to be inserted into the document
+     * @param replacementOffset the offset of the text to be replaced
+     * @param replacementLength the length of the text to be replaced
+     * @param image the image to display for this proposal
+     * @param displayString the string to be displayed for the proposal
+     * @param idString the string to be uniquely identify this proposal
+     * @param viewer the text viewer for which this proposal is computed, may be <code>null</code>
+     * If set to <code>null</code>, the replacement string will be taken as display string.
+     */
+    public CCompletionProposal(String replacementString, int replacementOffset, int replacementLength, Image image, String displayString, String idString, int relevance, ITextViewer viewer) {
+        Assert.isNotNull(replacementString);
 		Assert.isTrue(replacementOffset >= 0);
 		Assert.isTrue(replacementLength >= 0);
 				
-		fReplacementString= replacementString;
-		fReplacementOffset= replacementOffset;
-		fReplacementLength= replacementLength;
-		fImage= image;
-		fDisplayString= displayString != null ? displayString : replacementString;
-		fRelevance= relevance;
-		fTextViewer= viewer;
+		fReplacementString = replacementString;
+		fReplacementOffset = replacementOffset;
+		fReplacementLength = replacementLength;
+		fImage = image;
+        fRelevance = relevance;
+        fTextViewer = viewer;
+        
+		fDisplayString = displayString != null ? displayString : replacementString;
+        fIdString = idString != null ? idString : displayString;
 
-		fCursorPosition= replacementString.length();
+		fCursorPosition = replacementString.length();
 	
-		fContextInformation= null;
-		fContextInformationPosition= -1;
-		fTriggerCharacters= null;
-		fProposalInfo= null;
+		fContextInformation = null;
+		fContextInformationPosition = -1;
+		fTriggerCharacters = null;
+		fProposalInfo = null;
 	}
 	
 	/**
@@ -339,6 +358,15 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		return fDisplayString;
 	}
 
+    /**
+     * This method is used by the comparator to compare proposals. It ignores the return type of a function.
+     * 
+     * @return the string representing the display name without the return type (if any).
+     */
+    public String getIdString() {
+        return fIdString;
+    }
+    
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */

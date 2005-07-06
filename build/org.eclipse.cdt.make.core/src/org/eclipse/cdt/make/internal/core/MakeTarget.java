@@ -144,6 +144,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		}
 		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(project, builderID);
 		info.setErrorParsers(projectInfo.getErrorParsers());
+		info.setEnvironment(projectInfo.getEnvironment());
 		IWorkspaceRunnable op = new IWorkspaceRunnable() {
 
 			/*

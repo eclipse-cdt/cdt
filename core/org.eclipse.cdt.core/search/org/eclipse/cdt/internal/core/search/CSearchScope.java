@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.core.resources.IProject;
@@ -64,15 +65,21 @@ public class CSearchScope implements ICSearchScope {
     }
 
 	public void add(ICProject cProject, boolean includesPrereqProjects, HashSet visitedProjects) throws CModelException {
+		//Add the project to the scope
 		IProject project = cProject.getProject();
 		if (!project.isAccessible() || !visitedProjects.add(project)) return;
-	
 		this.addEnclosingProject(project.getFullPath());
+		//Add the children of the project to the scope
 		ICElement[] projChildren = cProject.getChildren();
 		for (int i=0; i< projChildren.length; i++){
 			this.add(projChildren[i]);
 		}
-					
+		//Add the include paths to the scope
+		IIncludeReference[] includeRefs = cProject.getIncludeReferences();
+		for (int i=0; i<includeRefs.length; i++){
+			this.add(includeRefs[i].getPath(),true);
+		}
+		
 		if (includesPrereqProjects){
 			IProject[] refProjects=null;
 			try {

@@ -20,15 +20,24 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class ManagedProjectUpdateTests extends TestCase {
@@ -112,7 +121,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 		if(projects == null || projects.length == 0)
 			return;
 		for(int i = 0; i < projects.length; i++){
-			IProject curProject = projects[i];
+			final IProject curProject = projects[i];
 			
 			//the project conversion occures the first time 
 			//ManagedBuildManager.getBuildInfo gets called
@@ -137,16 +146,40 @@ public class ManagedProjectUpdateTests extends TestCase {
 				}
 
 				//check whether the project builds without errors
-				try{
-					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
-				}
-				catch(CoreException e){
-					fail(e.getStatus().getMessage());
-				}
-				catch(OperationCanceledException e){
-					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
+				IWorkspace wsp = ResourcesPlugin.getWorkspace();
+				ISchedulingRule rule = wsp.getRuleFactory().buildRule();
+				Job buildJob = new Job("project build job"){ 	//$NON-NLS-1$
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
+						} catch(CoreException e){
+							fail(e.getStatus().getMessage());
+						} catch(OperationCanceledException e){
+							fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
+						}
+						return new Status(
+								IStatus.OK,
+								"org.eclipse.cdt.managedbuilder.core.tests",
+								IStatus.OK,
+								new String(),
+								null);
+					}
+				};
+				buildJob.setRule(rule);
+				
+				buildJob.schedule();
+				
+				try {
+					buildJob.join();
+				} catch (InterruptedException e) {
+					fail("the build job for the project \"" + curProject.getName() + "\" was interrupted, exception message: " + e.getMessage());
 				}
 				
+				IStatus status = buildJob.getResult();
+				if(status.getCode() != IStatus.OK){
+					fail("the build job for the project \"" + curProject.getName() + "\" failed, status message: " + status.getMessage());
+				}
+
 				//compare the generated makefiles to their benchmarks
 				if (files != null && files.length > 0) {
 					if (i == 0) {

@@ -167,10 +167,7 @@ public class IndexerTypesJob2 extends IndexerJob2 {
                     offsetType = offsetType / 10;
                     m *= 10;
                 }
-                int mod = 1;
-                while( offset / ( mod * 10 )> 0 )
-                    mod *= 10;
-                int value = offset % mod;
+                int value = offset - ( offsetType * m );
 //                int value = Integer.valueOf(String.valueOf(offset).substring(1)).intValue();
                 
                 TypeReference typeReference = null;

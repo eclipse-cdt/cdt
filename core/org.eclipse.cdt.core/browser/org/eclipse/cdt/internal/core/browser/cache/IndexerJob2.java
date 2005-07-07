@@ -33,7 +33,7 @@ public abstract class IndexerJob2 implements IIndexJob {
 	protected IIndex fProjectIndex = null;
 	protected ICDTIndexer fSourceIndexer = null;
 	
-	public static final String FAMILY= "BasicTypeIndexerJob"; //$NON-NLS-1$
+	public static final String FAMILY= "IndexerJob2"; //$NON-NLS-1$
 
 	public IndexerJob2(IndexManager indexManager, IProject project) {
 		fProject = project;

@@ -35,8 +35,6 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -79,166 +77,153 @@ public class OpenDefinitionAction extends SelectionParseAction implements
      * @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
-        final SelSearchNode selNode = getSelectedStringFromEditor();
-        
-        if(selNode == null) {
-            return;
-        }
-        
-        final Storage storage = new Storage();
-
-        IRunnableWithProgress runnable = new IRunnableWithProgress() 
-        {
-            // steps:
-            // 1- parse and get the best selected name based on the offset/length into that TU
-            // 2- based on the IASTName selected, find the best definition of it in the TU
-            // 3- if no IASTName is found for a definition, then search the Index
-            public void run(IProgressMonitor monitor) {
-                int selectionStart = selNode.selStart;
-                int selectionLength = selNode.selEnd - selNode.selStart;
-                
-                IASTName[] selectedNames = BLANK_NAME_ARRAY;
-                IASTTranslationUnit tu=null;
-                ParserLanguage lang=null;
-                ICElement project=null;
-                
-                if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
-                    ExternalEditorInput input = (ExternalEditorInput)fEditor.getEditorInput();
-                    try {
-                        // get the project for the external editor input's translation unit
-                        project = input.getTranslationUnit();
-                        while (!(project instanceof ICProject) && project != null) {
-                            project = project.getParent();
-                        }
-                        
-                        if (project instanceof ICProject) {
-                            tu = CDOM.getInstance().getASTService().getTranslationUnit(input.getStorage(), ((ICProject)project).getProject());
-                            lang = DOMSearchUtil.getLanguage(input.getStorage().getFullPath(), ((ICProject)project).getProject());
-                            projectName = ((ICProject)project).getElementName();
-                        }
-                    } catch (UnsupportedDialectException e) {
-                        operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
-                        return;
-                    }
-                } else {
-                    IFile resourceFile = null;
-                    resourceFile = fEditor.getInputFile();
-                    project = new CProject(null, resourceFile.getProject());
-                    
-                    try {
-                        tu = CDOM.getInstance().getASTService().getTranslationUnit(
-                                resourceFile,
-                                CDOM.getInstance().getCodeReaderFactory(
-                                        CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
-                    } catch (IASTServiceProvider.UnsupportedDialectException e) {
-                        operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
-                        return;
-                    }
-                    lang = DOMSearchUtil.getLanguageFromFile(resourceFile);
-                    projectName = findProjectName(resourceFile);
-                }
-                
-                // step 1 starts here
-                selectedNames = DOMSearchUtil.getSelectedNamesFrom(tu, selectionStart, selectionLength, lang);
-                                
-                if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
-                    IASTName searchName = selectedNames[0];
-                    // step 2 starts here
-                    IASTName[] domNames = DOMSearchUtil.getNamesFromDOM(searchName, ICSearchConstants.DEFINITIONS);
-
-                    // make sure the names are clean (fix for 95202)
-                    boolean modified=false;
-                    for(int i=0; i<domNames.length; i++) {
-                        if (domNames[i].toCharArray().length == 0) {
-                            domNames[i] = null;
-                            modified=true;
-                        }
-                    }
-                    if (modified)
-                        domNames = (IASTName[])ArrayUtil.removeNulls(IASTName.class, domNames);
-                    
-                    if (domNames != null && domNames.length > 0 && domNames[0] != null) {
-                        String fileName=null;
-                        int start=0;
-                        int end=0;
-                        
-                        if ( domNames[0].getTranslationUnit() != null ) {
-                            IASTFileLocation location = domNames[0].getFileLocation();
-                            fileName = location.getFileName();
-                            start = location.getNodeOffset();
-                            end = location.getNodeOffset() + location.getNodeLength();
-                        }
-                        
-                        if (fileName != null) {
-                            storage.setFileName(fileName);
-                            storage.setLocatable(new OffsetLocatable(start,end));
-                            storage.setResource(ParserUtil.getResourceForFilename( fileName ));
-                        } else {
-                            operationNotAvailable(CSEARCH_OPERATION_NO_DEFINITION_MESSAGE);
-                        }
-                    } else {
-                        // step 3 starts here
-                        ICElement[] scope = new ICElement[1];
-                       	scope[0] = project;
-						Set matches = DOMSearchUtil.getMatchesFromSearchEngine(SearchEngine.createCSearchScope(scope), searchName, ICSearchConstants.DEFINITIONS);
-
-                        if (matches != null && matches.size() > 0) {
-                            Iterator itr = matches.iterator();
-                            while(itr.hasNext()) {
-                                Object match = itr.next();
-                                if (match instanceof IMatch) {
-                                    IMatch theMatch = (IMatch)match;
-                                    storage.setFileName(theMatch.getLocation().toOSString());
-									storage.setLocatable(theMatch.getLocatable());
-                                    storage.setResource(ParserUtil.getResourceForFilename(theMatch.getLocation().toOSString()));
-                                    break;
-                                }
-                            }
-                        } else {
-                            operationNotAvailable(CSEARCH_OPERATION_NO_DEFINITION_MESSAGE);
-                        }
-                    }
-                } else if (selectedNames.length == 0){
-                	// last try: search the index for the selected string, even if no name was found for that selection
-                	ICElement[] scope = new ICElement[1];
-                   	scope[0] = project;
-                	Set matches = DOMSearchUtil.getMatchesFromSearchEngine( SearchEngine.createCSearchScope(scope), selNode.selText, ICSearchConstants.DEFINITIONS ); 
-                	
-                	if (matches != null && matches.size() > 0) {
-                        Iterator itr = matches.iterator();
-                        while(itr.hasNext()) {
-                            Object match = itr.next();
-                            if (match instanceof IMatch) {
-                                IMatch theMatch = (IMatch)match;
-                                storage.setFileName(theMatch.getLocation().toOSString());
-								storage.setLocatable(theMatch.getLocatable());
-                                storage.setResource(ParserUtil.getResourceForFilename(theMatch.getLocation().toOSString()));
-                                break;
-                            }
-                        }
-                    } else {
-                        operationNotAvailable(CSEARCH_OPERATION_NO_DEFINITION_MESSAGE);
-                        return;
-                    }
-                } else {
-                    operationNotAvailable(CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE);
-                    return;
-                }
-                
-                return;
-            }
-            
-            private String findProjectName(IFile resourceFile) {
-                if( resourceFile == null ) return ""; //$NON-NLS-1$
-                IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-                for( int i = 0; i < projects.length; ++i )
-                {
-                    if( projects[i].contains(resourceFile) )
-                        return projects[i].getName();
-                }
-                return ""; //$NON-NLS-1$
-            }
-        };
+    	final SelSearchNode selNode = getSelectedStringFromEditor();
+    	
+    	if(selNode == null) {
+    		return;
+    	}
+    	
+    	final Storage storage = new Storage();
+    	
+    	IRunnableWithProgress runnable = new IRunnableWithProgress() 
+    	{
+    		// steps:
+    		// 1- parse and get the best selected name based on the offset/length into that TU
+    		// 2- based on the IASTName selected, find the best definition of it in the TU
+    		// 3- if no IASTName is found for a definition, then search the Index
+    		public void run(IProgressMonitor monitor) {
+    			int selectionStart = selNode.selStart;
+    			int selectionLength = selNode.selEnd - selNode.selStart;
+    			
+    			IASTName[] selectedNames = BLANK_NAME_ARRAY;
+    			IASTTranslationUnit tu=null;
+    			ParserLanguage lang=null;
+    			ICElement project=null;
+    			
+    			if (fEditor.getEditorInput() instanceof ExternalEditorInput) {
+    				ExternalEditorInput input = (ExternalEditorInput)fEditor.getEditorInput();
+    				try {
+    					// get the project for the external editor input's translation unit
+    					project = input.getTranslationUnit();
+    					while (!(project instanceof ICProject) && project != null) {
+    						project = project.getParent();
+    					}
+    					
+    					if (project instanceof ICProject) {
+    						tu = CDOM.getInstance().getASTService().getTranslationUnit(input.getStorage(), ((ICProject)project).getProject());
+    						lang = DOMSearchUtil.getLanguage(input.getStorage().getFullPath(), ((ICProject)project).getProject());
+    						projectName = ((ICProject)project).getElementName();
+    					}
+    				} catch (UnsupportedDialectException e) {
+    					operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+    					return;
+    				}
+    			} else {
+    				IFile resourceFile = null;
+    				resourceFile = fEditor.getInputFile();
+    				project = new CProject(null, resourceFile.getProject());
+    				
+    				try {
+    					tu = CDOM.getInstance().getASTService().getTranslationUnit(
+    							resourceFile,
+    							CDOM.getInstance().getCodeReaderFactory(
+    									CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+    				} catch (IASTServiceProvider.UnsupportedDialectException e) {
+    					operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+    					return;
+    				}
+    				lang = DOMSearchUtil.getLanguageFromFile(resourceFile);
+    				project = new CProject(null, resourceFile.getProject());
+    			}
+    			
+    			// step 1 starts here
+    			selectedNames = DOMSearchUtil.getSelectedNamesFrom(tu, selectionStart, selectionLength, lang);
+    			
+    			try {
+    				if (selectedNames.length > 0 && selectedNames[0] != null) {
+    					IASTName searchName = selectedNames[0];
+    					// step 2 starts here
+    					IASTName[] domNames = DOMSearchUtil.getNamesFromDOM(searchName, ICSearchConstants.DEFINITIONS);
+    					
+    					// make sure the names are clean (fix for 95202)
+    					boolean modified=false;
+    					for(int i=0; i<domNames.length; i++) {
+    						if (domNames[i].toCharArray().length == 0) {
+    							domNames[i] = null;
+    							modified=true;
+    						}
+    					}
+    					if (modified)
+    						domNames = (IASTName[])ArrayUtil.removeNulls(IASTName.class, domNames);
+    					
+    					if (domNames != null && domNames.length > 0 && domNames[0] != null) {
+    						String fileName=null;
+    						int start=0;
+    						int end=0;
+    						
+    						if ( domNames[0].getTranslationUnit() != null ) {
+    							IASTFileLocation location = domNames[0].getFileLocation();
+    							if (location != null) 
+    							{
+    								fileName = location.getFileName();
+    								start = location.getNodeOffset();
+    								end = location.getNodeOffset() + location.getNodeLength();
+    							}
+    						}
+    						
+    						if (fileName != null) {
+    							storage.setFileName(fileName);
+    							storage.setLocatable(new OffsetLocatable(start,end));
+    							storage.setResource(ParserUtil.getResourceForFilename( fileName ));
+    							return;
+    						}
+    					} else {
+    						// step 3 starts here
+    						ICElement[] scope = new ICElement[1];
+    						scope[0] = project;
+    						Set matches = DOMSearchUtil.getMatchesFromSearchEngine(SearchEngine.createCSearchScope(scope), searchName, ICSearchConstants.DEFINITIONS);
+    						
+    						if (matches != null && matches.size() > 0) {
+    							Iterator itr = matches.iterator();
+    							while(itr.hasNext()) {
+    								Object match = itr.next();
+    								if (match instanceof IMatch) {
+    									IMatch theMatch = (IMatch)match;
+    									storage.setFileName(theMatch.getLocation().toOSString());
+    									storage.setLocatable(theMatch.getLocatable());
+    									storage.setResource(ParserUtil.getResourceForFilename(theMatch.getLocation().toOSString()));
+    									break;
+    								}
+    							}
+    							return;
+    						}
+    					}
+    				}
+    			} catch (Exception e) {} // catch all exceptions from DOM so the indexer can still be tried
+    			
+    			// last try: search the index for the selected string, even if no name was found for that selection
+    			ICElement[] scope = new ICElement[1];
+    			scope[0] = project;
+    			Set matches = DOMSearchUtil.getMatchesFromSearchEngine( SearchEngine.createCSearchScope(scope), selNode.selText, ICSearchConstants.DEFINITIONS ); 
+    			
+    			if (matches != null && matches.size() > 0) {
+    				Iterator itr = matches.iterator();
+    				while(itr.hasNext()) {
+    					Object match = itr.next();
+    					if (match instanceof IMatch) {
+    						IMatch theMatch = (IMatch)match;
+    						storage.setFileName(theMatch.getLocation().toOSString());
+    						storage.setLocatable(theMatch.getLocatable());
+    						storage.setResource(ParserUtil.getResourceForFilename(theMatch.getLocation().toOSString()));
+    						break;
+    					}
+    				}
+    			} else {
+    				operationNotAvailable(CSEARCH_OPERATION_NO_DEFINITION_MESSAGE);
+    				return;
+    			}
+    		}
+    	};
 
         try {
             ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());

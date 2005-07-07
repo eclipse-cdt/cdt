@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
-import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
@@ -74,14 +73,7 @@ public abstract class FindAction extends SelectionParseAction {
      * @return
      */
 	 public CSearchQuery createDOMSearchQueryForName( IASTName name, LimitTo limitTo, ICSearchScope scope, String searchPattern){
-		 if (name != null) {
-			 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope);
-		 } else {
-			 if (searchPattern != null)
-				 return  createSearchQuery(searchPattern, ICSearchConstants.UNKNOWN_SEARCH_FOR);
-			 else 
-				 return null;
-		 }
+		 return new DOMQuery(DOMSearchUtil.getSearchPattern(name), name, limitTo, scope, searchPattern);
 	 }
 	 
 	 
@@ -215,9 +207,6 @@ public abstract class FindAction extends SelectionParseAction {
 					clearStatusLine();
 				} else if (names.size() == 0) { // no names selected
 					operationNotAvailable(CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE);
-					return;
-				} else if (names.size() > 1) { // too many names selected
-					operationNotAvailable(CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE);
 					return;
 				}
 				

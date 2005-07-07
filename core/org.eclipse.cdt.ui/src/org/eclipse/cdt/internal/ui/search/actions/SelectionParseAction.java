@@ -68,7 +68,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  */
 public class SelectionParseAction extends Action {
 	private static final String OPERATOR = "operator"; //$NON-NLS-1$
-    protected static final String CSEARCH_OPERATION_TOO_MANY_NAMES_MESSAGE = "CSearchOperation.tooManyNames.message"; //$NON-NLS-1$
 	protected static final String CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE = "CSearchOperation.noNamesSelected.message"; //$NON-NLS-1$
 	protected static final String CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE = "CSearchOperation.operationUnavailable.message"; //$NON-NLS-1$
     protected static final String CSEARCH_OPERATION_NO_DEFINITION_MESSAGE = "CSearchOperation.noDefinitionFound.message"; //$NON-NLS-1$

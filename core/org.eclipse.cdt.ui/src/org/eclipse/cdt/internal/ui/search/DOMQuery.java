@@ -71,12 +71,14 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	private IASTName searchName=null;
 	private LimitTo limitTo=null;
 	private ICSearchScope scope=null;
-	
-	public DOMQuery(String displaySearchPattern, IASTName name, LimitTo limitTo, ICSearchScope scope) {
+	private String searchPattern=null;
+
+	public DOMQuery(String displaySearchPattern, IASTName name, LimitTo limitTo, ICSearchScope scope, String searchPattern) {
 		super(CUIPlugin.getWorkspace(), displaySearchPattern, false, null, null, null, displaySearchPattern);
 		this.searchName = name;
 		this.limitTo = limitTo;
 		this.scope = scope;
+		this.searchPattern = searchPattern;
 	}
 	
 	/* (non-Javadoc)
@@ -91,6 +93,7 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
         
 		// fix for 43128
 		Set matches=null;
+		IASTName[] foundNames=null;
 		if (!isLocal())
 			matches = DOMSearchUtil.getMatchesFromSearchEngine(scope, searchName, limitTo);
 		
@@ -107,7 +110,7 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
                 }
             }
         } else { // only search against the DOM if the index failed to get results... i.e. don't want duplicates
-            IASTName[] foundNames = DOMSearchUtil.getNamesFromDOM(searchName, limitTo);
+            foundNames = DOMSearchUtil.getNamesFromDOM(searchName, limitTo);
             
             for (int i=0; i<foundNames.length; i++) {
                 try {
@@ -138,6 +141,23 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
             }
         }
         
+		if (searchPattern != null && matches.size() == 0 && (foundNames == null || foundNames.length == 0)) {
+        	// last try: search the index for the selected string, even if no name was found for that selection
+        	matches = DOMSearchUtil.getMatchesFromSearchEngine( scope, searchPattern, limitTo ); 
+
+            Iterator itr = matches.iterator();
+            while(itr.hasNext()) {
+                Object next = itr.next();
+                if (next instanceof IMatch) {
+                    try {
+                        collector.acceptMatch((IMatch)next);
+                    } catch (CoreException e) {
+                        // don't do anything if the match wasn't accepted
+                    }
+                }
+            }
+		}
+		
         mainSearchPM.done();
         collector.done();
         

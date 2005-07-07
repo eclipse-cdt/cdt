@@ -65,12 +65,13 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	public String[] resolveBuildPaths(int pathType, String variableName,
 			String variableValue, IConfiguration configuration) {
 		
-		if(isMinGW(configuration)){
+		if(!isWindows()){
+			return variableValue.split(DELIMITER_UNIX);
+		} else if(isMinGW(configuration)){
 			return variableValue.split(DELIMITER_WIN);
 		}
 
 		String[] result = variableValue.split(DELIMITER_UNIX);
-		if (!isWindows()) return result; 
 		String exePath = getBinPath();
 		if (exePath == null) { return result; } // no changes
 		File file = new File(exePath); 

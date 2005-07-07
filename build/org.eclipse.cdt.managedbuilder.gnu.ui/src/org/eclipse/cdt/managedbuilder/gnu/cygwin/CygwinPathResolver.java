@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildPathResolver;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPath;
@@ -48,6 +50,9 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	static final String ROOTPATTERN = "/";       //$NON-NLS-1$
 	static final String DELIMITER_UNIX = ":";    //$NON-NLS-1$
 	static final String DELIMITER_WIN  = ";";    //$NON-NLS-1$
+	static final String GCC_VERSION_CMD  = "gcc --version";    //$NON-NLS-1$
+	static final String MINGW_SPECIAL = "mingw ";    //$NON-NLS-1$
+	static final String CYGWIN_SPECIAL = "cygwin ";    //$NON-NLS-1$
 	
 	static boolean checked = false;
 	static String binCygwin  = null;
@@ -60,6 +65,10 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	public String[] resolveBuildPaths(int pathType, String variableName,
 			String variableValue, IConfiguration configuration) {
 		
+		if(isMinGW(configuration)){
+			return variableValue.split(DELIMITER_WIN);
+		}
+
 		String[] result = variableValue.split(DELIMITER_UNIX);
 		if (!isWindows()) return result; 
 		String exePath = getBinPath();
@@ -69,7 +78,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		
 		ArrayList ls = new ArrayList();
 		String s = exePath + TOOL + variableValue;
-		String[] lines = exec(s);
+		String[] lines = exec(s, configuration);
 		if (lines != null && lines.length > 0) {
 			result = lines[0].replace(BS,SLASH).split(DELIMITER_WIN); 
 		}
@@ -175,10 +184,18 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		return null;
 	}
 	
-	private static String[] exec(String cmd) {
+	private static String[] exec(String cmd, IConfiguration cfg) {
 		try {
 //			Process proc = Runtime.getRuntime().exec(cmd);
-			Process proc = ProcessFactory.getFactory().exec(cmd.split(SP));
+			IBuildEnvironmentVariable vars[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true,true);
+			String env[] = new String[vars.length];
+			for(int i = 0; i < env.length; i++){
+				env[i] = vars[i].getName() + "=";
+				String value = vars[i].getValue();
+				if(value != null)
+					env[i] += value; 
+			}
+			Process proc = ProcessFactory.getFactory().exec(cmd.split(SP), env);
 			if (proc != null) {
 				
 				InputStream ein = proc.getInputStream();
@@ -196,5 +213,17 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		}
 		return null;	
 	}
-}
 	
+	public static boolean isMinGW(IConfiguration cfg){
+		String versionInfo[] = exec(GCC_VERSION_CMD, cfg);
+		if(versionInfo != null) {
+			for(int i = 0; i < versionInfo.length; i++){
+				if(versionInfo[i].indexOf(MINGW_SPECIAL) != -1)
+					return true;
+				else if(versionInfo[i].indexOf(CYGWIN_SPECIAL) != -1)
+					return false;
+			}
+		}
+		return false;
+	}
+}

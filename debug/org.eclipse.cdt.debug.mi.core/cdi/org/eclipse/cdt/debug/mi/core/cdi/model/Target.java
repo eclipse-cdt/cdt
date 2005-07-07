@@ -45,6 +45,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
+import org.eclipse.cdt.debug.mi.core.cdi.EventManager;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
@@ -569,6 +570,15 @@ public class Target extends SessionObject implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#disconnect()
 	 */
 	public void disconnect() throws CDIException {
+		// if Target is running try to suspend first.
+		if (isRunning()) {
+			try {
+				((EventManager)getSession().getEventManager()).allowProcessingEvents(false);
+				suspend();
+			} finally {
+				((EventManager)getSession().getEventManager()).allowProcessingEvents(true);			
+			}
+		}
 		CommandFactory factory = miSession.getCommandFactory();
 		MITargetDetach detach = factory.createMITargetDetach();
 		try {

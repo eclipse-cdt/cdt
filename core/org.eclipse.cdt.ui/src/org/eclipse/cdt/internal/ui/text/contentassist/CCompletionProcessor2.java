@@ -48,6 +48,8 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 
 	private IEditorPart editor;
 	private String errorMessage;
+    
+    private char[] autoActivationChars;
 	
 	// Property names
 	private String assistPrefix = "CEditor.contentassist"; //$NON-NLS-1$
@@ -59,9 +61,6 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 		this.editor = editor;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, int offset) {
 		try {
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
@@ -185,48 +184,32 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
         }
     }
     
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer,
 			int offset) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
-		// TODO Auto-generated method stub
-		return null;
+		return autoActivationChars;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
+    public void setCompletionProposalAutoActivationCharacters(char[] autoActivationChars) {
+        this.autoActivationChars = autoActivationChars;
+    }
+
 	public char[] getContextInformationAutoActivationCharacters() {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // none
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-	 */
-	public String getErrorMessage() {
+    public String getErrorMessage() {
 		return errorMessage;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-	 */
 	public IContextInformationValidator getContextInformationValidator() {
 		return new CParameterListValidator();
 	}
 
-    public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
-    }
-    
     public void orderProposalsAlphabetically(boolean order) {
     }
 

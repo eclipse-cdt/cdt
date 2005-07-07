@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.RowLayouter;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -77,6 +78,12 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 
 	public static final String EXTENSION_POINT_ID= "org.eclipse.cdt.ui.CSearchPage"; //$NON-NLS-1$
 	
+	public CSearchPage(){
+		int size = CSearchPattern.fSearchForValues.length;
+		fSearchForValues = new SearchFor[size + 1];
+		System.arraycopy(CSearchPattern.fSearchForValues, 0, fSearchForValues, 0,size);
+		fSearchForValues[size] = UNKNOWN_SEARCH_FOR;
+	}
 	public boolean performAction() {
 	    fLineManager.setErrorMessage(null); 
 		SearchPatternData data = getPatternData();
@@ -655,7 +662,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private static List fgPreviousSearchPatterns = new ArrayList(20);
 
 	private Button[] fSearchFor;
-	private SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE, UNKNOWN_SEARCH_FOR };
+	private SearchFor[] fSearchForValues;
 	
 	private String[] fSearchForText= {
 		CSearchMessages.getString("CSearchPage.searchFor.classStruct"), //$NON-NLS-1$
@@ -667,6 +674,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		CSearchMessages.getString("CSearchPage.searchFor.enum"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.enumr"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.namespace"),	//$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.typedef"),	//$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.macro"),	//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.any") }; 		//$NON-NLS-1$
 		
 		

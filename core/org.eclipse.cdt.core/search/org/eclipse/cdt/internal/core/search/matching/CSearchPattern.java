@@ -76,7 +76,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	public static final int ACCURATE_MATCH   = 2;
 	public static final int INACCURATE_MATCH = 3;
 	
-	private static SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE, TYPEDEF, MACRO};
+	public static SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE, TYPEDEF, MACRO};
 	
 	protected static class Requestor extends NullSourceElementRequestor
 	{
@@ -177,7 +177,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createMacroPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		if( limitTo != DECLARATIONS && limitTo != ALL_OCCURRENCES )
+		if( limitTo != DECLARATIONS && limitTo != ALL_OCCURRENCES && limitTo != DECLARATIONS_DEFINITIONS )
 			return null;
 			
 		return new MacroDeclarationPattern( patternString.toCharArray(), matchMode, DECLARATIONS, caseSensitive );	

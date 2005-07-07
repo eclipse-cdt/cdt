@@ -414,6 +414,7 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 			 * There should be at most one tool defined for a custom build step which was not an
 			 * extension element (not defined by a tool integrator in a manifest).
 			 * If the rcbs tool has been defined, remove the tool from the resource configuration.
+			 * If the rcbs tool was not disabled before now, indicate that a rebuild will be needed.
 			 * Set the rcbsApplicability in the resource configuration to "disabled" by default.
 			 * Update the field values.
 			 */
@@ -425,6 +426,14 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 					resConfig.removeTool(tool);
 					break;
 				}
+			}
+
+			/*
+			 * If the rcbs tool was not disabled, it will be after restoring defaults.
+			 * This transition implies a rebuild is needed.
+			 */
+			if(resConfig.getRcbsApplicability() != IResourceConfiguration.KIND_DISABLE_RCBS_TOOL){
+				resConfig.getParent().setRebuildState(true);
 			}
 			resConfig.setRcbsApplicability(IResourceConfiguration.KIND_DISABLE_RCBS_TOOL);
 			setValues();
@@ -438,6 +447,8 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 		public void performApply(IProgressMonitor monitor) throws CoreException {
 			IResourceConfiguration resConfig;
 			boolean foundRcbsTool = false;
+			boolean rebuildNeeded = false;
+			boolean rcbsStillDisabledSoNoRebuild = false;
 			int idx;
 			
 			/*
@@ -467,6 +478,9 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 					tool.getOutputTypes()[0].setOutputNames(resBuildOutputs);
 					tool.setToolCommand(resBuildCommand);
 					tool.setAnnouncement(resBuildAnnouncement);
+					if (tool.isDirty()) {
+						rebuildNeeded = true;
+					}
 					foundRcbsTool = true;
 					break;
 				}
@@ -486,6 +500,7 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 				rcbsTool.setCustomBuildStep(true);
 				rcbsTool.setToolCommand(resBuildCommand);
 				rcbsTool.setAnnouncement(resBuildAnnouncement);
+				rebuildNeeded = true;
 			}
 
 			/*
@@ -500,11 +515,24 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 				resConfig.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE);
 			} else
 			if (idx == rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_DISABLE))) {
+				/*
+				 * If the rcbs tool was disabled and will remain disabled, no rebuild is required.
+				 */
+				if(resConfig.getRcbsApplicability() == IResourceConfiguration.KIND_DISABLE_RCBS_TOOL){
+					rcbsStillDisabledSoNoRebuild = true;
+				}
 				resConfig.setRcbsApplicability(IResourceConfiguration.KIND_DISABLE_RCBS_TOOL);
 			} else {
 				resConfig.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
 			}
+			if (resConfig.isDirty()) {
+				rebuildNeeded = true;
+			}
 
+			if (rebuildNeeded && !rcbsStillDisabledSoNoRebuild) {
+				resConfig.getParent().setRebuildState(true);
+			}
+			
 			setDirty(false);
 			}
 

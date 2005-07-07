@@ -49,6 +49,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -59,7 +61,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
@@ -71,8 +72,8 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	private static final String PREFIX = "ToolsSettingsBlock";	//$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
 	private static final String SETTINGS_LABEL = LABEL + ".Settings";	//$NON-NLS-1$
-	private static final String TREE_LABEL = LABEL + ".ToolTree";	//$NON-NLS-1$
-	private static final String OPTIONS_LABEL = LABEL + ".ToolOptions";	//$NON-NLS-1$
+	//private static final String TREE_LABEL = LABEL + ".ToolTree";	//$NON-NLS-1$
+	//private static final String OPTIONS_LABEL = LABEL + ".ToolOptions";	//$NON-NLS-1$
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 20, 30 };
 
 	private static final String EMPTY_STRING = new String();
@@ -82,7 +83,6 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 */
 	private TreeViewer optionList;
 	private SashForm sashForm;
-	private Group sashGroup;
 	private Composite settingsPageContainer;
 	private ScrolledComposite containerSC;
 
@@ -194,6 +194,17 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		});
 		optionList.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		optionList.setLabelProvider(new ToolListLabelProvider());
+		optionList.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer,
+									Object parent,
+									Object element) {
+				if(parent instanceof IResourceConfiguration && element instanceof ITool) {
+					return !((ITool)element).getCustomBuildStep();
+				} else {
+					return true;
+				}
+			}
+		});
 	}
 
 	/* (non-Javadoc)

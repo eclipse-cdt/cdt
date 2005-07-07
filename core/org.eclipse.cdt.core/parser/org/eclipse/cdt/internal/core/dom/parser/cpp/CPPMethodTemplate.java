@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -97,6 +98,17 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 	 */
 	public int getVisibility() throws DOMException {
 		IASTDeclaration decl = getPrimaryDeclaration();
+		if( decl == null ){
+			IScope scope = getScope();
+			if( scope instanceof ICPPTemplateScope)
+				scope = scope.getParent();
+			if( scope instanceof ICPPClassScope ){
+				ICPPClassType cls = ((ICPPClassScope)scope).getClassType();
+				if( cls != null )
+					return ( cls.getKey() == ICPPClassType.k_class ) ? ICPPASTVisiblityLabel.v_private : ICPPASTVisiblityLabel.v_public;
+			}
+			return ICPPASTVisiblityLabel.v_private;
+		}
 		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 		IASTDeclaration [] members = cls.getMembers();
 		ICPPASTVisiblityLabel vis = null;
@@ -117,7 +129,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */
-    public boolean isVirtual() throws DOMException {
+    public boolean isVirtual() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -136,7 +148,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
      */
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;

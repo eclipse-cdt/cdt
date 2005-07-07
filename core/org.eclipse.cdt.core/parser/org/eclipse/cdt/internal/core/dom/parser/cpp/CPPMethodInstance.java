@@ -38,9 +38,8 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
-	public int getVisibility() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getVisibility() throws DOMException {
+		return ((ICPPMethod)getTemplateDefinition()).getVisibility();
 	}
 
     /* (non-Javadoc)
@@ -53,7 +52,7 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
      */
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;

@@ -75,7 +75,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
      */
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;

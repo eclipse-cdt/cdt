@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -51,7 +52,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
        	/* (non-Javadoc)
 	     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
     	 */
-		public boolean isDestructor() throws DOMException {
+		public boolean isDestructor() {
 			char[] name = getNameCharArray();
 			if (name.length > 1 && name[0] == '~')
 				return true;
@@ -82,7 +83,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		/* (non-Javadoc)
     	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
 	     */
-		public boolean isDestructor() throws DOMException {
+		public boolean isDestructor() {
 			char[] name = getNameCharArray();
 			if (name.length > 1 && name[0] == '~')
 				return true;
@@ -140,6 +141,16 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	 */
 	public int getVisibility() throws DOMException {
 		IASTDeclaration decl = getPrimaryDeclaration();
+		if( decl == null ){
+			IScope scope = getScope();
+			if( scope instanceof ICPPClassScope ){
+				ICPPClassType cls = ((ICPPClassScope)scope).getClassType();
+				if( cls != null )
+					return ( cls.getKey() == ICPPClassType.k_class ) ? ICPPASTVisiblityLabel.v_private : ICPPASTVisiblityLabel.v_public;
+			}
+			return ICPPASTVisiblityLabel.v_private;
+		}
+		
 		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 		IASTDeclaration [] members = cls.getMembers();
 		ICPPASTVisiblityLabel vis = null;
@@ -250,7 +261,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
      */
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;

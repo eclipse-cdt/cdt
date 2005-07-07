@@ -35,13 +35,12 @@ public class CPPMethodTemplateSpecialization extends
 	public CPPMethodTemplateSpecialization(IBinding specialized,
 			ICPPScope scope, ObjectMap argumentMap) {
 		super(specialized, scope, argumentMap);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
 	 */
-	public boolean isVirtual() throws DOMException {
+	public boolean isVirtual() {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -50,14 +49,16 @@ public class CPPMethodTemplateSpecialization extends
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
 	public int getVisibility() throws DOMException {
-		// TODO Auto-generated method stub
+		IBinding m = getSpecializedBinding();
+		if( m instanceof ICPPMethod )
+			return ((ICPPMethod)m).getVisibility();
 		return 0;
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
      */
-	public boolean isDestructor() throws DOMException {
+	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
 			return true;

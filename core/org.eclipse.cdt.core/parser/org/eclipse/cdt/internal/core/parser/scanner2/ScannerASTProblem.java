@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -268,7 +269,17 @@ public class ScannerASTProblem extends ASTNode implements IASTProblem {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
         }
 
-        Object[] args = new Object[] { msg, new String(""), new Integer(0) }; //$NON-NLS-1$        
+        IASTFileLocation f = getFileLocation();
+        String file = null;
+        int line = 0;
+        if( f == null )
+        {
+            file = ""; //$NON-NLS-1$
+        } else {
+            file = f.getFileName();
+            line = f.getStartingLineNumber();
+        }
+        Object[] args = new Object[] { msg, file, new Integer(line) }; //$NON-NLS-1$        
         message = ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
         return message;
     }

@@ -1281,7 +1281,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 		// check that entryType is correct
 		if (entryType != IPathEntry.CDT_INCLUDE_FILE &&
-			entryType != IPathEntry.CDT_LIBRARY &&
+//TODO: we need to implement the proper CDT_LIBRARY handling
+//calculating the CDT_LIBRARY entries from the managed build 
+//options is disabled for now, we need to define a new option type
+//that will represent library paths
+//see bug# 100844
+//			entryType != IPathEntry.CDT_LIBRARY &&
 			entryType != IPathEntry.CDT_MACRO) { return entries; }
 		
 		// calculate parameters depending of object type

@@ -496,7 +496,7 @@ public class ScannerConfigInfoFactory2 {
         private void loadDefaults(String profileId) {
             ProfileOptions po = new ProfileOptions();
             po.buildOutputFileActionEnabled = false;
-            po.buildOutputParserEnabled = false;
+            po.buildOutputParserEnabled = true;
             
             ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
                     getSCProfileConfiguration(profileId);

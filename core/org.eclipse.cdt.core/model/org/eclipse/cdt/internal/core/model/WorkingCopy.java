@@ -83,7 +83,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			ITranslationUnit original = this.getOriginalElement();
 			if (original.exists()) {
 				CommitWorkingCopyOperation op= new CommitWorkingCopyOperation(this, force);
-				runOperation(op, monitor);
+				op.runOperation(monitor);
 			} else {
 				String contents = this.getSource();
 				if (contents == null) return;
@@ -135,7 +135,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		}
 		try {
 			DestroyWorkingCopyOperation op = new DestroyWorkingCopyOperation(this);
-			runOperation(op, null);
+			op.runOperation(null);
 		} catch (CModelException e) {
 			// do nothing
 		}
@@ -356,7 +356,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
 
         ReconcileWorkingCopyOperation op = new ReconcileWorkingCopyOperation(this, forceProblemDetection);
-        runOperation(op, monitor);
+        op.runOperation(monitor);
 	}
 
 	/**

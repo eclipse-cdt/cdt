@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
@@ -38,31 +37,54 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 /**
  * ContentType processor
  */
-public class ContentTypeProcessor {
+public class ContentTypeProcessor extends CModelOperation {
 
 	CModelManager fManager;
 	CElementDelta fCurrentDelta;
+	ContentTypeChangeEvent[] fEvents;
 
-	public void processContentTypeChanges(ContentTypeChangeEvent event) {
-		ICElement root = CModelManager.getDefault().getCModel();
-		fCurrentDelta = new CElementDelta(root);
+	public ContentTypeProcessor(ContentTypeChangeEvent[] events) {
+		super(CModelManager.getDefault().getCModel());
+		this.fEvents = events;
 		fManager = CModelManager.getDefault();
-		IContentType contentType = event.getContentType();
-		
-		// only interested in our contentTypes
-		// Go through the events and generate deltas
-		ICProject[] cprojects = getAffectedProjects(event);
-		for (int k = 0; k < cprojects.length; ++k) {
-			ICProject cproject = cprojects[k];
-			processContentType(cproject, contentType, event.getContext());
-		}
+		ICElement root = fManager.getCModel();
+		fCurrentDelta = new CElementDelta(root);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		return true;
+	}
 
+	protected void executeOperation() throws CModelException {
+		for (int i = 0; i < fEvents.length; ++i) {
+			IContentType contentType = fEvents[i].getContentType();
+			IScopeContext context = fEvents[i].getContext();
+			ICProject[] cprojects = getAffectedProjects(fEvents[i]);
+			for (int k = 0; k < cprojects.length; ++k) {
+				processContentType(cprojects[k], contentType, context);
+			}
+		}
+		
 		if (fCurrentDelta.getAffectedChildren().length > 0) {
-			fManager.fire(fCurrentDelta, ElementChangedEvent.POST_CHANGE);
+			addDelta(fCurrentDelta);
+		}
+	}
+	
+
+
+	static public void processContentTypeChanges(ContentTypeChangeEvent[] events) {
+		try {
+			CModelOperation op = new ContentTypeProcessor(events);
+			op.runOperation(null);
+		} catch (CModelException e) {
+			// 
 		}
 	}
 
-	boolean isRegisteredContentTypeId(String id) {
+	private boolean isRegisteredContentTypeId(String id) {
 		String[] ids = CoreModel.getRegistedContentTypeIds();
 		for (int i = 0; i < ids.length; i++) {
 			if (ids[i].equals(id)) {
@@ -72,7 +94,7 @@ public class ContentTypeProcessor {
 		return false;
 	}
 
-	void processContentType(ICElement celement, IContentType contentType, IScopeContext context) {
+	protected void processContentType(ICElement celement, IContentType contentType, IScopeContext context) {
 		if (celement instanceof IOpenable) {
 			int type = celement.getElementType();
 			// if the type is not a TranslationUnit
@@ -139,13 +161,11 @@ public class ContentTypeProcessor {
 				String id =  ((ITranslationUnit)celement).getContentTypeId();
 				if (contentType.getId().equals(id)) {
 					try {
-						if (! contentType.isAssociatedWith(celement.getElementName(), context)) {
-							IContentType cType = CCorePlugin.getContentType(celement.getCProject().getProject(), celement.getElementName());
-							if (cType != null && isRegisteredContentTypeId(cType.getId())) {
-								elementChanged(celement);
-							} else {
-								elementRemoved(celement, celement.getParent());
-							}
+						IContentType cType = CCorePlugin.getContentType(celement.getCProject().getProject(), celement.getElementName());
+						if (cType != null && isRegisteredContentTypeId(cType.getId())) {
+							elementChanged(celement);
+						} else {
+							elementRemoved(celement, celement.getParent());
 						}
 					} catch (CoreException e) {
 						//
@@ -224,7 +244,7 @@ public class ContentTypeProcessor {
 		fManager.releaseCElement(celement);
 	}
 
-	protected void elementChanged(ICElement element) throws CModelException {
+	private void elementChanged(ICElement element) throws CModelException {
 		// For Binary/Archive We can not call close() to do the work
 		// closing will remove the element from the {Binary,Archive}Container
 		// We neef to clear the cache explicitely

@@ -179,33 +179,32 @@ public class MachO {
 			sizeofcmds = makeInt(bytes, offset, isle); offset += 4;
 			flags = makeInt(bytes, offset, isle); offset += 4;
 		}
-		
-		private final short makeShort(byte [] val, int offset, boolean isle) throws IOException {
-			if (val.length < offset + 2)
-				throw new IOException();
-			if ( isle ) {
-				return (short)(((val[offset + 1] & 0xff) << 8) + (val[offset + 0] & 0xff));
-			}
-			return (short)(((val[offset + 0] & 0xff) << 8) + (val[offset + 1] & 0xff));
+	}
+
+	private static final short makeShort(byte [] val, int offset, boolean isle) throws IOException {
+		if (val.length < offset + 2)
+			throw new IOException();
+		if ( isle ) {
+			return (short)(((val[offset + 1] & 0xff) << 8) + (val[offset + 0] & 0xff));
 		}
-	
-		private final int makeInt(byte [] val, int offset, boolean isle) throws IOException
-		{
-			if (val.length < offset + 4)
-				throw new IOException();
-			if ( isle ) {
-				return (((val[offset + 3] & 0xff) << 24) |
-						((val[offset + 2] & 0xff) << 16) |
-						((val[offset + 1] & 0xff) << 8) |
-						(val[offset + 0] & 0xff));
-			} else {
-				return (((val[offset + 0] & 0xff) << 24) |
-						((val[offset + 1] & 0xff) << 16) |
-						((val[offset + 2] & 0xff) << 8) |
-						(val[offset + 3] & 0xff));
-			}
+		return (short)(((val[offset + 0] & 0xff) << 8) + (val[offset + 1] & 0xff));
+	}
+
+	private static final int makeInt(byte [] val, int offset, boolean isle) throws IOException
+	{
+		if (val.length < offset + 4)
+			throw new IOException();
+		if ( isle ) {
+			return (((val[offset + 3] & 0xff) << 24) |
+					((val[offset + 2] & 0xff) << 16) |
+					((val[offset + 1] & 0xff) << 8) |
+					(val[offset + 0] & 0xff));
+		} else {
+			return (((val[offset + 0] & 0xff) << 24) |
+					((val[offset + 1] & 0xff) << 16) |
+					((val[offset + 2] & 0xff) << 8) |
+					(val[offset + 3] & 0xff));
 		}
-	
 	}
 
 	public class LoadCommand {
@@ -1029,10 +1028,12 @@ public class MachO {
 	}
 	
 	public static boolean isMachOHeader(byte[] bytes) {
-		boolean isle = false;
-		int offset = 0;
-		int magic = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
-		return (magic == MachO.MachOhdr.MH_MAGIC || magic == MachO.MachOhdr.MH_CIGAM);
+		try {
+			int magic = makeInt(bytes, 0, false);
+			return (magic == MachO.MachOhdr.MH_MAGIC || magic == MachO.MachOhdr.MH_CIGAM);
+		} catch (IOException e) {
+			return false;
+		}
 	}
 
 	public void dispose() {

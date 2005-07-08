@@ -115,11 +115,13 @@ public class CModel extends Openable implements ICModel {
 
 	public void delete(ICElement[] elements, boolean force, IProgressMonitor monitor)
 		throws CModelException {
+		CModelOperation op;
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
-			runOperation(new DeleteResourceElementsOperation(elements, force), monitor);
+			op = new DeleteResourceElementsOperation(elements, force);
 		} else {
-			runOperation(new DeleteElementsOperation(elements, force), monitor);
+			op = new DeleteElementsOperation(elements, force);
 		}
+		op.runOperation(monitor);
 	}
 
 	public void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
@@ -133,12 +135,13 @@ public class CModel extends Openable implements ICModel {
 
 	public void rename(ICElement[] elements, ICElement[] destinations, String[] renamings,
 		boolean force, IProgressMonitor monitor) throws CModelException {
+		CModelOperation op;
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
-			runOperation(new RenameResourceElementsOperation(elements, destinations,
-					renamings, force), monitor);
+			op = new RenameResourceElementsOperation(elements, destinations, renamings, force);
 		} else {
-			runOperation(new RenameElementsOperation(elements, destinations, renamings, force), monitor);
+			op = new RenameElementsOperation(elements, destinations, renamings, force);
 		}
+		op.runOperation(monitor);
 	}
 
 	/**
@@ -151,7 +154,7 @@ public class CModel extends Openable implements ICModel {
 				op.setInsertBefore(elements[i], siblings[i]);
 			}
 		}
-		runOperation(op, monitor);
+		op.runOperation(monitor);
 	}
 
 	protected CElementInfo createElementInfo () {

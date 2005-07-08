@@ -15,10 +15,11 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOutputEntry;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,6 +38,42 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class BinaryRunner {
 
+	class BinaryRunnerOperation extends CModelOperation {
+
+		BinaryRunnerOperation(ICProject cproj) {
+			super(cproj);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
+		 */
+		public boolean isReadOnly() {
+			return true;
+		}
+
+		protected void executeOperation() throws CModelException {
+			ICProject cproj = (ICProject)getElementsToProcess()[0];
+			IParent[] containers = new IParent[2];
+			containers[0] = cproj.getBinaryContainer();
+			containers[1] = cproj.getArchiveContainer();
+			CModelManager factory = CModelManager.getDefault();
+			ICElement root = factory.getCModel();
+			CElementDelta cdelta = new CElementDelta(root);
+			cdelta.changed(cproj, ICElementDelta.F_CONTENT);
+			for (int j = 0; j < containers.length; ++j) {
+				IParent container = containers[j];
+				ICElement[] children = container.getChildren();
+				if (children.length > 0) {
+					cdelta.added((ICElement)container);
+					for (int i = 0; i < children.length; i++) {
+						cdelta.added(children[i]);
+					}
+				}
+			}
+			addDelta(cdelta);
+		}
+		
+	}
 	ICProject cproject;
 	Job runner;
 
@@ -68,9 +105,10 @@ public class BinaryRunner {
 					vbin.removeChildren();
 					
 					cproject.getProject().accept(new Visitor(monitor), IContainer.INCLUDE_PHANTOMS);
-					fireEvents(cproject, vbin);
-					fireEvents(cproject, vlib);
-					
+
+					CModelOperation op = new BinaryRunnerOperation(cproject);
+					op.runOperation(monitor);
+
 					monitor.done();
 				} catch (CoreException e) {
 					return e.getStatus();
@@ -97,27 +135,6 @@ public class BinaryRunner {
 	public void stop() {
 		if (runner != null && runner.getState() == Job.RUNNING) {
 			runner.cancel();
-		}
-	}
-
-	void fireEvents(ICProject cproj, Parent container) {
-		// Fired the event.
-		try {
-			ICElement[] children = container.getChildren();
-			if (children.length > 0) {
-				CModelManager factory = CModelManager.getDefault();
-				ICElement root = factory.getCModel();
-				CElementDelta cdelta = new CElementDelta(root);
-				cdelta.added(cproj);
-				cdelta.added(container);
-				for (int i = 0; i < children.length; i++) {
-					cdelta.added(children[i]);
-				}
-				factory.registerCModelDelta(cdelta);
-				factory.fire(ElementChangedEvent.POST_CHANGE);
-			}
-		} catch (CModelException e) {
-			//
 		}
 	}
 

@@ -71,7 +71,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (sibling != null) {
 			op.createBefore(sibling);
 		}
-		CModelManager.getDefault().runOperation(op, monitor);
+		op.runOperation(monitor);
 		return getInclude(includeName);
 	}
 
@@ -80,7 +80,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (sibling != null) {
 			op.createBefore(sibling);
 		}
-		CModelManager.getDefault().runOperation(op, monitor);
+		op.runOperation(monitor);
 		return getUsing(usingName);
 	}
 
@@ -89,7 +89,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (sibling != null) {
 			op.createBefore(sibling);
 		}
-		CModelManager.getDefault().runOperation(op, monitor);
+		op.runOperation(monitor);
 		return getNamespace(namespace);
 	}
 
@@ -465,7 +465,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return workingCopy;
 		}
 		CreateWorkingCopyOperation op = new CreateWorkingCopyOperation(this, perFactoryWorkingCopies, factory, requestor);
-		runOperation(op, monitor);
+		op.runOperation(monitor);
 		return (IWorkingCopy)op.getResultElements()[0];
 	}
 

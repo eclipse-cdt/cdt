@@ -50,13 +50,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
@@ -79,8 +77,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
 	 */
 	protected DeltaProcessor fDeltaProcessor = new DeltaProcessor();
-
-	protected ContentTypeProcessor fContentTypeProcessor = new ContentTypeProcessor();
 
 	/**
 	 * Queue of deltas created explicily by the C Model that
@@ -563,8 +559,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 		byte[] bytes = new byte[hints];
 		if (hints > 0) {
+			InputStream is = null;
 			try {
-				InputStream is = file.getContents();
+				is = file.getContents();
 				int count = 0;
 				// Make sure we read up to 'hints' bytes if we possibly can
 				while (count < hints) {
@@ -573,7 +570,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						break;
 					count += bytesRead;
 				}
-				is.close();
 				if (count > 0 && count < bytes.length) {
 					byte[] array = new byte[count];
 					System.arraycopy(bytes, 0, array, 0, count);
@@ -583,6 +579,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				return null;
 			} catch (IOException e) {
 				return null;
+			} finally {
+				if (is != null) {
+					try {
+						is.close();
+					} catch (IOException e) {
+						// ignore
+					}
+				}
 			}
 		}
 
@@ -775,7 +779,11 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * @see org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeListener#contentTypeChanged()
 	 */
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
-		fContentTypeProcessor.processContentTypeChanges(event);
+		ContentTypeProcessor.processContentTypeChanges(new ContentTypeChangeEvent[]{ event });
+	}
+
+	public void contentTypeChanged(ContentTypeChangeEvent[] events) {
+		ContentTypeProcessor.processContentTypeChanges(events);
 	}
 
 	public void fire(int eventType) {
@@ -786,7 +794,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Fire C Model deltas, flushing them after the fact. 
 	 * If the firing mode has been turned off, this has no effect. 
 	 */
-	public void fire(ICElementDelta customDeltas, int eventType) {
+	void fire(ICElementDelta customDeltas, int eventType) {
 		if (fFire) {
 			ICElementDelta deltaToNotify;
 			if (customDeltas == null) {
@@ -942,38 +950,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				return rootDelta;
 			}
 			return null;
-		}
-	}
-
-	/**
-	 * Runs a C Model Operation
-	 */
-	public void runOperation(CModelOperation operation, IProgressMonitor monitor) throws CModelException {
-		boolean hadAwaitingDeltas = !fCModelDeltas.isEmpty();
-		try {
-			if (operation.isReadOnly()) {
-				operation.run(monitor);
-			} else {
-		// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
-				getCModel().getUnderlyingResource().getWorkspace()
-					.run(operation, operation.getSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
-			}
-		} catch (CoreException ce) {
-			if (ce instanceof CModelException) {
-				throw (CModelException)ce;
-			} else if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
-				Throwable e = ce.getStatus().getException();
-				if (e instanceof CModelException) {
-					throw (CModelException)e;
-				}
-			}
-			throw new CModelException(ce);
-		} finally {
-// fire only if there were no awaiting deltas (if there were, they would come from a resource modifying operation)
-			// and the operation has not modified any resource
-			if (!hadAwaitingDeltas && !operation.hasModifiedResource()) {
-				fire(ElementChangedEvent.POST_CHANGE);
-			} // else deltas are fired while processing the resource delta
 		}
 	}
 

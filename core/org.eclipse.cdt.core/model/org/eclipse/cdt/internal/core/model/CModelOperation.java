@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -95,6 +96,11 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected boolean hasModifiedResource = false;
 
+	/*
+	 * A per thread stack of java model operations (PerThreadObject of ArrayList).
+	 */
+	protected static ThreadLocal operationStacks = new ThreadLocal();
+
 	protected CModelOperation() {
 	}
 	/**
@@ -162,7 +168,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	}
 
 	/*
-	 * Registers the given reconcile delta with the Java Model Manager.
+	 * Registers the given reconcile delta with the C Model Manager.
 	 */
 	protected void addReconcileDelta(IWorkingCopy workingCopy, ICElementDelta delta) {
 		HashMap reconcileDeltas = CModelManager.getDefault().reconcileDeltas;
@@ -531,6 +537,53 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		}
 	}
 
+	/*
+	 * Returns the stack of operations running in the current thread.
+	 * Returns an empty stack if no operations are currently running in this thread. 
+	 */
+	protected ArrayList getCurrentOperationStack() {
+		ArrayList stack = (ArrayList)operationStacks.get();
+		if (stack == null) {
+			stack = new ArrayList();
+			operationStacks.set(stack);
+		}
+		return stack;
+	}
+
+	/*
+	 * Removes the last pushed operation from the stack of running operations.
+	 * Returns the poped operation or null if the stack was empty.
+	 */
+	protected CModelOperation popOperation() {
+		ArrayList stack = getCurrentOperationStack();
+		int size = stack.size();
+		if (size > 0) {
+			if (size == 1) { // top level operation 
+				operationStacks.set(null); // release reference (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=33927)
+			}
+			return (CModelOperation)stack.remove(size-1);
+		} else {
+			return null;
+		}
+	}
+
+	/*
+	 * Pushes the given operation on the stack of operations currently running in this thread.
+	 */
+	protected void pushOperation(CModelOperation operation) {
+		getCurrentOperationStack().add(operation);
+	}
+
+	/*
+	 * Returns whether this operation is the first operation to run in the current thread.
+	 */
+	protected boolean isTopLevelOperation() {
+		ArrayList stack;
+		return 
+			(stack = this.getCurrentOperationStack()).size() > 0
+			&& stack.get(0) == this;
+	}
+
 	/**
 	 * Main entry point for C Model operations.  Executes this operation
 	 * and registers any deltas created.
@@ -541,18 +594,56 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	public void run(IProgressMonitor monitor) throws CoreException {
 		CModelManager manager= CModelManager.getDefault();
 		int previousDeltaCount = manager.fCModelDeltas.size();
+		pushOperation(this);
 		try {
 			fMonitor = monitor;
 			execute();
 		} finally {
-			registerDeltas();
-			// Fire if we change somethings
-			 if ((manager.fCModelDeltas.size() > previousDeltaCount || !manager.reconcileDeltas.isEmpty())
-			 		 && !this.hasModifiedResource()) {
-				manager.fire(ElementChangedEvent.POST_CHANGE);
+			try {
+				registerDeltas();
+				// Fire if we change somethings
+				if (isTopLevelOperation()) {
+					if ((manager.fCModelDeltas.size() > previousDeltaCount || !manager.reconcileDeltas.isEmpty())
+							&& !this.hasModifiedResource()) {
+						manager.fire(ElementChangedEvent.POST_CHANGE);
+					}
+				}
+			} finally {
+				popOperation();
 			}
 		}
 	}
+
+	/**
+	 * Main entry point for C Model operations. Runs a C Model Operation as an IWorkspaceRunnable
+	 * if not read-only.
+	 */
+	public void runOperation(IProgressMonitor monitor) throws CModelException {
+		ICModelStatus status = verify();
+		if (!status.isOK()) {
+			throw new CModelException(status);
+		}
+		try {
+			if (isReadOnly()) {
+				run(monitor);
+			} else {
+		// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
+				getCModel().getUnderlyingResource().getWorkspace()
+					.run(this, getSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
+			}
+		} catch (CoreException ce) {
+			if (ce instanceof CModelException) {
+				throw (CModelException)ce;
+			} else if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
+				Throwable e = ce.getStatus().getException();
+				if (e instanceof CModelException) {
+					throw (CModelException)e;
+				}
+			}
+			throw new CModelException(ce);
+		}
+	}
+
 
 	/**
 	 * @see IProgressMonitor

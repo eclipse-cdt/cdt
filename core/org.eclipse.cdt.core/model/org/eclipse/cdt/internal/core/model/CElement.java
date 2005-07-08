@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
@@ -260,6 +261,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			case C_PROJECT:
 				return "CPROJECT";  //$NON-NLS-1$
 			case C_CCONTAINER:
+				if (this instanceof ISourceRoot) {
+					return "SOURCE_ROOT"; //$NON-NLS-1$
+				}
 				return "CCONTAINER"; //$NON-NLS-1$
 			case C_UNIT:
 				if (this instanceof IWorkingCopy) {
@@ -292,16 +296,15 @@ public abstract class CElement extends PlatformObject implements ICElement {
 				return "C_NAMESPACE"; 						 //$NON-NLS-1$
 			case C_USING:
 				return "C_USING"; 						 //$NON-NLS-1$
+			case C_VCONTAINER:
+				return "C_CONTAINER"; //$NON-NLS-1$
+			case C_BINARY:
+				return "C_BINARY"; //$NON-NLS-1$
+			case C_ARCHIVE:
+				return "C_ARCHIVE"; //$NON-NLS-1$
 			default:
 				return "UNKNOWN"; //$NON-NLS-1$
 		}
-	}
-
-	/**
-	 * Runs a C Model Operation
-	 */
-	protected void runOperation(CModelOperation operation, IProgressMonitor monitor) throws CModelException {
-		CModelManager.getDefault().runOperation(operation, monitor);
 	}
 	
 	/**

@@ -1,3 +1,24 @@
+2005-07-08 Alain Magloire
+	PR 100585:We need to bacth the fire of event.  Actually the CModelOperation needed to be
+	change to be aware of nested operation in the same thread.
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+	* model/org/eclipse/cdt/internal/core/model/CElement.java
+	* model/org/eclipse/cdt/internal/core/model/CModel.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/CModelException.java
+	* model/org/eclipse/cdt/internal/core/model/ContentTypeProcessor.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryContainerUpdatesOperation.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryStoreChangedOperation.java
+	* model/org/eclipse/cdt/internal/core/model/SetPathEntryContainerOperation.java
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/WorkingCopy.java
+
+2005-07-08 Alain Magloire
+	PR 102434: Patch from Chris Wiebe for the MachO parser
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* utils/org/eclipse/cdt/utils/macho/MachO.java
+
 2005-07-06 David Inglis
 	fixed bug#102546
 	

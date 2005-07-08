@@ -28,8 +28,8 @@ public class IndexEncoderUtil {
         //the first step in the Source Indexer is to add the file being indexed to the index
         //which actually creates an entry for the file in the index.
         
-        IndexedFileEntry mainIndexFile = indexer.getOutput().getIndexedFile(
-                indexer.getResourceFile().getFullPath().toString());
+        String fullPath = indexer.getResourceFile().getFullPath().toString(); 
+        IndexedFileEntry mainIndexFile = indexer.getOutput().getIndexedFile( fullPath );
         if (mainIndexFile != null)
             fileNum = mainIndexFile.getFileID();
         
@@ -46,7 +46,7 @@ public class IndexEncoderUtil {
                 filePath = fileName;
             }
             
-            if (!filePath.equals(indexer.getResourceFile().getFullPath().toString())) {
+            if (!filePath.equals(fullPath)) {
 	            //We are not in the file that has triggered the index. Thus, we need to find the
 	            //file number for the current file (if it has one). If the current file does not
 	            //have a file number, we need to add it to the index.
@@ -80,13 +80,20 @@ public class IndexEncoderUtil {
 				? true : false;
 	}
 
+	static private boolean visitedExternalHeader = false;
+	static private String lastVisitedFile = null;
 	public static boolean nodeInVisitedExternalHeader(IASTNode node, DOMSourceIndexer indexer) {
 		String fileName = node.getContainingFilename();
+		if (fileName.equals(lastVisitedFile)) {
+			return visitedExternalHeader;
+		}
+		
+		lastVisitedFile = fileName;
 		IPath filePath = new Path(fileName);
 		IPath projectPath = indexer.getProject().getFullPath();
-		
-		return (CCorePlugin.getWorkspace().getRoot().getFileForLocation(filePath) == null) &&
+		visitedExternalHeader = (CCorePlugin.getWorkspace().getRoot().getFileForLocation(filePath) == null) &&
 				indexer.haveEncounteredHeader(projectPath, filePath, false);
+		return visitedExternalHeader;
 	}
 
 }

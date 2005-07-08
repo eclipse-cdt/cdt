@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ParseError;
@@ -212,6 +213,14 @@ public abstract class FindAction extends SelectionParseAction {
 				
 				foundName = (IASTName)names.get(0);
 			}
+		}
+		
+		//Don't allow searches for labels since i)there is no corresponding ICElement
+		//and thus no label provider and ii) it doesn't make sense to do a global search
+		//for a local element
+		if (foundName != null && foundName.resolveBinding() instanceof ILabel) {
+			operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+			return;
 		}
 		
 		LimitTo limitTo = getLimitTo();

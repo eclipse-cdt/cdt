@@ -216,9 +216,9 @@ class CTagEntry{
 	private char[][] getFunctionSignature() {
 		String signature =  (String) tagExtensionField.get(CTagsConsoleParser.SIGNATURE);
 		
-		if (signature.equals("()")){
+		if (signature.equals("()")){ //$NON-NLS-1$
 			char[][] voidSignature = new char[1][];
-			voidSignature[0] = "void".toCharArray();
+			voidSignature[0] = "void".toCharArray(); //$NON-NLS-1$
 			return voidSignature;
 		}
 		return CSearchPattern.scanForParameters(signature);

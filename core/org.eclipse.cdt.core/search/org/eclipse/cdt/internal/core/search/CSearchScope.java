@@ -69,11 +69,15 @@ public class CSearchScope implements ICSearchScope {
 		IProject project = cProject.getProject();
 		if (!project.isAccessible() || !visitedProjects.add(project)) return;
 		this.addEnclosingProject(project.getFullPath());
-		//Add the children of the project to the scope
+		
+		this.add(project.getFullPath(),true);
+		
+		/*//Add the children of the project to the scope
 		ICElement[] projChildren = cProject.getChildren();
 		for (int i=0; i< projChildren.length; i++){
 			this.add(projChildren[i]);
-		}
+		}*/
+		
 		//Add the include paths to the scope
 		IIncludeReference[] includeRefs = cProject.getIncludeReferences();
 		for (int i=0; i<includeRefs.length; i++){

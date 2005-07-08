@@ -882,7 +882,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				if ( sl instanceof ICSourceLocator )
 					return ( ((ICSourceLocator)sl).findSourceElement( handle ) != null );
 				else if ( sl instanceof CSourceLookupDirector ) {
-					return true;//( ((CSourceLookupDirector)sl).getCompilationPath( handle ) != null || ((CSourceLookupDirector)sl).findSourceElements( handle ).length > 0 );
+					return ( ((CSourceLookupDirector)sl).contains( breakpoint ) );
 				}
 			}
 			catch( CoreException e ) {

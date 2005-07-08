@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
@@ -54,6 +59,20 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return fSupportedTypes.contains( type.getId() );
 	}
 
+	public boolean contains( ICBreakpoint breakpoint ) {
+		try {
+			String handle = breakpoint.getSourceHandle();
+			ISourceContainer[] containers = getSourceContainers();
+			for ( int i = 0; i < containers.length; ++i ) {
+				if ( contains( containers[i], handle ) )
+					return true;
+			}
+		}
+		catch( CoreException e ) {
+		}
+		return false;
+	}
+
 	public boolean contains( IProject project ) {
 		ISourceContainer[] containers = getSourceContainers();
 		for ( int i = 0; i < containers.length; ++i ) {
@@ -72,6 +91,49 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			containers = container.getSourceContainers();
 			for ( int i = 0; i < containers.length; ++i ) {
 				if ( contains( containers[i], project ) )
+					return true;
+			}
+		}
+		catch( CoreException e ) {
+		}
+		return false;
+	}
+
+	private boolean contains( ISourceContainer container, String sourceName ) {
+		IPath path = new Path( sourceName );
+		if ( !path.isValidPath( sourceName ) )
+			return false;
+		if ( container instanceof ProjectSourceContainer ) {
+			IProject project = ((ProjectSourceContainer)container).getProject();
+			IPath projPath = project.getLocation();
+			if ( projPath.isPrefixOf( path ) ) {
+				IFile file = ((ProjectSourceContainer)container).getProject().getFile( path.removeFirstSegments( projPath.segmentCount() ) );
+				return ( file != null && file.exists() );
+			}
+		}
+		if ( container instanceof FolderSourceContainer ) {
+			IContainer folder = ((FolderSourceContainer)container).getContainer();
+			IPath folderPath = folder.getLocation();
+			if ( folderPath.isPrefixOf( path ) ) {
+				IFile file = ((FolderSourceContainer)container).getContainer().getFile( path.removeFirstSegments( folderPath.segmentCount() ) );
+				return ( file != null && file.exists() );
+			}
+		}
+		if ( container instanceof CDirectorySourceContainer ) {
+			File dir = ((CDirectorySourceContainer)container).getDirectory();
+			boolean searchSubfolders = ((CDirectorySourceContainer)container).searchSubfolders();
+			IPath dirPath = new Path( dir.getAbsolutePath() );
+			if ( searchSubfolders || dirPath.segmentCount() + 1 == path.segmentCount() )
+				return dirPath.isPrefixOf( path );
+		}
+		if ( container instanceof MappingSourceContainer ) {
+			return ( ((MappingSourceContainer)container).getCompilationPath( sourceName ) != null ); 
+		}
+		try {
+			ISourceContainer[] containers;
+			containers = container.getSourceContainers();
+			for ( int i = 0; i < containers.length; ++i ) {
+				if ( contains( containers[i], sourceName ) )
 					return true;
 			}
 		}

@@ -1,4 +1,9 @@
 2005-07-08 Mikhail Khodjaiants
+	Filter breakpoints before setting using the source lookup mechanism.
+	* CBreakpointManager.java
+	* CSourceLookupDirector.java
+
+2005-07-08 Mikhail Khodjaiants
 	Bug 79371: Setting breakpoints in the left hand side ruler of the disassembly view is sluggish.
 	Asynchronous breakpoint handling.
 	* CBreakpointManager.java

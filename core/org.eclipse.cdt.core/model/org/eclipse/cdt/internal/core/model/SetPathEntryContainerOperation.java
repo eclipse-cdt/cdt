@@ -33,6 +33,13 @@ public class SetPathEntryContainerOperation extends CModelOperation {
 		fPathEntryManager = PathEntryManager.getDefault();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CModelOperation#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		return true;
+	}
+
 	protected void executeOperation() throws CModelException {
 		if (isCanceled()) {
 			return;

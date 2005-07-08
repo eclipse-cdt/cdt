@@ -884,7 +884,7 @@ public class CPPSemantics {
     
 	static private ICPPScope getLookupScope( IASTName name ) throws DOMException{
 	    IASTNode parent = name.getParent();
-	    
+	    IScope scope = null;
     	if( parent instanceof ICPPASTBaseSpecifier ) {
     	    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) parent.getParent();
     	    IASTName n = compSpec.getName();
@@ -893,14 +893,21 @@ public class CPPSemantics {
     	        n = ns[ ns.length - 1 ];
     	    }
     	    
-	        return (ICPPScope) CPPVisitor.getContainingScope( n );
+	        scope = CPPVisitor.getContainingScope( n );
 	    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
 	    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) parent;
 	    	IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) initializer.getParent();
-	    	return (ICPPScope) dtor.getName().resolveBinding().getScope();
-	    	
+	    	IBinding binding = dtor.getName().resolveBinding();
+	    	if( !(binding instanceof IProblemBinding) )
+	    		scope = binding.getScope();
+	    } else {
+	    	scope = CPPVisitor.getContainingScope( name );
 	    }
-	    return (ICPPScope) CPPVisitor.getContainingScope( name );
+    	if( scope instanceof ICPPScope )
+    		return (ICPPScope)scope;
+    	else if( scope instanceof IProblemBinding )
+    		return new CPPScope.CPPScopeProblem( ((IProblemBinding)scope).getASTNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding)scope).getNameCharArray() );
+    	return new CPPScope.CPPScopeProblem( name, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray() );
 	}
 	private static void mergeResults( LookupData data, Object results, boolean scoped ){
 	    if( !data.prefixLookup ){

@@ -323,8 +323,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 */
 	public ICPPClassType getClassType() {
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-		return (ICPPClassType) compSpec.getName().resolveBinding();
-		
+		IBinding binding = compSpec.getName().resolveBinding();
+		if (binding instanceof ICPPClassType)
+			return (ICPPClassType) binding;
+
+		return new CPPClassType.CPPClassTypeProblem( compSpec.getName(), IProblemBinding.SEMANTIC_BAD_SCOPE, compSpec.getName().toCharArray() );
 	}
 
 	/* (non-Javadoc)

@@ -49,8 +49,7 @@ public class SearchCompletionContributor implements ICompletionContributor {
 				
 		// Create search scope
 		ICElement[] projects = new ICElement[] { workingCopy.getCProject() };
-		//ICSearchScope scope = SearchEngine.createCSearchScope(projects, true);
-        ICSearchScope scope = SearchEngine.createWorkspaceScope();
+		ICSearchScope scope = SearchEngine.createCSearchScope(projects, true);
 			
 		// Create the pattern
 		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, true); //$NON-NLS-1$

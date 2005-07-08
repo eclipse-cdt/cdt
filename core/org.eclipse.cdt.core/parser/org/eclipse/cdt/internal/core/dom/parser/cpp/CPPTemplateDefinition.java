@@ -200,10 +200,12 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 		for( ; j < length; j++ ){
 			template = ( j == -1 ) ? CPPTemplates.getTemplateDeclaration( definition )
 								   : CPPTemplates.getTemplateDeclaration( declarations[j] );
+			if( template == null )
+				continue;
 			temp = template.getTemplateParameters()[i];
 
     		IASTName n = CPPTemplates.getTemplateParameterName( temp );
-    		if( n != name && n.getBinding() == null ) {
+    		if( n != null && n != name && n.getBinding() == null ) {
     		    n.setBinding( binding );
     		    if( binding instanceof ICPPInternalBinding )
 	                ((ICPPInternalBinding)binding).addDeclaration( n );

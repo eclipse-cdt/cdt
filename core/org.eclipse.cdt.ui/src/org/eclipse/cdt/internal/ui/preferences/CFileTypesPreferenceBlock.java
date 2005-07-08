@@ -320,6 +320,7 @@ public class CFileTypesPreferenceBlock {
 			CFileTypeAssociation[] add = (CFileTypeAssociation[]) fAddAssoc.toArray(new CFileTypeAssociation[fAddAssoc.size()]);
 			CFileTypeAssociation[] rem = (CFileTypeAssociation[]) fRemoveAssoc.toArray(new CFileTypeAssociation[fRemoveAssoc.size()]);
 			
+			changed = add.length > 0 || rem.length > 0;
 			adjustAssociations(add, rem);
 	
 			fAddAssoc.clear();

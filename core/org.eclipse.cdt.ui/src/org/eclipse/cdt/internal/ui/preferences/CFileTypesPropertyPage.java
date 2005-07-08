@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IProject;
@@ -148,14 +149,14 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			if (! isProjectSpecificContentType(project.getName())) {
 				// enable project-specific settings for this project
 				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, true);
+				try {
+					contentTypePrefs.flush();
+				} catch (BackingStoreException e) {
+					// ignore ??
+				}
+				computeEvents(project);
 			}
 			fPrefsBlock.performOk();
-			computeEvents(project);
-			try {
-				contentTypePrefs.flush();
-			} catch (BackingStoreException e) {
-				// ignore ??
-			}
 		} else if (fUseWorkspace.getSelection()) {
 			IProject project = getProject();
 			if (isProjectSpecificContentType(project.getName())) {
@@ -163,12 +164,12 @@ public class CFileTypesPropertyPage extends PropertyPage {
 				Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
 				// enable project-specific settings for this project
 				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
+				computeEvents(project);
 				try {
 					contentTypePrefs.flush();
 				} catch (BackingStoreException e) {
 					// ignore ??
 				}
-				computeEvents(project);
 			}
 		}
 		return super.performOk();
@@ -208,6 +209,16 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		return false;
 	}
 
+	public IContentType[] getRegistedContentTypes() {
+		String [] ids = CoreModel.getRegistedContentTypeIds();
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		IContentType [] ctypes = new IContentType[ids.length];
+		for (int i = 0; i < ids.length; i++) {
+			ctypes[i] = manager.getContentType(ids[i]);
+		}
+		return ctypes;
+	}
+
 	/**
 	 * We are looking at the association from the project, if we have any
 	 * we should generate an event.
@@ -215,7 +226,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	 */
 	void computeEvents(IProject project) {
 		IScopeContext projectScope = new ProjectScope(project);
-		IContentType[] ctypes = fPrefsBlock.getRegistedContentTypes();
+		IContentType[] ctypes = getRegistedContentTypes();
 		ArrayList list = new ArrayList(ctypes.length);
 		for (int i = 0; i < ctypes.length; i++) {
 			IContentType ctype = ctypes[i];
@@ -236,47 +247,15 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		}
 
 		// fire the events
-		for (int i = 0; i < list.size(); ++i) {
-			IContentType source = (IContentType)list.get(i);
-			IContentTypeManager.ContentTypeChangeEvent event =  new IContentTypeManager.ContentTypeChangeEvent(source, projectScope);
-			CModelManager.getDefault().contentTypeChanged(event);
+		if (list.size() > 0) {
+			IContentTypeManager.ContentTypeChangeEvent[] events =  new IContentTypeManager.ContentTypeChangeEvent[list.size()];
+			for (int i = 0; i < list.size(); ++i) {
+				IContentType source = (IContentType)list.get(i);
+				events[i] =  new IContentTypeManager.ContentTypeChangeEvent(source, projectScope);
+			}
+			CModelManager.getDefault().contentTypeChanged(events);
 		}
 	}
-
-//	void computeEvents(IProject project) {
-//		IScopeContext projectScope = new ProjectScope(project);
-//
-//		// Calculate the events to tell the clients of changes
-//		//IContentTypeManager manager = Platform.getContentTypeManager();
-//		//IContentType[] ctypes = manager.getAllContentTypes();
-//		IContentType[] ctypes = fPrefsBlock.getRegistedContentTypes();
-//		ArrayList list = new ArrayList(ctypes.length);
-//		for (int i = 0; i < ctypes.length; i++) {
-//			IContentType ctype = ctypes[i];
-//			try {
-//				IContentTypeSettings projectSettings = ctype.getSettings(projectScope);
-//				String[] globalSpecs = ctypes[i].getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-//				String[] projectSpecs = projectSettings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-//				if (isSpecsChanged(globalSpecs, projectSpecs)) {
-//					list.add(ctype);
-//				} else {
-//					globalSpecs = ctypes[i].getFileSpecs(IContentType.FILE_NAME_SPEC);
-//					projectSpecs = projectSettings.getFileSpecs(IContentType.FILE_NAME_SPEC);
-//					if (isSpecsChanged(globalSpecs, projectSpecs)) {
-//						list.add(ctype);
-//					}
-//				}
-//			} catch (CoreException e) {
-//				// ignore ?
-//			}
-//		}
-//		// fire the events
-//		for (int i = 0; i < list.size(); ++i) {
-//			IContentType source = (IContentType)list.get(i);
-//			IContentTypeManager.ContentTypeChangeEvent event =  new IContentTypeManager.ContentTypeChangeEvent(source, projectScope);
-//			CModelManager.getDefault().contentTypeChanged(event);
-//		}
-//	}
 
 	boolean isSpecsChanged(String[] newSpecs, String[] oldSpecs) {
 		if (newSpecs.length != oldSpecs.length) {

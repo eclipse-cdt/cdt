@@ -1,3 +1,8 @@
+2005-07-08 Alain Magloire
+	Fix for the CFileType UI
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPropertyPage.java
+
 2005-07-06 Vladimir Hirsl
 	Disabled Add Folder/File button in CPathIncludeSymbolEntryPerFilePage.
 

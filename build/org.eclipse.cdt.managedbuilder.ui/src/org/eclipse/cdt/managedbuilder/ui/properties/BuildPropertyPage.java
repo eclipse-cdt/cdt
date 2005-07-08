@@ -248,6 +248,18 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		//  If the user did not visit this page, then there is nothing to do.
 		if (!displayedConfig) return true;
 
+		if (!applyOptionBlock()) return false;
+		if (!applyDefaultConfiguration()) return false;
+		if (!writeBuildInfo()) return false;
+		
+		return true;
+	}
+
+	/**
+	 * Apply any changes that have been made in the managed build option block
+	 * (changes are stored in the managedbuildinfo object).
+	 */
+	protected boolean applyOptionBlock() {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				fOptionBlock.performApply(monitor);
@@ -264,9 +276,23 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			// cancelled
 			return false;
 		}
-
-		// Write out the build model info
+		return true;
+	}
+	
+	/**
+	 * Make the currently selected configuration the default 
+	 * (in the managedbuildinfo object).
+	 */
+	protected boolean applyDefaultConfiguration() {
 		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
+		return true;
+	}
+
+	/**
+	 * Save any changes applied to the managedbuildinfo object to disk.
+	 */
+	protected boolean writeBuildInfo() {
+		// Write out the build model info
 		ManagedBuildManager.saveBuildInfo(getProject(), false);
 		IManagedBuildInfo bi = ManagedBuildManager.getBuildInfo(getProject());
 		if (bi != null & bi instanceof ManagedBuildInfo) {
@@ -274,7 +300,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		}
 		return true;
 	}
-
+	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
@@ -313,16 +339,9 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		configSelector.setItems(getConfigurationNamesAndDescriptions());
 		
 		// Make sure the active configuration is selected
+		configSelector.select(0);
 		IConfiguration defaultConfig = info.getDefaultConfiguration();
-		int index;
-		if( (defaultConfig.getDescription() == null) || defaultConfig.getDescription().equals("") ) {	//$NON-NLS-1$
-			index = configSelector.indexOf(defaultConfig.getName());	
-		} else {
-			index = configSelector.indexOf(defaultConfig.getName() + "( " + defaultConfig.getDescription() + " )" );	//$NON-NLS-1$	//$NON-NLS-2$
-		}
-		
-		configSelector.select(index == -1 ? 0 : index);
-		handleConfigSelection();
+		setSelectedConfiguration(defaultConfig);
 	}
 
 	/* (non-Javadoc)
@@ -341,8 +360,37 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		return namesAndDescriptions;
 	}
 
+	/**
+	 * Sets the currently selected configuration and updates the UI to reflect
+	 * the current state of that configuration.
+	 */
+	public void setSelectedConfiguration(IConfiguration config) {
+		String nameAndDescription = new String();
+		if ((config.getDescription() == null)
+				|| (config.getDescription().equals(""))) {	//$NON-NLS-1$
+			nameAndDescription = config.getName();
+		} else {
+			nameAndDescription = config.getName() + "( "	//$NON-NLS-1$
+					+ config.getDescription() + " )";	//$NON-NLS-1$
+		}
+		configSelector.select(configSelector.indexOf(nameAndDescription));
+		handleConfigSelection();		
+	}
+	
+	/**
+	 * Sets whether the control for selecting a configuration to edit should 
+	 * be enabled.
+	 */
 	public void enableConfigSelection (boolean enable) {
 		configSelector.setEnabled(enable);
+	}
+	
+	/**
+	 * Sets whether the control for managing the configurations should be 
+	 * enabled.
+	 */
+	public void enabledManageConfigs (boolean enable) {
+		manageConfigs.setEnabled(false);
 	}
 
 	/* (non-Javadoc)
@@ -522,16 +570,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			configSelector.setItems(getConfigurationNamesAndDescriptions());
 
 			IConfiguration tmpSelectedConfiguration = manageDialog.getSelectedConfiguration();
-			String nameAndDescription = new String();
-			if ((tmpSelectedConfiguration.getDescription() == null)
-					|| (tmpSelectedConfiguration.getDescription().equals(""))) {	//$NON-NLS-1$
-				nameAndDescription = tmpSelectedConfiguration.getName();
-			} else {
-				nameAndDescription = tmpSelectedConfiguration.getName() + "( "	//$NON-NLS-1$
-						+ tmpSelectedConfiguration.getDescription() + " )";	//$NON-NLS-1$
-			}
-			configSelector.select(configSelector.indexOf(nameAndDescription));
-			handleConfigSelection();
+			setSelectedConfiguration(tmpSelectedConfiguration);
 		}
 		return;
 	}

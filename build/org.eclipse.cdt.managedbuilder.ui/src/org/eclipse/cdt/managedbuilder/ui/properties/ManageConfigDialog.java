@@ -71,8 +71,6 @@ public class ManageConfigDialog extends Dialog {
 	private static final String CONVERSION_TARGET_TIP = TIP + ".conversionTarget";	//$NON-NLS-1$
 	private static final String CONVERT_TIP = TIP + ".convert";	//$NON-NLS-1$
 	
-	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
-
 	private static final String EMPTY_STRING = new String();
 
 	// The list of configurations to delete
@@ -465,29 +463,8 @@ public class ManageConfigDialog extends Dialog {
 			IConfiguration parentConfig = dialog.getParentConfiguration();
 			
 			if (parentConfig != null) {
-				int id = ManagedBuildManager.getRandomNumber();
 				
-				// Create ID for the new component based on the parent ID and random component
-				String newId = parentConfig.getId();
-				int index = newId.lastIndexOf(ID_SEPARATOR);
-				if (index > 0) {
-					String lastComponent = newId.substring(index + 1, newId.length());
-					if (Character.isDigit(lastComponent.charAt(0))) {
-						// Strip the last component
-						newId = newId.substring(0, index);
-					}
-				}
-				newId += ID_SEPARATOR + id;
-				IConfiguration newConfig;
-				if (parentConfig.isExtensionElement()) {
-					newConfig = info.getManagedProject().createConfiguration(parentConfig, newId);
-				} else {
-					newConfig = info.getManagedProject().createConfigurationClone(parentConfig, newId);
-				}
-				
-				newConfig.setName(newConfigName);
-				newConfig.setDescription(newConfigDescription);
-				newConfig.setArtifactName(info.getManagedProject().getDefaultArtifactName());
+				IConfiguration newConfig = dialog.newConfiguration(info);
 				
 				// Add this new configuration to the existing list.
 				String nameAndDescription = new String();

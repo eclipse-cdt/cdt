@@ -216,6 +216,11 @@ class CTagEntry{
 	private char[][] getFunctionSignature() {
 		String signature =  (String) tagExtensionField.get(CTagsConsoleParser.SIGNATURE);
 		
+		if (signature.equals("()")){
+			char[][] voidSignature = new char[1][];
+			voidSignature[0] = "void".toCharArray();
+			return voidSignature;
+		}
 		return CSearchPattern.scanForParameters(signature);
 	}
 

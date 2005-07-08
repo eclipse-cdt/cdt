@@ -153,7 +153,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 				if ( target != null ) {
 					try {
 						IAddress address = target.getBreakpointAddress( breakpoint );
-						if ( ! address.isZero()  )
+						if ( address != null && !address.isZero()  )
 							return getInstructionLine( address );
 					}
 					catch( DebugException e ) {
@@ -332,7 +332,8 @@ public class DisassemblyEditorInput implements IEditorInput {
 					if ( bps[i] instanceof ICLineBreakpoint ) {
 						ICLineBreakpoint b = (ICLineBreakpoint)bps[i];
 						try {
-							if ( address.compareTo(bt.getBreakpointAddress( b )) == 0)
+							IAddress a = bt.getBreakpointAddress( b );
+							if ( a != null && address.compareTo( a ) == 0 )
 								return b;
 						}
 						catch( NumberFormatException e ) {

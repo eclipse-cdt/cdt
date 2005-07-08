@@ -1,23 +1,25 @@
-/*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- *******************************************************************************/
-package org.eclipse.cdt.debug.internal.core;
+ ***********************************************************************/ 
+package org.eclipse.cdt.debug.internal.core; 
 
 import java.math.BigInteger;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -32,7 +34,10 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIAddressBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -57,21 +62,32 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
+import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 
-/**
- * The breakpoint manager manages all breakpoints set to the associated 
- * debug target.
- */
-public class CBreakpointManager implements IBreakpointManagerListener, ICDIEventListener, IAdaptable {
+public class CBreakpointManager implements IBreakpointsListener, IBreakpointManagerListener, ICDIEventListener, IAdaptable {
+
+	static private class BreakpointInProgess {
+		
+		private boolean fDeleted = false;
+		
+		boolean isDeleted() {
+			return fDeleted;
+		}
+		
+		void delete() {
+			fDeleted = true;
+		}
+	}
+
+	static final protected BreakpointInProgess BREAKPOINT_IN_PROGRESS = new BreakpointInProgess(); 
 
 	private class BreakpointMap {
 
@@ -85,33 +101,40 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		 */
 		private HashMap fCDIBreakpoints;
 
-		protected BreakpointMap() {
+		private BreakpointMap() {
 			fCBreakpoints = new HashMap( 10 );
 			fCDIBreakpoints = new HashMap( 10 );
 		}
 
-		protected synchronized void put( ICBreakpoint breakpoint, ICDIBreakpoint cdiBreakpoint ) {
+		void register( ICBreakpoint breakpoint ) {
+			fCBreakpoints.put( breakpoint, BREAKPOINT_IN_PROGRESS );
+		}
+
+		void put( ICBreakpoint breakpoint, ICDIBreakpoint cdiBreakpoint ) {
 			fCBreakpoints.put( breakpoint, cdiBreakpoint );
 			fCDIBreakpoints.put( cdiBreakpoint, breakpoint );
 		}
 
-		protected synchronized ICDIBreakpoint getCDIBreakpoint( ICBreakpoint breakpoint ) {
-			return (ICDIBreakpoint)fCBreakpoints.get( breakpoint );
+		ICDIBreakpoint getCDIBreakpoint( ICBreakpoint breakpoint ) {
+			Object b = fCBreakpoints.get( breakpoint );
+			return ( b instanceof ICDIBreakpoint ) ? (ICDIBreakpoint)b : null;
 		}
 
-		protected synchronized ICBreakpoint getCBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
-			return (ICBreakpoint)fCDIBreakpoints.get( cdiBreakpoint );
-		}
-
-		protected synchronized void removeCBreakpoint( ICBreakpoint breakpoint ) {
-			if ( breakpoint != null ) {
-				ICDIBreakpoint cdiBreakpoint = (ICDIBreakpoint)fCBreakpoints.remove( breakpoint );
-				if ( cdiBreakpoint != null )
-					fCDIBreakpoints.remove( cdiBreakpoint );
+		ICBreakpoint getCBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
+			ICBreakpoint breakpoint = (ICBreakpoint)fCDIBreakpoints.get( cdiBreakpoint );
+			if ( breakpoint == null ) {
+				ICBreakpoint[] bip = getBreakpointsInProgress();
+				for ( int i = 0; i < bip.length; ++i ) {
+					if ( isSameBreakpoint( bip[i], cdiBreakpoint ) ) {
+						breakpoint = bip[i];
+						break;
+					}
+				}
 			}
+			return breakpoint;
 		}
 
-		protected synchronized void removeCDIBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
+		void removeCDIBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
 			if ( cdiBreakpoint != null ) {
 				ICBreakpoint breakpoint = (ICBreakpoint)fCDIBreakpoints.remove( cdiBreakpoint );
 				if ( breakpoint != null )
@@ -119,19 +142,60 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			}
 		}
 
-		protected ICBreakpoint[] getAllCBreakpoints() {
+		boolean isRegistered( ICBreakpoint breakpoint ) {
+			return ( fCBreakpoints.get( breakpoint ) != null );
+		}
+
+		boolean isInProgress( ICBreakpoint breakpoint ) {
+			return ( fCBreakpoints.get( breakpoint ) == BREAKPOINT_IN_PROGRESS );
+		}
+
+		ICBreakpoint[] getAllCBreakpoints() {
 			Set set = fCBreakpoints.keySet();
 			return (ICBreakpoint[])set.toArray( new ICBreakpoint[set.size()] );
 		}
 
-		protected ICDIBreakpoint[] getAllCDIBreakpoints() {
-			Set set = fCDIBreakpoints.keySet();
-			return (ICDIBreakpoint[])set.toArray( new ICDIBreakpoint[set.size()] );
-		}
-
-		protected void dispose() {
+		void dispose() {
 			fCBreakpoints.clear();
 			fCDIBreakpoints.clear();
+		}
+
+		private ICBreakpoint[] getBreakpointsInProgress() {
+			ArrayList list = new ArrayList();
+			Set set = fCBreakpoints.entrySet();
+			Iterator it = set.iterator();
+			while ( it.hasNext() ) {
+				Map.Entry entry = (Map.Entry)it.next();
+				if ( entry.getValue() == BREAKPOINT_IN_PROGRESS ) {
+					list.add( entry.getKey() );
+				}
+			}
+			return (ICBreakpoint[])list.toArray( new ICBreakpoint[list.size()] );
+		}
+
+		private boolean isSameBreakpoint( ICBreakpoint breakpoint, ICDIBreakpoint cdiBreakpoint ) {
+			try {
+				if ( breakpoint instanceof ICFunctionBreakpoint && cdiBreakpoint instanceof ICDIFunctionBreakpoint ) {
+					return ( ((ICFunctionBreakpoint)breakpoint).getFunction().compareTo( ((ICDIFunctionBreakpoint)cdiBreakpoint).getLocator().getFunction() ) == 0 );
+				}
+				if ( breakpoint instanceof ICAddressBreakpoint && cdiBreakpoint instanceof ICDIAddressBreakpoint ) {
+					IAddressFactory factory = getDebugTarget().getAddressFactory(); 
+					return factory.createAddress( ((ICAddressBreakpoint)breakpoint).getAddress() ).equals( factory.createAddress( ((ICDIAddressBreakpoint)cdiBreakpoint).getLocator().getAddress() ) );
+				}
+				if ( breakpoint instanceof ICLineBreakpoint && cdiBreakpoint instanceof ICDILineBreakpoint ) {
+					ICDILocator location = ((ICDILineBreakpoint)cdiBreakpoint).getLocator();
+					String file = location.getFile();
+					String sourceHandle = file;
+					if ( !isEmpty( file ) ) {
+						Object sourceElement = getSourceElement( file );
+						sourceHandle = ( sourceElement instanceof IFile ) ? ((IFile)sourceElement).getLocation().toOSString() : ((IStorage)sourceElement).getFullPath().toOSString();
+						return sourceHandle.equals( ((ICLineBreakpoint)breakpoint).getSourceHandle() ) && location.getLineNumber() == ((ICLineBreakpoint)breakpoint).getLineNumber(); 
+					}
+				}
+			}
+			catch( CoreException e ) {
+			}
+			return false;
 		}
 	}
 
@@ -139,60 +203,94 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 
 	private BreakpointMap fMap;
 	
-	private boolean fSkipBreakpoint= false;
+	private boolean fSkipBreakpoint = false;
 
 	public CBreakpointManager( CDebugTarget target ) {
 		super();
-		setDebugTarget( target );
-		fMap = new BreakpointMap();
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener( this );
-		getDebugTarget().getCDISession().getEventManager().addEventListener( this );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter( Class adapter ) {
-		if ( CBreakpointManager.class.equals( adapter ) )
-			return this;
-		if ( CDebugTarget.class.equals( adapter ) )
-			return getDebugTarget();
-		if ( ICDebugTarget.class.equals( adapter ) )
-			return getDebugTarget();
-		if ( IDebugTarget.class.equals( adapter ) )
-			return getDebugTarget();
-		return null;
-	}
-
-	public CDebugTarget getDebugTarget() {
-		return fDebugTarget;
-	}
-
-	private void setDebugTarget( CDebugTarget target ) {
 		fDebugTarget = target;
-	}
-
-	protected ICDITarget getCDITarget() {
-		return getDebugTarget().getCDITarget();
-	}
-
-	protected ICSourceLocator getCSourceLocator() {
-		ISourceLocator locator = getDebugTarget().getLaunch().getSourceLocator();
-		if ( locator instanceof IAdaptable )
-			return (ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class );
-		return null;
-	}
-
-	public void dispose() {
-		getDebugTarget().getCDISession().getEventManager().removeEventListener( this );
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener( this );
-		removeAllBreakpoints();
-		getBreakpointMap().dispose();
+		fMap = new BreakpointMap();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent)
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
+	public void breakpointsAdded( IBreakpoint[] breakpoints ) {
+		if ( !isTargetAvailable() )
+			return;
+		for ( int i = 0; i < breakpoints.length; ++i ) {
+			if ( breakpoints[i] instanceof ICBreakpoint && isTargetBreakpoint( (ICBreakpoint)breakpoints[i] ) )
+				breakpointAdded0( breakpoints[i] );			
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
+	 */
+	public void breakpointsRemoved( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
+		if ( !isTargetAvailable() )
+			return;
+		ArrayList list = new ArrayList( breakpoints.length );
+		synchronized( getBreakpointMap() ) {
+			for ( int i = 0; i < breakpoints.length; ++i ) {
+				if ( breakpoints[i] instanceof ICBreakpoint && !getBreakpointMap().isInProgress( (ICBreakpoint)breakpoints[i] ) )
+					list.add( getBreakpointMap().getCDIBreakpoint( (ICBreakpoint)breakpoints[i] ) );			
+			}
+		}
+		if ( list.isEmpty() )
+			return;
+		final ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])list.toArray( new ICDIBreakpoint[list.size()] );
+		final ICDITarget cdiTarget = getCDITarget();
+		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			public void run() {
+				try {
+					cdiTarget.deleteBreakpoints( cdiBreakpoints );
+				}
+				catch( CDIException e ) {
+				} 
+			}
+		} );			
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
+	 */
+	public void breakpointsChanged( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
+		ArrayList removeList = new ArrayList( breakpoints.length );
+		ArrayList installList = new ArrayList( breakpoints.length );
+		synchronized ( getBreakpointMap() ) {
+			for ( int i = 0; i < breakpoints.length; ++i ) {
+				if ( !(breakpoints[i] instanceof ICBreakpoint) || !isTargetAvailable() )
+					continue;
+				ICBreakpoint b = (ICBreakpoint)breakpoints[i];
+				boolean install = false;
+				try {
+					ICDebugTarget[] tfs = b.getTargetFilters();
+					install = Arrays.asList( tfs ).contains( getDebugTarget() );
+				}
+				catch( CoreException e ) {
+				}
+				boolean registered = getBreakpointMap().isRegistered( b );
+				boolean inProgress = getBreakpointMap().isInProgress( b );
+				if ( registered && !inProgress && !install ) {
+					removeList.add( b );
+				}
+				if ( !registered && install ) {
+					installList.add( b );
+				}
+			}
+		}
+		breakpointsRemoved( (ICBreakpoint[])removeList.toArray( new ICBreakpoint[removeList.size()] ), new IMarkerDelta[0] );
+		breakpointsAdded( (ICBreakpoint[])installList.toArray( new ICBreakpoint[removeList.size()] ) );
+		for ( int i = 0; i < breakpoints.length; ++i ) {
+			if ( !(breakpoints[i] instanceof ICBreakpoint) || !isTargetAvailable() )
+				changeBreakpointProperties( (ICBreakpoint)breakpoints[i], deltas[i] );
+		}
+	}
+
+	public void breakpointManagerEnablementChanged( boolean enabled ) {
+		doSkipBreakpoints( !enabled );
+	}
+
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
@@ -214,210 +312,59 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		}
 	}
 
-	public boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
-		IResource resource = breakpoint.getMarker().getResource();
-		if ( breakpoint instanceof ICAddressBreakpoint )
-			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
-		if ( breakpoint instanceof ICLineBreakpoint ) {
-			try {
-				String handle = breakpoint.getSourceHandle();
-				ISourceLocator sl = getSourceLocator();
-				if ( sl instanceof ICSourceLocator )
-					return ( ((ICSourceLocator)sl).findSourceElement( handle ) != null );
-				else if ( sl instanceof CSourceLookupDirector ) {
-					return true;//( ((CSourceLookupDirector)sl).getCompilationPath( handle ) != null || ((CSourceLookupDirector)sl).findSourceElements( handle ).length > 0 );
-				}
-			}
-			catch( CoreException e ) {
-				return false;
-			}
-		}
-		else {
-			IProject project = resource.getProject();
-			if ( project != null && project.exists() ) {
-				ISourceLocator sl = getSourceLocator();
-				if ( sl instanceof ICSourceLocator )
-					return ((ICSourceLocator)sl).contains( project );
-				else if ( sl instanceof CSourceLookupDirector )
-					return ((CSourceLookupDirector)sl).contains( project );
-				if ( project.equals( getProject() ) )
-					return true;
-				return CDebugUtils.isReferencedProject( getProject(), project );
-			}
-		}
-		return true;
-	}
-
-	public boolean isCDIRegistered( ICBreakpoint breakpoint ) {
-		return (getBreakpointMap().getCDIBreakpoint( breakpoint ) != null);
-	}
-
-	public boolean supportsAddressBreakpoint( ICAddressBreakpoint breakpoint ) {
-		String module = null;
-		try {
-			module = breakpoint.getModule();
-		}
-		catch( CoreException e ) {
-		}
-		if ( module != null )
-			return getExecFilePath().toOSString().equals( module );
-		// supporting old breakpoints (> 3.0)
-		try {
-			return getExecFilePath().toOSString().equals( breakpoint.getSourceHandle() );
-		}
-		catch( CoreException e ) {
-		}
-		return false;
-	}
-
-	public IFile getCDIBreakpointFile( ICDIBreakpoint cdiBreakpoint ) {
-		IBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
-		if ( breakpoint instanceof ICLineBreakpoint && !(breakpoint instanceof ICAddressBreakpoint) ) {
-			IResource resource = ((ICLineBreakpoint)breakpoint).getMarker().getResource();
-			if ( resource instanceof IFile )
-				return (IFile)resource;
-		}
+	public Object getAdapter( Class adapter ) {
+		if ( CBreakpointManager.class.equals( adapter ) )
+			return this;
+		if ( CDebugTarget.class.equals( adapter ) )
+			return getDebugTarget();
+		if ( ICDebugTarget.class.equals( adapter ) )
+			return getDebugTarget();
+		if ( IDebugTarget.class.equals( adapter ) )
+			return getDebugTarget();
 		return null;
 	}
 
-	public ICBreakpoint getBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
-		return getBreakpointMap().getCBreakpoint( cdiBreakpoint );
+	public CDebugTarget getDebugTarget() {
+		return fDebugTarget;
+	}
+
+	public void initialize() {
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener( this );
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener( this );
+		getDebugTarget().getCDISession().getEventManager().addEventListener( this );
+	}
+
+	public void dispose() {
+		getDebugTarget().getCDISession().getEventManager().removeEventListener( this );
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener( this );
+		removeAllBreakpoints();
+		getBreakpointMap().dispose();
 	}
 
 	public IAddress getBreakpointAddress( ICLineBreakpoint breakpoint ) {
-		if ( breakpoint != null ) {
-			try {
-				return fDebugTarget.getAddressFactory().createAddress( breakpoint.getAddress() );
-			}
-			catch( CoreException e ) {
-			}
-			catch( NumberFormatException e ) {
-			}
-//			ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
-//			if ( cdiBreakpoint instanceof ICDILocationBreakpoint ) {
-//				ICDILocator locator = ((ICDILocationBreakpoint)cdiBreakpoint).getLocator();
-//				if ( locator != null ) {
-//					IAddressFactory factory = getDebugTarget().getAddressFactory();
-//					BigInteger address = locator.getAddress();
-//					if ( address != null )
-//						return factory.createAddress( address );
-//				}	
-//			}
-		}
-		return fDebugTarget.getAddressFactory().getZero();
-	}
-
-	public void setBreakpoint( ICBreakpoint breakpoint ) throws DebugException {
-		doSetBreakpoint( breakpoint );
-	}
-
-	protected void doSetBreakpoint( ICBreakpoint breakpoint ) throws DebugException {
-		try {
+		BigInteger address = null;
+		synchronized ( getBreakpointMap() ) {
 			ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
-			if ( cdiBreakpoint == null ) {
-				if ( breakpoint instanceof ICFunctionBreakpoint )
-					setFunctionBreakpoint( (ICFunctionBreakpoint)breakpoint );
-				else if ( breakpoint instanceof ICAddressBreakpoint )
-					setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
-				else if ( breakpoint instanceof ICLineBreakpoint )
-					setLineBreakpoint( (ICLineBreakpoint)breakpoint );
-				else if ( breakpoint instanceof ICWatchpoint )
-					setWatchpoint( (ICWatchpoint)breakpoint );
-			}
-		}
-		catch( CoreException e ) {
-			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.0" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-		}
-		catch( NumberFormatException e ) {
-			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.1" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-		}
-		catch( CDIException e ) {
-			targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.2" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-		}
-	}
-
-	public void removeBreakpoint( final ICBreakpoint breakpoint ) throws DebugException {
-		doRemoveBreakpoint( breakpoint );
-	}
-
-	protected void doRemoveBreakpoint( ICBreakpoint breakpoint ) throws DebugException {
-		final ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
-		if ( cdiBreakpoint != null ) {
-			final ICDITarget cdiTarget = getCDITarget();
-			DebugPlugin.getDefault().asyncExec( new Runnable() {				
-				public void run() {
-					try {
-						cdiTarget.deleteBreakpoints( new ICDIBreakpoint[]{ cdiBreakpoint } );
-					}
-					catch( CDIException e ) {
-					} 
-				}
-			} );			
-		}
-	}
-
-	public void changeBreakpointProperties( final ICBreakpoint breakpoint, final IMarkerDelta delta ) throws DebugException {
-		doChangeBreakpointProperties( breakpoint, delta );
-	}
-
-	protected void doChangeBreakpointProperties( ICBreakpoint breakpoint, IMarkerDelta delta ) throws DebugException {
-		final ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
-		if ( cdiBreakpoint == null )
-			return;
-		ICDITarget cdiTarget = getCDITarget();
-		try {
-			final boolean enabled = breakpoint.isEnabled();
-			boolean oldEnabled = ( delta != null ) ? delta.getAttribute( IBreakpoint.ENABLED, true ) : enabled;
-			int ignoreCount = breakpoint.getIgnoreCount();
-			int oldIgnoreCount = ( delta != null ) ? delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 ) : ignoreCount;
-			String condition = breakpoint.getCondition();
-			String oldCondition = ( delta != null ) ? delta.getAttribute( ICBreakpoint.CONDITION, "" ) : condition; //$NON-NLS-1$
-			String[] newThreadIs = getThreadNames( breakpoint );
-			Boolean enabled0 = null;
-			ICDICondition condition0 = null;
-			if ( enabled != oldEnabled && enabled != cdiBreakpoint.isEnabled() ) {
-				enabled0 = ( enabled ) ? Boolean.TRUE : Boolean.FALSE;
-			}
-			if ( ignoreCount != oldIgnoreCount || condition.compareTo( oldCondition ) != 0 || areThreadFiltersChanged( newThreadIs, cdiBreakpoint ) ) {
-				final ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );
-				if ( !cdiCondition.equals( cdiBreakpoint.getCondition() ) ) {
-					condition0 = cdiCondition;
+			if ( cdiBreakpoint instanceof ICDILocationBreakpoint ) {
+				ICDILocator locator = ((ICDILocationBreakpoint)cdiBreakpoint).getLocator();
+				if ( locator != null ) {
+					address = locator.getAddress();
 				}
 			}
-			if ( enabled0 != null || condition0 != null ) {
-				changeBreakpointPropertiesOnTarget( cdiBreakpoint, enabled0, condition0 );
-			}
 		}
-		catch( CoreException e ) {
-			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.4" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-		}
-		catch( CDIException e ) {
-			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.4" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-		}
+		return ( address != null ) ? getDebugTarget().getAddressFactory().createAddress( address ) : null;
 	}
 
-	private void changeBreakpointPropertiesOnTarget( final ICDIBreakpoint breakpoint, final Boolean enabled, final ICDICondition condition ) {
-		DebugPlugin.getDefault().asyncExec( new Runnable() {				
-			public void run() {
-				if ( enabled != null ) {
-					try {
-						breakpoint.setEnabled( enabled.booleanValue() );
-					}
-					catch( CDIException e ) {
-					}
-				}
-				if ( condition != null ) {
-					try {
-						breakpoint.setCondition( condition );
-					}
-					catch( CDIException e ) {
-					}
-				}
-			}
-		} );			
+	public IBreakpoint getBreakpoint( ICDIBreakpoint cdiBreakpoint ) {
+		Object b = null;
+		synchronized ( getBreakpointMap() ) {
+			b = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
+		}
+		return ( b instanceof IBreakpoint ) ? (IBreakpoint)b : null; 
 	}
 
-	private void handleBreakpointCreatedEvent( final ICDIBreakpoint cdiBreakpoint ) {
+	private void handleBreakpointCreatedEvent( ICDIBreakpoint cdiBreakpoint ) {
 		if ( cdiBreakpoint instanceof ICDIWatchpoint )
 			doHandleWatchpointCreatedEvent( (ICDIWatchpoint)cdiBreakpoint );
 		else if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
@@ -432,73 +379,75 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		}
 	}
 
-	protected void doHandleLocationBreakpointCreatedEvent( ICDILocationBreakpoint cdiBreakpoint ) {
+	private void doHandleLocationBreakpointCreatedEvent( ICDILocationBreakpoint cdiBreakpoint ) {
 		if ( cdiBreakpoint.isTemporary() )
 			return;
-		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
-		if ( breakpoint == null ) {
-			breakpoint = createLocationBreakpoint( cdiBreakpoint );
+		ICBreakpoint breakpoint = null;
+		synchronized( getBreakpointMap() ) {
+			breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
+			if ( breakpoint == null ) {
+				breakpoint = createLocationBreakpoint( cdiBreakpoint );
+			}
+			if ( breakpoint != null )
+				getBreakpointMap().put( breakpoint, cdiBreakpoint );
 		}
+
 		if ( breakpoint != null ) {
-			try {
-				if ( breakpoint instanceof ICLineBreakpoint ) {
-					ICDILocator locator = cdiBreakpoint.getLocator();
-					if ( locator != null ) {
-						IAddress address = getDebugTarget().getAddressFactory().createAddress( locator.getAddress() );
-						if ( address != null ) {
-							((ICLineBreakpoint)breakpoint).setAddress( address.toHexAddressString() );				
-						}
-					}
-				}
-			}
-			catch( CoreException e1 ) {
-			}
+//			try {
+//				if ( breakpoint instanceof ICLineBreakpoint ) {
+//					ICDILocator locator = cdiBreakpoint.getLocator();
+//					if ( locator != null ) {
+//						IAddress address = getDebugTarget().getAddressFactory().createAddress( locator.getAddress() );
+//						if ( address != null ) {
+//							((ICLineBreakpoint)breakpoint).setAddress( address.toHexAddressString() );				
+//						}
+//					}
+//				}
+//			}
+//			catch( CoreException e1 ) {
+//			}
+			
 			try {
 				breakpoint.setTargetFilter( getDebugTarget() );
+				((CBreakpoint)breakpoint).register( true );
 			}
 			catch( CoreException e ) {
 			}
 			getBreakpointNotifier().breakpointInstalled( getDebugTarget(), breakpoint );
+			changeBreakpointProperties( breakpoint, cdiBreakpoint );
 		}
 	}
 
-	protected void doHandleWatchpointCreatedEvent( ICDIWatchpoint cdiWatchpoint ) {
-		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiWatchpoint );
-		if ( breakpoint == null ) {
-			try {
-				breakpoint = createWatchpoint( cdiWatchpoint );
-			}
-			catch( CDIException e ) {
-			}
-			catch( CoreException e ) {
-			}
-		}
-		if ( breakpoint != null ) {
-			try {
-				breakpoint.setTargetFilter( getDebugTarget() );
-			}
-			catch( CoreException e ) {
-			}
-			getBreakpointNotifier().breakpointInstalled( getDebugTarget(), breakpoint );
-		}
-	}
-
-	private void handleBreakpointDestroyedEvent( final ICDIBreakpoint cdiBreakpoint ) {
-		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
-		getBreakpointMap().removeCDIBreakpoint( cdiBreakpoint );
-		if ( breakpoint != null ) {
-			if ( isFilteredByTarget( breakpoint, getDebugTarget() ) ) {
+	private void doHandleWatchpointCreatedEvent( ICDIWatchpoint cdiWatchpoint ) {
+		ICBreakpoint breakpoint = null;
+		synchronized( getBreakpointMap() ) {
+			breakpoint = getBreakpointMap().getCBreakpoint( cdiWatchpoint );
+			if ( breakpoint == null ) {
 				try {
-					breakpoint.removeTargetFilter( getDebugTarget() );
+					breakpoint = createWatchpoint( cdiWatchpoint );
+				}
+				catch( CDIException e ) {
 				}
 				catch( CoreException e ) {
 				}
 			}
-			getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), new IBreakpoint[] { breakpoint } );
+			if ( breakpoint != null )
+				getBreakpointMap().put( breakpoint, cdiWatchpoint );
+		}
+
+		if ( breakpoint != null ) {
+			try {
+				breakpoint.setTargetFilter( getDebugTarget() );
+				((CBreakpoint)breakpoint).register( true );
+			}
+			catch( CoreException e ) {
+			}
+			getBreakpointNotifier().breakpointInstalled( getDebugTarget(), breakpoint );
+			changeBreakpointProperties( breakpoint, cdiWatchpoint );
 		}
 	}
 
-	private void handleBreakpointChangedEvent( final ICDIBreakpoint cdiBreakpoint ) {
+	private void handleBreakpointChangedEvent( ICDIBreakpoint cdiBreakpoint ) {
 		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
 		if ( breakpoint != null ) {
 			Map map = new HashMap( 3 );
@@ -528,58 +477,112 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		}
 	}
 
-	private void removeAllBreakpoints() {
-		ICDITarget cdiTarget = getCDITarget();
-		try {
-			cdiTarget.deleteAllBreakpoints();
+	private void handleBreakpointDestroyedEvent( ICDIBreakpoint cdiBreakpoint ) {
+		ICBreakpoint breakpoint = null;
+		synchronized( getBreakpointMap() ) {
+			breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
+			getBreakpointMap().removeCDIBreakpoint( cdiBreakpoint );
 		}
-		catch( CDIException e ) {
-			// ignore
+		if ( breakpoint != null ) {
+			if ( isFilteredByTarget( breakpoint, getDebugTarget() ) ) {
+				try {
+					breakpoint.removeTargetFilter( getDebugTarget() );
+				}
+				catch( CoreException e ) {
+				}
+			}
+			getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), new IBreakpoint[] { breakpoint } );
 		}
-		ICBreakpoint[] breakpoints = getBreakpointMap().getAllCBreakpoints();
-		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), breakpoints );
 	}
 
-	private void setLocationBreakpointOnTarget( final ICBreakpoint breakpoint, final ICDITarget target, final ICDILocation location, final ICDICondition condition, final boolean enabled ) {
+	private BreakpointMap getBreakpointMap() {
+		return fMap;
+	}
+
+	private void removeAllBreakpoints() {
+		ArrayList list = new ArrayList();
+		ICBreakpoint[] breakpoints = new ICBreakpoint[0];
+		synchronized( getBreakpointMap() ) {
+			breakpoints = getBreakpointMap().getAllCBreakpoints();			
+			for ( int i = 0; i < breakpoints.length; ++i ) {
+				if ( !getBreakpointMap().isInProgress( breakpoints[i] ) )
+					list.add( getBreakpointMap().getCDIBreakpoint( breakpoints[i] ) );			
+			}
+		}
+		if ( list.isEmpty() )
+			return;
+		final ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])list.toArray( new ICDIBreakpoint[list.size()] );
+		final ICDITarget cdiTarget = getCDITarget();
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
 			public void run() {
 				try {
-					// FIXME: Shouldn't be doing this. The breakpoint management needs to be redesigned.
-					ICDIBreakpoint cdiBreakpoint = null;
-					synchronized ( getBreakpointMap() ) {
-						cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
-						if ( cdiBreakpoint == null ) {
-							if ( breakpoint instanceof ICFunctionBreakpoint ) {
-								cdiBreakpoint = target.setFunctionBreakpoint( ICDIBreakpoint.REGULAR,
-										(ICDIFunctionLocation)location, condition, true );								
-							} else if ( breakpoint instanceof ICAddressBreakpoint ) {
-								cdiBreakpoint = target.setAddressBreakpoint( ICDIBreakpoint.REGULAR,
-										(ICDIAddressLocation)location, condition, true );
-								
-							} else if ( breakpoint instanceof ICLineBreakpoint ) {
-								cdiBreakpoint = target.setLineBreakpoint( ICDIBreakpoint.REGULAR,
-										(ICDILineLocation)location, condition, true );
-							}
-							getBreakpointMap().put( breakpoint, cdiBreakpoint );
-						}
-					}
-					if ( cdiBreakpoint != null && !enabled ) {
-						cdiBreakpoint.setEnabled( false );
-					}
+					cdiTarget.deleteBreakpoints( cdiBreakpoints );
 				}
 				catch( CDIException e ) {
 				} 
 			}
-		} );
+		} );			
+		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), breakpoints );
+	}
+
+	private void setBreakpoint( ICBreakpoint breakpoint ) {
+		try {
+			if ( !getBreakpointMap().isRegistered( breakpoint ) ) {
+				if ( breakpoint instanceof ICFunctionBreakpoint )
+					setFunctionBreakpoint( (ICFunctionBreakpoint)breakpoint );
+				else if ( breakpoint instanceof ICAddressBreakpoint )
+					setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
+				else if ( breakpoint instanceof ICLineBreakpoint )
+					setLineBreakpoint( (ICLineBreakpoint)breakpoint );
+				else if ( breakpoint instanceof ICWatchpoint )
+					setWatchpoint( (ICWatchpoint)breakpoint );
+			}
+		}
+		catch( CoreException e ) {
+		}
+		catch( NumberFormatException e ) {
+		}
+		catch( CDIException e ) {
+		}
+	}
+
+	private void setLocationBreakpointOnTarget( final ICBreakpoint breakpoint, final ICDITarget target, final ICDILocation location, final ICDICondition condition, final boolean enabled ) {
+		boolean registered = false;
+		synchronized ( getBreakpointMap() ) {
+			if ( !(registered = getBreakpointMap().isRegistered( breakpoint )) ) {
+				getBreakpointMap().register( breakpoint );
+			}
+		}
+		if ( !registered ) {
+			DebugPlugin.getDefault().asyncExec( new Runnable() {				
+				public void run() {
+					try {
+						if ( breakpoint instanceof ICFunctionBreakpoint ) {
+							target.setFunctionBreakpoint( ICDIBreakpoint.REGULAR,
+									(ICDIFunctionLocation)location, condition, true );								
+						} else if ( breakpoint instanceof ICAddressBreakpoint ) {
+							target.setAddressBreakpoint( ICDIBreakpoint.REGULAR,
+									(ICDIAddressLocation)location, condition, true );
+							
+						} else if ( breakpoint instanceof ICLineBreakpoint ) {
+							target.setLineBreakpoint( ICDIBreakpoint.REGULAR,
+									(ICDILineLocation)location, condition, true );
+						}
+					}
+					catch( CDIException e ) {
+					} 
+				}
+			} );
+		}
 	}
 
 	private void setFunctionBreakpoint( ICFunctionBreakpoint breakpoint ) throws CDIException, CoreException {
-		final boolean enabled = breakpoint.isEnabled();
-		final ICDITarget cdiTarget = getCDITarget();
+		boolean enabled = breakpoint.isEnabled();
+		ICDITarget cdiTarget = getCDITarget();
 		String function = breakpoint.getFunction();
 		String fileName = breakpoint.getFileName();
-		final ICDIFunctionLocation location = cdiTarget.createFunctionLocation( fileName, function );
-		final ICDICondition condition = createCondition( breakpoint );
+		ICDIFunctionLocation location = cdiTarget.createFunctionLocation( fileName, function );
+		ICDICondition condition = createCondition( breakpoint );
 		setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
 	}
 
@@ -603,24 +606,23 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private void setWatchpointOnTarget( final ICWatchpoint watchpoint, final ICDITarget target, final int accessType, final String expression, final ICDICondition condition, final boolean enabled ) {
-		DebugPlugin.getDefault().asyncExec( new Runnable() {				
-			public void run() {
-				try {
-					ICDIWatchpoint cdiWatchpoint = null;
-					synchronized ( getBreakpointMap() ) {
-						if ( getBreakpointMap().getCDIBreakpoint( watchpoint ) == null ) {
-							cdiWatchpoint = target.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
-							getBreakpointMap().put( watchpoint, cdiWatchpoint );
-						}
-					}
-					if ( !enabled ) {
-						cdiWatchpoint.setEnabled( false );
-					}
-				}
-				catch( CDIException e ) {
-				} 
+		boolean registered = false;
+		synchronized ( getBreakpointMap() ) {
+			if ( !(registered = getBreakpointMap().isRegistered( watchpoint )) ) {
+				getBreakpointMap().register( watchpoint );
 			}
-		} );
+		}
+		if ( !registered ) {
+			DebugPlugin.getDefault().asyncExec( new Runnable() {				
+				public void run() {
+					try {
+							target.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
+					}
+					catch( CDIException e ) {
+					} 
+				}
+			} );
+		}
 	}
 
 	private void setWatchpoint( ICWatchpoint watchpoint ) throws CDIException, CoreException {
@@ -635,20 +637,30 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		setWatchpointOnTarget( watchpoint, cdiTarget, accessType1, expression, condition, enabled );
 	}
 
-	protected BreakpointMap getBreakpointMap() {
-		return fMap;
+	protected ICDITarget getCDITarget() {
+		return getDebugTarget().getCDITarget();
 	}
 
-	protected void targetRequestFailed( String message, Throwable e ) throws DebugException {
-		requestFailed0( message, e, DebugException.TARGET_REQUEST_FAILED );
+	private ICDICondition createCondition( ICBreakpoint breakpoint ) throws CoreException, CDIException {
+		return getCDITarget().createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition(), getThreadNames( breakpoint ) );
 	}
 
-	protected void requestFailed( String message, Throwable e ) throws DebugException {
-		requestFailed0( message, e, DebugException.REQUEST_FAILED );
-	}
-
-	private void requestFailed0( String message, Throwable e, int code ) throws DebugException {
-		throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), code, message, e ) );
+	private String[] getThreadNames( ICBreakpoint breakpoint ) {
+		try {
+			ICThread[] threads = breakpoint.getThreadFilters( getDebugTarget() );
+			if ( threads == null )
+				return new String[0];				
+			String[] names = new String[threads.length];
+			for ( int i = 0; i < threads.length; ++i ) {
+				names[i] = threads[i].getName();
+			}
+			return names;
+		}
+		catch( DebugException e ) {
+		}
+		catch( CoreException e ) {
+		}
+		return new String[0];
 	}
 
 	private ICLineBreakpoint createLocationBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) {
@@ -694,15 +706,13 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 																		  cdiBreakpoint.getCondition().getIgnoreCount(), 
 																		  cdiBreakpoint.getCondition().getExpression(), 
 																		  false );
-		ICDILocator locator = cdiBreakpoint.getLocator();
-		if ( locator != null ) {
-			BigInteger address = locator.getAddress();
-			if ( address != null ) {
-				breakpoint.setAddress( address.toString() );				
-			}
-		}
-		getBreakpointMap().put( breakpoint, cdiBreakpoint );
-		((CBreakpoint)breakpoint).register( true );
+//		ICDILocator locator = cdiBreakpoint.getLocator();
+//		if ( locator != null ) {
+//			BigInteger address = locator.getAddress();
+//			if ( address != null ) {
+//				breakpoint.setAddress( address.toString() );				
+//			}
+//		}
 		return breakpoint;
 	}
 
@@ -719,8 +729,6 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 																				  cdiBreakpoint.getCondition().getIgnoreCount(), 
 																				  cdiBreakpoint.getCondition().getExpression(), 
 																				  false );
-		getBreakpointMap().put( breakpoint, cdiBreakpoint );
-		((CBreakpoint)breakpoint).register( true );
 		return breakpoint;
 	}
 
@@ -736,8 +744,6 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 																				cdiBreakpoint.getCondition().getIgnoreCount(), 
 																				cdiBreakpoint.getCondition().getExpression(), 
 																				false );
-		getBreakpointMap().put( breakpoint, cdiBreakpoint );
-		((CBreakpoint)breakpoint).register( true );
 		return breakpoint;
 	}
 
@@ -753,36 +759,176 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 																  cdiWatchpoint.getCondition().getIgnoreCount(), 
 																  cdiWatchpoint.getCondition().getExpression(), 
 																  false );
-		getBreakpointMap().put( watchpoint, cdiWatchpoint );
-		((CBreakpoint)watchpoint).register( true );
 		return watchpoint;
 	}
 
-	private ISourceLocator getSourceLocator() {
-		return getDebugTarget().getLaunch().getSourceLocator();
+	private void changeBreakpointProperties( ICBreakpoint breakpoint, IMarkerDelta delta ) {
+		ICDIBreakpoint cdiBreakpoint = null;
+		synchronized( getBreakpointMap() ) {
+			if ( !getBreakpointMap().isInProgress( breakpoint ) )
+				cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
+		}
+		if ( cdiBreakpoint == null )
+			return;
+		ICDITarget cdiTarget = getCDITarget();
+		try {
+			boolean enabled = breakpoint.isEnabled();
+			boolean oldEnabled = ( delta != null ) ? delta.getAttribute( IBreakpoint.ENABLED, true ) : enabled;
+			int ignoreCount = breakpoint.getIgnoreCount();
+			int oldIgnoreCount = ( delta != null ) ? delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 ) : ignoreCount;
+			String condition = breakpoint.getCondition();
+			String oldCondition = ( delta != null ) ? delta.getAttribute( ICBreakpoint.CONDITION, "" ) : condition; //$NON-NLS-1$
+			String[] newThreadIs = getThreadNames( breakpoint );
+			Boolean enabled0 = null;
+			ICDICondition condition0 = null;
+			if ( enabled != oldEnabled && enabled != cdiBreakpoint.isEnabled() ) {
+				enabled0 = ( enabled ) ? Boolean.TRUE : Boolean.FALSE;
+			}
+			if ( ignoreCount != oldIgnoreCount || condition.compareTo( oldCondition ) != 0 || areThreadFiltersChanged( newThreadIs, cdiBreakpoint ) ) {
+				ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );
+				if ( !cdiCondition.equals( cdiBreakpoint.getCondition() ) ) {
+					condition0 = cdiCondition;
+				}
+			}
+			if ( enabled0 != null || condition0 != null ) {
+				changeBreakpointPropertiesOnTarget( cdiBreakpoint, enabled0, condition0 );
+			}
+		}
+		catch( CoreException e ) {
+		}
+		catch( CDIException e ) {
+		}
 	}
 
-	private IProject getProject() {
-		return getDebugTarget().getProject();
+	private void changeBreakpointProperties( ICBreakpoint breakpoint, ICDIBreakpoint cdiBreakpoint ) {
+		Boolean enabled = null;
+		try {
+			if ( cdiBreakpoint.isEnabled() != !breakpoint.isEnabled() )
+				enabled = Boolean.valueOf( breakpoint.isEnabled() );
+		}
+		catch( CDIException e ) {
+		}
+		catch( CoreException e ) {
+		}
+		ICDICondition condition = null;
+		try {
+			ICDICondition c = createCondition( breakpoint );
+			if ( !cdiBreakpoint.getCondition().equals( c ) )
+				condition = c;
+		}
+		catch( CDIException e ) {
+		}
+		catch( CoreException e ) {
+		}
+		if ( enabled != null || condition != null )
+			changeBreakpointPropertiesOnTarget( cdiBreakpoint, enabled, condition );
 	}
 
-	private IPath getExecFilePath() {
-		return getDebugTarget().getExecFile().getPath();
+	private void changeBreakpointPropertiesOnTarget( final ICDIBreakpoint breakpoint, final Boolean enabled, final ICDICondition condition ) {
+		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			public void run() {
+				if ( enabled != null ) {
+					try {
+						breakpoint.setEnabled( enabled.booleanValue() );
+					}
+					catch( CDIException e ) {
+					}
+				}
+				if ( condition != null ) {
+					try {
+						breakpoint.setCondition( condition );
+					}
+					catch( CDIException e ) {
+					}
+				}
+			}
+		} );			
 	}
 
-	private CBreakpointNotifier getBreakpointNotifier() {
-		return CBreakpointNotifier.getInstance();
+	public void setBreakpoints() {
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] bps = manager.getBreakpoints( CDIDebugModel.getPluginIdentifier() );
+		for( int i = 0; i < bps.length; i++ ) {
+			if ( bps[i] instanceof ICBreakpoint && isTargetBreakpoint( (ICBreakpoint)bps[i] ) && !getBreakpointMap().isRegistered( (ICBreakpoint)bps[i] ) ) {
+				if ( bps[i] instanceof ICAddressBreakpoint ) {
+					// disable address breakpoints to prevent the debugger to insert them prematurely
+					try {
+						bps[i].setEnabled( false );
+					}
+					catch( CoreException e ) {
+					}
+				}
+				breakpointAdded0( bps[i] );
+			}
+		}
 	}
 
-	private boolean isEmpty( String str ) {
-		return !( str != null && str.trim().length() > 0 );
+	private void breakpointAdded0( IBreakpoint breakpoint ) {
+		if ( !isTargetAvailable() )
+			return;
+		if ( breakpoint instanceof ICAddressBreakpoint && !supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint ) )
+			return;
+		setBreakpoint( (ICBreakpoint)breakpoint );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
-	 */
-	public void breakpointManagerEnablementChanged( boolean enabled ) {
-		doSkipBreakpoints( !enabled );
+	private boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
+		IResource resource = breakpoint.getMarker().getResource();
+		if ( breakpoint instanceof ICAddressBreakpoint )
+			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
+		if ( breakpoint instanceof ICLineBreakpoint ) {
+			try {
+				String handle = breakpoint.getSourceHandle();
+				ISourceLocator sl = getSourceLocator();
+				if ( sl instanceof ICSourceLocator )
+					return ( ((ICSourceLocator)sl).findSourceElement( handle ) != null );
+				else if ( sl instanceof CSourceLookupDirector ) {
+					return true;//( ((CSourceLookupDirector)sl).getCompilationPath( handle ) != null || ((CSourceLookupDirector)sl).findSourceElements( handle ).length > 0 );
+				}
+			}
+			catch( CoreException e ) {
+				return false;
+			}
+		}
+		else {
+			IProject project = resource.getProject();
+			if ( project != null && project.exists() ) {
+				ISourceLocator sl = getSourceLocator();
+				if ( sl instanceof ICSourceLocator )
+					return ((ICSourceLocator)sl).contains( project );
+				else if ( sl instanceof CSourceLookupDirector )
+					return ((CSourceLookupDirector)sl).contains( project );
+				if ( project.equals( getProject() ) )
+					return true;
+				return CDebugUtils.isReferencedProject( getProject(), project );
+			}
+		}
+		return true;
+	}
+
+	public boolean supportsBreakpoint( ICBreakpoint breakpoint ) {
+		boolean s = false;
+		synchronized( getBreakpointMap() ) {
+			s = getBreakpointMap().isRegistered( breakpoint );
+		}
+		return s;
+	}
+
+	public boolean supportsAddressBreakpoint( ICAddressBreakpoint breakpoint ) {
+		String module = null;
+		try {
+			module = breakpoint.getModule();
+		}
+		catch( CoreException e ) {
+		}
+		if ( module != null )
+			return getExecFilePath().toOSString().equals( module );
+		// supporting old breakpoints (> 3.0)
+		try {
+			return getExecFilePath().toOSString().equals( breakpoint.getSourceHandle() );
+		}
+		catch( CoreException e ) {
+		}
+		return false;
 	}
 
 	public void skipBreakpoints( boolean enabled ) {
@@ -790,6 +936,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			fSkipBreakpoint = enabled;
 			doSkipBreakpoints( enabled );
 		}
+	}
+
+	public void watchpointOutOfScope( ICDIWatchpoint cdiWatchpoint ) {
+		handleBreakpointDestroyedEvent( cdiWatchpoint );
 	}
 
 	private void doSkipBreakpoints( boolean enabled ) {
@@ -810,6 +960,56 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				// ignore
 			}
 		}
+	}
+
+	private IPath convertPath( String sourceHandle ) {
+		IPath path = null;
+		if ( Path.EMPTY.isValidPath( sourceHandle ) ) {
+			ISourceLocator sl = getSourceLocator();
+			if ( sl instanceof CSourceLookupDirector ) {
+				path = ((CSourceLookupDirector)sl).getCompilationPath( sourceHandle );
+			}
+			if ( path == null ) {
+				path = new Path( sourceHandle );
+			}
+		}
+		return path;
+	}
+
+	private IProject getProject() {
+		return getDebugTarget().getProject();
+	}
+
+	private IPath getExecFilePath() {
+		return getDebugTarget().getExecFile().getPath();
+	}
+
+	private ISourceLocator getSourceLocator() {
+		return getDebugTarget().getLaunch().getSourceLocator();
+	}
+
+	protected Object getSourceElement( String file ) {
+		Object sourceElement = null;
+		ISourceLocator locator = getSourceLocator();
+		if ( locator instanceof ICSourceLocator || locator instanceof CSourceLookupDirector ) {
+			if ( locator instanceof ICSourceLocator )
+				sourceElement = ((ICSourceLocator)locator).findSourceElement( file );
+			else
+				sourceElement = ((CSourceLookupDirector)locator).getSourceElement( file );
+		}
+		return sourceElement;
+	}
+
+	protected boolean isEmpty( String str ) {
+		return !( str != null && str.trim().length() > 0 );
+	}
+
+	private boolean isTargetAvailable() {
+		return getDebugTarget().getCDITarget().getConfiguration().supportsBreakpoints() && getDebugTarget().isAvailable();
+	}
+
+	private CBreakpointNotifier getBreakpointNotifier() {
+		return CBreakpointNotifier.getInstance();
 	}
 
 	private boolean isFilteredByTarget( ICBreakpoint breakpoint, ICDebugTarget target ) {
@@ -839,53 +1039,5 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		catch( CDIException e ) {
 		}
 		return false;
-	}
-
-	private String[] getThreadNames( ICBreakpoint breakpoint ) {
-		try {
-			ICThread[] threads = breakpoint.getThreadFilters( getDebugTarget() );
-			if ( threads == null )
-				return new String[0];				
-			String[] names = new String[threads.length];
-			for ( int i = 0; i < threads.length; ++i ) {
-				names[i] = threads[i].getName();
-			}
-			return names;
-		}
-		catch( DebugException e ) {
-		}
-		catch( CoreException e ) {
-		}
-		return new String[0];
-	}
-
-	private ICDICondition createCondition( ICBreakpoint breakpoint ) throws CoreException, CDIException {
-		return getCDITarget().createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition(), getThreadNames( breakpoint ) );
-	}
-
-	private IPath convertPath( String sourceHandle ) {
-		IPath path = null;
-		if ( Path.EMPTY.isValidPath( sourceHandle ) ) {
-			ISourceLocator sl = getSourceLocator();
-			if ( sl instanceof CSourceLookupDirector ) {
-				path = ((CSourceLookupDirector)sl).getCompilationPath( sourceHandle );
-			}
-			if ( path == null ) {
-				path = new Path( sourceHandle );
-			}
-		}
-		return path;
-	}
-
-	private Object getSourceElement( String file ) {
-		Object sourceElement = null;
-		ISourceLocator locator = getSourceLocator();
-		if ( locator instanceof ICSourceLocator || locator instanceof CSourceLookupDirector ) {
-			if ( locator instanceof ICSourceLocator )
-				sourceElement = ((ICSourceLocator)locator).findSourceElement( file );
-			else
-				sourceElement = ((CSourceLookupDirector)locator).getSourceElement( file );
-		}
-		return sourceElement;
 	}
 }

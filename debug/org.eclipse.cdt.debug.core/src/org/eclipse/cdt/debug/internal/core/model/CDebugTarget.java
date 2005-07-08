@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -60,7 +59,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
-import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
@@ -87,7 +85,6 @@ import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupParticipant;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -103,7 +100,6 @@ import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
@@ -265,8 +261,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	private void initializeBreakpoints() {
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener( this );
-		setBreakpoints();
+		getBreakpointManager().initialize();
+		getBreakpointManager().setBreakpoints();
 	}
 
 	/**
@@ -296,27 +292,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 		if ( suspendEvent != null ) {
 			debugEvents.add( suspendEvent );
-		}
-	}
-
-	/**
-	 * Installs all C/C++ breakpoints that currently exist in the breakpoint manager.
-	 */
-	public void setBreakpoints() {
-		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] bps = manager.getBreakpoints( CDIDebugModel.getPluginIdentifier() );
-		for( int i = 0; i < bps.length; i++ ) {
-			if ( bps[i] instanceof ICBreakpoint && getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)bps[i] ) && !getBreakpointManager().isCDIRegistered( (ICBreakpoint)bps[i] ) ) {
-				if ( bps[i] instanceof ICAddressBreakpoint ) {
-					// disable address breakpoints to prevent the debugger to insert them prematurely
-					try {
-						bps[i].setEnabled( false );
-					}
-					catch( CoreException e ) {
-					}
-				}
-				breakpointAdded0( bps[i] );
-			}
 		}
 	}
 
@@ -421,7 +396,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public boolean supportsBreakpoint( IBreakpoint breakpoint ) {
 		if ( !getConfiguration().supportsBreakpoints() )
 			return false;
-		return (breakpoint instanceof ICBreakpoint && getBreakpointManager().isCDIRegistered( (ICBreakpoint)breakpoint ));
+		return (breakpoint instanceof ICBreakpoint && getBreakpointManager().supportsBreakpoint( (ICBreakpoint)breakpoint ));
 	}
 
 	/* (non-Javadoc)
@@ -626,74 +601,18 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	public void breakpointAdded( IBreakpoint breakpoint ) {
-		if ( !(breakpoint instanceof ICBreakpoint) || !isAvailable() || !getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)breakpoint ) )
-			return;
-		breakpointAdded0( breakpoint );
-	}
-
-	private void breakpointAdded0( IBreakpoint breakpoint ) {
-		if ( !isAvailable() )
-			return;
-		if ( breakpoint instanceof ICAddressBreakpoint && !getBreakpointManager().supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint ) )
-			return;
-		if ( getConfiguration().supportsBreakpoints() ) {
-			try {
-				getBreakpointManager().setBreakpoint( (ICBreakpoint)breakpoint );
-			}
-			catch( DebugException e ) {
-			}
-		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointRemoved( IBreakpoint breakpoint, IMarkerDelta delta ) {
-		if ( !(breakpoint instanceof ICBreakpoint) || !isAvailable() || !getBreakpointManager().isCDIRegistered( (ICBreakpoint)breakpoint ) )
-			return;
-		try {
-			getBreakpointManager().removeBreakpoint( (ICBreakpoint)breakpoint );
-		}
-		catch( DebugException e ) {
-		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointChanged( IBreakpoint breakpoint, IMarkerDelta delta ) {
-		if ( !(breakpoint instanceof ICBreakpoint) || !isAvailable() )
-			return;
-		ICBreakpoint b = (ICBreakpoint)breakpoint;
-		boolean install = false;
-		try {
-			ICDebugTarget[] tfs = b.getTargetFilters();
-			install = Arrays.asList( tfs ).contains( this );
-		}
-		catch( CoreException e ) {
-		}
-		boolean registered = getBreakpointManager().isCDIRegistered( b );
-		if ( registered && !install ) {
-			try {
-				getBreakpointManager().removeBreakpoint( b );
-			}
-			catch( DebugException e ) {
-			}
-		}
-		if ( !registered && install ) {
-			try {
-				getBreakpointManager().setBreakpoint( b );
-			}
-			catch( DebugException e ) {
-			}
-		}
-//		if ( delta != null ) {
-			try {
-				getBreakpointManager().changeBreakpointProperties( b, delta );
-			}
-			catch( DebugException e ) {
-			}
-//		}
 	}
 
 	/**
@@ -986,7 +905,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		resetStatus();
 		removeAllThreads();
 		getCDISession().getEventManager().removeEventListener( this );
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
 		saveGlobalVariables();
@@ -1133,16 +1051,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	private void handleWatchpointScope( ICDIWatchpointScope ws ) {
-		ICBreakpoint watchpoint = getBreakpointManager().getBreakpoint( ws.getWatchpoint() );
-		if ( watchpoint != null ) {
-			try {
-				getBreakpointManager().removeBreakpoint( watchpoint );
-			}
-			catch( DebugException e ) {
-				CDebugCorePlugin.log( e );
-			}
-			fireSuspendEvent( DebugEvent.BREAKPOINT );
-		}
+		getBreakpointManager().watchpointOutOfScope( ws.getWatchpoint() );
+		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 
 	private void handleSuspendedBySignal( ICDISignalReceived signal ) {
@@ -1479,16 +1389,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	protected void disposeMemoryBlockRetrieval() {
 		getMemoryBlockRetrieval().dispose();
-	}
-
-	public IFile getCurrentBreakpointFile() {
-		Object info = getCurrentStateInfo();
-		if ( info instanceof ICDIBreakpointHit ) {
-			ICDIBreakpoint cdiBreakpoint = ((ICDIBreakpointHit)info).getBreakpoint();
-			if ( cdiBreakpoint != null )
-				return getBreakpointManager().getCDIBreakpointFile( cdiBreakpoint );
-		}
-		return null;
 	}
 
 	protected CBreakpointManager getBreakpointManager() {

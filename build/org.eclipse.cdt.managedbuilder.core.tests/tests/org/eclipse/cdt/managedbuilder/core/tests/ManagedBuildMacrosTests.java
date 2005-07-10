@@ -648,6 +648,9 @@ public class ManagedBuildMacrosTests extends TestCase {
 		assertTrue(addMacro(TO_SAVE_W, IBuildMacro.VALUE_TEXT, TO_SAVE_W,
 				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
 		try {
+			// Save the buildinfo, and then remove it, to be complete
+			ManagedBuildManager.saveBuildInfo(proj, true);
+			ManagedBuildManager.removeBuildInfo(proj);
 			proj.close(null);
 			proj.open(null);
 		} catch (CoreException e) {

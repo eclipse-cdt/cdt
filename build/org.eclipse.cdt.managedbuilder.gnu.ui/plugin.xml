@@ -2526,6 +2526,7 @@
 					  </option>
 			          <outputType
 	                      outputs="dylib"
+	                      outputPrefix="lib"
 			              buildVariable="LIBRARIES"
 			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output"
 			              id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.debug.output">
@@ -2629,6 +2630,7 @@
 					  </option>
 			          <outputType
 	                      outputs="dylib"
+	                      outputPrefix="lib"
 			              buildVariable="LIBRARIES"
 			              superClass="cdt.managedbuild.tool.macosx.cpp.linker.output"
 			              id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.so.release.output">

@@ -1,4 +1,9 @@
 2005-07-09 Alain Magloire
+	Fix PR 97963
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferncePage.java
+	+ src/org/eclipse/cdt/internal/ui/preferences/PreviewSourceViewer.java
+
+2005-07-09 Alain Magloire
 	Fix PR 90419
 	* src/org/eclipse/cdt/internal/coreext/util/CodeFormatterUtil.java
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

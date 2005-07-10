@@ -683,23 +683,6 @@ public class InputType extends BuildObject implements IInputType {
 		}
 		return (IPath[])ins.toArray(new IPath[ins.size()]);
 	}
-
-	/* (non-Javadoc)
-	 * Returns the project that uses this IInputType 
-	 */
-	public IProject getProject(ITool tool) {
-		IBuildObject toolParent = tool.getParent();
-		if (toolParent != null) {
-			if (toolParent instanceof IToolChain) {
-				IConfiguration config = ((IToolChain)toolParent).getParent();
-				if (config == null) return null;
-				return (IProject)config.getOwner();
-			} else if (toolParent instanceof IResourceConfiguration) {
-				return (IProject)((IResourceConfiguration)toolParent).getOwner();
-			}
-		}
-		return null;
-	}
 	
 	/* (non-Javadoc)
 	 * Memory-safe way to access the list of input orders
@@ -833,23 +816,7 @@ public class InputType extends BuildObject implements IInputType {
 		//  Use content type if specified and registered with Eclipse
 		IContentType type = getDependencyContentType();
 		if (type != null) {
-			IContentTypeSettings settings = null;
-			IProject project = getProject(tool);
-			if (project != null) {
-				IScopeContext projectScope = new ProjectScope(project);
-				try {
-					settings = type.getSettings(projectScope);
-				} catch (Exception e) {}
-				if (settings != null) {
-					String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-					//  TODO: There doesn't seem to be any way to distinguish between these 2 cases:
-					//      1. No project specific entries have been set so getFileSpecs returns an empty list
-					//      2. There are project specific entries and all of the "default" entries have been removed
-					//    For now, we have to assume the first case.
-					if (specs.length > 0) return specs;
-				}
-			}
-			return type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+			return ((Tool)tool).getContentTypeFileSpecs(type);
 		}
 		return getDependencyExtensionsAttribute();
 	}
@@ -1049,23 +1016,7 @@ public class InputType extends BuildObject implements IInputType {
 		//  Use content type if specified and registered with Eclipse
 		IContentType type = getSourceContentType();
 		if (type != null) {
-			IContentTypeSettings settings = null;
-			IProject project = getProject(tool);
-			if (project != null) {
-				IScopeContext projectScope = new ProjectScope(project);
-				try {
-					settings = type.getSettings(projectScope);
-				} catch (Exception e) {}
-				if (settings != null) {
-					String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-					//  TODO: There doesn't seem to be any way to distinguish between these 2 cases:
-					//      1. No project specific entries have been set so getFileSpecs returns an empty list
-					//      2. There are project specific entries and all of the "default" entries have been removed
-					//    For now, we have to assume the first case.
-					if (specs.length > 0) return specs;
-				}
-			}
-			return type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+			return ((Tool)tool).getContentTypeFileSpecs(type);
 		}
 		return getSourceExtensionsAttribute();
 	}

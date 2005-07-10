@@ -116,6 +116,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
 	private static final String MANIFEST_VERSION_ERROR ="ManagedBuildManager.error.manifest.version.error";	//$NON-NLS-1$
 	private static final String PROJECT_VERSION_ERROR ="ManagedBuildManager.error.project.version.error";	//$NON-NLS-1$
+	private static final String PROJECT_FILE_ERROR = "ManagedBuildManager.error.project.file.missing";	//$NON-NLS-1$
 	private static final String MANIFEST_ERROR_HEADER = "ManagedBuildManager.error.manifest.header";	//$NON-NLS-1$
 	public  static final String MANIFEST_ERROR_RESOLVING = "ManagedBuildManager.error.manifest.resolving";	//$NON-NLS-1$
 	public  static final String MANIFEST_ERROR_DUPLICATE = "ManagedBuildManager.error.manifest.duplicate";	//$NON-NLS-1$
@@ -1464,6 +1465,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 	
 	/* (non-Javadoc)
+	 * Determine if the .cdtbuild file is present, which will determine if build information
+	 * can be loaded externally or not. Return true if present, false otherwise. 	 
+	 */
+	private static boolean canLoadBuildInfo(final IProject project) {
+		IFile file = project.getFile(SETTINGS_FILE_NAME);
+	    if (file == null) return false;
+		File cdtbuild = file.getLocation().toFile();
+		if (cdtbuild == null) return false;
+		return cdtbuild.exists();
+	}
+
+	/* (non-Javadoc)
 	 * Load the build information for the specified resource from its project
 	 * file. Pay attention to the version number too.
 	 */
@@ -1471,9 +1484,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		ManagedBuildInfo buildInfo = null;
 		IFile file = project.getFile(SETTINGS_FILE_NAME);
 		File cdtbuild = file.getLocation().toFile();
-		if (!cdtbuild.exists())
-			return null;
-	
+		if (!cdtbuild.exists()) {
+			// If we cannot find the .cdtbuild project file, throw an exception and let the user know
+			throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_FILE_ERROR, project.getName()));
+		}
+			
 		// So there is a project file, load the information there
 		InputStream stream = new FileInputStream(cdtbuild);
 		try {
@@ -1931,10 +1946,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 	
-	/**
+	/*
 	 * Creates a new build information object and associates it with the 
 	 * resource in the argument. Note that the information contains no 
-	 * build target or configuation information. It is the respoinsibility 
+	 * build target or configuation information. It is the responsibility 
 	 * of the caller to populate it. It is also important to note that the 
 	 * caller is responsible for associating an IPathEntryContainer with the 
 	 * build information after it has been populated. 
@@ -2011,7 +2026,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return
 	 */
 	private static ManagedBuildInfo findBuildInfo(IResource resource/*, boolean create*/) {
-		// I am sick of NPEs
+
 		if (resource == null) return null;
 
 		// Make sure the extension information is loaded first
@@ -2035,7 +2050,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return null;
 		}
 		
-		if(buildInfo == null && resource instanceof IProject)
+		if (buildInfo == null && resource instanceof IProject)
 			buildInfo = findBuildInfoSynchronized((IProject)resource);
 /*		
 		// Nothing in session store, so see if we can load it from cdtbuild
@@ -2055,6 +2070,47 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 */
 		return buildInfo;
+	}
+
+	/* (non-Javadoc)
+	 * Determine if build information can be found. Various attempts are made
+	 * to find the information, and if successful, true is returned; false otherwise.
+	 * Typically, this routine would be called prior to findBuildInfo, to deterimine
+	 * if findBuildInfo should be called to actually do the loading of build
+	 * information, if possible
+	 * @param resource
+	 * @return
+	 */
+	private static boolean canFindBuildInfo(IResource resource) {
+
+		if (resource == null) return false;
+
+		// Make sure the extension information is loaded first
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		ManagedBuildInfo buildInfo = null;
+
+		// Check if there is any build info associated with this project for this session
+		try {
+			buildInfo = (ManagedBuildInfo)resource.getSessionProperty(buildInfoProperty);
+		} catch (CoreException e) {
+			// Continue, to see if any of the upcoming checks are successful
+		}
+		
+		if (buildInfo == null && resource instanceof IProject) {
+			// Check weather getBuildInfo is called from converter
+			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo((IProject)resource);
+			if (buildInfo != null) return true;
+			// Check if the build information can be loaded from the .cdtbuild file
+			return canLoadBuildInfo(((IProject)resource));
+		}
+
+		return (buildInfo != null);
 	}
 
 	/* (non-Javadoc)
@@ -2094,7 +2150,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 			
 			// Check weather getBuildInfo is called from converter
-			if(buildInfo == null) {
+			if (buildInfo == null) {
 				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
 				if (buildInfo != null) return buildInfo;
 			}
@@ -2158,6 +2214,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource) {
 		return findBuildInfo(resource.getProject());
+	}
+
+	/**
+	 * Determines if the managed build information for the 
+	 * argument can be found.
+	 * 
+	 * @see ManagedBuildManager#initBuildInfo(IResource)
+	 * @param resource The resource to search for managed build information on.
+	 * @return boolean True if the build info can be found; false otherwise.
+	 */
+	public static boolean canGetBuildInfo(IResource resource) {
+		return canFindBuildInfo(resource.getProject());
 	}
 
 	/**

@@ -1527,6 +1527,10 @@ public class Option extends BuildObject implements IOption {
 							superClassId,
 							"option",	//$NON-NLS-1$
 							getId());
+				} else {
+					//  All of our superclasses must be resolved in order to call
+					//  getValueType below.   
+					((Option)superClass).resolveReferences();
 				}
 			}
 			if (categoryId != null) {

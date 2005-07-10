@@ -66,28 +66,33 @@ public class ManagedMakeProject implements ICOwner {
 	private void updateBinaryParsers(ICDescriptor cDescriptor) throws CoreException {
 		IManagedBuildInfo buildInfo = null;
 		String[] ids = null;
-		try {
-			IProject project = cDescriptor.getProject();
-			buildInfo = ManagedBuildManager.getBuildInfo(project);
-			if (buildInfo != null) {
-				IConfiguration config = buildInfo.getDefaultConfiguration();
-				if (config == null && buildInfo.getManagedProject() != null) {
-					IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
-					if (configs != null && configs.length > 0)
-						config = configs[0];
-				}
-				if (config != null) {
-					//  Get the values from the current configuration
-					IToolChain toolChain = config.getToolChain();
-					if (toolChain != null) {
-						ITargetPlatform targPlatform = toolChain.getTargetPlatform();
-						if (targPlatform != null) {
-							ids = targPlatform.getBinaryParserList();
-						}
+		IProject project = cDescriptor.getProject();
+
+		// If we cannot get the build information, it may be due to the fact that the 
+		// build information is yet to be created, due to a synchronization issue
+		// Don't do anything now to the binary parsers because there is nothing meaningful to do.
+		// This routine should be invoked later, when the required build information is available		
+		if (!ManagedBuildManager.canGetBuildInfo(project)) return;
+
+		buildInfo = ManagedBuildManager.getBuildInfo(project);
+		if (buildInfo != null) {
+			IConfiguration config = buildInfo.getDefaultConfiguration();
+			if (config == null && buildInfo.getManagedProject() != null) {
+				IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
+				if (configs != null && configs.length > 0)
+					config = configs[0];
+			}
+			if (config != null) {
+				//  Get the values from the current configuration
+				IToolChain toolChain = config.getToolChain();
+				if (toolChain != null) {
+					ITargetPlatform targPlatform = toolChain.getTargetPlatform();
+					if (targPlatform != null) {
+						ids = targPlatform.getBinaryParserList();
 					}
 				}
 			}
-		} catch (Exception e) {return;}
+		}
 		
 		cDescriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 		if (ids != null) {

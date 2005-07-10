@@ -46,6 +46,8 @@ import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
@@ -54,6 +56,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeSettings;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -2639,4 +2644,49 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	public IConfigurationElement getCurrentMbsVersionConversionElement() {
 		return currentMbsVersionConversionElement;
 	}
+
+	public IProject getProject() {
+		IBuildObject toolParent = getParent();
+		if (toolParent != null) {
+			if (toolParent instanceof IToolChain) {
+				IConfiguration config = ((IToolChain)toolParent).getParent();
+				if (config == null) return null;
+				return (IProject)config.getOwner();
+			} else if (toolParent instanceof IResourceConfiguration) {
+				return (IProject)((IResourceConfiguration)toolParent).getOwner();
+			}
+		}
+		return null;
+	}
+
+	public String[] getContentTypeFileSpecs (IContentType type) {
+		String[] globalSpecs = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC); 
+		IContentTypeSettings settings = null;
+		IProject project = getProject();
+		if (project != null) {
+			IScopeContext projectScope = new ProjectScope(project);
+			try {
+				settings = type.getSettings(projectScope);
+			} catch (Exception e) {}
+			if (settings != null) {
+				String[] specs = settings.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+				if (specs.length > 0) {
+					int total = globalSpecs.length + specs.length;
+					String[] projSpecs = new String[total];
+					int i=0;
+					for (int j=0; j<specs.length; j++) {
+						projSpecs[i] = specs[j];
+						i++;
+					}								
+					for (int j=0; j<globalSpecs.length; j++) {
+						projSpecs[i] = globalSpecs[j];
+						i++;
+					}								
+					return projSpecs;
+				}
+			}
+		}
+		return globalSpecs;		
+	}
+
 }

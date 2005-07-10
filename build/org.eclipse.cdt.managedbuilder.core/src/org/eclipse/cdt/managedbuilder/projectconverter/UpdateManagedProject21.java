@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -37,8 +38,14 @@ import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 class UpdateManagedProject21 {
+
+	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
+	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
+	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
 	
 	/**
 	 * @param monitor the monitor to allow users to cancel the long-running operation
@@ -138,20 +145,29 @@ class UpdateManagedProject21 {
 					IResource.NONE);
 				
 				if(found[0]){
+					IScopeContext projectScope = new ProjectScope(project);
+
+					// First, we need to enable user settings on the project __explicitely__
+					// Unfortunately there is no clear API in Eclipse-3.1 to do this.
+					// We should revisit this code when Eclipse-3.1.x and above is out
+					// with more complete API.
+					Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
+					// enable project-specific settings for this project
+					contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, true);
+					try {
+						contentTypePrefs.flush();
+					} catch (BackingStoreException e) {
+						// ignore ??
+					}
+
+					// Now the project setting is on/enable.
+					// Add the new association in the project user setting.
+					// the conflict resolution of the ContentTypeManager framework
+					// will give preference to the project settings.
 					IContentTypeManager manager = Platform.getContentTypeManager();
 					IContentType contentType = manager.getContentType("org.eclipse.cdt.core.cxxSource");	//$NON-NLS-1$
-					IScopeContext projectScope = new ProjectScope(project);
 					IContentTypeSettings settings = contentType.getSettings(projectScope);
-					// First, copy the extensions from the "global" content type
-					String[] specs = contentType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
-					for (int j = 0; j < specs.length; j++) {
-						settings.addFileSpec(specs[j], IContentType.FILE_EXTENSION_SPEC);
-					}
-					specs = contentType.getFileSpecs(IContentType.FILE_NAME_SPEC);
-					for (int j = 0; j < specs.length; j++) {
-						settings.addFileSpec(specs[j], IContentType.FILE_NAME_SPEC);
-					}				
-					// Add the .c extension
+					// Add the .c extension on the C++ content type.
 					settings.addFileSpec("c", IContentType.FILE_EXTENSION_SPEC);	//$NON-NLS-1$
 				}
 			} catch (CoreException e) {

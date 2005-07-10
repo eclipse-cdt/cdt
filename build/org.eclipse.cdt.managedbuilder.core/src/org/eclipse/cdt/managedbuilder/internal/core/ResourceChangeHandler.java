@@ -253,13 +253,17 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 
 		private IManagedBuilderMakefileGenerator getInitializedGenerator(IProject project){
 			IManagedBuilderMakefileGenerator makeGen = (IManagedBuilderMakefileGenerator)fBuildFileGeneratorMap.get(project);
-			if(makeGen == null){
-				try{
-					if(project.hasNature(ManagedCProjectNature.MNG_NATURE_ID)){
+			if (makeGen == null) {
+				try {
+					if (project.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
+						// Determine if we can access the build info before actually trying
+						// If not, don't try, to avoid putting up a dialog box warning the user
+						if (!ManagedBuildManager.canGetBuildInfo(project)) return null;
+						
 						IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
-						if(buildInfo != null){
+						if (buildInfo != null){
 							IConfiguration defaultCfg = buildInfo.getDefaultConfiguration();
-							if(defaultCfg != null){
+							if (defaultCfg != null) {
 								makeGen = ManagedBuildManager.getBuildfileGenerator(defaultCfg);
 								makeGen.initialize(project,buildInfo,new NullProgressMonitor());
 								fBuildFileGeneratorMap.put(project,makeGen);
@@ -267,6 +271,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 						}
 					}
 				} catch (CoreException e){
+					return null;
 				}
 			}
 			return makeGen;

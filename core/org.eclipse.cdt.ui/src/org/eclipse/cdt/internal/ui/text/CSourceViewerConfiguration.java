@@ -57,9 +57,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
-	/** Key used to look up display tab width */
-	public final static String PREFERENCE_TAB_WIDTH= "org.eclipse.cdt.editor.tab.width"; //$NON-NLS-1$
-
     private CTextTools fTextTools;
 	private CEditor fEditor;
 	
@@ -282,7 +279,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		Vector vector= new Vector();
 
 		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
-		int tabWidth= getPreferenceStore().getInt(PREFERENCE_TAB_WIDTH);
+		int tabWidth= getTabWidth(sourceViewer);
 		boolean useSpaces= getPreferenceStore().getBoolean(CEditor.SPACES_FOR_TABS); //$NON-NLS-1$
 
 		for (int i= 0; i <= tabWidth; i++) {
@@ -309,15 +306,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		
 		return (String[]) vector.toArray(new String[vector.size()]);
 	}
-
-
-	/**
-	 * @see SourceViewerConfiguration#getTabWidth(ISourceViewer)
-	 */
-	public int getTabWidth(ISourceViewer sourceViewer) {
-		return getPreferenceStore().getInt(PREFERENCE_TAB_WIDTH);
-	}
-
 
 	/**
 	 * @see SourceViewerConfiguration#getAnnotationHover(ISourceViewer)

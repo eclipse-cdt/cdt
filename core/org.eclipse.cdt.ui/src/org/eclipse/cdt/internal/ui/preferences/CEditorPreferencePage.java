@@ -86,7 +86,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList overlayKeys = new ArrayList();
 		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_MULTI_LINE_COMMENT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ICColorConstants.C_MULTI_LINE_COMMENT + "_bold")); //$NON-NLS-1$
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICColorConstants.C_SINGLE_LINE_COMMENT));
@@ -125,8 +124,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, new RGB(170,170,170));
-
-		store.setDefault(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 4);
 
 		store.setDefault(CEditor.SPACES_FOR_TABS, false);
 

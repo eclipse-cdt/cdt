@@ -98,6 +98,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -335,24 +336,18 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 				String property = event.getProperty();
 
-				if (CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH.equals(property)) {
+				if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
 					SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 					String[] types = configuration.getConfiguredContentTypes(asv);
-					for (int i = 0; i < types.length; i++)
+					for (int i = 0; i < types.length; i++) {
 						asv.setIndentPrefixes(configuration.getIndentPrefixes(asv, types[i]), types[i]);
-
-					if (fTabConverter != null)
-						fTabConverter.setNumberOfSpacesPerTab(
-							getPreferenceStore().getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
-
-					Object value = event.getNewValue();
-
-					if (value instanceof Integer) {
-						asv.getTextWidget().setTabs(((Integer) value).intValue());
-
-					} else if (value instanceof String) {
-						asv.getTextWidget().setTabs(Integer.parseInt((String) value));
 					}
+
+					if (fTabConverter != null) {
+						fTabConverter.setNumberOfSpacesPerTab(configuration.getTabWidth(asv));
+					}
+					// the super class handles the reset of the tabsize.
+					return;
 				}
 
 				if (SPACES_FOR_TABS.equals(property)) {
@@ -371,8 +366,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				}
 
 				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
-					if (fProjectionModelUpdater != null)
+					if (fProjectionModelUpdater != null) {
 						fProjectionModelUpdater.uninstall();
+					}
 					// either freshly enabled or provider changed
 					fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
 					if (fProjectionModelUpdater != null) {
@@ -382,8 +378,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				}
 
 				IContentAssistant c= asv.getContentAssistant();
-				if (c instanceof ContentAssistant)
+				if (c instanceof ContentAssistant) {
 					ContentAssistPreference.changeConfiguration((ContentAssistant) c, getPreferenceStore(), event);
+				}
 				
 			}
 		} finally {
@@ -1145,10 +1142,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	private void startTabConversion() {
 		if (fTabConverter == null) {
+			CSourceViewer asv = (CSourceViewer) getSourceViewer();
+			SourceViewerConfiguration configuration = getSourceViewerConfiguration();
 			fTabConverter = new TabConverter();
 			configureTabConverter();
-			fTabConverter.setNumberOfSpacesPerTab(getPreferenceStore().getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
-			CSourceViewer asv = (CSourceViewer) getSourceViewer();
+			fTabConverter.setNumberOfSpacesPerTab(configuration.getTabWidth(asv));
 			asv.addTextConverter(fTabConverter);
 		}
 	}

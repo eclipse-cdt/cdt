@@ -1,3 +1,10 @@
+2005-07-09 Alain Magloire
+	Fix PR 90419
+	* src/org/eclipse/cdt/internal/coreext/util/CodeFormatterUtil.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+
 2005-07-08 Alain Magloire
 	Fix for the CFileType UI
 	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java

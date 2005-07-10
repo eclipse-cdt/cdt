@@ -15,7 +15,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.internal.corext.Assert;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.text.BadLocationException;
@@ -24,6 +23,7 @@ import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 public class CodeFormatterUtil {
 
@@ -136,7 +136,7 @@ public class CodeFormatterUtil {
 	
 	public static int getTabWidth() {
 		Preferences preferences= CUIPlugin.getDefault().getPluginPreferences();
-		return preferences.getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH);
+		return preferences.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 
 }

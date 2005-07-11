@@ -600,7 +600,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		ICDITarget cdiTarget = getCDITarget();
 		String handle = breakpoint.getSourceHandle();
 		IPath path = convertPath( handle );
-		ICDILineLocation location = cdiTarget.createLineLocation( path.toPortableString(), breakpoint.getLineNumber() );
+		ICDILineLocation location = cdiTarget.createLineLocation( path.lastSegment()/*path.toPortableString()*/, breakpoint.getLineNumber() );
 		ICDICondition condition = createCondition( breakpoint );
 		setLocationBreakpointOnTarget( breakpoint, cdiTarget, location, condition, enabled );
 	}

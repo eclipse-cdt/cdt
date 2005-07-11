@@ -24,7 +24,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -72,7 +71,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	protected List fList;
 	protected ColorEditor fForegroundColorEditor;
 	protected Button fBoldCheckBox;
-	protected SourceViewer fPreviewViewer;
+	protected PreviewSourceViewer fPreviewViewer;
 
 	private CEditorHoverConfigurationBlock fCEditorHoverConfigurationBlock;
 	private FoldingConfigurationBlock fFoldingConfigurationBlock;
@@ -276,9 +275,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		fCTextTools = CUIPlugin.getDefault().getTextTools();
 		CSourceViewerConfiguration configuration = new CSourceViewerConfiguration(fCTextTools, null);
 		//fPreviewViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
-		PreviewSourceViewer asv = new PreviewSourceViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-		asv.setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
-		fPreviewViewer = asv;
+		fPreviewViewer = new PreviewSourceViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+		fPreviewViewer.setPreferenceStore(CUIPlugin.getDefault().getCombinedPreferenceStore());
 		fPreviewViewer.configure(configuration);
 		fPreviewViewer.getTextWidget().setFont(JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
 		fPreviewViewer.setEditable(false);

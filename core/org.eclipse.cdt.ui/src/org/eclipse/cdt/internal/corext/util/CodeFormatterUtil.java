@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.internal.corext.Assert;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -135,8 +135,8 @@ public class CodeFormatterUtil {
 	}
 	
 	public static int getTabWidth() {
-		Preferences preferences= CUIPlugin.getDefault().getPluginPreferences();
-		return preferences.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+		IPreferenceStore store = CUIPlugin.getDefault().getCombinedPreferenceStore();
+		return store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 
 }

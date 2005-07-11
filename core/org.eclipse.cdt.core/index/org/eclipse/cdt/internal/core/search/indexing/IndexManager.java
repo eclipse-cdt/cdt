@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.search.indexing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -19,13 +21,19 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexRequest;
 import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -100,10 +108,82 @@ public class IndexManager extends JobManager{
 			//Set default upgrade values
 			CCorePlugin.getDefault().getPluginPreferences().setValue(CCorePlugin.PREF_INDEXER, CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
 			this.indexerMap = new HashMap(5);
+            
+            // subscribe for path entry changes
+            CoreModel.getDefault().addElementChangedListener(new ElementChangeListener());
 		} finally{
 			monitor.exitWrite();
 		}
 	}
+    
+    public class ElementChangeListener implements IElementChangedListener {
+        private boolean scannerInfoChanged = false;
+        private IProject currentProject = null;
+        private List changedElements = new ArrayList();
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
+         */
+        public void elementChanged(ElementChangedEvent event) {
+            scannerInfoChanged = false;
+            currentProject = null;
+            changedElements.clear();
+            processDelta(event.getDelta());
+            
+            if (!scannerInfoChanged) 
+                return;
+            if (changedElements.size() > 0) {
+                for (Iterator i = changedElements.iterator(); i.hasNext();) {
+                    IFile file = (IFile) i.next();
+                    addResource(currentProject, file);
+                }
+            }
+            else {
+                if (!CoreModel.isScannerInformationEmpty(currentProject)) {
+                    addResource(currentProject, currentProject);
+                }
+            }
+        }
+
+        /**
+         * @param delta
+         */
+        private void processDelta(ICElementDelta delta) {
+            ICElement element= delta.getElement();
+
+            IResource res = element.getResource();
+            if (res instanceof IProject) {
+                currentProject = (IProject) res;
+            }
+            if (isPathEntryChange(delta)) {
+                scannerInfoChanged = true;
+                if (res instanceof IFile) {
+                    if (!changedElements.contains(res)) {
+                        changedElements.add(res);
+                    }
+                }
+            }
+                
+            ICElementDelta[] affectedChildren= delta.getAffectedChildren();
+            for (int i= 0; i < affectedChildren.length; i++) {
+                processDelta(affectedChildren[i]);
+            }
+        }
+
+        /**
+         * @param delta
+         * @return
+         */
+        private boolean isPathEntryChange(ICElementDelta delta) {
+            int flags= delta.getFlags();
+            return (delta.getKind() == ICElementDelta.CHANGED && 
+                    ((flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0 ||
+                    (flags & ICElementDelta.F_CHANGED_PATHENTRY_MACRO) != 0 ||
+                    (flags & ICElementDelta.F_PATHENTRY_REORDER) !=0));
+        }
+        
+    }
+    
 	 /**
 	 * Notify indexer which scheduled this job that the job has completed  
 	 * 

@@ -1,3 +1,10 @@
+2005-07-11 Vladimir Hirsl
+	Fix for PR 100585: [Scanner Discovery - Indexer] Indexer not notified of scanner info change
+	Change in project/file scanner info will now cause whole project or just affected files
+	to be indexed.
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+
 2005-07-08 Alain Magloire
 	PR 100585:We need to bacth the fire of event.  Actually the CModelOperation needed to be
 	change to be aware of nested operation in the same thread.

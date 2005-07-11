@@ -129,7 +129,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		}
 
 		private ICDIVariableDescriptor getCDIVariableObject() {
-			if (fCDIVariable != null) {
+			if ( fCDIVariable != null ) {
 				return fCDIVariable;
 			}
 			return fCDIVariableObject;
@@ -350,6 +350,11 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	private CVariableFormat fFormat = CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) );
 
 	/**
+	 * Whether this variable has been disposed.
+	 */
+	private boolean fIsDisposed = false;
+
+	/**
 	 * Constructor for CVariable.
 	 */
 	protected CVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject ) {
@@ -382,6 +387,8 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
 	 */
 	public ICType getType() throws DebugException {
+		if ( isDisposed() )
+			return null;
 		InternalVariable iv = getCurrentInternalVariable();
 		return ( iv != null ) ? iv.getType() : null;
 	}
@@ -436,7 +443,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
 	public IValue getValue() throws DebugException {
-		if ( isEnabled() ) {
+		if ( !isDisposed() && isEnabled() ) {
 			InternalVariable iv = getCurrentInternalVariable();
 			if ( iv != null ) {
 				try {
@@ -475,6 +482,8 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
 	public boolean hasValueChanged() throws DebugException {
+		if ( isDisposed() )
+			return false;
 		InternalVariable iv = getCurrentInternalVariable(); 
 		return ( iv != null ) ? iv.isChanged() : false;
 	}
@@ -782,6 +791,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	public void dispose() {
 		// Hack: do not destroy local variables
 		internalDispose( false );
+		setDisposed( true );
 	}
 
 	protected int sizeof() {
@@ -836,5 +846,13 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		iv = getShadow();
 		if ( iv != null )
 			iv.dispose( destroy );
+	}
+	
+	protected boolean isDisposed() {
+		return fIsDisposed;
+	}
+
+	protected void setDisposed( boolean isDisposed ) {
+		fIsDisposed = isDisposed;
 	}
 }

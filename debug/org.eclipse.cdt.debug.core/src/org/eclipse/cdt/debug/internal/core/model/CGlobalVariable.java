@@ -79,5 +79,6 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	 */
 	public void dispose() {
 		internalDispose( true );
+		setDisposed( true );
 	}
 }

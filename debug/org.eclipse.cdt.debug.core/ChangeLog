@@ -1,4 +1,11 @@
 2005-07-11 Mikhail Khodjaiants
+	Bug 102077: The DebugLabelViewDecorato asking info out of context.
+	Added a new flag to CVariable indicate the disposed state and prevent target requests.
+	* CExpression.java
+	* CGlobalVariable.java
+	* CVariable.java
+
+2005-07-11 Mikhail Khodjaiants
 	Bug 102563: Break points not working. 
 	Temporary switching back to use file names instead of full paths.
 	* CBreakpointManager.java

@@ -183,12 +183,15 @@ public class CExpression extends CVariable implements IExpression {
 			fValue = CValueFactory.NULL_VALUE;
 		}
 		internalDispose( true );
+		setDisposed( true );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
 	 */
 	public ICType getType() throws DebugException {
+		if ( isDisposed() )
+			return null;
 		if ( fType == null ) {
 			synchronized( this ) {
 				if ( fType == null ) {

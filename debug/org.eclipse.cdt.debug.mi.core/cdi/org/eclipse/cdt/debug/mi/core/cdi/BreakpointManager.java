@@ -929,31 +929,43 @@ public class BreakpointManager extends Manager {
 				}
 				line.append(no);				
 			} else if (bkpt instanceof FunctionBreakpoint) {
-				if (file != null && file.length() > 0) {
-					line.append(file).append(':');
-				}
 				if (function != null && function.length() > 0) {
-					// GDB does not seem to accept function arguments when
-					// we use file name:
-					// (gdb) break file.c:Test(int)
-					// Will fail, altought it can accept this
-					// (gdb) break file.c:main
-					// so fall back to the line number or
-					// just the name of the function if lineno is invalid.
-					int paren = function.indexOf('(');
-					if (paren != -1) {
-						if (no <= 0) {
-							String func = function.substring(0, paren);
-							line.append(func);
-						} else {
-							line.append(no);
-						}
-					} else {
+					// if the function contains :: assume the user
+					// knows the exact funciton
+					int colon = function.indexOf("::"); //$NON-NLS-1$
+					if (colon != -1) {
 						line.append(function);
+					} else {
+						if (file != null && file.length() > 0) {
+							line.append(file).append(':');
+						}
+						// GDB does not seem to accept function arguments when
+						// we use file name:
+						// (gdb) break file.c:Test(int)
+						// Will fail, altought it can accept this
+						// (gdb) break file.c:main
+						// so fall back to the line number or
+						// just the name of the function if lineno is invalid.
+						int paren = function.indexOf('(');
+						if (paren != -1) {
+							if (no <= 0) {
+								String func = function.substring(0, paren);
+								line.append(func);
+							} else {
+								line.append(no);
+							}
+						} else {
+							line.append(function);
+						}
 					}
 				} else {
 					// ???
-					line.append(no);
+					if (file != null && file.length() > 0) {
+						line.append(file).append(':');
+					}
+					if (no > 0) {
+						line.append(no);
+					}
 				}
 			} else if (bkpt instanceof AddressBreakpoint) {
 				line.append('*').append(locator.getAddress());				

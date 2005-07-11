@@ -1,4 +1,12 @@
 2005-07-11 Mikhail Khodjaiants
+	Bug 94770: Breakpoint marker messages need formatting.
+	* BreakpointMessages.properties
+	* CAddressBreakpoint.java
+	* CFunctionBreakpoint.java
+	* CLineBreakpoint.java
+	* CWatchpoint.java
+
+2005-07-11 Mikhail Khodjaiants
 	Bug 102077: The DebugLabelViewDecorato asking info out of context.
 	Added a new flag to CVariable indicate the disposed state and prevent target requests.
 	* CExpression.java

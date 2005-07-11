@@ -48,17 +48,10 @@ public class CLineBreakpoint extends AbstractLineBreakpoint {
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	protected String getMarkerMessage() throws CoreException {
-		StringBuffer sb = new StringBuffer( BreakpointMessages.getString( "CLineBreakpoint.1" ) ); //$NON-NLS-1$
 		String fileName = ensureMarker().getResource().getName();
 		if ( fileName != null && fileName.length() > 0 ) {
-			sb.append( ' ' );
-			sb.append( fileName );
+			fileName = ' ' + fileName + ' ';
 		}
-		int lineNumber = getLineNumber();
-		if ( lineNumber > 0 ) {
-			sb.append( MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.2" ), new Integer[] { new Integer( lineNumber ) } ) ); //$NON-NLS-1$
-		}
-		sb.append( getConditionText() );
-		return sb.toString();
+		return MessageFormat.format( BreakpointMessages.getString( "CLineBreakpoint.0" ), new Object[] { fileName, new Integer( getLineNumber() ), getConditionText() } ); //$NON-NLS-1$
 	}
 }

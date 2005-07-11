@@ -48,17 +48,10 @@ public class CFunctionBreakpoint extends AbstractLineBreakpoint implements ICFun
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	protected String getMarkerMessage() throws CoreException {
-		StringBuffer sb = new StringBuffer( BreakpointMessages.getString( "CFunctionBreakpoint.2" ) ); //$NON-NLS-1$
-		String name = ensureMarker().getResource().getName();
-		if ( name != null && name.length() > 0 ) {
-			sb.append( ' ' );
-			sb.append( name );
+		String fileName = ensureMarker().getResource().getName();
+		if ( fileName != null && fileName.length() > 0 ) {
+			fileName = ' ' + fileName + ' ';
 		}
-		String function = getFunction();
-		if ( function != null && function.trim().length() > 0 ) {
-			sb.append( MessageFormat.format( BreakpointMessages.getString( "CFunctionBreakpoint.3" ), new String[] { function.trim() } ) ); //$NON-NLS-1$
-		}
-		sb.append( getConditionText() );
-		return sb.toString();
+		return MessageFormat.format( BreakpointMessages.getString( "CFunctionBreakpoint.0" ), new String[] { fileName, getFunction(), getConditionText() } ); //$NON-NLS-1$
 	}
 }

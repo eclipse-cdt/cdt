@@ -69,27 +69,21 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint {
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
 	protected String getMarkerMessage() throws CoreException {
-		StringBuffer sb = new StringBuffer();
-		if ( isWriteType() && !isReadType() )
-			sb.append( BreakpointMessages.getString( "CWatchpoint.1" ) ); //$NON-NLS-1$
-		else if ( !isWriteType() && isReadType() )
-			sb.append( BreakpointMessages.getString( "CWatchpoint.2" ) ); //$NON-NLS-1$
-		else if ( isWriteType() && isReadType() )
-			sb.append( BreakpointMessages.getString( "CWatchpoint.3" ) ); //$NON-NLS-1$
-		else
-			sb.append( BreakpointMessages.getString( "CWatchpoint.4" ) ); //$NON-NLS-1$
-		sb.append( ' ' );
 		String fileName = ensureMarker().getResource().getName();
 		if ( fileName != null && fileName.length() > 0 ) {
-			sb.append( ' ' );
-			sb.append( fileName );
+			fileName = ' ' + fileName + ' ';
 		}
 		String expression = getExpression();
 		if ( expression != null && expression.length() > 0 ) {
-			sb.append( MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.5" ), new String[]{ expression } ) ); //$NON-NLS-1$
+			expression = " '" + expression + "' "; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		sb.append( getConditionText() );
-		return sb.toString();
+		if ( isWriteType() && !isReadType() )
+			return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.0" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
+		else if ( !isWriteType() && isReadType() )
+			return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.1" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
+		else if ( isWriteType() && isReadType() )
+			return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.2" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
+		return MessageFormat.format( BreakpointMessages.getString( "CWatchpoint.3" ), new String[] { fileName, expression, getConditionText() } ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

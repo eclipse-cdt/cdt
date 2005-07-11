@@ -1,3 +1,7 @@
+2005-07-10 Mikhail Khodjaiants
+	Bug 103173: Register: user created register groups disappear after debug session restart.
+	* CRegisterManager.java
+
 2005-07-08 Mikhail Khodjaiants
 	Filter breakpoints before setting using the source lookup mechanism.
 	* CBreakpointManager.java

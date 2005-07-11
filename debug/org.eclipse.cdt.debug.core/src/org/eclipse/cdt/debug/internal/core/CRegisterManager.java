@@ -133,6 +133,7 @@ public class CRegisterManager {
 			new Runnable() {
 				public void run() {
 					fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), name, descriptors ) );
+					setUseDefaultRegisterGroups( false );
 					getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
 				}
 			} );
@@ -149,6 +150,7 @@ public class CRegisterManager {
 						}
 						fRegisterGroups.clear();
 					}
+					setUseDefaultRegisterGroups( false );
 					getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
 				}
 			} );
@@ -162,6 +164,7 @@ public class CRegisterManager {
 						((CRegisterGroup)groups[i]).dispose();
 					}
 					fRegisterGroups.removeAll( Arrays.asList( groups ) );
+					setUseDefaultRegisterGroups( false );
 					getDebugTarget().fireChangeEvent( DebugEvent.CONTENT );
 				}
 			} );
@@ -237,11 +240,11 @@ public class CRegisterManager {
 			}
 			childNode = childNode.getNextSibling();
 		}
-		fUseDefaultRegisterGroups = false;
+		setUseDefaultRegisterGroups( false );
 	}
 
 	protected void initializeDefaults() {
-		fUseDefaultRegisterGroups = true;
+		setUseDefaultRegisterGroups( true );
 		String current = null;
 		int startIndex = 0;
 		for ( int i = 0; i < fRegisterDescriptors.length; ++i ) {
@@ -278,7 +281,7 @@ public class CRegisterManager {
 	}
 
 	private String getMemento() throws CoreException {
-		if ( fUseDefaultRegisterGroups || fRegisterGroups == null )
+		if ( useDefaultRegisterGroups() || fRegisterGroups == null )
 			return ""; //$NON-NLS-1$
 		Document document = DebugPlugin.newDocument();
 		Element element = document.createElement( ELEMENT_REGISTER_GROUP_LIST );
@@ -316,5 +319,13 @@ public class CRegisterManager {
 					}
 				} );
 		
+	}
+	
+	protected boolean useDefaultRegisterGroups() {
+		return fUseDefaultRegisterGroups;
+	}
+	
+	protected void setUseDefaultRegisterGroups( boolean useDefaultRegisterGroups ) {
+		fUseDefaultRegisterGroups = useDefaultRegisterGroups;
 	}
 }

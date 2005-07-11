@@ -907,12 +907,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 templateIdScopes.push(IToken.tLPAREN);
             }
             boolean popped = false;
+            boolean proper=false;
             IASTTypeId typeId = null;
+            IToken startCastExpression=null;
             // If this isn't a type name, then we shouldn't be here
             try {
                 try {
                     typeId = typeId(false);
                     consume(IToken.tRPAREN);
+                    proper = true;
+                    startCastExpression=mark();
                 } catch (BacktrackException bte) {
                     backup(mark);
                     throwBacktrack(bte);
@@ -922,12 +926,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     templateIdScopes.pop();
                     popped = true;
                 }
+
                 IASTExpression castExpression = castExpression();
+                
                 mark = null; // clean up mark so that we can garbage collect
                 return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
                         typeId, castExpression, startingOffset,
                         calculateEndOffset(castExpression));
             } catch (BacktrackException b) {
+                try {
+                	// try a compoundStatementExpression
+            		backup(startCastExpression);
+                	if (typeId != null && proper && LT(1) == IToken.tLPAREN) {
+	                	IASTExpression castExpression = compoundStatementExpression();
+	                    mark = null; // clean up mark so that we can garbage collect
+	                    return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
+	                            typeId, castExpression, startingOffset,
+	                            calculateEndOffset(castExpression));
+                	}
+                } catch (BacktrackException bte2) {}
+            	
                 backup(mark);
                 if (templateIdScopes.size() > 0 && !popped) {
                     templateIdScopes.pop();

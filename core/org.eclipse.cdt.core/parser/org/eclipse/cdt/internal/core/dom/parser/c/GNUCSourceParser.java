@@ -816,6 +816,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             consume();
             IASTTypeId typeId = null;
             IASTExpression castExpression = null;
+            boolean proper=false;
+            IToken startCastExpression=null;
             // If this isn't a type name, then we shouldn't be here
             try {
                 try {
@@ -823,6 +825,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     switch (LT(1)) {
                     case IToken.tRPAREN:
                         consume();
+                        proper=true;
+                        startCastExpression=mark();
                         castExpression = castExpression();
                         break;
                     case IToken.tEOC:
@@ -831,6 +835,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                         throw backtrack;
                     }
                 } catch (BacktrackException bte) {
+            	    try {
+        	           	// try a compoundStatementExpression
+    	        		backup(startCastExpression);
+	                	if (typeId != null && proper && LT(1) == IToken.tLPAREN) {
+	                		castExpression = compoundStatementExpression();
+	            	        mark = null; // clean up mark so that we can garbage collect
+	        	            return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
+	    	                        typeId, castExpression, startingOffset,
+		                            LT(1) == IToken.tEOC ? LA(1).getEndOffset() : calculateEndOffset(castExpression));
+	                	}
+  	                } catch (BacktrackException bte2) {}
+                	
                     backup(mark);
                     throwBacktrack(bte);
                 }

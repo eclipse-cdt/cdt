@@ -269,10 +269,8 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 	    writer.write( "           });                 \n"); //$NON-NLS-1$
 	    writer.write( "}                              \n"); //$NON-NLS-1$
 	    
-        try {
-            parseGCC( writer.toString() ); // TODO Devin raised bug 93980
-            assertFalse(true);
-        } catch (Exception e) {}
+        parseGCC( writer.toString() );
+        parseGPP( writer.toString() );
 	}
 	
 	public void testBug74190_g_return_if_fail() throws Exception {
@@ -283,10 +281,8 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 	    writer.write( "           });                 \n"); //$NON-NLS-1$
 	    writer.write( "}                              \n"); //$NON-NLS-1$
 	    
-        try {
-            parseGCC( writer.toString() ); // TODO Devin raised bug 93982
-            assertFalse(true);
-        } catch (Exception e) {}
+        parseGCC( writer.toString() );
+        parseGPP( writer.toString() );
 	}
     
 	public void testBug95635() throws Exception{

@@ -71,7 +71,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private TogglePresentationAction fTogglePresentation;
 	private String fContextMenuId;
 	
-	OpenIncludeAction fOpenIncludeAction;
+	protected OpenIncludeAction fOpenIncludeAction;
 	private IncludeGroupingAction fIncludeGroupingAction;
 	
 	private MemberFilterActionGroup fMemberFilterActionGroup;

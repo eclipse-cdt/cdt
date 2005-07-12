@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -1346,11 +1347,14 @@ public class CPPSemantics {
 		IASTName[] found = null;
 		
 		if( parent instanceof IASTCompoundStatement ){
-		    if( parent.getParent() instanceof IASTFunctionDefinition ){
-		        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ((IASTFunctionDefinition)parent.getParent()).getDeclarator();
+			IASTNode p = parent.getParent();
+		    if( p instanceof IASTFunctionDefinition ){
+		        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ((IASTFunctionDefinition)p).getDeclarator();
 		        nodes = dtor.getParameters();
 		    } 
-		    if( nodes == null || nodes.length == 0 ){
+		    if( p instanceof ICPPASTCatchHandler ){
+		    	parent = p;
+		    } else if( nodes == null || nodes.length == 0 ){
 				IASTCompoundStatement compound = (IASTCompoundStatement) parent;
 				nodes = compound.getStatements();
 		    }
@@ -1462,6 +1466,16 @@ public class CPPSemantics {
 					        item = nodes[0];
 					        break;
 					    }  
+				    } else if( parent instanceof ICPPASTCatchHandler ){
+				    	parent = ((ICPPASTCatchHandler)parent).getCatchBody();
+				    	if( parent instanceof IASTCompoundStatement ){
+				    		nodes = ((IASTCompoundStatement)parent).getStatements();
+				    	}
+				    	if( nodes.length > 0 ){
+					        idx = 0;
+					        item = nodes[0];
+					        break;
+					    }  
 				    }
 				    if( item == null && nodeStackPos >= 0 ){
 				        nodes = nodeStack[nodeStackPos];
@@ -1545,6 +1559,8 @@ public class CPPSemantics {
 	        declaration = (IASTDeclaration) node;
 		else if( node instanceof IASTDeclarationStatement )
 			declaration = ((IASTDeclarationStatement)node).getDeclaration();
+		else if( node instanceof ICPPASTCatchHandler )
+			declaration = ((ICPPASTCatchHandler)node).getDeclaration();
 		else if( node instanceof ICPPASTForStatement && checkAux )
         {
 			ICPPASTForStatement forStatement = (ICPPASTForStatement) node;

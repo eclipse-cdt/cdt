@@ -4889,4 +4889,25 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( f2, col.getName(16).resolveBinding() );
         assertSame( BT, col.getName(17).resolveBinding() );
 	}
+	
+	public void testBug103281() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct Except { int blah; };       \n"); //$NON-NLS-1$
+		buffer.append("void f() {                         \n"); //$NON-NLS-1$
+		buffer.append("   try { }                         \n"); //$NON-NLS-1$
+		buffer.append("   catch ( Except * e ) {          \n"); //$NON-NLS-1$
+		buffer.append("      e->blah;                     \n"); //$NON-NLS-1$
+		buffer.append("   }                               \n"); //$NON-NLS-1$
+		buffer.append("}                                  \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        IField blah = (IField) col.getName(1).resolveBinding();
+        IVariable e = (IVariable) col.getName(4).resolveBinding();
+        
+        assertSame( e, col.getName(5).resolveBinding() );
+        assertSame( blah, col.getName(6).resolveBinding() );
+	}
 }

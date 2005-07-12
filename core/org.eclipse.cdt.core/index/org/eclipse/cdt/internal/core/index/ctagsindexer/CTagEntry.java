@@ -216,7 +216,10 @@ class CTagEntry{
 	private char[][] getFunctionSignature() {
 		String signature =  (String) tagExtensionField.get(CTagsConsoleParser.SIGNATURE);
 		
-		if (signature.equals("()")){ //$NON-NLS-1$
+		//Under Exuberant CTags 5.5.4, in the C parsing mode: a function that doesn't take any parameters
+		//will have no signature string (resulting in null)
+		if (signature == null ||
+			signature.equals("()")){ //$NON-NLS-1$
 			char[][] voidSignature = new char[1][];
 			voidSignature[0] = "void".toCharArray(); //$NON-NLS-1$
 			return voidSignature;

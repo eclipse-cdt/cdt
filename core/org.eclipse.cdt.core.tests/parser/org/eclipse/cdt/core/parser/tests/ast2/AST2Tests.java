@@ -89,6 +89,20 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2Tests extends AST2BaseTest {
 
+    public void testBug78103() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int *p1; int *p2;\n" ); //$NON-NLS-1$
+        buffer.append( "union {\n" ); //$NON-NLS-1$
+        buffer.append( "struct {int a; int b;} A;\n" ); //$NON-NLS-1$
+        buffer.append( "struct {int a; int b;};\n" ); //$NON-NLS-1$
+        buffer.append( "} MyStruct;\n" ); //$NON-NLS-1$
+        buffer.append( "void test (void) {\n" ); //$NON-NLS-1$
+        buffer.append( "p1 = &MyStruct.A.a;\n" ); //$NON-NLS-1$
+        buffer.append( "p2 = &MyStruct.b;\n" ); //$NON-NLS-1$
+        buffer.append( "        MyStruct.b = 1;\n" ); //$NON-NLS-1$
+        buffer.append( "}\n" ); //$NON-NLS-1$
+        parseAndCheckBindings( buffer.toString() );
+    }
+    
     public void testBug43241() throws Exception {
         parseAndCheckBindings( "int m(int); int (*pm)(int) = &m; int f(int); int x = f((*pm)(5));" ); //$NON-NLS-1$
     }

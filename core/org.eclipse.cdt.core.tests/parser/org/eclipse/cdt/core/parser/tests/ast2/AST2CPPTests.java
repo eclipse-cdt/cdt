@@ -102,6 +102,20 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
 
+    public void testBug78103() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int *p1; int *p2;\n" ); //$NON-NLS-1$
+        buffer.append( "union {\n" ); //$NON-NLS-1$
+        buffer.append( "struct {int a; int b;} A;\n" ); //$NON-NLS-1$
+        buffer.append( "struct {int a; int b;};\n" ); //$NON-NLS-1$
+        buffer.append( "} MyStruct;\n" ); //$NON-NLS-1$
+        buffer.append( "void test (void) {\n" ); //$NON-NLS-1$
+        buffer.append( "p1 = &MyStruct.A.a;\n" ); //$NON-NLS-1$
+        buffer.append( "p2 = &MyStruct.b;\n" ); //$NON-NLS-1$
+        buffer.append( "        MyStruct.b = 1;\n" ); //$NON-NLS-1$
+        buffer.append( "}\n" ); //$NON-NLS-1$
+        parseAndCheckBindings( buffer.toString() );
+    }
+    
     public void testBug43579() throws Exception {
         parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$
         parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$

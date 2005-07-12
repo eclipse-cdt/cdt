@@ -1,3 +1,8 @@
+2005-07-12 Mikhail Khodjaiants
+	Bug 103522: Launcher: Stop at main checkbox is covered with default launch dialog size.
+	Moved the "Stop in main" and "Advanced" buttons on the line below.
+	* CDebuggerTab.java
+
 2005-06-28 Mikhail Khodjaiants
 	Bug 89276: Typo in org.eclipse.cdt.launch/plugin.xml.
 	* plugin.xml

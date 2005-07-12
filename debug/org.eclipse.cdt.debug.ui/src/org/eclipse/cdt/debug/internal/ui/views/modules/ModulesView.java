@@ -47,6 +47,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -89,8 +90,10 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  
 /**
  * Displays the modules currently loaded by the process being debugged.
@@ -348,7 +351,14 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		// TODO Auto-generated method stub
+		TextViewerAction textAction = new TextViewerAction( getDetailViewer(), ITextOperationTarget.SELECT_ALL );
+		textAction.configureAction( ModulesMessages.getString( "ModulesView.13" ), "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId( IWorkbenchActionDefinitionIds.SELECT_ALL );
+		setAction( ActionFactory.SELECT_ALL.getId(), textAction );
+		textAction = new TextViewerAction( getDetailViewer(), ITextOperationTarget.COPY );
+		textAction.configureAction( ModulesMessages.getString( "ModulesView.16" ), "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		textAction.setActionDefinitionId( IWorkbenchActionDefinitionIds.COPY );
+		setAction( ActionFactory.COPY.getId(), textAction );
 	}
 
 	/* (non-Javadoc)
@@ -690,12 +700,10 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	protected void fillDetailContextMenu( IMenuManager menu ) {
 		menu.add( new Separator( ICDebugUIConstants.MODULES_GROUP ) );
 		menu.add( new Separator() );
-		menu.add( getAction( ActionFactory.CUT.getId() ) );
-		menu.add( getAction( ActionFactory.COPY.getId() + ".Detail" ) ); //$NON-NLS-1$
-		menu.add( getAction( ActionFactory.PASTE.getId() ) );
-		menu.add( new Separator( "FIND" ) ); //$NON-NLS-1$
-		menu.add( getAction( ActionFactory.FIND.getId() ) );
+		menu.add( getAction( ActionFactory.COPY.getId() ) );
+		menu.add( getAction( ActionFactory.SELECT_ALL.getId() ) );
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+		updateObjects();
 	}
 
 	private ICursorListener getCursorListener() {

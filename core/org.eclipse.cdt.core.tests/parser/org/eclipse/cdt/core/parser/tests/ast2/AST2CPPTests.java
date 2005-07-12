@@ -4975,5 +4975,9 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testBug80171() throws Exception {
         parseAndCheckBindings( "static var;"); //$NON-NLS-1$
     }
+    
+//    public void testBug78800() throws Exception {
+//        parseAndCheckBindings( "class Matrix {  public: Matrix & operator *(Matrix &); }; Matrix transform = rotate * translate;" ); //$NON-NLS-1$
+//    }
 
 }

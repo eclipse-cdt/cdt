@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest.CPPNameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -89,6 +90,17 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2Tests extends AST2BaseTest {
 
+    public void testBug40768() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int *zzz1 (char);\n" );  //$NON-NLS-1$
+        buffer.append( "int (*zzz2) (char); \n" ); //$NON-NLS-1$
+        buffer.append( "int ((*zzz3)) (char); \n" ); //$NON-NLS-1$
+        buffer.append( "int (*(zzz4)) (char); \n" ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); //$NON-NLS-1$
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );
+    }
+    
     public void testBasicFunction() throws Exception {
         StringBuffer buff = new StringBuffer();
         buff.append("int x;\n"); //$NON-NLS-1$

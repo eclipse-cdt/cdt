@@ -102,6 +102,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
 
+    public void testBug43241() throws Exception {
+        parseAndCheckBindings( "int m(int); int (*pm)(int) = &m; int f(){} int f(int); int x = f((*pm)(5));" ); //$NON-NLS-1$
+    }
+    
     public void testBug40768() throws Exception {
         StringBuffer buffer = new StringBuffer( "int *zzz1 (char);\n" );  //$NON-NLS-1$
         buffer.append( "int (*zzz2) (char); \n" ); //$NON-NLS-1$
@@ -112,6 +116,15 @@ public class AST2CPPTests extends AST2BaseTest {
         tu.accept(col);
         assertNoProblemBindings( col );
     }
+    
+    protected void parseAndCheckBindings( String code ) throws Exception
+    {
+        IASTTranslationUnit tu = parse( code, ParserLanguage.CPP ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );
+    }
+
     
     public void testBug40422() throws Exception
     {

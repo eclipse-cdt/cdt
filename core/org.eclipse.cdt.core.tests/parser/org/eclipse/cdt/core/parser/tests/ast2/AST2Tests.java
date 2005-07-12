@@ -77,7 +77,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest.CPPNameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -90,6 +89,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2Tests extends AST2BaseTest {
 
+//    public void testBug43241() throws Exception {
+//        parseAndCheckBindings( "int m(int); int (*pm)(int) = &m; int f(){} int f(int); int x = f((*pm)(5));" ); //$NON-NLS-1$
+//    }
+    
     public void testBug40768() throws Exception {
         StringBuffer buffer = new StringBuffer( "int *zzz1 (char);\n" );  //$NON-NLS-1$
         buffer.append( "int (*zzz2) (char); \n" ); //$NON-NLS-1$
@@ -99,6 +102,14 @@ public class AST2Tests extends AST2BaseTest {
         CNameCollector col = new CNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
+    }
+    
+    protected void parseAndCheckBindings( String code ) throws Exception
+    {
+        IASTTranslationUnit tu = parse( code, ParserLanguage.C ); //$NON-NLS-1$
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        assertNoProblemBindings( col );        
     }
     
     public void testBasicFunction() throws Exception {

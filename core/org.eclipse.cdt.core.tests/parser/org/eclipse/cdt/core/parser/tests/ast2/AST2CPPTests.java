@@ -4971,4 +4971,9 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( e, col.getName(5).resolveBinding() );
         assertSame( blah, col.getName(6).resolveBinding() );
 	}
+    
+    public void testBug80171() throws Exception {
+        parseAndCheckBindings( "static var;"); //$NON-NLS-1$
+    }
+
 }

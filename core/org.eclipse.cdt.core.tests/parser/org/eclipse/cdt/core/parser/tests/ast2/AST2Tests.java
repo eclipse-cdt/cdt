@@ -3274,4 +3274,8 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append("}\n"); //$NON-NLS-1$
         parseAndCheckBindings( buffer.toString() );
     }
+    
+    public void testBug80171() throws Exception {
+        parseAndCheckBindings( "static var;"); //$NON-NLS-1$
+    }
 }

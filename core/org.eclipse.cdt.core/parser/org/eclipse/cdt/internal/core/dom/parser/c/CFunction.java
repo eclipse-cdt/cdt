@@ -45,18 +45,24 @@ public class CFunction implements IFunction, ICInternalFunction {
 	private static final int RESOLUTION_IN_PROGRESS = 1 << 1;
 	private int bits = 0;
 	
-	IFunctionType type = null;
+	protected IFunctionType type = null;
 	
 	public CFunction( IASTFunctionDeclarator declarator ){
-	    if( declarator.getParent() instanceof IASTFunctionDefinition || declarator instanceof ICASTKnRFunctionDeclarator )
-	        definition = declarator;
-	    else {
-	        declarators = new IASTStandardFunctionDeclarator [] { (IASTStandardFunctionDeclarator) declarator };
-	    }
+		if( declarator != null ) {
+		    if( declarator.getParent() instanceof IASTFunctionDefinition || declarator instanceof ICASTKnRFunctionDeclarator )
+		        definition = declarator;
+		    else {
+		        declarators = new IASTStandardFunctionDeclarator [] { (IASTStandardFunctionDeclarator) declarator };
+		    }
+		}
 	}
 	
     public IASTNode getPhysicalNode(){
-        return ( definition != null ) ? definition : declarators[0];
+    	if( definition != null )
+    		return definition;
+    	else if( declarators != null && declarators.length > 0 )
+    		return declarators[0];
+    	return null;
     }
     public void addDeclarator( IASTFunctionDeclarator fnDeclarator ){
         updateParameterBindings( fnDeclarator );
@@ -80,15 +86,18 @@ public class CFunction implements IFunction, ICInternalFunction {
         }
     }
 	
+    protected IASTTranslationUnit getTranslationUnit() {
+		if( definition != null )
+            return definition.getTranslationUnit();
+        else if( declarators != null )
+            return declarators[0].getTranslationUnit();
+		return null;
+    }
+    
     private void resolveAllDeclarations(){
 	    if( (bits & (FULLY_RESOLVED | RESOLUTION_IN_PROGRESS)) == 0 ){
 	        bits |= RESOLUTION_IN_PROGRESS;
-		    IASTTranslationUnit tu = null;
-	        if( definition != null )
-	            tu = definition.getTranslationUnit();
-	        else if( declarators != null )
-	            tu = declarators[0].getTranslationUnit();
-	        
+		    IASTTranslationUnit tu = getTranslationUnit();
 	        if( tu != null ){
 	            CPPVisitor.getDeclarations( tu, this );
 	        }
@@ -102,9 +111,14 @@ public class CFunction implements IFunction, ICInternalFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
 	public IParameter[] getParameters() {
-		IParameter [] result = null;
+		IParameter [] result = IParameter.EMPTY_PARAMETER_ARRAY;
 		
-	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
+	    IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getPhysicalNode();
+	    if( dtor == null && (bits & FULLY_RESOLVED) == 0){
+            resolveAllDeclarations();
+            dtor = (IASTFunctionDeclarator) getPhysicalNode();
+    	}
+	    
 		if (dtor instanceof IASTStandardFunctionDeclarator) {
 			IASTParameterDeclaration[] params = ((IASTStandardFunctionDeclarator)dtor).getParameters();
 			int size = params.length;
@@ -150,8 +164,10 @@ public class CFunction implements IFunction, ICInternalFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
-		return CVisitor.getContainingScope( dtor.getParent() );
+	    IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getPhysicalNode();
+	    if( dtor != null )
+	    	return CVisitor.getContainingScope( dtor.getParent() );
+	    return null;
 	}
 
 	/* (non-Javadoc)
@@ -170,14 +186,19 @@ public class CFunction implements IFunction, ICInternalFunction {
      */
     public IFunctionType getType() {
         if( type == null ) {
-        	IASTDeclarator functionName = ( definition != null ) ? definition : declarators[0];
-        	
-        	while (functionName.getNestedDeclarator() != null)
-        		functionName = functionName.getNestedDeclarator();
-        	
-        	IType tempType = CVisitor.createType( functionName );
-        	if (tempType instanceof IFunctionType)
-        		type = (IFunctionType)tempType;
+        	IASTDeclarator functionDtor = (IASTDeclarator) getPhysicalNode();
+        	if( functionDtor == null && (bits & FULLY_RESOLVED) == 0){
+                resolveAllDeclarations();
+                functionDtor = (IASTDeclarator) getPhysicalNode();
+        	}
+        	if( functionDtor != null ) {
+	        	while (functionDtor.getNestedDeclarator() != null)
+	        		functionDtor = functionDtor.getNestedDeclarator();
+	        	
+	        	IType tempType = CVisitor.createType( functionDtor );
+	        	if (tempType instanceof IFunctionType)
+	        		type = (IFunctionType)tempType;
+        	}
         }
         
         return type;

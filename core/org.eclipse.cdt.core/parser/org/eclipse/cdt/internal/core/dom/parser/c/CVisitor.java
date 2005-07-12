@@ -779,8 +779,8 @@ public class CVisitor {
 			if ( CharArrayUtils.equals(declarator.getName().toCharArray(), name.toCharArray()) ){
 				binding = resolveBinding( parent, CURRENT_SCOPE );
 				if( binding != null ) {
-				    if( binding instanceof IFunction )
-				        ((CFunction)binding).addDeclarator( (ICASTKnRFunctionDeclarator) declarator );
+				    if( binding instanceof ICInternalFunction )
+				        ((ICInternalFunction)binding).addDeclarator( (ICASTKnRFunctionDeclarator) declarator );
 				    else 
 				        binding = new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_OVERLOAD, name.toCharArray() );
 				} else { 

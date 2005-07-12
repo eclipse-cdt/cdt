@@ -27,7 +27,6 @@ public class CImplicitFunction extends CExternalFunction implements IFunction, I
 
     private IParameter[] parms=null;
     private IScope scope=null;
-    private IFunctionType type=null;
     private boolean takesVarArgs=false;
     private char[] name=null;
     

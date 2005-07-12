@@ -3203,4 +3203,26 @@ public class AST2Tests extends AST2BaseTest {
         assertNoProblemBindings( col );
     }
     
+    public void testBug98760() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("struct nfa;                   \n"); //$NON-NLS-1$
+    	buffer.append("void f() {                    \n"); //$NON-NLS-1$
+    	buffer.append("   struct nfa * n;            \n"); //$NON-NLS-1$
+    	buffer.append("   freenfa( n );              \n"); //$NON-NLS-1$
+    	buffer.append("}                             \n"); //$NON-NLS-1$
+    	buffer.append("static void freenfa( nfa )    \n"); //$NON-NLS-1$
+    	buffer.append("struct nfa * nfa;             \n"); //$NON-NLS-1$
+    	buffer.append("{                             \n"); //$NON-NLS-1$
+    	buffer.append("}                             \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        
+        IFunction free = (IFunction) col.getName(4).resolveBinding();
+        IParameter [] ps = free.getParameters();
+        assertEquals( ps.length, 1 );
+        
+        assertSame( free, col.getName(6).resolveBinding() );
+    }
 }

@@ -14,10 +14,14 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+
 /**
  * @author aniefer
  *
  */
 public interface ICInternalFunction extends ICInternalBinding {
 	public void setFullyResolved( boolean resolved );
+	
+	public void addDeclarator( IASTFunctionDeclarator fnDeclarator );
 }

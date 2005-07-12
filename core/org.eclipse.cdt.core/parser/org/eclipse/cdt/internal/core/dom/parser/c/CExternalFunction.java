@@ -15,11 +15,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
@@ -29,42 +27,29 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 /**
  * @author aniefer
  */
-public class CExternalFunction implements IFunction, ICExternalBinding {
+public class CExternalFunction extends CFunction implements IFunction, ICExternalBinding {
     private IASTName name = null;
     private IASTTranslationUnit tu = null;
-    private IFunctionType fType = null;
     
     public CExternalFunction( IASTTranslationUnit tu, IASTName name ) {
+    	super( null );
         this.name = name;
         this.tu = tu;
-    }
-    
-    public IASTNode getPhysicalNode(){
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
-     */
-    public IParameter[] getParameters() {
-        return IParameter.EMPTY_PARAMETER_ARRAY;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
-     */
-    public IScope getFunctionScope() {
-        return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
      */
     public IFunctionType getType() {
-    	if( fType == null ){
-    		fType = new CPPFunctionType( CPPSemantics.VOID_TYPE, IType.EMPTY_TYPE_ARRAY );
+    	IFunctionType t = super.getType();
+    	if( t == null ) {
+    		type = new CPPFunctionType( CPPSemantics.VOID_TYPE, IType.EMPTY_TYPE_ARRAY );
     	}
-        return fType;
+        return type;
+    }
+    
+    protected IASTTranslationUnit getTranslationUnit() {
+		return tu;
     }
 
     /* (non-Javadoc)
@@ -89,44 +74,9 @@ public class CExternalFunction implements IFunction, ICExternalBinding {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
-     */
-    public boolean isStatic() {
-        return false;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
      */
     public boolean isExtern() {
         return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
-     */
-    public boolean isAuto() {
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
-     */
-    public boolean isRegister() {
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#isInline()
-     */
-    public boolean isInline() {
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
-     */
-    public boolean takesVarArgs() {
-        return false;
     }
 }

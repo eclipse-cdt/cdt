@@ -101,6 +101,16 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 
 public class AST2CPPTests extends AST2BaseTest {
+    public void testBug79540() throws Exception {
+        StringBuffer buffer = new StringBuffer( "#define REF_WRAP(e) class A { public: A (){ } A& foo2(e& v) { return *this; } }\n" ); //$NON-NLS-1$
+        buffer.append( "class B\n" ); //$NON-NLS-1$
+        buffer.append( "{\n" ); //$NON-NLS-1$
+        buffer.append( "REF_WRAP(B);\n" ); //$NON-NLS-1$
+        buffer.append( "B();\n" ); //$NON-NLS-1$
+        buffer.append( "void foo();\n" ); //$NON-NLS-1$
+        buffer.append( "};\n" ); //$NON-NLS-1$
+        parseAndCheckBindings( buffer.toString() );
+    }
 
     public void testBug78103() throws Exception {
         StringBuffer buffer = new StringBuffer( "int *p1; int *p2;\n" ); //$NON-NLS-1$
@@ -120,7 +130,7 @@ public class AST2CPPTests extends AST2BaseTest {
         parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$
         parseAndCheckBindings("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);"); //$NON-NLS-1$
     }
-    
+        
 //    public void testBug43242() throws Exception {
 //        StringBuffer buffer = new StringBuffer( "class A { int m(int); };\n" ); //$NON-NLS-1$
 //        buffer.append( "A a; \n" ); //$NON-NLS-1$

@@ -146,12 +146,13 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNoProblemBindings( col );
     }
     
-    protected void parseAndCheckBindings( String code ) throws Exception
+    protected IASTTranslationUnit parseAndCheckBindings( String code ) throws Exception
     {
         IASTTranslationUnit tu = parse( code, ParserLanguage.CPP ); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept(col);
         assertNoProblemBindings( col );
+        return tu;
     }
 
     

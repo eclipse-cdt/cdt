@@ -118,12 +118,13 @@ public class AST2Tests extends AST2BaseTest {
         assertNoProblemBindings( col );
     }
     
-    protected void parseAndCheckBindings( String code ) throws Exception
+    protected IASTTranslationUnit parseAndCheckBindings( String code ) throws Exception
     {
         IASTTranslationUnit tu = parse( code, ParserLanguage.C ); //$NON-NLS-1$
         CNameCollector col = new CNameCollector();
         tu.accept(col);
-        assertNoProblemBindings( col );        
+        assertNoProblemBindings( col );
+        return tu;
     }
     
     public void testBasicFunction() throws Exception {
@@ -3293,5 +3294,19 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append("}\n" ); //$NON-NLS-1$
         buffer.append("}\n" ); //$NON-NLS-1$
         parseAndCheckBindings( buffer.toString() );
+    }
+    
+    public void testBug84759() throws Exception {
+        StringBuffer buffer = new StringBuffer("enum COLOR {\n" ); //$NON-NLS-1$
+        buffer.append( "RED=1\n" ); //$NON-NLS-1$
+        buffer.append( "};\n" ); //$NON-NLS-1$
+        buffer.append( "enum COLOR getColor() {\n" ); //$NON-NLS-1$
+        buffer.append( "enum COLOR ret;\n" ); //$NON-NLS-1$
+        buffer.append( "return ret;\n" ); //$NON-NLS-1$
+        buffer.append( "}\n" ); //$NON-NLS-1$
+        IASTTranslationUnit tu = parseAndCheckBindings( buffer.toString() );
+        IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[1];
+        assertEquals( fd.getDeclSpecifier().getRawSignature(), "enum COLOR"); //$NON-NLS-1$
+        
     }
 }

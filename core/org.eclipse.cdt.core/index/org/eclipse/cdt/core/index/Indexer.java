@@ -17,6 +17,7 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 
@@ -60,24 +61,10 @@ public class Indexer {
 	}
 	
 	public static boolean indexEnabledOnProject(IProject project){
-		boolean allEnabled = true;
+		ICDTIndexer _indexer = manager.getIndexerForProject(project);
+		if (_indexer instanceof NullIndexer)
+			return false;
 		
-		//TODO: BOG make this generic
-		/*try {
-			Boolean indexValue = (Boolean) project.getSessionProperty(IndexManager.activationKey);
-			if (indexValue != null){
-				if(!indexValue.booleanValue()){
-					allEnabled = false;
-				}
-			}
-			else {
-				if (!manager.isIndexEnabled(project)){
-					allEnabled=false;
-				}
-			}
-			
-		} catch (CoreException e) {}*/
-		
-		return allEnabled;
+		return true;
 	}
 }

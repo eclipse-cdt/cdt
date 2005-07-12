@@ -155,9 +155,9 @@ public class CPPSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 
 	public void testSimpleOpenDeclaration2() throws Exception {
 		String header = "int x;\r\n // comment \r\nint y;\r\n /* comment */ \r\n int z;\r\n"; //$NON-NLS-1$
-		importFile("test.h", header); //$NON-NLS-1$
-		String code = "#include \"test.h\"\r\nint foo() { \r\n return y;\r\n}\r\n"; //$NON-NLS-1$
-		IFile file = importFile("test.cpp", code); //$NON-NLS-1$
+		importFile("testSimpleOpenDeclaration2.h", header); //$NON-NLS-1$
+		String code = "#include \"testSimpleOpenDeclaration2.h\"\r\nint foo() { \r\n return y;\r\n}\r\n"; //$NON-NLS-1$
+		IFile file = importFile("testSimpleOpenDeclaration2.cpp", code); //$NON-NLS-1$
 		
 		int offset = code.indexOf("y;"); //$NON-NLS-1$
 		IASTNode def = testCtrl_F3(file, offset); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

@@ -144,9 +144,9 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 
 	public void testSimpleOpenDeclaration2() throws Exception {
 		String header = "int x;\r\n // comment \r\n int y() { return 1; } /* comment */ \r\n int z; \r\n"; //$NON-NLS-1$
-		importFile("test.h", header); //$NON-NLS-1$
+		importFile("testSimpleOpenDeclaration2.h", header); //$NON-NLS-1$
 		String code = "int foo() { \n return y();\n}\n"; //$NON-NLS-1$
-		IFile file = importFile("test.c", code);
+		IFile file = importFile("testSimpleOpenDeclaration2.c", code);
 		
 		int offset = code.indexOf("y();\n}\n");
 		IASTNode def = testCtrl_F3(file, offset);

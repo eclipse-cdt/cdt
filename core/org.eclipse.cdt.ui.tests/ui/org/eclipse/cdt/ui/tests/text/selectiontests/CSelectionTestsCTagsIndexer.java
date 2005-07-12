@@ -150,9 +150,9 @@ public class CSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 
 	public void testSimpleOpenDeclaration2() throws Exception {
 		String header = "int x;\r\n // comment \r\nint y() { return 1; }\r\n /* comment */ \r\n int z;\r\n"; //$NON-NLS-1$
-		importFile("test.h", header); //$NON-NLS-1$
+		importFile("testSimpleOpenDeclaration2.h", header); //$NON-NLS-1$
 		String code = "int foo() { \n return y();\n}\n"; //$NON-NLS-1$
-		IFile file = importFile("test.c", code); //$NON-NLS-1$
+		IFile file = importFile("testSimpleOpenDeclaration2.c", code); //$NON-NLS-1$
 		
 		int offset = code.indexOf("y();\n}\n"); //$NON-NLS-1$
 		ISelection def = testCtrl_F3Selection(file, offset);

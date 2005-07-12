@@ -3278,4 +3278,20 @@ public class AST2Tests extends AST2BaseTest {
     public void testBug80171() throws Exception {
         parseAndCheckBindings( "static var;"); //$NON-NLS-1$
     }
+    
+    public void testBug79067() throws Exception {
+        StringBuffer buffer = new StringBuffer("enum E_OPTIONCODE {\n" ); //$NON-NLS-1$
+        buffer.append("    red = 1,\n" ); //$NON-NLS-1$
+        buffer.append("black = 2,\n" ); //$NON-NLS-1$
+        buffer.append("};\n" ); //$NON-NLS-1$
+        buffer.append("void arithConversionTest(enum E_OPTIONCODE eOption)\n" ); //$NON-NLS-1$
+        buffer.append("{\n" ); //$NON-NLS-1$
+        buffer.append("int myColor = 5;\n" ); //$NON-NLS-1$
+        buffer.append("int temp = eOption - myColor; /* Syntax error */\n" ); //$NON-NLS-1$
+        buffer.append("if(eOption-myColor) /* Invalid arithmetic conversion */\n" ); //$NON-NLS-1$
+        buffer.append("{\n" ); //$NON-NLS-1$
+        buffer.append("}\n" ); //$NON-NLS-1$
+        buffer.append("}\n" ); //$NON-NLS-1$
+        parseAndCheckBindings( buffer.toString() );
+    }
 }

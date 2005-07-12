@@ -250,16 +250,22 @@ public class CFunction implements IFunction, ICInternalFunction {
     	IASTParameterDeclaration temp = null;
     	if( definition != null ){
     	    if( definition instanceof IASTStandardFunctionDeclarator ){
-    	        temp = ((IASTStandardFunctionDeclarator)definition).getParameters()[idx];
-        		temp.getDeclarator().getName().setBinding( binding );
+    	    	IASTParameterDeclaration [] parameters = ((IASTStandardFunctionDeclarator)definition).getParameters();
+    	    	if( parameters.length > idx ) {
+	    	        temp = parameters[idx];
+	        		temp.getDeclarator().getName().setBinding( binding );
+    	    	}
     	    } else if( definition instanceof ICASTKnRFunctionDeclarator ){
     	    	fKnRDtor = (ICASTKnRFunctionDeclarator) definition;
-    	        IASTName n = fKnRDtor.getParameterNames()[idx];
-    	        n.setBinding( binding );
-    	        IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( fKnRDtor, n );
-    	        if( dtor != null ){
-    	            dtor.getName().setBinding( binding );
-    	        }
+    	    	IASTName [] parameterNames = fKnRDtor.getParameterNames();
+    	    	if( parameterNames.length > idx ) {
+	    	        IASTName n = parameterNames[idx];
+	    	        n.setBinding( binding );
+	    	        IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( fKnRDtor, n );
+	    	        if( dtor != null ){
+	    	            dtor.getName().setBinding( binding );
+	    	        }
+    	    	}
     	    }
     	}
     	if( declarators != null ){

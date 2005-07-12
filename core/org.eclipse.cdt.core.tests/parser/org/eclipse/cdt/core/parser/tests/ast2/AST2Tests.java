@@ -89,9 +89,9 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2Tests extends AST2BaseTest {
 
-//    public void testBug43241() throws Exception {
-//        parseAndCheckBindings( "int m(int); int (*pm)(int) = &m; int f(){} int f(int); int x = f((*pm)(5));" ); //$NON-NLS-1$
-//    }
+    public void testBug43241() throws Exception {
+        parseAndCheckBindings( "int m(int); int (*pm)(int) = &m; int f(int); int x = f((*pm)(5));" ); //$NON-NLS-1$
+    }
     
     public void testBug40768() throws Exception {
         StringBuffer buffer = new StringBuffer( "int *zzz1 (char);\n" );  //$NON-NLS-1$

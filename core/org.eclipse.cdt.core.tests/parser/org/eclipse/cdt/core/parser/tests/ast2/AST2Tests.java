@@ -3262,4 +3262,16 @@ public class AST2Tests extends AST2BaseTest {
         
         assertSame( free, col.getName(6).resolveBinding() );
     }
+    
+    public void testBug79650() throws Exception {
+        StringBuffer buffer = new StringBuffer("void testCasting() {\n"); //$NON-NLS-1$
+        buffer.append("typedef struct {\n"); //$NON-NLS-1$
+        buffer.append("    int employee_id;\n"); //$NON-NLS-1$
+        buffer.append("int dept_id;\n"); //$NON-NLS-1$
+        buffer.append("} Employee;\n"); //$NON-NLS-1$
+        buffer.append("#define MY_DETAILS { 20, 30 }\n"); //$NON-NLS-1$
+        buffer.append("Employee e = (Employee)MY_DETAILS; \n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        parseAndCheckBindings( buffer.toString() );
+    }
 }

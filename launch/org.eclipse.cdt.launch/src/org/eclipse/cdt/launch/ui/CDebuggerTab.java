@@ -126,12 +126,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		WorkbenchHelp.setHelp( getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB );
 		GridLayout layout = new GridLayout( 2, true );
 		comp.setLayout( layout );
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL_HORIZONTAL;
-		gd.grabExcessHorizontalSpace = true;
+		GridData gd = new GridData( GridData.BEGINNING, GridData.CENTER, true, false );
 		comp.setLayoutData( gd );
 
-		createDebuggerCombo( comp, 1 );
+		createDebuggerCombo( comp, ( fAttachMode ) ? 1 : 2 );
 		createOptionsComposite( comp );
 		createDebuggerGroup( comp, 2 );
 	}
@@ -279,11 +277,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (fAttachMode == true) {
 			GridLayout layout = new GridLayout( 1, false );
 			optionsComp.setLayout( layout );
-			optionsComp.setLayoutData( new GridData( GridData.END, GridData.CENTER, true, false, 1, 1 ) );
+			optionsComp.setLayoutData( new GridData( GridData.BEGINNING, GridData.CENTER, true, false, 1, 1 ) );
 		} else {
 			GridLayout layout = new GridLayout( 2, false );
 			optionsComp.setLayout( layout );
-			optionsComp.setLayoutData( new GridData( GridData.END, GridData.CENTER, true, false, 1, 1 ) );
+			optionsComp.setLayoutData( new GridData( GridData.BEGINNING, GridData.CENTER, true, false, 2, 1 ) );
 			fStopInMain = createCheckButton( optionsComp, LaunchMessages.getString( "CDebuggerTab.Stop_at_main_on_startup" ) ); //$NON-NLS-1$
 			GridData data = new GridData();
 			data.horizontalAlignment = GridData.BEGINNING;

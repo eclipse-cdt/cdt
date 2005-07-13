@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
@@ -38,11 +39,14 @@ import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
 import org.eclipse.cdt.internal.ui.search.DOMQuery;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.NewSearchUI;
@@ -95,7 +99,23 @@ public abstract class FindAction extends SelectionParseAction {
 		ISelection sel = getSelection();
 		 
 	 	if (sel instanceof IStructuredSelection) {
-			run((IStructuredSelection) sel);
+	 		Object obj = ((IStructuredSelection)sel).getFirstElement();
+	 		
+	 		// if possible, try to perform a full blown DOM query before the Index query, if this fails, then perform an Index query
+	 		if (obj instanceof ISourceReference && fSite.getSelectionProvider() instanceof ProblemTreeViewer) {
+		 		try {
+		 			fEditor = ((ProblemTreeViewer)fSite.getSelectionProvider()).getEditor();
+		 			IDocument doc = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+	 				ISourceReference ref = (ISourceReference)obj;
+
+					TextSelection selection = new TextSelection(doc, ref.getSourceRange().getIdStartPos(), ref.getSourceRange().getIdLength());
+					run(selection);
+					return;
+				} catch (Exception e) {
+				}
+	 		}
+	 		
+	 		run((IStructuredSelection) sel);
 		} else if (sel instanceof ITextSelection) {
 			run((ITextSelection) sel);
 		} 

@@ -7,8 +7,11 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -26,6 +29,7 @@ import org.eclipse.swt.widgets.Widget;
 public class ProblemTreeViewer extends TreeViewer {
 
 	protected ResourceToItemsMapper fResourceToItemsMapper;
+	private CEditor editor = null;
 
 	/*
 	 * @see TreeViewer#TreeViewer(Composite)
@@ -141,5 +145,23 @@ public class ProblemTreeViewer extends TreeViewer {
 		// or lots of TUs exist in one folder so lets skip it....
 		return cp.hasChildren(element);
 	}
+	
+    /* (non-Javadoc)
+     * Method declared on ISelectionProvider.
+     */
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        super.addSelectionChangedListener(listener);
+        if (listener instanceof CContentOutlinePage) {
+        	editor =((CContentOutlinePage)listener).getEditor(); 
+        }
+    }
+    
+    /**
+     * This returns the editor corresponding to the opened CEditor that is listening to the selection changes on the Outline View.
+     * @return
+     */
+    public CEditor getEditor() {
+    	return editor;
+    }
 }
 

@@ -172,6 +172,14 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	}
 	
 	/**
+    * Returns the CEditor corresponding to this CContentOutlinePage.
+    * @param return
+    */
+	public CEditor getEditor() {
+		return fEditor;
+	}
+	
+	/**
 	 * Called by the editor to signal that the content has updated.
 	 */
 	public void contentUpdated() {

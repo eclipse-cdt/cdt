@@ -13,19 +13,13 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.ICDTIndexer;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkingSet;
@@ -78,30 +72,10 @@ public class ReferencesSearchGroup extends ActionGroup {
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, refsMenu);	
 		}
 		
-		if (fEditor != null){
-			ICElement celement = fEditor.getInputCElement();
-			ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(celement.getCProject().getProject());
-			if (indexer != null){
-				setReferenceMenuEnabled(indexer.getIndexerFeatures());
-			}
-		}
-		else if (fSite != null){
-		 try {
-			 ISelection sel =fSite.getSelectionProvider().getSelection();
-			 if (sel instanceof IStructuredSelection){
-				 IStructuredSelection structSel = (IStructuredSelection) sel;
-				 Object cElement = structSel.getFirstElement();
-				 if (cElement instanceof ICElement){
-					 ICElement el = (ICElement) cElement;
-					 IProject proj = el.getCProject().getProject();
-					 ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(proj);
-					 setReferenceMenuEnabled(indexer.getIndexerFeatures());
-				 }
-			 }
-		 }  catch (NullPointerException err){/* Safety */}
-		}
-		
-		
+	
+//		/setReferenceMenuEnabled();
+			
+	
 		incomingMenu.add(refsMenu);
 		incomingMenu = refsMenu;
 		
@@ -115,17 +89,6 @@ public class ReferencesSearchGroup extends ActionGroup {
 		
 	}	
 	
-	private void setReferenceMenuEnabled(int indexFeatures){
-		if ((indexFeatures & ICDTIndexer._REFERENCES) == ICDTIndexer._REFERENCES){
-			//references for this indexer
-			fFindRefsAction.setEnabled(true);
-			fFindRefsInWorkingSetAction.setEnabled(true);
-		} else {
-			//no references for this indexer
-			fFindRefsAction.setEnabled(false);
-			fFindRefsInWorkingSetAction.setEnabled(false);
-		}
-	}
 	/**
 	 * @return
 	 */

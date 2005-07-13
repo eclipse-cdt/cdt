@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -1824,4 +1825,25 @@ public class AST2TemplateTests extends AST2BaseTest {
         f1 = (ICPPFunctionTemplate) col.getName(1).resolveBinding();
         assertSame( f1, col.getName(10).resolveBinding() );
 	}
+	
+    public void testBug103578() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("template <class T, int someConst = 0 >  class A {};      \n"); //$NON-NLS-1$
+    	buffer.append("int f() {                                                \n"); //$NON-NLS-1$
+    	buffer.append("   const int local = 10;                                 \n"); //$NON-NLS-1$
+    	buffer.append("   A<int, local> broken;                                 \n"); //$NON-NLS-1$
+    	buffer.append("};                                                       \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPClassTemplate A = (ICPPClassTemplate) col.getName(2).resolveBinding();
+        IVariable local = (IVariable) col.getName(4).resolveBinding();
+        
+        ICPPClassType a = (ICPPClassType) col.getName(5).resolveBinding();
+        assertTrue( a instanceof ICPPTemplateInstance );
+        assertSame( ((ICPPTemplateInstance)a).getTemplateDefinition(), A );
+        assertSame( local, col.getName(7).resolveBinding() );
+    }
 }

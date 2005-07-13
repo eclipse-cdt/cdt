@@ -1606,6 +1606,13 @@ public class CPPVisitor {
 				} catch (DOMException e) {
 					type = e.getProblem();
 				}
+			} else if( binding instanceof IVariable ){
+				//this is to help with the ambiguity between typeid & idexpression in template arguments
+				try {
+					type = ((IVariable)binding).getType();
+				} catch (DOMException e) {
+					type = e.getProblem();
+				}
 			}
 		}
 		return type;

@@ -10,7 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -115,9 +125,8 @@ public class ScannerConfigNature implements IProjectNature {
 	 * @param description
 	 * @param builderID
 	 * @return ICommand
-	 * @throws CoreException
 	 */
-	public static ICommand getBuildSpec(IProjectDescription description, String builderID) throws CoreException {
+	public static ICommand getBuildSpec(IProjectDescription description, String builderID) {
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
 			if (commands[i].getBuilderName().equals(builderID)) {
@@ -133,9 +142,8 @@ public class ScannerConfigNature implements IProjectNature {
 	 * @param description
 	 * @param newCommand
 	 * @return IProjecDescription
-	 * @throws CoreException
 	 */
-	public static IProjectDescription setBuildSpec(IProjectDescription description, ICommand newCommand) throws CoreException {
+	public static IProjectDescription setBuildSpec(IProjectDescription description, ICommand newCommand) {
 		ICommand[] oldCommands = description.getBuildSpec();
 		ICommand oldCommand = getBuildSpec(description, newCommand.getBuilderName());
 		ICommand[] newCommands;
@@ -160,4 +168,73 @@ public class ScannerConfigNature implements IProjectNature {
 		description.setBuildSpec(newCommands);
 		return description;
 	}
+
+	/**
+	 * @param project
+	 */
+	public static void initializeDiscoveryOptions(IProject project) {
+		try {
+			IScannerConfigBuilderInfo2 scPrefInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
+					MakeCorePlugin.getDefault().getPluginPreferences(), false);
+			String selectedProfile = scPrefInfo.getSelectedProfileId();
+			IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
+					project, selectedProfile);
+			
+			scProjInfo.setAutoDiscoveryEnabled(scPrefInfo.isAutoDiscoveryEnabled());
+			scProjInfo.setProblemReportingEnabled(scPrefInfo.isProblemReportingEnabled());
+	
+			scProjInfo.setBuildOutputParserEnabled(scPrefInfo.isBuildOutputParserEnabled());
+			scProjInfo.setBuildOutputFileActionEnabled(scPrefInfo.isBuildOutputFileActionEnabled());
+			scProjInfo.setBuildOutputFilePath(scPrefInfo.getBuildOutputFilePath());
+	
+			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(selectedProfile);
+			List providerIdList = scPrefInfo.getProviderIdList();
+			for (Iterator i = providerIdList.iterator(); i.hasNext();) {
+				String providerId = (String) i.next();
+				
+				scProjInfo.setProviderOutputParserEnabled(providerId, scPrefInfo.isProviderOutputParserEnabled(providerId));
+				if (profile.getScannerInfoProviderElement(providerId).getProviderKind().equals(
+						ScannerConfigProfile.ScannerInfoProvider.RUN)) {
+					scProjInfo.setProviderRunCommand(providerId, scPrefInfo.getProviderRunCommand(providerId));
+					scProjInfo.setProviderRunArguments(providerId, scPrefInfo.getProviderRunArguments(providerId));
+				}
+				else {
+					scProjInfo.setProviderOpenFilePath(providerId, scPrefInfo.getProviderOpenFilePath(providerId));
+				}
+			}
+			scProjInfo.save();
+			
+			// the last step is to add discovered paths container
+			ICProject cProject = CoreModel.getDefault().create(project);
+			IPathEntry[] rawPathEntries = CoreModel.getRawPathEntries(cProject);
+			boolean found = false;
+			for (int i = 0; i < rawPathEntries.length; i++) {
+				if (rawPathEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER) {
+					IContainerEntry container = (IContainerEntry) rawPathEntries[i];
+					if (container.getPath().equals(DiscoveredPathContainer.CONTAINER_ID)) {
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found) {
+				IPathEntry[] newRawPathEntries = new IPathEntry[rawPathEntries.length + 1];
+				System.arraycopy(rawPathEntries, 0, newRawPathEntries, 0, rawPathEntries.length);
+				newRawPathEntries[rawPathEntries.length] = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
+				CoreModel.setRawPathEntries(cProject, newRawPathEntries, null);
+			}
+//			if (profile.getProfileScope().equals(ScannerConfigScope.PROJECT_SCOPE)) {
+//				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
+//						new DiscoveredPathContainer(project), null);
+//			}
+//			else {	// file scope
+//				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
+//						new PerFileDiscoveredPathContainer(project), null);
+//			}
+		}
+		catch (CoreException e) {
+			MakeCorePlugin.log(e);
+		}
+	}
+
 }

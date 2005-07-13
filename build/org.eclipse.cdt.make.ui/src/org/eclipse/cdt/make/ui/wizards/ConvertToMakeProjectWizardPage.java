@@ -86,6 +86,7 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
 			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
 			MakeProjectNature.addNature(project, new SubProgressMonitor(monitor, 1));
 			ScannerConfigNature.addScannerConfigNature(project);
+			ScannerConfigNature.initializeDiscoveryOptions(project);
 			CCorePlugin.getDefault().mapCProjectOwner(project, projectID, true);
 		} finally {
 			monitor.done();

@@ -18,9 +18,11 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
@@ -33,7 +35,7 @@ public class CPPBaseClause implements ICPPBase {
         public CPPBaseProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
         }
-        public ICPPClassType getBaseClass() {
+        public IBinding getBaseClass() {
         	if( classProblem == null ){
         		classProblem = new CPPClassType.CPPClassTypeProblem( node, id, arg );
         	}
@@ -49,7 +51,7 @@ public class CPPBaseClause implements ICPPBase {
         }
     }
     private ICPPASTBaseSpecifier base = null;
-	private ICPPClassType baseClass = null;
+	private IBinding baseClass = null;
     
     public CPPBaseClause( ICPPASTBaseSpecifier base ){
         this.base = base;
@@ -58,11 +60,15 @@ public class CPPBaseClause implements ICPPBase {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getBaseClass()
      */
-    public ICPPClassType getBaseClass() {
+    public IBinding getBaseClass() throws DOMException {
 		if( baseClass == null ){
 	    	IBinding b = base.getName().resolveBinding();
-	    	if( b instanceof ICPPClassType )
-	    		baseClass = (ICPPClassType) b;
+	    	while( b instanceof ITypedef && ((ITypedef)b).getType() instanceof IBinding ){
+				b = (IBinding) ((ITypedef)b).getType();
+	    	}
+	    	if( b instanceof ICPPClassType || b instanceof ICPPTemplateParameter )
+	    		baseClass = b;
+	    	
 	    	else if( b instanceof IProblemBinding ){
 	    		baseClass =  new CPPClassType.CPPClassTypeProblem( base.getName(), ((IProblemBinding)b).getID(), base.getName().toCharArray() );
 	    	} else {

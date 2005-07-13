@@ -317,7 +317,9 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 		IField[] fields = getDeclaredFields();
 		ICPPBase [] bases = getBases();
 		for ( int i = 0; i < bases.length; i++ ) {
-            fields = (IField[]) ArrayUtil.addAll( IField.class, fields, bases[i].getBaseClass().getFields() );
+			IBinding b = bases[i].getBaseClass();
+			if( b instanceof ICPPClassType )
+				fields = (IField[]) ArrayUtil.addAll( IField.class, fields, ((ICPPClassType)b).getFields() );
         }
 		return (IField[]) ArrayUtil.trim( IField.class, fields );
 	}
@@ -548,14 +550,16 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 	    
 	    ICPPBase [] bases = getBases();
 		for ( int i = 0; i < bases.length; i++ ) {
-			ICPPClassType cls;
+			ICPPClassType cls = null;
 			try {
-				cls = bases[i].getBaseClass();
+				IBinding b = bases[i].getBaseClass();
+				if( b instanceof ICPPClassType )
+					cls = (ICPPClassType) b;
 			} catch (DOMException e) {
 				continue;
 			}
-			if( cls instanceof CPPClassType )
-				result = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, result, ((CPPClassType)cls).getConversionOperators() );
+			if( cls instanceof ICPPInternalClassType )
+				result = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, result, ((ICPPInternalClassType)cls).getConversionOperators() );
         }
 		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, result );
 	}
@@ -571,7 +575,9 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 		set.addAll( scope.getImplicitMethods() );
 		ICPPBase [] bases = getBases();
 		for ( int i = 0; i < bases.length; i++ ) {
-			set.addAll( bases[i].getBaseClass().getMethods() );
+			IBinding b = bases[i].getBaseClass();
+			if( b instanceof ICPPClassType )
+				set.addAll( ((ICPPClassType)b).getMethods() );
         }
 		return (ICPPMethod[]) set.keyArray( ICPPMethod.class );
 	}
@@ -591,7 +597,9 @@ public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
 		ICPPMethod[] methods = getDeclaredMethods();
 		ICPPBase [] bases = getBases();
 		for ( int i = 0; i < bases.length; i++ ) {
-            methods = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, methods, bases[i].getBaseClass().getAllDeclaredMethods() );
+			IBinding b = bases[i].getBaseClass();
+			if( b instanceof ICPPClassType )
+				methods = (ICPPMethod[]) ArrayUtil.addAll( ICPPMethod.class, methods, ((ICPPClassType)b).getAllDeclaredMethods() );
         }
 		return (ICPPMethod[]) ArrayUtil.trim( ICPPMethod.class, methods );
 	}

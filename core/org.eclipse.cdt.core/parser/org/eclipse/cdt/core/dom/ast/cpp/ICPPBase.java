@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
 /**
@@ -22,11 +23,13 @@ public interface ICPPBase {
 	public static final ICPPBase[] EMPTY_BASE_ARRAY = new ICPPBase[0];
 
 	/**
-	 * The base class.
+	 * The base class.  Generally a ICPPClassType, but may be a ICPPTemplateParameter.
+	 * In the case of typedefs, the binding being typedefed will be returned instead of
+	 * the typedef itself.
 	 * 
 	 * @return
 	 */
-	public ICPPClassType getBaseClass() throws DOMException;
+	public IBinding getBaseClass() throws DOMException;
 
 	/**
 	 * The visibility qualifier applied to the base class.

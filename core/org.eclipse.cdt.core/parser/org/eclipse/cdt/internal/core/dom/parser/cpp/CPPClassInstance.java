@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -48,7 +49,20 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
-	public ICPPBase[] getBases() {
+	public ICPPBase[] getBases() throws DOMException {
+		ICPPClassType cls = (ICPPClassType) getSpecializedBinding();
+		if( cls != null ){
+			ICPPBase [] bases = cls.getBases();
+			for (int i = 0; i < bases.length; i++) {
+				IBinding T = bases[i].getBaseClass();
+				if( T instanceof ICPPTemplateTypeParameter && argumentMap.containsKey( T ) ){
+					IType t = (IType) argumentMap.get( T );
+					if( t instanceof ICPPClassType )
+						((CPPBaseClause)bases[i]).setBaseClass( (ICPPClassType) argumentMap.get(T) );
+				}
+			}
+			return bases;
+		}
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 

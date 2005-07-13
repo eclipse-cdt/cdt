@@ -218,7 +218,9 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 		IField[] fields = getDeclaredFields();
 		ICPPBase [] bases = getBases();
 		for ( int i = 0; i < bases.length; i++ ) {
-            fields = (IField[]) ArrayUtil.addAll( IField.class, fields, bases[i].getBaseClass().getFields() );
+			IBinding b = bases[i].getBaseClass();
+			if( b instanceof ICPPClassType )
+				fields = (IField[]) ArrayUtil.addAll( IField.class, fields, ((ICPPClassType)b).getFields() );
         }
 		return (IField[]) ArrayUtil.trim( IField.class, fields );
 	}

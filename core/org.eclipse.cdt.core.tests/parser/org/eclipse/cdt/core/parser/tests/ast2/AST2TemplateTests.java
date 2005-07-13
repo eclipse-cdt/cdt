@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -1845,5 +1846,29 @@ public class AST2TemplateTests extends AST2BaseTest {
         assertTrue( a instanceof ICPPTemplateInstance );
         assertSame( ((ICPPTemplateInstance)a).getTemplateDefinition(), A );
         assertSame( local, col.getName(7).resolveBinding() );
+    }
+    
+    public void testBug103715() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("template <class T> class A : public T {};   \n"); //$NON-NLS-1$
+    	buffer.append("class B { int base; };                      \n"); //$NON-NLS-1$
+    	buffer.append("void f() {                                  \n"); //$NON-NLS-1$
+    	buffer.append("   A< B > a;                                \n"); //$NON-NLS-1$
+    	buffer.append("   a.base;                                  \n"); //$NON-NLS-1$
+    	buffer.append("}                                           \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPField base = (ICPPField) col.getName(4).resolveBinding();
+        assertSame( base, col.getName(11).resolveBinding() );
+        
+        ICPPClassType B = (ICPPClassType) col.getName(3).resolveBinding();
+        ICPPClassType A = (ICPPClassType) col.getName(6).resolveBinding();
+        
+        ICPPBase [] bases = A.getBases();
+        assertEquals( bases.length, 1 );
+        assertSame( bases[0].getBaseClass(), B );
     }
 }

@@ -55,7 +55,7 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 		if( cls != null ){
 			ICPPBase [] bases = cls.getBases();
 			for (int i = 0; i < bases.length; i++) {
-				ICPPClassType T = bases[i].getBaseClass();
+				IBinding T = bases[i].getBaseClass();
 				if( T instanceof ICPPTemplateTypeParameter && argumentMap.containsKey( T ) ){
 					IType t = (IType) argumentMap.get( T );
 					if( t instanceof ICPPClassType )
@@ -64,7 +64,6 @@ public class CPPClassSpecialization extends CPPSpecialization implements
 			}
 			return bases;
 		}
-		// TODO Auto-generated method stub
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 

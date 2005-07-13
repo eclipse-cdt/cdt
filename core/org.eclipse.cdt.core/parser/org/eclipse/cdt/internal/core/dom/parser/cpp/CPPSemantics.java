@@ -852,7 +852,9 @@ public class CPPSemantics {
 			    for( int i = 0; i < bases.length; i++ ){
 			        if( bases[i] instanceof IProblemBinding )
 			            continue;
-			        getAssociatedScopes( bases[i].getBaseClass(), namespaces, classes );
+			        IBinding b = bases[i].getBaseClass();
+			        if( b instanceof IType )
+			        	getAssociatedScopes( (IType) b, namespaces, classes );
 			    }
 		    }
 		} else if( t instanceof IEnumeration ){
@@ -1094,12 +1096,11 @@ public class CPPSemantics {
 	}
 
 	private static Object lookupInParents( CPPSemantics.LookupData data, ICPPScope lookIn ) throws DOMException{
-		IASTNode node = lookIn.getPhysicalNode();
-		if( node == null || !(node instanceof ICPPASTCompositeTypeSpecifier) )
-			return null;
-		
-		ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) node;
-		ICPPASTBaseSpecifier [] bases = compositeTypeSpec.getBaseSpecifiers();
+		ICPPBase [] bases = null;
+		if( lookIn instanceof ICPPClassScope ){
+			ICPPClassType c  = ((ICPPClassScope)lookIn).getClassType();
+			bases = c.getBases();
+		}
 	
 		Object inherited = null;
 		Object result = null;
@@ -1118,12 +1119,9 @@ public class CPPSemantics {
 		{
 			inherited = null;
 			ICPPClassType cls = null;
-			IBinding binding = bases[i].getName().resolveBinding();
-			while( binding instanceof ITypedef && ((ITypedef)binding).getType() instanceof IBinding ){
-				binding = (IBinding) ((ITypedef)binding).getType();
-			}
-			if( binding instanceof ICPPClassType )
-				cls = (ICPPClassType) binding;
+			IBinding b = bases[i].getBaseClass();
+			if( b instanceof ICPPClassType )
+				cls = (ICPPClassType) b;
 			else 
 				continue;
 			ICPPScope parent = (ICPPScope) cls.getCompositeScope();
@@ -1159,7 +1157,7 @@ public class CPPSemantics {
 					    visitVirtualBaseClasses( data, cls );
 					}
 				} else {
-				    data.problem = new ProblemBinding( bases[i].getName(), IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, bases[i].getName().toCharArray() );
+				    data.problem = new ProblemBinding( null, IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, cls.getNameCharArray() );
 				    return null;
 				}
 			}	
@@ -1218,9 +1216,13 @@ public class CPPSemantics {
                 if( bases[i].isVirtual() ){
                     if( data.visited == ObjectSet.EMPTY_SET )
 				        data.visited = new ObjectSet(2);
-					data.visited.put( bases[i].getBaseClass().getCompositeScope() );
+                    IBinding b = bases[i].getBaseClass();
+                    if( b instanceof ICPPClassType )
+                    	data.visited.put( ((ICPPClassType)b).getCompositeScope() );
                 } else {
-                    visitVirtualBaseClasses( data, bases[i].getBaseClass() );
+                	IBinding b = bases[i].getBaseClass();
+                    if( b instanceof ICPPClassType )
+                    	visitVirtualBaseClasses( data, (ICPPClassType) b );
                 }
             } catch ( DOMException e1 ) {
             }
@@ -3104,17 +3106,18 @@ public class CPPSemantics {
 		else return -1;
 		
 		
-		ICPPClassType parent = null;
+		IBinding parent = null;
 		ICPPBase [] bases = clsSymbol.getBases();
 		
 		for( int i = 0; i < bases.length; i ++ ){
 			ICPPBase wrapper = bases[i];	
 			parent = bases[i].getBaseClass();
 			boolean isVisible = ( wrapper.getVisibility() == ICPPBase.v_public);
-
-			if( parent.isSameType( clsBase ) || 
-				(clsBase instanceof ICPPSpecialization &&  //allow some flexibility with templates 
-				 ((IType)((ICPPSpecialization)clsBase).getSpecializedBinding()).isSameType( parent ) ) )
+			
+			if( parent instanceof IType && 
+				 ( ((IType)parent).isSameType( clsBase ) || 
+				   ( clsBase instanceof ICPPSpecialization &&  //allow some flexibility with templates 
+				     ((IType)((ICPPSpecialization)clsBase).getSpecializedBinding()).isSameType( (IType) parent ) ) ) )
 			{
 				if( needVisibility && !isVisible )
 					return -1;

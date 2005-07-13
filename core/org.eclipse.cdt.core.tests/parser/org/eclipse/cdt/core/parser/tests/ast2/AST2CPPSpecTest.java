@@ -11213,6 +11213,31 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
+	/**
+	 [--Start Example(CPP 14.8.3-4):
+	template<class T> struct B {  };
+	template<class T> struct D : public B<T> {  };
+	template<class T> void f(B<T>&);
+	void g(B<int>& bi, D<int>& di)
+	{
+	f(bi); // f(bi)
+	f(di); // f( (B<int>&)di )
+	}
+	 --End Example]
+	 */
+	public void test14_8_3s4() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("template<class T> struct B {  };\n"); //$NON-NLS-1$
+		buffer.append("template<class T> struct D : public B<T> {  };\n"); //$NON-NLS-1$
+		buffer.append("template<class T> void f(B<T>&);\n"); //$NON-NLS-1$
+		buffer.append("void g(B<int>& bi, D<int>& di)\n"); //$NON-NLS-1$
+		buffer.append("{\n"); //$NON-NLS-1$
+		buffer.append("f(bi); // f(bi)\n"); //$NON-NLS-1$
+		buffer.append("f(di); // f( (B<int>&)di )\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+
+		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
+	}
 
 	/**
 	 [--Start Example(CPP 14.8.3-6):

@@ -353,7 +353,10 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         ICPPBase[] baseClasses = cppClassBinding.getBases();
         for (int i = 0; i < baseClasses.length; i++) {
             ICPPBase base = baseClasses[i];
-            ICPPClassType baseClass = baseClasses[i].getBaseClass();
+            IBinding b = baseClasses[i].getBaseClass();
+            if( !(b instanceof ICPPClassType) )
+            	continue;
+            ICPPClassType baseClass = (ICPPClassType) b;
             // skip problem bindings
             if (baseClass instanceof IProblemBinding) 
                 continue;

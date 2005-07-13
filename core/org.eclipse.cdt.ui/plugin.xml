@@ -1339,13 +1339,13 @@
    </extension>
    <extension
          point="org.eclipse.cdt.ui.IndexerPage">
-
+         <!--
  	  <indexerUI
             class="org.eclipse.cdt.ui.dialogs.DOMSourceIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
             indexerID="org.eclipse.cdt.core.domsourceindexer"
             name="%CDTIndexer.domsourceindexer"/>
-
+            -->
       <indexerUI
             class="org.eclipse.cdt.ui.dialogs.CTagsIndexerBlock"
             indexerID="org.eclipse.cdt.core.ctagsindexer"
@@ -1356,13 +1356,12 @@
             indexerID="org.eclipse.cdt.core.nullindexer"
             name="%CDTIndexer.nullindexer"
             id="org.eclipse.cdt.ui.nullindexerUI"/>
-                     <!--
 	  <indexerUI
             class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
             indexerID="org.eclipse.cdt.core.domsourceindexer"
             name="%CDTIndexer.domsourceindexer"/>
-            -->
+
    </extension>
 	<extension
          point="org.eclipse.cdt.ui.completionContributors">

@@ -1,3 +1,10 @@
+2005-07-13 Vladimir Hirsl
+	Fix for PR 103428: IndexerManager leaks elementchangelisteners on reset()
+	In case of indexer thread restart after crash/shutdown previous listener is
+	deregistered before registering a new one.
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+
 2005-07-11 Vladimir Hirsl
 	Fix for PR 100585: [Scanner Discovery - Indexer] Indexer not notified of scanner info change
 	Change in project/file scanner info will now cause whole project or just affected files

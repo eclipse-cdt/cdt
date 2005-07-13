@@ -26,7 +26,9 @@ import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IndexRequest;
 import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
@@ -97,6 +99,8 @@ public class IndexManager extends JobManager{
     private HashMap indexerMap = null;
 
 	private ReadWriteMonitor monitor = new ReadWriteMonitor();
+    
+    private static ElementChangeListener elementChangeListener = null;
 
 	/**
 	 * Flush current state
@@ -110,7 +114,11 @@ public class IndexManager extends JobManager{
 			this.indexerMap = new HashMap(5);
             
             // subscribe for path entry changes
-            CoreModel.getDefault().addElementChangedListener(new ElementChangeListener());
+            if (elementChangeListener != null) {
+                CoreModel.getDefault().removeElementChangedListener(elementChangeListener);
+            }
+            elementChangeListener = new ElementChangeListener();
+            CoreModel.getDefault().addElementChangedListener(elementChangeListener);
 		} finally{
 			monitor.exitWrite();
 		}
@@ -152,12 +160,12 @@ public class IndexManager extends JobManager{
             ICElement element= delta.getElement();
 
             IResource res = element.getResource();
-            if (res instanceof IProject) {
+            if (element instanceof ICProject && res instanceof IProject) {
                 currentProject = (IProject) res;
             }
             if (isPathEntryChange(delta)) {
                 scannerInfoChanged = true;
-                if (res instanceof IFile) {
+                if (element instanceof ITranslationUnit && res instanceof IFile) {
                     if (!changedElements.contains(res)) {
                         changedElements.add(res);
                     }
@@ -328,6 +336,10 @@ public class IndexManager extends JobManager{
 			}
 		}
 		
+        if (elementChangeListener != null) {
+            CoreModel.getDefault().removeElementChangedListener(elementChangeListener);
+            elementChangeListener = null;
+        }
 		super.shutdown();
 	}
 	

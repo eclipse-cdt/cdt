@@ -111,6 +111,19 @@ public class AST2CPPTests extends AST2BaseTest {
         buffer.append( "};\n" ); //$NON-NLS-1$
         parseAndCheckBindings( buffer.toString() );
     }
+    
+    public void testBug103578() throws Exception {
+        StringBuffer buffer = new StringBuffer( "template <class T, int someConst=0>\n" ); //$NON-NLS-1$
+        buffer.append( "class WithTemplate {};\n" ); //$NON-NLS-1$
+        buffer.append( "int main ()\n" ); //$NON-NLS-1$
+        buffer.append( "{\n" ); //$NON-NLS-1$
+        buffer.append( "WithTemplate <int, 10> normalInstance;\n" ); //$NON-NLS-1$
+        buffer.append( "const int localConst=10;\n" ); //$NON-NLS-1$
+        buffer.append( "WithTemplate <int, localConst> brokenInstance;\n" ); //$NON-NLS-1$
+        buffer.append( "return 0;\n" ); //$NON-NLS-1$
+        buffer.append( "}\n" ); //$NON-NLS-1$
+        parseAndCheckBindings( buffer.toString() );
+    }
 
     public void testBug78103() throws Exception {
         StringBuffer buffer = new StringBuffer( "int *p1; int *p2;\n" ); //$NON-NLS-1$

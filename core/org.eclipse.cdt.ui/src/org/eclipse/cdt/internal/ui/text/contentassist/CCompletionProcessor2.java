@@ -71,7 +71,8 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
             boolean fileScope = store.getBoolean(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE);
             boolean projectScope = store.getBoolean(ContentAssistPreference.PROJECT_SEARCH_SCOPE);
 
-            if (fileScope) { // do a full parse
+            if (fileScope && workingCopy != null) { // do a full parse
+
                 IFile file = (IFile)workingCopy.getResource();
                 if (file != null)
                     completionNode = CDOM.getInstance().getCompletionNode(
@@ -90,10 +91,11 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
                 
                 if (completionNode != null)
                     prefix = completionNode.getPrefix();
-                
-            } else if (projectScope) { // find the prefix from the document
-                prefix = scanPrefix(viewer.getDocument(), offset);
+
             }
+            
+            if (prefix == null)
+                prefix = scanPrefix(viewer.getDocument(), offset);
             
 			errorMessage = CUIMessages.getString(noCompletions);
 			

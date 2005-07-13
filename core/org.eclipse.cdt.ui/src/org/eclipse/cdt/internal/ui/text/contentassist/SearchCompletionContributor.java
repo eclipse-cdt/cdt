@@ -42,14 +42,18 @@ public class SearchCompletionContributor implements ICompletionContributor {
         
         if (prefix == null || prefix.length() == 0)
             return;
-            
+        
 		// Create search engine
 		SearchEngine searchEngine = new SearchEngine();
 		searchEngine.setWaitingPolicy( ICSearchConstants.FORCE_IMMEDIATE_SEARCH );
 				
 		// Create search scope
-		ICElement[] projects = new ICElement[] { workingCopy.getCProject() };
-		ICSearchScope scope = SearchEngine.createCSearchScope(projects, true);
+        ICSearchScope scope;
+        if (workingCopy != null) {
+            ICElement[] projects = new ICElement[] { workingCopy.getCProject() };
+            scope = SearchEngine.createCSearchScope(projects, true);
+        } else
+            scope = SearchEngine.createWorkspaceScope();
 			
 		// Create the pattern
 		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, true); //$NON-NLS-1$

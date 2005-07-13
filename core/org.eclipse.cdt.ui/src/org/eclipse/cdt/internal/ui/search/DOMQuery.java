@@ -94,54 +94,56 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 		// fix for 43128
 		Set matches=null;
 		IASTName[] foundNames=null;
-		if (!isLocal())
-			matches = DOMSearchUtil.getMatchesFromSearchEngine(scope, searchName, limitTo);
+		if (searchName != null) {
+			if (!isLocal())
+				matches = DOMSearchUtil.getMatchesFromSearchEngine(scope, searchName, limitTo);
+			
+			if (matches != null && matches.size() > 0) {
+	            Iterator itr = matches.iterator();
+	            while(itr.hasNext()) {
+	                Object next = itr.next();
+	                if (next instanceof IMatch) {
+	                    try {
+	                        collector.acceptMatch((IMatch)next);
+	                    } catch (CoreException e) {
+	                        // don't do anything if the match wasn't accepted
+	                    }
+	                }
+	            }
+	        } else { // only search against the DOM if the index failed to get results... i.e. don't want duplicates
+	            foundNames = DOMSearchUtil.getNamesFromDOM(searchName, limitTo);
+	            
+	            for (int i=0; i<foundNames.length; i++) {
+	                try {
+	                    String fileName = null;
+	                    IPath path = null;
+	                    int start = 0;
+	                    int end = 0;
+	                    
+	                    if ( foundNames[i].getTranslationUnit() != null ) {
+	                        IASTFileLocation location = foundNames[i].getFileLocation();
+	                        fileName = location.getFileName();
+	                        start = location.getNodeOffset();
+	                        end = location.getNodeOffset() + location.getNodeLength();
+	                    }
+	                    
+	                    path = new Path(fileName);
+	                    Object fileResource=null;
+	                    IResource res = ParserUtil.getResourceForFilename(fileName);
+	                    if (res != null)
+	                        fileResource = res;
+	                    else {
+	                        fileResource = PathUtil.getWorkspaceRelativePath(fileName);
+	                    }
+	                    
+	                    collector.acceptMatch( createMatch(fileResource, start, end, foundNames[i], path ) );
+	                    
+	                } catch (CoreException ce) {}
+	            }
+	        }
+		}
 		
-		if (matches != null && matches.size() > 0) {
-            Iterator itr = matches.iterator();
-            while(itr.hasNext()) {
-                Object next = itr.next();
-                if (next instanceof IMatch) {
-                    try {
-                        collector.acceptMatch((IMatch)next);
-                    } catch (CoreException e) {
-                        // don't do anything if the match wasn't accepted
-                    }
-                }
-            }
-        } else { // only search against the DOM if the index failed to get results... i.e. don't want duplicates
-            foundNames = DOMSearchUtil.getNamesFromDOM(searchName, limitTo);
-            
-            for (int i=0; i<foundNames.length; i++) {
-                try {
-                    String fileName = null;
-                    IPath path = null;
-                    int start = 0;
-                    int end = 0;
-                    
-                    if ( foundNames[i].getTranslationUnit() != null ) {
-                        IASTFileLocation location = foundNames[i].getFileLocation();
-                        fileName = location.getFileName();
-                        start = location.getNodeOffset();
-                        end = location.getNodeOffset() + location.getNodeLength();
-                    }
-                    
-                    path = new Path(fileName);
-                    Object fileResource=null;
-                    IResource res = ParserUtil.getResourceForFilename(fileName);
-                    if (res != null)
-                        fileResource = res;
-                    else {
-                        fileResource = PathUtil.getWorkspaceRelativePath(fileName);
-                    }
-                    
-                    collector.acceptMatch( createMatch(fileResource, start, end, foundNames[i], path ) );
-                    
-                } catch (CoreException ce) {}
-            }
-        }
-        
-		if (searchPattern != null && matches.size() == 0 && (foundNames == null || foundNames.length == 0)) {
+		if ((searchPattern != null || matches == null || matches.size() == 0) && (foundNames == null || foundNames.length == 0)) {
         	// last try: search the index for the selected string, even if no name was found for that selection
         	matches = DOMSearchUtil.getMatchesFromSearchEngine( scope, searchPattern, limitTo ); 
 

@@ -126,6 +126,7 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug95229")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug101287")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug102258")); //$NON-NLS-1$
+		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug103323")); //$NON-NLS-1$
 	
 		return suite;
 	}
@@ -1045,6 +1046,27 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
         assertEquals(((IASTName)decl).toString(), "RTBindingEnd"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 7);
         assertEquals(((ASTNode)decl).getLength(), 12);
+	}
+	
+	public void testBug103323() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("namespace foo {\n"); //$NON-NLS-1$
+		buffer.append("int g() {\n"); //$NON-NLS-1$
+		buffer.append("return 0;\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		buffer.append("int f() {\n"); //$NON-NLS-1$
+		buffer.append("return foo::g();\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+
+		String code = buffer.toString();
+		IFile file = importFile("testBug103323.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("g();\n"); //$NON-NLS-1$
+        int length = "g()".length(); //$NON-NLS-1$
+
+        testSimple_Ctrl_G_Selection(file, offset, length, 1);
+        
 	}
 
     // REMINDER: see CPPSelectionTestsDomIndexer#suite() when appending new tests to this suite

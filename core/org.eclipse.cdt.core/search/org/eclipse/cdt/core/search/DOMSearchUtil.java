@@ -64,7 +64,8 @@ import org.eclipse.core.runtime.content.IContentType;
  * @author dsteffle
  */
 public class DOMSearchUtil {
-    private static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
+    private static final String BLANK_STRING = ""; //$NON-NLS-1$
+	private static final IASTName[] BLANK_NAME_ARRAY = new IASTName[0];
     private static final IASTName[] EMPTY_NAME_LIST = BLANK_NAME_ARRAY;
     private static final Set EMPTY_MATCHES = new HashSet(0);
 
@@ -468,6 +469,9 @@ public class DOMSearchUtil {
 	 * @return
 	 */
 	public static String getSearchPattern(IASTName name) {
+		if (name == null)
+			return BLANK_STRING;
+		
 		StringBuffer buffer = new StringBuffer();
 		// first option - use binding to get qualified name
 		IBinding binding = name.resolveBinding();

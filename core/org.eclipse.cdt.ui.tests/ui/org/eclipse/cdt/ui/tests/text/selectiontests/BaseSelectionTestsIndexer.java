@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -32,9 +33,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -290,6 +296,34 @@ public class BaseSelectionTestsIndexer extends TestCase {
         }
         
         return null;
+    }
+    
+    protected void testSimple_Ctrl_G_Selection(IFile file, int offset, int length, int numOccurrences) throws ParserException {
+		if (offset < 0)
+			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
+		
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IEditorPart part = null;
+        try {
+            part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
+        } catch (PartInitException e) {
+            assertFalse(true);
+        }
+        
+        if (part instanceof AbstractTextEditor) {
+            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
+            
+            final IAction action = ((AbstractTextEditor)part).getAction(ICEditorActionDefinitionIds.FIND_DECL);
+            
+            action.run();
+            
+        	// update the file/part to point to the newly opened IFile/IEditorPart
+//            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("org.eclipse.search.ui.views.SearchView");
+            
+//            String title = view.getTitle();
+
+//            assertTrue( title.indexOf(numOccurrences + " Occurrences") >= 0 ); //$NON-NLS-1$
+        }
     }
     
     public void resetIndexer(final String indexerId){

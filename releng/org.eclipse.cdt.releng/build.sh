@@ -1,3 +1,5 @@
+umask 0022
+
 cd `dirname $0`
 
 mkdir -p tools

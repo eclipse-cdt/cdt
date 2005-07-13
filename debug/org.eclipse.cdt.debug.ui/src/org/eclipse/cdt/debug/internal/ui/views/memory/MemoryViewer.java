@@ -253,4 +253,10 @@ public class MemoryViewer extends ContentViewer {
 	protected ITextOperationTarget getTextOperationTarget() {
 		return (MemoryControlArea)fTabFolder.getSelection().getControl();
 	}
+
+	public void dispose() {
+		for ( int i = 0; i < fMemoryControlAreas.length; ++i ) {
+			fMemoryControlAreas[i].dispose();
+		}
+	}
 }

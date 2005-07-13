@@ -252,6 +252,7 @@ public class MemoryView extends AbstractDebugEventHandlerView implements ISelect
 		remove( (AutoRefreshMemoryAction)getAction( "AutoRefreshMemory" ) ); //$NON-NLS-1$
 		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
+		((MemoryViewer)getViewer()).dispose();
 		super.dispose();
 	}
 

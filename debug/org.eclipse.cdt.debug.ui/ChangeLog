@@ -1,3 +1,10 @@
+2005-07-13 Mikhail Khodjaiants
+	Fixed the Memory view leaks.
+	* MemoryControlArea.java
+	* MemoryText.java
+	* MemoryView.java
+	* MemoryViewer.java
+
 2005-02-24 Mikhail Khodjaiants
 	Applied patch from Tracy Miranda (bug 86533: Breakpoint is set on the wrong line in Disassembly view).
 	* DisassemblyEditorInput.java

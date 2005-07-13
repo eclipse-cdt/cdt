@@ -53,6 +53,7 @@ public class MemoryText
 					   MemoryPresentation presentation )
 	{
 		fText = new StyledText( parent, style );
+		fText.setFont( new Font( fText.getDisplay(), getFontData() ) );
 		fText.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 		fPresentation = presentation;
 		initialize();
@@ -104,7 +105,6 @@ public class MemoryText
 	{
 		int offset = fText.getCaretOffset();
 		fText.getCaret().setVisible( false );
-		fText.setFont( new Font( fText.getDisplay(), getFontData() ) );
 		fText.setBackground( getBackgroundColor() );
 		fText.setForeground( getForegroundColor() );
 		fText.setText( fPresentation.getText() );
@@ -233,7 +233,10 @@ public class MemoryText
 		}
 */
 	}
-	
+
+	public void dispose() {
+	}
+
 	protected void setEditable( boolean editable )
 	{
 		fText.setEditable( editable );

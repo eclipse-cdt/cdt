@@ -357,6 +357,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 		if ( getPresentation() != null ) {
 			getPresentation().dispose();
 		}
+		fMemoryText.dispose();
 		super.dispose();
 	}
 

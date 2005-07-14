@@ -89,6 +89,10 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2Tests extends AST2BaseTest {
 
+    public void testBug75189() throws Exception {
+        parseAndCheckBindings( "struct A{};typedef int (*F) (A*);" ); //$NON-NLS-1$
+    }
+    
     public void testBug78103() throws Exception {
         StringBuffer buffer = new StringBuffer( "int *p1; int *p2;\n" ); //$NON-NLS-1$
         buffer.append( "union {\n" ); //$NON-NLS-1$

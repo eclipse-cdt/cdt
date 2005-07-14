@@ -1,4 +1,15 @@
 2005-07-14 Vladimir Hirsl
+	Fix for 103024: NPE in indexerEncoderUtil.nodeInVisitedExternalEheader
+	Project was not being set when creating indexer in IndexManager#getDefaultIndexer().
+	
+	* index/org/eclipse/cdt/core/index/ICDTIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/nullindexer/NullIndexer.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+	* src/org/eclipse/cdt/internal/core/InternalCExtension.java
+
+2005-07-14 Vladimir Hirsl
 	Fix for 95826: indexer message "File not indexed because it was not built" won't go away
 	Info marker was missing INDEXER_MARKER_ORIGINATOR attribute.
 	

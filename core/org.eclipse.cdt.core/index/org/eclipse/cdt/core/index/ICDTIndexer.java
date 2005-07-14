@@ -174,5 +174,11 @@ public interface ICDTIndexer {
      */
     public void saveIndex(IIndex index) throws IOException;
 
-	
+    /**
+     * Associate a project with indexer
+     * 
+     * @param project
+     */
+    public void setIndexerProject(IProject project);
+    
 }

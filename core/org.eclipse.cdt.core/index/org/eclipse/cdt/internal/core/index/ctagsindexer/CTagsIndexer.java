@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.InternalCExtension;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
@@ -555,5 +556,12 @@ public class CTagsIndexer extends AbstractCExtension implements ICDTIndexer {
 	public void addResourceByPath(IProject project, IPath path, int resourceType) {
 	  //Nothing yet
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.index.ICDTIndexer#setIndexerProject(org.eclipse.core.resources.IProject)
+     */
+    public void setIndexerProject(IProject project) {
+        setProject(project);
+    }
 
 }

@@ -122,4 +122,9 @@ public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
         // TODO Auto-generated method stub
     }
 
+    public void setIndexerProject(IProject project) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

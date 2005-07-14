@@ -419,6 +419,7 @@ public class IndexManager extends JobManager{
 			for (int i = 0; i < element.length; i++) {
 				if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
 					indexer = (ICDTIndexer) element[i].createExecutableExtension("run"); //$NON-NLS-1$
+                    indexer.setIndexerProject(project);
 					break;
 				}
 			}
@@ -433,7 +434,7 @@ public class IndexManager extends JobManager{
    	ICDTIndexer indexer = null;
    	try{
 		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project,true);
-		ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID, true);
+		ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID, false);
 		
 		if (cextensions != null && cextensions.length > 0)
 			indexer = (ICDTIndexer) cextensions[0].createExtension();
@@ -492,7 +493,7 @@ public class IndexManager extends JobManager{
 	    monitor.enterWrite();
 	    try{ 
 	        //Purge the old indexer from the indexer map
-	        Object e = indexerMap.remove(project);   
+	        indexerMap.remove(project);   
 	    } finally { 
 	        monitor.exitWrite();
 	        final ICDTIndexer indexer = this.getIndexerForProject(project);

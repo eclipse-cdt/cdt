@@ -658,5 +658,12 @@ public class DOMSourceIndexer extends AbstractCExtension implements ICDTIndexer 
 		// TODO Auto-generated method stub
 		
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.index.ICDTIndexer#setIndexerProject(org.eclipse.core.resources.IProject)
+     */
+    public void setIndexerProject(IProject project) {
+        setProject(project);
+    }
 	
 }

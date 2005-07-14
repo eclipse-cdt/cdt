@@ -10,15 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceChangeHandler;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISavedState;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 //  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
 //        ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
@@ -78,16 +87,61 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 		//      elements
 		
+		IJobManager jobManager = Platform.getJobManager();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			jobManager.beginRule(root, null);
+
+			startResourceChangeHandling();
+		} catch (Exception e) {
+			//either an IllegalArgumentException is thrown by the jobManager.beginRule
+			//or core exception is thrown by the startResourceChangeHandling()
+			//in any case, schedule a job with the root rule
+			//that will perform the resource change handling initialization
+			
+			Job rcJob = new Job(ManagedMakeMessages.getResourceString("ManagedBuilderCorePlugin.resourceChangeHandlingInitializationJob")){ 	//$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					try{
+						startResourceChangeHandling();
+					} catch (CoreException e){
+						CCorePlugin.log(e);
+						return e.getStatus();
+					}
+					return new Status(
+							IStatus.OK,
+							ManagedBuilderCorePlugin.getUniqueIdentifier(),
+							IStatus.OK,
+							new String(),
+							null);
+				}
+			};
+			
+			rcJob.setRule(root);
+			rcJob.setPriority(Job.INTERACTIVE);
+			rcJob.schedule();
+
+		} finally {
+			jobManager.endRule(root);
+		}
+	}
+	
+	/*
+	 * This method adds a save participant and resource change listener
+	 * Throws CoreException if the methods fails to add a save participant.
+	 * The resource change listener in not added in this case either.
+	 */
+	private void startResourceChangeHandling() throws CoreException{
 		// Set up a listener for resource change events
 		listener = new ResourceChangeHandler();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-			  listener, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE /*| IResourceChangeEvent.POST_BUILD*/);
-	    ISavedState lastState =
-	        ResourcesPlugin.getWorkspace().addSaveParticipant(this, listener);
-	    if (lastState != null) {
-	        lastState.processResourceChangeEvents(listener);
-	    }
+		ISavedState lastState =
+			ResourcesPlugin.getWorkspace().addSaveParticipant(ManagedBuilderCorePlugin.this, listener);
 
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				listener, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE /*| IResourceChangeEvent.POST_BUILD*/);
+
+		if (lastState != null) {
+			lastState.processResourceChangeEvents(listener);
+		}
 	}
 
 	/* (non-Javadoc)

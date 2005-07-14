@@ -388,6 +388,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			config.removeResourceConfiguration(rcCfg);
 			rcCfg.setResourcePath(newPath.toString());
 			((Configuration)config).addResourceConfiguration((ResourceConfiguration)rcCfg);
+			config.setRebuildState(true);
 			return true;
 		}
 		return false;
@@ -397,6 +398,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		IResourceConfiguration rcCfg = config.getResourceConfiguration(path.toString());
 		if(rcCfg != null){
 			config.removeResourceConfiguration(rcCfg);
+			config.setRebuildState(true);
 			return true;
 		}
 		return false;

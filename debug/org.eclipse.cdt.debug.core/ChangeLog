@@ -1,3 +1,7 @@
+2005-07-14 Mikhail Khodjaiants
+	Bug 103784: NPE in source lookup.
+	* CSourceLookupDirector.java
+
 2005-07-11 Mikhail Khodjaiants
 	Bug 94770: Breakpoint marker messages need formatting.
 	* BreakpointMessages.properties

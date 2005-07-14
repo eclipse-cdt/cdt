@@ -106,7 +106,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		if ( container instanceof ProjectSourceContainer ) {
 			IProject project = ((ProjectSourceContainer)container).getProject();
 			IPath projPath = project.getLocation();
-			if ( projPath.isPrefixOf( path ) ) {
+			if ( projPath != null && projPath.isPrefixOf( path ) ) {
 				IFile file = ((ProjectSourceContainer)container).getProject().getFile( path.removeFirstSegments( projPath.segmentCount() ) );
 				return ( file != null && file.exists() );
 			}
@@ -114,7 +114,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		if ( container instanceof FolderSourceContainer ) {
 			IContainer folder = ((FolderSourceContainer)container).getContainer();
 			IPath folderPath = folder.getLocation();
-			if ( folderPath.isPrefixOf( path ) ) {
+			if ( folderPath != null && folderPath.isPrefixOf( path ) ) {
 				IFile file = ((FolderSourceContainer)container).getContainer().getFile( path.removeFirstSegments( folderPath.segmentCount() ) );
 				return ( file != null && file.exists() );
 			}

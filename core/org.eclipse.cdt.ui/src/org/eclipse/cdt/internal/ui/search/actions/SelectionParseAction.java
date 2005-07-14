@@ -537,9 +537,9 @@ public class SelectionParseAction extends Action {
 	}
 	
 	protected class SelSearchNode{
-	 	protected String selText;
-	 	protected int selStart;
-	 	protected int selEnd;
+	 	public String selText;
+        public int selStart;
+        public int selEnd;
 	}
 
     protected SelSearchNode getSelectedStringFromEditor() {

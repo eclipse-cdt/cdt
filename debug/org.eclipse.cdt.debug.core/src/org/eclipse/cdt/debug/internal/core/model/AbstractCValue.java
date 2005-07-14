@@ -40,7 +40,7 @@ public abstract class AbstractCValue extends CDebugElement implements ICValue {
 	 * @see org.eclipse.cdt.debug.core.model.ICValue#evaluateAsExpression(org.eclipse.cdt.debug.core.model.ICStackFrame)
 	 */
 	public String evaluateAsExpression( ICStackFrame frame ) {
-		String valueString = null;
+		String valueString = ""; //$NON-NLS-1$
 		AbstractCVariable parent = getParentVariable();
 		if ( parent != null ) {
 			if ( frame != null && frame.canEvaluate() ) {

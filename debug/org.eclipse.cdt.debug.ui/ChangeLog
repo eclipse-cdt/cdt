@@ -1,3 +1,8 @@
+2005-07-14 Mikhail Khodjaiants
+	Bug 103910: The modules view's icon is missing.
+	+ icons/view16/memory_view.gif
+	- icons/view16/sharedlibraries_view.gif
+
 2005-07-12 Mikhail Khodjaiants
 	Bug 103162: Module View: Missing context menu on detailed pane.
 	* ModulesMessages.properties

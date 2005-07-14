@@ -1,3 +1,9 @@
+2005-07-14 Vladimir Hirsl
+	Fix for 95826: indexer message "File not indexed because it was not built" won't go away
+	Info marker was missing INDEXER_MARKER_ORIGINATOR attribute.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/AbstractIndexerRunner.java
+
 2005-07-13 Vladimir Hirsl
 	Fix for PR 103428: IndexerManager leaks elementchangelisteners on reset()
 	In case of indexer thread restart after crash/shutdown previous listener is

@@ -149,6 +149,7 @@ public abstract class AbstractIndexerRunner implements IIndexerRunner, ICSearchC
 	                IMarker marker = resource.createMarker(ICModelMarker.INDEXER_MARKER);
 	                marker.setAttribute(IMarker.MESSAGE, message); 
 	                marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+	                marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString());
 	            }
 	        } catch (CoreException e) {}
 		}

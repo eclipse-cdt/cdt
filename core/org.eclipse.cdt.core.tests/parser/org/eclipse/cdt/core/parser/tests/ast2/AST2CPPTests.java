@@ -103,6 +103,19 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public class AST2CPPTests extends AST2BaseTest {
     
+    public void testBug78883() throws Exception {
+        StringBuffer buffer = new StringBuffer("class B {\n"); //$NON-NLS-1$
+        buffer.append("public:\n"); //$NON-NLS-1$
+        buffer.append("B( int t );\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("class A : public B {\n"); //$NON-NLS-1$
+        buffer.append("public:\n"); //$NON-NLS-1$
+        buffer.append("A( int t );\n"); //$NON-NLS-1$
+        buffer.append("};\n"); //$NON-NLS-1$
+        buffer.append("A::A( int t ) : B( t - 1 ){}\n"); //$NON-NLS-1$
+        parseAndCheckBindings(buffer.toString());
+    }
+    
     public void testBug77967() throws Exception {
         StringBuffer buffer = new StringBuffer( "enum type {A};\n" ); //$NON-NLS-1$
         buffer.append( "enum type a, b;\n" );  //$NON-NLS-1$

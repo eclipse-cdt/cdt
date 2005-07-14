@@ -482,12 +482,12 @@ public class SelectionParseAction extends Action {
                     break;  
                 }
                 case 'n': { // start of "new"
-                    while (doc.getChar(++index) != 'w');
+                    while (doc.getChar(++index) != 'w') {}
                     possibleEnd=++index;
                     break;
                 }
                 case 'd': { // start of "delete"
-                    while (doc.getChar(++index) != 't' && doc.getChar(index+1) != 'e');
+                    while (doc.getChar(++index) != 't' && doc.getChar(index+1) != 'e'){}
                     index+=2;
                     possibleEnd=index;
                     break;
@@ -536,7 +536,7 @@ public class SelectionParseAction extends Action {
 		return sel;
 	}
 	
-	class SelSearchNode{
+	protected class SelSearchNode{
 	 	protected String selText;
 	 	protected int selStart;
 	 	protected int selEnd;
@@ -635,7 +635,7 @@ public class SelectionParseAction extends Action {
 			} else if (locatable instanceof ILineLocatable){
 				int tempstartOffset = ((ILineLocatable)locatable).getStartLine();
 				
-				IDocument doc =  ((AbstractTextEditor) part).getDocumentProvider().getDocument(part.getEditorInput());;
+				IDocument doc =  ((AbstractTextEditor) part).getDocumentProvider().getDocument(part.getEditorInput());
 				try {
 					//NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
 					//resolver doesn't take this into account and is still 0 based

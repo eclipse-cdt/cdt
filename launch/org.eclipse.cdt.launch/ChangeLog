@@ -1,3 +1,7 @@
+2005-07-14 Mikhail Khodjaiants
+	Fix PR 103207: New Icon for the TwoPaneElement in the binary search
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+
 2005-07-12 Mikhail Khodjaiants
 	Bug 103522: Launcher: Stop at main checkbox is covered with default launch dialog size.
 	Moved the "Stop in main" and "Advanced" buttons on the line below.

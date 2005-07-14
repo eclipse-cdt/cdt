@@ -190,7 +190,7 @@ public class ContentTypeProcessor extends CModelOperation {
 				switch (parent.getElementType()) {
 				case ICElement.C_MODEL:
 					((CModelInfo)info).setNonCResources(null);
-				return;
+				break;
 				case ICElement.C_PROJECT:
 					((CProjectInfo)info).setNonCResources(null);
 				break;

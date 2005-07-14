@@ -4274,11 +4274,10 @@ abstract class BaseScanner implements IScanner {
                                 replacedArgs.put(repObject, rep);
                             repObject = rep;
                         }
+                      
+                        if (result != null )
+                            System.arraycopy(repObject, 0, result, outpos, repObject.length);
                     }
-
-                    if (result != null)
-                        System.arraycopy(repObject, 0, result, outpos,
-                                repObject.length);
                     outpos += repObject.length;
 
                     lastcopy = pos;

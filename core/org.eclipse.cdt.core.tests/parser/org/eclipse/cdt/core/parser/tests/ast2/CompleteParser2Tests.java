@@ -2468,4 +2468,11 @@ public class CompleteParser2Tests extends TestCase {
     	parse( writer.toString() );
     }
 
+    public void testBug103560() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#define A( a, b ) a ## b               \n"); //$NON-NLS-1$
+    	writer.write("#define FOOBAR 1                       \n"); //$NON-NLS-1$
+    	writer.write("int i = A( FOO, BAR );                 \n"); //$NON-NLS-1$
+    	parse( writer.toString() );
+    }
 }

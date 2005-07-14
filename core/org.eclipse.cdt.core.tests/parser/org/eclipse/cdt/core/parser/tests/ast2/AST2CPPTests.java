@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -106,6 +107,11 @@ public class AST2CPPTests extends AST2BaseTest {
         parseAndCheckBindings( "struct A{};typedef int (*F) (A*);" ); //$NON-NLS-1$
     }
 
+    public void testBug75340() throws Exception {
+        IASTTranslationUnit tu = parseAndCheckBindings( "void f(int i = 0, int * p = 0);"); //$NON-NLS-1$
+        IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        assertEquals( ASTSignatureUtil.getParameterSignature( sd.getDeclarators()[0] ), "(int, int *)" ); //$NON-NLS-1$
+    }
     
     public void testBug79540() throws Exception {
         StringBuffer buffer = new StringBuffer( "#define REF_WRAP(e) class A { public: A (){ } A& foo2(e& v) { return *this; } }\n" ); //$NON-NLS-1$

@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -91,6 +92,12 @@ public class AST2Tests extends AST2BaseTest {
 
     public void testBug75189() throws Exception {
         parseAndCheckBindings( "struct A{};typedef int (*F) (A*);" ); //$NON-NLS-1$
+    }
+    
+    public void testBug75340() throws Exception {
+        IASTTranslationUnit tu = parseAndCheckBindings( "void f(int i = 0, int * p = 0);"); //$NON-NLS-1$
+        IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        assertEquals( ASTSignatureUtil.getParameterSignature( sd.getDeclarators()[0] ), "(int, int *)" ); //$NON-NLS-1$
     }
     
     public void testBug78103() throws Exception {

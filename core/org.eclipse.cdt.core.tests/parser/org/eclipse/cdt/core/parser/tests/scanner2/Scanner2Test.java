@@ -45,24 +45,37 @@ public class Scanner2Test extends BaseScanner2Test
     }
 
     
-//    public void testBug102825_2() throws Exception {
-//        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
-//        buffer.append("#define CINIT(name,type,number) = CURLOPTTYPE_##type + number\n" ); //$NON-NLS-1$
-//        buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n" ); //$NON-NLS-1$
-//        initializeScanner(buffer.toString());
-//        validateToken( IToken.tASSIGN );
-//        validateInteger( "10000"); //$NON-NLS-1$
-//    }
+    public void testBug102825_2() throws Exception {
+        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
+        buffer.append("#define CINIT(name,type,number) = CURLOPTTYPE_##type + number\n" ); //$NON-NLS-1$
+        buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n" ); //$NON-NLS-1$
+        initializeScanner(buffer.toString());
+        validateToken( IToken.tASSIGN );
+        validateInteger( "10000"); //$NON-NLS-1$
+    }
 
-//    public void testBug102825_3() throws Exception {
-//        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
-//        buffer.append("#define CINIT(name,type,number) CURLOPT_##name = CURLOPTTYPE_##type + number\n" ); //$NON-NLS-1$
-//        buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n" ); //$NON-NLS-1$
-//        initializeScanner(buffer.toString());
-//        validateIdentifier( "CURLOPT_FILE"); //$NON-NLS-1$
-//        validateToken( IToken.tASSIGN );
-//        validateInteger( "10000"); //$NON-NLS-1$
-//    }
+    public void testBug102825_3() throws Exception {
+        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
+        buffer.append("#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_	## type + number\n" ); //$NON-NLS-1$
+        buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n" ); //$NON-NLS-1$
+        initializeScanner(buffer.toString());
+        validateIdentifier( "CURLOPT_FILE"); //$NON-NLS-1$
+        validateToken( IToken.tASSIGN );
+        validateInteger( "10000"); //$NON-NLS-1$
+    }
+    
+    public void testBug102825_4() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("#define glue( a, b ) a ## b\n"); //$NON-NLS-1$
+    	buffer.append("#define HIGHLOW \"hello\"\n"); //$NON-NLS-1$
+    	buffer.append("glue( HIGH, LOW )\n"); //$NON-NLS-1$
+    	
+    	initializeScanner(buffer.toString());
+        Callback callback = new Callback( ParserMode.QUICK_PARSE );
+		initializeScanner( buffer.toString(), ParserMode.QUICK_PARSE, callback );
+		validateString( "hello"); //$NON-NLS-1$
+		assertEquals( callback.problems.size(), 0 );
+    }
     
 	public class TableRow
 	{

@@ -1905,6 +1905,52 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(C 6.10.3.5-6):
+	#define str(s) # s
+	#define xstr(s) str(s)
+	#define debug(s, t) printf("x" # s "= %d, x" # t "= %s", \
+	x ## s, x ## t)
+	#define INCFILE(n) vers ## n
+	#define glue(a, b) a ## b
+	#define xglue(a, b) glue(a, b)
+	#define HIGHLOW "hello"
+	#define LOW LOW ", world"
+	int f() {
+	debug(1, 2);
+	fputs(str(strncmp("abc\0d", "abc", '\4') // this goes away
+	== 0) str(: @\n), s);
+	//#include xstr(INCFILE(2).h)
+	glue(HIGH, LOW);
+	xglue(HIGH, LOW)
+	}
+	 --End Example]
+	 */
+	public void test6_10_3_5s6() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#define str(s) # s                    \n"); //$NON-NLS-1$
+		buffer.append("#define xstr(s) str(s)                \n"); //$NON-NLS-1$
+		buffer.append("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n"); //$NON-NLS-1$
+		buffer.append("x ## s, x ## t)                       \n"); //$NON-NLS-1$
+		buffer.append("#define INCFILE(n) vers ## n          \n"); //$NON-NLS-1$
+		buffer.append("#define glue(a, b) a ## b             \n"); //$NON-NLS-1$
+		buffer.append("#define xglue(a, b) glue(a, b)        \n"); //$NON-NLS-1$
+		buffer.append("#define HIGHLOW \"hello\"             \n"); //$NON-NLS-1$
+		buffer.append("#define LOW LOW \", world\"           \n"); //$NON-NLS-1$
+		buffer.append("void printf( char *, ...);            \n"); //$NON-NLS-1$
+		buffer.append("void fputs( char *, ... );            \n"); //$NON-NLS-1$
+		buffer.append("int x1, x2, s;                        \n"); //$NON-NLS-1$
+		buffer.append("int f() {                             \n"); //$NON-NLS-1$
+		buffer.append("   debug(1, 2);                       \n"); //$NON-NLS-1$
+		buffer.append("   fputs(str(strncmp(\"abc\0d\", \"abc\", '\4') // this goes away\n"); //$NON-NLS-1$
+		buffer.append("   == 0) str(: @\n), s);              \n"); //$NON-NLS-1$
+		buffer.append("   char * c = glue(HIGH, LOW);        \n"); //$NON-NLS-1$
+		buffer.append("   c = xglue(HIGH, LOW);              \n"); //$NON-NLS-1$
+		buffer.append("}                                     \n"); //$NON-NLS-1$
+
+		parseCandCPP(buffer.toString(), false, 0);
+	}
+	
+	/**
 	 [--Start Example(C 6.10.3.5-8):
 	#define OBJ_LIKE1 (1-1)
 	#define OBJ_LIKE2    \
@@ -1927,4 +1973,37 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		parseCandCPP(buffer.toString(), true, 0);
 	}
 	
+	/**
+	 [--Start Example(C 6.10.3.5-9):
+	#define debug(...) fprintf(stderr, __VA_ARGS__)
+	#define showlist(...) puts(#__VA_ARGS__)
+	#define report(test, ...) ((test)?puts(#test):\
+	printf(__VA_ARGS__))
+	int f() {
+	debug("Flag");
+	debug("X = %d\n", x);
+	showlist(The first, second, and third items.);
+	report(x>y, "x is %d but y is %d", x, y);
+	}
+	 --End Example]
+	 */
+	public void test6_10_3_5s9() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#define debug(...) fprintf(stderr, __VA_ARGS__)\n"); //$NON-NLS-1$
+		buffer.append("#define showlist(...) puts(#__VA_ARGS__)\n"); //$NON-NLS-1$
+		buffer.append("#define report(test, ...) ((test)?puts(#test):\\\n"); //$NON-NLS-1$
+		buffer.append("printf(__VA_ARGS__))                             \n"); //$NON-NLS-1$
+		buffer.append("void fprintf( ... );                             \n"); //$NON-NLS-1$
+		buffer.append("void puts(char * );                              \n"); //$NON-NLS-1$
+		buffer.append("void printf( char *, ... );                      \n"); //$NON-NLS-1$
+		buffer.append("int stderr, x, y;                                \n");//$NON-NLS-1$
+		buffer.append("int f() {                                        \n"); //$NON-NLS-1$
+		buffer.append("   debug(\"Flag\");                              \n"); //$NON-NLS-1$
+		buffer.append("   debug(\"X = %d\\n\", x);                      \n"); //$NON-NLS-1$
+		buffer.append("   showlist(The first, second, and third items.);\n"); //$NON-NLS-1$
+		buffer.append("   report(x>y, \"x is %d but y is %d\", x, y);   \n"); //$NON-NLS-1$
+		buffer.append("}                                                \n"); //$NON-NLS-1$
+
+		parseCandCPP(buffer.toString(), false, 0);
+	}
 }

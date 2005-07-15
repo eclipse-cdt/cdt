@@ -4243,7 +4243,7 @@ abstract class BaseScanner implements IScanner {
                         System.arraycopy(repObject, 0, newRep, l1, l2);
                     else
                         System.arraycopy(expansion, idstart, newRep, l1, l2);
-
+                    idstart = prevArgStart;
                     repObject = newRep;
                 }
                 if (repObject != null) {
@@ -4396,19 +4396,7 @@ abstract class BaseScanner implements IScanner {
                         }
                         break;
                     }
-
-                    // copy everything up to the whitespace
-                    int n = wsstart - (++lastcopy);
-                    if (n > 0 && result != null)
-                        System
-                                .arraycopy(expansion, lastcopy, result, outpos,
-                                        n);
-                    outpos += n;
-
-                    // skip over the ## and the whitespace around it
-                    lastcopy = --pos;
-                    wsstart = -1;
-
+                    --pos;
                 } else {
                     prevConcat = false;
                     // stringify

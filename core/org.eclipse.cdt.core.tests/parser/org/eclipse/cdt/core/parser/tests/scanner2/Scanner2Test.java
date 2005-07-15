@@ -34,7 +34,27 @@ import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
  */
 public class Scanner2Test extends BaseScanner2Test
 {
-//    public void testBug102825() throws Exception {
+
+    public void testBug102825_1() throws Exception {
+        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
+        buffer.append("#define CINIT = CURLOPTTYPE_##OBJECTPOINT + 1\n" ); //$NON-NLS-1$
+        buffer.append("CINIT\n" ); //$NON-NLS-1$
+        initializeScanner(buffer.toString());
+        validateToken( IToken.tASSIGN );
+        validateInteger( "10000"); //$NON-NLS-1$
+    }
+
+    
+//    public void testBug102825_2() throws Exception {
+//        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
+//        buffer.append("#define CINIT(name,type,number) = CURLOPTTYPE_##type + number\n" ); //$NON-NLS-1$
+//        buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n" ); //$NON-NLS-1$
+//        initializeScanner(buffer.toString());
+//        validateToken( IToken.tASSIGN );
+//        validateInteger( "10000"); //$NON-NLS-1$
+//    }
+
+//    public void testBug102825_3() throws Exception {
 //        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
 //        buffer.append("#define CINIT(name,type,number) CURLOPT_##name = CURLOPTTYPE_##type + number\n" ); //$NON-NLS-1$
 //        buffer.append("CINIT(FILE, OBJECTPOINT, 1)\n" ); //$NON-NLS-1$
@@ -2306,7 +2326,7 @@ public class Scanner2Test extends BaseScanner2Test
    }
     
    public void testBug102568A() throws Exception {
-	   initializeScanner("///*\r\nint x;\r\n");
+	   initializeScanner("///*\r\nint x;\r\n"); //$NON-NLS-1$
 	   validateToken( IToken.t_int );
 	   validateIdentifier( "x" ); //$NON-NLS-1$
 	   validateToken( IToken.tSEMI );
@@ -2314,7 +2334,7 @@ public class Scanner2Test extends BaseScanner2Test
    }
 
    public void testBug102568B() throws Exception {
-	   initializeScanner("// bla some thing /* ... \r\nint x;\r\n");
+	   initializeScanner("// bla some thing /* ... \r\nint x;\r\n"); //$NON-NLS-1$
 	   validateToken( IToken.t_int );
 	   validateIdentifier( "x" ); //$NON-NLS-1$
 	   validateToken( IToken.tSEMI );

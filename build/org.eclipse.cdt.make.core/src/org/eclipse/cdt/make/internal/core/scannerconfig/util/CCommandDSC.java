@@ -101,7 +101,7 @@ public class CCommandDSC {
 	 * Returns a command where -imacros and -include options have been removed
 	 * @return
 	 */
-	public String getSCDRunnableCommand() {
+	public String getSCDRunnableCommand(boolean quoteIncludePaths) {
 		String commandAsString = new String();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = (KVStringPair)i.next();
@@ -113,8 +113,16 @@ public class CCommandDSC {
     			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString()) ||
     					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString()))
     				continue;
-    			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
-                                   optionPair.getValue() + SINGLE_SPACE;
+    			if (quoteIncludePaths) {
+    				if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE.toString())) {
+    					commandAsString += optionPair.getKey() + SINGLE_SPACE + 
+    							"\"" + optionPair.getValue() + "\"" + SINGLE_SPACE;  //$NON-NLS-1$//$NON-NLS-2$
+    				}
+    			}
+    			else {
+	    			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
+	                                   optionPair.getValue() + SINGLE_SPACE;
+    			}
             }
 		}
 		return commandAsString.trim();

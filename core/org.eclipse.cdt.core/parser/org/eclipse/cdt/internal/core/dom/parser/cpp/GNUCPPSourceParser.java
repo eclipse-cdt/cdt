@@ -1894,7 +1894,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     name = operatorId(start, null);
                 else {
                     backup(mark);
-                    throwBacktrack(start.getOffset(), end.getEndOffset()
+                    throwBacktrack(start.getOffset(), (end != null ? end.getEndOffset() : start.getEndOffset())
                             - start.getOffset());
                 }
             } else if (LT(1) == IToken.t_operator)

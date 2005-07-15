@@ -150,6 +150,11 @@ public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, I
 	}
 	
 	public void addSpecialization( IType [] types, ICPPSpecialization spec ){
+		if( types == null )
+			return;
+		for( int i = 0; i < types.length; i++ )
+			if( types[i] == null )
+				return;
 		if( instances == null )
 			instances = new ObjectMap( 2 );
 		instances.put( types, spec );

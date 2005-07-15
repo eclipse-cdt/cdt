@@ -2215,7 +2215,7 @@ public class CPPSemantics {
 			numSourceParams = ( useImplicitObj ) ? sourceParameters.length + 1 : sourceParameters.length;
 			int numTargetParams = 0;
 			
-			if( currFnCost == null ){
+			if( currFnCost == null || currFnCost.length != ((numSourceParams == 0) ? 1 : numSourceParams) ){
 				currFnCost = new Cost [ (numSourceParams == 0) ? 1 : numSourceParams ];	
 			}
 			
@@ -2279,8 +2279,10 @@ public class CPPSemantics {
 			//In order for this function to be better than the previous best, it must
 			//have at least one parameter match that is better that the corresponding
 			//match for the other function, and none that are worse.
-			for( int j = 0; j < numSourceParams || j == 0; j++ ){ 
-				if( currFnCost[ j ].rank < 0 ){
+			int len = ( bestFnCost == null || currFnCost.length < bestFnCost.length ) ? currFnCost.length : bestFnCost.length;
+			for( int j = 1; j <= len; j++ ){
+				Cost currCost = currFnCost[ currFnCost.length - j ];
+				if( currCost.rank < 0 ){
 					hasWorse = true;
 					hasBetter = false;
 					break;
@@ -2288,10 +2290,9 @@ public class CPPSemantics {
 				
 				//an ambiguity in the user defined conversion sequence is only a problem
 				//if this function turns out to be the best.
-				currHasAmbiguousParam = ( currFnCost[ j ].userDefined == 1 );
-				
+				currHasAmbiguousParam = ( currCost.userDefined == 1 );
 				if( bestFnCost != null ){
-					comparison = currFnCost[ j ].compare( bestFnCost[ j ] );
+					comparison = currCost.compare( bestFnCost[ bestFnCost.length - j ] );
 					hasWorse |= ( comparison < 0 );
 					hasBetter |= ( comparison > 0 );
 				} else {

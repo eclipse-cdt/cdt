@@ -62,6 +62,9 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 	ICPPASTTranslationUnit tu = null;
 	public CPPNamespace( ICPPASTNamespaceDefinition nsDef ){
 	    findAllDefinitions( nsDef );
+	    if( namespaceDefinitions.length == 0 ){
+	    	namespaceDefinitions = (IASTName[]) ArrayUtil.append( IASTName.class, namespaceDefinitions, nsDef.getName() );
+	    }
 	}
 	
     /* (non-Javadoc)

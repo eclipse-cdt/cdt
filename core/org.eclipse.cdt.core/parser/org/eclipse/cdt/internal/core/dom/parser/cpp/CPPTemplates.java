@@ -488,7 +488,7 @@ public class CPPTemplates {
 					else if( !t.isSameType( arg ) ){
 						continue outer;
 					}
-				} else if( arg == null || !matchTemplateParameterAndArgument( param, arg )){
+				} else if( arg == null || !matchTemplateParameterAndArgument( param, arg, map )){
 					continue outer;
 				}
 			}
@@ -541,7 +541,7 @@ public class CPPTemplates {
 					arg = (IType) map.get( param );
 				}
 				
-				if( arg == null || !matchTemplateParameterAndArgument( param, arg ) )
+				if( arg == null || !matchTemplateParameterAndArgument( param, arg, map ) )
 					return null;
 				
 				result[i] = arg;
@@ -1394,7 +1394,7 @@ public class CPPTemplates {
 		//TODO
 		return true;	
 	}
-	static protected boolean matchTemplateParameterAndArgument( ICPPTemplateParameter param, IType argument ){
+	static protected boolean matchTemplateParameterAndArgument( ICPPTemplateParameter param, IType argument, ObjectMap map ){
 		if( !isValidArgument(param, argument) ){
 			return false;
 		}
@@ -1431,6 +1431,9 @@ public class CPPTemplates {
 		} else {
 			try {
 				IType pType = ((ICPPTemplateNonTypeParameter)param).getType();
+				if( map != null && pType != null && map.containsKey( pType ) ){
+					pType = (IType) map.get( pType );
+				}
 				Cost cost = CPPSemantics.checkStandardConversionSequence( argument, pType );
 					
 				if( cost == null || cost.rank == Cost.NO_MATCH_RANK ){
@@ -1532,7 +1535,7 @@ public class CPPTemplates {
 				}
 			}
 			
-			if( CPPTemplates.matchTemplateParameterAndArgument( param, arg ) ){
+			if( CPPTemplates.matchTemplateParameterAndArgument( param, arg, map ) ){
 				map.put( param, arg );
 				actualArgs[i] = arg;
 			} else {

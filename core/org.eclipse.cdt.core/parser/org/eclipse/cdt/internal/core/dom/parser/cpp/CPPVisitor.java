@@ -821,7 +821,10 @@ public class CPPVisitor {
 				}
 			}
 		} catch( DOMException e ){
-		    return e.getProblem();
+			IProblemBinding problem = e.getProblem();
+			if( problem instanceof ICPPScope )
+				return problem;
+			return new CPPScope.CPPScopeProblem( problem.getASTNode(), problem.getID(), problem.getNameCharArray() ); 
 		}
 		return getContainingScope( parent );
 	}

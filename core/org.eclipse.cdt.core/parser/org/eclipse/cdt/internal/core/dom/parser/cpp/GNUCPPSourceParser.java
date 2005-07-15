@@ -365,9 +365,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tCOMPLETION:
             case IToken.tEOC:
                 last = consume();
-                last = consumeTemplateArguments(last, argumentList);
-                if (last.getType() == IToken.tGT)
+                IToken templateLast = consumeTemplateArguments(last, argumentList);
+                if (last != templateLast) {
+                    last = templateLast;
                     hasTemplateId = true;
+                }
                 break;
 
             default:

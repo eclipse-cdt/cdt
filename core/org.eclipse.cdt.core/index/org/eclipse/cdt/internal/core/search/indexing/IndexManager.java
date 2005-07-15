@@ -433,12 +433,13 @@ public class IndexManager extends JobManager{
    protected ICDTIndexer getIndexer(IProject project) {
    	ICDTIndexer indexer = null;
    	try{
-		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project,true);
-		ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID, false);
-		
-		if (cextensions != null && cextensions.length > 0)
-			indexer = (ICDTIndexer) cextensions[0].createExtension();
-	
+		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+		if (cdesc != null) {
+            ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.INDEXER_UNIQ_ID, true);
+    		
+    		if (cextensions != null && cextensions.length > 0)
+    			indexer = (ICDTIndexer) cextensions[0].createExtension();
+        }
    	} catch (CoreException e){}
    	
 	if (indexer == null)

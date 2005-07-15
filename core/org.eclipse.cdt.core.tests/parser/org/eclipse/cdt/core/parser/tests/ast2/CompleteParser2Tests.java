@@ -2162,7 +2162,109 @@ public class CompleteParser2Tests extends TestCase {
     
 	public void testPredefinedSymbol_bug70928() throws Exception {
 		// GNU builtin storage class type __cdecl preceded by a custom return type 
-		parse("typedef int size_t; \n int __cdecl foo(); \n");//$NON-NLS-1$
+		Writer writer = new StringWriter();
+		writer.write( "#define __cdecl __attribute__ ((__cdecl__))\n" ); //$NON-NLS-1$
+		writer.write( "typedef int size_t; \n int __cdecl foo(); \n" ); //$NON-NLS-1$
+		parse(writer.toString(), true, ParserLanguage.CPP, true);//$NON-NLS-1$
+	}
+	
+	public void testPredefinedSymbol_bug70928_infinite_loop_test1() throws Exception {
+		// GNU builtin storage class type __cdecl preceded by a custom return type 
+		Writer writer = new StringWriter();
+		writer.write( "#define __cdecl __attribute__ ((__cdecl__))\n" ); //$NON-NLS-1$
+		writer.write( "typedef int size_t; \n int __cdecl foo(); \n" ); //$NON-NLS-1$
+		parse(writer.toString(), false, ParserLanguage.CPP, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
+		parse(writer.toString(), false, ParserLanguage.C, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
+	}
+	
+	public void testPredefinedSymbol_bug70928_infinite_loop_test2() throws Exception {
+		// GNU builtin storage class type __cdecl preceded by a custom return type 
+		Writer writer = new StringWriter();
+		writer.write( "int x __attribute__ ((aligned (16))) = 0;\n" ); //$NON-NLS-1$
+		parse(writer.toString(), false, ParserLanguage.CPP, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
+		parse(writer.toString(), false, ParserLanguage.C, false);//$NON-NLS-1$ // test for an infinite loop if the GCC extensions aren't supported
+	}
+	
+	public void testBug102376() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write( "int func1 (void) __attribute__((,id2,id (,,),,,));\n" ); //$NON-NLS-1$
+		writer.write( "int func2 (void) __attribute__((id,id (id)));\n" ); //$NON-NLS-1$
+		writer.write( "int func3 (void) __attribute__((id,id (3)));\n" ); //$NON-NLS-1$
+		writer.write( "int func4 (void) __attribute__((id,id (1+2)));\n" ); //$NON-NLS-1$
+		writer.write( "void (****f1)(void) __attribute__((noreturn));\n" ); //$NON-NLS-1$
+/* not yet supported by the GCC compiler:	
+ * 	    writer.write( "void (__attribute__((noreturn)) ****f2) (void);\n" ); //$NON-NLS-1$
+ *		writer.write( "char *__attribute__((aligned(8))) *f3;\n" ); //$NON-NLS-1$
+ *		writer.write( "char * __attribute__((aligned(8))) * f3;\n" ); //$NON-NLS-1$
+*/		writer.write( "void fatal1 () __attribute__ ((noreturn));\n" ); //$NON-NLS-1$
+		writer.write( "int square1 (int) __attribute__ ((pure));\n" ); //$NON-NLS-1$
+		writer.write( "extern int\n" ); //$NON-NLS-1$
+		writer.write( "my_printf1 (void *my_object, const char *my_format, ...)\n" ); //$NON-NLS-1$
+		writer.write( "__attribute__ ((format (printf, 2, 3)));\n" ); //$NON-NLS-1$
+		writer.write( "extern char *\n" ); //$NON-NLS-1$
+		writer.write( "my_dgettext1 (char *my_domain, const char *my_format)\n" ); //$NON-NLS-1$
+		writer.write( "__attribute__ ((format_arg (2)));\n" ); //$NON-NLS-1$
+		writer.write( "extern void *\n" ); //$NON-NLS-1$
+		writer.write( "my_memcpy1 (void *dest, const void *src, size_t len)\n" ); //$NON-NLS-1$
+		writer.write( "__attribute__((nonnull (1, 2)));\n" ); //$NON-NLS-1$
+		writer.write( "extern void *\n" ); //$NON-NLS-1$
+		writer.write( "my_memcpy2 (void *dest, const void *src, size_t len)\n" ); //$NON-NLS-1$
+		writer.write( "__attribute__((nonnull));\n" ); //$NON-NLS-1$
+		writer.write( "extern void foobar3 (void) __attribute__ ((section (\"bar\")));\n" ); //$NON-NLS-1$
+		writer.write( "int old_fn () __attribute__ ((deprecated));\n" ); //$NON-NLS-1$
+		writer.write( "void f5 () __attribute__ ((weak, alias (\"__f\")));\n" ); //$NON-NLS-1$
+		writer.write( "void __attribute__ ((visibility (\"protected\")))\n" ); //$NON-NLS-1$
+		writer.write( "f6 () { /* Do something. */; }\n" ); //$NON-NLS-1$
+		writer.write( "int i2 __attribute__ ((visibility (\"hidden\")));\n" ); //$NON-NLS-1$
+		writer.write( "void f7 () __attribute__ ((interrupt (\"IRQ\")));\n" ); //$NON-NLS-1$
+		writer.write( "void *alt_stack9;\n" ); //$NON-NLS-1$
+		writer.write( "void f8 () __attribute__ ((interrupt_handler,\n" ); //$NON-NLS-1$
+		writer.write( "sp_switch (\"alt_stack\")));\n" ); //$NON-NLS-1$
+		writer.write( "int x1 __attribute__ ((aligned (16))) = 0;\n" ); //$NON-NLS-1$
+		writer.write( "struct foo11 { int x[2] __attribute__ ((aligned (8))); };\n" ); //$NON-NLS-1$
+		writer.write( "short array12[3] __attribute__ ((aligned));\n" ); //$NON-NLS-1$
+		writer.write( "extern int old_var14 __attribute__ ((deprecated));\n" ); //$NON-NLS-1$
+		writer.write( "struct foo13\n" ); //$NON-NLS-1$
+		writer.write( "{\n" ); //$NON-NLS-1$
+		writer.write( "char a15;\n" ); //$NON-NLS-1$
+		writer.write( "int x16[2] __attribute__ ((packed));\n" ); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
+		writer.write( "struct duart15 a16 __attribute__ ((section (\"DUART_A\"))) = { 0 };\n" ); //$NON-NLS-1$
+		writer.write( "struct duart15 b17 __attribute__ ((section (\"DUART_B\"))) = { 0 };\n" ); //$NON-NLS-1$
+		writer.write( "char stack18[10000] __attribute__ ((section (\"STACK\"))) = { 0 };\n" ); //$NON-NLS-1$
+		writer.write( "int init_data19 __attribute__ ((section (\"INITDATA\"))) = 0;\n" ); //$NON-NLS-1$
+		writer.write( "int foo20 __attribute__((section (\"shared\"), shared)) = 0;\n" ); //$NON-NLS-1$
+		writer.write( "int foo21 __attribute__ ((vector_size (16)));\n" ); //$NON-NLS-1$
+		writer.write( "struct S22 { int a23; };\n" ); //$NON-NLS-1$
+		writer.write( "struct S24  __attribute__ ((vector_size (16))) foo;\n" ); //$NON-NLS-1$
+		writer.write( "struct S25 { short f27[3]; } __attribute__ ((aligned (8)));\n" ); //$NON-NLS-1$
+		writer.write( "typedef int more_aligned_int __attribute__ ((aligned (8)));\n" ); //$NON-NLS-1$
+		writer.write( "struct S26 { short f28[3]; } __attribute__ ((aligned));\n" ); //$NON-NLS-1$
+		writer.write( "\n" ); //$NON-NLS-1$
+		writer.write( "struct my_unpacked_struct29\n" ); //$NON-NLS-1$
+		writer.write( "{\n" ); //$NON-NLS-1$
+		writer.write( "char c;\n" ); //$NON-NLS-1$
+		writer.write( "int i;\n" ); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
+		writer.write( "          \n" ); //$NON-NLS-1$
+		writer.write( "struct my_packed_struct __attribute__ ((__packed__))\n" ); //$NON-NLS-1$
+		writer.write( "{\n" ); //$NON-NLS-1$
+		writer.write( "char c;\n" ); //$NON-NLS-1$
+		writer.write( "int  i;\n" ); //$NON-NLS-1$
+		writer.write( "struct my_unpacked_struct29 s;\n" ); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
+		writer.write( "\n" ); //$NON-NLS-1$
+		writer.write( "typedef union\n" ); //$NON-NLS-1$
+		writer.write( "{\n" ); //$NON-NLS-1$
+		writer.write( "int *__ip;\n" ); //$NON-NLS-1$
+		writer.write( "union wait *__up;\n" ); //$NON-NLS-1$
+		writer.write( "} wait_status_ptr_t __attribute__ ((__transparent_union__));\n" ); //$NON-NLS-1$
+		writer.write( "\n" ); //$NON-NLS-1$
+		writer.write( "typedef int T1 __attribute__ ((deprecated));\n" ); //$NON-NLS-1$
+		writer.write( "typedef short __attribute__((__may_alias__)) short_a;\n" ); //$NON-NLS-1$
+		writer.write( "extern const unsigned short int ** __ctype_b_loc (void) __attribute__ ((__const));" ); //$NON-NLS-1$
+		parse( writer.toString(), true, ParserLanguage.C, true );
+		parse( writer.toString(), true, ParserLanguage.CPP, true );
 	}
 
     public void testBug73652() throws Exception

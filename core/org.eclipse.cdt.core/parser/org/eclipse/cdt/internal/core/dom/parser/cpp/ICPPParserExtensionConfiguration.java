@@ -31,5 +31,6 @@ public interface ICPPParserExtensionConfiguration {
     public boolean supportLongLongs();
 	public boolean supportKnRC();
 	public boolean supportGCCOtherBuiltinSymbols();
+	public boolean supportAttributeSpecifiers();
 
 }

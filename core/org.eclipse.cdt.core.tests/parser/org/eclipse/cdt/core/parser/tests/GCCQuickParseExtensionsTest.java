@@ -106,6 +106,24 @@ public class GCCQuickParseExtensionsTest extends BaseASTTest {
 		assertEquals( f.getName(), "func2"); //$NON-NLS-1$
     }
     
+    public void testBug39704E() throws Exception
+    {
+		IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int * __attribute__((dllimport)) (* import) (void);"); //$NON-NLS-1$
+		assertEquals( d.getName(), "import"); // false assertion  //$NON-NLS-1$
+    }
+    
+    public void testBug39704F() throws Exception
+    {
+		IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int __attribute__((dllimport)) (* import) (void);"); //$NON-NLS-1$
+		assertEquals( d.getName(), "import"); // false assertion  //$NON-NLS-1$
+    }
+
+    public void testBug39704G() throws Exception
+    {
+		IASTVariable d = (IASTVariable)assertSoleDeclaration("int x __attribute__ ((aligned (16))) = 0;"); //$NON-NLS-1$
+		assertEquals( d.getName(), "x"); // false assertion  //$NON-NLS-1$
+    }
+    
     public void testBug39686() throws Exception
     {
         Writer code = new StringWriter();

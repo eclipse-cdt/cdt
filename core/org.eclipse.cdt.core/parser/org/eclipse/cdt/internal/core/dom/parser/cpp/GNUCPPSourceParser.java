@@ -535,6 +535,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
 
         for (;;) {
+// 			having __attribute__ inbetween pointers is not yet supported by the GCC compiler
+//        	if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after a *
+//            	__attribute__();
+        	
             if (LT(1) == IToken.tAMPER) {
                 int length = LA(1).getEndOffset() - LA(1).getOffset();
                 int o = consume(IToken.tAMPER).getOffset();
@@ -1965,7 +1969,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         super(scanner, log, mode, config.supportStatementsInExpressions(),
                 config.supportTypeofUnaryExpressions(), config
                         .supportAlignOfUnaryExpression(), config.supportKnRC(),
-                config.supportGCCOtherBuiltinSymbols());
+                config.supportGCCOtherBuiltinSymbols(), config.supportAttributeSpecifiers());
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config.supportExtendedTemplateSyntax();
         supportMinAndMaxOperators = config.supportMinAndMaxOperators();
@@ -3456,6 +3460,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     flags.setEncounteredTypename(true);
                     break;
                 }
+            case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
+            	if (supportAttributeSpecifiers)
+            		__attribute__();
+            	else
+            		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
+            	break;
             default:
                 if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
                     typeofExpression = unaryTypeofExpression();
@@ -3833,6 +3843,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         overallLoop: do {
 
             consumePointerOperators(pointerOps);
+            
+            // if __attribute__ is after the pointer ops and before the declarator ex: void * __attribute__((__cdecl__)) foo();
+            if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
+            	__attribute__();
+            
             if (!pointerOps.isEmpty())
                 finalOffset = calculateEndOffset((IASTNode) pointerOps
                         .get(pointerOps.size() - 1));
@@ -3945,6 +3960,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         tryEncountered = true;
                         break overallLoop;
                     }
+                    
+                    if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
+                    	__attribute__();
 
                     IToken beforeCVModifier = mark();
                     IToken[] cvModifiers = new IToken[2];
@@ -4044,6 +4062,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     bitField = constantExpression();
                     finalOffset = calculateEndOffset(bitField);
                     break;
+                case IGCCToken.t__attribute__:  // if __attribute__ is after the declarator
+                	if(supportAttributeSpecifiers)
+                		__attribute__();
+                	else
+                		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
+                	break;
                 default:
                     break;
                 }
@@ -4253,6 +4277,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             name = createName(name());
         else
             name = createName();
+        
+        if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class identifier and before the { or ;
+        	__attribute__();
 
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);

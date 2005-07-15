@@ -60,9 +60,6 @@ public abstract class GNUScannerExtensionConfiguration implements IScannerExtens
     private static final ObjectStyleMacro __signed__ = new ObjectStyleMacro(
             "__signed__".toCharArray(), "signed".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 
-    private static final ObjectStyleMacro __cdecl = new ObjectStyleMacro(
-            "__cdecl".toCharArray(), emptyCharArray); //$NON-NLS-1$
-
     private static final ObjectStyleMacro __complex__ = new ObjectStyleMacro(
             "__complex__".toCharArray(), "_Complex".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -74,15 +71,6 @@ public abstract class GNUScannerExtensionConfiguration implements IScannerExtens
     
     private static final ObjectStyleMacro __null = new ObjectStyleMacro(
     		"__null".toCharArray(), "(void *)0".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-
-    private static final FunctionStyleMacro __attribute__ = new FunctionStyleMacro(
-            "__attribute__".toCharArray(), //$NON-NLS-1$
-            emptyCharArray, new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
-
-    private static final FunctionStyleMacro __declspec = new FunctionStyleMacro(
-            "__declspec".toCharArray(), //$NON-NLS-1$
-            emptyCharArray, new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
-
 
     private static final FunctionStyleMacro __builtin_va_arg = new FunctionStyleMacro(
             "__builtin_va_arg".toCharArray(), //$NON-NLS-1$
@@ -100,12 +88,9 @@ public abstract class GNUScannerExtensionConfiguration implements IScannerExtens
     public CharArrayObjectMap getAdditionalMacros() {
         CharArrayObjectMap realDefinitions = new CharArrayObjectMap(16);
         realDefinitions.put(__inline__.name, __inline__);
-        realDefinitions.put(__cdecl.name, __cdecl);
         realDefinitions.put(__const__.name, __const__);
         realDefinitions.put(__const.name, __const);
         realDefinitions.put(__extension__.name, __extension__);
-        realDefinitions.put(__attribute__.name, __attribute__);
-        realDefinitions.put(__declspec.name, __declspec);
         realDefinitions.put(__restrict__.name, __restrict__);
         realDefinitions.put(__restrict.name, __restrict);
         realDefinitions.put(__volatile__.name, __volatile__);

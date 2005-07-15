@@ -27,5 +27,12 @@ public interface ICParserExtensionConfiguration {
 	 * @return
 	 */
 	public boolean supportGCCOtherBuiltinSymbols();
+	
+	/**
+	 * See http://gcc.gnu.org/onlinedocs/gcc-3.4.4/gcc/Attribute-Syntax.html#Attribute-Syntax
+	 * for more information on GCC's Attribute Specifiers.
+	 * @return
+	 */
+	public boolean supportAttributeSpecifiers();
 
 }

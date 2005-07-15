@@ -36,6 +36,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
         CharArrayIntMap additionalCPPKeywords = new CharArrayIntMap( 8, -1 );
 		additionalCPPKeywords.put( GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
 		additionalCPPKeywords.put( GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );		
+		additionalCPPKeywords.put( GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
 		additionalCPPKeywords.put( Keywords.cRESTRICT, IToken.t_restrict );
 		additionalCPPKeywords.put( Keywords.c_COMPLEX, IToken.t__Complex );
 		additionalCPPKeywords.put( Keywords.c_IMAGINARY, IToken.t__Imaginary );

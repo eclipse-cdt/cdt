@@ -42,6 +42,12 @@ public class GCCScannerExtensionsTest extends BaseScanner2Test {
     	initializeScanner(
     			"#define __cdecl __attribute__((cdecl))\n" + //$NON-NLS-1$
 				"__cdecl;"); //$NON-NLS-1$
+    	validateToken(IGCCToken.t__attribute__);
+    	validateToken(IToken.tLPAREN);
+    	validateToken(IToken.tLPAREN);
+    	validateToken(IToken.tIDENTIFIER);
+    	validateToken(IToken.tRPAREN);
+    	validateToken(IToken.tRPAREN);
     	validateToken(IToken.tSEMI);
     	validateEOF();
 	}

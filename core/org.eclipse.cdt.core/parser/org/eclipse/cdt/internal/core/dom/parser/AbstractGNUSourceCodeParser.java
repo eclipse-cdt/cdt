@@ -87,12 +87,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected final boolean supportKnRC;
 
     protected final boolean supportGCCOtherBuiltinSymbols;
+    
+    protected final boolean supportAttributeSpecifiers;
 
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
             boolean supportStatementsInExpressions,
             boolean supportTypeOfUnaries, boolean supportAlignOfUnaries,
-            boolean supportKnRC, boolean supportGCCOtherBuiltinSymbols) {
+            boolean supportKnRC, boolean supportGCCOtherBuiltinSymbols,
+            boolean supportAttributeSpecifiers) {
         this.scanner = scanner;
         this.log = logService;
         this.mode = parserMode;
@@ -101,6 +104,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         this.supportAlignOfUnaries = supportAlignOfUnaries;
         this.supportKnRC = supportKnRC;
         this.supportGCCOtherBuiltinSymbols = supportGCCOtherBuiltinSymbols;
+        this.supportAttributeSpecifiers = supportAttributeSpecifiers;
     }
 
     protected boolean parsePassed = true;
@@ -2125,4 +2129,88 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return parseDeclarationOrExpressionStatement();
     }
 
+    protected void __attribute__() throws BacktrackException, EndOfFileException {
+    	IToken token = LA(1);
+    	
+    	if (token.getType() == IGCCToken.t__attribute__) {
+    		consume();
+    		
+    		token = LA(1);
+    		
+    		if (token.getType() == IToken.tLPAREN) {
+    			consume();
+            	while(true) {
+            		token = LA(1);
+            		switch(token.getType()) {
+            			case IToken.tLPAREN:
+            				consume();
+                        	boolean ident=false;
+                        	boolean comma1=false;
+                        	boolean first=true;
+            				whileLoop: while(true) {
+            					token = LA(1);
+            					switch(token.getType()) {
+            						case IToken.tIDENTIFIER:
+           								if (comma1 || first) {
+           									ident=true;
+           									first=false;
+           								} else {
+           									throwBacktrack(token.getOffset(), token.getLength());
+           								}
+            							consume();
+            							break;
+            						case IToken.tLPAREN:
+            							consume();
+            							if (ident) {
+            								token = LA(1);
+            								// consume the parameters
+            								whileLoop2: while(true) {
+            									try {
+            										expression();
+            									} catch (BacktrackException be) {
+            										switch(LT(1)) {
+	            										case IToken.tCOMMA:
+	            											consume();
+	            											break;
+	            										case IToken.tRPAREN:
+	            											consume();
+	            											break whileLoop2;
+	            										default:
+	            											throwBacktrack(be);
+            										}
+            									}
+            								}
+            							} else {
+            								throwBacktrack(token.getOffset(), token.getLength()); // can't have __attribute((()))
+            							}
+            							break;
+            						case IToken.tRPAREN:
+           								consume();
+           								break whileLoop;
+            						case IToken.tCOMMA:
+            							if (ident) {
+            								ident=false;
+            								comma1=true;
+            							}
+            							consume();            								
+            							break;
+            						case IToken.t_const:
+            							consume();
+            							break;
+            						default:
+           								throwBacktrack(token.getOffset(), token.getLength());
+            							break;
+            					}
+            				}
+            				break;
+            			case IToken.tRPAREN: // finished
+            				consume();
+            				return;
+            			default:
+            				throwBacktrack(token.getOffset(), token.getLength());
+            		}
+            	}
+    		}
+    	}
+    }
 }

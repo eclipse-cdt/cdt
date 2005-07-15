@@ -58,4 +58,11 @@ public class GCCParserExtensionConfiguration implements
 		return true;
 	}
 	
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration#supportAttributeSpecifiers()
+     */
+	public boolean supportAttributeSpecifiers() {
+		return true;
+	}
+	
 }

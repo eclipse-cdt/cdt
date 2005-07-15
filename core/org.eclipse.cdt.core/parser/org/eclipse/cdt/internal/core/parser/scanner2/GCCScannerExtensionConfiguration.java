@@ -68,6 +68,7 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
         CharArrayIntMap result = new CharArrayIntMap( 4, -1 );
 		result.put( GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
 		result.put( GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
+		result.put( GCCKeywords.cp__ATTRIBUTE__, IGCCToken.t__attribute__ );
         return result;
     }
 

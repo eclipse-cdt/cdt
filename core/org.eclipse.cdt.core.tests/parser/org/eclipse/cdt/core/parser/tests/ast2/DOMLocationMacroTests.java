@@ -222,16 +222,17 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     public void testStdioBug() throws ParserException
     {
         StringBuffer buffer = new StringBuffer( "#define    _PTR        void *\n"); //$NON-NLS-1$
+        buffer.append( "#define __cdecl __attribute__ ((__cdecl__))\n" ); //$NON-NLS-1$
         buffer.append( "#define _EXFUN(name, proto)     __cdecl name proto\n"); //$NON-NLS-1$
         buffer.append( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));\n"); //$NON-NLS-1$
         String code = buffer.toString();
         
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
                 : null) {
-            IASTTranslationUnit tu = parse(code, p);
+            IASTTranslationUnit tu = parse(code, p, true, true);
             final IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
             IASTPreprocessorObjectStyleMacroDefinition _PTR = (IASTPreprocessorObjectStyleMacroDefinition) macroDefinitions[0];
-            IASTPreprocessorFunctionStyleMacroDefinition _EXFUN = (IASTPreprocessorFunctionStyleMacroDefinition) macroDefinitions[1];
+            IASTPreprocessorFunctionStyleMacroDefinition _EXFUN = (IASTPreprocessorFunctionStyleMacroDefinition) macroDefinitions[2];
             IASTSimpleDeclaration memchr = (IASTSimpleDeclaration) tu.getDeclarations()[0];
             IASTNodeLocation [] locations = memchr.getNodeLocations();
             assertEquals( locations.length, 4 );

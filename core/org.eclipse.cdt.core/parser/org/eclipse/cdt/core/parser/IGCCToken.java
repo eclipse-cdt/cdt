@@ -21,5 +21,6 @@ public interface IGCCToken extends IToken {
 	public static final int t___alignof__ = tLAST + 2;
 	public static final int tMAX = tLAST + 3;
 	public static final int tMIN = tLAST + 4;
+	public static final int t__attribute__ = tLAST + 5;
 	
 }

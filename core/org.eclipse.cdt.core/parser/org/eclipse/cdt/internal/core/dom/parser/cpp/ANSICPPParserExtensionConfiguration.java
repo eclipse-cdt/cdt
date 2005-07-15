@@ -93,4 +93,11 @@ public class ANSICPPParserExtensionConfiguration implements
 		return false;
 	}
 
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration#supportAttributeSpecifiers()
+     */
+	public boolean supportAttributeSpecifiers() {
+		return false;
+	}
+
 }

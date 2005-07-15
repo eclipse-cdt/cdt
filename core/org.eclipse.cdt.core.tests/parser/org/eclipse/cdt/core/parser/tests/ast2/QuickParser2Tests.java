@@ -1459,11 +1459,17 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug39704A() throws Exception {
-        parse("__declspec (dllimport) int foo;"); //$NON-NLS-1$
+    	StringWriter writer = new StringWriter();
+    	writer.write("#define __declspec(x) __attribute__((x))"); //$NON-NLS-1$
+    	writer.write("__declspec (dllimport) int foo;"); //$NON-NLS-1$
+        parse( writer.toString() );
     }
 
     public void testBug39704D() throws Exception {
-        parse("__declspec(dllexport) int func1 (int a) {}"); //$NON-NLS-1$
+    	StringWriter writer = new StringWriter();
+    	writer.write("#define __declspec(x) __attribute__((x))"); //$NON-NLS-1$
+    	writer.write("__declspec(dllexport) int func1 (int a) {}"); //$NON-NLS-1$
+        parse( writer.toString() );    	
     }
 
     public void testBug39695() throws Exception {

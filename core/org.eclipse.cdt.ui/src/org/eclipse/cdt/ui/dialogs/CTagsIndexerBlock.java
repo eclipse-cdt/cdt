@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.dialogs;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
@@ -125,6 +126,9 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 						orig = cext[i].getExtensionData("ctagsindexincludes"); //$NON-NLS-1$
 						if (orig == null || !orig.equals(indexIncludeFiles)) {
 							cext[i].setExtensionData("ctagsindexincludes", indexIncludeFiles); //$NON-NLS-1$
+							if (indexIncludeFiles.equals( "true")){ //$NON-NLS-1$
+								CCorePlugin.getDefault().getCoreModel().getIndexManager().addResource(proj,proj);
+							}
 						}
 						orig = cext[i].getExtensionData("ctagslocationtype"); //$NON-NLS-1$
 						if (orig == null || !orig.equals(cTagsLocationType)) {

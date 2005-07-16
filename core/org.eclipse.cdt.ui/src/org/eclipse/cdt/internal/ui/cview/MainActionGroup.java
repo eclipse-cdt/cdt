@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
+import org.eclipse.cdt.internal.ui.search.actions.AddToIndexAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
@@ -77,6 +78,8 @@ public class MainActionGroup extends CViewActionGroup {
 	WorkingSetFilterActionGroup workingSetGroup;
 	CustomFiltersActionGroup fCustomFiltersActionGroup;	
 
+	AddToIndexAction addToIndexAction; 
+	
 	SelectionSearchGroup selectionSearchGroup;
 	RefactoringActionGroup refactoringActionGroup;
 
@@ -163,6 +166,7 @@ public class MainActionGroup extends CViewActionGroup {
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
 		refactoringActionGroup = new RefactoringActionGroup(getCView().getSite(), null);	
 		
+		addToIndexAction = new AddToIndexAction(getCView().getSite());
 	}
 
 	/**
@@ -183,6 +187,9 @@ public class MainActionGroup extends CViewActionGroup {
 			menu.add(importAction);
 			exportAction.selectionChanged(resources);
 			menu.add(exportAction);
+			//Can be added once support for manually adding external files to index is established
+			/*menu.add(new Separator());
+			menu.add(addToIndexAction);*/
 			menu.add(new Separator());
 			addSearchMenu(menu, celements);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -197,6 +204,8 @@ public class MainActionGroup extends CViewActionGroup {
 		openFileGroup.fillContextMenu(menu);
 		menu.add(new Separator());
 		buildGroup.fillContextMenu(menu);
+		menu.add(new Separator());
+		menu.add(addToIndexAction);
 		menu.add(new Separator());
 		refactorGroup.fillContextMenu(menu);
 		menu.add(new Separator());

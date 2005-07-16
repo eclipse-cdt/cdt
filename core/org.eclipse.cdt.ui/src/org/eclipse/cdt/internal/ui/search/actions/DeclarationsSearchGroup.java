@@ -39,12 +39,14 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	private IWorkbenchSite fSite;
 	
 	private FindDeclarationsAction fFindDeclarationsAction;
+	private FindDeclarationsProjectAction fFindDeclarationsProjectAction;
 	private FindDeclarationsInWorkingSetAction fFindDeclarationsInWorkingSetAction;
 	
 	private ArrayList actions;
 	
 	public DeclarationsSearchGroup(IWorkbenchSite site) {
 		fFindDeclarationsAction= new FindDeclarationsAction(site);
+		fFindDeclarationsProjectAction = new FindDeclarationsProjectAction(site);
 		fFindDeclarationsInWorkingSetAction = new FindDeclarationsInWorkingSetAction(site,null);
 		fSite = site;
 	}
@@ -59,6 +61,9 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		if (editor != null){
 			editor.setAction(ICEditorActionDefinitionIds.FIND_DECL, fFindDeclarationsAction);
 		}
+		
+		fFindDeclarationsProjectAction = new FindDeclarationsProjectAction(editor);
+		
 		fFindDeclarationsInWorkingSetAction = new FindDeclarationsInWorkingSetAction(editor,null);
 	}
 	/* 
@@ -83,6 +88,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		
 		FindAction[] actions = getWorkingSetActions();
 		incomingMenu.add(fFindDeclarationsAction);
+		incomingMenu.add(fFindDeclarationsProjectAction);
 		incomingMenu.add(fFindDeclarationsInWorkingSetAction);
 		
 		for (int i=0; i<actions.length; i++){
@@ -136,6 +142,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	 */
 	public void dispose() {
 		fFindDeclarationsAction= null;
+		fFindDeclarationsProjectAction=null;
 		fFindDeclarationsInWorkingSetAction= null;
 		super.dispose();
 	}

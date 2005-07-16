@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
@@ -133,7 +134,28 @@ public class CSearchScopeFactory {
 		return createCSearchScope( cElements );
 	}
 	
+	/**
+	 * @param fStructuredSelection
+	 * @return
+	 */
+	public ICSearchScope createEnclosingProjectScope(IStructuredSelection fStructuredSelection) {
+		Set cElements = new HashSet( fStructuredSelection.size() );
+		
+		Iterator iter = fStructuredSelection.iterator();
+		while( iter.hasNext() ){
+			Object tempObj = iter.next(); 
+			if ( tempObj instanceof ICElement){
+				ICProject cproject = ((ICElement) tempObj).getCProject();
+				if (cproject != null)
+					cElements.add(cproject);
+			}
+			
+		}
+		
+		return createCSearchScope( cElements );
+	}
 
+	
 	/**
 	 * @param elements
 	 * @param match

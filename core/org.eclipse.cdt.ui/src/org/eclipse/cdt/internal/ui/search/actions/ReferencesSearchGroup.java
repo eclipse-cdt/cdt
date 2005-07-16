@@ -29,6 +29,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 public class ReferencesSearchGroup extends ActionGroup {
 
 	private FindRefsAction fFindRefsAction;
+	private FindRefsProjectAction fFindRefsProjectAction;
 	private FindRefsInWorkingSetAction fFindRefsInWorkingSetAction;
 	
 	private CEditor fEditor;
@@ -36,6 +37,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 	
 	public ReferencesSearchGroup(IWorkbenchSite site) {
 		fFindRefsAction= new FindRefsAction(site);
+		fFindRefsProjectAction = new FindRefsProjectAction(site);
 		fFindRefsInWorkingSetAction = new FindRefsInWorkingSetAction(site, null);
 		fSite=site;
 	}
@@ -51,6 +53,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 		if (editor != null){
 			editor.setAction(ICEditorActionDefinitionIds.FIND_REFS, fFindRefsAction);
 		}
+		fFindRefsProjectAction = new FindRefsProjectAction(editor);
 		fFindRefsInWorkingSetAction = new FindRefsInWorkingSetAction(editor, null);
 	}
 	
@@ -81,6 +84,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 		
 		FindAction[] actions = getWorkingSetActions();
 		incomingMenu.add(fFindRefsAction);
+		incomingMenu.add(fFindRefsProjectAction);
 		incomingMenu.add(fFindRefsInWorkingSetAction);
 		
 		for (int i=0; i<actions.length; i++){
@@ -115,6 +119,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 	 */
 	public void dispose() {
 		fFindRefsAction= null;
+		fFindRefsProjectAction=null;
 		fFindRefsInWorkingSetAction= null;
 		super.dispose();
 	}

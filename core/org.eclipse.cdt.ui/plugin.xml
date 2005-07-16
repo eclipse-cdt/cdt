@@ -1064,13 +1064,14 @@
          name="CSearchPage"
          point="org.eclipse.search.searchPages">
       <page
-            showScopeSection="true"
-            label="%CSearchPage.label"
+            canSearchEnclosingProjects="true"
+            class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             extensions="c:90,cpp:90, cxx:90, cc:90,C:90, h:90, hh:90, hpp:90, H:90"
             icon="icons/obj16/csearch_obj.gif"
-            class="org.eclipse.cdt.internal.ui.search.CSearchPage"
-            sizeHint="460, 160"
-            id="org.eclipse.cdt.ui.CSearchPage">
+            id="org.eclipse.cdt.ui.CSearchPage"
+            label="%CSearchPage.label"
+            showScopeSection="true"
+            sizeHint="460, 160">
       </page>
    </extension>
    <extension

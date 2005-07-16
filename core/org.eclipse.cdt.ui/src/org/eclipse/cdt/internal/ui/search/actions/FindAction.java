@@ -105,12 +105,14 @@ public abstract class FindAction extends SelectionParseAction {
 	 		if (obj instanceof ISourceReference && fSite.getSelectionProvider() instanceof ProblemTreeViewer) {
 		 		try {
 		 			fEditor = ((ProblemTreeViewer)fSite.getSelectionProvider()).getEditor();
-		 			IDocument doc = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
-	 				ISourceReference ref = (ISourceReference)obj;
-
-					TextSelection selection = new TextSelection(doc, ref.getSourceRange().getIdStartPos(), ref.getSourceRange().getIdLength());
-					run(selection);
-					return;
+		 			if (fEditor != null){
+			 			IDocument doc = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		 				ISourceReference ref = (ISourceReference)obj;
+	
+						TextSelection selection = new TextSelection(doc, ref.getSourceRange().getIdStartPos(), ref.getSourceRange().getIdLength());
+						run(selection);
+						return;
+		 			}
 				} catch (Exception e) {
 				}
 	 		}

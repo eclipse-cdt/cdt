@@ -93,7 +93,7 @@ public class FindDeclarationsInWorkingSetAction extends FindAction {
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getLimitTo()
 	 */
 	protected LimitTo getLimitTo() {
-		return ICSearchConstants.DECLARATIONS;
+		return ICSearchConstants.DECLARATIONS_DEFINITIONS;
 	}
 
 }

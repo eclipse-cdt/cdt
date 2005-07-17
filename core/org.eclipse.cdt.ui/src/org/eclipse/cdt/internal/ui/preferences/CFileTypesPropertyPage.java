@@ -45,6 +45,54 @@ import org.osgi.service.prefs.Preferences;
  */
 public class CFileTypesPropertyPage extends PropertyPage {
 
+	class FixCFileTypesPreferenceBlock extends CFileTypesPreferenceBlock {
+		ArrayList list = new ArrayList();
+
+		public FixCFileTypesPreferenceBlock() {
+			super();
+		}
+
+		public FixCFileTypesPreferenceBlock(IProject input) {
+			super(input);
+		}
+
+		private IContentTypeManager.ContentTypeChangeEvent newContentTypeChangeEvent(IContentType source, IScopeContext context) {
+			return new IContentTypeManager.ContentTypeChangeEvent(source, context);
+		}
+
+		public boolean performOk() {
+			boolean changed = super.performOk();
+			if (changed) {
+				int size = list.size();
+				if (size > 0) {
+					IContentTypeManager.ContentTypeChangeEvent[] events = new IContentTypeManager.ContentTypeChangeEvent[size];
+					list.toArray(events);
+					CModelManager.getDefault().contentTypeChanged(events);
+				}
+			}
+			return changed;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferenceBlock#addAssociation(org.eclipse.core.runtime.preferences.IScopeContext, org.eclipse.core.runtime.content.IContentType, java.lang.String, int)
+		 */
+		protected void addAssociation(IScopeContext context, IContentType contentType, String spec, int type) {
+			super.addAssociation(context, contentType, spec, type);
+			// accumulate the events
+			list.add(newContentTypeChangeEvent(contentType, context));
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferenceBlock#removeAssociation(org.eclipse.core.runtime.preferences.IScopeContext, org.eclipse.core.runtime.content.IContentType, java.lang.String, int)
+		 */
+		protected void removeAssociation(IScopeContext context, IContentType contentType, String spec, int type) {
+			super.removeAssociation(context, contentType, spec, type);
+			// accumulate the events
+			list.add(newContentTypeChangeEvent(contentType, context));
+		}
+		
+	}
+
 	private static final String CONTENT_TYPE_PREF_NODE = "content-types"; //$NON-NLS-1$
 	private static final String FULLPATH_CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + CONTENT_TYPE_PREF_NODE;
 	private static final String PREF_LOCAL_CONTENT_TYPE_SETTINGS = "enabled"; //$NON-NLS-1$
@@ -57,7 +105,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 
 	protected Button fUseWorkspace;
 	protected Button fUseProject;
-	protected CFileTypesPreferenceBlock fPrefsBlock;
+	protected FixCFileTypesPreferenceBlock fPrefsBlock;
 	
 	public CFileTypesPropertyPage(){
 		super();
@@ -111,13 +159,13 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		blockPane.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		if (custom) {
-			fPrefsBlock = new CFileTypesPreferenceBlock(project);
+			fPrefsBlock = new FixCFileTypesPreferenceBlock(project);
 		} else {
-			fPrefsBlock = new CFileTypesPreferenceBlock();
+			fPrefsBlock = new FixCFileTypesPreferenceBlock();
 		}
 
 		fPrefsBlock.createControl(blockPane);
-		
+	
 		fUseWorkspace.setSelection(!custom);
 		fUseProject.setSelection(custom);
 		fPrefsBlock.setEnabled(custom);
@@ -162,7 +210,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			if (isProjectSpecificContentType(project.getName())) {
 				ProjectScope projectScope = new ProjectScope(project);
 				Preferences contentTypePrefs = projectScope.getNode(FULLPATH_CONTENT_TYPE_PREF_NODE);
-				// enable project-specific settings for this project
+				// disable project-specific settings for this project
 				contentTypePrefs.putBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
 				computeEvents(project);
 				try {
@@ -170,6 +218,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 				} catch (BackingStoreException e) {
 					// ignore ??
 				}
+				computeEvents(project);
 			}
 		}
 		return super.performOk();

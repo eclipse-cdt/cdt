@@ -1,4 +1,9 @@
 2005-07-09 Alain Magloire
+	Fix PR 102324: Fire event in the property page for change contentType
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPropertyPage.java
+
+2005-07-09 Alain Magloire
 	Fix PR 97963
 	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferncePage.java
 	+ src/org/eclipse/cdt/internal/ui/preferences/PreviewSourceViewer.java

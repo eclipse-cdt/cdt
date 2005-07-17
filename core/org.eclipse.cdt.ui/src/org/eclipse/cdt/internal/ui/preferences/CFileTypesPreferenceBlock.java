@@ -344,7 +344,7 @@ public class CFileTypesPreferenceBlock {
 		return assocs;
 	}
 
-	private void adjustAssociations(CFileTypeAssociation[] add, CFileTypeAssociation[] rem) {
+	protected void adjustAssociations(CFileTypeAssociation[] add, CFileTypeAssociation[] rem) {
 		IScopeContext context = null;
 		if (fInput != null) {
 			context = new ProjectScope(fInput);
@@ -353,7 +353,7 @@ public class CFileTypesPreferenceBlock {
 		removeAssociations(rem, context);
 	}
 
-	private void addAssociations(CFileTypeAssociation[] add, IScopeContext context) {
+	protected void addAssociations(CFileTypeAssociation[] add, IScopeContext context) {
 		for (int i = 0; i < add.length; ++i) {
 			CFileTypeAssociation assoc = add[i];
 			String spec = assoc.getSpec();
@@ -375,7 +375,7 @@ public class CFileTypesPreferenceBlock {
 		}
 	}
 
-	private void removeAssociations(CFileTypeAssociation[] rem, IScopeContext context) {
+	protected void removeAssociations(CFileTypeAssociation[] rem, IScopeContext context) {
 		for (int i = 0; i < rem.length; ++i) {
 			CFileTypeAssociation assoc = rem[i];
 			IContentType contentType = assoc.getContentType();

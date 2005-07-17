@@ -1,3 +1,9 @@
+2005-07-16 Alain Magloire
+	Fix for PR 102327: Fire deltas when contentType is changed.
+	* model/org/eclipse/cdt/core/model/ICElementDelta.java
+	* model/org/eclipse/cdt/internal/core/model/CElementDelta.java
+	* model/org/eclipse/cdt/internal/core/model/ContentTypeProcessor.java
+
 2005-07-14 Vladimir Hirsl
 	Fix for 103024: NPE in indexerEncoderUtil.nodeInVisitedExternalEheader
 	Project was not being set when creating indexer in IndexManager#getDefaultIndexer().

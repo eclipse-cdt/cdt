@@ -85,6 +85,10 @@ public class ContentTypeProcessor extends CModelOperation {
 	}
 
 	private boolean isRegisteredContentTypeId(String id) {
+		// bailout early
+		if (id == null || id.length() == 0) {
+			return false;
+		}
 		String[] ids = CoreModel.getRegistedContentTypeIds();
 		for (int i = 0; i < ids.length; i++) {
 			if (ids[i].equals(id)) {
@@ -95,6 +99,35 @@ public class ContentTypeProcessor extends CModelOperation {
 	}
 
 	protected void processContentType(ICElement celement, IContentType contentType, IScopeContext context) {
+		/*
+		 * We only know that an association was added/removed from the contentType.
+		 * we need to go to all the members that are in the cache(known ICElement) and recheck there
+		 * state to see if there were affected.  That also include children that were non-celement
+		 * the new assiociation may have turn them to new ICElement.
+		 * algo:
+		 *   if ICContainer check if we have a CElementinfo(children)
+		 *   	if yes, 
+		 *      	look at the members(IResource) and get there contentType
+		 *      	if the type is the same as the event
+		 *      		check if element was already a celement
+		 *      		if yes,
+		 *      			check if the element as the same contentType
+		 *      			if yes,
+		 *      				do nothing
+		 *      			else
+		 *      				if the content ID is registered ID
+		 *      					fired changed event
+		 *      				else
+		 *      					fire remove event
+		 *      	check for the CElement
+		 *      		get the new oldID and the newID
+		 *      		if not equal
+		 *      			check if the newID is registered
+		 *      			if yes
+		 *      				fire changed event
+		 *      			else
+		 *      				fire remove event
+		 */
 		if (celement instanceof IOpenable) {
 			int type = celement.getElementType();
 			// if the type is not a TranslationUnit
@@ -128,11 +161,14 @@ public class ContentTypeProcessor extends CModelOperation {
 									if (cType != null && cType.equals(contentType)) {
 										boolean found = false;
 										for (int j = 0; j < celements.length; ++j) {
-											if (celements[j].getElementName().equals(name)
-													&& celements[j].getElementType() == ICElement.C_UNIT) {
-												ITranslationUnit unit = (ITranslationUnit)celements[j];
-												if (!cType.getId().equals(unit.getContentTypeId())) {
-													elementChanged(celements[j]);
+											if (celements[j].getElementName().equals(name)) {
+												if (celements[j].getElementType() == ICElement.C_UNIT) {
+													ITranslationUnit unit = (ITranslationUnit)celements[j];
+													if (!cType.getId().equals(unit.getContentTypeId())) {
+														if (isRegisteredContentTypeId(cType.getId())) {
+															elementChanged(celements[j]);
+														}
+													}
 												}
 												found = true;
 												break;
@@ -158,12 +194,15 @@ public class ContentTypeProcessor extends CModelOperation {
 			}
 			break;
 			case ICElement.C_UNIT: {
-				String id =  ((ITranslationUnit)celement).getContentTypeId();
-				if (contentType.getId().equals(id)) {
+				String oldId =  ((ITranslationUnit)celement).getContentTypeId();
+				if (contentType.getId().equals(oldId)) {
 					try {
 						IContentType cType = CCorePlugin.getContentType(celement.getCProject().getProject(), celement.getElementName());
-						if (cType != null && isRegisteredContentTypeId(cType.getId())) {
-							elementChanged(celement);
+						String newId = (cType != null) ? cType.getId() : ""; //$NON-NLS-1$
+						if (isRegisteredContentTypeId(newId)) {
+							if (!oldId.equals(newId)) {
+								elementChanged(celement);
+							}
 						} else {
 							elementRemoved(celement, celement.getParent());
 						}
@@ -257,7 +296,7 @@ public class ContentTypeProcessor extends CModelOperation {
 		if (element instanceof IOpenable) {
 			((IOpenable)element).close();
 		}
-		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
+		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT |ICElementDelta.F_CONTENT_TYPE);
 	}
 	/**
 	 * Removes the given element from its parents cache of children. If the

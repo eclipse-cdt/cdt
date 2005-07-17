@@ -698,6 +698,12 @@ public class CElementDelta implements ICElementDelta {
 			buffer.append("PATHENTRY REORDER"); //$NON-NLS-1$
 			prev = true;
 		}
+		if ((changeFlags & ICElementDelta.F_CONTENT_TYPE) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("CONTENT_TYPE"); //$NON-NLS-1$
+			prev = true;
+		}
 
 		//if ((changeFlags & ICElementDelta.F_SUPER_TYPES) != 0) {
 		//	if (prev)

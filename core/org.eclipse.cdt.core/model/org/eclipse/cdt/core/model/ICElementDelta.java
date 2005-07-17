@@ -168,6 +168,11 @@ public interface ICElementDelta {
 	public int F_BINARY_PARSER_CHANGED = 0x800000;
 
 	/**
+	 * Change in the binary Parser.
+	 */
+	public int F_CONTENT_TYPE = 0x1000000;
+
+	/**
 	 * Returns deltas for the children that have been added.
 	 */
 	public ICElementDelta[] getAddedChildren();

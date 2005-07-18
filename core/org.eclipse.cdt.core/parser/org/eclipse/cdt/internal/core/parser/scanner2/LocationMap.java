@@ -1564,7 +1564,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     private IASTPreprocessorStatement createASTIf(_If i) {
         IASTPreprocessorIfStatement result = new ASTIf(i.taken);
         ((ASTNode) result).setOffsetAndLength(i.context_directive_start,
-                i.context_directive_end - -i.context_directive_start);
+                i.context_directive_end - i.context_directive_start);
 		((ScannerASTNode) result).setParent(rootNode);
 		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;

@@ -30,6 +30,7 @@ import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -119,82 +120,99 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.getResource()), false);
 				IMatchLocatable searchLocatable = searchMatch.getLocatable();
 				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.getResource()), searchLocatable, currentOffset, currentLength);
+				return;
 			}
-			else {
-				//Match is outside of the workspace
-				try {
-					IEditorInput input =EditorUtility.getEditorInput(new ExternalSearchFile(searchMatch.getPath(), searchMatch));
-					IWorkbenchPage p= CUIPlugin.getActivePage();
-					IEditorPart editorPart= p.openEditor(input, "org.eclipse.cdt.ui.editor.ExternalSearchEditor"); //$NON-NLS-1$
-					if (editorPart instanceof ITextEditor) {
-						ITextEditor textEditor= (ITextEditor) editorPart;
+			
+			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(searchMatch.getPath());
+			if (files != null && files.length > 0){
+				for (int i=0; i<files.length; i++) {
+					if (EditorUtility.isLinked(files[i])) {
+						try {
+							editor = EditorUtility.openInEditor(files[i]);
+						} catch (PartInitException e) {
+						} catch (CModelException e) {
+						}
 						IMatchLocatable searchLocatable = searchMatch.getLocatable();
-						int startOffset=0;
-						int length=0;
-						if (searchLocatable instanceof IOffsetLocatable){
-						   startOffset = ((IOffsetLocatable)searchLocatable).getNameStartOffset();
-						   length = ((IOffsetLocatable)searchLocatable).getNameEndOffset() - startOffset;
-						} else if (searchLocatable instanceof ILineLocatable){
-							int tempstartLine = ((ILineLocatable)searchLocatable).getStartLine();
-							int tempendLine = ((ILineLocatable)searchLocatable).getEndLine();
-							
-							//Convert the given line number into an offset in order to be able to use
-							//the text editor to open 
-							IDocument doc =textEditor.getDocumentProvider().getDocument(input);
-							if (doc == null)
-								return;
-							
+						showWithMarker(editor, getCanonicalFile(files[i]), searchLocatable, currentOffset, currentLength);
+						return;
+					}
+				}
+			}
+			
+			//Match is outside of the workspace
+			try {
+				IEditorInput input =EditorUtility.getEditorInput(new ExternalSearchFile(searchMatch.getPath(), searchMatch));
+				IWorkbenchPage p= CUIPlugin.getActivePage();
+				IEditorPart editorPart= p.openEditor(input, "org.eclipse.cdt.ui.editor.ExternalSearchEditor"); //$NON-NLS-1$
+				if (editorPart instanceof ITextEditor) {
+					ITextEditor textEditor= (ITextEditor) editorPart;
+					IMatchLocatable searchLocatable = searchMatch.getLocatable();
+					int startOffset=0;
+					int length=0;
+					if (searchLocatable instanceof IOffsetLocatable){
+						startOffset = ((IOffsetLocatable)searchLocatable).getNameStartOffset();
+						length = ((IOffsetLocatable)searchLocatable).getNameEndOffset() - startOffset;
+					} else if (searchLocatable instanceof ILineLocatable){
+						int tempstartLine = ((ILineLocatable)searchLocatable).getStartLine();
+						int tempendLine = ((ILineLocatable)searchLocatable).getEndLine();
+						
+						//Convert the given line number into an offset in order to be able to use
+						//the text editor to open 
+						IDocument doc =textEditor.getDocumentProvider().getDocument(input);
+						if (doc == null)
+							return;
+						
+						try {
+//							NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
+							//resolver doesn't take this into account and is still 0 based
+							startOffset = doc.getLineOffset(tempstartLine-1);
+							length=doc.getLineLength(tempstartLine-1);
+						} catch (BadLocationException e) {}
+						
+						//See if an end line number has been provided - if so
+						//use it to calculate the length of the reveal...
+						//Make sure that an end offset exists that is greater than 0
+						//and that is greater than the start line number
+						if (tempendLine>0 && tempendLine > tempstartLine){
+							int endOffset;
 							try {
-//								NOTE: Subtract 1 from the passed in line number because, even though the editor is 1 based, the line
-								//resolver doesn't take this into account and is still 0 based
-								startOffset = doc.getLineOffset(tempstartLine-1);
-								length=doc.getLineLength(tempstartLine-1);
+								//See NOTE above
+								endOffset = doc.getLineOffset(tempendLine-1);
+								length = endOffset - startOffset;
 							} catch (BadLocationException e) {}
 							
-							//See if an end line number has been provided - if so
-							//use it to calculate the length of the reveal...
-							//Make sure that an end offset exists that is greater than 0
-							//and that is greater than the start line number
-							if (tempendLine>0 && tempendLine > tempstartLine){
-								int endOffset;
-								try {
-									//See NOTE above
-									endOffset = doc.getLineOffset(tempendLine-1);
-									length = endOffset - startOffset;
-								} catch (BadLocationException e) {}
-								
-							}
 						}
-						textEditor.selectAndReveal(startOffset,length);
 					}
-					
+					textEditor.selectAndReveal(startOffset,length);
+				}
+				
 				//TODO: Put in once we have marker support for External Translation Units
 				/*	//Get all the CProjects off the model
-					ICProject[] cprojects = CoreModel.getDefault().getCModel().getCProjects();
-					
-					ICProject containingProject=null;
-					ICElement celem = null;
-					//Find the CProject that the element belongs to
-					for (int i=0; i<cprojects.length; i++){
-						celem = cprojects[i].findElement(searchMatch.referringElement);
-						containingProject=celem.getCProject();
-						if (containingProject != null)
-							break;
-					}
-					//Create a translation unit, open in editor
-					ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(containingProject, searchMatch.path);
-					IEditorPart editorPart = null;
-					if (unit != null) {
-						editorPart = EditorUtility.openInEditor(unit);
-					}
-					//Show with marker
-					if (editorPart instanceof ITextEditor) {
-						ITextEditor textEditor= (ITextEditor) editorPart;
-						showWithMarker(textEditor,(IFile) celem.getUnderlyingResource(),searchMatch.startOffset, searchMatch.endOffset - searchMatch.startOffset);
-					}*/
-				} catch (CModelException e) {}
-				  catch (CoreException e) {}
-			}
+				 ICProject[] cprojects = CoreModel.getDefault().getCModel().getCProjects();
+				 
+				 ICProject containingProject=null;
+				 ICElement celem = null;
+				 //Find the CProject that the element belongs to
+				  for (int i=0; i<cprojects.length; i++){
+				  celem = cprojects[i].findElement(searchMatch.referringElement);
+				  containingProject=celem.getCProject();
+				  if (containingProject != null)
+				  break;
+				  }
+				  //Create a translation unit, open in editor
+				   ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(containingProject, searchMatch.path);
+				   IEditorPart editorPart = null;
+				   if (unit != null) {
+				   editorPart = EditorUtility.openInEditor(unit);
+				   }
+				   //Show with marker
+				    if (editorPart instanceof ITextEditor) {
+				    ITextEditor textEditor= (ITextEditor) editorPart;
+				    showWithMarker(textEditor,(IFile) celem.getUnderlyingResource(),searchMatch.startOffset, searchMatch.endOffset - searchMatch.startOffset);
+				    }*/
+			} catch (CModelException e) {}
+			catch (CoreException e) {}
+
 		}
 	}
 	/* (non-Javadoc)

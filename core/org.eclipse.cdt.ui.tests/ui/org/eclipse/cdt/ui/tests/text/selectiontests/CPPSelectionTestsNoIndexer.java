@@ -37,6 +37,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -133,6 +134,31 @@ public class CPPSelectionTestsNoIndexer extends TestCase {
     protected IFile importFile(String fileName, String contents ) throws Exception{
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
+        
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+        
+        fileManager.addFile(file);
+        
+        return file;
+    }
+    
+    protected IFile importFileWithLink(String fileName, String contents) throws Exception{
+        //Obtain file handle
+        IFile file = project.getProject().getFile(fileName);
+        
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        
+        File linkFile = new File(location.toOSString());
+        if (!linkFile.exists()) {
+        	linkFile.createNewFile();
+        }
+        
+        file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
         InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
         //Create file input stream
@@ -1077,5 +1103,28 @@ public class CPPSelectionTestsNoIndexer extends TestCase {
         assertEquals(((IASTName)decl).toString(), "operator short"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 11);
         assertEquals(((ASTNode)decl).getLength(), 14);
+    }
+    
+    public void testBug103697() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int x;\n"); //$NON-NLS-1$
+        buffer.append("int foo() {\n"); //$NON-NLS-1$
+        buffer.append(" return x;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+                
+        String code = buffer.toString();
+        IFile file = importFileWithLink("testBug103697.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
+        IASTNode def = testCtrl_F3(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName)def).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 4);
+        assertEquals(((ASTNode)def).getLength(), 1);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 1);
     }
 }

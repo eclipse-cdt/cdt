@@ -127,6 +127,7 @@ public class CPPSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 		suite.addTest(new CPPSelectionTestsCTagsIndexer("testNoDefinitions")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsCTagsIndexer("testOpenFileDiffDir")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsCTagsIndexer("testBug101287")); //$NON-NLS-1$
+		suite.addTest(new CPPSelectionTestsCTagsIndexer("testBug103697")); //$NON-NLS-1$
 		
 		return suite;
 	}
@@ -661,6 +662,29 @@ public class CPPSelectionTestsCTagsIndexer extends BaseSelectionTestsIndexer
 			assertEquals(((TextSelection)decl).getLength(), "int abc;\n".length());
 		}
 	}
+	
+    public void testBug103697() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int x;\n"); //$NON-NLS-1$
+        buffer.append("int foo() {\n"); //$NON-NLS-1$
+        buffer.append(" return x;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+                
+        String code = buffer.toString();
+        IFile file = importFileWithLink("testBug103697.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
+        IASTNode def = testCtrl_F3(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName)def).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 4);
+        assertEquals(((ASTNode)def).getLength(), 1);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 1);
+    }
 	
     // REMINDER: see CSelectionTestsCTagsIndexer#suite() when appending new tests to this suite
 

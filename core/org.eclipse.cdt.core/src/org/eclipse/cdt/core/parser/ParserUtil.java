@@ -128,6 +128,13 @@ public class ParserUtil
             resultingResource = root.getFileForLocation( path );
             if( resultingResource != null && resultingResource.exists() ) 
                 return resultingResource;
+
+            // check for linked resources
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+            if( files != null && files.length > 0 && files[0] != null) {
+            	return files[0];
+            }
+            
     		return null;
         }
         catch( IllegalArgumentException iae ) //thrown on invalid paths

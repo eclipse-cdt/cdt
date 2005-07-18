@@ -133,7 +133,7 @@ public class OpenDefinitionAction extends SelectionParseAction implements
     					return;
     				}
     				lang = DOMSearchUtil.getLanguageFromFile(resourceFile);
-    				project = new CProject(null, resourceFile.getProject());
+    				projectName = resourceFile.getProject().getName();
     			}
     			
     			// step 1 starts here

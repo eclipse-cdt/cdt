@@ -28,10 +28,13 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
@@ -131,17 +134,19 @@ public class EditorUtility {
 		
 		if (file != null) {
 		try {
-				File tempFile = file.getRawLocation().toFile();
+				if (!isLinked(file)) {
+					File tempFile = file.getRawLocation().toFile();
 				
-				if (tempFile != null){
-					String canonicalPath = null;
-					try {
-						canonicalPath = tempFile.getCanonicalPath();
-					} catch (IOException e1) {}
-					
-					if (canonicalPath != null){
-						IPath path = new Path(canonicalPath);
-						file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
+					if (tempFile != null){
+						String canonicalPath = null;
+						try {
+							canonicalPath = tempFile.getCanonicalPath();
+						} catch (IOException e1) {}
+						
+						if (canonicalPath != null){
+							IPath path = new Path(canonicalPath);
+							file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
+						}
 					}
 				}
 				
@@ -152,6 +157,26 @@ public class EditorUtility {
 			} catch (CModelException e) {}
 		}
 		return null;
+	}
+	
+	public static boolean isLinked(IFile file) {
+		if (file.isLinked())
+			return true;
+		
+		IPath path = file.getLocation();
+		
+		while (path.segmentCount() > 0) {
+			path = path.removeLastSegments(1);
+			IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
+			
+			for(int i=0; i<containers.length; i++) {
+				if (containers[i] instanceof IFolder && ((IFolder)containers[i]).isLinked()) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	/**

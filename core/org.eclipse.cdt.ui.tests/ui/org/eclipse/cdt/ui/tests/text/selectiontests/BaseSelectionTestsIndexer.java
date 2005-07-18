@@ -11,7 +11,10 @@
 package org.eclipse.cdt.ui.tests.text.selectiontests;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
+
+import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -27,27 +30,23 @@ import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import junit.framework.TestCase;
 
 /**
  * Base test class for testing Ctrl_F3/F3 with the indexers.
@@ -110,6 +109,31 @@ public class BaseSelectionTestsIndexer extends TestCase {
         fileManager.addFile(file);
         
         waitForIndex(20); // only wait 20 seconds max.
+        
+        return file;
+    }
+    
+    protected IFile importFileWithLink(String fileName, String contents) throws Exception{
+        //Obtain file handle
+        IFile file = project.getProject().getFile(fileName);
+        
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        
+        File linkFile = new File(location.toOSString());
+        if (!linkFile.exists()) {
+        	linkFile.createNewFile();
+        }
+        
+        file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
+        
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+        
+        fileManager.addFile(file);
         
         return file;
     }

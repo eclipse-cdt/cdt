@@ -59,6 +59,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -600,6 +601,15 @@ public class SelectionParseAction extends Action {
             return true;
         }
         
+        // check the IWorkspaceRoot to see if it knows of any IFiles that are open for the corresponding filename (i.e. linked resources)
+        IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+        for(int i=0; i<files.length; i++) {
+        	if (files[i] != null) {
+        		open( files[i], locatable );
+        		return true;
+        	}
+        }
+
         FileStorage storage = new FileStorage(null, path);
         IEditorPart part = EditorUtility.openInEditor(storage);
         setSelectionAtOffset(part, locatable);

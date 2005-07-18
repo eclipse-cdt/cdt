@@ -52,6 +52,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 	public static final String DEFAULT_CACHE_SIZE_IN_MB_STRING = String.valueOf(DEFAULT_CACHE_SIZE_IN_MB);
 	private static final int MB_TO_KB_FACTOR = 1024;
 	private CodeReaderLRUCache cache = null; // the actual cache
+	private IResourceChangeListener listener = new UpdateCodeReaderCacheListener(this);
 
 	private class UpdateCodeReaderCacheListener implements IResourceChangeListener {
 		ICodeReaderCache c = null;
@@ -126,7 +127,14 @@ public class CodeReaderCache implements ICodeReaderCache {
 	public CodeReaderCache(int size) {
 		cache = new CodeReaderLRUCache(size * MB_TO_KB_FACTOR);
 		if (ResourcesPlugin.getWorkspace() != null)
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(new UpdateCodeReaderCacheListener(this));
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+	}
+	
+	protected void finalize() throws Throwable {
+		super.finalize();
+
+		if (ResourcesPlugin.getWorkspace() != null)
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 	}
 	
 	/**

@@ -50,7 +50,7 @@ For other operating systems please refer to your installation documentation.</p>
 <ul>
   <li>The Console view displays the output of the build tools.</li>
   <li>The Tasks view displays a list of compiler errors and warnings related to your projects.</li>
-  <li>Makefile targets are displayed in the Make Targets view.</li>
+  <li>For Standard Make projects, the Makefile targets are displayed in the Make Targets view.</li>
 </ul>
 
 <p>For more information about the Tasks view, see <b>Workbench User Guide &gt; Reference &gt; User interface information &gt; Views and editors &gt; Tasks view</b>.</p>
@@ -84,7 +84,7 @@ For other operating systems please refer to your installation documentation.</p>
 
 <h2>Controlling the building of your project</h2>
 
-<p>The C/C++ compiler that a project uses is controlled by the project's <b>Properties</b> setting.
+<p>For a Standard Make project, the C/C++ compiler that a project uses is controlled by the project's <b>Properties</b> setting.
 To view a project's properties, right-click on the project and select <b>Properties</b>.
 In the dialog that appears, the <b>C/C++ Standard Make Project</b> page enables you to control a variety of settings, including:</p>
 <dl>
@@ -97,13 +97,19 @@ In the dialog that appears, the <b>C/C++ Standard Make Project</b> page enables 
 		<dd>Controls which makefile target will be built depending on the scope of the build.</dd>
 </dl>
 
+<p>For a Managed Make project, the project properties dialog enables you to manage the build configurations of your project.  For additional information see:</p>
+<ul>
+  <li><b>Reference &gt; C/C++ Project Properties &gt; Managed Make Projects</b></li>
+  <li><b>Reference &gt; C/C++ Project Properties &gt; Managed Make File Properties</b></li>
+</ul>
+
 <h2>Viewing build information</h2>
 
 <p>Build-related information is displayed as follows: </p>
 <ul>
 	<li>The <b>Console</b> view displays the output of the make utility.</li>
 	<li>The <b>Tasks</b> view displays a list of compiler errors and warnings related to your projects.  </li>
-	<li>Build actions display in the <b>Make Targets</b> view.</li>
+	<li>For a Standard Make project, build actions display in the <b>Make Targets</b> view.</li>
 </ul>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
@@ -113,6 +119,11 @@ In the dialog that appears, the <b>C/C++ Standard Make Project</b> page enables 
 <p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_o_build_task.htm">Building</a></p>
+<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_u_properties.htm">Project Properties</a></p>
+&nbsp;
+
 <p>
 <img src="../images/rh03_04.gif" ALT="Red Hat Copyright Statement"><br>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement">

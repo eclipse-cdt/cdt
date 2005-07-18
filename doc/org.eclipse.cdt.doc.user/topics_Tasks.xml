@@ -30,11 +30,12 @@
 		<topic label="Building projects" href="tasks/cdt_o_build_task.htm">
 			<topic label="Renaming a project" href="tasks/cdt_t_proj_rename.htm"/>
 			<topic label="Selecting referenced projects" href="tasks/cdt_t_proj_ref.htm"/>
-			<topic label="Defining build settings" href="tasks/cdt_t_proj_build_set.htm"/>
+			<topic label="Defining Standard Make build settings" href="tasks/cdt_t_proj_build_set.htm"/>
+			<topic label="Defining Managed Make build settings" href="tasks/cdt_t_mproj_build_set.htm"/>
 			<topic label="Filtering Errors" href="tasks/cdt_t_proj_error_parser.htm"/>
 			<topic label="Selecting a binary parser" href="tasks/cdt_t_proj_parser.htm"/>
 			<topic label="Adding Include paths and symbols" href="tasks/cdt_t_proj_paths.htm"/>
-			<topic label="Selecting a deployment platform" href="tasks/cdt_t_proj_platf.htm"/>
+			<topic label="Selecting a project type" href="tasks/cdt_t_proj_platf.htm"/>
 			<topic label="Setting build order" href="tasks/cdt_t_setbuildorder.htm"/>
 			<topic label="Building Manually" href="tasks/cdt_t_manualbuild.htm"/>
 			<topic label="Removing Build Automatically" href="tasks/cdt_t_autobuild.htm"/>

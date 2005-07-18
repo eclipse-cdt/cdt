@@ -1,0 +1,474 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>C/C++ Project Properties, Managed,  Build</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+	<style>
+<!--
+ table.MsoNormalTable
+	{mso-style-parent:"";
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	}
+-->
+</style>
+</head>
+<body>
+
+<h1>C/C++ Project Properties, Managed, C/C++ Build, Macros</h1>
+Customizes the build macros used in your build configuration.<p>
+<img img src="../images/mprop_macros.png" alt="C/C++ Project Properties, Managed, C/C++ Build, Macros"></p>
+
+<p><dl>
+	<dt>Project Type:</dt><dd>Displays the type of project that is built by the 
+	selected build configuration.</dd>
+	<dt>Configuration:</dt><dd>Select the build configuration from the list provided.</dd>
+	<dt>Manage...</dt><dd>You can add, remove and rename configurations.</dd>
+	<dt>Configuration Settings</dt><dd>You can add and remove build macros for a 
+	project or configuration.&nbsp; Each tab contains two tables - one for User 
+	defined build macros and one for non user-defined build macros.&nbsp; Each 
+	table contains three columns<b>:</b><p><b>Name</b> of the build macro</p>
+	<p><b>Type </b>of value contained in the build macro (see below)</p>
+	<p><b>Value </b>of the build macro.&nbsp; </p>
+	<p>You can view all build macros that are not user-defined in the <b>System 
+	Macros</b> table.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;</span><span style="font-style: normal; font-variant: normal; font-weight: normal">You</span> 
+	can choose to also display all macros defined for lower-precedence contexts 
+	in the <b>System Macros</b> table by checking the <b>Show parent context 
+	macros</b> checkbox.</p>
+	<p class="MsoNormal">You can view all user-defined macros in the <b>User 
+	Macros</b> table.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;
+	</span>A user-defined macro overrides a non user-defined macro of the same 
+	name for the given context.&nbsp; Overridden macros are displayed in bold in 
+	the <b>System Macros</b> table.</dd>
+</dl>
+<dl>
+	<dt>Restore Defaults</dt><dd>Returns any changes back to their default setting.</dd>
+	<dt>Apply</dt><dd>Applies any changes.</dd>
+</dl></p>
+
+<h2>Detailed Specification</h2>
+<p>Build Macros can be used in all C/C++ Build configuration properties that 
+accept text. Build Macros are referenced in strings by enclosing them in braces, preceded by a dollar sign.
+There are no special restrictions on a macro name, though it is encouraged that a macro name begin with 
+a letter and contain only letters, digits and underscore signs.  Build macro names are case sensitive.
+<br>
+If the actual value of text property contains $<i>{text</i><some_expression>}, it must be pre-pended 
+with the backslash in order to distinguish it from a build macro. The Managed 
+Build System pre-defines many useful macros (see below) and allows tool 
+integrators and users to define additional macros.</p>
+<p>Build Macros can hold several types of values:
+</p>
+<ol>
+	<li>Text value: can be any text string</li>
+	<li>Text-List value:  an array of Text values</li>
+	<li>Path-file value: can hold  a file path</li>
+	<li>Path-dir value: can hold  a directory path
+	</li>
+	<li>Path-any value: can hold  both a file and directory path
+	</li>
+	<li>Path-file-List value:  an array of Path-file values
+	</li>
+	<li>Path-dir-List value:  an array of Path-dir values</li>
+	<li>Path-any-List value:  an array of Path-any values </li>
+</ol>
+<p class="MsoNormal">Build Macros are context-sensitive, that is the macro of a 
+given name could have different values depending on where it is used.&nbsp; 
+Several contexts are defined:</p>
+<ol>
+	<li>
+	<p class="MsoNormal">The currently selected file.</li>
+	<li>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">The 
+	currently selected option</li>
+	<li>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">The 
+	currently selected configuration (which includes a tool-chain).</li>
+	<li>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">The 
+	currently selected project.</li>
+	<li>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">The 
+	current workspace.</li>
+	<li>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">The CDT 
+	and Eclipse installations.</li>
+	<li>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">The 
+	process environment variables defined in the environment passed to Eclipse.</li>
+</ol>
+<p class="MsoNormal">Users can define new macros for any project or 
+configuration of a project.&nbsp; The value of a build macro will be searched 
+for in the order specified above.&nbsp;If macro is not found for the currently 
+selected file context, the currently selected option context will be used, if 
+not found, the currently selected configuration context will be used, etc.&nbsp; </p>
+<p class="MsoNormal">Macro resolution takes place when the build file is being 
+generated.</p>
+<span style="font-size: 12.0pt; font-family: Times New Roman">All macros except 
+the build process environment macros always get resolved in the makefile.&nbsp; 
+See the ??“expand build environment macros�? checkbox in the “Build Settings�? tab 
+of the “C/C++ Build�?. </span>
+<p class="MsoNormal">The Managed Build System pre-defines many useful macros 
+described in the following tables:</p>
+<h3>File-specific macros</h3>
+<p class="MsoNormal">The set of file-context macros is MBS-predefined, neither a 
+tool-integrator nor a user can define new file-context macros, but a 
+tool-integrator can specify the values for the file-context macros using 
+attributes of a builder element. The macro values specified in those attributes 
+should not contain the explicit e.g. file name, but instead should provide the 
+filename definition in terms of the builder automatic variables and text 
+functions. This is needed to allow the makefile generator to generate pattern 
+rules, e.g. in the case of Gnu make, the macro that represents the output file 
+name will contain the “$(notdir $@)? value. The builder definition of the gnu 
+tool-chain will contain attribute specifying the value for that macro. If a 
+tool-integrator does not provide the values for the file-specific macros, MBS 
+will automatically expand them to their actual value when generating the 
+buildfile, e.g. for the foo.c file the macro that represents the input file name 
+will contain “foo.c? in this case. In this case the makefile generator will not 
+be able to use pattern rules for building files with options containing 
+file-specific macros. (see the “Supplying the file-context macros values? 
+section for more detail)</p>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none" id="table1" width="695">
+	<tr style="height: 8.3pt">
+		<td valign="top" style="width: 217px; height: 8.3pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center"><b>Macro</b></td>
+		<td valign="top" style="width: 103px; height: 8.3pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center"><b>Value 
+		Type</b></td>
+		<td valign="top" style="width: 329px; height: 8.3pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center"><b>
+		Description</b></td>
+	</tr>
+	<tr style="height: 3.5pt">
+		<td valign="top" style="width: 217px; height: 3.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${InputFileName}</td>
+		<td valign="top" style="width: 103px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 329px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the input 
+		file name. The input file has the following meaning:</p>
+		<p class="MsoNormal" style="text-align: justify; text-indent: -.25in; margin-left: .25in">
+		1.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>If a 
+		tool does not accept building multiple files of the primary input type 
+		with one tool invocation, the input file is the file of the primary 
+		input type being built.</p>
+		<p class="MsoNormal" style="text-align: justify; text-indent: -.25in; margin-left: .25in">
+		2.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>If a 
+		tool accepts building multiple files of the primary input type with one 
+		tool invocation the input file is undefined and the macros representing 
+		the input file contain information about one of the inputs of the 
+		primary input type being built.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${InputFileExt}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the extension 
+		of the input file.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${InputFileBaseName}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the base name 
+		of the input file. That is the file name with an extension stripped.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${InputFileRelPath}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Path(File)</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the input 
+		file path relative to the builder current directory.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${InputDirRelPath}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Path(Dir)</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the input 
+		file directory path relative to the builder current directory.</td>
+	</tr>
+	<tr style="height: 3.5pt">
+		<td valign="top" style="width: 217px; height: 3.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${OutputFileName}</td>
+		<td valign="top" style="width: 103px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 329px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the output 
+		file name. The output file has the following meaning:</p>
+		<p class="MsoNormal" style="text-align: justify; text-indent: -.25in; margin-left: .25in">
+		1.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>If a 
+		tool is not capable of producing multiple files of the primary output 
+		type with one tool invocation the output file is the file of the primary 
+		output type that is built with a given tool invocation.</p>
+		<p class="MsoNormal" style="text-align: justify; text-indent: -.25in; margin-left: .25in">
+		2.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>If a 
+		tool is capable of producing multiple files of the primary output type 
+		with one tool invocation the output file is undefined and the macros 
+		representing the output file contain information about one of the files 
+		of the primary output type that are built with a given tool invocation.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${OutputFileExt}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the output 
+		file extension.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${OutputFileBaseName}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the output 
+		file base name. That is the output file name with an extension stripped.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${OutputFileRelPath}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Path(File)</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the output 
+		file path relative to the current builder directory.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${OutputDirRelPath}</td>
+		<td valign="top" style="width: 103px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Path(Dir)</td>
+		<td valign="top" style="width: 329px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the output 
+		file directory path relative to the current builder directory.</td>
+	</tr>
+</table>
+<h3 style="text-indent: 0in; margin-left: 0in">&nbsp;Configuration-specific macros</h3>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="695" style="width: 521.4pt; border-collapse: collapse; border: medium none" id="table3">
+	<tr style="height: 8.3pt">
+		<td valign="top" style="width: 215px; height: 8.3pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center"><b>Macro</b></td>
+		<td valign="top" style="width: 104px; height: 8.3pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center"><b>Value 
+		Type</b></td>
+		<td valign="top" style="width: 331px; height: 8.3pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center"><b>
+		Description</b></td>
+	</tr>
+	<tr style="height: 3.5pt">
+		<td valign="top" style="width: 215px; height: 3.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${ConfigName}</td>
+		<td valign="top" style="width: 104px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 331px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the name of a 
+		given configuration.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 215px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${ConfigDescription}</td>
+		<td valign="top" style="width: 104px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 331px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the description of a given 
+		configuration.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 215px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${BuildArtifactFileName}</td>
+		<td valign="top" style="width: 104px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 331px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the name of the build artifact.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 215px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${BuildArtifactFileExt}</td>
+		<td valign="top" style="width: 104px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 331px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the extension of the build artifact.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 215px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${BuildArtifactFileBaseName}</td>
+		<td valign="top" style="width: 104px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 331px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the base name of the build artifact.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 215px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${BuildArtifactFilePrefix}</td>
+		<td valign="top" style="width: 104px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 331px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the prefix of the build artifact.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 215px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${TargetOsList}</td>
+		<td valign="top" style="width: 104px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text-List</td>
+		<td valign="top" style="width: 331px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the list of the target OS names.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 215px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${TargetArchList}</td>
+		<td valign="top" style="width: 104px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text-List</td>
+		<td valign="top" style="width: 331px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the list of the target Arch names.</td>
+	</tr>
+</table>
+<h3 style="text-indent: 0in; margin-left: 0in">Project-specific macros</h3>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="695" style="width: 521.4pt; border-collapse: collapse; border: medium none" id="table4">
+	<tr style="height: 3.5pt">
+		<td valign="top" style="width: 219px; height: 3.5pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${ProjName}</td>
+		<td valign="top" style="width: 105px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 328px; height: 3.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="text-align:justify">Represents the name of a 
+		given project.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 219px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${ProjDirPath}</td>
+		<td valign="top" style="width: 105px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Path(Dir)</td>
+		<td valign="top" style="width: 328px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the absolute path of a given project.
+		</td>
+	</tr>
+</table>
+<h3 style="text-indent: 0in; margin-left: 0in">Workspace-specific macros</h3>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="695" style="width: 521.4pt; border-collapse: collapse; border: medium none" id="table5">
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${WorkspaceDirPath}</td>
+		<td valign="top" style="width: 106px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Path(Dir)</td>
+		<td valign="top" style="width: 328px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the workspace absolute path.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${DirectoryDelimiter}</td>
+		<td valign="top" style="width: 106px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 328px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the directory delimiter used on the 
+		system. That is the “\? for Win32 systems and the “/? for Unix-like 
+		systems</p>
+		<p class="MsoNormal">This could be useful, e.g. in the case a user needs 
+		the absolute path of an input file. The absolute path would be 
+		represented in the following way: ${CWD}${DirectoryDelimiter}${InputFileRelPath}</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td valign="top" style="width: 217px; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${PathDelimiter}</td>
+		<td valign="top" style="width: 106px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td valign="top" style="width: 328px; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the default path delimiter used on the 
+		system to separate paths in the path environment variables. That is the 
+		“;? for Win32 systems and the “:? for Unix-like systems</p>
+		<p class="MsoNormal">This might be used in the environment variable 
+		definitions</td>
+	</tr>
+</table>
+<h3>CDT/Eclipse installation-specific macros</h3>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" width="695" style="width: 521.4pt; border-collapse: collapse; border: medium none" id="table6">
+	<tr style="height: 6.95pt">
+		<td width="228" valign="top" style="width: 171.0pt; height: 6.95pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${EclipseVersion}</td>
+		<td width="108" valign="top" style="width: 80.85pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td width="359" valign="top" style="width: 269.55pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the current eclipse version.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td width="228" valign="top" style="width: 171.0pt; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${CDTVersion}</td>
+		<td width="108" valign="top" style="width: 80.85pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td width="359" valign="top" style="width: 269.55pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the current CDT version.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td width="228" valign="top" style="width: 171.0pt; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${MBSVersion}</td>
+		<td width="108" valign="top" style="width: 80.85pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td width="359" valign="top" style="width: 269.55pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the current MBS version.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td width="228" valign="top" style="width: 171.0pt; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${HostOsName}</td>
+		<td width="108" valign="top" style="width: 80.85pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td width="359" valign="top" style="width: 269.55pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the operating system name on which 
+		eclipse is running.</td>
+	</tr>
+	<tr style="height: 6.95pt">
+		<td width="228" valign="top" style="width: 171.0pt; height: 6.95pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">${HostArchName}</td>
+		<td width="108" valign="top" style="width: 80.85pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align:center">Text</td>
+		<td width="359" valign="top" style="width: 269.55pt; height: 6.95pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal">Represents the architecture name on which eclipse 
+		is running.</td>
+	</tr>
+</table>
+
+<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<a href="cdt_u_sprop_info.htm">C++ Project Properties, Standard, Info</a><br>
+<a href="cdt_u_sprop_builders.htm">C++ Project Properties, Standard, Builders</a><br>
+<a href="cdt_u_sprop_file_types.htm">C++ Project Properties, Standard, File Types</a><br>
+<a href="cdt_u_sprop_includes.htm">C++ Project Properties, Standard, Include Paths and Symbols</a><br>
+<a href="cdt_u_sprop_indexer.htm">C++ Project Properties, Standard, Indexer</a><br>
+<a href="cdt_u_sprop_mbuild.htm">C++ Project Properties, Standard, Make Builder</a><br>
+<a href="cdt_u_sprop_merror.htm">C++ Project Properties, Standard, Error Parser</a><br>
+<a href="cdt_u_sprop_mbinary.htm">C++ Project Properties, Standard, Binary Parser</a><br>
+<a href="cdt_u_sprop_mdiscovery.htm">C++ Project Properties, Standard, Discovery Options</a><br>
+<a href="cdt_u_sprop_psource.htm">C++ Project Properties, Standard, Source</a><br>
+<a href="cdt_u_sprop_poutput.htm">C++ Project Properties, Standard, Output</a><br>
+<a href="cdt_u_sprop_pproj.htm">C++ Project Properties, Standard, Projects</a><br>
+<a href="cdt_u_sprop_plib.htm">C++ Project Properties, Standard, Libraries</a><br>
+<a href="cdt_u_sprop_pcontainers.htm">C++ Project Properties, Standard, Path Containers</a><br>
+<a href="cdt_u_sprop_ref.htm">C++ Project Properties, Standard, Project References</a><br>
+<a href="cdt_u_mprop_info.htm">C++ Project Properties, Managed, Info</a><br>
+<a href="cdt_u_mprop_builders.htm">C++ Project Properties, Managed, Builders</a><br>
+<a href="cdt_u_mprop_build.htm">C++ Project Properties, Managed, C/C++ Build</a><br>
+<a href="cdt_u_mprop_tool_settings.htm">C++ Project Properties, Managed, C/C++ Build, Tool Settings</a><br>
+<a href="cdt_u_mprop_build_settings.htm">C++ Project Properties, Managed, C/C++ Build, Build Settings</a><br>
+<a href="cdt_u_mprop_dcbs.htm">C++ Project Properties, Managed, C/C++ Build, Build Steps</a><br>
+<a href="cdt_u_mprop_merror.htm">C++ Project Properties, Managed, C/C++ Build, Error Parsers</a><br>
+<a href="cdt_u_mprop_mbinary.htm">C++ Project Properties, Managed, C/C++ Build, Binary Parser</a><br>
+<a href="cdt_u_mprop_env.htm">C++ Project Properties, Managed, C/C++ Build, Environment</a><br>
+<a href="cdt_u_mprop_documentation.htm">C++ Project Properties, Managed, C/C++ Documentation</a><br>
+<a href="cdt_u_mprop_file_types.htm">C++ Project Properties, Managed, C/C++ File Types</a><br>
+<a href="cdt_u_mprop_indexer.htm">C++ Project Properties, Managed, C/C++ Indexer</a><br>
+<a href="cdt_u_mprop_ref.htm">C++ Project Properties, Managed, Project References</a></p>
+
+<p>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >  
+</p>
+</body>
+
+</html>

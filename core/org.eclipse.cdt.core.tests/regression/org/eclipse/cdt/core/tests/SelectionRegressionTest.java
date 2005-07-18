@@ -71,7 +71,7 @@ public class SelectionRegressionTest extends BaseTestFramework {
     	suite.addTest( new SelectionRegressionTest( "testMethod" ) ); //$NON-NLS-1$
     	suite.addTest( new FailingTest( new SelectionRegressionTest( "testMethodRHS78656" ), 78656 )); //$NON-NLS-1$
     	suite.addTest( new FailingTest( new SelectionRegressionTest( "testMethod78114" ), 78114 )); //$NON-NLS-1$
-    	suite.addTest( new FailingTest( new SelectionRegressionTest( "testMethod78118" ), 78118 )); //$NON-NLS-1$
+    	suite.addTest( new SelectionRegressionTest( "testMethod78118" ) ); //$NON-NLS-1$
     	suite.addTest( new FailingTest( new SelectionRegressionTest( "testOverloadedMethod78389" ), 78389 )); //$NON-NLS-1$
     	suite.addTest( new FailingTest( new SelectionRegressionTest( "testConstructor78625" ), 78625) ); //$NON-NLS-1$
     	suite.addTest( new SelectionRegressionTest( "testClassField" ) ); //$NON-NLS-1$

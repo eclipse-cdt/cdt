@@ -6648,7 +6648,7 @@ public class Parser implements IParserData, IParser
 			// duple is prefix of greaterContextDuple
 			// or duple is suffix of greaterContextDuple
 			// duple is a sub-duple of greaterContextDuple
-			if( duple.getFirstToken().equals( greaterContextDuple.getFirstToken() ))
+			if( greaterContextDuple == null || duple.getFirstToken().equals( greaterContextDuple.getFirstToken() ))
 				finalDuple = duple; //	=> do not use greaterContextDuple
 			else if( duple.getLastSegment().getFirstToken().equals( greaterContextDuple.getLastSegment().getFirstToken() ))
 				finalDuple = greaterContextDuple; //  => use greaterContextDuple

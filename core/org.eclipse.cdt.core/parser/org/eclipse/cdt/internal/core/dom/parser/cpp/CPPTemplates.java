@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -209,12 +210,18 @@ public class CPPTemplates {
 			parent = parent.getParent();
 		}
 
-		if( parent instanceof ICPPASTElaboratedTypeSpecifier && parent.getParent() instanceof IASTSimpleDeclaration 
-		    && segment != 0 )
+		IASTNode decl = parent.getParent();
+		while( !(decl instanceof IASTDeclaration) )
+			decl = decl.getParent();
+		decl = decl.getParent();
+			
+		if( decl instanceof ICPPASTExplicitTemplateInstantiation &&
+			parent instanceof ICPPASTElaboratedTypeSpecifier && segment != 0 )
 		{
 		    return createClassExplicitInstantiation( (ICPPASTElaboratedTypeSpecifier) parent );
-		} else if( parent instanceof ICPPASTCompositeTypeSpecifier && segment != 0 ){
-			return createClassSpecialization( (ICPPASTCompositeTypeSpecifier) parent );
+		} else if( (parent instanceof ICPPASTElaboratedTypeSpecifier ||
+				    parent instanceof ICPPASTCompositeTypeSpecifier ) && segment != 0 ){
+			return createClassSpecialization( (ICPPASTDeclSpecifier) parent );
 		} else if( parent instanceof ICPPASTFunctionDeclarator && segment != 0 ){
 			return createFunctionSpecialization( id );
 		}
@@ -272,8 +279,15 @@ public class CPPTemplates {
 		}
 		return null;
 	}
-	protected static IBinding createClassSpecialization( ICPPASTCompositeTypeSpecifier compSpec ){
-		IASTName name = compSpec.getName();
+	protected static IBinding createClassSpecialization( ICPPASTDeclSpecifier compSpec ){
+		IASTName name = null;
+		if( compSpec instanceof ICPPASTElaboratedTypeSpecifier )
+			name = ((ICPPASTElaboratedTypeSpecifier)compSpec).getName();
+		else if( compSpec instanceof ICPPASTCompositeTypeSpecifier )
+			name = ((ICPPASTCompositeTypeSpecifier)compSpec).getName();
+		else 
+			return null;
+		
 		if( name instanceof ICPPASTQualifiedName ){
 			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 			name = ns[ ns.length - 1 ];
@@ -304,10 +318,14 @@ public class CPPTemplates {
 			for (int i = 0; i < templateParams.length; i++) {
 				argMap.put( templateParams[i], args[i] );
 			}
-			
-			ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope( id );
-			spec = new CPPClassSpecialization(binding, scope, argMap );
-			((ICPPInternalTemplate)template).addSpecialization( args, (ICPPSpecialization) spec );
+			if( template instanceof ICPPInternalTemplate ){
+				spec = ((ICPPInternalTemplate)template).getInstance( args );
+			}
+			if( spec == null ) {
+				ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope( id );
+				spec = new CPPClassSpecialization(binding, scope, argMap );
+				((ICPPInternalTemplate)template).addSpecialization( args, (ICPPSpecialization) spec );
+			}
 			IASTNode parent = id.getParent();
 			while( !(parent instanceof IASTDeclSpecifier ) )
 				parent = parent.getParent();

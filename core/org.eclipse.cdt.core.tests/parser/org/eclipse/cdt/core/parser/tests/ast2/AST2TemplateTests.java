@@ -1681,13 +1681,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	
 	public void testBug99254() throws Exception{
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("template <class T> class A {                  \n");
-		buffer.append("   A( T t );                                  \n");
-		buffer.append("};                                            \n");
-		buffer.append("void f( A<int> a );                           \n");
-		buffer.append("void m(){                                     \n");
-		buffer.append("   f( A<int>(1) );                            \n");
-		buffer.append("}                                             \n");
+		buffer.append("template <class T> class A {                  \n"); //$NON-NLS-1$
+		buffer.append("   A( T t );                                  \n"); //$NON-NLS-1$
+		buffer.append("};                                            \n"); //$NON-NLS-1$
+		buffer.append("void f( A<int> a );                           \n"); //$NON-NLS-1$
+		buffer.append("void m(){                                     \n"); //$NON-NLS-1$
+		buffer.append("   f( A<int>(1) );                            \n"); //$NON-NLS-1$
+		buffer.append("}                                             \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
 		CPPNameCollector col = new CPPNameCollector();
@@ -1704,17 +1704,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 	
 	public void testBug99254_2() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("namespace core {                                \n");
-		buffer.append("   template<class T> class A {                  \n");
-		buffer.append("      A( T x, T y );                            \n");
-		buffer.append("   };                                           \n");
-		buffer.append("}                                               \n");
-		buffer.append("class B {                                       \n");
-		buffer.append("   int add(const core::A<int> &rect );          \n");
-		buffer.append("};                                              \n");
-		buffer.append("void f( B* b ){                                 \n");
-		buffer.append("   b->add( core::A<int>(10, 2) );               \n");
-		buffer.append("}                                               \n");
+		buffer.append("namespace core {                                \n"); //$NON-NLS-1$
+		buffer.append("   template<class T> class A {                  \n"); //$NON-NLS-1$
+		buffer.append("      A( T x, T y );                            \n"); //$NON-NLS-1$
+		buffer.append("   };                                           \n"); //$NON-NLS-1$
+		buffer.append("}                                               \n"); //$NON-NLS-1$
+		buffer.append("class B {                                       \n"); //$NON-NLS-1$
+		buffer.append("   int add(const core::A<int> &rect );          \n"); //$NON-NLS-1$
+		buffer.append("};                                              \n"); //$NON-NLS-1$
+		buffer.append("void f( B* b ){                                 \n"); //$NON-NLS-1$
+		buffer.append("   b->add( core::A<int>(10, 2) );               \n"); //$NON-NLS-1$
+		buffer.append("}                                               \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
 		CPPNameCollector col = new CPPNameCollector();
@@ -1731,14 +1731,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 	
 	public void testBug99254_3() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("template <class T> class A { A( T ); };         \n");
-		buffer.append("typedef signed int s32;                         \n");
-		buffer.append("class B {                                       \n");
-		buffer.append("   int add(const A<s32> &rect );                \n");
-		buffer.append("};                                              \n");
-		buffer.append("void f( B* b ){                                 \n");
-		buffer.append("   b->add( A<int>(10) );                        \n");
-		buffer.append("}                                               \n");
+		buffer.append("template <class T> class A { A( T ); };         \n"); //$NON-NLS-1$
+		buffer.append("typedef signed int s32;                         \n"); //$NON-NLS-1$
+		buffer.append("class B {                                       \n"); //$NON-NLS-1$
+		buffer.append("   int add(const A<s32> &rect );                \n"); //$NON-NLS-1$
+		buffer.append("};                                              \n"); //$NON-NLS-1$
+		buffer.append("void f( B* b ){                                 \n"); //$NON-NLS-1$
+		buffer.append("   b->add( A<int>(10) );                        \n"); //$NON-NLS-1$
+		buffer.append("}                                               \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
 		CPPNameCollector col = new CPPNameCollector();
@@ -1754,26 +1754,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 	}
 	
 	public void testBug98666() throws Exception {
-		IASTTranslationUnit tu = parse( "A::template B<T> b;", ParserLanguage.CPP );
+		IASTTranslationUnit tu = parse( "A::template B<T> b;", ParserLanguage.CPP ); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept( col );
 		
 		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);
 		IASTName [] ns = qn.getNames();
 		assertTrue( ns[1] instanceof ICPPASTTemplateId );
-		assertEquals( ((ICPPASTTemplateId)ns[1]).toString(), "B" );
+		assertEquals( ((ICPPASTTemplateId)ns[1]).toString(), "B" ); //$NON-NLS-1$
 	}
 	
 	public void testBug90678() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("template <class T> struct A{                          \n");
-		buffer.append("   class C {                                          \n");
-		buffer.append("      template <class T2> struct B {};                \n");
-		buffer.append("   };                                                 \n");
-		buffer.append("};                                                    \n");
-		buffer.append("template <class T> template <class T2>                \n");
-		buffer.append("struct A<T>::C::B<T2*>{};                             \n");
-		buffer.append("A<short>::C::B<int*> ab;                              \n");
+		buffer.append("template <class T> struct A{                          \n"); //$NON-NLS-1$
+		buffer.append("   class C {                                          \n"); //$NON-NLS-1$
+		buffer.append("      template <class T2> struct B {};                \n"); //$NON-NLS-1$
+		buffer.append("   };                                                 \n"); //$NON-NLS-1$
+		buffer.append("};                                                    \n"); //$NON-NLS-1$
+		buffer.append("template <class T> template <class T2>                \n"); //$NON-NLS-1$
+		buffer.append("struct A<T>::C::B<T2*>{};                             \n"); //$NON-NLS-1$
+		buffer.append("A<short>::C::B<int*> ab;                              \n"); //$NON-NLS-1$
 		
 		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
 		CPPNameCollector col = new CPPNameCollector();
@@ -1870,5 +1870,33 @@ public class AST2TemplateTests extends AST2BaseTest {
         ICPPBase [] bases = A.getBases();
         assertEquals( bases.length, 1 );
         assertSame( bases[0].getBaseClass(), B );
+    }
+    
+    public void testBug74276() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("template < class T > class complex;         \n"); //$NON-NLS-1$
+    	buffer.append("template <> class complex <float>;          \n"); //$NON-NLS-1$
+    	buffer.append("template < class T > class complex{         \n"); //$NON-NLS-1$
+    	buffer.append("};                                          \n"); //$NON-NLS-1$
+    	buffer.append("template <> class complex< float > {        \n"); //$NON-NLS-1$
+    	buffer.append("   void f( float );                         \n"); //$NON-NLS-1$
+    	buffer.append("};                                          \n"); //$NON-NLS-1$
+    	buffer.append("void complex<float>::f(float){              \n"); //$NON-NLS-1$
+    	buffer.append("}                                           \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPClassTemplate complex = (ICPPClassTemplate) col.getName(1).resolveBinding();
+        ICPPClassType cspec = (ICPPClassType) col.getName(2).resolveBinding();
+        assertTrue( cspec instanceof ICPPSpecialization );
+        assertSame( ((ICPPSpecialization)cspec).getSpecializedBinding(), complex );
+        
+        assertSame( complex, col.getName(5).resolveBinding() );
+        assertSame( cspec, col.getName(6).resolveBinding() );
+        
+        ICPPMethod f = (ICPPMethod) col.getName(8).resolveBinding();
+        assertSame( f, col.getName(10).resolveBinding() );
     }
 }

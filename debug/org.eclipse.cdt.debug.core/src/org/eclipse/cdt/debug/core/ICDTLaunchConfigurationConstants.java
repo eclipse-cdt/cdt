@@ -149,6 +149,12 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_REGISTER_BOOKKEEPING"; //$NON-NLS-1$
 
 	/**
+	 * launch configuration attribute key.  The value is a string specifying the protocol to
+	 * use.  For now only "mi", "mi1", "m2", "mi3" are supported.
+	 */
+	public static final String ATTR_DEBUGGER_PROTOCOL = CDT_LAUNCH_ID + ".protocol"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. The value is a global variables'
 	 * memento.
 	 */

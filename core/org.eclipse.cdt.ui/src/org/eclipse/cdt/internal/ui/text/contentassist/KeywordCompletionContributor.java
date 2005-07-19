@@ -10,6 +10,8 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
@@ -25,31 +27,58 @@ public class KeywordCompletionContributor implements ICompletionContributor {
             IWorkingCopy workingCopy, ASTCompletionNode completionNode,
             String prefix, List proposals) {
 
+        // No prefix, no completions
+        if (prefix.length() == 0)
+            return;
+
+        if (!validContext(completionNode))
+            return;
+        
         String[] keywords = cppkeywords; // default to C++
         if (workingCopy != null && workingCopy.isCLanguage())
             keywords = ckeywords;
         
         if (prefix.length() > 0)
             for (int i = 0; i < keywords.length; ++i)
-                if (keywords[i].startsWith(prefix))
-                    handleKeyword(keywords[i], completionNode, offset, viewer, proposals);
-    }
-    
-    private void handleKeyword(String keyword, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
-        Image image = getImage(CElementImageProvider.getKeywordImageDescriptor());
-        proposals.add(createProposal(keyword, keyword, image, completionNode, offset, viewer));
-    }
-    
-    private CCompletionProposal createProposal(String repString, String dispString, Image image, ASTCompletionNode completionNode, int offset, ITextViewer viewer) {
-        int repLength = completionNode.getLength();
-        int repOffset = offset - repLength;
-        return new CCompletionProposal(repString, repOffset, repLength, image, dispString, 1, viewer);
+                if (keywords[i].startsWith(prefix)) {
+                    ImageDescriptor imagedesc = CElementImageProvider.getKeywordImageDescriptor();
+                    Image image = imagedesc != null ? CUIPlugin.getImageDescriptorRegistry().get(imagedesc) : null;
+                    int repLength = prefix.length();
+                    int repOffset = offset - repLength;
+                    proposals.add(new CCompletionProposal(keywords[i], repOffset, repLength, image, keywords[i], 1, viewer));
+                }
     }
 
-    private Image getImage(ImageDescriptor desc) {
-        return desc != null ? CUIPlugin.getImageDescriptorRegistry().get(desc) : null;
+    // TODO This is copied from the search completion contributor
+    // We should make this common
+    private boolean validContext(ASTCompletionNode completionNode) {
+        if (completionNode == null)
+            // No completion node, assume true
+            return true;
+
+        boolean valid = true;
+        IASTName[] names = completionNode.getNames();
+        for (int i = 0; i < names.length; i++) {
+            IASTName name = names[i];
+            
+            // not hooked up, not a valid name, ignore
+            if (name.getTranslationUnit() == null)
+                continue;
+            
+            // member access currently isn't valid
+            if (name.getParent() instanceof IASTFieldReference) {
+                valid = false;
+                continue;
+            }
+            
+            // found one that was valid
+            return true;
+        }
+
+        // Couldn't find a valid context
+        return valid;
     }
-    
+
     // These are the keywords we complete
     // We only do the ones that are >= 5 characters long
     private static String [] ckeywords = {

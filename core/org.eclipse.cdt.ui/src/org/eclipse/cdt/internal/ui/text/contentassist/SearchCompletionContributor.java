@@ -21,10 +21,11 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
@@ -33,7 +34,21 @@ import org.eclipse.swt.graphics.Image;
 
 public class SearchCompletionContributor implements ICompletionContributor {
 
-	public void contributeCompletionProposals(ITextViewer viewer, int offset,
+    // The completion search for list
+    // Kind of like the All Elements but excluding METHODS and FIELDS
+    private static SearchFor[] completionSearchFor = {
+        ICSearchConstants.CLASS_STRUCT,
+        ICSearchConstants.FUNCTION,
+        ICSearchConstants.VAR,
+        ICSearchConstants.UNION,
+        ICSearchConstants.ENUM,
+        ICSearchConstants.ENUMTOR,
+        ICSearchConstants.NAMESPACE,
+        ICSearchConstants.TYPEDEF,
+        ICSearchConstants.MACRO
+    };
+
+    public void contributeCompletionProposals(ITextViewer viewer, int offset,
 			IWorkingCopy workingCopy, ASTCompletionNode completionNode, String prefix,
 			List proposals)
 	{
@@ -56,7 +71,11 @@ public class SearchCompletionContributor implements ICompletionContributor {
             scope = SearchEngine.createWorkspaceScope();
 			
 		// Create the pattern
-		ICSearchPattern pattern = SearchEngine.createSearchPattern(prefix + "*", ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.ALL_OCCURRENCES, true); //$NON-NLS-1$
+        String patternString = prefix + "*"; //$NON-NLS-1$
+        OrPattern pattern = new OrPattern();
+        for (int i = 0; i < completionSearchFor.length; i++)
+            pattern.addPattern( SearchEngine.createSearchPattern( patternString,
+                    completionSearchFor[i], ICSearchConstants.ALL_OCCURRENCES, true));
 
 		// Run the search
 		BasicSearchResultCollector collector = new BasicSearchResultCollector();

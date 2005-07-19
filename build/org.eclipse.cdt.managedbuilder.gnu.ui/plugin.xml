@@ -71,7 +71,7 @@
                defaultValue="false"
                name="%Option.Posix.Linker.Strip"
                category="gnu.c.link.category.general"
-               command="--strip-all"
+               command="-s"
                id="gnu.c.link.option.strip"
                valueType="boolean">
          </option>
@@ -229,7 +229,7 @@
                defaultValue="false"
                name="%Option.Posix.Linker.Strip"
                category="gnu.cpp.link.category.options"
-               command="--strip-all"
+               command="-s"
                id="gnu.cpp.link.option.strip"
                valueType="boolean">
          </option>
@@ -535,7 +535,7 @@
                defaultValue="false"
                name="%Option.Posix.Linker.Strip"
                category="macosx.c.link.category.general"
-               command="--strip-all"
+               command="-s"
                id="macosx.c.link.option.strip"
                valueType="boolean">
          </option>
@@ -673,7 +673,7 @@
                defaultValue="false"
                name="%Option.Posix.Linker.Strip"
                category="macosx.cpp.link.category.options"
-               command="--strip-all"
+               command="-s"
                id="macosx.cpp.link.option.strip"
                valueType="boolean">
          </option>

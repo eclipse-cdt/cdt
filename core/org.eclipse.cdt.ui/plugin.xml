@@ -1379,6 +1379,10 @@
             id="Search"
             priority="3"/>
       <contributor
+            class="org.eclipse.cdt.internal.ui.text.contentassist.KeywordCompletionContributor"
+            id="Keywords"
+            priority="10"/>
+      <contributor
             class="org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionContributor"
             id="Help"
             priority="99"/>

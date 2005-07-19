@@ -25,18 +25,18 @@ public interface IScannerPreprocessorLog {
 
     public void startInclusion(CodeReader reader, int offset, int endOffset);
 
-    public void endInclusion(int offset);
+    public void endInclusion(CodeReader reader, int offset);
 
     public void startObjectStyleMacroExpansion(IMacroDefinition macro,
             int startOffset, int endOffset);
 
-    public void endObjectStyleMacroExpansion(int offset);
+    public void endObjectStyleMacroExpansion(IMacroDefinition macro, int offset);
 
     
     public void startFunctionStyleExpansion(IMacroDefinition macro,
             char[][] parameters, int startOffset, int endOffset);
 
-    public void endFunctionStyleExpansion(int offset);
+    public void endFunctionStyleExpansion(IMacroDefinition macro, int offset);
 
     public interface IMacroDefinition {
         public char[] getName();

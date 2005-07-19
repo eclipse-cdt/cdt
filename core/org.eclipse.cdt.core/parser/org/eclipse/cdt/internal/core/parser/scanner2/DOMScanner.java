@@ -250,7 +250,7 @@ public class DOMScanner extends BaseScanner {
             else
             {
                 bufferDelta[0] += bufferDelta[bufferStackPos + 1] + ((CodeReader) result).buffer.length;
-                locationMap.endInclusion( getGlobalCounter(0) );
+                locationMap.endInclusion( ((CodeReader) result), getGlobalCounter(0) );
             }
 
         } else if (result instanceof InclusionData) {
@@ -262,7 +262,7 @@ public class DOMScanner extends BaseScanner {
             }
 
             int value = getGlobalCounter(bufferStackPos + 1) + delta_pos;                                      
-            locationMap.endInclusion(value);
+            locationMap.endInclusion(codeReader, value);
             bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
                     + codeReader.buffer.length;
         } else if (result instanceof MacroData) {
@@ -270,7 +270,7 @@ public class DOMScanner extends BaseScanner {
             if (data.macro instanceof FunctionStyleMacro && fsmCount == 0) {
 
                 locationMap
-                        .endFunctionStyleExpansion(getGlobalCounter(bufferStackPos + 1)
+                        .endFunctionStyleExpansion(((FunctionStyleMacro)data.macro).attachment, getGlobalCounter(bufferStackPos + 1)
                                 + delta_pos + 1); // functionstyle
                 // macro)
                 // ;
@@ -278,7 +278,7 @@ public class DOMScanner extends BaseScanner {
                         + delta_pos + 1;
             } else if (data.macro instanceof ObjectStyleMacro && fsmCount == 0) {
                 locationMap
-                        .endObjectStyleMacroExpansion(getGlobalCounter(bufferStackPos + 1)
+                        .endObjectStyleMacroExpansion(((ObjectStyleMacro)data.macro).attachment, getGlobalCounter(bufferStackPos + 1)
                                 + delta_pos );
                 bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
                         + delta_pos;

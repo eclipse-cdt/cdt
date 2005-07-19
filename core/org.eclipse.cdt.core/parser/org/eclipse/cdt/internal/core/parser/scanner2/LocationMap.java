@@ -1862,9 +1862,27 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#endInclusion(char[],
      *      int)
      */
-    public void endInclusion(int offset) {
-        ((_Inclusion) currentContext).context_ends = offset;
-        currentContext = currentContext.getParent();
+    public void endInclusion(CodeReader reader, int offset) {
+        if( currentContext instanceof _Inclusion && 
+                ((_Inclusion)currentContext).reader == reader )
+        {
+            ((_Inclusion) currentContext).context_ends = offset;
+            currentContext = currentContext.getParent();
+            return;
+        }
+        
+        _CompositeContext test = currentContext;
+        while( ( test = test.getParent() ) != tu )
+        {
+            if( test instanceof _Inclusion && 
+                    ((_Inclusion)test).reader == reader )
+            {
+                currentContext = test;
+                ((_Inclusion) currentContext).context_ends = offset;
+                currentContext = currentContext.getParent();
+                return;
+            }            
+        }
     }
 
     /*
@@ -1887,9 +1905,25 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#exitObjectStyleMacroExpansion(char[],
      *      int)
      */
-    public void endObjectStyleMacroExpansion(int offset) {
-        ((_ObjectMacroExpansion) currentContext).context_ends = offset;
-        currentContext = currentContext.getParent();
+    public void endObjectStyleMacroExpansion(IMacroDefinition macro, int offset) {
+        if( currentContext instanceof _MacroExpansion && ((_MacroExpansion)currentContext).definition == macro )
+        {
+            ((_ObjectMacroExpansion) currentContext).context_ends = offset; 
+            currentContext = currentContext.getParent();
+            return;
+        }
+
+        _CompositeContext test = currentContext;
+        while( ( test = test.getParent() ) != tu )
+        {
+            if( test instanceof _MacroExpansion && ((_MacroExpansion)test).definition == macro )
+            {
+                currentContext = test;
+                ((_ObjectMacroExpansion) currentContext).context_ends = offset; 
+                currentContext = currentContext.getParent();
+                return;
+            }
+        }
     }
 
     /*
@@ -1912,9 +1946,25 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#exitFunctionStyleExpansion(char[],
      *      int)
      */
-    public void endFunctionStyleExpansion(int offset) {
-        ((_FunctionMacroExpansion) currentContext).context_ends = offset; 
-        currentContext = currentContext.getParent();
+    public void endFunctionStyleExpansion(IMacroDefinition macro, int offset) {
+        if( currentContext instanceof _MacroExpansion && ((_MacroExpansion)currentContext).definition == macro )
+        {
+            ((_FunctionMacroExpansion) currentContext).context_ends = offset; 
+            currentContext = currentContext.getParent();
+            return;
+        }
+
+        _CompositeContext test = currentContext;
+        while( ( test = test.getParent() ) != tu )
+        {
+            if( test instanceof _MacroExpansion && ((_MacroExpansion)test).definition == macro )
+            {
+                currentContext = test;
+                ((_FunctionMacroExpansion) currentContext).context_ends = offset; 
+                currentContext = currentContext.getParent();
+                return;
+            }
+        }
     }
 
     /*

@@ -1,3 +1,7 @@
+2005-07-18 Alain Magloire
+	New combo to choose the MIVersion.
+	* src/org/eclipse/cdt/launch/ui/CDEbuggerTab.java
+
 2005-07-14 Mikhail Khodjaiants
 	Fix PR 103207: New Icon for the TwoPaneElement in the binary search
 	* src/org/eclipse/cdt/launch/ui/CMainTab.java

@@ -45,6 +45,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -57,6 +58,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		private Button fVarBookKeeping;
 
 		private Button fRegBookKeeping;
+
+		final String[] protocolItems = new String[] { "mi", "mi1", "mi2", "mi3" };   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+		private Combo fPCombo;
 
 		/**
 		 * Constructor for AdvancedDebuggerOptionsDialog.
@@ -81,9 +85,24 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			fVarBookKeeping.setText(LaunchMessages.getString("CDebuggerTab.Variables")); //$NON-NLS-1$
 			fRegBookKeeping = new Button(group, SWT.CHECK);
 			fRegBookKeeping.setText(LaunchMessages.getString("CDebuggerTab.Registers")); //$NON-NLS-1$
+			createProtocolCombo(composite, 2);
 			initialize();
 			return composite;
 		}
+
+		protected void createProtocolCombo(Composite parent, int colspan) {
+			Group comboComp = new Group(parent, SWT.NONE);
+			comboComp.setText("Protocol");
+			GridLayout layout = new GridLayout(2, false);
+			comboComp.setLayout(layout);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = colspan;
+			comboComp.setLayoutData(gd);
+			fPCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
+			fPCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			fPCombo.setItems(protocolItems);
+		}
+
 
 		protected void okPressed() {
 			saveValues();
@@ -96,6 +115,19 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			fVarBookKeeping.setSelection( (varBookkeeping instanceof Boolean) ? ! ((Boolean)varBookkeeping).booleanValue() : true);
 			Object regBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING);
 			fRegBookKeeping.setSelection( (regBookkeeping instanceof Boolean) ? ! ((Boolean)regBookkeeping).booleanValue() : true);
+			Object protocol = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL);
+			int index = 0;
+			if (protocol instanceof String) {
+				String p = (String)protocol;
+				if (p != null && p.length() > 0) {
+					for (int i = 0; i < protocolItems.length; ++i) {
+						if (protocolItems[i].equals(p)) {
+							index = i;
+						}
+					}
+				}
+			}
+			fPCombo.select(index);
 		}
 
 		private void saveValues() {
@@ -104,6 +136,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, varBookkeeping);
 			Boolean regBookkeeping = (fRegBookKeeping.getSelection()) ? Boolean.FALSE : Boolean.TRUE;
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
+			String protocol = fPCombo.getText();
+			if (protocol != null && protocol.length() > 0) {
+				attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, protocol);
+			}
 			updateLaunchConfigurationDialog();
 		}
 
@@ -386,6 +422,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
 		} catch (CoreException e) {
 		}
+		try {
+			String protocol = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
+			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, protocol);
+		} catch (CoreException e) {
+		}
 	}
 
 	private void applyAdvancedAttributes(ILaunchConfigurationWorkingCopy config) {
@@ -398,6 +439,13 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (regBookkeeping instanceof Boolean)
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING,
 					((Boolean)regBookkeeping).booleanValue());
+		Object protocol = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL);
+		if (protocol instanceof String) {
+			String p = (String)protocol;
+			if (p != null && p.length() > 0) {
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, p);
+			}
+		}
 	}
 
 	protected Shell getShell() {

@@ -86,7 +86,9 @@ public class RxThread extends Thread {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
-				MIPlugin.getDefault().debugLog(line);
+				if (MIPlugin.getDefault().isDebugging()) {
+					MIPlugin.getDefault().debugLog(line);
+				}
 				setPrompt(line);
 				processMIOutput(line + "\n"); //$NON-NLS-1$
 			}

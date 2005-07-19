@@ -94,13 +94,14 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
 			File cwd = getProjectPath(config).toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			if (usePty) {
-				session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), cwd, gdbinit, monitor);
+				session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getPath().toFile(), cwd, gdbinit, monitor);
 			} else {
-				session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), cwd, gdbinit, null, monitor);
+				session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getPath().toFile(), cwd, gdbinit, null, monitor);
 			}
 			initializeLibraries(config, session);
 			return session;
@@ -129,11 +130,12 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			int pid = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, -1);
 			File cwd = getProjectPath(config).toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			File exeFile = exe != null ? exe.getPath().toFile() : null;
-			session = MIPlugin.getDefault().createCSession(gdb, exeFile, pid, null, cwd, gdbinit, monitor);
+			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exeFile, pid, null, cwd, gdbinit, monitor);
 			initializeLibraries(config, session);
 			return session;
 		} catch (Exception e) {
@@ -161,10 +163,11 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = getProjectPath(config).toFile();
 			IPath coreFile = new Path(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null));
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), coreFile.toFile(), cwd, gdbinit, monitor);
+			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getPath().toFile(), coreFile.toFile(), cwd, gdbinit, monitor);
 			initializeLibraries(config, session);
 			return session;
 		} catch (Exception e) {

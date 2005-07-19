@@ -27,11 +27,14 @@ import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowPrompt;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
+import org.eclipse.cdt.debug.mi.core.command.MIVersion;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Represents a GDB/MI session.
@@ -88,26 +91,55 @@ public class MISession extends Observable {
 	MIInferior inferior;
 	
 	/**
-	 * Create the gdb session.
+	 * @param process
+	 * @param tty
+	 * @param type
+	 * @param commandTimeout
+	 * @param launchTimeout
+	 * @param miVersion
+	 * @param monitor
+	 * @throws MIException
+	 */
+	public MISession(MIProcess process, IMITTY tty, int type, int commandTimeout, int launchTimeout, String miVersion, IProgressMonitor monitor) throws MIException {
+		this(process, tty, type, new CommandFactory(miVersion), commandTimeout, launchTimeout, monitor);
+	}
+
+
+	/**
+	 * Create the gdb session. Assume MIVersion 1
 	 *
+	 * @deprecated use the other constructors with the MIVersion
 	 * @param Process gdb Process.
 	 * @param pty Terminal to use for the inferior.
 	 * @param timeout time in milliseconds to wait for command response.
 	 * @param type the type of debugin session.
 	 */
-	public MISession(MIProcess process, IMITTY tty, int timeout, int type, int launchTimeout) throws MIException {
-
-		// Assume mi1 for now
-		String miVersion = "mi1"; //$NON-NLS-1$
-
+	public MISession(MIProcess process, IMITTY tty, int commandTimeout, int type, int launchTimeout) throws MIException {
+		this(process, tty, type, commandTimeout, launchTimeout, MIVersion.MI1, new NullProgressMonitor());
+		if (useExecConsole()) {
+			// if exec console is present, assume MI2 supported
+			setCommandFactory(new CommandFactory(MIVersion.MI2));
+		}
+	}
+	
+	/**
+	 * Create the gdb session.
+	 *
+	 * @param type the type of debugging session.
+	 * @param commandFactory the MI command factory
+	 * @param Process gdb Process.
+	 * @param pty Terminal to use for the inferior.
+	 * @param timeout time in milliseconds to wait for command response.
+	 */
+	public MISession(MIProcess process, IMITTY tty, int type, CommandFactory commandFactory, int commandTimeout, int launchTimeout, IProgressMonitor monitor) throws MIException {
 		gdbProcess = process;
 		inChannel = process.getInputStream();
 		outChannel = process.getOutputStream();
 
-		cmdTimeout = timeout;
+		factory = commandFactory;
+		cmdTimeout = commandTimeout;
 
 		sessionType = type;
-
 
 		parser = new MIParser();
 
@@ -116,12 +148,21 @@ public class MISession extends Observable {
 		txQueue = new CommandQueue();
 		rxQueue = new CommandQueue();
 		eventQueue = new Queue();
+		
+		txThread = new TxThread(this);
+		rxThread = new RxThread(this);
+		eventThread = new EventThread(this);
 
+		// initialize/setup
+		setup(launchTimeout, new NullProgressMonitor());
+	}
+	
+	protected void setup(int launchTimeout, IProgressMonitor monitor) throws MIException {
 		// The Process may have terminated earlier because
 		// of bad arguments etc .. check this here and bail out.
 		try {
-			process.exitValue();
-			InputStream err = process.getErrorStream();
+			gdbProcess.exitValue();
+			InputStream err = gdbProcess.getErrorStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(err));
 			String line = null;
 			try {
@@ -137,54 +178,21 @@ public class MISession extends Observable {
 		} catch (IllegalThreadStateException e) {
 			// Ok, it means the process is alive.
 		}
-
-		txThread = new TxThread(this);
-		rxThread = new RxThread(this);
-		eventThread = new EventThread(this);
+		
+		if (monitor.isCanceled()) {
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Process_Terminated")); //$NON-NLS-1$
+		}
 
 		txThread.start();
 		rxThread.start();
 		eventThread.start();
-
-		// Disable a certain number of irritations from gdb.
-		// Like confirmation and screen size.
-
-		try {
-			MIGDBSet confirm = new MIGDBSet(miVersion, new String[]{"confirm", "off"}); //$NON-NLS-1$ //$NON-NLS-2$
-			postCommand(confirm, launchTimeout);
-			confirm.getMIInfo(); 
-
-			MIGDBSet width = new MIGDBSet(miVersion, new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
-			postCommand(width, launchTimeout);
-			width.getMIInfo(); 
-
-			MIGDBSet height = new MIGDBSet(miVersion, new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
-			postCommand(height, launchTimeout);
-			height.getMIInfo();
-
-			// Try to discover is "-interpreter-exec" is supported.
-			try {
-				MIInterpreterExecConsole echo = new  MIInterpreterExecConsole(miVersion, "echo"); //$NON-NLS-1$
-				postCommand(echo, launchTimeout);
-				echo.getMIInfo();
-				useInterpreterExecConsole = true;
-			} catch (MIException e) {
-				//
-			}
-
-			// Get GDB's prompt
-			MIGDBShowPrompt prompt = new MIGDBShowPrompt(miVersion);
-			postCommand(prompt);
-			MIGDBShowInfo infoPrompt = prompt.getMIGDBShowInfo();
-			String value = infoPrompt.getValue();
-			if (value != null && value.length() > 0) {
-				parser.cliPrompt = value.trim();
-			}
-			if (useInterpreterExecConsole) {
-				miVersion = "mi2"; //$NON-NLS-1$
-			}
 			
-			factory = new CommandFactory(miVersion); //$NON-NI
+		try {
+			if (monitor.isCanceled()) {
+				throw new MIException(MIPlugin.getResourceString("src.MISession.Process_Terminated")); //$NON-NLS-1$
+			}
+
+			initialize(launchTimeout, monitor);
 		} catch (MIException exc) {
 			// Kill the Transmition thread.
 			if (txThread.isAlive()) {
@@ -201,6 +209,69 @@ public class MISession extends Observable {
 			// rethrow up the exception.
 			throw exc;
 		}
+	}
+	
+	protected void initialize(int launchTimeout, IProgressMonitor monitor) throws MIException {
+		// Disable a certain number of irritations from gdb.
+		// Like confirmation and screen size.
+		MIGDBSet confirm = getCommandFactory().createMIGDBSet(new String[]{"confirm", "off"}); //$NON-NLS-1$ //$NON-NLS-2$
+		postCommand(confirm, launchTimeout);
+		confirm.getMIInfo();
+		if (monitor.isCanceled()) {
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Process_Terminated")); //$NON-NLS-1$
+		}
+
+		MIGDBSet width = getCommandFactory().createMIGDBSet(new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+		postCommand(width, launchTimeout);
+		width.getMIInfo();
+		if (monitor.isCanceled()) {
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Process_Terminated")); //$NON-NLS-1$
+		}
+
+		MIGDBSet height = getCommandFactory().createMIGDBSet(new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+		postCommand(height, launchTimeout);
+		height.getMIInfo();
+		if (monitor.isCanceled()) {
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Process_Terminated")); //$NON-NLS-1$
+		}
+		
+		useInterpreterExecConsole = canUseInterpreterExecConsole();
+		if (monitor.isCanceled()) {
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Process_Terminated")); //$NON-NLS-1$
+		}
+
+		String prompt = getCLIPrompt();
+		if (monitor.isCanceled()) {
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Process_Terminated")); //$NON-NLS-1$
+		}
+		if (prompt != null) {
+			getMIParser().cliPrompt = prompt;
+		}
+	}
+	
+	protected boolean canUseInterpreterExecConsole() {
+		// Try to discover if "-interpreter-exec" is supported.
+		try {
+			MIInterpreterExecConsole echo = getCommandFactory().createMIInterpreterExecConsole("echo"); //$NON-NLS-1$
+			postCommand(echo);
+			echo.getMIInfo();
+			return true;
+		} catch (MIException e) {
+			//
+		}
+		return false;
+	}
+	
+	protected String getCLIPrompt() throws MIException {
+		// Get GDB's prompt
+		MIGDBShowPrompt prompt = getCommandFactory().createMIGDBShowPrompt();
+		postCommand(prompt);
+		MIGDBShowInfo infoPrompt = prompt.getMIGDBShowInfo();
+		String value = infoPrompt.getValue();
+		if (value != null && value.length() > 0) {
+			return value.trim();
+		}
+		return null;
 	}
 
 	/**
@@ -364,7 +435,7 @@ public class MISession extends Observable {
 		}
 		postCommand0(cmd, timeout);
 	}
-
+	
 	/**
 	 * if timeout < 0 the operation will not try to way for
 	 * answer from gdb.
@@ -375,7 +446,9 @@ public class MISession extends Observable {
 	 */
 	public synchronized void postCommand0(Command cmd, long timeout) throws MIException {
 		// TRACING: print the command;
-		MIPlugin.getDefault().debugLog(cmd.toString());
+		if (MIPlugin.getDefault().isDebugging()) {
+			MIPlugin.getDefault().debugLog(cmd.toString());
+		}
 
 		txQueue.addCommand(cmd);
 
@@ -457,7 +530,7 @@ public class MISession extends Observable {
 		// Although we will close the pipe().  It is cleaner
 		// to give a chance to gdb to cleanup.
 		// send the exit(-gdb-exit).  But we only wait a maximum of 2 sec.
-		MIGDBExit exit = factory.createMIGDBExit();
+		MIGDBExit exit = getCommandFactory().createMIGDBExit();
 		try {
 			postCommand0(exit, 2000);
 		} catch (MIException e) {
@@ -548,12 +621,17 @@ public class MISession extends Observable {
 		super.notifyObservers(arg);
 	}
 
-
 	OutputStream getConsolePipe() {
+		if (miOutConsolePipe == null) {
+			getMIConsoleStream();
+		}
 		return miOutConsolePipe;
 	}
 
 	OutputStream getLogPipe() {
+		if (miOutLogPipe == null) {
+			getMILogStream();
+		}
 		return miOutLogPipe;
 	}
 

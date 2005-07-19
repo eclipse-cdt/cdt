@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.mi.core;
 import java.io.File;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -43,6 +44,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = getProjectPath(config).toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
@@ -50,7 +52,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 				remote += ":"; //$NON-NLS-1$
 				remote += config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
 				String[] args = new String[] {"remote", remote}; //$NON-NLS-1$
-				session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), 0, args, cwd, gdbinit, monitor);
+				session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getPath().toFile(), 0, args, cwd, gdbinit, monitor);
 			} else {
 				MIPlugin plugin = MIPlugin.getDefault();
 				Preferences prefs = plugin.getPluginPreferences();
@@ -58,7 +60,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
 				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid"); //$NON-NLS-1$
-				session = MIPlugin.getDefault().createCSession(gdb, exe.getPath().toFile(), -1, null, cwd, gdbinit, monitor);
+				session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getPath().toFile(), -1, null, cwd, gdbinit, monitor);
 				ICDITarget[] targets = session.getTargets();
 				for (int i = 0; i < targets.length; ++i) {
 					Target target = (Target)targets[i];

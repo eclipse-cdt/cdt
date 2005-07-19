@@ -228,6 +228,10 @@ public class CommandFactory {
 		return new MIGDBShow(getMIVersion(), params);
 	}
 
+	public MIGDBShowPrompt createMIGDBShowPrompt() {
+		return new MIGDBShowPrompt(getMIVersion());
+	}
+
 	public MIGDBShowExitCode createMIGDBShowExitCode() {
 		return new MIGDBShowExitCode(getMIVersion());
 	}
@@ -349,7 +353,7 @@ public class CommandFactory {
 	}
 
 	public MIVarCreate createMIVarCreate(String name, String frameAddr, String expression) {
-		return new MIVarCreate(name, frameAddr, expression);
+		return new MIVarCreate(getMIVersion(), name, frameAddr, expression);
 	}
 
 	public MIVarDelete createMIVarDelete(String name) {

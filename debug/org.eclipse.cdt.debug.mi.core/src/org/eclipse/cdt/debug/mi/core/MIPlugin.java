@@ -17,11 +17,13 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
-import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
+import org.eclipse.cdt.debug.mi.core.command.MIVersion;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,7 +62,7 @@ public class MIPlugin extends Plugin {
 	}
 	/**
 	 * The constructor
-	 * @see org.eclipse.core.runtime.Plugin#Plugin(IPluginDescriptor)
+	 * @see org.eclipse.core.runtime.Plugin#Plugin()
 	 */
 	public MIPlugin() {
 		super();
@@ -83,8 +85,8 @@ public class MIPlugin extends Plugin {
 	 * @throws MIException
 	 * @return MISession
 	 */
-	public MISession createMISession(MIProcess process, IMITTY pty, int timeout, int type, int launchTimeout) throws MIException {
-		return new MISession(process, pty, timeout, type, launchTimeout);
+	public MISession createMISession(MIProcess process, IMITTY pty, int timeout, int type, int launchTimeout, String miVersion, IProgressMonitor monitor) throws MIException {
+		return new MISession(process, pty, type, timeout, launchTimeout, miVersion, monitor);
 	}
 
 	/**
@@ -95,21 +97,22 @@ public class MIPlugin extends Plugin {
 	 * @throws MIException
 	 * @return MISession
 	 */
-	public MISession createMISession(MIProcess process, IMITTY pty, int type) throws MIException {
+	public MISession createMISession(MIProcess process, IMITTY pty, int type, String miVersion, IProgressMonitor monitor) throws MIException {
 		MIPlugin miPlugin = getDefault();
 		Preferences prefs = miPlugin.getPluginPreferences();
 		int timeout = prefs.getInt(IMIConstants.PREF_REQUEST_TIMEOUT);
 		int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
-		return createMISession(process, pty, timeout, type, launchTimeout);
+		return createMISession(process, pty, timeout, type, launchTimeout, miVersion, monitor);
 	}
 
 	/**
-	 * Method createCSession.
+	 * Method createCSession; Create an new PTY instance and launch gdb in mi for local debug.
+	 * 
 	 * @param program
 	 * @return ICDISession
 	 * @throws MIException
 	 */
-	public Session createCSession(String gdb, File program, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, String miVersion, File program, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		IMITTY pty = null;
 		boolean failed = false;
 
@@ -121,7 +124,7 @@ public class MIPlugin extends Plugin {
 		}
 
 		try {
-			return createCSession(gdb, program, cwd, gdbinit, pty, monitor);
+			return createCSession(gdb, miVersion, program, cwd, gdbinit, pty, monitor);
 		} catch (IOException exc) {
 			failed = true;
 			throw exc;
@@ -149,12 +152,12 @@ public class MIPlugin extends Plugin {
 	}
 
 	/**
-	 * Method createCSession.
+	 * Method createCSession; lauch gdb in mi mode for local debugging
 	 * @param program
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public Session createCSession(String gdb, File program, File cwd, String gdbinit, IMITTY pty, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, String miVersion, File program, File cwd, String gdbinit, IMITTY pty, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -170,23 +173,33 @@ public class MIPlugin extends Plugin {
 		String[] args;
 		if (pty != null) {
 			if (program == null) {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			}
 		} else {
 			if (program == null) {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			}
 		}
 
-		MIProcess pgdb = new MIProcessAdapter(args, monitor);
+		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
+		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
 
+		if (MIPlugin.getDefault().isDebugging()) {
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < args.length; ++i) {
+				sb.append(args[i]);
+				sb.append(' ');
+			}
+			MIPlugin.getDefault().debugLog(sb.toString());
+		}
+		
 		MISession session;
 		try {
-			session = createMISession(pgdb, pty, MISession.PROGRAM);
+			session = createMISession(pgdb, pty, MISession.PROGRAM, miVersion, monitor);
 		} catch (MIException e) {
 			pgdb.destroy();
 			throw e;
@@ -213,13 +226,13 @@ public class MIPlugin extends Plugin {
 	}
 
 	/**
-	 * Method createCSession.
+	 * Method createCSession; Post mortem debug with a core file.
 	 * @param program
 	 * @param core
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public Session createCSession(String gdb, File program, File core, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, String miVersion, File program, File core, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -234,14 +247,26 @@ public class MIPlugin extends Plugin {
 
 		String[] args;
 		if (program == null) {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi", "-c", core.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion, "-c", core.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi", "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion, "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		}
-		MIProcess pgdb = new MIProcessAdapter(args, monitor);
+
+		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
+		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
+		
+		if (MIPlugin.getDefault().isDebugging()) {
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < args.length; ++i) {
+				sb.append(args[i]);
+				sb.append(' ');
+			}
+			MIPlugin.getDefault().debugLog(sb.toString());
+		}
+		
 		MISession session;
 		try {
-			session = createMISession(pgdb, null, MISession.CORE);
+			session = createMISession(pgdb, null, MISession.CORE, miVersion, monitor);
 			//@@@ We have to manually set the suspended state when doing post-mortem
 			session.getMIInferior().setSuspended();
 		} catch (MIException e) {
@@ -252,13 +277,13 @@ public class MIPlugin extends Plugin {
 	}
 
 	/**
-	 * Method createCSession.
+	 * Method createCSession; remote debuging by selectin  a target.
 	 * @param program
 	 * @param pid
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public Session createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
+	public Session createCSession(String gdb, String miVersion, File program, int pid, String[] targetParams, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -273,14 +298,26 @@ public class MIPlugin extends Plugin {
 
 		String[] args;
 		if (program == null) {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
-		MIProcess pgdb = new MIProcessAdapter(args, monitor);
+
+		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
+		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
+		
+		if (MIPlugin.getDefault().isDebugging()) {
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < args.length; ++i) {
+				sb.append(args[i]);
+				sb.append(' ');
+			}
+			MIPlugin.getDefault().debugLog(sb.toString());
+		}
+		
 		MISession session;
 		try {
-			session = createMISession(pgdb, null, MISession.ATTACH);
+			session = createMISession(pgdb, null, MISession.ATTACH, miVersion, monitor);
 		} catch (MIException e) {
 			pgdb.destroy();
 			throw e;
@@ -337,9 +374,9 @@ public class MIPlugin extends Plugin {
 			// This is to verbose for a log file, better use the console.
 			//	getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
 			// ALERT:FIXME: For example for big buffers say 4k length,
-			// the console will simply blow taking down eclipse.
+			// the console will simply blows taking down eclipse.
 			// This seems only to happen in Eclipse-gtk and Eclipse-motif
-			// on GNU/Linux, so it will be break in smaller chunks.
+			// on GNU/Linux, so we break the lines in smaller chunks.
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);
 				message = message.substring(100);

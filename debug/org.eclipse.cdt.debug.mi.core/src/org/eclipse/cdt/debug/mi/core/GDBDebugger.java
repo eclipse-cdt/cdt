@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -73,9 +74,10 @@ public class GDBDebugger implements ICDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), cwd, gdbinit, null);
+			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -105,9 +107,10 @@ public class GDBDebugger implements ICDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), pid, null, cwd, gdbinit, null);
+			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), pid, null, cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -137,9 +140,10 @@ public class GDBDebugger implements ICDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
-			session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), corefile.toFile(), cwd, gdbinit, null);
+			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), corefile.toFile(), cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {

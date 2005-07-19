@@ -21,16 +21,20 @@ import java.io.Reader;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
 
 /**
  */
 public class MIProcessAdapter implements MIProcess {
 
 	Process fGDBProcess;
+	private static final int ONE_SECOND = 1000;
 
 	public MIProcessAdapter(String[] args, IProgressMonitor monitor) throws IOException {
-		fGDBProcess = getGDBProcess(args, monitor);
+		this(args, 0, monitor);
+	}
+
+	public MIProcessAdapter(String[] args, int launchTimeout, IProgressMonitor monitor) throws IOException {
+		fGDBProcess = getGDBProcess(args, launchTimeout, monitor);
 	}
 
 	/**
@@ -41,17 +45,7 @@ public class MIProcessAdapter implements MIProcess {
 	 * @return Process
 	 * @throws IOException
 	 */
-	protected Process getGDBProcess(String[] args, IProgressMonitor monitor) throws IOException {
-		int ONE_SECOND = 1000;
-
-		if (MIPlugin.getDefault().isDebugging()) {
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < args.length; ++i) {
-				sb.append(args[i]);
-				sb.append(' ');
-			}
-			MIPlugin.getDefault().debugLog(sb.toString());
-		}
+	protected Process getGDBProcess(String[] args, int launchTimeout, IProgressMonitor monitor) throws IOException {
 		final Process pgdb = ProcessFactory.getFactory().exec(args);
 		Thread syncStartup = new Thread("GDB Start") { //$NON-NLS-1$
 			public void run() {
@@ -74,10 +68,7 @@ public class MIProcessAdapter implements MIProcess {
 		};
 		syncStartup.start();
 
-		MIPlugin miPlugin = MIPlugin.getDefault();
-		Preferences prefs = miPlugin.getPluginPreferences();
 		int timepass = 0;
-		int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
 		if (launchTimeout <= 0) {
 			// Simulate we are waiting forever.
 			launchTimeout = Integer.MAX_VALUE;

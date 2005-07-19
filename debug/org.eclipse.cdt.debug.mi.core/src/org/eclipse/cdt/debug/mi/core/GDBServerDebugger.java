@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -63,6 +64,7 @@ public class GDBServerDebugger implements ICDebugger {
 		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
@@ -70,7 +72,7 @@ public class GDBServerDebugger implements ICDebugger {
 				remote += ":"; //$NON-NLS-1$
 				remote += config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
 				String[] args = new String[] {"remote", remote}; //$NON-NLS-1$
-				session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), 0, args, cwd, gdbinit, null);
+				session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), 0, args, cwd, gdbinit, null);
 			} else {
 				MIPlugin plugin = MIPlugin.getDefault();
 				Preferences prefs = plugin.getPluginPreferences();
@@ -78,7 +80,7 @@ public class GDBServerDebugger implements ICDebugger {
 
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
 				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid"); //$NON-NLS-1$
-				session = MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), -1, null, cwd, gdbinit, null);
+				session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), -1, null, cwd, gdbinit, null);
 				ICDITarget[] targets = session.getTargets();
 				for (int i = 0; i < targets.length; ++i) {
 					Target target = (Target)targets[i];

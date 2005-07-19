@@ -58,7 +58,7 @@ public class MICommand extends Command {
 	 * @return
 	 */
 	public boolean isMI1() {
-		return "mi1".equalsIgnoreCase(fMIVersion); //$NON-NLS-1$
+		return MIVersion.MI1.equalsIgnoreCase(fMIVersion); //$NON-NLS-1$
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class MICommand extends Command {
 	 * @return
 	 */
 	public boolean isMI2() {
-		return "mi2".equalsIgnoreCase(fMIVersion); //$NON-NLS-1$
+		return MIVersion.MI2.equalsIgnoreCase(fMIVersion); //$NON-NLS-1$
 	}
 
 	/**

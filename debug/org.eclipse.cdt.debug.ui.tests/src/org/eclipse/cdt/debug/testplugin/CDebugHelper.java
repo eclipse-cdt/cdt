@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
+import org.eclipse.cdt.debug.mi.core.command.MIVersion;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
@@ -55,7 +56,7 @@ public class CDebugHelper {
             exename+="sol/" + exe;
         else
            return(null);
-        session=mi.createCSession(null, new File(exename), new File("."), null, null);
+        session=mi.createCSession(null, MIVersion.MI1, new File(exename), new File("."), null, null);
 		return(session);
 	}
 	/**
@@ -73,7 +74,7 @@ public class CDebugHelper {
 			return(null);        
 		}
 		
-		session=mi.createCSession(null, new File(workspacePath +bins[0].getPath().toOSString()), new File("."), null, null);
+		session=mi.createCSession(null, MIVersion.MI1, new File(workspacePath +bins[0].getPath().toOSString()), new File("."), null, null);
 		return(session);
 	}
 	

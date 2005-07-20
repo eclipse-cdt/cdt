@@ -5048,5 +5048,28 @@ public class AST2CPPTests extends AST2BaseTest {
     public void testBug78800() throws Exception {
         parseAndCheckBindings( "class Matrix {  public: Matrix & operator *(Matrix &); }; Matrix rotate, translate; Matrix transform = rotate * translate;" ); //$NON-NLS-1$
     }
+    
+    public void test10_2s3b() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("struct U { static int i; };      \n"); //$NON-NLS-1$
+		buffer.append("struct V : U { };                \n"); //$NON-NLS-1$
+		buffer.append("struct W : U { using U::i; };    \n"); //$NON-NLS-1$
+		buffer.append("struct X : V, W { void foo(); }; \n"); //$NON-NLS-1$
+		buffer.append("void X::foo() {                  \n"); //$NON-NLS-1$
+		buffer.append("   i;                            \n"); //$NON-NLS-1$
+		buffer.append("}                                \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPField i = (ICPPField) col.getName(1).resolveBinding();
+        ICPPUsingDeclaration using = (ICPPUsingDeclaration) col.getName(6).resolveBinding();
+        ICPPDelegate [] delegates = using.getDelegates();
+        assertEquals( delegates.length, 1 );
+        assertSame( i, delegates[0].getBinding() );
+        
+        assertSame( i, col.getName(16).resolveBinding() );
+	}
 
 }

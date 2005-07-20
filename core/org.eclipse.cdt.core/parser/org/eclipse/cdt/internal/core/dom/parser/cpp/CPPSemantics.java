@@ -1236,37 +1236,45 @@ public class CPPSemantics {
 		}
 
 	    IBinding binding =  ( n instanceof IBinding) ? (IBinding)n : ((IASTName)n).resolveBinding();
+	    while( binding instanceof ICPPDelegate ){
+	    	binding = ((ICPPDelegate)binding).getBinding();
+	    }
 	    Object [] objs = ( names instanceof Object[] ) ? (Object[])names : null;
 	    int idx = ( objs != null && objs.length > 0 ) ? 0 : -1;
 	    Object o = ( idx != -1 ) ? objs[idx++] : names;
 	    while( o != null ) {       
 	        IBinding b = ( o instanceof IBinding ) ? (IBinding) o : ((IASTName)o).resolveBinding();
 	        
-	        if( binding != b )
-	            return true;
-			
-			boolean ok = false;
-			//3.4.5-4 if the id-expression  in a class member access is a qualified id... the result 
-			//is not required to be a unique base class...
-			if( binding instanceof ICPPClassType ){
-				IASTNode parent = data.astName.getParent();
-				if( parent instanceof ICPPASTQualifiedName && 
-					parent.getPropertyInParent() == IASTFieldReference.FIELD_NAME )
-				{
-					ok = true;
+	        if( b instanceof ICPPUsingDeclaration ){
+	        	objs = ArrayUtil.append( Object.class, objs, ((ICPPUsingDeclaration)b).getDelegates() );
+	        } else {
+	        	while( b instanceof ICPPDelegate ){
+	    	    	b = ((ICPPDelegate)b).getBinding();
+	    	    }
+		        if( binding != b )
+		            return true;
+				
+				boolean ok = false;
+				//3.4.5-4 if the id-expression  in a class member access is a qualified id... the result 
+				//is not required to be a unique base class...
+				if( binding instanceof ICPPClassType ){
+					IASTNode parent = data.astName.getParent();
+					if( parent instanceof ICPPASTQualifiedName && 
+						parent.getPropertyInParent() == IASTFieldReference.FIELD_NAME )
+					{
+						ok = true;
+					}
 				}
-			}
-		    //it is not ambiguous if they are the same thing and it is static or an enumerator
-	        if( binding instanceof IEnumerator ||
-	           (binding instanceof IFunction && ((ICPPInternalFunction)binding).isStatic( false )) ||
-		       (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) 
-	        {
-	        	ok = true;
+			    //it is not ambiguous if they are the same thing and it is static or an enumerator
+		        if( binding instanceof IEnumerator ||
+		           (binding instanceof IFunction && ((ICPPInternalFunction)binding).isStatic( false )) ||
+			       (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) 
+		        {
+		        	ok = true;
+		        }
+		        if( !ok )
+					return true;
 	        }
-	        if( !ok )
-				return true;
-			
-			next:
 	        if( idx > -1 && idx < objs.length )
 	        	o = objs[idx++];
 	        else

@@ -179,36 +179,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		}
 	}
 
-
-	/**
-	 [--Start Example(CPP 10.2-3b):
-	struct U { static int i; };
-	struct V : U { };
-	struct W : U { using U::i; };
-	struct X : V, W { void foo(); };
-	void X::foo() {
-	i; //finds U::i in two ways: as W::i and U::i in V
-	// no ambiguity because U::i is static
-	}
-	 --End Example]
-	 */
-	public void test10_2s3b()  { // TODO raised bug 90652
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("struct U { static int i; };\n"); //$NON-NLS-1$
-		buffer.append("struct V : U { };\n"); //$NON-NLS-1$
-		buffer.append("struct W : U { using U::i; };\n"); //$NON-NLS-1$
-		buffer.append("struct X : V, W { void foo(); };\n"); //$NON-NLS-1$
-		buffer.append("void X::foo() {\n"); //$NON-NLS-1$
-		buffer.append("i; //finds U::i in two ways: as W::i and U::i in V\n"); //$NON-NLS-1$
-		buffer.append("// no ambiguity because U::i is static\n"); //$NON-NLS-1$
-		buffer.append("}\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-	
 	/**
 	 [--Start Example(CPP 14.5.3-1):
 	template<class T> class task;

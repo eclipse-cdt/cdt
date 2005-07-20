@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.testplugin.FileManager;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -35,6 +36,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -143,6 +145,110 @@ public class CSelectionTestsNoIndexer extends TestCase {
         
         return file;
     }
+    
+    protected IFile importFileWithLink(String fileName, String contents) throws Exception{
+        //Obtain file handle
+        IFile file = project.getProject().getFile(fileName);
+        
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        
+        File linkFile = new File(location.toOSString());
+        if (!linkFile.exists()) {
+        	linkFile.createNewFile();
+        }
+        
+        file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
+        
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+        
+        fileManager.addFile(file);
+        
+        return file;
+    }
+    
+    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName ) throws Exception{
+    	IFolder linkedFolder = project.getFolder(folderName);
+    	IPath folderLocation = new Path(project.getLocation().toOSString() + File.separator + folderName + "_this_is_linked"); //$NON-NLS-1$
+    	IFolder actualFolder = project.getFolder(folderName + "_this_is_linked"); //$NON-NLS-1$
+    	if (!actualFolder.exists())
+    		actualFolder.create(true, true, monitor);
+    	
+    	linkedFolder.createLink(folderLocation, IResource.NONE, monitor);
+    	
+    	actualFolder.delete(true, false, monitor);
+    	
+    	IFile file = linkedFolder.getFile(fileName);
+    	
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+            	
+        fileManager.addFile(file);
+    	
+        return file;
+    }
+    
+    protected IFile importFileWithLink(String fileName, String contents, IFolder folder) throws Exception{
+        if (!folder.exists())
+        	folder.create(true, true, null);
+    	
+    	//Obtain file handle
+        IFile file = project.getProject().getFile(fileName);
+        
+        IPath location = new Path(folder.getLocation().toOSString() + File.separator + fileName); //$NON-NLS-1$
+        
+        File linkFile = new File(location.toOSString());
+        if (!linkFile.exists()) {
+        	linkFile.createNewFile();
+        }
+        
+        file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
+        
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+        
+        fileManager.addFile(file);
+        
+        return file;
+    }
+    
+    protected IFolder importFolder(String folderName) throws Exception {
+    	IFolder folder = project.getProject().getFolder(folderName);
+		
+		//Create file input stream
+		if( !folder.exists() )
+			folder.create( false, false, monitor );
+		
+		return folder;
+    }
+
+    // TODO Devin remove this commented method
+//    protected IFolder importFolderWithLink(String folderName) throws Exception {
+//    	// create the folder that will be linked
+//    	IFolder folder = project.getProject().getFolder(folderName);
+//    	
+//    	// create the linked folder    	
+//    	IFolder linkedFolder = project.getProject().getFolder(folderName + "linked"); //$NON-NLS-1$
+//    	if (!linkedFolder.exists())
+//    		linkedFolder.create(true, true, null);
+//
+//    	// make the link
+//        folder.createLink(linkedFolder.getLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+//		
+//		return folder;
+//    }
     
 	protected IASTNode testF3(IFile file, int offset) throws ParserException {
 		return testF3(file, offset, 0);
@@ -669,4 +775,53 @@ public class CSelectionTestsNoIndexer extends TestCase {
         assertEquals(((ASTNode)def).getOffset(), 128);
         assertEquals(((ASTNode)def).getLength(), 3);
 	}
+	
+    public void testBug103697() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int x;\n"); //$NON-NLS-1$
+        buffer.append("int foo() {\n"); //$NON-NLS-1$
+        buffer.append(" return x;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+                
+        String code = buffer.toString();
+        IFile file = importFileWithLink("testBug103697.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
+        IASTNode def = testCtrl_F3(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName)def).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 4);
+        assertEquals(((ASTNode)def).getLength(), 1);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 1);
+    }
+    
+    public void testBug76043() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("int x;\n"); //$NON-NLS-1$
+    	buffer.append("int foo() {\n"); //$NON-NLS-1$
+    	buffer.append(" return x;\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	String code = buffer.toString(); 
+    	
+    	IFile file = importFileInsideLinkedFolder("testBug76043.c", code, "folder"); //$NON-NLS-1$ //$NON-NLS-2$
+    	
+    	assertFalse(file.isLinked()); // I'm not sure why the IResource#isLinked() returns false if it's contained within a linked folder
+    	
+        int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
+        IASTNode def = testCtrl_F3(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName)def).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 4);
+        assertEquals(((ASTNode)def).getLength(), 1);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 1);
+    }
+    
 }

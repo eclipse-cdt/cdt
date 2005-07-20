@@ -116,6 +116,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 		suite.addTest(new CSelectionTestsDOMIndexer("testOpenFileDiffDir")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsDOMIndexer("testBug101287")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsDOMIndexer("testBug103697")); //$NON-NLS-1$
+		suite.addTest(new CSelectionTestsDOMIndexer("testBug76043")); //$NON-NLS-1$
 		
 		return suite;
 	}
@@ -655,6 +656,31 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
         String code = buffer.toString();
         IFile file = importFileWithLink("testBug103697.cpp", code); //$NON-NLS-1$
         
+        int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
+        IASTNode def = testCtrl_F3(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName)def).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 4);
+        assertEquals(((ASTNode)def).getLength(), 1);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 4);
+        assertEquals(((ASTNode)decl).getLength(), 1);
+    }
+    
+    public void testBug76043() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("int x;\n"); //$NON-NLS-1$
+    	buffer.append("int foo() {\n"); //$NON-NLS-1$
+    	buffer.append(" return x;\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	String code = buffer.toString(); 
+    	
+    	IFile file = importFileInsideLinkedFolder("testBug76043.c", code, "folder"); //$NON-NLS-1$ //$NON-NLS-2$
+    	
+    	assertFalse(file.isLinked()); // I'm not sure why the IResource#isLinked() returns false if it's contained within a linked folder
+    	
         int offset = code.indexOf("return x;\n") + "return ".length(); //$NON-NLS-1$ //$NON-NLS-2$
         IASTNode def = testCtrl_F3(file, offset);
         IASTNode decl = testF3(file, offset);

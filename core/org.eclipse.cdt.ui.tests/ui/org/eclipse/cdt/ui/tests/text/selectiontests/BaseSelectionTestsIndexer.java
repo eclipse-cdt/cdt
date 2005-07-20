@@ -137,6 +137,31 @@ public class BaseSelectionTestsIndexer extends TestCase {
         
         return file;
     }
+    
+    protected IFile importFileInsideLinkedFolder(String fileName, String contents, String folderName ) throws Exception{
+    	IFolder linkedFolder = project.getFolder(folderName);
+    	IPath folderLocation = new Path(project.getLocation().toOSString() + File.separator + folderName + "_this_is_linked"); //$NON-NLS-1$
+    	IFolder actualFolder = project.getFolder(folderName + "_this_is_linked"); //$NON-NLS-1$
+    	if (!actualFolder.exists())
+    		actualFolder.create(true, true, monitor);
+    	
+    	linkedFolder.createLink(folderLocation, IResource.NONE, monitor);
+    	
+    	actualFolder.delete(true, false, monitor);
+    	
+    	IFile file = linkedFolder.getFile(fileName);
+    	
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        //Create file input stream
+        if( file.exists() )
+            file.setContents( stream, false, false, monitor );
+        else
+            file.create( stream, false, monitor );
+            	
+        fileManager.addFile(file);
+    	
+        return file;
+    }
 
     protected IFolder importFolder(String folderName) throws Exception {
     	IFolder folder = project.getProject().getFolder(folderName);

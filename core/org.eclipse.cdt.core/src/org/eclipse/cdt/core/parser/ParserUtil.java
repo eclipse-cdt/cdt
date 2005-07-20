@@ -115,6 +115,7 @@ public class ParserUtil
 		if( workspace == null )
 			return null;
 		IPath path = new Path( finalPath );
+		IPath initialPath = new Path( finalPath );
 		
 		IWorkspaceRoot root = workspace.getRoot();
         if( root.getLocation().isPrefixOf( path ) )
@@ -130,9 +131,13 @@ public class ParserUtil
                 return resultingResource;
 
             // check for linked resources
-            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
-            if( files != null && files.length > 0 && files[0] != null) {
-            	return files[0];
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(initialPath); 
+
+            // note for findFilesForLocation(IPath): This method does not consider whether resources actually exist at the given locations.
+            // so only return the first IFile found that is accessible
+            for(int i=0; i<files.length; i++) {
+            	if (files[i].isAccessible())
+            		return files[i];
             }
             
     		return null;

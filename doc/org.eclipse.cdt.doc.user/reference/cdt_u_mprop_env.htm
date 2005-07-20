@@ -6,6 +6,16 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>C/C++ Project Properties, Managed,  Build</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+	<style>
+<!--
+ li.MsoNormal
+	{mso-style-parent:"";
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	margin-left:0in; margin-right:0in; margin-top:0in}
+-->
+</style>
 </head>
 <body>
 
@@ -18,13 +28,131 @@ Customizes the environment variables to be used in building your build configura
 	selected build configuration.</dd>
 	<dt>Configuration:</dt><dd>Select the build configuration from the list provided.</dd>
 	<dt>Manage...</dt><dd>You can add, remove and rename configurations.</dd>
-	<dt>Configuration Settings</dt><dd>To Be Added.</dd>
+	<dt>Configuration Settings</dt><dd>You can add, remove and edit 
+	environment variables for a 
+	project or configuration.&nbsp; Each tab contains two tables - one for user-defined 
+	environment variables and one for non user-defined environment 
+	variables.&nbsp; Each 
+	table contains two columns<b>:</b><p><b>Name</b> of the environment variable</p>
+	<p><b>Value </b>of the environment variable.&nbsp; </p>
+	<p>You can view all environment variables that are not user-defined in the <b>System 
+	Variables</b> table.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;</span><span style="font-style: normal; font-variant: normal; font-weight: normal">You</span> 
+	can choose to also display all variables defined for lower-precedence contexts 
+	in the <b>System Variables</b> table by checking the <b>Show parent level 
+	variables</b> checkbox. System variables are read-only.</p>
+	<p class="MsoNormal">You can view all user-defined variables in the <b>User 
+	Variables</b> table.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;
+	</span>A user-defined variable overrides a non user-defined variable of the same 
+	name for the given level.&nbsp; Overridden variables are displayed in bold in 
+	the <b>System Variables</b> table.</dd>
 	<dt>Restore Defaults</dt><dd>Returns any changes back to their default setting.</dd>
 	<dt>Apply</dt><dd>Applies any changes.</dd>
-</dl></p>
+</dl>
+
+<h2>Detailed Specification</h2>
+<p style="margin-top: 15px; margin-bottom: 0">Users and tool-chain integrators 
+can define the set of environment variables to be used while the build process 
+is executing. </p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Since the 
+environment variable names are case sensitive on Unix-like systems and case 
+insensitive on Windows systems, the Managed Build System (MBS) will treat the variable names in the same manner as the host system.</p>
+<ul>
+	<li>
+	<p class="MsoNormal" style="margin-top: 10px; margin-bottom: 0">MBS will 
+	allow tool-integrators and users to specify multiple variables whose names 
+	differ only in case on systems that support case sensitive variable names 
+	and will not allow them to do that on Windows systems. </li>
+	<li>
+	<p class="MsoNormal" style="margin-top: 10px; margin-bottom: 0">MBS will 
+	also treat variable names as case sensitive (on Unix-like systems) or case 
+	insensitive (on Windows systems) in its own operations (overriding a 
+	lower-level variable, etc.)</li>
+</ul>
+<p class="MsoNormal"><span lang="EN-US">Build Environment variables can be 
+specified at several levels:</span></p>
+<blockquote>
+	<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+	<span lang="EN-US">1.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>Configuration level – variables specific to the selected configuration</span></p>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-top: 0; margin-bottom: 0">
+	<span lang="EN-US">2.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>Project level – variables specific to the selected project and common 
+	for all project configurations</span></p>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-top: 0; margin-bottom: 0">
+	<span lang="EN-US">3.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>Workspace level – variables specific to the current workspace</span></p>
+	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in; margin-top: 0; margin-bottom: 0">
+	<span lang="EN-US">4.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>System environment passed to eclipse</span></p>
+</blockquote>
+<p class="MsoNormal"><span lang="EN-US">When running the build utility for the 
+selected configuration, the process' total environment variables set will be 
+generated, including variables from all specified levels. Levels have 
+precedence over each other as specified in the above list, so for example if 
+configuration level and workspace level have a variable of the same name, the 
+configuration variable will take precedence, etc.</span></p>
+<p style="margin-bottom: 0">Users can create and delete environment variables 
+for any given project configuration, for the entire project or for the entire 
+workspace.</p>
+<p style="margin-bottom: 0">To create a new variable the &quot;New&quot; button should be 
+pressed. The dialog will appear representing the variable definition.</p>
+<p style="margin-bottom: 0">
+<img border="0" src="../images/mprop_env_new_repl.PNG" width="433" height="223"></p>
+<p style="margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0">A variable definition contains the name, the value, the 
+delimiter and the &quot;operation&quot; <span lang="EN-US">to perform on the 
+variable of the same name defined at the lower-precedence level. The following 
+"operations" are defined:&nbsp;</span></p>
+<p class="MsoNormal" style="text-indent: -.25in; margin-left: 53.25pt; margin-top: 0">
+<span lang="EN-US" style="font-family: Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&quot;</span></span><span lang="EN-US">append&quot;:&nbsp; If the variable already exists, 
+add the user-specified value to the end of any existing value that the 
+environment variable has.&nbsp; If the variable does not yet exist, create the 
+variable and set it to the user-specified value.</span></p>
+<p class="MsoNormal" style="text-indent: -.25in; margin-left: 53.25pt; margin-top: 0">
+<span lang="EN-US" style="font-family: Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang="EN-US">&quot;prepend&quot;:&nbsp; If the variable already 
+exists, add the user-specified value to beginning of any existing value that the 
+environment variable has.&nbsp; If the variable does not yet exist, create the 
+variable and set it to the user-specified value.</span></p>
+<p class="MsoNormal" style="text-indent: -.25in; margin-left: 53.25pt; margin-top: 0">
+<span lang="EN-US" style="font-family: Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&quot;</span></span><span lang="EN-US">replace&quot;:&nbsp; If the variable already 
+exists, set the value to the user-specified value.&nbsp; If the variable does not yet 
+exist, create the variable and set it to the user-specified value.</span></p>
+<p class="MsoNormal" style="text-indent: -.25in; margin-left: 53.25pt; margin-top: 0">
+<span lang="EN-US" style="font-family: Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang="EN-US">&quot;delete&quot;:&nbsp; If the variable already exists, 
+remove the variable.</span></p>
+<p>The resulting value of the variable used for the build process will be 
+calculated by querying all levels from bottom to top and performing the 
+operations for the variables defined at those levels.</p>
+<p>The &quot;Name&quot; field contains the list of variables that are already defined. A user can 
+choose any variable from the list or enter a new variable name. When the 
+variable from the list is chosen or the name typed by the user matches already 
+defined variable name, the other fields of the dialog get filled with the 
+current value, delimiter and operation of that variable.</p>
+<p>When the &quot;replace&quot; operation is selected, the &quot;Value&quot; field is used to 
+specify the variable value.</p>
+<p>When either the &quot;prepend&quot; or &quot;append&quot; operation is selected, the &quot;Value&quot; 
+field becomes grayed and the &quot;Prepended/Appended value&quot; field becomes visible 
+that allows user to specify the value to be prepended/appended. The resulting 
+variable value will be automatically calculated and displayed in the &quot;Value&quot; 
+field. The delimiter to be used with append/prepend operations may be 
+specified in the &quot;Delimiter&quot; field.</p>
+<p>
+<img border="0" src="../images/mprop_env_new_prep.png" width="433" height="223"></p>
+<p>When the &quot;delete&quot; operation is selected, the &quot;Value&quot;, &quot;Delimiter&quot; and &quot;Prepended/Appended 
+value&quot; field becomes inaccessible.</p>
+<p>When performing the variable value calculation the variable name case 
+sensitivity will be taken in account. That is on Windows systems the variables of 
+the different levels or provided by different suppliers whose names differ only 
+in case will be treated as the same variable, while on Unix-like systems where 
+case sensitive variable names are supported variables whose names will differ 
+only in case will be treated as different variables. </p></p>
 
 
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<p style="margin-top: 0; margin-bottom: 0"><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
 <a href="cdt_u_sprop_info.htm">C++ Project Properties, Standard, Info</a><br>
 <a href="cdt_u_sprop_builders.htm">C++ Project Properties, Standard, Builders</a><br>
 <a href="cdt_u_sprop_file_types.htm">C++ Project Properties, Standard, File Types</a><br>
@@ -53,6 +181,9 @@ Customizes the environment variables to be used in building your build configura
 <a href="cdt_u_mprop_file_types.htm">C++ Project Properties, Managed, C/C++ File Types</a><br>
 <a href="cdt_u_mprop_indexer.htm">C++ Project Properties, Managed, C/C++ Indexer</a><br>
 <a href="cdt_u_mprop_ref.htm">C++ Project Properties, Managed, Project References</a></p>
+<p style="margin-top: 0; margin-bottom: 0"><a href="cdt_o_mproj_pref.htm">Managed Build Project preferences</a></p>
+<p style="margin-top: 0; margin-bottom: 0"><a href="cdt_o_mproj_pref_env.htm">Managed Build Project preferences, Environment</a></p>
+<p style="margin-top: 0; margin-bottom: 0"><a href="cdt_o_mproj_pref_macro.htm">Managed Build Project preferences, Macros</a></p>
 
 <p>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >  

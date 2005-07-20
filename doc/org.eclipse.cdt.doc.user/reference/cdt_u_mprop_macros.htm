@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<h1>C/C++ Project Properties, Managed, C/C++ Build, Macros</h1>
+<h1>C/C++ Project Properties, Managed, C/C++ Build, Build Macros</h1>
 Customizes the build macros used in your build configuration.<p>
 <img img src="../images/mprop_macros.png" alt="C/C++ Project Properties, Managed, C/C++ Build, Macros"></p>
 
@@ -27,9 +27,9 @@ Customizes the build macros used in your build configuration.<p>
 	selected build configuration.</dd>
 	<dt>Configuration:</dt><dd>Select the build configuration from the list provided.</dd>
 	<dt>Manage...</dt><dd>You can add, remove and rename configurations.</dd>
-	<dt>Configuration Settings</dt><dd>You can add and remove build macros for a 
-	project or configuration.&nbsp; Each tab contains two tables - one for User 
-	defined build macros and one for non user-defined build macros.&nbsp; Each 
+	<dt>Configuration Settings</dt><dd>You can add, remove and edit build macros for a 
+	project or configuration.&nbsp; Each tab contains two tables - one for user-defined 
+	build macros and one for non user-defined build macros.&nbsp; Each 
 	table contains three columns<b>:</b><p><b>Name</b> of the build macro</p>
 	<p><b>Type </b>of value contained in the build macro (see below)</p>
 	<p><b>Value </b>of the build macro.&nbsp; </p>
@@ -37,7 +37,7 @@ Customizes the build macros used in your build configuration.<p>
 	Macros</b> table.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;</span><span style="font-style: normal; font-variant: normal; font-weight: normal">You</span> 
 	can choose to also display all macros defined for lower-precedence contexts 
 	in the <b>System Macros</b> table by checking the <b>Show parent context 
-	macros</b> checkbox.</p>
+	macros</b> checkbox. System macros are read-only.</p>
 	<p class="MsoNormal">You can view all user-defined macros in the <b>User 
 	Macros</b> table.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;
 	</span>A user-defined macro overrides a non user-defined macro of the same 
@@ -56,8 +56,8 @@ There are no special restrictions on a macro name, though it is encouraged that 
 a letter and contain only letters, digits and underscore signs.  Build macro names are case sensitive.
 <br>
 If the actual value of text property contains $<i>{text</i><some_expression>}, it must be pre-pended 
-with the backslash in order to distinguish it from a build macro. The Managed 
-Build System pre-defines many useful macros (see below) and allows tool 
+with a backslash in order to distinguish it from a build macro. The Managed 
+Build System (MBS) pre-defines many useful macros (see below) and allows tool 
 integrators and users to define additional macros.</p>
 <p>Build Macros can hold several types of values:
 </p>
@@ -99,37 +99,43 @@ Several contexts are defined:</p>
 	<p class="MsoNormal" style="text-indent: -.25in; margin-left: .25in">The 
 	process environment variables defined in the environment passed to Eclipse.</li>
 </ol>
-<p class="MsoNormal">Users can define new macros for any project or 
-configuration of a project.&nbsp; The value of a build macro will be searched 
+<p class="MsoNormal">Users can define and delete macros 
+for any given project configuration, for the entire project or for the entire 
+workspace.</p>
+<p class="MsoNormal">The value of a build macro will be searched 
 for in the order specified above.&nbsp;If macro is not found for the currently 
 selected file context, the currently selected option context will be used, if 
 not found, the currently selected configuration context will be used, etc.&nbsp; </p>
+<p class="MsoNormal">To define a new macro the &quot;New&quot; button should be pressed. 
+A dialog will appear representing the macro definition.</p>
+<p class="MsoNormal">
+<img border="0" src="../images/mprop_macros_new_file.PNG" width="426" height="321"></p>
+<p>The &quot;Name&quot; field contains the list of macros that are already defined. A user can 
+choose any variable from the list or enter a new variable name. When a macro 
+from the list is chosen or the name typed by the user matches already existing 
+macro name, the other fields of the dialog get filled with the value, and value 
+type of that macro.</p>
+<p>When either of the &quot;String&quot;, &quot;File&quot;, &quot;Directory&quot; or &quot;File or Directory&quot; value 
+types is selected, the macro value may be specified with the &quot;Value&quot; edit-box. 
+For the &quot;File&quot; and &quot;Directory&quot; types a &quot;Browse&quot; button is also displayed that 
+allows selecting file or directory using the &quot;Browse&quot; dialog.</p>
+<p>When either of the &quot;List of Strings&quot;, &quot;List of Files&quot;, &quot;List of Directories&quot; 
+or &quot;List Files or Directories&quot; value types is selected, the macro value may be 
+specified with the &quot;Macro Value&quot; multi-line text box and button bar.</p>
+<p class="MsoNormal">
+<img border="0" src="../images/mprop_macros_new_list_file.PNG" width="426" height="321"></p>
+<p class="MsoNormal">&nbsp;</p>
 <p class="MsoNormal">Macro resolution takes place when the build file is being 
 generated.</p>
-<span style="font-size: 12.0pt; font-family: Times New Roman">All macros except 
+All macros except 
 the build process environment macros always get resolved in the makefile.&nbsp; 
-See the ??“expand build environment macros�? checkbox in the “Build Settings�? tab 
-of the “C/C++ Build�?. </span>
+See the <a href="cdt_u_mprop_build_settings.htm">“Expand Build Environment Macros&quot; checkbox in the “Build Settings&quot; tab 
+of the “C/C++ Build&quot; page</a>.
 <p class="MsoNormal">The Managed Build System pre-defines many useful macros 
 described in the following tables:</p>
 <h3>File-specific macros</h3>
-<p class="MsoNormal">The set of file-context macros is MBS-predefined, neither a 
-tool-integrator nor a user can define new file-context macros, but a 
-tool-integrator can specify the values for the file-context macros using 
-attributes of a builder element. The macro values specified in those attributes 
-should not contain the explicit e.g. file name, but instead should provide the 
-filename definition in terms of the builder automatic variables and text 
-functions. This is needed to allow the makefile generator to generate pattern 
-rules, e.g. in the case of Gnu make, the macro that represents the output file 
-name will contain the “$(notdir $@)? value. The builder definition of the gnu 
-tool-chain will contain attribute specifying the value for that macro. If a 
-tool-integrator does not provide the values for the file-specific macros, MBS 
-will automatically expand them to their actual value when generating the 
-buildfile, e.g. for the foo.c file the macro that represents the input file name 
-will contain “foo.c? in this case. In this case the makefile generator will not 
-be able to use pattern rules for building files with options containing 
-file-specific macros. (see the “Supplying the file-context macros values? 
-section for more detail)</p>
+<p class="MsoNormal">The set of file-context macros is predefined by the Managed Build System (MBS).  Neither a 
+tool-integrator nor a user can define new file-context macros.</p>
 <table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none" id="table1" width="695">
 	<tr style="height: 8.3pt">
 		<td valign="top" style="width: 217px; height: 8.3pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
@@ -436,7 +442,7 @@ section for more detail)</p>
 	</tr>
 </table>
 
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<p style="margin-top: 0; margin-bottom: 0"><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
 <a href="cdt_u_sprop_info.htm">C++ Project Properties, Standard, Info</a><br>
 <a href="cdt_u_sprop_builders.htm">C++ Project Properties, Standard, Builders</a><br>
 <a href="cdt_u_sprop_file_types.htm">C++ Project Properties, Standard, File Types</a><br>
@@ -465,6 +471,9 @@ section for more detail)</p>
 <a href="cdt_u_mprop_file_types.htm">C++ Project Properties, Managed, C/C++ File Types</a><br>
 <a href="cdt_u_mprop_indexer.htm">C++ Project Properties, Managed, C/C++ Indexer</a><br>
 <a href="cdt_u_mprop_ref.htm">C++ Project Properties, Managed, Project References</a></p>
+<p style="margin-top: 0; margin-bottom: 0"><a href="cdt_o_mproj_pref.htm">Managed Build Project preferences</a></p>
+<p style="margin-top: 0; margin-bottom: 0"><a href="cdt_o_mproj_pref_env.htm">Managed Build Project preferences, Environment</a></p>
+<p style="margin-top: 0; margin-bottom: 0"><a href="cdt_o_mproj_pref_macro.htm">Managed Build Project preferences, Macros</a></p>
 
 <p>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >  

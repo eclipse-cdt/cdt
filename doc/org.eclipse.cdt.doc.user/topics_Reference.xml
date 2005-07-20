@@ -60,7 +60,10 @@
 			<topic label="Binary Parser" href="reference/cdt_u_newproj_parser_binary.htm"/>
 			<topic label="Discovery Options" href="reference/cdt_u_discovery_preferences.htm"/>
 		</topic>
-		<topic label="Managed Make Project preferences" href="reference/cdt_o_mproj_pref.htm"/>
+		<topic label="Managed Make Project preferences" href="reference/cdt_o_mproj_pref.htm">
+			<topic label="Environment" href="reference/cdt_o_mproj_pref_env.htm"/>
+			<topic label="Build Macros" href="reference/cdt_o_mproj_pref_macro.htm"/>
+		</topic>
 		<topic label="Search preferences" href="reference/cdt_u_search_pref.htm"/>
 	</topic>
 	<topic label="C/C++ Project Properties" href="reference/cdt_u_properties.htm">
@@ -74,7 +77,7 @@
 				<topic label="Error Parser" href="reference/cdt_u_mprop_merror.htm"/>
 				<topic label="Binary Parser" href="reference/cdt_u_mprop_mbinary.htm"/>
 				<topic label="Environment" href="reference/cdt_u_mprop_env.htm"/>
-				<topic label="Macros" href="reference/cdt_u_mprop_macros.htm"/>
+				<topic label="Build Macros" href="reference/cdt_u_mprop_macros.htm"/>
 			</topic>
 			<topic label="C/C++ Documentation" href="reference/cdt_u_mprop_documentation.htm"/>
 			<topic label="C/C++ File Types" href="reference/cdt_u_mprop_file_types.htm"/>

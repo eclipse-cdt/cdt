@@ -1,3 +1,7 @@
+2005-07-21 Chris Wiebe
+	Fix PR 104442
+	* src/org/eclipse/cdt/internal/ui/text/FastCPartitionScanner.java
+
 2005-07-09 Alain Magloire
 	Fix PR 102324: Fire event in the property page for change contentType
 	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java

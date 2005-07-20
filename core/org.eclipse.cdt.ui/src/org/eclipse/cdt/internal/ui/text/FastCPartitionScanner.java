@@ -33,7 +33,6 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	private static final int SLASH_STAR= 3; // prefix for MULTI_LINE_COMMENT
 	private static final int STAR= 4; // postfix for MULTI_LINE_COMMENT
 	private static final int CARRIAGE_RETURN=5; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
-	private static final int ESCAPED_CR=6; // for win32 system where termination string is \r\n save the backslash
 	
 	/** The scanner. */
 //	private final BufferedRuleBasedScanner fScanner= new BufferedRuleBasedScanner(1000);
@@ -66,12 +65,12 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 		fTokenOffset += fTokenLength;
 		fTokenLength= fPrefixLength;
 
+		final char[][] delimiters = fScanner.getLegalLineDelimiters();
+
 		while (true) {
 			final int ch= fScanner.read();
-			
-			// characters
-	 		switch (ch) {
-	 		case ICharacterScanner.EOF:
+
+			if (ch == ICharacterScanner.EOF) {
 		 		if (fTokenLength > 0) {
 		 			fLast= NONE; // ignore last
 		 			return preFix(fState, CCODE, NONE, 0);
@@ -80,20 +79,23 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 		 		fLast= NONE;
 		 		fPrefixLength= 0;
 		 		return Token.EOF;
-
-	 		case '\r':
-				fLast= (fLast == BACKSLASH) ? ESCAPED_CR : CARRIAGE_RETURN;
-				fTokenLength++;
-				continue;
-	
-	 		case '\n': 		 		
+			}
+			
+			// detect if we're at the end of the line
+			final int delim = detectLineDelimiter(ch, fScanner, delimiters);
+			if (delim != -1) {
+				final int len = delimiters[delim].length;
+				if (len > 1) {
+					// adjust the token length if the delimiter was 2 or more chars
+					fTokenLength += (len - 1);
+				}
 				switch (fState) {
 				case SINGLE_LINE_COMMENT:
 				case CHARACTER:
 				//case STRING:				
 					// assert(fTokenLength > 0);
-					boolean escapedLine = (fLast == BACKSLASH || fLast == ESCAPED_CR);
-					if (!escapedLine) {
+					// if last char was a backslash then we have an escaped line
+					if (fLast != BACKSLASH) {
 						return postFix(fState);
 					}
 					// FALLTHROUGH
@@ -242,6 +244,46 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 		} 
  	}		
 
+	/**
+	 * returns index of longest matching element in delimiters
+	 */
+	private static final int detectLineDelimiter(final int ch, final ICharacterScanner scanner, final char[][] delimiters) {
+		int longestDelimiter = -1;
+		int maxLen = 0;
+		for (int i = 0; i < delimiters.length; i++) {
+			final char[] delim = delimiters[i];
+			if (ch == delim[0]) {
+				final int len = delim.length;
+				if (len > maxLen && (len == 1 || sequenceDetected(scanner, delim, 1, len))) {
+					maxLen = len;
+					longestDelimiter = i;
+				}
+			}
+		}
+		return longestDelimiter;
+	}
+	
+	/**
+	 * <code>true</code> if sequence matches between beginIndex (inclusive) and endIndex (exclusive)
+	 */
+	private static final boolean sequenceDetected(final ICharacterScanner scanner, final char[] sequence, final int beginIndex, final int endIndex) {
+		int charsRead = 0;
+		for (int i = beginIndex; i < endIndex; ++i) {
+			final int c = scanner.read();
+			if (c != ICharacterScanner.EOF) {
+				++charsRead;
+			}
+			if (c != sequence[i]) {
+				// Non-matching character detected, rewind the scanner back to the start.
+				for (; charsRead > 0; --charsRead) {
+					scanner.unread();
+				}
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	private static final int getLastLength(int last) {
 		switch (last) {
 		default:

@@ -120,6 +120,15 @@ public class OpenIncludeAction extends Action {
 					ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, fileToOpen);
 					if (unit != null) {
 						EditorUtility.openInEditor(unit);
+					} else {
+						// try linked files
+						IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(fileToOpen);
+						for(int i=0; i<files.length; i++) {
+							if (files[i].isAccessible()) {
+								EditorUtility.openInEditor(files[i]);
+								break;
+							}
+						}
 					}
 				}
 			} 

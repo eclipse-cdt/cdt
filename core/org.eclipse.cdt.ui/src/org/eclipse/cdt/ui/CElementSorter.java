@@ -127,11 +127,13 @@ public class CElementSorter extends ViewerSorter {
 			return MACROS;
 		} else if (element instanceof INamespace) {
 			String name = ((ICElement)element).getElementName();
-			if (name.startsWith("__")) { //$NON-NLS-1$
-				return NAMESPACES_SYSTEM;
-			}
-			if (name.charAt(0) == '_') {
-				return NAMESPACES_RESERVED;
+			if( name.length() > 0 ) {
+				if (name.startsWith("__")) { //$NON-NLS-1$
+					return NAMESPACES_SYSTEM;
+				}
+				if (name.charAt(0) == '_') {
+					return NAMESPACES_RESERVED;
+				}
 			}
 			return NAMESPACES;
 		} else if (element instanceof IUsing) {
@@ -170,11 +172,13 @@ public class CElementSorter extends ViewerSorter {
 			return INCLUDEREFERENCES;
 		} else if (element instanceof ICElement) {
 			String name = ((ICElement)element).getElementName();
-			if (name.startsWith("__")) { //$NON-NLS-1$
-				return CELEMENTS_SYSTEM;
-			}
-			if (name.charAt(0) == '_') {
-				return CELEMENTS_RESERVED;
+			if( name.length() > 0 ) {
+				if (name.startsWith("__")) { //$NON-NLS-1$
+					return CELEMENTS_SYSTEM;
+				}
+				if (name.charAt(0) == '_') {
+					return CELEMENTS_RESERVED;
+				}
 			}
 			return CELEMENTS;
 		} else if (element instanceof IFile) {

@@ -644,8 +644,6 @@ public class DOMAST extends ViewPart {
 
       if (part == null) {
          part = getActiveEditor();
-         
-         if (!(part instanceof CEditor)) return;
       }
 
       viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -952,7 +950,8 @@ public class DOMAST extends ViewPart {
    	IEditorPart editor = null;
    	
    	if (getSite().getPage().isEditorAreaVisible() &&
-	   	getSite().getPage().getActiveEditor() != null) {
+	   	getSite().getPage().getActiveEditor() != null &&
+	   	getSite().getPage().getActiveEditor() instanceof CEditor) {
 	   	editor = getSite().getPage().getActiveEditor();
 	    part = editor;
 	    lang = getLanguageFromFile(((CEditor)editor).getInputFile());

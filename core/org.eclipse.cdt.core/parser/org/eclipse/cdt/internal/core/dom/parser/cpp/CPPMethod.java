@@ -218,17 +218,14 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */
-    public boolean isVirtual() {
-		if( definition != null ){
-			IASTNode node = definition.getParent();
-			while( node instanceof IASTDeclarator )
-				node = node.getParent();
-			
+    public boolean isVirtual() throws DOMException {
+    	IASTDeclaration decl = getPrimaryDeclaration();
+		if( decl != null ){
 			ICPPASTDeclSpecifier declSpec = null;
-			if( node instanceof IASTSimpleDeclaration )
-				declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)node).getDeclSpecifier();
-			else if( node instanceof IASTFunctionDefinition )
-				declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)node).getDeclSpecifier();
+			if( decl instanceof IASTSimpleDeclaration )
+				declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+			else if( decl instanceof IASTFunctionDefinition )
+				declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
 			
 			if( declSpec != null ){
 				return declSpec.isVirtual();

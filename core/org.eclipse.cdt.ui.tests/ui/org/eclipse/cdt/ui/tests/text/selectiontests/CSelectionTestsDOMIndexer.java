@@ -108,6 +108,7 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CSelectionTestsDOMIndexer.class.getName());
 
+		suite.addTest(new CSelectionTestsDOMIndexer("testBug78354")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsDOMIndexer("testSimpleOpenDeclaration")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsDOMIndexer("testSimpleOpenDeclaration2")); //$NON-NLS-1$
 		suite.addTest(new CSelectionTestsDOMIndexer("testBasicDefinition")); //$NON-NLS-1$
@@ -694,5 +695,27 @@ public class CSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer impleme
         assertEquals(((ASTNode)decl).getLength(), 1);
     }
 
+    public void testBug78354() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("typedef int TestTypeOne;\n"); //$NON-NLS-1$
+        buffer.append("typedef int TestTypeTwo;\n"); //$NON-NLS-1$
+        buffer.append("main()\n"); //$NON-NLS-1$
+        buffer.append("{\n"); //$NON-NLS-1$
+        buffer.append("TestTypeOne myFirstLink = 5;\n"); //$NON-NLS-1$
+        buffer.append("TestTypeTwo mySecondLink = 6;\n"); //$NON-NLS-1$
+        buffer.append("return 0;\n"); //$NON-NLS-1$
+        buffer.append("}\n"); //$NON-NLS-1$
+        
+        String code = buffer.toString();
+        IFile file = importFileWithLink("testBug78354.cpp", code); //$NON-NLS-1$
+        
+        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$ //$NON-NLS-2$
+        IASTNode decl = testF3(file, offset);
+        assertTrue(decl instanceof IASTName);
+        assertEquals(((IASTName)decl).toString(), "TestTypeOne"); //$NON-NLS-1$
+        assertEquals(((ASTNode)decl).getOffset(), 12);
+        assertEquals(((ASTNode)decl).getLength(), 11);
+    }  
+    
     // REMINDER: see CSelectionTestsDomIndexer#suite() when appending new tests to this suite
 }

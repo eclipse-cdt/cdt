@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -3319,5 +3321,19 @@ public class AST2Tests extends AST2BaseTest {
         IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[1];
         assertEquals( fd.getDeclSpecifier().getRawSignature(), "enum COLOR"); //$NON-NLS-1$
         
+    }
+    
+    public void test1043290() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int f() { "); //$NON-NLS-1$
+        buffer.append( "int x = 4;  while( x < 10 ) blah: ++x; "); //$NON-NLS-1$
+        buffer.append( "}"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parseAndCheckBindings(buffer.toString() );
+        IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTStatement [] statements = ((IASTCompoundStatement)fd.getBody()).getStatements();
+        IASTWhileStatement whileStmt = (IASTWhileStatement) statements[1];
+        IASTLabelStatement labelStmt = (IASTLabelStatement) whileStmt.getBody();
+        assertTrue( labelStmt.getNestedStatement() instanceof IASTExpressionStatement );
+        IASTExpressionStatement es = (IASTExpressionStatement) labelStmt.getNestedStatement();
+        assertTrue( es.getExpression() instanceof IASTUnaryExpression );
     }
 }

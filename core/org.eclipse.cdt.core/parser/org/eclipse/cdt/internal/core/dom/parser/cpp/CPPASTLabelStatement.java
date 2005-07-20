@@ -13,13 +13,17 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * @author jcamelon
  */
 public class CPPASTLabelStatement extends CPPASTNode implements
-        IASTLabelStatement {
+        IASTLabelStatement, IASTAmbiguityParent {
     private IASTName name;
+    private IASTStatement nestedStatement;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTLabelStatement#getName()
@@ -44,6 +48,7 @@ public class CPPASTLabelStatement extends CPPASTNode implements
 	        }
 		}
         if( name != null ) if( !name.accept( action ) ) return false;
+        if( nestedStatement != null ) if( !nestedStatement.accept( action ) ) return false;
         return true;
     }
 
@@ -54,4 +59,22 @@ public class CPPASTLabelStatement extends CPPASTNode implements
 		if( n == name ) return r_declaration;
 		return r_unclear;
 	}
+
+    public IASTStatement getNestedStatement() {
+        return nestedStatement;
+    }
+
+    public void setNestedStatement(IASTStatement s) {
+        nestedStatement = s;
+    }
+
+    public void replace(IASTNode child, IASTNode other) {
+        if( child == nestedStatement )
+        {
+            other.setParent( this );
+            other.setPropertyInParent( child.getPropertyInParent() );
+            setNestedStatement((IASTStatement) other);
+        }
+        
+    }
 }

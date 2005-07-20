@@ -1684,14 +1684,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTStatement parseLabelStatement() throws EndOfFileException,
             BacktrackException {
         IToken labelName = consume(IToken.tIDENTIFIER);
-        int lastOffset = consume(IToken.tCOLON).getEndOffset();
+        consume(IToken.tCOLON);
+        IASTStatement nestedStatement = statement();
+        int lastOffset = calculateEndOffset( nestedStatement );
         IASTLabelStatement label_statement = createLabelStatement();
         ((ASTNode) label_statement).setOffsetAndLength(labelName.getOffset(),
                 lastOffset - labelName.getOffset());
+        
         IASTName name = createName(labelName);
         label_statement.setName(name);
         name.setParent(label_statement);
         name.setPropertyInParent(IASTLabelStatement.NAME);
+        
+        label_statement.setNestedStatement( nestedStatement );
+        nestedStatement.setParent( label_statement );
+        nestedStatement.setPropertyInParent( IASTLabelStatement.NESTED_STATEMENT );
         return label_statement;
     }
 

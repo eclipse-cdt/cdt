@@ -465,7 +465,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
 		assertTrue( node instanceof IASTName );
 		assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPClassType );
 		assertEquals( ((IASTName)node).toString(), "Squaw" ); //$NON-NLS-1$
-		assertEquals( ((ICPPClassType)((IASTName)node).resolveBinding()).getKey(), ICPPClassType.k_union );
+		assertEquals( ((ICPPClassType)((IASTName)node).resolveBinding()).getKey(), ICompositeType.k_union );
 		IASTName[] decls = getDeclarationOffTU((IASTName)node);
 		assertEquals(decls.length, 1);
 		assertEquals( decls[0].toString(), "Squaw" ); //$NON-NLS-1$

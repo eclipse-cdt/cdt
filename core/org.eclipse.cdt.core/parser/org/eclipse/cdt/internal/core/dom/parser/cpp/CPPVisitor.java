@@ -208,7 +208,7 @@ public class CPPVisitor {
 	}
 	
 	private static IBinding createBinding( IASTGotoStatement gotoStatement ) {
-	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( gotoStatement );
+	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( gotoStatement.getName() );
 	    IASTName name = gotoStatement.getName();
 	    IBinding binding;
         try {
@@ -225,7 +225,7 @@ public class CPPVisitor {
 	}
 	
 	private static IBinding createBinding( IASTLabelStatement labelStatement ) {
-	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( labelStatement );
+	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( labelStatement.getName() );
 	    IASTName name = labelStatement.getName();
 	    IBinding binding;
         try {
@@ -819,6 +819,12 @@ public class CPPVisitor {
 				if( type instanceof ICPPClassType ){
 					return ((ICPPClassType) type).getCompositeScope();
 				}
+			} else if( parent instanceof IASTGotoStatement || parent instanceof IASTLabelStatement ){
+			    while( !(parent instanceof IASTFunctionDefinition) ){
+			        parent = parent.getParent();
+			    }
+			    IASTFunctionDefinition fdef = (IASTFunctionDefinition) parent;
+			    return ((ICPPASTFunctionDeclarator)fdef.getDeclarator()).getFunctionScope();
 			}
 		} catch( DOMException e ){
 			IProblemBinding problem = e.getProblem();
@@ -855,13 +861,7 @@ public class CPPVisitor {
 		    return getContainingScope( name );
 		}
 		
-		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){
-		    while( !(parent instanceof IASTFunctionDefinition) ){
-		        parent = parent.getParent();
-		    }
-		    IASTFunctionDefinition fdef = (IASTFunctionDefinition) parent;
-		    return ((ICPPASTFunctionDeclarator)fdef.getDeclarator()).getFunctionScope();
-		}
+		
 		
 		if( scope == null )
 			return getContainingScope( parent );

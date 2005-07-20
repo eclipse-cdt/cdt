@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -104,15 +106,15 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class AST2CPPTests extends AST2BaseTest {
     
     
-//    public void testBug102825() throws Exception {
-//        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
-//        buffer.append("#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number\n" ); //$NON-NLS-1$
-//        buffer.append("typedef enum {\n" ); //$NON-NLS-1$
-//        buffer.append("CINIT(FILE, OBJECTPOINT, 1),\n" ); //$NON-NLS-1$
-//        buffer.append("    CINIT(URL,  OBJECTPOINT, 2)\n" ); //$NON-NLS-1$
-//        buffer.append("} CURLoption ;\n" ); //$NON-NLS-1$
-//        parseAndCheckBindings(buffer.toString());
-//    }
+    public void testBug102825() throws Exception {
+        StringBuffer buffer = new StringBuffer("#define CURLOPTTYPE_OBJECTPOINT   10000\n" ); //$NON-NLS-1$
+        buffer.append("#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_ ## type + number\n" ); //$NON-NLS-1$
+        buffer.append("typedef enum {\n" ); //$NON-NLS-1$
+        buffer.append("CINIT(FILE, OBJECTPOINT, 1),\n" ); //$NON-NLS-1$
+        buffer.append("    CINIT(URL,  OBJECTPOINT, 2)\n" ); //$NON-NLS-1$
+        buffer.append("} CURLoption ;\n" ); //$NON-NLS-1$
+        parseAndCheckBindings(buffer.toString());
+    }
     
     public void testBug78883() throws Exception {
         StringBuffer buffer = new StringBuffer("class B {\n"); //$NON-NLS-1$
@@ -5072,4 +5074,17 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( i, col.getName(16).resolveBinding() );
 	}
 
+    public void test1043290() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int f() { "); //$NON-NLS-1$
+        buffer.append( "int x = 4;  while( x < 10 ) blah: ++x; "); //$NON-NLS-1$
+        buffer.append( "}"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parseAndCheckBindings(buffer.toString() );
+        IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTStatement [] statements = ((IASTCompoundStatement)fd.getBody()).getStatements();
+        IASTWhileStatement whileStmt = (IASTWhileStatement) statements[1];
+        IASTLabelStatement labelStmt = (IASTLabelStatement) whileStmt.getBody();
+        assertTrue( labelStmt.getNestedStatement() instanceof IASTExpressionStatement );
+        IASTExpressionStatement es = (IASTExpressionStatement) labelStmt.getNestedStatement();
+        assertTrue( es.getExpression() instanceof IASTUnaryExpression );
+    }
 }

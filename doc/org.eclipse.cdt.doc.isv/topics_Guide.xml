@@ -4,6 +4,6 @@
 <!-- Define topics for the main guide                                              -->
 <!-- ============================================================================= -->
 <toc label="Guide">
-	<topic label="CDT DOM" href="guide/dom/index.html">
-	</topic>
+	<topic label="CDT DOM" href="guide/dom/index.html"/>
+	<topic label="Managed Build System Extensibility Document" href="guide/mbs/extensibilityGuide/Managed_Build_Extensibility.html"/>
 </toc>

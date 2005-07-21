@@ -118,6 +118,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			
 			rcJob.setRule(root);
 			rcJob.setPriority(Job.INTERACTIVE);
+			rcJob.setSystem(true);
 			rcJob.schedule();
 
 		} finally {

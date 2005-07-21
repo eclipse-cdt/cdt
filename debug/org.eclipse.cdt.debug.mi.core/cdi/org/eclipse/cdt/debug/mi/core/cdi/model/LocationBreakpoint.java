@@ -67,11 +67,16 @@ public abstract class LocationBreakpoint extends Breakpoint implements ICDIBreak
 	}
 
 	public String getFunction() {
-		if (miBreakpoints != null && miBreakpoints.length > 0) {
-			return miBreakpoints[0].getFunction();
-		} else if (fLocation instanceof ICDIFunctionLocation) {
+		// TODO: We need to review this but for now
+		// we need to return what the cdt debug passed us
+		// it is necessary when they do the comparison.
+		if (fLocation instanceof ICDIFunctionLocation) {
 			return ((ICDIFunctionLocation)fLocation).getFunction();
-		}
+		} else if (miBreakpoints != null && miBreakpoints.length > 0) {
+			return miBreakpoints[0].getFunction();
+		} /*else if (fLocation instanceof ICDIFunctionLocation) {
+			return ((ICDIFunctionLocation)fLocation).getFunction();
+		}*/
 		return null;
 	}
 

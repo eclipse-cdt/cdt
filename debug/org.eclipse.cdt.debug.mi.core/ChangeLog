@@ -1,3 +1,8 @@
+2005-07-21 Alain Magloire
+	Fix for PR 103193
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/LocationBreakpoint.java
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2005-07-18 Alain Magloire
 	GDB has now four different version of MI, so it has become
 	important to give the user the choice of the version.

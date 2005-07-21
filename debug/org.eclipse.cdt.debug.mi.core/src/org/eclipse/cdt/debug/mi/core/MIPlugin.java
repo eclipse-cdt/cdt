@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
-import org.eclipse.cdt.debug.mi.core.command.MIVersion;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.IProgressMonitor;

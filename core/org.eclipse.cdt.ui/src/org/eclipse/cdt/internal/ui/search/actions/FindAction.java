@@ -333,7 +333,7 @@ public abstract class FindAction extends SelectionParseAction {
     		//or Working Copy (both represented by C_UNIT) or hit a null
     		if (element.getElementType() == ICElement.C_UNIT ||
     			element == null){
-    			fullName.insert(0,"::"); //$NON-NLS-1$
+//    			fullName.insert(0,"::"); //$NON-NLS-1$ // fix for PR 104128
     			break;
     		}
     		else if (element.getElementType() != ICElement.C_ENUMERATION){

@@ -3336,4 +3336,23 @@ public class AST2Tests extends AST2BaseTest {
         IASTExpressionStatement es = (IASTExpressionStatement) labelStmt.getNestedStatement();
         assertTrue( es.getExpression() instanceof IASTUnaryExpression );
     }
+    
+    public void testBug104390_2() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void f() {                         \n"); //$NON-NLS-1$
+    	buffer.append("   int x;                          \n"); //$NON-NLS-1$
+    	buffer.append("   for( int x; ; )                 \n"); //$NON-NLS-1$
+    	buffer.append("      blah: x;                     \n"); //$NON-NLS-1$
+    	buffer.append("}                                  \n"); //$NON-NLS-1$
+
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true);
+        CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        
+        IVariable x = (IVariable) col.getName(1).resolveBinding();
+        IVariable x2 = (IVariable) col.getName(2).resolveBinding();
+        assertNotSame( x, x2 );
+        assertSame( x2, col.getName(4).resolveBinding() );
+        assertTrue( col.getName(3).resolveBinding() instanceof ILabel );
+    }
 }

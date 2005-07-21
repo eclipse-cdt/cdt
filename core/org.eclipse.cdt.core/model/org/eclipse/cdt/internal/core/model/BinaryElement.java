@@ -31,6 +31,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	IAddress addr;
 	int fStartLine;
 	int fEndLine;
+	ITranslationUnit fSourceTU;
 
 	public BinaryElement(ICElement parent, String name, int type, IAddress a) {
 		super(parent, name, type);
@@ -103,40 +104,43 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	 * @see org.eclipse.cdt.core.model.ISourceReference#getTranslationUnit()
 	 */
 	public ITranslationUnit getTranslationUnit()  {
-		ITranslationUnit tu = null;
-		CModelManager mgr = CModelManager.getDefault();
-		ICElement parent = getParent();
-		if (parent != null) {
-			IPath path = parent.getPath();
-			if (path != null && path.isAbsolute()) {
-				IResource res = mgr.getCModel().getWorkspace().getRoot().getFileForLocation(path);
-				if (res != null && res.exists() && res.getType() == IResource.FILE) {
-					ICElement e = CModelManager.getDefault().create(res, null);
-					if (e instanceof ITranslationUnit) {
-						tu = (ITranslationUnit)e;
+		if (fSourceTU == null) {
+			ITranslationUnit tu = null;
+			CModelManager mgr = CModelManager.getDefault();
+			ICElement parent = getParent();
+			if (parent != null) {
+				IPath path = parent.getPath();
+				if (path != null && path.isAbsolute()) {
+					IResource res = mgr.getCModel().getWorkspace().getRoot().getFileForLocation(path);
+					if (res != null && res.exists() && res.getType() == IResource.FILE) {
+						ICElement e = CModelManager.getDefault().create(res, null);
+						if (e instanceof ITranslationUnit) {
+							tu = (ITranslationUnit)e;
+						}
+					}
+					// do not give up yet in C++ the methods may be inline in the headers
+					ICProject cproject = getCProject();
+					tu = mgr.createTranslationUnitFrom(cproject, path);
+				} else {
+					// TODO-model: handle non-absolute paths when finding source files
+					// ??? assert()
+					path = new Path(""); //$NON-NLS-1$
+				}
+				// Fall back to the project sourcemapper.
+				if (tu == null) {
+					ICProject cproject = getCProject();
+					SourceMapper mapper = mgr.getSourceMapper(cproject);
+					if (mapper != null) {
+						String lastSegment = path.lastSegment();
+						if (lastSegment != null) {
+							tu = mapper.findTranslationUnit(lastSegment);
+						}
 					}
 				}
-				// do not give up yet in C++ the methods may be inline in the headers
-				ICProject cproject = getCProject();
-				tu = mgr.createTranslationUnitFrom(cproject, path);
-			} else {
-				// TODO-model: handle non-absolute paths when finding source files
-				// ??? assert()
-				path = new Path(""); //$NON-NLS-1$
 			}
-			// Fall back to the project sourcemapper.
-			if (tu == null) {
-				ICProject cproject = getCProject();
-				SourceMapper mapper = mgr.getSourceMapper(cproject);
-				if (mapper != null) {
-					String lastSegment = path.lastSegment();
-					if (lastSegment != null) {
-						tu = mapper.findTranslationUnit(lastSegment);
-					}
-				}
-			}
+			fSourceTU = tu;
 		}
-		return tu;
+		return fSourceTU;
 	}
 
 	/* (non-Javadoc)

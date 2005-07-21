@@ -1,3 +1,7 @@
+2005-07-22 Chris Wiebe
+	Fix for PR 104725
+	* model/org/eclipse/cdt/internal/core/model/BinaryElement.java
+	
 2005-07-16 Alain Magloire
 	Fix for PR 102327: Fire deltas when contentType is changed.
 	* model/org/eclipse/cdt/core/model/ICElementDelta.java

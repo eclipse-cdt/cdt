@@ -1,4 +1,11 @@
 2005-07-22 Chris Wiebe
+	Fix for PR 104605: MachO parsing
+	First pass at optimization. My test case went from >20 minutes to 5 seconds
+	* utils/org/eclipse/cdt/utils/macho/MachO.java
+	* utils/org/eclipse/cdt/utils/macho/MachOHelper.java
+	* utils/org/eclipse/cdt/utils/macho/parser/MachOBinaryObject.java
+
+2005-07-22 Chris Wiebe
 	Fix for PR 104725
 	* model/org/eclipse/cdt/internal/core/model/BinaryElement.java
 	

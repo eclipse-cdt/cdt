@@ -6,17 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation
+ *     Apple Computer - work on performance optimizations
  *******************************************************************************/
 package org.eclipse.cdt.utils.macho.parser;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
@@ -37,11 +40,17 @@ import org.eclipse.core.runtime.Path;
  */
 public class MachOBinaryObject extends BinaryObjectAdapter {
 
-	private BinaryObjectInfo info;
-	private ISymbol[] symbols;
-	private AR.ARHeader header;
-	private IAddressFactory addressFactory;
+	protected AR.ARHeader header;
+	protected IAddressFactory addressFactory;
+	protected MachO.Attribute attributes;
+	protected MachOHelper.Sizes sizes;
+	protected ISymbol[] symbols;
+	protected String soname;
+	protected String[] needed;
+	protected long timeStamp;
+	private static final String[] NO_NEEDED = new String[0];
 
+	
 	/**
 	 * @param parser
 	 * @param path
@@ -49,6 +58,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	 */
 	public MachOBinaryObject(IBinaryParser parser, IPath path, AR.ARHeader header) {
 		super(parser, path, IBinaryFile.OBJECT);
+		this.header = header;
 	}
 
 	/**
@@ -61,35 +71,13 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
-	 */
-	public ISymbol[] getSymbols() {
-		// Call the hasChanged first, to initialize the timestamp
-		if (hasChanged() || symbols == null) {
-			try {
-				loadAll();
-			} catch (IOException e) {
-				symbols = NO_SYMBOLS;
-			}
-		}
-		return symbols;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	protected BinaryObjectInfo getBinaryObjectInfo() {
-		// Call the hasChanged first, to initialize the timestamp
-		if (hasChanged() || info == null) {
-			try {
-				loadInfo();
-			} catch (IOException e) {
-				info = new BinaryObjectInfo();
-			}
-		}
-		return info;
+		// we don't use this method
+		// overload to do nothing
+		return new BinaryObjectInfo();
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
@@ -102,10 +90,15 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	}
 	
 	protected MachOHelper getMachOHelper() throws IOException {
-		if (header != null) {
-			return new MachOHelper(getPath().toOSString(), header.getObjectDataOffset());
+		IPath path = getPath();
+		if (path != null) {
+			if (header != null) {
+				return new MachOHelper(path.toOSString(), header.getObjectDataOffset());
+			} else {
+				return new MachOHelper(path.toOSString());
+			}
 		}
-		return new MachOHelper(getPath().toOSString());
+		return null;
 	}
 	
 	/**
@@ -118,12 +111,128 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return super.getName();
 	}
 
-	protected void loadAll() throws IOException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
+	 */
+	public IAddressFactory getAddressFactory() {
+		if (addressFactory == null) {
+			addressFactory = new Addr32Factory();
+		}
+		return addressFactory;
+	}
+	
+	protected void clearCachedValues() {
+		attributes = null;
+		sizes = null;
+		symbols = null;
+		soname = null;
+		needed = null;
+	}
+	
+	protected MachO.Attribute internalGetAttributes() {
+		if (hasChanged()) {
+			clearCachedValues();
+		}
+		if (attributes == null) {
+			MachOHelper helper = null;
+			try {
+				helper = getMachOHelper();
+				if (helper != null) {
+					attributes = helper.getMachO().getAttributes();
+				}
+			} catch (IOException e) {
+			} finally {
+				if (helper != null) {
+					helper.dispose();
+				}
+			}
+		}
+		return attributes;
+	}
+	
+	protected MachOHelper.Sizes internalGetSizes() {
+		if (hasChanged()) {
+			clearCachedValues();
+		}
+		if (sizes == null) {
+			MachOHelper helper = null;
+			try {
+				helper = getMachOHelper();
+				if (helper != null) {
+					sizes = helper.getSizes();
+					// since we're invoking the helper we might as well update
+					// the attributes since it's a pretty lightweight operation
+					if (attributes == null) {
+						attributes = helper.getMachO().getAttributes();
+					}
+				}
+			} catch (IOException e) {
+			} finally {
+				if (helper != null) {
+					helper.dispose();
+				}
+			}
+		}
+		return sizes;
+	}
+
+	protected ISymbol[] internalGetSymbols() {
+		if (hasChanged()) {
+			clearCachedValues();
+		}
+		if (symbols == null) {
+			loadBinaryInfo();
+		}
+		return symbols;
+	}
+	
+	protected String internalGetSoName() {
+		if (hasChanged()) {
+			clearCachedValues();
+		}
+		if (soname == null) {
+			loadBinaryInfo();
+		}
+		return soname;
+	}
+
+	protected String[] internalGetNeeded() {
+		if (hasChanged()) {
+			clearCachedValues();
+		}
+		if (needed == null) {
+			loadBinaryInfo();
+		}
+		return needed;
+	}
+
+	protected void loadBinaryInfo() {
 		MachOHelper helper = null;
 		try {
 			helper = getMachOHelper();
-			loadInfo(helper);
-			loadSymbols(helper);
+			if (helper != null) {
+				//TODO we can probably optimize this further in MachOHelper
+
+				symbols = loadSymbols(helper);
+				//TODO is the sort necessary?
+				Arrays.sort(symbols);
+				
+				soname = helper.getSoname();
+				needed = helper.getNeeded();
+				
+				// since we're invoking the helper we might as well update the
+				// sizes since it's a pretty lightweight operation by comparison
+				if (sizes == null) {
+					sizes = helper.getSizes();
+				}
+				// since we're invoking the helper we might as well update the
+				// attributes since it's a pretty lightweight operation by comparison
+				if (attributes == null) {
+					attributes = helper.getMachO().getAttributes();
+				}
+			}
+		} catch (IOException e) {
+			symbols = NO_SYMBOLS;
 		} finally {
 			if (helper != null) {
 				helper.dispose();
@@ -131,32 +240,24 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 	}
 
-	protected void loadInfo() throws IOException {
-		MachOHelper helper = null;
+	protected ISymbol[] loadSymbols(MachOHelper helper) throws IOException {
+		CPPFilt cppfilt =  null;
 		try {
-			helper = getMachOHelper();
-			loadInfo(helper);
+			ArrayList list = new ArrayList();
+			// Hack should be remove when Elf is clean
+			helper.getMachO().setCppFilter(false);
+			cppfilt = getCPPFilt();
+			//TODO we can probably optimize this further in MachOHelper
+			addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, cppfilt, list);
+			addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, cppfilt, list);
+			addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, cppfilt, list);
+			addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, cppfilt, list);
+			return (ISymbol[]) list.toArray(new ISymbol[list.size()]);
 		} finally {
-			if (helper != null) {
-				helper.dispose();
+			if (cppfilt != null) {
+				cppfilt.dispose();
 			}
-		}		
-	}
-	
-	protected void loadInfo(MachOHelper helper) throws IOException {
-		info = new BinaryObjectInfo();
-		info.needed = helper.getNeeded();
-		MachOHelper.Sizes sizes = helper.getSizes();
-		info.bss = sizes.bss;
-		info.data = sizes.data;
-		info.text = sizes.text;
-	
-		info.soname = helper.getSoname();
-		
-		MachO.Attribute attribute = helper.getMachO().getAttributes();
-		info.isLittleEndian = attribute.isLittleEndian();
-		info.hasDebug = attribute.hasDebug();
-		info.cpu = attribute.getCPU();
+		}
 	}
 
 	protected CPPFilt getCPPFilt() {
@@ -164,29 +265,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return parser.getCPPFilt();
 	}
 
-	protected void loadSymbols(MachOHelper helper) throws IOException {
-		ArrayList list = new ArrayList();
-		// Hack should be remove when Elf is clean
-		helper.getMachO().setCppFilter(false);
-
-		CPPFilt cppfilt = getCPPFilt();
-
-		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, cppfilt, list);
-		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, cppfilt, list);
-		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, cppfilt, list);
-		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, cppfilt, list);
-		list.trimToSize();
-
-		if (cppfilt != null) {
-			cppfilt.dispose();
-		}
-
-		symbols = (ISymbol[])list.toArray(NO_SYMBOLS);
-		Arrays.sort(symbols);
-		list.clear();
-	}
-
-	protected void addSymbols(MachO.Symbol[] array, int type, CPPFilt cppfilt, List list) {
+	private void addSymbols(MachO.Symbol[] array, int type, CPPFilt cppfilt, List list) {
 		for (int i = 0; i < array.length; i++) {
 			String name = array[i].toString();
 			if (cppfilt != null) {
@@ -204,13 +283,96 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getAddressFactory()
-	 */
-	public IAddressFactory getAddressFactory() {
-		if (addressFactory == null) {
-			addressFactory = new Addr32Factory();
+	public String getCPU() {
+		MachO.Attribute attribute = internalGetAttributes();
+		if (attribute != null) {
+			return attribute.getCPU();
 		}
-		return addressFactory;
+		return ""; //$NON-NLS-1$
+	}
+
+	public boolean hasDebug() {
+		MachO.Attribute attribute = internalGetAttributes();
+		if (attribute != null) {
+			return attribute.hasDebug();
+		}
+		return false;
+	}
+
+	public boolean isLittleEndian() {
+		MachO.Attribute attribute = internalGetAttributes();
+		if (attribute != null) {
+			return attribute.isLittleEndian();
+		}
+		return false;
+	}
+
+	public long getBSS() {
+		MachOHelper.Sizes size = internalGetSizes();
+		if (size != null) {
+			return size.bss;
+		}
+		return 0;
+	}
+
+	public long getData() {
+		MachOHelper.Sizes size = internalGetSizes();
+		if (size != null) {
+			return size.data;
+		}
+		return 0;
+	}
+
+	public long getText() {
+		MachOHelper.Sizes size = internalGetSizes();
+		if (size != null) {
+			return size.text;
+		}
+		return 0;
+	}
+
+	public ISymbol[] getSymbols() {
+		ISymbol[] syms = internalGetSymbols();
+		if (syms != null) {
+			return syms;
+		}
+		return NO_SYMBOLS;
+	}
+
+	public ISymbol getSymbol(IAddress addr) {
+		//TODO should this be cached?
+		// fall back to super implementation for now
+		return super.getSymbol(addr);
+	}
+	
+	public String[] getNeededSharedLibs() {
+		String[] libs = internalGetNeeded();
+		if (libs != null) {
+			return libs;
+		}
+		return NO_NEEDED;
+	}
+
+	public String getSoName() {
+		String name = internalGetSoName();
+		if (name != null) {
+			return name;
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	protected boolean hasChanged() {
+		IPath path = getPath();
+		if (path != null) {
+			File file = path.toFile();
+			if (file != null) {
+				long modification = file.lastModified();
+				if (modification != timeStamp) {
+					timeStamp = modification;
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

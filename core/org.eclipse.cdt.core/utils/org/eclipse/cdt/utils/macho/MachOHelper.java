@@ -8,8 +8,8 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Craig Watson
+ *     Apple Computer - work on performance optimizations
  *******************************************************************************/
-
 package org.eclipse.cdt.utils.macho;
 
 import java.io.IOException;
@@ -301,6 +301,8 @@ public class MachOHelper {
 		data = 0;
 		bss = 0;
 
+		// TODO further optimization
+		// TODO we only need to load the sections, not the whole shebang
 		loadBinary();
 
 		for (int i = 0; i < sections.length; i++) {

@@ -8,16 +8,17 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Craig Watson.
+ *     Apple Computer - work on performance optimizations
  *******************************************************************************/
-
 package org.eclipse.cdt.utils.macho;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.CPPFilt;
@@ -40,8 +41,10 @@ public class MachO {
     private Section[] sections;			/* sections from SegmentCommand */
     SymtabCommand symtab;		/* SymtabCommand that contains the symbol table */
     
-	protected String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
+	protected static final SymbolComparator symbol_comparator = new SymbolComparator();
+	
 
 	public class MachOhdr {
 
@@ -572,19 +575,11 @@ public class MachO {
     }
     
 	protected String string_from_macho_symtab(MachO.SymtabCommand symtab, int index) throws IOException {
-		StringBuffer str = new StringBuffer();
-		byte tmp;
 		if ( index > symtab.strsize ) {
 				return EMPTY_STRING;
 			}
 		efile.seek(symtab.stroff + index);
-		while( true ) {
-			tmp = efile.readByte();
-			if ( tmp == 0 )
-				break;
-			str.append((char)tmp);
-		}
-		return str.toString();
+		return getCStr();
 	}
 	
 	public class Symbol implements Comparable {
@@ -713,18 +708,6 @@ public class MachO {
 			return name;
 		}
 
-		private Line getLine(long value) {
-			if (!debugsym) {
-				return null;
-			}
-			for (int l = 0; l < lines.length; l++) {
-				Line line = lines[l];
-				if (value <= line.address)
-					return line;
-			}
-			return null;
-		}
-		
 		/**
 		 * Returns line information in the form of filename:line
 		 * and if the information is not available may return null
@@ -817,13 +800,33 @@ public class MachO {
 		}
 	}
 
+	private Line getLine(long value) {
+		if (!debugsym) {
+			return null;
+		}
+		
+		int ndx = Arrays.binarySearch(lines, new Long(value));
+		if ( ndx >= 0 )
+			return lines[ndx];
+		if ( ndx == -1 ) {
+			return null;
+		}
+		ndx = -ndx - 1;
+		for (int l = ndx - 1; l < lines.length; l++) {
+			Line line = lines[l];
+			if (value <= line.address)
+				return line;
+		}
+		return null;
+	}
+	
 	/**
 	 * We have to implement a separate compararator since when we do the
 	 * binary search down below we are using a Long and a Symbol object
 	 * and the Long doesn't know how to compare against a Symbol so if
 	 * we compare Symbol vs Long it is ok, but not if we do Long vs Symbol.
 	 */
-	class SymbolComparator implements Comparator {
+	public static class SymbolComparator implements Comparator {
 		long val1, val2;
 		public int compare(Object o1, Object o2) {
 
@@ -850,7 +853,7 @@ public class MachO {
 	/**
 	 * Simple class to implement a line table
 	 */
-	public class Line implements Comparable {
+	public static class Line implements Comparable {
 		public long address;
 		public int lineno;
 		public String file;
@@ -1124,7 +1127,7 @@ public class MachO {
 		}
 		
 		/* now create line table, sorted on address */
-		ArrayList lineList = new ArrayList(nlines);
+		Map lineList = new HashMap(nlines);
 		for (int s = 0; s < symbols.length; s++) {
 			Symbol sym = symbols[s];
 			if (sym.n_type == Symbol.N_SLINE || sym.n_type == Symbol.N_FUN) {
@@ -1132,15 +1135,16 @@ public class MachO {
 				lentry.address = sym.n_value;
 				lentry.lineno = sym.n_desc;
 				
-				int l = lineList.indexOf(lentry);
-				if (l >= 0)
-					lentry = (Line)lineList.get(l);
-				else
-					lineList.add(lentry);
-
-				if (sym.n_type == Symbol.N_FUN) {
+				Line lookup = (Line)lineList.get(lentry);
+				if (lookup != null) {
+					lentry = lookup;
+				} else {
+					lineList.put(lentry, lentry);
+				}
+				
+				if (lentry.function == null && sym.n_type == Symbol.N_FUN) {
 					String func = sym.toString();
-					if (func != null) {
+					if (func != null && func.length() > 0) {
 						int colon = func.indexOf(':');
 						if (colon > 0)
 							lentry.function = func.substring(0, colon);
@@ -1152,19 +1156,17 @@ public class MachO {
 				}
 			}
 		}
-		lineList.trimToSize();
-		lines = (Line[])lineList.toArray(new Line[0]);
+		Set k = lineList.keySet();
+		lines = (Line[]) k.toArray(new Line[k.size()]);
 		Arrays.sort(lines);
 		
 		/* now check for file names */
 		for (int s = 0; s < symbols.length; s++) {
 			Symbol sym = symbols[s];
 			if (sym.n_type == Symbol.N_SO) {
-				for (int l = 0; l < lines.length; l++) {
-					if (sym.n_value <= lines[l].address) {
-						lines[l].file = sym.toString();
-						break;
-					}
+				Line line = getLine(sym.n_value);
+				if (line != null) {
+					line.file = sym.toString();
 				}
 			}
 		}
@@ -1211,6 +1213,17 @@ public class MachO {
 			tlhints[i].itoc = field & 0x00ffffff;
 		}
 		return tlhints;
+	}
+	
+	private String getCStr() throws IOException {
+		StringBuffer str = new StringBuffer();
+		while( true ) {
+			byte tmp = efile.readByte();
+			if (tmp == 0)
+				break;
+			str.append((char)tmp);
+		}
+		return str.toString();
 	}
 	
 	private String getLCStr(int len) throws IOException {
@@ -1523,15 +1536,14 @@ public class MachO {
     }
 
     public DyLib[] getDyLibs(int type) {
-		Vector v = new Vector();
-
+		ArrayList v = new ArrayList();
 		for (int i = 0; i < loadcommands.length; i++) {
 			if (loadcommands[i].cmd == type) {
 				DyLibCommand dl = (DyLibCommand)loadcommands[i];
 				v.add(dl.dylib);				
 			}
 		}
-		return (DyLib[]) v.toArray(new DyLib[0]);
+		return (DyLib[]) v.toArray(new DyLib[v.size()]);
     }
 	
 	/* return the address of the function that address is in */
@@ -1540,9 +1552,6 @@ public class MachO {
 			return null;
 		}
 
-		//@@@ If this works, move it to a single instance in this class.
-		SymbolComparator symbol_comparator = new SymbolComparator();
-		
 		int ndx = Arrays.binarySearch(symbols, new Long(vma), symbol_comparator);
 		if ( ndx > 0 )
 			return symbols[ndx];

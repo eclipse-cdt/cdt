@@ -3979,6 +3979,9 @@ abstract class BaseScanner implements IScanner {
         while (bufferPos[bufferStackPos] < limit) {
             skipOverWhiteSpace();
 
+            if( bufferPos[bufferStackPos] + 1 >= limit )
+            	break;
+            
             if (buffer[++bufferPos[bufferStackPos]] == ')') {
                 // end of macro
                 break;

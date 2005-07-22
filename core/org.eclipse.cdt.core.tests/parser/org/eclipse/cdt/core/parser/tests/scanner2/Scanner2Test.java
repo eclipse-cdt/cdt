@@ -2354,4 +2354,14 @@ public class Scanner2Test extends BaseScanner2Test
 	   validateEOF();
    }
    
+   public void testbug84270() throws Exception {
+	   Writer writer = new StringWriter();
+	   writer.write("#define h g( ~\n"); //$NON-NLS-1$
+	   writer.write("#define g f\n"); //$NON-NLS-1$
+	   writer.write("#define f(a) f(x * (a))\n"); //$NON-NLS-1$
+	   writer.write("h 5) \n"); //$NON-NLS-1$
+	   initializeScanner( writer.toString() );
+	   fullyTokenize();
+   }
+   
 }

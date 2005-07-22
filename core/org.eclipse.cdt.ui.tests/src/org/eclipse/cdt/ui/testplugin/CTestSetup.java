@@ -1,13 +1,17 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * IBM - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.ui.testplugin;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
-
-
 
 public class CTestSetup extends TestSetup {
 	
@@ -24,8 +28,5 @@ public class CTestSetup extends TestSetup {
 
 	protected void tearDown() throws Exception {
 	}
-	
-
-	
 	
 }

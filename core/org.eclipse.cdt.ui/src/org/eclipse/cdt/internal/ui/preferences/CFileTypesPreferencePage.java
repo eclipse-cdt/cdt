@@ -7,18 +7,13 @@
  * 
  * Contributors: 
  *     TimeSys Corporation - Initial implementation
+ *     Qnx Software System
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -39,7 +34,6 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 
 	public CFileTypesPreferencePage() {
 		setDescription(PreferencesMessages.getString("CFileTypesPreferencePage.description")); //$NON-NLS-1$
-		//setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		noDefaultAndApplyButton();
 	}
 
@@ -52,8 +46,6 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 		topPane.setLayout(new GridLayout());
 		topPane.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		//fResolver = getResolverModel().getResolver(); 
-//		fPrefsBlock = new CFileTypesPreferenceBlock(fResolver);
 		fPrefsBlock = new CFileTypesPreferenceBlock(null);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp( topPane, ICHelpContextIds.FILE_TYPES_PREF_PAGE );
@@ -70,10 +62,6 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-//		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
-//		prefs.setToDefault(WorkspaceResolver.PREFS_ASSOCIATIONS_EXCLUSION);
-//		prefs.setToDefault(WorkspaceResolver.PREFS_ASSOCIATIONS_INCLUSION);
-//		fPrefsBlock.setResolver(getResolverModel().getResolver());
 		super.performDefaults();
 	}
 
@@ -83,36 +71,9 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	public boolean performOk() {
 		
 		if (fPrefsBlock.performOk()) {
-//			ICFileTypeAssociation[] oldAssocs = fResolver.getFileTypeAssociations();
-//
-//			ICFileTypeResolver workingCopy = fPrefsBlock.getResolverWorkingCopy();
-//			ICFileTypeAssociation[] newAssocs = workingCopy.getFileTypeAssociations();
-//
-//			// compare
-//			List delList = new ArrayList();
-//			List addList = new ArrayList();
-//
-//			for (int i = 0; i < oldAssocs.length; i++) {
-//				if (Arrays.binarySearch(newAssocs, oldAssocs[i], ICFileTypeAssociation.Comparator) < 0) {
-//					delList.add(oldAssocs[i]);
-//				}
-//			}
-//			
-//			for (int i = 0; i < newAssocs.length; i++) {
-//				if (Arrays.binarySearch(oldAssocs, newAssocs[i], ICFileTypeAssociation.Comparator) < 0) {
-//					addList.add(newAssocs[i]);
-//				}
-//			}
-//
-//			ICFileTypeAssociation[] addAssocs = (ICFileTypeAssociation[]) addList.toArray(new ICFileTypeAssociation[addList.size()]);
-//			ICFileTypeAssociation[] delAssocs = (ICFileTypeAssociation[]) delList.toArray(new ICFileTypeAssociation[delList.size()]);
-//			fResolver.adjustAssociations(addAssocs, delAssocs);
 		}
 		
 		return super.performOk();
 	}
 
-//	private IResolverModel getResolverModel() {
-//		return CCorePlugin.getDefault().getResolverModel();
-//	}
 }

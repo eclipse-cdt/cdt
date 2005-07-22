@@ -692,6 +692,10 @@ at least one configuration defined for it. A configuration must define (or
 inherit) a set of tool-chain definitions that work together to produce the build 
 goal as an output.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A projectType may define a project 
+level environment variable provider in the <i>projectEnvironmentSupplier</i> attribute.&nbsp; See § 
+7.6 for additional information.<br>
+</p>
+<p class="MsoNormal" style="margin-top:6.0pt">A projectType may define a project 
 level macro provider in the <i>projectMacroSupplier</i> attribute.&nbsp; See § 
 7.8 for additional information.<br>
 </p>
@@ -825,7 +829,8 @@ UI.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
-      &nbsp;</td>
+      The name of a class that implements the IProjectEnvironmentVariableSupplier 
+		interface in order to provide project level environment variables.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -839,7 +844,8 @@ UI.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
-      &nbsp;</td>
+      The name of a class that implements the IConfigurationNameProvider 
+		interface in order to provide a default name for a configuration.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -947,11 +953,6 @@ displayed in the UI in the build property page and new project wizards.&nbsp;
 The configuration contains the information needed to &#8220;clean&#8221; the build files on 
 the host machine. &nbsp;The configuration can specify the <i>cleanCommand</i> 
 attribute which specifies a command that removes the build files.&nbsp; 
-</p>
-<p class="MsoNormal" style="margin-top:6.0pt">A configuration may define a 
-configuration 
-level macro provider in the <i>configurationMacroSupplier</i> attribute.&nbsp; See § 
-7.8 for additional information.<br>
 </p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional configuration attributes are described in the schema table below.</p>
 <p class="subsection">3.4.1 Schema</p>
@@ -1063,34 +1064,82 @@ track of this specific configuration.</td>
  valign="top">
       no</td>
     </tr>
-  	<tr>
+    <tr>
       <td
- style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
- valign="top" height="49">
-      <span style="background-color: #FFFF00">configurationMacro Supplier</span></td>
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">prebuildStep</span></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top" height="49">
-      The name of a class that implements the IConfigurationBuildMacroSupplier 
-		interface in order to provide configuration level build macros.</td>
+ valign="top">
+      Specifies the pre-build command(s), which runs prior to the standard MBS 
+		build.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top" height="49">
+ valign="top">
       no</td>
     </tr>
     <tr>
       <td
  style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      <span style="background-color: #FFFF00">preannouncebuild</span>
+		<span style="background-color: #FFFF00">Step</span></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      Specifies the post-build command(s), which runs after the standard MBS 
+		build.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">postbuildStep</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      Specifies the string to be displayed when the pre-build command step is 
+		run.</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">postannouncebuild</span>
+		<span style="background-color: #FFFF00">Step</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      Specifies the string to be displayed when the post-build command step is 
+		run.</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">description</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      Specifies the description of the configuration that will be displayed to 
+		the user while creating a project and managing configurations.</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      no</td>
     </tr>
   </tbody>
 </table>
@@ -1125,6 +1174,15 @@ build output.&nbsp; If this is not specified, then MBS uses the file extension
 of the build artifact name supplied by the user.&nbsp; This will work when the 
 user uses one of the extensions expected by the tool, but will not work if they 
 do not.</p>
+<p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may define a 
+configuration level environment variable provider in the <i>configurationEnvironmentSupplier</i> attribute.&nbsp; See § 
+7.6 for additional information.<br>
+</p>
+<p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may define a 
+configuration 
+level macro provider in the <i>configurationMacroSupplier</i> attribute.&nbsp; See § 
+7.8 for additional information.<br>
+</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional tool-chain attributes are described in 
 the schema table below.</p>
 <p class="subsection">3.5.1 Schema</p>
@@ -1285,6 +1343,79 @@ the schema table below.</p>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
+ valign="top" height="49">
+      <span style="background-color: #FFFF00">configurationMacro Supplier</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      The name of a class that implements the IConfigurationBuildMacroSupplier 
+		interface in order to provide configuration level build macros.</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      no</td>
+    </tr>
+	<tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
+ valign="top" height="49">
+      <span style="background-color: #FFFF00">configurationEnviron mentSupplier</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      The name of a class that implements the IConfigurationEnvironmentVariableSupplier 
+		interface in order to provide configuration level environment variables.</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      no</td>
+    </tr>
+	<tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
+ valign="top" height="49">
+      <span style="background-color: #FFFF00">isToolChain</span>
+		<span style="background-color: #FFFF00">Supported</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      &nbsp;</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      no</td>
+    </tr>
+	<tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
+ valign="top" height="49">
+      <span style="background-color: #FFFF00">versionsSupported</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      &nbsp;</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      no</td>
+    </tr>
+	<tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 92.15pt;"
+ valign="top" height="49">
+      <span style="background-color: #FFFF00">convertToId</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      &nbsp;</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top" height="49">
+      no</td>
     </tr>
     <tr>
       <td
@@ -1931,6 +2062,10 @@ categories. </p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool contains one or more 
 children of type inputType and outputType.&nbsp; These define the inputs and 
 outputs of the tool in the detail necessary for build file generation.</p>
+<p class="MsoNormal" style="margin-top:6.0pt">A tool contains one or more 
+children of type envVarBuildPath.&nbsp; These specify the names of the 
+environment variables used by the tool for specifying the include and the 
+library paths.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Certain tools logically belong to 
 certain kinds of projects. For example, the Gnu compiler is invoked differently 
 for C and C++ source files. You can specify a filter for a tool based on the 
@@ -2203,6 +2338,62 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
 		defined to use the tool.&nbsp; The error parser(s) can be removed by the CDT 
 		user, and is automatically removed when there are no more project 
 		resources that use the tool.</font></td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">announcement</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      &nbsp;</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">icon</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      &nbsp;</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">versionsSupported</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      &nbsp;</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      no</td>
+    </tr>
+	<tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">convertToId</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      &nbsp;</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2944,6 +3135,19 @@ categories. This is the ID of the owner of the category.</p>
       <p>yes</p>
       </td>
     </tr>
+    <tr>
+      <td
+ style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <span style="background-color: #FFFF00">icon</span></td>
+      <td
+ style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      &nbsp;</td>
+      <td
+ style="border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; width: 13%; vertical-align: top; border-left-style:none; border-left-width:medium; border-top-style:none; border-top-width:medium; padding-left:5.4pt; padding-right:5.4pt; padding-top:0in; padding-bottom:0in">
+      no</td>
+    </tr>
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_13">3.13 Option</a></p>
@@ -3021,14 +3225,14 @@ unaware that there are libraries and external object files that
 participate in
 the final build step.</p>
 <p class="subsection">3.13.1.4.2 Browse Types</p>
-<p>Certain types of list options that deal with files or directories
-are easier for the user to manipulate if there is a browse button
-supplied in the UI. This is especially true for include and library
-search paths, as well as library and object file lists. Because the UI
-needs to know what "type" of browser to display, the implementer must
-specify the <var>browseType</var> for list options as <code>none</code>
+<p>Certain types of list and string options that deal with files or directories 
+are easier for the user to manipulate if there is a browse button supplied in 
+the UI. This is especially true for include and library search paths, as well as 
+library and object file lists. Because the UI needs to know what &quot;type&quot; of 
+browser to display, the implementer may
+specify the <var>browseType</var> for list and string options as <code>none</code>
 (default), <code>file</code>, or <code>directory</code>. Note that
-the <var>browseType</var> attribute is only used for list options. It
+the <var>browseType</var> attribute is only used for list and string options. It
 is ignored for all other option types.<br>
 </p>
 <p class="subsection">3.13.2 Values and Default Values</p>
@@ -3382,6 +3586,40 @@ needed.</td>
  style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
     </tr>
+    <tr>
+      <td
+ style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top"><span style="background-color: #FFFF00">valueHandler</span></td>
+      <td
+ style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">&nbsp;</td>
+      <td
+ style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top"><span style="background-color: #FFFF00">valueHandlerExtra</span>
+		<span style="background-color: #FFFF00">Argument</span></td>
+      <td
+ style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">&nbsp;</td>
+      <td
+ style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top"><span style="background-color: #FFFF00">applicability Calculator</span></td>
+      <td
+ style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">&nbsp;</td>
+      <td
+ style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ valign="top">no</td>
+    </tr>
   </tbody>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_14">3.14 List Option Value</a></p>
@@ -3615,6 +3853,37 @@ attributes are specified in the schema table below.</p>
 		the parent configuration.&nbsp; The default value is false.&nbsp; The 
 		resourceConfiguration element should retain its tool children, if any 
 		exist, even when excluded from the build.</font></td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+      <span style="background-color: #FFFF00">rcbsApplicability</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+      Identifies how the user desires to apply a resource custom build step:<br>
+		1. Apply rcbs tool before any other tools defined for the resource.<br>
+		2. Apply rcbs tool after any other tools defined for the resource.<br>
+		3. Apply rcbs tool overriding any other tools defined for the resource.<br>
+		4. Disable (don&amp;apos;t apply) the rcbs tool.</td>
+      <td
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+      no</td>
+    </tr>
+    <tr>
+      <td
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+      <span style="background-color: #FFFF00">toolsToInvoke</span></td>
+      <td
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
+      Identifies which tools to invoke by a semicolon separated list of child 
+		tool ids. Applies as follows:<br>
+		1. Defaults to all tools in the order found<br>
+		2. Use specified ordered list of children to invoke<br>
+		3. If empty string, treat as if no resource configuration existed, i.e., 
+		use project level tool.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       no</td>

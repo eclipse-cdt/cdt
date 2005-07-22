@@ -1,3 +1,6 @@
+2005-07-22 Alain Magloire
+	Fix to Copyright.
+
 2004-10-17 Alain Magloire
 	Remove deprecated method in CDI adjust the implementation.
 	* core/org/eclipse/cdt/debug/core/tests/BreakpointTests.java

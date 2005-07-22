@@ -1,30 +1,59 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
-
 <head>
-	<meta http-equiv="Content-Language" content="en-us">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Set Discovery Options</title>
-	<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Set Discovery Options</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-
 <h1>Set Discovery Options</h1>
-
-<p>For most standard make projects you will want to parse the output of the build to populate your paths and symbols tables. </p> 
-<p>To do so right click on your project and select <b>Properties &gt; C/C++ Make Project &gt; Discovery Options </b>
-and select the <b>Automate discovery of paths and symbols</b> checkbox.</p>
-
-<p><img img src="../images/sprop_make_discovery.png" alt="C/C++ Project Properties, Standard, Discovery Options"></p>
-
-
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
+<p>For most standard make projects you will want to parse the output of
+the build to populate your paths and symbols tables. </p>
+<p>To do so right click on your project and select <b>Properties &gt;
+C/C++ Make Project &gt; Discovery Options </b>
+and select the <b>Automate discovery of paths and symbols</b> checkbox.<br>
+</p>
+<p>There are two discovery profiles available:<br>
+</p>
+<ul>
+  <li>Per project - all discovered paths and symbols are associated
+with the project; all files use this information. <br>
+  </li>
+</ul>
+<p style="margin-left: 40px;"><img img=""
+ src="../images/sprop_make_discovery_project.png"
+ alt="C/C++ Project Properties, Standard, Discovery Options"
+ style="width: 598px; height: 585px;"><br>
+</p>
+<ul>
+  <li>Per file - specific discovered paths and symbols are associated
+with a file or set of files they apply to. Header files that do not
+inherit information from a source file that includes it will use
+project level information. Source files that have not been compiled at
+all will have no information associated (high level CDT functionality
+will be limited for these files).<br>
+    <br>
+Use per file profile to improve CDT features correctness.<br>
+    <br>
+  </li>
+</ul>
+<p></p>
+<div style="margin-left: 40px;"><img
+ alt="C/C++ Project Properties, Standard, Discovery Options"
+ src="../images/sprop_make_discovery_file.png"
+ style="width: 598px; height: 585px;"><br>
+</div>
+<p>For both profiles there is an option to discover paths and symbols
+based on a previous build output. To activate the discovery select a
+build log file and then the <span style="font-weight: bold;">Load</span>
+button.<br>
+</p>
+<p><img src="../images/ngref.gif" alt="Related reference" border="0"
+ height="21" width="143"><br>
 <a href="cdt_t_convert_cdt_proj.htm">Converting CDT 1.x Projects</a><br>
-<a href="../reference/cdt_u_sprop_mdiscovery.htm">C/C++ Project Properties, Standard, Discovery Options</a></p>
-
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > 
-
-
+<a href="../reference/cdt_u_sprop_mdiscovery.htm">C/C++ Project
+Properties, Standard, Discovery Options</a></p>
+<img src="../images/ng00_04a.gif" alt="IBM Copyright Statement">
 </body>
-
 </html>

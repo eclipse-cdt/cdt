@@ -7,11 +7,6 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Created on Apr 2, 2003
- *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code Template
- * /
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 

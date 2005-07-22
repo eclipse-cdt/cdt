@@ -1,3 +1,6 @@
+2005-07-22 Alain Magloire
+	Fix the Copyright notice for epl.
+
 2005-07-22 Chris Wiebe
 	Fix for PR 104605: MachO parsing
 	First pass at optimization. My test case went from >20 minutes to 5 seconds

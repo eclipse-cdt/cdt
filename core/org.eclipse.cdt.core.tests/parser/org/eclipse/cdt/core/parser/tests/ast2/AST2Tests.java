@@ -3355,4 +3355,16 @@ public class AST2Tests extends AST2BaseTest {
         assertSame( x2, col.getName(4).resolveBinding() );
         assertTrue( col.getName(3).resolveBinding() instanceof ILabel );
     }
+    
+    public void testBug104800() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int f() { \n"); //$NON-NLS-1$
+        buffer.append( "int i;\n"); //$NON-NLS-1$
+        buffer.append( "do { ++i; } while( i < 10 );\n"); //$NON-NLS-1$
+        buffer.append( "return 0;\n"); //$NON-NLS-1$
+        buffer.append ( "}\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parseAndCheckBindings( buffer.toString() );
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
+        assertEquals( body.getStatements().length, 3 );
+    }
 }

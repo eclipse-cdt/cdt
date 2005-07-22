@@ -1845,11 +1845,21 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         switch (LT(1)) {
         case IToken.tRPAREN:
         case IToken.tEOC:
+            consume();
+            break;
+        default:
+            throw backtrack;
+        }
+        
+        switch (LT(1)) {
+        case IToken.tSEMI:
+        case IToken.tEOC:
             lastOffset = consume().getEndOffset();
             break;
         default:
             throw backtrack;
         }
+        
 
         IASTDoStatement do_statement = createDoStatement();
         ((ASTNode) do_statement).setOffsetAndLength(startOffset, lastOffset

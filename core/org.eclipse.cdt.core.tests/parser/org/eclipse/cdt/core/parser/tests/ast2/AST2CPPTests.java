@@ -5087,4 +5087,16 @@ public class AST2CPPTests extends AST2BaseTest {
         IASTExpressionStatement es = (IASTExpressionStatement) labelStmt.getNestedStatement();
         assertTrue( es.getExpression() instanceof IASTUnaryExpression );
     }
+    
+    public void testBug104800() throws Exception {
+        StringBuffer buffer = new StringBuffer( "int f() { \n"); //$NON-NLS-1$
+        buffer.append( "int i;\n"); //$NON-NLS-1$
+        buffer.append( "do { ++i; } while( i < 10 );\n"); //$NON-NLS-1$
+        buffer.append( "return 0;\n"); //$NON-NLS-1$
+        buffer.append ( "}\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parseAndCheckBindings( buffer.toString() );
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
+        IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
+        assertEquals( body.getStatements().length, 3 );
+    }
 }

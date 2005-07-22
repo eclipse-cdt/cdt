@@ -11,7 +11,7 @@
 			<topic label="Create a makefile" href="tasks/cdt_t_new_make.htm"/>
 			<topic label="Hide files of a given type" href="tasks/cdt_t_prvw_hide_files.htm"/>
 			<topic label="Converting CDT 1.x Projects" href="tasks/cdt_t_convert_cdt_proj.htm"/>
-			<topic label="Converting CDT 2.0 Managed Make Projects" href="tasks/cdt_t_convert_mbs20_proj.htm"/>
+			<topic label="Converting CDT 2.x Managed Make Projects" href="tasks/cdt_t_convert_mbs20_proj.htm"/>
 			<topic label="Adding Convert to a C/C++ Make Project to the New menu" href="tasks/cdt_t_add_custom_persp.htm"/>
 			<topic label="Set Discovery Options" href="tasks/cdt_t_discovery.htm"/>
 		</topic>

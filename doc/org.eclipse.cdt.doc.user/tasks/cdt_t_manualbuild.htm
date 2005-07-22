@@ -1,63 +1,60 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html lang="en">
-
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Building Manually</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Building Manually</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
-
 <h1>Building Manually</h1>
-
-<p>Manual builds let you choose the scope of a build, as well as options for building, 
-or rebuilding projects. You can view the output of the make utility in the console.</p>
-
-<p><img src="../images/console_build.png" alt="Sample build in console view"></p>
-
-
-
+<p>Manual builds let you choose the scope of a build, as well as
+options for building, or rebuilding projects. You can view the output
+of the make utility in the console.</p>
+<p><img src="../images/console_build.png"
+ alt="Sample build in console view"></p>
 <dl>
   <dt>Incremental Builds</dt>
-  <dd>To incrementally build all open projects, you can select <b>Project &gt; Build All</b> or type <b>CTRL+B</b>.</dd>
+  <dd>To incrementally build all open projects, you can select <b>Project
+&gt; Build All</b> or type <b>CTRL+B</b>.</dd>
   <dt>Build Individual Projects</dt>
   <dd>To build individual projects click <b>Project &gt; Build Project</b>.</dd>
   <dt>Rebuild Projects</dt>
-  <dd>To rebuild a project right click on the project and select <b>Rebuild Project</b>.<br>
-		<b>Note: </b>This will rebuild projects that this project references as well, but will not rebuild projects that references this one.</dd>
+  <dd>To rebuild a project right click on the project and select <b>Rebuild
+Project</b>.<br>
+    <b>Note: </b>This will rebuild projects that this project
+references as well, but will not rebuild projects that references this
+one.</dd>
   <dt>Build Automatically</dt>
-  <dd>This performs a Build All whenever any project file is saved, such as your <tt>makefile</tt>.  <br>
-  			<b>Tip: </b>For C/C++ projects this feature should be turned off, if there is a checkmark beside <b>Build Automatically</b> it is on, to turn it off select  <b>Build Automatically</b>.</dd>
-</dl>		
-
-
+  <dd>This performs a Build All whenever any project file is saved,
+such as your <tt>makefile</tt>. <br>
+    <b>Tip: </b>For C/C++ projects, this feature should be turned off.
+If there is a checkmark beside <b>Build Automatically</b> the feature
+is on. To turn it off, select <b>Build Automatically</b>.</dd>
+</dl>
 <p><b>Tip: </b>If you get the error message:</p>
-
 <p><samp>Exec error:Launching failed</samp></p>
-
-<p>The error message means 
-that the CDT cannot locate the build command, (usually <samp>make</samp>). Either your path is 
-not configured correctly or you do not have <samp>make</samp> installed on your system.</p>
-
-
-<p><b>Tip: </b>The menubar item <b>Project > Build Working Set</b> submenu for C/C++ projects simply creates a link to the build all target as defined in your makefile, and is no different from an <b>Incremental Build</b>.</p>
-
-
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<p>then CDT cannot locate the build command, (usually <samp>make</samp>).
+Either your path is not configured correctly or you do not have <samp>make</samp>
+installed on your system.</p>
+<p><b>Tip: </b>The menubar item <b>Project &gt; Build Working Set</b>
+submenu for C/C++ projects simply creates a link to the build all
+target as defined in your makefile, and is no different from an <b>Incremental
+Build</b>.</p>
+<p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts"
+ width="143" height="21">
 <br>
 <a href="../concepts/cdt_c_build_over.htm">Build overview</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<p><img border="0" src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
 <br>
 <a href="cdt_t_proj_build_set.htm">Defining Build Settings</a><br>
 <a href="cdt_o_build_task.htm">Building</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21">
 <br>
-<a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page, C/C++ Properties window</a></p>
-
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
-
+<a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page,
+C/C++ Properties window</a></p>
+<img src="../images/ng00_04a.gif" alt="IBM Copyright Statement">
 </body>
-
 </html>

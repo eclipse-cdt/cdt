@@ -1,83 +1,100 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
-
 <head>
-	<meta http-equiv="Content-Language" content="en-us">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>C/C++ Project Properties, Managed Make File,  Build</title>
-	<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Managed Make File, Build</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-
-<h1>C/C++ Project Properties, Managed,  C/C++ Build, Build Steps</h1>
-Customizes the selected build configuration allowing the specification of user defined build command steps, as 
-well as a descriptive message to be displayed in the
-build output, immediately prior to and immediately after normal build processing 
-executes.
-<p><img img src="../images/mprop_dcbs.png" alt="Properties, Managed Make, C/C++ Build, Build Steps"></p>
-
-<p><dl>
-	<dt>Project Type:</dt><dd>Displays the type of project that is built by the 
-	selected build configuration.</dd>
-	<dt>Configuration:</dt><dd>Allows the selection of the active build configuration from the list provided.</dd>
-	<dt>Manage...</dt>
-	<dd>You can add, remove and rename configurations.</dd>
-	<dt>Pre-build Step</dt>
-	<dt>&nbsp;&nbsp;&nbsp; Command</dt><dd>A command, or a list of semicolon separated 
-	commands, to be executed immediately prior to execution of the build.</dd>
-	<dt>&nbsp;&nbsp;&nbsp; Description</dt><dd>Optional descriptive text that is 
-	associated with the pre-build step to be displayed in the build output 
-	immediately prior to execution of the pre-build step command or commands.</dd>
-	<dt>Post-build Step</dt>
-	<dt>&nbsp;&nbsp;&nbsp; Command</dt><dd>A command, or a list of semicolon separated 
-	commands, to be executed immediately after the execution of the build.</dd>
-	<dt>&nbsp;&nbsp;&nbsp; Description</dt><dd>Optional descriptive text that is 
-	associated with the post-build step to be displayed in the build output 
-	immediately prior to execution of the post-build step command or commands.</dd>
-	<dt>Restore Defaults</dt><dd>Returns any changes back to their default 
-	setting</dd>
-	<dt>Apply</dt><dd>Applies any changes.</dd>
+<h1>C/C++ Project Properties, Managed, C/C++ Build, Build Steps</h1>
+Customizes the selected build configuration allowing the specification
+of user defined build command steps, as well as a descriptive message
+to be displayed in the
+build output, immediately prior to and immediately after normal build
+processing executes.
+<p><img img="" src="../images/mprop_dcbs.png"
+ alt="Properties, Managed Make, C/C++ Build, Build Steps"></p>
+<p></p>
+<dl>
+  <dt>Project Type:</dt>
+  <dd>Displays the type of project that is built by the selected build
+configuration.</dd>
+  <dt>Configuration:</dt>
+  <dd>Specifies the selected build configuration from the list provided.</dd>
+  <dt>Manage...</dt>
+  <dd>Adds, removes, rename and manages configurations.</dd>
+  <dt>Pre-build Step</dt>
+  <dt>&nbsp;&nbsp;&nbsp; Command</dt>
+  <dd>Specifies a command, or a list of semicolon separated commands,
+to be executed immediately prior to execution of the build.</dd>
+  <dt>&nbsp;&nbsp;&nbsp; Description</dt>
+  <dd>Specifies optional descriptive text that is associated with the
+pre-build step to be displayed in the build output immediately prior to
+execution of the pre-build step command or commands.</dd>
+  <dt>Post-build Step</dt>
+  <dt>&nbsp;&nbsp;&nbsp; Command</dt>
+  <dd>Specifies a command, or a list of semicolon separated commands,
+to be executed immediately after the execution of the build.</dd>
+  <dt>&nbsp;&nbsp;&nbsp; Description</dt>
+  <dd>Specifies optional descriptive text that is associated with the
+post-build step to be displayed in the build output immediately prior
+to execution of the post-build step command or commands.</dd>
+  <dt>Restore Defaults</dt>
+  <dd>Returns any changes back to their default setting</dd>
+  <dt>Apply</dt>
+  <dd>Applies any changes.</dd>
 </dl>
 <h2></h2>
 <h2>Detailed Specification</h2>
-<p>To ensure reasonable custom build step behavior, sensible input must be 
-provided when specifying custom build step input. Custom build steps are not 
-verified for correctness in any regard and are passed exactly as entered into 
-the build stream. <br>
+<p>To ensure reasonable custom build step behavior, sensible input must
+be provided when specifying custom build step input. Custom build steps
+are not verified for correctness in any regard and are passed exactly
+as entered into the build stream. <br>
 <br>
-In the descriptive text, below, the term &quot;main build&quot; is defined as the sequence 
-of commands to be executed when a build is invoked, not including pre-build or 
-post-build steps.<br>
+In the descriptive text, below, the term "main build" is defined as the
+sequence of commands to be executed when a build is invoked, not
+including pre-build or post-build steps.<br>
 <br>
-The pre-build step is not executed if the state of the main build is determined 
-to be up to date; otherwise it is executed. An attempt to execute the main build 
-will occur regardless of the success or failure of executing the pre-build step.
+The pre-build step is not executed if the state of the main build is
+determined to be up to date; otherwise it is executed. An attempt to
+execute the main build will occur regardless of the success or failure
+of executing the pre-build step.
 <br>
 <br>
-The post-build step is not executed if the state of the main build is determined 
-to be up to date. It will be executed only if the main-build has executed 
-successfully. </p>
-
-
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"><br>
-<a href="cdt_u_mfile_info.htm">C++ Project Properties, Managed Make File, Info</a><br>
+The post-build step is not executed if the state of the main build is
+determined to be up to date. It will be executed only if the main-build
+has executed successfully. </p>
+<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21"><br>
+<a href="cdt_u_mfile_info.htm">C++ Project Properties, Managed Make
+File, Info</a><br>
 <a href="cdt_u_mprop_info.htm">C++ Project Properties, Managed, Info</a><br>
-<a href="cdt_u_mprop_builders.htm">C++ Project Properties, Managed, Builders</a><br>
-<a href="cdt_u_mprop_build.htm">C++ Project Properties, Managed, C/C++ Build</a><br>
-<a href="cdt_u_mprop_tool_settings.htm">C++ Project Properties, Managed, C/C++ Build, Tool Settings</a><br>
-<a href="cdt_u_mprop_build_settings.htm">C++ Project Properties, Managed, C/C++ Build, Build Settings</a><br>
-<a href="cdt_u_mprop_merror.htm">C++ Project Properties, Managed, C/C++ Build, Error Parsers</a><br>
-<a href="cdt_u_mprop_mbinary.htm">C++ Project Properties, Managed, C/C++ Build, Binary Parser</a><br>
-<a href="cdt_u_mprop_env.htm">C++ Project Properties, Managed, C/C++ Build, Environment</a><br>
-<a href="cdt_u_mprop_macros.htm">C++ Project Properties, Managed, C/C++ Build, Macros</a><br>
-<a href="cdt_u_mprop_documentation.htm">C++ Project Properties, Managed, C/C++ Documentation</a><br>
-<a href="cdt_u_mprop_file_types.htm">C++ Project Properties, Managed, C/C++ File Types</a><br>
-<a href="cdt_u_mprop_indexer.htm">C++ Project Properties, Managed, C/C++ Indexer</a><br>
-<a href="cdt_u_mprop_ref.htm">C++ Project Properties, Managed, Project References</a></p>
-
+<a href="cdt_u_mprop_builders.htm">C++ Project Properties, Managed,
+Builders</a><br>
+<a href="cdt_u_mprop_build.htm">C++ Project Properties, Managed, C/C++
+Build</a><br>
+<a href="cdt_u_mprop_tool_settings.htm">C++ Project Properties,
+Managed, C/C++ Build, Tool Settings</a><br>
+<a href="cdt_u_mprop_build_settings.htm">C++ Project Properties,
+Managed, C/C++ Build, Build Settings</a><br>
+<a href="cdt_u_mprop_merror.htm">C++ Project Properties, Managed, C/C++
+Build, Error Parsers</a><br>
+<a href="cdt_u_mprop_mbinary.htm">C++ Project Properties, Managed,
+C/C++ Build, Binary Parser</a><br>
+<a href="cdt_u_mprop_env.htm">C++ Project Properties, Managed, C/C++
+Build, Environment</a><br>
+<a href="cdt_u_mprop_macros.htm">C++ Project Properties, Managed, C/C++
+Build, Macros</a><br>
+<a href="cdt_u_mprop_documentation.htm">C++ Project Properties,
+Managed, C/C++ Documentation</a><br>
+<a href="cdt_u_mprop_file_types.htm">C++ Project Properties, Managed,
+C/C++ File Types</a><br>
+<a href="cdt_u_mprop_indexer.htm">C++ Project Properties, Managed,
+C/C++ Indexer</a><br>
+<a href="cdt_u_mprop_ref.htm">C++ Project Properties, Managed, Project
+References</a></p>
 <p>
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >  
-</p>
+<img src="../images/ng00_04a.gif" alt="IBM Copyright Statement"> </p>
 </body>
-
 </html>

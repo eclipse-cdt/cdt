@@ -1,96 +1,94 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html lang="en">
-
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Defining Standard Make build settings</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Defining Standard Make build settings</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
-
 <h1>Defining Standard Make build settings</h1>
-
 <p>The <b>Make Builder</b> page lets you:</p>
-
 <ul>
-  <li>Configure how the CDT handles make 
-errors.</li>
+  <li>Configure how the CDT handles make errors.</li>
   <li>Change the default build command.</li>
   <li>Map the target passed to make when you select build or rebuild.</li>
 </ul>
-
-<p>You can define the properties on a per project basis in the New Project 
-wizard, in the C/C++ Projects view or in the Navigator view. You can also define 
-project properties in the Preferences window for future standard make projects.</p>
-
+<p>You can define the properties on a per project basis in the New
+Project wizard, in the C/C++ Projects view or in the Navigator view.
+You can also define project properties in the Preferences window for
+future standard make projects.</p>
 <p>Before you begin</p>
-
-<p>In order to be able to turn on or to turn off the feature that automatically performs 
-an incremental build of your project every time a resource is saved for 
-individual projects, you need to enable the Workbench <b>Build Automatically</b> preference. You can then 
-disable this feature or change the associated make target for individual projects.</p>
-
+<p>In order to be able to turn on or to turn off the feature that
+automatically performs an incremental build of your project every time
+a resource is saved for individual projects, you need to enable the
+Workbench <b>Build Automatically</b> preference. You can then disable
+this feature or change the associated make target for individual
+projects.</p>
 <p>To enable build on resource save:</p>
-
 <ol>
   <li>Click <b>Window &gt; Preferences</b>.</li>
-  <li>To automatically perform an incremental build of your project every time a 
-  resource is saved, select <b>Workbench</b> from the list.</li>
-  <li>Select the <b>Perform build automatically on resource modification</b> check box. <br>Note: this is the default setting.</li>
+  <li>To automatically perform an incremental build of your project
+every time a resource is saved, select <b>Workbench</b> from the list.</li>
+  <li>Select the <b>Perform build automatically on resource
+modification</b> check box. <br>
+Note: this is the default setting.</li>
   <p>You can now enable or disable this feature on a per project basis.</p>
-  </ol>
-
+</ol>
 <p>To define build settings:</p>
-<p><img src="../images/new_make-builder.png" alt="Windows Preference Make Builder dialog"></p>
-
+<p><img src="../images/new_make-builder.png"
+ alt="Windows Preference Make Builder dialog"></p>
 <ol>
   <li>Do one of the following:</li>
   <ul>
-  <li>Click <b>Window &gt; Preferences</b>. Expand<b> C/C++</b>, click <b> 
-  New Make Projects</b>.</li>
-  <li>In the C/C++ Projects view, right-click a standard make project, and select <b>Properties</b>. 
-  Select <b>C/C++ Make Project</b> from the list.</li></ul>
-  <li>Click the <b>Make Builder</b> tab.</li>
-  <li>Do one of the following:</li>
-  <ul>
-  <li>To stop the build when an error is encountered, select <b>Stop on first build error</b>.</li>
+    <li>Click <b>Window &gt; Preferences</b>. Expand<b> C/C++</b>,
+click <b> New Make Projects</b>.</li>
+    <li>In the C/C++ Projects view, right-click a standard make
+project, and select <b>Properties</b>. Select <b>C/C++ Make Project</b>
+from the list.</li>
   </ul>
+  <li>Click the <b>Make Builder</b> tab.</li>
+</ol>
+<ol style="list-style-type: decimal;" start="3">
+  <li>To stop the build when an error is encountered, select <b>Stop
+on first build error</b>.</li>
+</ol>
+<ol style="list-style-type: decimal;" start="4">
   <li>Select one of the following build command settings:</li>
   <ul>
-  <li>To use the default make command, select the <b>Use Default</b> check box.</li>
-  <li>To use a build utility other than the default make command <b>Build Command</b> 
-  box, clear the <b>Use Default</b> check box .</li>
+    <li>To use the default make command, select the <b>Use Default</b>
+check box.</li>
+    <li>To use a build utility other than the default make command <b>Build
+Command</b> box, clear the <b>Use Default</b> check box .</li>
   </ul>
   <li>In the Workbench Build Behavior box, do the following:</li>
-  <ul><li>To build your project when resources are saved and change the default 
-    make build target, select 
-  the <b>Build on resource save (Auto Build)</b> check box. Enter a new build target in the <b>Make build 
-  target</b> box.</li>
-  <li>To change the build default make build target, select the <b>Build 
-  (Incremental Build)</b> check box. Enter a new build target in the <b>Make 
-  build target</b> box.<li>To change the rebuild default make build target, 
-  select the <b>Rebuild (Full Build)</b> check box. Enter a new build target 
-  in the <b>Make build target</b> box.</li>
+  <ul>
+    <li>To build your project when resources are saved and change the
+default make build target, select the <b>Build on resource save (Auto
+Build)</b> check box. Enter a new build target in the <b>Make build
+target</b> box.</li>
+    <li>To change the build default make build target, select the <b>Build
+(Incremental Build)</b> check box. Enter a new build target in the <b>Make
+build target</b> box.</li>
+    <li>To change the rebuild default make build target, select the <b>Rebuild
+(Full Build)</b> check box. Enter a new build target in the <b>Make
+build target</b> box.</li>
   </ul>
-  <li>Click the <b>Finish</b>.</li>
-  </ol>
-  <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+  <li>Click <span style="font-weight: bold;">OK</span>.</li>
+</ol>
+<p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts"
+ width="143" height="21"><br>
+<a href="../concepts/cdt_c_projects.htm">CDT Projects</a><br>
+<a href="../concepts/cdt_c_proj_file_views.htm">Project file views</a></p>
+<p><img border="0" src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
 <br>
-  <a href="../concepts/cdt_c_projects.htm">CDT Projects</a><br>
-  <a href="../concepts/cdt_c_proj_file_views.htm">Project file views</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
-<br>
-
 <a href="cdt_o_proj_files.htm">Working with C/C++ project files</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21">
 <br>
-<a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page, C/C++ Properties window</a></p>
-
-
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
-
+<a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page,
+C/C++ Properties window</a></p>
+<img src="../images/ng00_04a.gif" alt="IBM Copyright Statement">
 </body>
-
 </html>

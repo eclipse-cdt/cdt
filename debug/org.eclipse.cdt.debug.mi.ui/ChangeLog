@@ -1,3 +1,6 @@
+2005-07-22 Alain Magloire
+	Fix the copyright.
+
 2005-04-13 Alain Magloire
 	Fix PR 91002
 	* src/org/eclipse/cdt/debug/mi/internal/preferences/MIPreferencePage.java

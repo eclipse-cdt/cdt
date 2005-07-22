@@ -2622,16 +2622,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static boolean checkForMigrationSupport(ManagedBuildInfo buildInfo,
 			boolean forCurrentMbsVersion) {
 		
-		IProjectType projectType = null;
 		IConfigurationElement element = null;
 
-		// Get the projectType from buildInfo
+		// Get the managed project from buildInfo
 		IManagedProject managedProject = buildInfo.getManagedProject();
-		projectType = managedProject.getProjectType();
 
-		// walk through the hierarchy of the projectType and 
+		// walk through the hierarchy of the project and 
 		// call the converters if available for each configuration
-		IConfiguration[] configs = projectType.getConfigurations();
+		IConfiguration[] configs = managedProject.getConfigurations();
 		for (int i = 0; i < configs.length; i++) {
 			IConfiguration configuration = configs[i];
 			IToolChain toolChain = configuration.getToolChain();
@@ -2667,16 +2665,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					}
 				}
 				IBuilder builder = toolChain.getBuilder();
-				if (forCurrentMbsVersion) {
-					element = ((Builder)builder).getCurrentMbsVersionConversionElement();
-				} else {
-					element = ((Builder)builder).getPreviousMbsVersionConversionElement();
-				}
-
-				if (element != null) {
-					if ( invokeConverter(builder, buildInfo, element) != true ) {
-						buildInfo.getManagedProject().setValid(false);
-						return false;
+				if (builder != null) {
+					if (forCurrentMbsVersion) {
+						element = ((Builder)builder).getCurrentMbsVersionConversionElement();
+					} else {
+						element = ((Builder)builder).getPreviousMbsVersionConversionElement();
+					}
+	
+					if (element != null) {
+						if ( invokeConverter(builder, buildInfo, element) != true ) {
+							buildInfo.getManagedProject().setValid(false);
+							return false;
+						}
 					}
 				}
 			}

@@ -501,13 +501,13 @@
    <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxSource"
-       file-extensions="cpp,cxx,cc"/>
+       file-extensions="C,cpp,cxx,cc"/>
    </extension> 
 
    <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.asmSource"
-       file-extensions="s,asm"/>
+       file-extensions="S,s,asm"/>
    </extension> 
 
    <extension point="org.eclipse.core.runtime.contentTypes"> 

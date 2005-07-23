@@ -1,4 +1,8 @@
 2005-07-22 Alain Magloire
+	Fix PR 104908
+	* plugin.xml
+
+2005-07-22 Alain Magloire
 	Fix the Copyright notice for epl.
 
 2005-07-22 Chris Wiebe

@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.lang.reflect.Array;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -88,22 +86,80 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
         return children;
 	}
     
+	/**
+	 * Inserts obj into the array at position pos and if this is not possible (due to a bad offset)
+	 * then the obj is just appended to the end of the array.
+	 * 
+	 * @param c
+	 * @param array
+	 * @param obj
+	 * @param pos
+	 * @return
+	 */
+	public Object[] insert(Class c, Object[] array, Object obj, int pos) {
+		if (pos < 0 || pos >= array.length) {
+			return ArrayUtil.append(c, array, obj);
+		}
+		
+		Object[] temp = (Object[]) Array.newInstance( c, array.length + 1 );
+		if (pos > 0) {
+			System.arraycopy( array, 0, temp, 0, pos );
+			temp[pos] = obj;
+			System.arraycopy( array, pos, temp, pos + 1, array.length - pos );
+		} else {
+			temp[0] = obj;
+			System.arraycopy( array, 0, temp, 1, array.length );
+		}
+		
+		return temp;
+	}
+	
     public void cleanChildren() {
         // remove null elements
         children = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
         
         // sort the elements
-        Arrays.sort(children, new Comparator() {
-            public int compare(Object a, Object b) {
-                if(a instanceof DOMASTNodeLeaf && b instanceof DOMASTNodeLeaf &&
-                        ((DOMASTNodeLeaf)a).getNode() instanceof ASTNode &&
-                        ((DOMASTNodeLeaf)b).getNode() instanceof ASTNode) {
-                    return ((ASTNode)((DOMASTNodeLeaf)a).getNode()).getOffset() - ((ASTNode)((DOMASTNodeLeaf)b).getNode()).getOffset();
-                }
-                
-                return 0;
-            }
-        });
+		//if (indexFirstPreproStmnt >= 0) { // TODO Devin what if it's ALL preprocessor statements ?
+			int firstOffset=0;
+			int firstLength=0;
+			int checkOffset=0;
+			int checkLength=0;
+			boolean moved=false;
+			for (int j=0, i=0; j < children.length && children[j] != null; j++) {
+				if( !(children[j].getNode() instanceof IASTPreprocessorStatement) )
+					continue;
+				while(true) {
+					if (i==j) break; // don't need to check itself or anything after it
+					
+					checkOffset = ((ASTNode)children[j].getNode()).getOffset();
+					checkLength = ((ASTNode)children[j].getNode()).getLength();
+					firstOffset = ((ASTNode)children[i].getNode()).getOffset();
+					firstLength = ((ASTNode)children[i].getNode()).getLength();
+					
+					// if the checking element comes before the first element then move the checking element before the first element
+					if (checkOffset < firstOffset && checkOffset + checkLength < firstOffset + firstLength) {
+						DOMASTNodeLeaf temp = children[j];
+						System.arraycopy( children, i, children, i + 1, j - i );
+						children[i] = temp;
+						break;
+					}
+					
+					// if the checking element is within the bounds of the first element then it must be a child of that element
+					if (checkOffset > firstOffset && checkOffset + checkLength < firstOffset + firstLength) {
+						DOMASTNodeLeaf temp = children[j];
+						if( j + 1 < children.length )
+							System.arraycopy( children, j + 1, children, j, children.length - j - 1 );
+						children[ children.length - 1 ] = null;
+						((DOMASTNodeParent)children[i]).addChild(temp);
+						j--;
+						break;
+					}
+					
+					i++;
+				}
+			}
+	//	}
+		children = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
         
         // need to also clean up the children's children, to make sure all nulls are removed (prevent expansion sign when there isn't one)
         for(int i=0; i<children.length; i++) {
@@ -157,7 +213,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
             if (nodeChain[i] != null) {
                 parentToFind = nodeChain[i];
                 
-                for(; j>=indexFirstPreproStmnt; j--) {
+                for(; j>=0; j--) {
                     if (childrenToSearch[j] instanceof DOMASTNodeParent) {
                         if ( childrenToSearch[j].getNode() == node.getParent() ) {
                             return (DOMASTNodeParent)childrenToSearch[j];
@@ -270,80 +326,36 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 		if (equalNodes(node, this.getNode(), useOffset)) {
 			return this;
 		}
-		if( !useOffset || node instanceof IASTPreprocessorStatement) {
-		    IASTNode nodeToFind = node;
-		    // build the chain of nodes... and use it to search the tree for the DOMASTNodeParent that contains the node
-			IASTNode[] nodeChain = new IASTNode[DEFAULT_NODE_CHAIN_SIZE];
-			IASTNode topNode = node;
-			nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
-			while(topNode.getParent() != null && !(topNode.getParent() instanceof IASTTranslationUnit)) {
-				topNode = topNode.getParent();
-				nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
-			}
-			
-			// loop through the chain of nodes and use it to only search the necessary children required to find the node
-			DOMASTNodeLeaf[] childrenToSearch = children;
-			outerLoop: for(int i=nodeChain.length-1; i>=0; i--) {
-				if (nodeChain[i] != null) {
-					nodeToFind = nodeChain[i];
-					
-					for(int j=0; j<childrenToSearch.length; j++) {
-						if (childrenToSearch[j] instanceof DOMASTNodeParent) {
-							
-							if ( equalNodes(childrenToSearch[j].getNode(), node, useOffset) ) { 
-								return (DOMASTNodeParent)childrenToSearch[j];
-							}						
-							
-							if ( equalNodes(childrenToSearch[j].getNode(), nodeToFind, useOffset) ) {
-								childrenToSearch = ((DOMASTNodeParent)childrenToSearch[j]).getChildren(false);
-								continue outerLoop;
-							}
-							
-							// since the nodeChain doesn't include #includes, if an #include is encountered then search it's children
-							if (childrenToSearch[j].getNode() instanceof IASTPreprocessorIncludeStatement) {
-								DOMASTNodeParent foundParentInInclude = ((DOMASTNodeParent)childrenToSearch[j]).findTreeObject(node, useOffset);
-								if(foundParentInInclude != null) {
-									return foundParentInInclude;
-								}
-							}
-						}
-					}
-				}
-			}
-		} else {
-		    if( children.length == 0 )
-			    return null;
-		    if( !cleanupedElements ){
-		        cleanChildren();
-		    }
-			int a = 0, z = children.length - 1;
-			int idx = (z - a) / 2 ;
-			while( true ){
-			    int compare = children[ idx ].relativeNodePosition( node );
-			    if( compare == 0 ){
-			        if( children[idx] instanceof DOMASTNodeParent ){
-			            return ((DOMASTNodeParent)children[idx]).findTreeObject( node, useOffset );
-			        }
-			        return null; //??
-			    } else if( compare == -1 )
-			        z = idx;
-			    else
-			        a = idx;
-			    int diff = z - a;
-			    if( diff == 0 )
-			        return null;
-			    else if( diff == 1 )
-			        idx = ( idx == z ) ? a : z;
-			    else 
-			        idx = a + ( z - a ) / 2;
-			    if( z == a )
-			        return null;
-			    if( z - a == 1 && children[ a ].relativeNodePosition( node ) == 1 && children[ z ].relativeNodePosition( node ) == -1 )
-			        return null;
-			}   
+		if( children.length == 0 )
+			return null;
+		if( !cleanupedElements ){
+			cleanChildren();
 		}
-		
-		return null; // nothing found
+		int a = 0, z = children.length - 1;
+		int idx = (z - a) / 2 ;
+		while( true ){
+			int compare = children[ idx ].relativeNodePosition( node );
+			if( compare == 0 ){
+				if( children[idx] instanceof DOMASTNodeParent ){
+					return ((DOMASTNodeParent)children[idx]).findTreeObject( node, useOffset );
+				}
+				return null; //??
+			} else if( compare == -1 )
+				z = idx;
+			else
+				a = idx;
+			int diff = z - a;
+			if( diff == 0 )
+				return null;
+			else if( diff == 1 )
+				idx = ( idx == z ) ? a : z;
+			else 
+				idx = a + ( z - a ) / 2;
+			if( z == a )
+				return null;
+			if( z - a == 1 && children[ a ].relativeNodePosition( node ) == 1 && children[ z ].relativeNodePosition( node ) == -1 )
+				return null;
+		}   
 	}
 	
 	private boolean equalNodes(IASTNode node1, IASTNode node2, boolean useOffset) {

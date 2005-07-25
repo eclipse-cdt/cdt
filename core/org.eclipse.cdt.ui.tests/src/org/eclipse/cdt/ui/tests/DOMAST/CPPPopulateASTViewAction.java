@@ -48,7 +48,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulateDOMASTAction {
 	private static final int INITIAL_PROBLEM_SIZE = 4;
-	private static final int INITIAL_INCLUDE_STATEMENT_SIZE = 8;
 	{
 		shouldVisitNames          = true;
 		shouldVisitDeclarations   = true;
@@ -73,14 +72,28 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		this.monitor = monitor;
 	}
 	
-	private int addRoot(IASTNode node) {
-        if (monitor != null && monitor.isCanceled()) return PROCESS_ABORT;
-        if (node == null) return PROCESS_CONTINUE;
+	private class DOMASTNodeLeafContinue extends DOMASTNodeLeaf {
+		public DOMASTNodeLeafContinue(IASTNode node) {
+			super(node);
+		}
+	}
+
+	/** 
+	 * return null if the algorithm should stop (monitor was cancelled)
+	 * return DOMASTNodeLeafContinue if the algorithm should continue but no valid DOMASTNodeLeaf was added (i.e. node was null
+	 * return the DOMASTNodeLeaf added to the DOM AST View's model otherwise 
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private DOMASTNodeLeaf addRoot(IASTNode node) {
+        if (monitor != null && monitor.isCanceled()) return null;
+        if (node == null) return new DOMASTNodeLeafContinue(null);
         
         // only do length check for ASTNode (getNodeLocations on PreprocessorStatements is very expensive)
         if (!(node instanceof ICPPASTLinkageSpecification) && 
         	node instanceof ASTNode && ((ASTNode)node).getLength() <= 0)
-            return PROCESS_CONTINUE;
+            return new DOMASTNodeLeafContinue(null);
         
         DOMASTNodeParent parent = null;
         
@@ -99,12 +112,10 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
         if (parent == null)
             parent = root;
         
-        createNode(parent, node);
-        
-        return PROCESS_CONTINUE;
+        return createNode(parent, node);
 	}
     
-    private void createNode(DOMASTNodeParent parent, IASTNode node) {
+    private DOMASTNodeLeaf createNode(DOMASTNodeParent parent, IASTNode node) {
         DOMASTNodeParent tree = new DOMASTNodeParent(node);
         parent.addChild(tree);
         
@@ -121,20 +132,28 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
             tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PREPROCESSOR);
         if (node instanceof IASTPreprocessorIncludeStatement)
             tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_INCLUDE_STATEMENTS);
+		
+		return tree;
     }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
 	public int visit(IASTDeclaration declaration) {
-		return addRoot(declaration);
+		DOMASTNodeLeaf temp = addRoot(declaration);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 	 */
 	public int visit(IASTDeclarator declarator) {
-		int ret = addRoot(declarator);
+		DOMASTNodeLeaf temp =  addRoot(declarator);
 		
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
 		for(int i=0; i<ops.length; i++)
@@ -160,58 +179,108 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 			}	
 		}
 		
-		return ret;
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processBaseSpecifier(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
 	 */
 	public int visit(ICPPASTBaseSpecifier specifier) {
-		return addRoot(specifier);
+		DOMASTNodeLeaf temp = addRoot(specifier);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 	 */
 	public int visit(IASTDeclSpecifier declSpec) {
-		return addRoot(declSpec);
+		DOMASTNodeLeaf temp = addRoot(declSpec);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
 	public int visit(IASTEnumerator enumerator) {
-		return addRoot(enumerator);
+		DOMASTNodeLeaf temp = addRoot(enumerator);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 	 */
 	public int visit(IASTExpression expression) {
-		return addRoot(expression);
+		DOMASTNodeLeaf temp = addRoot(expression);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 	 */
 	public int visit(IASTInitializer initializer) {
-		return addRoot(initializer);
+		DOMASTNodeLeaf temp = addRoot(initializer);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public int visit(IASTName name) {
+		DOMASTNodeLeaf temp = null;
 		if (name.toString() != null)
-			return addRoot(name);
-		return PROCESS_CONTINUE;
+			temp = addRoot(name);
+		else
+			return PROCESS_CONTINUE;
+		
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processNamespace(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 	 */
 	public int visit(ICPPASTNamespaceDefinition namespace) {
-		return addRoot(namespace);
+		DOMASTNodeLeaf temp = addRoot(namespace);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
@@ -219,37 +288,60 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	 */
 	public int visit(
 			IASTParameterDeclaration parameterDeclaration) {
-		return addRoot(parameterDeclaration);
+		DOMASTNodeLeaf temp = addRoot(parameterDeclaration);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
 	public int visit(IASTStatement statement) {
-		return addRoot(statement);
+		DOMASTNodeLeaf temp = addRoot(statement);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 	 */
 	public int visit(IASTTypeId typeId) {
-		return addRoot(typeId);
+		DOMASTNodeLeaf temp = addRoot(typeId);
+		if (temp == null)
+			return PROCESS_ABORT;
+		else if (temp instanceof DOMASTNodeLeafContinue)
+			return PROCESS_CONTINUE;
+		else
+			return PROCESS_CONTINUE;
 	}
 
-	private void mergeNode(ASTNode node) {
-		addRoot(node);
+	private DOMASTNodeLeaf mergeNode(ASTNode node) {
+		DOMASTNodeLeaf leaf = addRoot(node);
 		
 		if (node instanceof IASTPreprocessorMacroDefinition)
 			addRoot(((IASTPreprocessorMacroDefinition)node).getName());
+		
+		return leaf;
 	}
 	
-	public void mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
+	public DOMASTNodeLeaf[] mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
+		DOMASTNodeLeaf[] leaves = new DOMASTNodeLeaf[statements.length];
 		for(int i=0; i<statements.length; i++) {
-			if (monitor != null && monitor.isCanceled()) return;
+			if (monitor != null && monitor.isCanceled()) return leaves;
 			
 			if (statements[i] instanceof ASTNode)
-				mergeNode((ASTNode)statements[i]);
+				leaves[i] = mergeNode((ASTNode)statements[i]);
 		}
+		
+		return leaves;
 	}
 	
 	public void mergePreprocessorProblems(IASTProblem[] problems) {
@@ -265,45 +357,26 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		return root;
 	}
 	
-	public void groupIncludes(IASTPreprocessorStatement[] statements) {
-		// get all of the includes from the preprocessor statements (need the object since .equals isn't implemented)
-		IASTPreprocessorIncludeStatement[] includes = new IASTPreprocessorIncludeStatement[INITIAL_INCLUDE_STATEMENT_SIZE];
-		int index = 0;
-		for(int i=0; i<statements.length; i++) {
-			if (monitor != null && monitor.isCanceled()) return;
-			if (statements[i] instanceof IASTPreprocessorIncludeStatement) {
-				if (index == includes.length) {
-					includes = (IASTPreprocessorIncludeStatement[])ArrayUtil.append(IASTPreprocessorIncludeStatement.class, includes, statements[i]);
-					index++;
-				} else {
-					includes[index++] = (IASTPreprocessorIncludeStatement)statements[i];	
-				}
-			}
-		}
-		
-		// get the tree model elements corresponding to the includes
-		DOMASTNodeParent[] treeIncludes = new DOMASTNodeParent[index];
-		for (int i=0; i<treeIncludes.length; i++) {
-			if (monitor != null && monitor.isCanceled()) return;
-			treeIncludes[i] = root.findTreeObject(includes[i], false);
-		}
-		
+	public void groupIncludes(DOMASTNodeLeaf[] treeIncludes) {
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)
 		DOMASTNodeLeaf child = null;
-		outerLoop: for (int i=treeIncludes.length-1; i>=0; i--) {
+		outerLoop: for (int i=treeIncludes.length - 1; i >= 0; i-- ) {
 			if (treeIncludes[i] == null) continue;
 
-			for(int j=root.getChildren(false).length-1; j>=0; j--) {
-				if (monitor != null && monitor.isCanceled()) return;
+			IASTNode node = null;
+			for(int j=0; j < root.getChildren(false).length; j++) {
+//				if (monitor != null && monitor.isCanceled()) return; // this causes a deadlock when checked here
 				child = root.getChildren(false)[j];
 				
+				node = treeIncludes[i].getNode();
 				if (child != null && treeIncludes[i] != child &&
-						includes[i] instanceof ASTInclusionStatement &&
-						((ASTNode)child.getNode()).getOffset() >= ((ASTInclusionStatement)includes[i]).startOffset &&
-						((ASTNode)child.getNode()).getOffset() <= ((ASTInclusionStatement)includes[i]).endOffset) {
+						node instanceof ASTInclusionStatement &&
+						((ASTNode)child.getNode()).getOffset() >= ((ASTInclusionStatement)node).startOffset &&
+						((ASTNode)child.getNode()).getOffset() <= ((ASTInclusionStatement)node).endOffset) 
+				{
 					root.removeChild(child);
-					treeIncludes[i].addChild(child);
+					((DOMASTNodeParent)treeIncludes[i]).addChild(child);
 				}
 			}
 		}

@@ -404,7 +404,7 @@ public class DOMAST extends ViewPart {
 	         monitor.subTask(MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_);
 	         start=System.currentTimeMillis();
 	         // merge preprocessor statements to the tree
-	         action.mergePreprocessorStatements(statements);
+	         DOMASTNodeLeaf[] includeStatements = action.mergePreprocessorStatements(statements);
 	         monitor.worked(2);
 	         System.out.println(DOM_AST_VIEW_DONE + MERGING_ + statements.length + _PREPROCESSOR_STATEMENTS_ + COLON_SPACE + (System.currentTimeMillis()- start) );
 	         
@@ -426,7 +426,7 @@ public class DOMAST extends ViewPart {
 	         monitor.subTask(GROUPING_AST);
 	         start=System.currentTimeMillis();
 	         // group #includes
-	         action.groupIncludes(statements);
+	         action.groupIncludes(includeStatements);
 	         monitor.worked(30);
 	         System.out.println(DOM_AST_VIEW_DONE + GROUPING_AST + COLON_SPACE + (System.currentTimeMillis()- start) );
 
@@ -809,141 +809,141 @@ public class DOMAST extends ViewPart {
    }
 
    private void makeActions() {
- 	  loadActiveEditorAction = new Action() {
-        public void run() {
-        	openDOMASTView(getActiveEditor());
-        }
-     };
-     loadActiveEditorAction.setText(LOAD_ACTIVE_EDITOR);
-     loadActiveEditorAction.setToolTipText(LOAD_ACTIVE_EDITOR);
-     loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_RELOAD_VIEW);
-   	
-     refreshAction = new Action() {
-         public void run() {
-            // take a snapshot of the tree expansion
-         	Object[] expanded = viewer.getExpandedElements();
-
-         	// set the new content provider
-         	setContentProvider(new ViewContentProvider(file, expanded));
-         }
-      };
-      refreshAction.setText(REFRESH_DOM_AST);
-      refreshAction.setToolTipText(REFRESH_DOM_AST);
-      refreshAction.setImageDescriptor(DOMASTPluginImages.DESC_REFRESH_VIEW);
-
-     expandAllAction = new Action() {
-        public void run() {
-        	viewer.expandAll();
-        }
-     };
-     expandAllAction.setText(EXPAND_ALL);
-     expandAllAction.setToolTipText(EXPAND_ALL);
-     expandAllAction.setImageDescriptor(DOMASTPluginImages.DESC_EXPAND_ALL);
-     
-     collapseAllAction = new Action() {
-        public void run() {
-        	viewer.collapseAll();
-        }
-     };
-     collapseAllAction.setText(COLLAPSE_ALL);
-     collapseAllAction.setToolTipText(COLLAPSE_ALL);
-     collapseAllAction.setImageDescriptor(DOMASTPluginImages.DESC_COLLAPSE_ALL);
-
-     clearAction = new Action() {
-        public void run() {
-        	viewer.setContentProvider(new ViewContentProvider(null));
-        	viewer.refresh();
-        }
-     };
-     clearAction.setText(CLEAR);
-     clearAction.setToolTipText(CLEAR);
-     clearAction.setImageDescriptor(DOMASTPluginImages.DESC_CLEAR);
-     
-     searchNamesAction = new Action() {
-        private void performSearch() {
-        	if (viewer.getTree().getItems().length == 0) {
-        		showMessage(DOM_AST_HAS_NO_CONTENT);
-        	}
-        	
-        	FindIASTNameDialog dialog = new FindIASTNameDialog(getSite().getShell(), new FindIASTNameTarget(viewer, lang));
-        	dialog.open();
-       }
-     	
-     	public void run() {
-     		performSearch();
-        }
-     };
-     searchNamesAction.setText(SEARCH_FOR_IASTNAME);
-     searchNamesAction.setToolTipText(SEARCH_FOR_IASTNAME);
-     searchNamesAction.setImageDescriptor(DOMASTPluginImages.DESC_SEARCH_NAMES);
-     
-      openDeclarationsAction = new DisplayDeclarationsAction();
-      openDeclarationsAction.setText(OPEN_DECLARATIONS);
-      openDeclarationsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-            .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-
-      openReferencesAction = new DisplayReferencesAction();
-      openReferencesAction.setText(OPEN_REFERENCES);
-      openReferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-            .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-	  
-	  displayProblemsAction = new DisplayProblemsResultAction();
-	  displayProblemsAction.setText(DISPLAY_PROBLEMS);
-      displayProblemsAction.setImageDescriptor(DOMASTPluginImages.DESC_IASTProblem);
-	  
-	  displayNodeTypeAction = new Action() { 
-		  public void run() {
-			  ISelection selection = viewer.getSelection();
-		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
-		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
-					showMessage("ASTUtil#getNodeType(IASTNode): \"" + ASTTypeUtil.getNodeType(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		     	}
-		  } };
-	  displayNodeTypeAction.setText(DISPLAY_TYPE);
-      displayNodeTypeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-            .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-
-	  displayNodeSignatureAction = new Action() { 
-		  public void run() {
-			  ISelection selection = viewer.getSelection();
-		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
-		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
-					showMessage("ASTSignatureUtil#getNodeSignature(IASTNode): \"" + ASTSignatureUtil.getNodeSignature(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		     	}
-		  } };
-      displayNodeSignatureAction.setText(DISPLAY_SIGNATURE);
-	  displayNodeSignatureAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-		  .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-	  
-	  displayExpressionAction = new Action() { 
-		  public void run() {
-			  ISelection selection = viewer.getSelection();
-		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
-		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTExpression) {
-					showMessage("ASTSignatureUtil#getExpressionString(IASTExpression): \"" + ASTSignatureUtil.getExpressionString((IASTExpression)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		     	}
-		  } };
-	  displayExpressionAction.setText(DISPLAY_EXPRESSION);
-	  displayExpressionAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-		  .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-	  
-	  displayInitializerAction = new Action() { 
-		  public void run() {
-			  ISelection selection = viewer.getSelection();
-		     	if (selection instanceof IStructuredSelection &&
-		     			((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
-		     			((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTInitializer) {
-					showMessage("ASTSignatureUtil#getInitializerString(IASTInitializer): \"" + ASTSignatureUtil.getInitializerString((IASTInitializer)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		     	}
-		  } };
-	  displayInitializerAction.setText(DISPLAY_INITIALIZER);
-	  displayInitializerAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-		  .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-	  
-      singleClickAction = new ASTHighlighterAction(part);
+	   loadActiveEditorAction = new Action() {
+		   public void run() {
+			   openDOMASTView(getActiveEditor());
+		   }
+	   };
+	   loadActiveEditorAction.setText(LOAD_ACTIVE_EDITOR);
+	   loadActiveEditorAction.setToolTipText(LOAD_ACTIVE_EDITOR);
+	   loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_RELOAD_VIEW);
+	   
+	   refreshAction = new Action() {
+		   public void run() {
+			   // take a snapshot of the tree expansion
+			   Object[] expanded = viewer.getExpandedElements();
+			   
+			   // set the new content provider
+			   setContentProvider(new ViewContentProvider(file, expanded));
+		   }
+	   };
+	   refreshAction.setText(REFRESH_DOM_AST);
+	   refreshAction.setToolTipText(REFRESH_DOM_AST);
+	   refreshAction.setImageDescriptor(DOMASTPluginImages.DESC_REFRESH_VIEW);
+	   
+	   expandAllAction = new Action() {
+		   public void run() {
+			   viewer.expandAll();
+		   }
+	   };
+	   expandAllAction.setText(EXPAND_ALL);
+	   expandAllAction.setToolTipText(EXPAND_ALL);
+	   expandAllAction.setImageDescriptor(DOMASTPluginImages.DESC_EXPAND_ALL);
+	   
+	   collapseAllAction = new Action() {
+		   public void run() {
+			   viewer.collapseAll();
+		   }
+	   };
+	   collapseAllAction.setText(COLLAPSE_ALL);
+	   collapseAllAction.setToolTipText(COLLAPSE_ALL);
+	   collapseAllAction.setImageDescriptor(DOMASTPluginImages.DESC_COLLAPSE_ALL);
+	   
+	   clearAction = new Action() {
+		   public void run() {
+			   viewer.setContentProvider(new ViewContentProvider(null));
+			   viewer.refresh();
+		   }
+	   };
+	   clearAction.setText(CLEAR);
+	   clearAction.setToolTipText(CLEAR);
+	   clearAction.setImageDescriptor(DOMASTPluginImages.DESC_CLEAR);
+	   
+	   searchNamesAction = new Action() {
+		   private void performSearch() {
+			   if (viewer.getTree().getItems().length == 0) {
+				   showMessage(DOM_AST_HAS_NO_CONTENT);
+			   }
+			   
+			   FindIASTNameDialog dialog = new FindIASTNameDialog(getSite().getShell(), new FindIASTNameTarget(viewer, lang));
+			   dialog.open();
+		   }
+		   
+		   public void run() {
+			   performSearch();
+		   }
+	   };
+	   searchNamesAction.setText(SEARCH_FOR_IASTNAME);
+	   searchNamesAction.setToolTipText(SEARCH_FOR_IASTNAME);
+	   searchNamesAction.setImageDescriptor(DOMASTPluginImages.DESC_SEARCH_NAMES);
+	   
+	   openDeclarationsAction = new DisplayDeclarationsAction();
+	   openDeclarationsAction.setText(OPEN_DECLARATIONS);
+	   openDeclarationsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	   
+	   openReferencesAction = new DisplayReferencesAction();
+	   openReferencesAction.setText(OPEN_REFERENCES);
+	   openReferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	   
+	   displayProblemsAction = new DisplayProblemsResultAction();
+	   displayProblemsAction.setText(DISPLAY_PROBLEMS);
+	   displayProblemsAction.setImageDescriptor(DOMASTPluginImages.DESC_IASTProblem);
+	   
+	   displayNodeTypeAction = new Action() { 
+		   public void run() {
+			   ISelection selection = viewer.getSelection();
+			   if (selection instanceof IStructuredSelection &&
+					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+					   ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
+				   showMessage("ASTUtil#getNodeType(IASTNode): \"" + ASTTypeUtil.getNodeType(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			   }
+		   } };
+	   displayNodeTypeAction.setText(DISPLAY_TYPE);
+	   displayNodeTypeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	   
+	   displayNodeSignatureAction = new Action() { 
+		   public void run() {
+			   ISelection selection = viewer.getSelection();
+			   if (selection instanceof IStructuredSelection &&
+					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+					   ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
+				   showMessage("ASTSignatureUtil#getNodeSignature(IASTNode): \"" + ASTSignatureUtil.getNodeSignature(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			   }
+		   } };
+	   displayNodeSignatureAction.setText(DISPLAY_SIGNATURE);
+	   displayNodeSignatureAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	   
+	   displayExpressionAction = new Action() { 
+		   public void run() {
+			   ISelection selection = viewer.getSelection();
+			   if (selection instanceof IStructuredSelection &&
+					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+					   ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTExpression) {
+				   showMessage("ASTSignatureUtil#getExpressionString(IASTExpression): \"" + ASTSignatureUtil.getExpressionString((IASTExpression)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			   }
+		   } };
+	   displayExpressionAction.setText(DISPLAY_EXPRESSION);
+	   displayExpressionAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	   
+	   displayInitializerAction = new Action() { 
+		   public void run() {
+			   ISelection selection = viewer.getSelection();
+			   if (selection instanceof IStructuredSelection &&
+					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
+					   ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTInitializer) {
+				   showMessage("ASTSignatureUtil#getInitializerString(IASTInitializer): \"" + ASTSignatureUtil.getInitializerString((IASTInitializer)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			   }
+		   } };
+	   displayInitializerAction.setText(DISPLAY_INITIALIZER);
+	   displayInitializerAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+			   .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	   
+	   singleClickAction = new ASTHighlighterAction(part);
    }
 
    protected IEditorPart getActiveEditor() {

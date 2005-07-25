@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.browser.cache;
 
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -141,7 +142,15 @@ public class TypeCacherJob extends BasicJob {
 	private void update(ITypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
 		boolean success = true;
 		IProject project = fTypeCache.getProject();
-	
+		
+		//A query on the null indexer will look like a canceled or failed job, which will cause us
+		//to try again later, don't even try in that case.
+		ICDTIndexer indexer = fIndexManager.getIndexerForProject( project );
+		if( indexer == null || !indexer.isIndexEnabled( project ) ){
+			monitor.done();
+			return;
+		}
+		
 		monitor.beginTask("", 100); //$NON-NLS-1$
 		if (project.exists() && project.isOpen()) {
 		    success = doIndexerJob(new IndexerTypesJob2(fIndexManager, fTypeCache, scope), monitor);
@@ -266,7 +275,7 @@ public class TypeCacherJob extends BasicJob {
 	    public DummyIndexerJob(IndexManager indexManager, IProject project) {
 	        super(indexManager, project);
 	    }
-		protected boolean processIndex(IIndex index, IProject project, IProgressMonitor progressMonitor) throws InterruptedException {
+		protected boolean processIndex(IIndex index, IProject project, IProgressMonitor progressMonitor) {
 		    return false;
 		}
 	}

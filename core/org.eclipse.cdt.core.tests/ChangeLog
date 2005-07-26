@@ -1,3 +1,6 @@
+2005-06-26 Alain Magloire
+	* model/org/eclipse/cdt/core/model/tests/StructuralTemplateTests.java
+
 2005-06-25 Alain Magloire
 	PR 98788: Templates
 	* model/org/eclipse/cdt/core/model/tests/CModleElementsTests.java

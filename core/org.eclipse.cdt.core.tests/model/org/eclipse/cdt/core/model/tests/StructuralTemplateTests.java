@@ -100,8 +100,8 @@ public class StructuralTemplateTests extends ITemplateTests {
 			String[] myExpectedValues = {
 				"fum",
 				"scrum",
-				"first",
-				"fum",
+				"nonVector::first",
+				"Foo::fum",
 				"IsGreaterThan",
 			};
 			assertEquals(myExpectedValues.length, arrayElements.size());
@@ -216,8 +216,8 @@ public class StructuralTemplateTests extends ITemplateTests {
 			"fum<Bar>(int) : void",
 			"scrum<int>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
 			// TODO: shouldn't signature indicate const function as well?
-			"first<T>() : const T&", // TODO: where should <T> be?
-			"fum<Bar>(int) : void",
+			"nonVector::first<T>() : const T&", // TODO: where should <T> be?
+			"Foo::fum<Bar>(int) : void",
 			"IsGreaterThan<X>(X, X) : bool",
 			/*"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*",*/
 		};

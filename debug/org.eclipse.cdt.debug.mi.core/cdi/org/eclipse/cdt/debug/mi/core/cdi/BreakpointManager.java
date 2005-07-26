@@ -759,7 +759,7 @@ public class BreakpointManager extends Manager {
 
 	public void setWatchpoint(Watchpoint wp) throws CDIException {
 		Target target = (Target)wp.getTarget();
-		boolean access = wp.isReadType() || wp.isWriteType();
+		boolean access = wp.isReadType() && wp.isWriteType();
 		boolean read = wp.isReadType() && ! wp.isWriteType();
 		String expression = wp.getWatchExpression();
 		MISession miSession = target.getMISession();

@@ -2538,5 +2538,26 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	parse(writer.toString());
     }
 
+    public void testBug100992() throws Exception {
+        Writer writer = new StringWriter();
+        writer.write( "class String { public: String(); ~String(); };"); //$NON-NLS-1$
+        writer.write( "String::String(){}"); //$NON-NLS-1$
+        writer.write( "String::~String(){}"); //$NON-NLS-1$
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        IASTAbstractTypeSpecifierDeclaration StringDecl = (IASTAbstractTypeSpecifierDeclaration) i.next();
+        Iterator members = ((IASTClassSpecifier)StringDecl.getTypeSpecifier()).getDeclarations();
+        IASTMethod cons_decl = (IASTMethod) members.next();
+        assertTrue( cons_decl.isConstructor() );
+        IASTMethod dest_decl = (IASTMethod) members.next();
+        assertTrue( dest_decl.isDestructor() );
+        assertFalse( members.hasNext() );
+        IASTMethod cons_defn = (IASTMethod) i.next();
+        assertTrue( cons_defn.isConstructor() );
+        IASTMethod dest_defn = (IASTMethod) i.next();
+        assertTrue( dest_defn.isDestructor() );
+        assertFalse( i.hasNext() );
+    }
+
+    
 }
 

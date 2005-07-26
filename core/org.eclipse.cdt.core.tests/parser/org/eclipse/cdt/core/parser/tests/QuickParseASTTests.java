@@ -2219,4 +2219,25 @@ public class QuickParseASTTests extends BaseASTTest
     	writer.write( ".5,4x,\\002|proj g|= \\002,1p,d12.5)\";" ); //$NON-NLS-1$
     	IASTVariable v = (IASTVariable) assertSoleDeclaration( writer.toString(), ParserLanguage.C );
     }
+    
+    public void testBug100992() throws Exception {
+        Writer writer = new StringWriter();
+        writer.write( "class String { public: String(); ~String(); };"); //$NON-NLS-1$
+        writer.write( "String::String(){}"); //$NON-NLS-1$
+        writer.write( "String::~String(){}"); //$NON-NLS-1$
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        IASTAbstractTypeSpecifierDeclaration StringDecl = (IASTAbstractTypeSpecifierDeclaration) i.next();
+        Iterator members = ((IASTClassSpecifier)StringDecl.getTypeSpecifier()).getDeclarations();
+        IASTMethod cons_decl = (IASTMethod) members.next();
+        // this unfortunately doesn't work in QUICK_PARSE
+//        assertTrue( cons_decl.isConstructor() ); 
+        IASTMethod dest_decl = (IASTMethod) members.next();
+//        assertTrue( dest_decl.isDestructor() );
+        assertFalse( members.hasNext() );
+        IASTFunction cons_defn = (IASTFunction) i.next();
+        assertFalse( cons_defn instanceof IASTMethod );
+        IASTFunction dest_defn = (IASTFunction) i.next();
+        assertFalse( dest_defn instanceof IASTMethod );
+        assertFalse( i.hasNext() );
+    }
 }

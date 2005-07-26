@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.browser.cache;
 
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -120,7 +119,6 @@ public class TypeCacherJob extends BasicJob {
 	
 	private void flush(ITypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
 		// flush the cache
-		boolean success = true;
 		IProject project = fTypeCache.getProject();
 
 		monitor.beginTask("", 100); //$NON-NLS-1$
@@ -128,11 +126,11 @@ public class TypeCacherJob extends BasicJob {
 		fTypeCache.flush(scope);
 		if (!scope.encloses(project)) {
 			if (project.exists() && project.isOpen()) {
-			    success = doIndexerJob(new IndexerDependenciesJob(fIndexManager, fTypeCache, scope), monitor);
+			    doIndexerJob(new IndexerDependenciesJob(fIndexManager, fTypeCache, scope), monitor);
 			}
 		}
 
-		if (!success || monitor.isCanceled()) {
+		if ( monitor.isCanceled() ) {
 			throw new InterruptedException();
 		}
 		
@@ -140,23 +138,14 @@ public class TypeCacherJob extends BasicJob {
 	}
 	
 	private void update(ITypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
-		boolean success = true;
 		IProject project = fTypeCache.getProject();
-		
-		//A query on the null indexer will look like a canceled or failed job, which will cause us
-		//to try again later, don't even try in that case.
-		ICDTIndexer indexer = fIndexManager.getIndexerForProject( project );
-		if( indexer == null || !indexer.isIndexEnabled( project ) ){
-			monitor.done();
-			return;
-		}
 		
 		monitor.beginTask("", 100); //$NON-NLS-1$
 		if (project.exists() && project.isOpen()) {
-		    success = doIndexerJob(new IndexerTypesJob2(fIndexManager, fTypeCache, scope), monitor);
+		    doIndexerJob(new IndexerTypesJob2(fIndexManager, fTypeCache, scope), monitor);
 		}
 		
-		if (!success || monitor.isCanceled()) {
+		if (monitor.isCanceled()) {
 			throw new InterruptedException();
 		}
 			

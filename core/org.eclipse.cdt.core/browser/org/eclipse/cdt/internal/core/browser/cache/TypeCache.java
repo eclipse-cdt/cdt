@@ -28,9 +28,12 @@ import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeInfo;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -681,25 +684,35 @@ public class TypeCache implements ITypeCache {
 		if (deltasRemaining() == 0)
 			return;	// nothing to do
 
-		TypeCacherJob deltaJob;
+		TypeCacherJob deltaJob = null;
+		IndexManager indexManager = CModelManager.getDefault().getIndexManager();
+		ICDTIndexer indexer = indexManager.getIndexerForProject( fProject );
+		boolean haveIndexer = (indexer != null && indexer.isIndexEnabled( fProject ));
 		synchronized(fDeltas) {
-			// grab all the remaining deltas
-			TypeCacheDelta[] jobDeltas = (TypeCacheDelta[]) fDeltas.toArray(new TypeCacheDelta[fDeltas.size()]);
-
-			// create a new job
-			deltaJob = new TypeCacherJob(this, jobDeltas, enableIndexing);
-			// assign deltas to job
-			if (jobDeltas != null) {
-				for (int i = 0; i < jobDeltas.length; ++i) {
-					jobDeltas[i].assignToJob(deltaJob);
+			if( haveIndexer ){
+				// grab all the remaining deltas
+				TypeCacheDelta[] jobDeltas = (TypeCacheDelta[]) fDeltas.toArray(new TypeCacheDelta[fDeltas.size()]);
+	
+				// create a new job
+				deltaJob = new TypeCacherJob(this, jobDeltas, enableIndexing);
+				// assign deltas to job
+				if (jobDeltas != null) {
+					for (int i = 0; i < jobDeltas.length; ++i) {
+						jobDeltas[i].assignToJob(deltaJob);
+					}
 				}
+			} else {
+				//we don't have an indexer, don't create a job to do these deltas, throw them away
+				fDeltas.clear();
 			}
 		}
 
-		// schedule the new job
-		deltaJob.addJobChangeListener(fJobChangeListener);
-		deltaJob.setPriority(priority);
-		deltaJob.schedule(delay);
+		if( deltaJob != null ){
+			// schedule the new job
+			deltaJob.addJobChangeListener(fJobChangeListener);
+			deltaJob.setPriority(priority);
+			deltaJob.schedule(delay);
+		}
 	}
 
 	public void reconcileAndWait(boolean enableIndexing, int priority, IProgressMonitor monitor) {

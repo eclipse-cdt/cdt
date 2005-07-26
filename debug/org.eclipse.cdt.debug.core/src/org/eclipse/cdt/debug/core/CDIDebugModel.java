@@ -11,9 +11,7 @@
 package org.eclipse.cdt.debug.core;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.HashMap;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -21,15 +19,12 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
-import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
@@ -94,13 +89,7 @@ public class CDIDebugModel {
 			public void run( IProgressMonitor m ) throws CoreException {
 				boolean stop = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
 				target[0] = new CDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect );
-				ICDITargetConfiguration config = cdiTarget.getConfiguration();
-				if ( config.supportsBreakpoints() && stop ) {
-					stopInMain( (CDebugTarget)target[0] );
-				}
-				if ( config.supportsResume() && resumeTarget ) {
-					target[0].resume();
-				}
+				((CDebugTarget)target[0]).start( stop, resumeTarget );
 			}
 		};
 		try {
@@ -459,21 +448,6 @@ public class CDIDebugModel {
 			}
 		}
 		return null;
-	}
-
-	protected static void stopInMain( CDebugTarget target ) throws DebugException {
-		ICDILocation location = target.getCDITarget().createFunctionLocation( "", "main" ); //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			target.setInternalTemporaryBreakpoint( location );
-		}
-		catch( DebugException e ) {
-			String message = MessageFormat.format( DebugCoreMessages.getString( "CDebugModel.0" ), new String[]{ e.getStatus().getMessage() } ); //$NON-NLS-1$
-			IStatus newStatus = new Status( IStatus.WARNING, e.getStatus().getPlugin(), ICDebugInternalConstants.STATUS_CODE_QUESTION, message, null );
-			if ( !CDebugUtils.question( newStatus, target ) ) {
-				target.terminate();
-				throw new DebugException( new Status( IStatus.OK, e.getStatus().getPlugin(), e.getStatus().getCode(), e.getStatus().getMessage(), null ) );
-			}
-		}
 	}
 
 	/**

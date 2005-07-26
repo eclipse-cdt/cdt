@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.DebugCoreMessages;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -262,7 +264,19 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void initializeBreakpoints() {
 		getBreakpointManager().initialize();
-		getBreakpointManager().setBreakpoints();
+	}
+
+	public void start( boolean stopInMain, boolean resume ) throws DebugException {
+		ICDITargetConfiguration config = getConfiguration();
+		if ( config.supportsBreakpoints() ) {
+			getBreakpointManager().setInitialBreakpoints();
+			if ( stopInMain ) {
+				stopInMain();
+			}
+		}
+		if ( config.supportsResume() && resume ) {
+			resume();
+		}
 	}
 
 	/**
@@ -1683,5 +1697,20 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	protected void skipBreakpoints( boolean enabled ) {
 		getBreakpointManager().skipBreakpoints( enabled );
+	}
+
+	protected void stopInMain() throws DebugException {
+		ICDILocation location = getCDITarget().createFunctionLocation( "", "main" ); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			setInternalTemporaryBreakpoint( location );
+		}
+		catch( DebugException e ) {
+			String message = MessageFormat.format( DebugCoreMessages.getString( "CDebugModel.0" ), new String[]{ e.getStatus().getMessage() } ); //$NON-NLS-1$
+			IStatus newStatus = new Status( IStatus.WARNING, e.getStatus().getPlugin(), ICDebugInternalConstants.STATUS_CODE_QUESTION, message, null );
+			if ( !CDebugUtils.question( newStatus, this ) ) {
+				terminate();
+				throw new DebugException( new Status( IStatus.OK, e.getStatus().getPlugin(), e.getStatus().getCode(), e.getStatus().getMessage(), null ) );
+			}
+		}
 	}
 }

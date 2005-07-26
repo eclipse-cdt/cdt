@@ -47,6 +47,11 @@ public class Value extends CObject implements ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getValueString()
 	 */
 	public String getValueString() throws CDIException {
+		// make sure the variable is updated.
+		if (! variable.isUpdated()) {
+			variable.update();
+		}
+
 		String result = ""; //$NON-NLS-1$
 		MISession mi = ((Target)getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();

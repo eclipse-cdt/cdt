@@ -1,4 +1,8 @@
 2005-07-26 Mikhail Khodjaiants
+	Bug 105224: Two identical directory source container types.
+	* plugin.properties
+
+2005-07-26 Mikhail Khodjaiants
 	Bug 102929: Race conditions when setting breakpoints at launch.
 	The initial breakpoint settings, stop in main and resume are batched 
 	in one job. This garantees the right order of commands sent to the backend.

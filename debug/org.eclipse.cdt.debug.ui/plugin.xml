@@ -1238,7 +1238,7 @@
       <sourceContainerPresentation
             browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.CDirectorySourceContainerBrowser"
             containerTypeID="org.eclipse.cdt.debug.core.containerType.directory"
-            icon="icons/obj16/folder_obj.gif"
+            icon="icons/obj16/directory_obj.gif"
             id="org.eclipse.cdt.debug.ui.containerPresentation.directory"/>
    </extension>
    <extension

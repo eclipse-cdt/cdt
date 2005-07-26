@@ -1,3 +1,8 @@
+2005-07-26 Mikhail Khodjaiants
+	Bug 105224: Two identical directory source container types.
+	+ icons\obj16\directory_obj.gif
+	* plugin.xml
+
 2005-07-25 Alain Magloire
 	Part fix for PR 100992: The signature was incorrect for structure/unions.
 	

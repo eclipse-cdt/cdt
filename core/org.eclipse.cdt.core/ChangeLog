@@ -1,3 +1,8 @@
+2005-07-26 Alain Magloire
+	Fix PR 100992: IMethod were generated for implementation, we should generate
+	IFunction for method defines outside of the class shell.
+	* model/org/eclipse/cdt/internal/core/model/CModelBuilder.java
+
 2005-07-22 Alain Magloire
 	Fix PR 104908
 	* plugin.xml

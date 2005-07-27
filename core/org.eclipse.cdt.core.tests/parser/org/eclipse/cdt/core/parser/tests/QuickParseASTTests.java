@@ -2148,14 +2148,16 @@ public class QuickParseASTTests extends BaseASTTest
     public void testBug59179() throws Exception
     {
     	Iterator i = parse( "class __decl  main{  int main; };", true, false ).getDeclarations(); //$NON-NLS-1$
-    	assertFalse( i.hasNext() );
+        // Bug 66496 - added in handling for things like this
+        // changing assertFalse to assertTrue
+        // however, I don't think this is really testing the bug...
+    	assertTrue( i.hasNext() );
     }
 
     public void testBug57652() throws Exception
 	{
     	parse("struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, true, ParserLanguage.C ).getDeclarations(); //$NON-NLS-1$
 	}
-    
     
     public void testBug60142() throws Exception
 	{

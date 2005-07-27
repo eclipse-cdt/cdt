@@ -5626,8 +5626,14 @@ public class Parser implements IParserData, IParser
 
 		setCompletionValues(sdw.getScope(), completionKind, KeywordSetKey.EMPTY);
 		// class name
-		if (LT(1) == IToken.tIDENTIFIER)
-			duple = name(sdw.getScope(), completionKind, KeywordSetKey.EMPTY);
+		if (LT(1) == IToken.tIDENTIFIER) {
+            // Bug 66496
+            // special magic to handle macros that resolve to dllimport/dllexport in quick parse
+            if (mode == ParserMode.QUICK_PARSE && LT(2) == IToken.tIDENTIFIER)
+                consume();
+            
+		    duple = name(sdw.getScope(), completionKind, KeywordSetKey.EMPTY);
+        }
 		if (duple != null && !duple.isIdentifier())
 			nameType = ClassNameType.TEMPLATE;
 		if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE) {

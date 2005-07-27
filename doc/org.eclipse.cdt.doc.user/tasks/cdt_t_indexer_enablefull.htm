@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="en-us" http-equiv="Content-Language">
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <title>Enable/Disable Full C/C++ Indexer</title>
+  <link href="../help.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<h1>Enable/Disable Full C/C++ Indexer</h1>
+<p>Users can choose which indexer they wish to use on a specific
+project by bringing up the project properties and <br>
+selecting an indexer from the available indexer list.<br>
+</p>
+<p><img style="width: 580px; height: 532px;"
+ src="../images/indexer_fullindexer_properties.PNG"
+ alt="Full C/C++ Indexer Properties"></p>
+<h2>Enable Full C/C++ Indexer</h2>
+<h3>Build Info</h3>
+<br>
+In order for the Full C/C++ Indexer to successfully index your project,
+it is necessary to set up your project's build info.<br>
+This build info is used by the parser to find the paths specified
+within your source files. Note that <span style="font-style: italic;">without
+any build info, </span><br style="font-style: italic;">
+<span style="font-style: italic;">the full C/C++ indexer will just skip
+over all files</span>. <br>
+<br>
+For <span style="font-weight: bold;">Managed Make</span> projects,
+some build info is provided by default when a project gets first
+created. This default info is<br>
+enough to allow the indexer to index the entire project. However, it is
+possible that some internal include paths could still be <br>
+missing. In this case a warning marker will appear next to the
+inclusion that was not found and a corresponding entry will appear<br>
+in the Problems view.<br>
+<br>
+<img src="../images/indexer_inclusionnotfound.PNG"
+ alt="Preprocessor inclusion not found"
+ style="width: 326px; height: 62px;"><br>
+<br>
+<br>
+<img src="../images/indexer_inclusionnotfound_problemsview.PNG"
+ alt="Inclusion Problems View" style="width: 701px; height: 103px;"><br>
+<br>
+For <span style="font-weight: bold;">Standard Make</span> projects, no
+build info is provided by default. However, if you rebuild your project
+the Scanner Discovery will<br>
+kick in - regardless if you have an actual makefile -&nbsp; and
+populate some default build info. For more information see the <a
+ href="cdt_t_discovery.htm">Set Discovery <br>
+Options</a> page.<br>
+<br>
+For both types of projects you can always add build paths manually by
+right clicking on the project properties.<br>
+<h3>Enabling the&nbsp; indexer</h3>
+<br>
+To enable the Full C/C++ Indexer:
+<ol>
+  <li>Right click on the project and select <b>Properties &gt; C/C++
+Indexer</b></li>
+  <li>Select the <b>Full C/C++ Indexer (declarations and cross
+references)</b></li>
+  <li>Click <b>OK</b></li>
+</ol>
+This will throw away whatever old index was around for the current
+project and start a new reindex of the entire project using the full<br>
+C/C++ Indexer.<br>
+<br>
+<h2>Disable Full C/C++ Indexer</h2>
+<br>
+To disable the Full C/C++ Indexer:
+<ol>
+  <li>Right click on the project and select <b>Properties &gt; C/C++
+Indexer</b></li>
+  <li>Select the <span style="font-weight: bold;">No Indexer (search
+based features will not work correctly)</span><b></b></li>
+  <li>Click <b>OK</b></li>
+</ol>
+This will stop any ongoing indexes and disconnect the project from
+reacting to resource changes.<br>
+<p><img height="21" width="143" alt="Related concepts"
+ src="../images/ngconcepts.gif" border="0">
+<br>
+<a href="../concepts/cdt_c_search.htm">C/C++ search</a><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+<a href="../concepts/cdt_c_indexer_prob_rep.htm">C/C++ Indexer Problem
+Reporting</a><br>
+<a href="../concepts/cdt_c_indexer_open_close.htm">C/C++ Indexer
+Opening or Closing a project</a><br>
+<a href="../concepts/cdt_c_indexer_prog_bar.htm">C/C++ Indexer Progress
+Bar</a></p>
+<p><img height="21" width="143" alt="Related tasks"
+ src="../images/ngtasks.gif" border="0"><br>
+<a href="../tasks/cdt_t_sel_search.htm">Selection Searching for C/C++
+elements</a><br>
+<a href="../tasks/cdt_t_endis_indexer.htm">Enable/Disable the C/C++
+Indexer</a><br>
+<a href="../tasks/cdt_t_indexer_timeout.htm">C/C++ Indexer - Indexer
+Timeout</a><br>
+<a href="../tasks/cdt_t_set_src_fold.htm">Setting Source Folders</a><br>
+</p>
+<p><img height="21" width="143" alt="Related reference"
+ src="../images/ngref.gif" border="0">
+<br>
+<a href="../reference/cdt_u_search_pref.htm">Search, C/C++ Preferences
+window</a>
+<br>
+<a href="../reference/cdt_u_search.htm">C/C++ search page, Search
+dialog box</a>
+<br>
+<a href="../reference/cdt_u_mprop_indexer.htm">C/C++ Project
+Properties, Managed, Indexer</a>
+<br>
+<a href="../reference/cdt_u_sprop_indexer.htm">C/C++ Project
+Properties, Standard, Indexer</a></p>
+<p>&nbsp;</p>
+<img alt="IBM Copyright Statement" src="../images/ng00_05a.gif"
+ style="width: 324px; height: 14px;">
+</body>
+</html>

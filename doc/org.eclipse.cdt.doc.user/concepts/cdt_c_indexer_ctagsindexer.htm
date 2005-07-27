@@ -1,46 +1,32 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
 <head>
   <meta http-equiv="Content-Language" content="en-us">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>C/C++ Indexer</title>
+  <title>CTags Indexer</title>
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>C/C++ Indexer</h1>
-<p>The C/C++ indexer uses the parser to create a database of your
-source and header files that provides the basis for C/C++ search,
-navigation features and parts of content assist.</p>
-<p>The indexer runs on a background thread and reacts to resource
-change events such as:
+<h1>CTags Indexer</h1>
+<p>The CTags indexer makes use of Exuberant CTags (version 5.5.4) to
+create an index of the source and header files in your project. The
+main advantage provided by CTags is that the index creation is very
+quick. This makes it ideal to use on larger sized projects.&nbsp; <br>
+</p>
+<p>CTags, however, does not provide the same level of detail in
+indexing as the Full C/C++ indexer. Specifically:<br>
 </p>
 <ul>
-  <li>C/C++ project creation/deletion</li>
-  <li>Source files creation/deletion</li>
-  <li>File imports</li>
-  <li>Source file content changes</li>
-</ul>
-<p>It is possible to customize the behavior of the indexer through the
-use of source folders or even turn it off completely. This customizable
-behavior is available on a per-project basis (i.e. it is possible to
-have different indexer settings for each project in your workspace). <br>
-</p>
-<p>CDT 3.0 supports the contribution of additional indexers, with 2
-indexers being provided with the default CDT release:<br>
-</p>
-<ul>
-  <li>Full C/C++ Indexer : provides full indexing capabilities - both
-declarations and cross reference information.<br>
+  <li>no cross reference information</li>
+  <li>each file is processed on its own<br>
   </li>
-  <li>CTags Indexer: provides partial indexing capabilities - only
-declaration information. <br>
+  <li>limited preprocessing capabilties<br>
   </li>
 </ul>
 <p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts"
  width="143" height="21"> <br>
-<a href="cdt_c_indexer_fullindexer.htm">Full C/C++ Indexer</a><a
- href="cdt_c_search.htm"><br>
-C/C++ search</a><br>
+<a href="cdt_c_indexer_fullindexer.htm">Full C/C++ Indexer</a><br>
+<a href="cdt_c_search.htm">C/C++ search</a><br>
 <a href="cdt_c_indexer_prob_rep.htm">C/C++ Indexer Problem Reporting</a><br>
 <a href="cdt_c_indexer_open_close.htm">C/C++ Indexer Opening or Closing
 a project</a><br>
@@ -72,6 +58,7 @@ Properties, Managed, Indexer</a>
 <a href="../reference/cdt_u_sprop_indexer.htm">C/C++ Project
 Properties, Standard, Indexer</a></p>
 <p>&nbsp;</p>
-<img src="../images/ng00_04a.gif" alt="IBM Copyright Statement">
+<img src="../images/ng00_05a.gif" alt="IBM Copyright Statement"
+ style="width: 324px; height: 14px;">
 </body>
 </html>

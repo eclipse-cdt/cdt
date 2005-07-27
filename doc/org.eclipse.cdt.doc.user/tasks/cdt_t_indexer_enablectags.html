@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Enable/Disable CTags Indexer</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<h1>Enable/Disable CTags Indexer</h1>
+<p>Users can choose which indexer they wish to use on a specific
+project by bringing up the project properties and <br>
+selecting an indexer from the available indexer list.<br>
+</p>
+<p><img alt="CTags Indexer Properties"
+ src="../images/indexer_ctags_properties.PNG"
+ style="width: 659px; height: 532px;"></p>
+<h2>Enable CTags Indexer</h2>
+<h3><span style="font-weight: bold;"></span>Enabling the&nbsp; indexer
+</h3>
+To enable the CTags Indexer:
+<ol>
+  <li>Right click on the project and select <b>Properties &gt; C/C++
+Indexer</b></li>
+  <li>Select the <b>CTags Indexer (declarations only) </b>from the
+list of available indexers<br>
+  </li>
+  <li>Click <b>OK</b></li>
+</ol>
+This will throw away whatever old index was around for the current
+project and start a new reindex of the entire project using the CTags<br>
+indexer and whatever options are present on the property page.<br>
+<h3>CTags Location<br>
+</h3>
+By default, the CTags Indexer expects that Ctags has been added to the
+path and will try to use it. To use another CTags:<br>
+<br>
+<ol>
+  <li>Right click on the project and select <b>Properties &gt; C/C++
+Indexer</b></li>
+  <li>Click the <b>Use the specified CTags </b>button</li>
+  <li>Click on the <span style="font-weight: bold;">Browse...</span>
+button</li>
+  <li>Navigate to the location of the desired CTags</li>
+  <li>Select the CTags executable and click <span
+ style="font-weight: bold;">Open</span></li>
+</ol>
+The path of&nbsp; the given CTags executable is displayed in the CTags
+location box. When indexing the current project from now<br>
+on, the CTags indexer will now use whatever CTags is displayed on the
+path.<br>
+<br>
+If the CTags indexer can't find the location of your CTags or can't use
+the specified CTags it will let you know in the form<br>
+of a warning marker.<br>
+<br>
+<img src="../images/indexer_ctags_ctagsmissing.PNG" alt="CTags missing"
+ style="width: 682px; height: 138px;"><br>
+<h3>Include Files<br>
+</h3>
+Checking this box will cause the CTags indexer to index all of the
+files on the project's include paths.<br>
+<br>
+<h3>CTags File<br>
+</h3>
+By default, the CTags indexer runs CTags on your project and stores the
+output in an internal file before adding the entries<br>
+to the index. If you have an already existing CTag output file, you can
+get import it into the index. To do this:<br>
+<br>
+<ol>
+  <li>Right click on the project and select <b>Properties &gt; C/C++
+Indexer</b></li>
+  <li>Click th<span style="font-weight: bold;">e Import existing CTags
+file</span> button</li>
+  <li>Browse to the CTags location</li>
+  <li>Click <span style="font-weight: bold;">OK</span></li>
+  <li><span style="font-weight: bold;"><span style="font-weight: bold;"><span
+ style="font-weight: bold;"></span></span></span><span
+ style="font-weight: bold;"><span style="font-weight: bold;"><span
+ style="font-weight: bold;"></span></span></span>Close and reopen the
+project<span style="font-weight: bold;"><br>
+    </span></li>
+</ol>
+The CTags Indexer will now attempt to import your CTags file. <br>
+<br>
+Note that the CTags indexer expects a certain format for the CTags
+file. In order for an external file to be imported <br>
+by the CTags indexer, the following conditions must be met:<br>
+<ol>
+  <li>Exuberant CTags version 5.5.4 was used</li>
+  <li>The following options are run with CTags:</li>
+</ol>
+<ul>
+  <li>--excmd=number</li>
+  <li>--format=2</li>
+  <li>--fields=aiKlmnsSz<br>
+  </li>
+  <li>--c-types=cdefgmnpstuvx<br>
+  </li>
+  <li>--c++-types=cdefgmnpstuvx<br>
+  </li>
+  <li>--languages=c,c++</li>
+</ul>
+<br>
+If the CTags indexer cannot parse the given CTag file it will tell you
+what the problem is in the form of a warning marker:<br>
+<br>
+<img src="../images/indexer_ctags_wrongtagformat.PNG"
+ alt="CTag wrong format" style="width: 706px; height: 122px;"><br>
+<br>
+<h2>Disable CTags Indexer</h2>
+<br>
+To disable the CTags Indexer:
+<ol>
+  <li>Right click on the project and select <b>Properties &gt; C/C++
+Indexer</b></li>
+  <li>Select the <span style="font-weight: bold;">No Indexer (search
+based features will not work correctly)</span></li>
+  <li>Click <b>OK</b></li>
+</ol>
+This will stop any ongoing indexes and disconnect the project from
+reacting to resource changes.<br>
+<p><img style="border: 0px solid ; width: 143px; height: 21px;"
+ src="../images/ngconcepts.gif" alt="Related concepts">
+<br>
+<a href="../concepts/cdt_c_search.htm">C/C++ search</a><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+<a href="../concepts/cdt_c_indexer_prob_rep.htm">C/C++ Indexer Problem
+Reporting</a><br>
+<a href="../concepts/cdt_c_indexer_open_close.htm">C/C++ Indexer
+Opening or Closing a project</a><br>
+<a href="../concepts/cdt_c_indexer_prog_bar.htm">C/C++ Indexer Progress
+Bar</a></p>
+<p><img style="border: 0px solid ; width: 143px; height: 21px;"
+ src="../images/ngtasks.gif" alt="Related tasks"><br>
+<a href="../tasks/cdt_t_sel_search.htm">Selection Searching for C/C++
+elements</a><br>
+<a href="../tasks/cdt_t_endis_indexer.htm">Enable/Disable the C/C++
+Indexer</a><br>
+<a href="../tasks/cdt_t_indexer_timeout.htm">C/C++ Indexer - Indexer
+Timeout</a><br>
+<a href="../tasks/cdt_t_set_src_fold.htm">Setting Source Folders</a><br>
+</p>
+<p><img style="border: 0px solid ; width: 143px; height: 21px;"
+ src="../images/ngref.gif" alt="Related reference">
+<br>
+<a href="../reference/cdt_u_search_pref.htm">Search, C/C++ Preferences
+window</a>
+<br>
+<a href="../reference/cdt_u_search.htm">C/C++ search page, Search
+dialog box</a>
+<br>
+<a href="../reference/cdt_u_mprop_indexer.htm">C/C++ Project
+Properties, Managed, Indexer</a>
+<br>
+<a href="../reference/cdt_u_sprop_indexer.htm">C/C++ Project
+Properties, Standard, Indexer</a></p>
+<p>&nbsp;</p>
+<img src="../images/ng00_05a.gif" alt="IBM Copyright Statement"
+ style="width: 324px; height: 14px;">
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<title></title>
+<br>
+<br>
+</body>
+</html>

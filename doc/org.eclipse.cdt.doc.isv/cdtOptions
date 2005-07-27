@@ -14,6 +14,7 @@
 -link http://java.sun.com/j2se/1.4/docs/api
 
 org.eclipse.cdt.core.model
+org.eclipse.cdt.core.search
 org.eclipse.cdt.core.dom.ast
 org.eclipse.cdt.core.dom.ast.c
 org.eclipse.cdt.core.dom.ast.cpp

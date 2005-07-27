@@ -55,8 +55,8 @@
 <!-- Extension Point: CFileType and CFileTypeAssociation for translation unit ident      -->
 <!-- =================================================================================== -->
    <extension-point id="CLanguage" name="CLanguage" schema="schema/CLanguage.exsd"/>
-   <extension-point id="CFileType" name="CFileType" schema="schema/CFileType.exsd"/>
-   <extension-point id="CFileTypeAssociation" name="CFileTypeAssociation" schema="schema/CFileTypeAssociation.exsd"/>
+   <extension-point id="CFileType" name="CFileType" />
+   <extension-point id="CFileTypeAssociation" name="CFileTypeAssociation" />
 <!-- =================================================================================== -->
 <!-- PathEntryContainer initialization, this is part of the IPathEntry framework         -->
 <!-- =================================================================================== -->

@@ -195,7 +195,7 @@ public class NewEnvVarDialog extends StatusDialog {
 		fOpSelector = new Combo(comp, SWT.READ_ONLY|SWT.DROP_DOWN);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 1;
-		gd.widthHint = 70;
+//		gd.widthHint = 70;
 		fOpSelector.setLayoutData(gd);
 		fOpSelector.setItems(new String[]{
 				ManagedBuilderUIMessages.getResourceString(OPERATION_REPLACE),
@@ -215,7 +215,8 @@ public class NewEnvVarDialog extends StatusDialog {
 		fOpVarValueLabel.setFont(comp.getFont());
 		gd = new GridData();
 		gd.horizontalSpan = 1;
-		gd.widthHint = 100;
+//		gd.widthHint = 100;
+		fOpVarValueLabel.setText(ManagedBuilderUIMessages.getResourceString(VALUE_PREPEND));
 		fOpVarValueLabel.setLayoutData(gd);
 		fOpVarValueEdit = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		fOpVarValueEdit.setFont(comp.getFont());
@@ -536,6 +537,8 @@ public class NewEnvVarDialog extends StatusDialog {
 
 				break;
 		}
+		
+		fOpVarValueLabel.getParent().layout(true);
 	}
 	
 	private String recalculateValueString(){

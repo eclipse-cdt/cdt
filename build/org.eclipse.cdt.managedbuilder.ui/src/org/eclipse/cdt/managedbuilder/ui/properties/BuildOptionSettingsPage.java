@@ -404,11 +404,11 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		} else {
 			config = configuration;
 		}
-		//if (!optionApplicability.isOptionEnabled(config, holder, )) {
-		//	fieldEditor.setEnabled(false, parent);
-		//} else {
-		//	fieldEditor.setEnabled(true, parent);
-		//}
+		if (!optionApplicability.isOptionEnabled(config, holder, option )) {
+			fieldEditor.setEnabled(false, parent);
+		} else {
+			fieldEditor.setEnabled(true, parent);
+		}
 	}
 
 	/* (non-Javadoc)

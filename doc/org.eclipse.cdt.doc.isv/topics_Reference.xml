@@ -5,25 +5,37 @@
 <!-- ============================================================================= -->
 <toc label="Reference">
 	<topic label="API Reference" href="reference/api/overview-summary.html">
-       <topic label="org.eclipse.cdt.core.model" href="reference/api/org/eclipse/cdt/core/model/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.ast" href="reference/api/org/eclipse/cdt/core/dom/ast/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.ast.c" href="reference/api/org/eclipse/cdt/core/dom/ast/c/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.ast.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/cpp/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.ast.gnu" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.ast.gnu.c" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/c/package-summary.html"/>
-       <topic label="org.eclipse.cdt.core.dom.ast.gnu.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/cpp/package-summary.html"/>
-       <topic label="org.eclipse.cdt.debug.core.cdi" href="reference/api/org/eclipse/cdt/debug/core/cdi/package-summary.html"/>
-       <topic label="org.eclipse.cdt.debug.core.cdi.event" href="reference/api/org/eclipse/cdt/debug/core/cdi/event/package-summary.html"/>
-       <topic label="org.eclipse.cdt.debug.core.cdi.model" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/package-summary.html"/>
-       <topic label="org.eclipse.cdt.debug.core.cdi.model.type" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/type/package-summary.html"/>
+		<topic label="org.eclipse.cdt.core.model" href="reference/api/org/eclipse/cdt/core/model/package-summary.html"/>
+		<topic label="org.eclipse.cdt.core.search" href="reference/api/org/eclipse/cdt/core/search/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.core.dom.ast" href="reference/api/org/eclipse/cdt/core/dom/ast/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.core.dom.ast.c" href="reference/api/org/eclipse/cdt/core/dom/ast/c/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.core.dom.ast.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/cpp/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.core.dom.ast.gnu" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.core.dom.ast.gnu.c" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/c/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.core.dom.ast.gnu.cpp" href="reference/api/org/eclipse/cdt/core/dom/ast/gnu/cpp/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.debug.core.cdi" href="reference/api/org/eclipse/cdt/debug/core/cdi/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.debug.core.cdi.event" href="reference/api/org/eclipse/cdt/debug/core/cdi/event/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.debug.core.cdi.model" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/package-summary.html"/>
+       	<topic label="org.eclipse.cdt.debug.core.cdi.model.type" href="reference/api/org/eclipse/cdt/debug/core/cdi/model/type/package-summary.html"/>
 	</topic>
 	<topic label="Extension Points Reference" href="reference/extension-points/index.html">
-         <topic label="org.eclipse.cdt.core.CBuildConsole" href="reference/extension-points/org_eclipse_cdt_core_CBuildConsole.html"/>
-         <topic label="org.eclipse.cdt.core.CIndexer" href="reference/extension-points/org_eclipse_cdt_core_CIndexer.html"/>
-         <topic label="org.eclipse.cdt.core.CodeFormatter" href="reference/extension-points/org_eclipse_cdt_core_CodeFormatter.html"/>
-         <topic label="org.eclipse.cdt.core.CProject" href="reference/extension-points/org_eclipse_cdt_core_CProject.html"/>
-         <topic label="org.eclipse.cdt.core.PathEntryContainerInitializer" href="reference/extension-points/org_eclipse_cdt_core_PathEntryContainerInitializer.html"/>
-         <topic label="org.eclipse.cdt.core.ProcessList" href="reference/extension-points/org_eclipse_cdt_core_ProcessList.html"/>
-         <topic label="org.eclipse.cdt.debug.core.CDebugger" href="reference/extension-points/org_eclipse_cdt_debug_core_CDebugger.html"/>
+       	<topic label="org.eclipse.cdt.core.CBuildConsole" href="reference/extension-points/org_eclipse_cdt_core_CBuildConsole.html"/>
+       	<topic label="org.eclipse.cdt.core.CIndexer" href="reference/extension-points/org_eclipse_cdt_core_CIndexer.html"/>
+       	<topic label="org.eclipse.cdt.core.CodeFormatter" href="reference/extension-points/org_eclipse_cdt_core_CodeFormatter.html"/>
+       	<topic label="org.eclipse.cdt.core.CProject" href="reference/extension-points/org_eclipse_cdt_core_CProject.html"/>
+       	<topic label="org.eclipse.cdt.core.PathEntryContainerInitializer" href="reference/extension-points/org_eclipse_cdt_core_PathEntryContainerInitializer.html"/>
+       	<topic label="org.eclipse.cdt.core.ProcessList" href="reference/extension-points/org_eclipse_cdt_core_ProcessList.html"/>
+       	<topic label="org.eclipse.cdt.debug.core.CDebugger" href="reference/extension-points/org_eclipse_cdt_debug_core_CDebugger.html"/>
+		<topic label="org.eclipse.cdt.make.core.MakeTargetBuilder" href="reference/extension-points/org_eclipse_cdt_make_core_MakeTargetBuilder.html"/>
+		<topic label="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile" href="reference/extension-points/org_eclipse_cdt_make_core_ScannerConfigurationDiscoveryProfile.html"/>
+		<topic label="org.eclipse.cdt.make.ui.DiscoveryProfilePage" href="reference/extension-points/org_eclipse_cdt_make_ui_DiscoveryProfilePage.html"/>
+		<topic label="org.eclipse.cdt.managedbuilder.core.buildDefinitions" href="reference/extension-points/org_eclipse_cdt_managedbuilder_core_buildDefinitions.html"/>
+		<topic label="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo" href="reference/extension-points/org_eclipse_cdt_managedbuilder_core_ManagedBuildInfo.html"/>
+		<topic label="org.eclipse.cdt.managedbuilder.core.projectConverter" href="reference/extension-points/org_eclipse_cdt_managedbuilder_core_projectConverter.html"/>
+		<topic label="org.eclipse.cdt.managedbuilder.ui.newWizardPages" href="reference/extension-points/org_eclipse_cdt_managedbuilder_ui_newWizardPages.html"/>
+		<topic label="org.eclipse.cdt.ui.CHelpProvider" href="reference/extension-points/org_eclipse_cdt_ui_CHelpProvider.html"/>
+		<topic label="org.eclipse.cdt.ui.completionContributors" href="reference/extension-points/org_eclipse_cdt_ui_completionContributors.html"/>
+		<topic label="org.eclipse.cdt.ui.IndexerPage" href="reference/extension-points/org_eclipse_cdt_ui_IndexerPage.html"/>
+		<topic label="org.eclipse.cdt.ui.PathContainerPage" href="reference/extension-points/org_eclipse_cdt_ui_PathContainerPage.html"/>
 	</topic>
 </toc>

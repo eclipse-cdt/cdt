@@ -68,8 +68,6 @@ class CTagsIndexAll extends CTagsIndexRequest {
 		if (progressMonitor != null && progressMonitor.isCanceled()) return true;
 		if (!project.isAccessible()) return true; // nothing to do
 		
-		String test = this.indexPath.toOSString();
-		
 		IIndex index = indexer.getIndex(this.indexPath, true, /*reuse index file*/ true /*create if none*/);
 		if (index == null) return true;
 		ReadWriteMonitor monitor = indexer.getMonitorFor(index);
@@ -151,6 +149,9 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			refs = cProj.getIncludeReferences();
 		} catch (CModelException e) {}
 		
+		//This project has no references, don't bother processing any further
+		if (refs.length == 0)
+			return;
 		
 		//Find common base for references
 		String[] pathString = new String[refs.length];

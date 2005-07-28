@@ -195,7 +195,7 @@
             class="org.eclipse.cdt.internal.ui.CPerspectiveFactory"
             id="org.eclipse.cdt.ui.CPerspective">
       </perspective>
-      <perspective
+      <!--perspective
             name="%CBrowsing.perspective.name"
             icon="icons/view16/cbrowsing_pers.gif"
             class="org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPerspectiveFactory"
@@ -206,7 +206,7 @@
             icon="icons/view16/chierch_pers.gif"
             class="org.eclipse.cdt.internal.ui.browser.typehierarchy.CHierarchyPerspectiveFactory"
             id="org.eclipse.cdt.ui.CHierarchyPerspective">
-      </perspective>
+      </perspective-->
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -215,18 +215,18 @@
          <perspectiveShortcut
                id="org.eclipse.cdt.ui.CPerspective">
          </perspectiveShortcut>
-         <perspectiveShortcut
+         <!--perspectiveShortcut
                id="org.eclipse.cdt.ui.CBrowsingPerspective">
-         </perspectiveShortcut>
+         </perspectiveShortcut-->
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <perspectiveShortcut
                id="org.eclipse.cdt.ui.CPerspective">
          </perspectiveShortcut>
-         <perspectiveShortcut
+         <!--perspectiveShortcut
                id="org.eclipse.cdt.ui.CBrowsingPerspective">
-         </perspectiveShortcut>
+         </perspectiveShortcut-->
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.cdt.ui.CPerspective">
@@ -234,21 +234,21 @@
                id="org.eclipse.debug.ui.DebugPerspective">
          </perspectiveShortcut>
          <perspectiveShortcut
-               id="org.eclipse.vcm.ui.vcmPerspective">
+               id="org.eclipse.team.ui.TeamSynchronizingPerspective">
          </perspectiveShortcut>
          <actionSet
                id="org.eclipse.debug.ui.launchActionSet">
          </actionSet>
-         <perspectiveShortcut
+         <!--perspectiveShortcut
                id="org.eclipse.cdt.ui.CBrowsingPerspective">
-         </perspectiveShortcut>
+         </perspectiveShortcut-->
       </perspectiveExtension>
-      <perspectiveExtension
+      <!--perspectiveExtension
             targetID="org.eclipse.cdt.ui.CBrowsingPerspective">
          <perspectiveShortcut
                id="org.eclipse.cdt.ui.CPerspective">
          </perspectiveShortcut>
-      </perspectiveExtension>
+      </perspectiveExtension-->
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -263,7 +263,7 @@
             class="org.eclipse.cdt.internal.ui.cview.CView"
             id="org.eclipse.cdt.ui.CView">
       </view>
-      <category
+      <!--category
             name="%CBrowsing.viewCategoryName"
             id="org.eclipse.cdt.ui.c.browsing">
       </category>
@@ -305,7 +305,7 @@
             category="org.eclipse.cdt.ui.c.hierarchy"
             class="org.eclipse.cdt.internal.ui.browser.typehierarchy.TypeHierarchyViewPart"
             id="org.eclipse.cdt.ui.TypeHierarchyView">
-      </view>
+      </view-->
    </extension>
 <!-- The wizards -->
 <!-- For C Wizards -->
@@ -909,16 +909,16 @@
             sequence="Ctrl+G"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-     <key
+     <!--key
             sequence="F4"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-     <key
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
+     <!--key
             sequence="Ctrl+Shift+H"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
      <key
             sequence="Ctrl+Shift+N"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -1016,18 +1016,18 @@
             description="%ActionDefinition.findrefs.description"
             name="%ActionDefinition.findrefs.name"
             id="org.eclipse.cdt.ui.search.findrefs"/>
-      <command
+      <!--command
             name="%ActionDefinition.openTypeHierarchy.name"
             description="%ActionDefinition.openTypeHierarchy.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy">
-      </command>
-      <command
+      </command-->
+      <!--command
             name="%ActionDefinition.openTypeInHierarchy.name"
             description="%ActionDefinition.openTypeInHierarchy.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy">
-      </command>
+      </command-->
       <command
             name="%ActionDefinition.addInclude.name"
             description="%ActionDefinition.addInclude.description"
@@ -1126,14 +1126,14 @@
                menubarPath="navigate/open.ext2"
                tooltip="%OpenTypeAction.tooltip">
          </action>
-        <action
+        <!--action
                definitionId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
                label="%OpenTypeHierarchyAction.label"
                retarget="true"
                menubarPath="navigate/open.ext"
                id="org.eclipse.cdt.ui.actions.OpenTypeHierarchy">
-         </action>
-         <action
+         </action-->
+         <!--action
                id="org.eclipse.cdt.ui.actions.openTypeInHierarchy"
                class="org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeInHierarchyAction"
                definitionId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
@@ -1141,7 +1141,7 @@
                helpContextId="org.eclipse.cdt.ui.open_type_in_hierarchy_action"
                menubarPath="navigate/open.ext2"
                tooltip="%OpenTypeInHierarchyAction.tooltip">
-         </action>
+         </action-->
          <menu
                label="%searchMenu.label"
                id="org.eclipse.search.menu">

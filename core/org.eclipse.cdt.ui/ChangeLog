@@ -1,3 +1,10 @@
+2005-07-28 David Inglis
+
+	Disable browsing and hierarchy views/perspectives and open hierarchy action as per
+	https://bugs.eclipse.org/bugs/show_bug.cgi?id=102195
+	
+	* plugins.xml
+
 2005-07-22 Alain Magloire
 	Fix copyright.
 

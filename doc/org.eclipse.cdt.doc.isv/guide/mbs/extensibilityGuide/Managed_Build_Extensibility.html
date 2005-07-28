@@ -184,6 +184,7 @@ managed build system and how to extend it.</font></td>
 </div>
 <div class="indent"><a href="#_TocSectionAdvanced">8 Advanced Features</a>
 <div class="indent"><a href="#_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</a></div>
+<div class="indent"><a href="#_TocSectionAdvanced_2">8.2 Supporting Multiple Versions of a Tool-chain</a></div>
 </div>
 <!-- End of Table of Contents --><br>
 <p class="section"><a name="_TocSectionIntro">1 Introduction</a></p>
@@ -194,10 +195,27 @@ integrating those tools into Eclipse and the managed build system is
 part of that framework. Understanding how the managed build system
 works, and what steps are required to extend it is the focus of this
 document.</p>
+<p>Much of the text in this document is taken from the managed build system (MBS) 
+design documents that are contained in the Eclipse Bugzilla data base.&nbsp; The 
+authors of these documents include Mikhail Sennikovsky, Bob Monteleone, Sunil 
+Davasam, Chris Recoskie, Lars Kurth, and Bala Torati.&nbsp; These design 
+documents are a source of additional information regarding particular MBS 
+functionality.&nbsp; Note that these documents are not necessarily kept up to 
+date after the initial design, where-as this document attempts to be up to date.&nbsp; 
+Here is a list of some of the documents:</p>
+<ul>
+	<li>Custom Build Steps (#???)</li>
+	<li>Tool-chain Installation Support (#???)</li>
+	<li>Tool-chain Multi-version Support (#???)</li>
+	<li>Build Environment Varaibles (#???)</li>
+	<li>Build Macros (#???)</li>
+	<li>Custom Project Wizard Pages (#???)</li>
+	<li>Shared Tool Options (#???)</li>
+</ul>
 <p class="subsection"><a name="_TocSectionIntro_1">1.1 Who Needs This
 Information</a></p>
 <p>The information in this document describes the design of the managed
-build system (MBS) and discusses how to add new tool-chain definitions to it
+build system and discusses how to add new tool-chain definitions to it
 through the <code>buildDefinitions</code> extension point. It is
 intended for someone
 who wants to understand how the managed build system works, or is
@@ -209,7 +227,7 @@ collection (GCC). If you have
 access to GCC tools on your platform and find the predefined project-types
 sufficient for your
 needs, then you do not need to modify anything. Please
-feel free to skip sections 3, 6, and 7 as they are primarily concerned
+feel free to skip sections 3, 6, 7 and 8, as they are primarily concerned
 with adding new tool integrations to the build model.</p>
 <p>If you are working with tools other than GCC, or you wish to create 
 project-types that CDT does not support out of the box, then you have to
@@ -278,13 +296,12 @@ defined by the user, but others will be built into the tools themselves
 so the user will be unaware of them. The CDT parser
 described in the previous section needs
 to know about the entire set to properly parse source files. It is the
-responsibility of the MBS to answer both the user-supplied and built-in
-paths and symbols to the parser. Of the two, the user-supplied include
-paths and defines are trivial as they are entered by the user through
-the UI. The built-in compiler settings on the other hand, are quite a
-bit harder to decipher and the solution will vary from tool to
-tool. A discussion of the possible solutions is provided in &sect;
-6.9.3.<br>
+responsibility of the MBS to answer both the user-supplied and built-in paths 
+and symbols to the parser. Of the two, the user-supplied include paths and 
+defines are trivial as they are entered by the user through the UI. The built-in 
+compiler settings on the other hand, are quite a bit harder to decipher and the 
+solution will vary from tool to tool. A discussion of the possible solutions is 
+provided in § 6.12.<br>
 <p class="subsection">1.2.4 Tool Definitions and Settings Storage</p>
 A key feature of the managed build system is that it is extensible.
 Tool integrators
@@ -351,7 +368,7 @@ contains the following primary objects:&nbsp;</p>
 		<td width="463" valign="top" style="width: 347.4pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
 		<p class="MsoNormal" style="margin-top:6.0pt">An ordered set of tools 
 		used to transform the project resources into the final output (build 
-		artifact) of the project.&nbsp; A tool integrator can provide a family 
+		artifacts) of the project.&nbsp; A tool integrator can provide a family 
 		of tool-chains that support different host/target platform combinations, 
 		and different versions of the tool-chain.</td>
 	</tr>
@@ -471,7 +488,7 @@ and modify the following attributes of the tool-chain: </p>
 	<font face="arial, helvetica, geneva" size="2">The mapping of an individual 
 	resource to a Custom Build step.&nbsp; The user specifies the commands to be 
 	executed by the step, the input 
-	dependencies of the step, and the output resources that are created by the 
+	dependencies of the step, and the output files that are created by the 
 	step.</font></li>
 	<li class="MsoNormal" style="margin-top: 6.0pt">
 	<font face="arial, helvetica, geneva" size="2" color="#FF0000">The mapping of 
@@ -621,7 +638,7 @@ stores user settings between sessions, like the level of debugging information
 that is needed for a particular build configuration. The following section 
 describes the format of the grammar and what the information is used for by the 
 build model.&nbsp; See the CDT 3.0 Gnu tool-chain definitions for an example of 
-the managed build object model.</p>
+using the managed build object model.</p>
 <h3>Common Attributes</h3>
 <p>Many of the MBS elements require the specification of the <i>id </i>
 attribute.&nbsp; The attribute value typically takes a form similar to Eclipse 
@@ -845,7 +862,12 @@ UI.</p>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
       The name of a class that implements the IConfigurationNameProvider 
-		interface in order to provide a default name for a configuration.</td>
+		interface in order to provide a default name for a configuration.&nbsp; 
+		The configuration names in a user's project must be unique.&nbsp; A 
+		projectType can contain configuration children with the same name.&nbsp; 
+		In this case, a configurationNameProvider must be specified to make the 
+		names unique before they are displayed to the user in the New Project 
+		and New Configuration dialog boxes.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -952,8 +974,13 @@ configuration. It must also have a <var>name</var> that will be
 displayed in the UI in the build property page and new project wizards.&nbsp; 
 The configuration contains the information needed to &#8220;clean&#8221; the build files on 
 the host machine. &nbsp;The configuration can specify the <i>cleanCommand</i> 
-attribute which specifies a command that removes the build files.&nbsp; 
-</p>
+attribute which specifies a command that removes the build files.</p>
+<p class="MsoNormal" style="margin-top:6.0pt">The<i> prebuildStep, 
+preannounceBuildStep, postbuildStep </i>and <i>postannouncebuildStep </i>
+attributes define a custom build step to be run before and/or after the the 
+build steps defined by the tool-chain.&nbsp; These attributes are not typically 
+defined in the manifest file, but are instead added by a user from the 
+configuration properties user interface.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional configuration attributes are described in the schema table below.</p>
 <p class="subsection">3.4.1 Schema</p>
 <table
@@ -1135,7 +1162,9 @@ track of this specific configuration.</td>
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       Specifies the description of the configuration that will be displayed to 
-		the user while creating a project and managing configurations.</td>
+		the user while creating a project and managing configurations.&nbsp; The 
+		description is only displayed in the UI - it is not considered to be 
+		part of the configuration name.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1145,7 +1174,7 @@ track of this specific configuration.</td>
 </table>
 <p class="subsection"><a name="_TocSectionGrammar_5">3.5 Tool Chain</a></p>
 <p class="MsoNormal" style="margin-top:6.0pt">The toolChain element represents 
-the tool chain in the user model.&nbsp; It is a tool-integrator-defined, ordered set 
+the tool chain in the user model.&nbsp; It is a tool-integrator-defined set 
 of tools that transform the project&#8217;s input into the project&#8217;s outputs. &nbsp;A 
 tool-chain can be defined as part of a configuration, or as an independent 
 specification that is referenced in a separate configuration via the toolChain 
@@ -1160,20 +1189,19 @@ of type builder.&nbsp; This defines the &#8220;build&#8221; or &#8220;make&#8221
 drive the transformation of the inputs into outputs. </p>
 <p class="MsoNormal" style="margin-top:6.0pt">Typically a tool-chain is hosted 
 only on a limited subset of operating system/architecture combinations. For 
-example, it does not make much sense to allow a user to try to build a Solaris shared 
-library project if they are running Eclipse and the CDT on Windows. You can 
+example, it does not make much sense to allow a user to try to build a Solaris 
+shared library project if they are running Eclipse and CDT on Windows. You can 
 specify the operating systems and architectures that the tool-chain is supported 
 on as a comma-separated list in the <i>osList</i> and <i>archList</i> 
 attributes. </p>
-<p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may be associated 
-with a scanner configuration profile that defines how to discover built-in compiler defines and 
-includes search paths.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool-chain should specify the <i>
 targetTool </i>attribute to identify the tool that runs to generate the primary 
-build output.&nbsp; If this is not specified, then MBS uses the file extension 
+build output.&nbsp; If this is not specified, MBS uses the file extension 
 of the build artifact name supplied by the user.&nbsp; This will work when the 
 user uses one of the extensions expected by the tool, but will not work if they 
 do not.</p>
+<p class="MsoNormal" style="margin-top:6.0pt">MBS supports multiple versions of 
+a tool-chain???</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may define a 
 configuration level environment variable provider in the <i>configurationEnvironmentSupplier</i> attribute.&nbsp; See § 
 7.6 for additional information.<br>
@@ -1183,6 +1211,9 @@ configuration
 level macro provider in the <i>configurationMacroSupplier</i> attribute.&nbsp; See § 
 7.8 for additional information.<br>
 </p>
+<p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may be associated 
+with a scanner configuration profile that defines how to discover built-in compiler defines and 
+includes search paths.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional tool-chain attributes are described in 
 the schema table below.</p>
 <p class="subsection">3.5.1 Schema</p>
@@ -1259,7 +1290,7 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       <span style="font-family: Arial"><font size="2">A semi-colon separated 
-		list of the identifiers &nbsp;of the tools that can be used to create the 
+		list of the identifiers&nbsp;of the tools that can be used to create the 
 		build artifact.&nbsp; A list is required, for example, when there are 2 
 		versions of a target tool that are used with different project natures.</font></span></td>
       <td
@@ -1383,7 +1414,17 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
-      &nbsp;</td>
+      <p class="MsoNormal">The name of a class that implements the 
+		<span style="font-size: 12.0pt; font-family: Times New Roman">
+		IManagedIsToolChainSupported </span>interface.&nbsp; This provides a 
+		method to be called to determine if support for the tool-chain is 
+		currently installed on the system.&nbsp; MBS uses this information in 
+		order to filter the choices presented to the CDT user and to inform the 
+		user when support needed by their project is not installed. If the <i>
+		isToolChainSupported </i>callback is not provided by the tool-chain 
+		definition, the tool-chain is treated as supported.&nbsp; If all 
+		configurations defined for the given project type are not supported the 
+		project type is treated as unsupported.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1435,7 +1476,7 @@ the schema table below.</p>
 		DiscoveryProfileId</span></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top">Specifies an id of scanner configuration discovery profile for 
+ valign="top">Specifies the id of a scanner configuration discovery profile for 
 		gathering the built-in compiler settings for a toolchain.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -4416,7 +4457,7 @@ steps of setting up your environment, creating a new plugin where you
 can define a tool integration, and give you pointers for publishing the tool 
 integration for others to use.<br>
 </p>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_1">6.1 Setting up your
 Environment</a></p>
 <p>Tool integrations are specified by extending the <code>buildDefinitions</code>
@@ -4430,7 +4471,7 @@ Feature Details</span> and check that "Eclipse C/C++ Development Tools
 If they do not, simply install the SDK from the same update site you
 used to install the CDT.<br>
 </p>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_2">6.2 Creating your
 Plug-in
 Project</a></p>
@@ -4464,7 +4505,7 @@ button.</li>
  style="font-weight: bold;">Plug-in
 Development</span> perspective, answer <span style="font-weight: bold;">Yes</span>.</li>
 </ol>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_3">6.3 Creating the
 Extension</a></p>
 <p>You have installed the CDT source and
@@ -4505,7 +4546,7 @@ as the <span style="font-weight: bold;">ID</span> for the
 extension, and <code>Example Tool Chain</code>
 for the <span style="font-weight: bold;">Name</span>.</li>
 </ol>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_4">6.4 Adding a Project Type</a></p>
 <p>Now we will add a new projectType, configuration, toolChain, builder, 
 targetPlatform and an example tool to
@@ -4529,7 +4570,7 @@ Executable</code> for our projectType.</li>
 to false.<br>
   </li>
 </ol>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_5">6.5 Adding a
 Configuration</a></p>
 <p>We have now added a basic project-type definition. We now want to define a 
@@ -4560,7 +4601,8 @@ following list <code>org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.G
 org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.VCErrorParser</code></li>
 </ol>
 <p style="font-weight: normal;" class="subsection">
-<a name="_TocSectionTutorial_6">6.6 Adding a ToolChain</a></p>
+<b>
+<a name="_TocSectionTutorial_6">6.6 Adding a ToolChain</a></b></p>
 <p style="font-weight: normal;">
 Each configuration requires a toolChain child that defines the set of tools used by 
 the configuration.</p>
@@ -4587,7 +4629,8 @@ you are running on a version of Solaris, or <code>other</code> if none
 of the above apply.</li>
 </ol>
 <p style="font-weight: normal;" class="subsection">
-<a name="_TocSectionTutorial_7">6.7 Adding a </a>Builder</p>
+<b>
+<a name="_TocSectionTutorial_7">6.7 Adding a </a>Builder</b></p>
 <p style="font-weight: normal;">
 Each toolChain can have a builder child that describes the build utility used by 
 the tool-chain to create the build artifacts of the configuration.</p>
@@ -4607,7 +4650,7 @@ example.toolchain.builder</code>.</li>
  style="font-weight: bold;">Command</span>
 property, click on it to edit the value, and enter <code>make</code>.</li>
 </ol>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_8">6.8 Adding a TargetPlatform</a></p>
 <p style="font-weight: normal;">
 Each toolChain can have a targetPlatform child that describes the target 
@@ -4636,7 +4679,8 @@ are running this tutorial on Linux or Solaris, enter the value <code>org.eclipse
 If you are running the tutorial on Windows, enter the value <code>org.eclipse.cdt.core.PE</code>.</li>
 </ol>
 <p style="font-weight: normal;" class="subsection">
-<a name="_TocSectionTutorial_9">6.9 Adding a Tool</a></p>
+<b>
+<a name="_TocSectionTutorial_9">6.9 Adding a Tool</a></b></p>
 <p style="font-weight: normal;">
 Each toolChain describes the set of tools used by the build utility to create 
 the build artifacts of the configuration.</p>
@@ -4673,7 +4717,7 @@ real tool, so just enter <code>ccc</code> as the value for the <span
  style="font-weight: bold;">command</span>
 property.</li>
 </ol>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_10">6.10 Testing the ProjectType</a></p>
 <p>We have now defined enough information to create a project for
 our
@@ -4735,7 +4779,7 @@ not have any way to edit the settings for the tool other than the tool
 command. That is because we
 have not defined any options yet. It is time to edit the tool 
 definition again.</p>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_11">6.11 Adding Tool Options</a></p>
 <p>Users expect to be able to change the settings for their build tools through 
 the property page for a project. What they see is controlled by the way options 
@@ -4810,14 +4854,14 @@ debugging your run-time workbench. You should see something like this.</p>
  title="" alt="Tutorial project property page"></p>
 <h5>Figure 9 MBS property page with tool, category, and options<br>
 </h5>
-<p style="font-weight: normal;" class="subsection">
+<p class="subsection">
 <a name="_TocSectionTutorial_12">6.12 Taking the Next Step</a></p>
 <p>The purpose of the tutorial you just followed was to become familiar with the 
 steps involved in creating a simple tool-chain and to get a feeling for how the 
 choices you make in the specification of options affect the UI. In this section, 
 we will discuss some additional points that you need to consider before 
 specifying your own tool integration.</p>
-<p style="font-weight: normal;" class="subsection">6.12.1 Adding More
+<p class="subsection">6.12.1 Adding More
 Tools</p>
 <p>Unless you just happen to have a compiler on your system that is
 invoked with &#8216;ccc&#8217;, the example tool we created is not going to build 
@@ -4829,7 +4873,7 @@ compiler and &#8220;something else&#8221; is usually sufficient, but you may hav
 to
 define additional tools if your tool-chain requires intermediate build
 steps to function properly.</p>
-<p style="font-weight: normal;" class="subsection">6.12.2 Defined
+<p class="subsection">6.12.2 Defined
 Symbols and Header File Search
 Paths</p>
 <p>There are elements of the CDT core that require build information
@@ -4847,7 +4891,7 @@ specification has options of type &#8220;includePaths&#8221; and &#8220;definedS
 The build model will pay special attention to these options and answer
 them to the appropriate clients in the CDT core without any further
 intervention on your part.</p>
-<p style="font-weight: normal;" class="subsection">6.12.3 Built-in
+<p class="subsection">6.12.3 Built-in
 Symbols and Search Paths</p>
 <p>We have automated the discovery of paths and symbols for standard
 GCC compilers that are building targets for the platform they are
@@ -4870,7 +4914,7 @@ for the user to edit these values if something changes is to directly
 edit the plug-in manifest where the extension is specified. Please
 refer to &sect; 3.11
 for more details on specifying list option values.
-<p style="font-weight: normal;" class="subsection">6.12.4 User-Specified
+<p class="subsection">6.12.4 User-Specified
 Libraries and Object
 Modules</p>
 <p>Similarly, a user may want to specify external libraries to link
@@ -4880,7 +4924,7 @@ special attention to an option containing libraries so that when the
 build file generator requests them, it can answer a valid list. Flag the
 option value type as &#8220;libs&#8221; for external libraries or &#8220;userObjs&#8221; for
 object modules.</p>
-<p style="font-weight: normal;" class="subsection">6.12.5 ProjectType and Other 
+<p class="subsection">6.12.5 ProjectType and Other 
 Element
 Hierarchies</p>
 <p>One area of the build model that the tutorial does not touch on
@@ -4905,7 +4949,7 @@ it is now possible to declare a configuration, tool-chain, tool, builder and tar
 is possible to declare a complete set of elements once, and use superClass references to those 
 elements inside many projectTypes.<br>
 </p>
-<p style="font-weight: normal;" class="subsection">6.12.6 Publishing
+<p class="subsection">6.12.6 Publishing
 your Plug-in</p>
 <p>The subject of packaging Eclipse plug-ins is well covered in the <span
  style="font-style: italic;">Platform Plug-in Developer Guide</span>.
@@ -5126,7 +5170,30 @@ default MBS implementation does not modify any of the command line parts.&nbsp; 
 uses the parts and the pattern to generate the complete command line that can be 
 retrieved using IManagedCommandLineInfo.getCommandLine.</p>
 </a>
-<p class="subsection"><a name="_TocSectionDynamic_5">7.5 Determining if a Tool Chain is Installed</p>
+<p class="subsection"><a name="_TocSectionDynamic_5">7.5 Determining if a Tool Chain is Installed</a></p>
+<p class="MsoNormal">A tool-chain definition can provide a method to be called 
+to determine if support for the tool-chain is currently installed on the 
+system.&nbsp; MBS uses this information in order to filter the choices presented to 
+the CDT user and to inform the user when support needed by their project is not 
+installed. If the method is not provided by the tool-chain definition, the 
+tool-chain is treated as supported.&nbsp; If all configurations defined for the 
+given project type are not supported the project type is treated as unsupported.</p>
+<p class="subsection">In order to provide this functionality, the &#8220;isToolChainSupported&#8221; 
+attribute in the toolChain 
+definition must be specified. The value of this attribute should be set to the 
+name of the class which implements the I<span style="font-size: 12.0pt; font-family: Times New Roman">ManagedIsToolChainSupported</span> 
+interface.</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
+IManagedIsToolChainSupported{</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean 
+isSupported(IToolChain toolChain, PluginVersionIdentifier version, String 
+instance);</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">The version 
+argument specifies the version of the ToolChain, or null if the ToolChain does 
+not have a version number.&nbsp; The instance argument is currently null.&nbsp; It will be 
+used when &#8220;Multi-Instance&#8221; support is implemented.</p>
 <p class="subsection"><a name="_TocSectionDynamic_6">7.6 Defining Environment Variables</a></p>
 <p>A tool-integrator can provide a method to be called that identifies the default 
 environment variables for the tool-chain.&nbsp; These would typically include the 
@@ -5929,5 +5996,6 @@ Elements</h3>
 <p class="MsoNormal">This element is supported in the same manner as in CDT 2.0, 
 with the exception that the dynamic elements returned by the provider must use 
 the new object model.</p>
+<p class="subsection"><a name="_TocSectionAdvanced_2">8.2 Supporting Multiple Versions of a Tool-chain</p>
 </body>
 </html>

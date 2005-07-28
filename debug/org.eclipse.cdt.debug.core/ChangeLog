@@ -1,3 +1,7 @@
+2005-07-28 Mikhail Khodjaiants
+	Bug 103567: breakpoints view of of sync w/CDT CVS HEAD
+	* CBreakpointManager.java
+
 2005-07-26 Mikhail Khodjaiants
 	Bug 105224: Two identical directory source container types.
 	* plugin.properties

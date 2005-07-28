@@ -228,8 +228,11 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		ArrayList list = new ArrayList( breakpoints.length );
 		synchronized( getBreakpointMap() ) {
 			for ( int i = 0; i < breakpoints.length; ++i ) {
-				if ( breakpoints[i] instanceof ICBreakpoint && !getBreakpointMap().isInProgress( (ICBreakpoint)breakpoints[i] ) )
-					list.add( getBreakpointMap().getCDIBreakpoint( (ICBreakpoint)breakpoints[i] ) );			
+				if ( breakpoints[i] instanceof ICBreakpoint && !getBreakpointMap().isInProgress( (ICBreakpoint)breakpoints[i] ) ) {
+					ICDIBreakpoint b = getBreakpointMap().getCDIBreakpoint( (ICBreakpoint)breakpoints[i] );
+					if ( b != null )
+						list.add( b );
+				}
 			}
 		}
 		if ( list.isEmpty() )

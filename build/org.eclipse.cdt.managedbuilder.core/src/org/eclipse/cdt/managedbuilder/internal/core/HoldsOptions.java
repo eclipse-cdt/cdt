@@ -299,6 +299,7 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 				return superClass.getOptionById(id);
 			}
 		}
+		if (opt == null) return null;
 		return opt.isValid() ? opt : null;
 	}
 

@@ -1,3 +1,8 @@
+2005-07-29 Mikhail Khodjaiants
+	The registers with errors shouldn't be disposed when the target is suspended.
+	Added synchronization to the "getRegisters" method.
+	* CRegisterGroup.java
+
 2005-07-28 Mikhail Khodjaiants
 	Bug 104421: Register view can not show correct value when switch between different thread or stack frame.
 	* ICDIRegister.java

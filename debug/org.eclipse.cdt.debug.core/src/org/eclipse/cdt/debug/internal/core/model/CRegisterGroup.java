@@ -80,9 +80,13 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 		if ( fDisposed )
 			return new IRegister[0];
 		if ( fRegisters == null ) {
-			fRegisters = new IRegister[fRegisterDescriptors.length];
-			for( int i = 0; i < fRegisters.length; ++i ) {
-				fRegisters[i] = new CRegister( this, fRegisterDescriptors[i] );
+			synchronized( this ) {
+				if ( fRegisters == null ) {
+					fRegisters = new IRegister[fRegisterDescriptors.length];
+					for( int i = 0; i < fRegisters.length; ++i ) {
+						fRegisters[i] = new CRegister( this, fRegisterDescriptors[i] );
+					}
+				}
 			}
 		}
 		return fRegisters;
@@ -101,13 +105,12 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	}
 
 	public void targetSuspended() {
-		if (fRegisters == null) {
+		if ( fRegisters == null ) {
 			return;
 		}
 		for ( int i = 0; i < fRegisters.length; ++i ) {
 			if ( fRegisters[i] != null && ((CRegister)fRegisters[i]).hasErrors() ) {
-				((CRegister)fRegisters[i]).dispose();
-				fRegisters[i] = null;
+				((CRegister)fRegisters[i]).resetStatus();
 			}
 		}
 	}

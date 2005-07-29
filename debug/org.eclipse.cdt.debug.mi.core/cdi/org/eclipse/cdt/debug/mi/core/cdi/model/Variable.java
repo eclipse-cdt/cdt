@@ -73,7 +73,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
  */
 public abstract class Variable extends VariableDescriptor implements ICDIVariable {
 
-	MIVar fMiVar;
+	protected MIVar fMiVar;
 	Value value;
 	public ICDIVariable[] children = new ICDIVariable[0];
 	String editable = null;
@@ -273,7 +273,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			String name, String fullName, int pos, int depth, MIVar miVar);
 	
 	public int getChildrenNumber() throws CDIException {
-		return fMiVar.getNumChild();
+		return getMIVar().getNumChild();
 	}
 
 	/**
@@ -333,7 +333,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		Target target = (Target)getTarget();
 		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
-		MIVarAssign var = factory.createMIVarAssign(fMiVar.getVarName(), expression);
+		MIVarAssign var = factory.createMIVarAssign(getMIVar().getVarName(), expression);
 		try {
 			miSession.postCommand(var);
 			MIInfo info = var.getMIInfo();
@@ -346,7 +346,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 
 		// If the assign was succesfull fire a MIVarChangedEvent() for the variable
 		// Note GDB will not fire an event for the changed variable we have to do it manually.
-		MIVarChangedEvent change = new MIVarChangedEvent(miSession, var.getToken(), fMiVar.getVarName());
+		MIVarChangedEvent change = new MIVarChangedEvent(miSession, var.getToken(), getMIVar().getVarName());
 		miSession.fireEvent(change);
 
 		// Changing values may have side effects i.e. affecting other variables
@@ -382,7 +382,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		if (editable == null) {
 			MISession mi = ((Target) getTarget()).getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			MIVarShowAttributes var = factory.createMIVarShowAttributes(fMiVar.getVarName());
+			MIVarShowAttributes var = factory.createMIVarShowAttributes(getMIVar().getVarName());
 			try {
 				mi.postCommand(var);
 				MIVarShowAttributesInfo info = var.getMIVarShowAttributesInfo();
@@ -404,7 +404,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		int fmt = Format.toMIFormat(format);
 		MISession mi = ((Target) getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIVarSetFormat var = factory.createMIVarSetFormat(fMiVar.getVarName(), fmt);
+		MIVarSetFormat var = factory.createMIVarSetFormat(getMIVar().getVarName(), fmt);
 		try {
 			mi.postCommand(var);
 			MIInfo info = var.getMIInfo();
@@ -432,7 +432,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	 * @return
 	 */
 	public boolean equals(Variable variable) {
-		return fMiVar.getVarName().equals(variable.getMIVar().getVarName());
+		return getMIVar().getVarName().equals(variable.getMIVar().getVarName());
 	}
 
 	/* (non-Javadoc)
@@ -449,11 +449,11 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	 */
 	public String getTypeName() throws CDIException {
 		if (fTypename == null) {
-			fTypename = fMiVar.getType();
+			fTypename = getMIVar().getType();
 			if (fTypename == null || fTypename.length() == 0) {
 				MISession mi = ((Target) getTarget()).getMISession();
 				CommandFactory factory = mi.getCommandFactory();
-				MIVarInfoType infoType = factory.createMIVarInfoType(fMiVar.getVarName());
+				MIVarInfoType infoType = factory.createMIVarInfoType(getMIVar().getVarName());
 				try {
 					mi.postCommand(infoType);
 					MIVarInfoTypeInfo info = infoType.getMIVarInfoTypeInfo();

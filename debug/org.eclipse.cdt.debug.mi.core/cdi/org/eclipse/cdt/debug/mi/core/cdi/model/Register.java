@@ -10,24 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
-import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
-import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
-import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
-import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
-import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 
 /**
  */
@@ -60,6 +51,8 @@ public class Register extends Variable implements ICDIRegister {
 			String n = getName();
 			if (!n.startsWith("$")) { //$NON-NLS-1$
 				fFullName = "$" + n; //$NON-NLS-1$
+			} else {
+				fFullName = n;
 			}
 		}
 		return fFullName;
@@ -84,7 +77,7 @@ public class Register extends Variable implements ICDIRegister {
 	public ICDIValue getValue(ICDIStackFrame context) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		RegisterManager mgr = session.getRegisterManager();
-		Variable var = mgr.createVariable((StackFrame)context, getQualifiedName());
+		Variable var = mgr.createShadowRegister(this, (StackFrame)context, getQualifiedName());
 		return var.getValue();
 	}
 

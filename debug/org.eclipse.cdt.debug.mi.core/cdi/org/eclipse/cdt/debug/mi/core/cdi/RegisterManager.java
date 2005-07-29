@@ -13,14 +13,16 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.model.LocalVariable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterDescriptor;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterGroup;
@@ -49,14 +51,86 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
  */
 public class RegisterManager extends Manager {
 
+	final int MAX_ENTRIES = 150;
+
+	/**
+	 * 
+	 * LRUMap.<br>
+	 * Simple LRU cache using a LinkedHashMap
+	 */
+	class LRUMap extends LinkedHashMap {
+		private static final long serialVersionUID = 1L;
+		LRUMap() {
+			super(MAX_ENTRIES+1, .75F, true);
+		}
+		/* (non-Javadoc)
+		 * @see java.util.LinkedHashMap#removeEldestEntry(java.util.Map.Entry)
+		 */
+		protected boolean removeEldestEntry(Entry eldest) {
+            boolean toRemove = size() > MAX_ENTRIES;
+            if (toRemove) {
+        		ShadowRegister v = (ShadowRegister)eldest.getValue();
+            	try {
+            		Target target = (Target)v.getTarget();
+            		removeMIVar(target.getMISession(), v.getMIVar());
+            	} catch (Exception e) {
+            		// ignore all
+            	}
+            	v.setMIVar(null);
+            }
+            return toRemove;
+		}
+	}
+
+	/**
+	 * 
+	 * ShadowRegister.<br>
+	 * To keep track of the register value we can a shadow variable.  If the
+	 * the variable MIVar was destroy by the LRUCache we try to recreate it.
+	 */
+	class ShadowRegister extends Register {
+
+		public ShadowRegister(Register reg, StackFrame frame, String n, MIVar v) {
+			super((Target)reg.getTarget(), (Thread)frame.getThread(), frame, n, null, 0, 0, v);
+			try {
+				fTypename = reg.getTypeName();
+			} catch (CDIException e) {
+				// ignore
+			}
+			try {
+				fType = reg.getType();
+			} catch (CDIException e) {
+				// ignore
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#getMIVar()
+		 */
+		public MIVar getMIVar() {
+			if (fMiVar == null) {
+				try {
+					fMiVar = createMiVar((StackFrame)getStackFrame(), getName());
+				} catch (CDIException e) {
+					//
+				}
+			}
+			return fMiVar;
+		}
+
+		public void setMIVar(MIVar newMIVar) {
+			fMiVar = newMIVar;
+		}
+	}
+
 	Map regsMap;
-	Map varMap;
+	Map varsMap;
 	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public RegisterManager(Session session) {
 		super(session, true);
 		regsMap = new Hashtable();
-		varMap = new Hashtable();
+		varsMap = new Hashtable();
 		// The register bookkeeping provides better update control.
 		setAutoUpdate( true );
 	}
@@ -70,13 +144,13 @@ public class RegisterManager extends Manager {
 		return regsList;
 	}
 
-	synchronized List getVariableList(Target target) {
-		List varList = (List)varMap.get(target);
-		if (varList == null) {
-			varList = Collections.synchronizedList(new ArrayList());
-			varMap.put(target, varList);
+	synchronized Map getVariableMap(Target target) {
+		Map varMap = (Map)varsMap.get(target);
+		if (varMap == null) {
+			varMap = Collections.synchronizedMap(new LRUMap());
+			varsMap.put(target, varMap);
 		}
-		return varList;
+		return varMap;
 	}
 
 	public ICDIRegisterGroup[] getRegisterGroups(Target target) throws CDIException {
@@ -135,7 +209,6 @@ public class RegisterManager extends Manager {
 			}
 		}
 		return reg;
-		//throw new CDIException(CdiResources.getString("cdi.RegisterManager.Wrong_register_type")); //$NON-NLS-1$
 	}
 
 	public void destroyRegister(Register reg) {
@@ -167,7 +240,7 @@ public class RegisterManager extends Manager {
 		}
 	}
 
-	public Variable createVariable(StackFrame frame, String reg) throws CDIException {
+	public MIVar createMiVar(StackFrame frame, String regName) throws CDIException {
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -176,22 +249,28 @@ public class RegisterManager extends Manager {
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			MIVarCreate var = factory.createMIVarCreate(reg);
+			MIVarCreate var = factory.createMIVarCreate(regName);
 			mi.postCommand(var);
 			MIVarCreateInfo info = var.getMIVarCreateInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
-			Variable variable = new LocalVariable(target, null, frame, reg, null, 0, 0, info.getMIVar());
-			List varList = getVariableList(target);
-			varList.add(variable);
-			return variable;
+			return info.getMIVar();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
+	}
+
+	public Variable createShadowRegister(Register register, StackFrame frame, String regName) throws CDIException {
+		Target target = (Target)frame.getTarget();
+		MIVar miVar = createMiVar(frame, regName);
+		ShadowRegister variable = new ShadowRegister(register, frame, regName, miVar);
+		Map varMap = getVariableMap(target);
+		varMap.put(miVar.getVarName(), variable);
+		return variable;
 	}
 
 	/**
@@ -234,13 +313,6 @@ public class RegisterManager extends Manager {
 
 	public void update(Target target) throws CDIException {
 		MISession mi = target.getMISession();
-
-//		Variable[] vars = getVariables(target);
-//		for (int i = 0; i < vars.length; ++i) {
-//			removeMIVar(mi, vars[i].getMIVar());
-//			List varList = getVariableList(target);
-//			varList.remove(vars[i]);
-//		}
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListChangedRegisters changed = factory.createMIDataListChangedRegisters();
 		try {
@@ -301,7 +373,7 @@ public class RegisterManager extends Manager {
 	}
 
 	private Variable[] getVariables(Target target) {
-		List varList = (List)varMap.get(target);
+		List varList = (List)varsMap.get(target);
 		if (varList != null) {
 			return (Variable[]) varList.toArray(new Variable[varList.size()]);
 		}
@@ -330,6 +402,5 @@ public class RegisterManager extends Manager {
 		}
 		return null;
 	}
-
 
 }

@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -45,8 +44,8 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 
 	String qualifiedName = null;
 	String fFullName = null;
-	ICDIType fType = null;
-	String fTypename = null;
+	protected ICDIType fType = null;
+	protected String fTypename = null;
 	String sizeof = null;
 
 	/**

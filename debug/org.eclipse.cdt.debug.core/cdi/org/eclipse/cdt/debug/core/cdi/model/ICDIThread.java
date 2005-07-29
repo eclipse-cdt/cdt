@@ -67,6 +67,17 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	ICDIThreadStorageDescriptor[] getThreadStorageDescriptors() throws CDIException;
 
 	/**
+	 * Create a variable from the descriptor for evaluation.  A CreatedEvent will be trigger and
+	 * ChangedEvent will also be trigger when the variable is assign a new value.
+	 * DestroyedEvent is fired when the variable is out of scope and automatically
+	 * removed from the manager list.
+	 * @param varDesc ICDThreadStorageDesc
+	 * @return
+	 * @throws CDIException
+	 */
+	ICDIThreadStorage createThreadStorage(ICDIThreadStorageDescriptor varDesc) throws CDIException;
+
+	/**
 	 * Equivalent to resume(false)
 	 * 
 	 * @deprecated 

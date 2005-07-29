@@ -20,10 +20,14 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.LocalVariable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterDescriptor;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterGroup;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
@@ -46,11 +50,13 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 public class RegisterManager extends Manager {
 
 	Map regsMap;
+	Map varMap;
 	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public RegisterManager(Session session) {
 		super(session, true);
 		regsMap = new Hashtable();
+		varMap = new Hashtable();
 		// The register bookkeeping provides better update control.
 		setAutoUpdate( true );
 	}
@@ -62,6 +68,15 @@ public class RegisterManager extends Manager {
 			regsMap.put(target, regsList);
 		}
 		return regsList;
+	}
+
+	synchronized List getVariableList(Target target) {
+		List varList = (List)varMap.get(target);
+		if (varList == null) {
+			varList = Collections.synchronizedList(new ArrayList());
+			varMap.put(target, varList);
+		}
+		return varList;
 	}
 
 	public ICDIRegisterGroup[] getRegisterGroups(Target target) throws CDIException {
@@ -152,6 +167,33 @@ public class RegisterManager extends Manager {
 		}
 	}
 
+	public Variable createVariable(StackFrame frame, String reg) throws CDIException {
+		Target target = (Target)frame.getTarget();
+		Thread currentThread = (Thread)target.getCurrentThread();
+		StackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(frame.getThread(), false);
+		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+		try {
+			MISession mi = target.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIVarCreate var = factory.createMIVarCreate(reg);
+			mi.postCommand(var);
+			MIVarCreateInfo info = var.getMIVarCreateInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+			Variable variable = new LocalVariable(target, null, frame, reg, null, 0, 0, info.getMIVar());
+			List varList = getVariableList(target);
+			varList.add(variable);
+			return variable;
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		} finally {
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
+		}
+	}
+
 	/**
 	 * Use by the eventManager to find the Register;
 	 */
@@ -192,6 +234,13 @@ public class RegisterManager extends Manager {
 
 	public void update(Target target) throws CDIException {
 		MISession mi = target.getMISession();
+
+//		Variable[] vars = getVariables(target);
+//		for (int i = 0; i < vars.length; ++i) {
+//			removeMIVar(mi, vars[i].getMIVar());
+//			List varList = getVariableList(target);
+//			varList.remove(vars[i]);
+//		}
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListChangedRegisters changed = factory.createMIDataListChangedRegisters();
 		try {
@@ -247,6 +296,14 @@ public class RegisterManager extends Manager {
 		List regsList = (List)regsMap.get(target);
 		if (regsList != null) {
 			return (Register[]) regsList.toArray(new Register[regsList.size()]);
+		}
+		return new Register[0];
+	}
+
+	private Variable[] getVariables(Target target) {
+		List varList = (List)varMap.get(target);
+		if (varList != null) {
+			return (Variable[]) varList.toArray(new Variable[varList.size()]);
 		}
 		return new Register[0];
 	}

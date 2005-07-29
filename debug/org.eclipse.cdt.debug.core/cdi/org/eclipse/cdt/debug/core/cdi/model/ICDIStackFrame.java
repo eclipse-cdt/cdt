@@ -40,7 +40,29 @@ public interface ICDIStackFrame extends ICDIExecuteStepReturn, ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDILocalVariableDescriptor[] getLocalVariableDescriptors() throws CDIException;
-	
+
+	/**
+	 * Create a variable from the descriptor for evaluation.  A CreatedEvent will be trigger and
+	 * ChangedEvent will also be trigger when the variable is assign a new value.
+	 * DestroyedEvent is fired when the variable is out of scope and automatically
+	 * removed from the manager list.
+	 * @param varDesc ICDThreadStorageDesc
+	 * @return
+	 * @throws CDIException
+	 */
+	ICDIArgument createArgument(ICDIArgumentDescriptor varDesc) throws CDIException;
+
+	/**
+	 * Create a variable from the descriptor for evaluation.  A CreatedEvent will be trigger and
+	 * ChangedEvent will also be trigger when the variable is assign a new value.
+	 * DestroyedEvent is fired when the variable is out of scope and automatically
+	 * removed from the manager list.
+	 * @param varDesc ICDThreadStorageDesc
+	 * @return
+	 * @throws CDIException
+	 */
+	ICDILocalVariable createLocalVariable(ICDILocalVariableDescriptor varDesc) throws CDIException;
+
 	/**
 	 * Returns the arguments in this stack frame. An empty collection 
 	 * is returned if there are no arguments.

@@ -25,22 +25,22 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
  */
 public class Value extends CObject implements ICDIValue {
 
-	protected Variable variable;
+	protected Variable fVariable;
 
 	public Value(Variable v) {
 		super((Target)v.getTarget());
-		variable = v;
+		fVariable = v;
 	}
 
-	protected Variable getVariable() {
-		return variable;
+	protected Variable getVariable() throws CDIException {
+		return fVariable;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
-		return variable.getTypeName();
+		return getVariable().getTypeName();
 	}
 
 	/**
@@ -48,15 +48,15 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public String getValueString() throws CDIException {
 		// make sure the variable is updated.
-		if (! variable.isUpdated()) {
-			variable.update();
+		if (! getVariable().isUpdated()) {
+			getVariable().update();
 		}
 
 		String result = ""; //$NON-NLS-1$
 		MISession mi = ((Target)getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarEvaluateExpression var =
-			factory.createMIVarEvaluateExpression(variable.getMIVar().getVarName());
+			factory.createMIVarEvaluateExpression(getVariable().getMIVar().getVarName());
 		try {
 			mi.postCommand(var);
 			MIVarEvaluateExpressionInfo info = var.getMIVarEvaluateExpressionInfo();
@@ -74,7 +74,7 @@ public class Value extends CObject implements ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */	
 	public int getChildrenNumber() throws CDIException {
-		return variable.getMIVar().getNumChild();
+		return getVariable().getMIVar().getNumChild();
 	}
 	
 	/**
@@ -106,14 +106,14 @@ public class Value extends CObject implements ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
-		return variable.getChildren();
+		return getVariable().getChildren();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getType()
 	 */
 	public ICDIType getType() throws CDIException {
-		return variable.getType();
+		return getVariable().getType();
 	}
 
 }

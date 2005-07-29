@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorage;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorageDescriptor;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -497,6 +498,18 @@ public class Thread extends CObject implements ICDIThread {
 		Session session = (Session)getTarget().getSession();
 		VariableManager varMgr = session.getVariableManager();
 		return varMgr.getThreadStorageDescriptors(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#createThreadStorage(org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorageDescriptor)
+	 */
+	public ICDIThreadStorage createThreadStorage(ICDIThreadStorageDescriptor varDesc) throws CDIException {
+		if (varDesc instanceof ThreadStorageDescriptor) {
+			Session session = (Session)getTarget().getSession();
+			VariableManager varMgr = session.getVariableManager();
+			return varMgr.createThreadStorage((ThreadStorageDescriptor)varDesc);
+		}
+		return null;
 	}
 
 }

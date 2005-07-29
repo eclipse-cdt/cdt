@@ -383,13 +383,13 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 		return mgr.getVariableDescriptorAsType(this, type);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#createVariable()
-	 */
-	public ICDIVariable createVariable() throws CDIException {
-		Session session = (Session)getTarget().getSession();
-		VariableManager mgr = session.getVariableManager();
-		return mgr.createVariable(this);
-	}
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#createVariable()
+//	 */
+//	public ICDIVariable createVariable() throws CDIException {
+//		Session session = (Session)getTarget().getSession();
+//		VariableManager mgr = session.getVariableManager();
+//		return mgr.createVariable(this);
+//	}
 
 }

@@ -127,7 +127,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 				fVariables = new ArrayList( vars.size() );
 				Iterator it = vars.iterator();
 				while( it.hasNext() ) {
-					fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableDescriptor)it.next() ) );
+					fVariables.add( CVariableFactory.createLocalVariable( this, (ICDIVariableDescriptor)it.next() ) );
 				}
 			}
 			else if ( refreshVariables() ) {
@@ -158,7 +158,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		// add any new locals
 		Iterator newOnes = locals.iterator();
 		while( newOnes.hasNext() ) {
-			fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableDescriptor)newOnes.next() ) );
+			fVariables.add( CVariableFactory.createLocalVariable( this, (ICDIVariableDescriptor)newOnes.next() ) );
 		}
 	}
 

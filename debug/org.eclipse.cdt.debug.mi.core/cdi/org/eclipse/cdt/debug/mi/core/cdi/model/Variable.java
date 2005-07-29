@@ -422,9 +422,17 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	public boolean equals(ICDIVariable var) {
 		if (var instanceof Variable) {
 			Variable variable = (Variable) var;
-			return fMiVar.getVarName().equals(variable.getMIVar().getVarName());
+			return equals(variable);
 		}
 		return super.equals(var);
+	}
+
+	/**
+	 * @param variable
+	 * @return
+	 */
+	public boolean equals(Variable variable) {
+		return fMiVar.getVarName().equals(variable.getMIVar().getVarName());
 	}
 
 	/* (non-Javadoc)

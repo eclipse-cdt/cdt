@@ -65,6 +65,8 @@ public class CRegisterManager {
 
 	private boolean fUseDefaultRegisterGroups = true;
 
+	private CStackFrame fCurrentFrame;
+
 	/** 
 	 * Constructor for CRegisterManager. 
 	 */
@@ -101,7 +103,14 @@ public class CRegisterManager {
 	}
 
 	public IRegisterGroup[] getRegisterGroups( CStackFrame frame ) throws DebugException {
-		return (IRegisterGroup[])fRegisterGroups.toArray( new IRegisterGroup[fRegisterGroups.size()] );
+		IRegisterGroup[] groups = (IRegisterGroup[])fRegisterGroups.toArray( new IRegisterGroup[fRegisterGroups.size()] );
+		if ( getCurrentFrame() != frame ) {
+			for ( int i = 0; i < groups.length; ++i ) {
+				((CRegisterGroup)groups[i]).resetRegisterValues();
+			}
+			setCurrentFrame( frame );
+		}
+		return groups;
 	}
 
 	public void initialize() {
@@ -327,5 +336,13 @@ public class CRegisterManager {
 	
 	protected void setUseDefaultRegisterGroups( boolean useDefaultRegisterGroups ) {
 		fUseDefaultRegisterGroups = useDefaultRegisterGroups;
+	}
+
+	public CStackFrame getCurrentFrame() {
+		return fCurrentFrame;
+	}
+	
+	private void setCurrentFrame( CStackFrame currentFrame ) {
+		fCurrentFrame = currentFrame;
 	}
 }

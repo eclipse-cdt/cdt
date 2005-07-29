@@ -77,10 +77,22 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @param filename
 	 * @param function
 	 * @param name
-	 * @return ICDIVariableDescriptor
+	 * @return ICDIGlobalVariableDescriptor
 	 * @throws CDIException
 	 */
-	ICDIVariableDescriptor getGlobalVariableDescriptors(String filename, String function, String name) throws CDIException;
+	ICDIGlobalVariableDescriptor getGlobalVariableDescriptors(String filename, String function, String name) throws CDIException;
+
+	/**
+	 * Create a variable from the descriptor for evaluation.  A CreatedEvent will be trigger and
+	 * ChangedEvent will also be trigger when the variable is assign a new value.
+	 * DestroyedEvent is fired when the variable is out of scope and automatically
+	 * removed from the manager list.
+	 * 
+	 * @param varDesc ICDIGlobalVariableDescriptor
+	 * @return ICDIGlobalVariable
+	 * @throws CDIException
+	 */
+	ICDIGlobalVariable createGlobalVariable(ICDIGlobalVariableDescriptor varDesc) throws CDIException;
 
 	/**
 	 * Return the register groups.
@@ -88,6 +100,17 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @return ICDIRegisterGroup[]
 	 */
 	ICDIRegisterGroup[] getRegisterGroups() throws CDIException;
+
+	/**
+	 * Create a variable from the descriptor for evaluation.  A CreatedEvent will be trigger and
+	 * ChangedEvent will also be trigger when the variable is assign a new value.
+	 * DestroyedEvent is fired when the variable is out of scope and automatically
+	 * removed from the manager list.
+	 * @param varDesc ICDThreadStorageDesc
+	 * @return
+	 * @throws CDIException
+	 */
+	ICDIRegister createRegister(ICDIRegisterDescriptor varDesc) throws CDIException;
 
 	/**
 	 * Returns whether this target is terminated.

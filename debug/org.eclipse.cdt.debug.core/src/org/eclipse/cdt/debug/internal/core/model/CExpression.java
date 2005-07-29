@@ -31,7 +31,7 @@ import org.eclipse.debug.core.model.IValue;
 /**
  * Represents an expression in the CDI model.
  */
-public class CExpression extends CVariable implements IExpression {
+public class CExpression extends CLocalVariable implements IExpression {
 
 	private String fText;
 

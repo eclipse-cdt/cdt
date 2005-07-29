@@ -1,4 +1,24 @@
 2005-07-28 Mikhail Khodjaiants
+	Bug 104421: Register view can not show correct value when switch between different thread or stack frame.
+	* ICDIRegister.java
+	* ICDIStackFrame.java
+	* ICDITarget.java
+	* ICDIThread.java
+	* ICDIVariable.java
+	* ICDIVariableDescriptor.java
+	* CRegisterManager.java
+	* CExpression.java
+	* CGlobalVariable.java
+	* CIndexedValue.java
+	+ CLocalVariable.java
+	* CRegister.java
+	* CRegisterGroup.java
+	* CStackFrame.java
+	* CValue.java
+	* CVariable.java
+	* CVariableFactory.java
+
+2005-07-28 Mikhail Khodjaiants
 	Bug 103567: breakpoints view of of sync w/CDT CVS HEAD
 	* CBreakpointManager.java
 

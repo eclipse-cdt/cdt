@@ -14,7 +14,9 @@ import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -107,6 +109,32 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			localDescs = mgr.getLocalVariableDescriptors(this);
 		}
 		return localDescs;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#createArgument(org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor)
+	 */
+	public ICDIArgument createArgument(ICDIArgumentDescriptor varDesc) throws CDIException {
+		if (varDesc instanceof ArgumentDescriptor) {
+			Session session = (Session)getTarget().getSession();
+			VariableManager mgr = session.getVariableManager();
+			return mgr.createArgument((ArgumentDescriptor)varDesc);
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#createLocalVariable(org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor)
+	 */
+	public ICDILocalVariable createLocalVariable(ICDILocalVariableDescriptor varDesc) throws CDIException {
+		if (varDesc instanceof ArgumentDescriptor) {
+			return createArgument((ICDIArgumentDescriptor)varDesc);
+		} else if (varDesc instanceof LocalVariableDescriptor) {
+			Session session = (Session)getTarget().getSession();
+			VariableManager mgr = session.getVariableManager();
+			return mgr.createLocalVariable((LocalVariableDescriptor)varDesc);			
+		}
+		return null;
 	}
 
 	/**

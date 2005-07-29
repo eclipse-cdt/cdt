@@ -10,12 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
+import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
+import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
+import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 
 /**
  */
@@ -57,10 +69,34 @@ public class Register extends Variable implements ICDIRegister {
 		return new Register(target, thread, frame, name, fullName, pos, depth, miVar);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#dispose()
+	 */
 	public void dispose() throws CDIException {
 		ICDITarget target = getTarget();
 		RegisterManager regMgr = ((Session)target.getSession()).getRegisterManager();
 		regMgr.destroyRegister(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRegister#getValue(org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame)
+	 */
+	public ICDIValue getValue(ICDIStackFrame context) throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		RegisterManager mgr = session.getRegisterManager();
+		Variable var = mgr.createVariable((StackFrame)context, getQualifiedName());
+		return var.getValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRegister#equals(org.eclipse.cdt.debug.core.cdi.model.ICDIRegister)
+	 */
+	public boolean equals(ICDIRegister register) {
+		if (register instanceof Register) {
+			Register reg = (Register) register;
+			return super.equals(reg);
+		}
+		return super.equals(register);
 	}
 
 }

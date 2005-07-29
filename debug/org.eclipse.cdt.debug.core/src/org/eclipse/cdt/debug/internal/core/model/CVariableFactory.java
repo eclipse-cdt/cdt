@@ -25,12 +25,12 @@ import org.eclipse.core.runtime.Path;
  */
 public class CVariableFactory {
 
-	public static CVariable createVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject ) {
-		return new CVariable( parent, cdiVariableObject );
+	public static CLocalVariable createLocalVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject ) {
+		return new CLocalVariable( parent, cdiVariableObject );
 	}
 
-	public static CVariable createVariableWithError( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject, String message ) {
-		return new CVariable( parent, cdiVariableObject, message );
+	public static CLocalVariable createLocalVariableWithError( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject, String message ) {
+		return new CLocalVariable( parent, cdiVariableObject, message );
 	}
 
 	public static IGlobalVariableDescriptor createGlobalVariableDescriptor( final String name, final IPath path ) {

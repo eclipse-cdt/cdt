@@ -44,9 +44,9 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 		 * GDB time to respond. In the end perhaps we want a UI for this. As it 
 		 * is, let's just make up a number that's 5 seconds for us plus one 
 		 * second for every 128 entries. */
-		int timeout = variable.getMIVar().getNumChild() * 8 + 5000;
+		int timeout = getVariable().getMIVar().getNumChild() * 8 + 5000;
 
-		return variable.getChildren(timeout);
+		return getVariable().getChildren(timeout);
 	}
 
 	/**
@@ -60,6 +60,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 		//}
 
 		// Overload for registers.
+		Variable variable = getVariable();
 		if (variable instanceof Register) {
 			ICDIVariable[] vars = getVariables();
 			

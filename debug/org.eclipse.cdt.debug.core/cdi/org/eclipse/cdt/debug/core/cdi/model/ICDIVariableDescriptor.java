@@ -79,17 +79,6 @@ public interface ICDIVariableDescriptor extends ICDIObject {
 	ICDIVariableDescriptor getVariableDescriptorAsType(String type) throws CDIException;
 
 	/**
-	 * Create a Variable for evaluation.  A CreatedEvent will be trigger and
-	 * ChangedEvent will also be trigger when the variable is assign a new value.
-	 * DestroyedEvent is fired when the variable is out of scope and automatically
-	 * removed from the manager list.
-	 * @param var
-	 * @return ICDIVariable
-	 * @throws CDIException
-	 */
-	ICDIVariable createVariable() throws CDIException;
-
-	/**
 	 * Returns true if the variable Object are the same,
 	 * For example event if the name is the same because of
 	 * casting this may return false;

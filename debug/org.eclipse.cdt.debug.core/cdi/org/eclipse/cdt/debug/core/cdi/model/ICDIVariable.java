@@ -56,14 +56,6 @@ public interface ICDIVariable extends ICDIVariableDescriptor {
 	void setValue(ICDIValue value) throws CDIException;
 	
 	/**
-	 * Set the format of the variable.
-	 * 
-	 * @param format - @see ICDIFormat
-	 * @throws CDIException if this method fails.
-	 */
-	void setFormat(int format) throws CDIException;
-
-	/**
 	 * Remove the variable from the manager list.
 	 * 
 	 * @param var

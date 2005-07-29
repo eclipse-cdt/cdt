@@ -241,7 +241,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	}
 
 	private void invalidate() {
-		if (fRegisters == null) {
+		if ( fRegisters == null ) {
 			return;
 		}
 		for ( int i = 0; i < fRegisters.length; ++i ) {
@@ -250,5 +250,16 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 			}
 		}
 		fRegisters = null;
+	}
+
+	public void resetRegisterValues() {
+		if ( fRegisters == null ) {
+			return;
+		}
+		for ( int i = 0; i < fRegisters.length; ++i ) {
+			if ( fRegisters[i] != null ) {
+				((CRegister)fRegisters[i]).invalidateValue();
+			}
+		}
 	}
 }

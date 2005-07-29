@@ -385,6 +385,12 @@ class UpdateManagedProject12 {
 						String name = optRef.getAttribute(IOption.DEFAULT_VALUE);
 						// Convert it to the ID
 						String idValue = newOpt.getEnumeratedId(name);
+						if (idValue == null) {
+							// If the name does not match one of the enumerations values, probably because
+							// the list of enumerands has changed, set the name to be the name used for the 
+							// enumeration's default value
+							name = (String)newOpt.getDefaultValue();
+						}
 						configuration.setOption(tool, newOpt, idValue != null ? idValue : name);
 						break;
 					case IOption.STRING_LIST:

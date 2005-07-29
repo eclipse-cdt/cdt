@@ -200,7 +200,7 @@ public class Target extends SessionObject implements ICDITarget {
 	/**
 	 * Called when stopping because of breakpoints etc ..
 	 */
-	public void updateState(int newThreadId) {
+	public synchronized void updateState(int newThreadId) {
 		Thread[] oldThreads = currentThreads;
 
 		// If we use "info threads" in getCThreads() this
@@ -338,7 +338,7 @@ public class Target extends SessionObject implements ICDITarget {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThreads()
 	 */
-	public ICDIThread[] getThreads() throws CDIException {
+	public synchronized ICDIThread[] getThreads() throws CDIException {
 		if (currentThreads.length == 0) {
 			currentThreads = getCThreads();
 		}

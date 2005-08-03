@@ -405,10 +405,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String[] getLibsForConfiguration(String extension) {
 		Vector libs = new Vector();
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			if (tool.producesFileType(extension)) {
+		ITool tool = getDefaultConfiguration().getTargetTool();
+		if(tool == null)
+			tool = getToolFromOutputExtension(extension);
+			
+		if(tool != null){
 				IOption[] opts = tool.getOptions();
 				// Look for the lib option type
 				for (int i = 0; i < opts.length; i++) {
@@ -452,7 +453,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 						continue;
 					}
 				}
-			}
 		}
 		return (String[])libs.toArray(new String[libs.size()]);
 	}
@@ -739,12 +739,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String[] getUserObjectsForConfiguration(String extension) {
 		Vector objs = new Vector();
-		// Get all the tools for the current config
-		ITool[] tools = getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			// The tool is OK for this project nature
-			if (tool.producesFileType(extension)) {
+		ITool tool = getDefaultConfiguration().getTargetTool();
+		if(tool == null)
+			tool = getToolFromOutputExtension(extension);
+			
+		if(tool != null){
 				IOption[] opts = tool.getOptions();
 				// Look for the user object option type
 				for (int i = 0; i < opts.length; i++) {
@@ -775,7 +774,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 						continue;
 					}
 				}
-			}
 		}
 		return (String[])objs.toArray(new String[objs.size()]);
 	}

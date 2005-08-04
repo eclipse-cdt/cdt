@@ -1,3 +1,8 @@
+2005-08-04 Alain Magloire
+	Part fix for PR 100992: The signature was incorrect for structure/unions.
+	
+	* src/org/eclipse/cdt/debug/internal/ui/actions/ToggleBreakpointAdapter.java
+
 2005-07-13 Mikhail Khodjaiants
 	Fixed the Memory view leaks.
 	* MemoryControlArea.java

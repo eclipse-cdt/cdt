@@ -394,7 +394,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		StringBuffer name = new StringBuffer();
 		String methodName = method.getElementName();
 		ICElement parent = method.getParent();
-		while ( parent != null && ( parent.getElementType() == ICElement.C_NAMESPACE || parent.getElementType() == ICElement.C_CLASS ) ) {
+		while ( parent != null && ( parent.getElementType() == ICElement.C_NAMESPACE || parent.getElementType() == ICElement.C_CLASS )
+				|| parent.getElementType() == ICElement.C_STRUCT || parent.getElementType() == ICElement.C_UNION) {
 			name.append( parent.getElementName() ).append( "::" ); //$NON-NLS-1$
 			parent = parent.getParent();
 		}

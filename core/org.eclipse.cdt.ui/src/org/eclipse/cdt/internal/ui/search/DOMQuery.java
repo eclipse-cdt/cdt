@@ -143,7 +143,8 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	        }
 		}
 		
-		if ((searchPattern != null || matches == null || matches.size() == 0) && (foundNames == null || foundNames.length == 0)) {
+		// if the searchPattern is not null, and there were no matches from the index, and there were no matches from the DOM AST then do a basic index search with the searchPattern String
+		if (searchPattern != null && (matches == null || matches.size() == 0) && (foundNames == null || foundNames.length == 0)) {
         	// last try: search the index for the selected string, even if no name was found for that selection
         	matches = DOMSearchUtil.getMatchesFromSearchEngine( scope, searchPattern, limitTo ); 
 

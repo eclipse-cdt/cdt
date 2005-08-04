@@ -1,3 +1,7 @@
+2005-08-04 Alain Magloire
+	Part fix for PR 100992: The signature was incorrect for structure/unions.
+	* model/org/eclipse/cdt/internal/core/model/CModelBuilder.java
+
 2005-03-02 Alain Magloire
 	Fix PR 84527: PathEntryManager marker jobs were start to often.
 	Scalabilite issue.

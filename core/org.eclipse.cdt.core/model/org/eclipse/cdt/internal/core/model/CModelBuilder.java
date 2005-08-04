@@ -19,7 +19,9 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
+import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -655,7 +657,7 @@ public class CModelBuilder {
 		
 		FunctionDeclaration element = null;
 		
-		if( functionDeclaration instanceof IASTMethod )
+		if( functionDeclaration instanceof IASTMethod && parent instanceof IStructure)
 		{
 			IASTMethod methodDeclaration = (IASTMethod) functionDeclaration;
 			MethodDeclaration methodElement = null;
@@ -700,6 +702,18 @@ public class CModelBuilder {
 		}
 		else // instance of IASTFunction 
 		{
+			if (parent instanceof ITranslationUnit) {
+				String[] names = functionDeclaration.getFullyQualifiedName();
+				StringBuffer buf = new StringBuffer();
+				for (int i = 0; i < names.length; ++i) {
+					if (buf.length() != 0) {
+						buf.append("::"); //$NON-NLS-1$
+					}
+					buf.append(names[i]);
+				}
+				name = buf.toString();
+			}
+
 			FunctionDeclaration functionElement = null;
 			if (functionDeclaration.hasFunctionBody())
 			{				

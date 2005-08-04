@@ -620,6 +620,7 @@ public class VariableManager extends Manager {
 					//throw new MI2CDIException(e);
 					eventList.add(new MIVarDeletedEvent(mi, varName));
 				}
+				variable.setUpdated(true);
 				for (int j = 0; j < changes.length; j++) {
 					String n = changes[j].getVarName();
 					if (changes[j].isInScope()) {
@@ -629,10 +630,50 @@ public class VariableManager extends Manager {
 						eventList.add(new MIVarDeletedEvent(mi, n));
 					}
 				}
+			} else {
+			    variable.setUpdated(false);
 			}
 		}
 		MIEvent[] events = (MIEvent[]) eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
+	}
+
+	public void update(Variable variable) throws CDIException {
+		Target target = (Target)variable.getTarget();
+		MISession mi = target.getMISession();
+		List eventList = new ArrayList();
+		update(target, variable, eventList);
+		MIEvent[] events = (MIEvent[]) eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);		
+	}
+
+	public void update(Target target, Variable variable, List eventList) throws CDIException {
+		MISession mi = target.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		String varName = variable.getMIVar().getVarName();
+		MIVarChange[] changes = noChanges;
+		MIVarUpdate update = factory.createMIVarUpdate(varName);
+		try {
+			mi.postCommand(update);
+			MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+			changes = info.getMIVarChanges();
+		} catch (MIException e) {
+			//throw new MI2CDIException(e);
+			eventList.add(new MIVarDeletedEvent(mi, varName));
+		}
+		variable.setUpdated(true);
+		for (int j = 0; j < changes.length; j++) {
+			String n = changes[j].getVarName();
+			if (changes[j].isInScope()) {
+				eventList.add(new MIVarChangedEvent(mi, n));
+			} else {
+				destroyVariable(variable);
+				eventList.add(new MIVarDeletedEvent(mi, n));
+			}
+		}
 	}
 
 	/**

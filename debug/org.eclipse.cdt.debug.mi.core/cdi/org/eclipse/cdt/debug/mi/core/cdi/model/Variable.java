@@ -79,6 +79,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	String editable = null;
 	String language;
 	boolean isFake = false;
+	boolean isUpdated = true;
 
 	public Variable(VariableDescriptor obj, MIVar v) {
 		super(obj);
@@ -88,6 +89,20 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	public Variable(Target target, Thread thread, StackFrame frame, String n, String q, int pos, int depth, MIVar v) {
 		super(target, thread, frame, n, q, pos, depth);
 		fMiVar = v;
+	}
+
+	public void setUpdated(boolean update) {
+		isUpdated = update;
+	}
+
+	public boolean isUpdated() {
+		return isUpdated;
+	}
+
+	public void update() throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		VariableManager mgr = session.getVariableManager();
+		mgr.update(this);
 	}
 
 	public MIVar getMIVar() {

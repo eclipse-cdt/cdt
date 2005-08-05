@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.ui" id="PathContainerPage" name="%PathContainerPageExtensionPoint"/>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="PathContainerPage" name="Path Container Page"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

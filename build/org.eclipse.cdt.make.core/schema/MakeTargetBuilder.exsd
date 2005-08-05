@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.make.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.make.core" id="MakeTargetBuilder" name="%extensionTargetBuilder.name"/>
+         <meta.schema plugin="org.eclipse.cdt.make.core" id="MakeTargetBuilder" name="Make Target Builder"/>
       </appInfo>
       <documentation>
          This extension point is used to identify builders that support IMakeBuidlerInfo an arguments.

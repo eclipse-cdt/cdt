@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.ui" id="CHelpProvider" name="%cHelpProviderName"/>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="CHelpProvider" name="C Help Provider"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

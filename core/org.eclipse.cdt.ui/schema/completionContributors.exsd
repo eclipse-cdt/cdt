@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.ui" id="completionContributor" name="%completionContributor"/>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="completionContributor" name="Completion Contributor"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

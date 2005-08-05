@@ -119,6 +119,11 @@ public abstract class Conditional extends Parent implements IConditional {
 			}
 		}
 
+		if (count >= line.length()) {
+			arg1 = arg2 = EMPTY;
+			return;			
+		}
+
 		arg1 = line.substring(1, count);
  
 		/* Find the start of the second string.  */
@@ -152,6 +157,10 @@ public abstract class Conditional extends Parent implements IConditional {
 				}
 			}
 		}
-		arg2 = line.substring(0, count);
+		if (count > line.length()) {
+			arg2 = EMPTY;
+		} else {
+			arg2 = line.substring(0, count);
+		}
 	}
 }

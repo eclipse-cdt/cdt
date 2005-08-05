@@ -787,7 +787,12 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			 adapter.equals( IJumpToLine.class ) || 
 			 adapter.equals( IJumpToAddress.class ) ) {
 			try {
-				return (ICStackFrame)getTopStackFrame();
+				// Alain: Put a proper fix later.
+				Object obj = getTopStackFrame();
+				if (obj instanceof ICStackFrame) {
+					return (ICStackFrame)obj;
+				}
+				//return (ICStackFrame)getTopStackFrame();
 			}
 			catch( DebugException e ) {
 				// do nothing
@@ -797,7 +802,12 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			return this;
 		if ( adapter == ICStackFrame.class ) {
 			try {
-				return (ICStackFrame)getTopStackFrame();
+				// Alain: Put a proper fix later.
+				Object obj = getTopStackFrame();
+				if (obj instanceof ICStackFrame) {
+					return (ICStackFrame)obj;
+				}
+				//return (ICStackFrame)getTopStackFrame();
 			}
 			catch( DebugException e ) {
 				// do nothing

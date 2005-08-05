@@ -1,3 +1,9 @@
+2005-08-04 Alain Magloire
+	ClastCastException being throw in CThread.getAdapter(IRunToLine.class);
+	Patch solution to ignore the exception.
+
+	* src/org/eclipse/cdt/debug/internal/core/model/CThread.java
+
 2005-07-29 Mikhail Khodjaiants
 	The registers with errors shouldn't be disposed when the target is suspended.
 	Added synchronization to the "getRegisters" method.

@@ -50,7 +50,7 @@ below with a sample of the possible icons:</p>
 <p>The number beside the thread label is a reference counter, not a 
 thread identification number (TID).</p>
 <p>The CDT displays stack frames as child elements. It displays the reason for 
-the suspension beside the target, (such as end of stepping range, breakpoint 
+the suspension beside the thread, (such as end of stepping range, breakpoint 
 hit, and signal received). When a program exits, the  exit 
 code is displayed.</p>
 
@@ -69,7 +69,7 @@ from Debug view.</p>
     <td align="left" width="211">Terminate </td>
     <td align="left" width="45">
     <img border="0" src="../images/icon_terminate.gif" width="16" height="16"></td>
-    <td align="left" width="638">Ends the selected process</td>
+    <td align="left" width="638">Ends the selected debug session and/or process. The impact of this action depends on the type of the item selected in the Debug view.</td>
   </tr>
   <tr>
     <td align="left" width="211">Disconnect</td>
@@ -82,26 +82,26 @@ debugging attached processes)</td>
     <td align="left" width="211">Remove All Terminated</td>
     <td align="left" width="45">
     <img border="0" src="../images/icon_remove_all.gif" width="16" height="16"></td>
-    <td align="left" width="638">Clears all the killed processes in Debug view</td>
+    <td align="left" width="638">Clears all terminated processes in Debug view</td>
   </tr>
   <tr>
     <td align="left" width="211">Terminate and Remove</td>
     <td align="left" width="45">
     <img border="0" src="../images/icon_terminate_rem.gif" width="16" height="16"></td>
-    <td align="left" width="638">Ends the selected process and remove it from Debug 
+    <td align="left" width="638">Ends the selected debug session and removes it from Debug 
     view</td>
   </tr>
   <tr>
     <td align="left" width="211">Relaunch</td>
     <td align="left" width="45">
     <img border="0" src="../images/icon_relaunch.gif" width="16" height="16"></td>
-    <td align="left" width="638">Restarts the process</td>
+    <td align="left" width="638">Starts a new debug session for the selected process</td>
   </tr>
   <tr>
     <td align="left" width="211">Terminate All</td>
     <td align="left" width="45">
     <img border="0" src="../images/icon_terminate_all.gif" width="16" height="16"></td>
-    <td align="left" width="638">Ends all active processes in Debug view</td>
+    <td align="left" width="638">Ends all active debug sessions in Debug view</td>
   </tr>
 </table>
 

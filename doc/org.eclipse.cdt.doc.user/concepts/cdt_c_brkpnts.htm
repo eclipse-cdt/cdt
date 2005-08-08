@@ -11,21 +11,24 @@
 <body>
 <h1>Breakpoints</h1>
 
-<p>A breakpoint suspends the execution of a thread at the location where the breakpoint is set.
-To set a breakpoint, right-click in the frame on the left side of an editor beside
-the line where you want the breakpoint, then choose <b>Add Breakpoint</b>.
+<p>A breakpoint suspends the execution of a program at the location where the breakpoint is set.
+To set a line breakpoint, right-click in the marker bar area on the left side of an editor beside
+the line where you want the program to be suspended, then choose <b>Toggle Breakpoint</b>. You can 
+also double-click on the marker bar next to the source code line. A new breakpoint marker appears 
+on the marker bar, directly to the left of the line where you added the breakpoint. Also, the new 
+breakpoint appears in the Breakpoints view list.
 </p>
 <p>Once set, a breakpoint can be enabled and disabled by right-clicking on its icon or by
 right-clicking on its description in the <b>Breakpoints</b> view.
 </p>
 
 <ul>
-<li>When a breakpoint is enabled, it causes a thread to suspend whenever it is hit. 
+<li>When a breakpoint is enabled, it causes the program to suspend whenever it is hit. 
 Enabled breakpoints are indicated with a blue  
 <img src="../images/icon_breakpoint_obj.gif" alt="enabled breakpoint" border="0"> circle. 
 Enabled breakpoints that are successfully installed 
 are indicated with a checkmark overlay.</li>
-<li>When a breakpoint is disabled, it will not cause threads to suspend. 
+<li>When a breakpoint is disabled, it will not affect the execution of the program. 
 Disabled breakpoints are indicated with a white 
 <img src="../images/icon_breakpoint_disable.gif" alt="disabled breakpoint" border="0"> circle.<br>
 <img border="0" src="../images/add_breakpoint.png" ALT="Editor view with cursor highlighting breakpoint" width="453" height="335">
@@ -34,9 +37,6 @@ Disabled breakpoints are indicated with a white
 
 
 
-<p>Debugging breakpoints are displayed in the marker bar in the editor area 
-and in the <b>Breakpoints</b> view.
-</p>
 <p><b>Note: </b>Execution will also suspend 
 if <b>Stop at main() on startup</b> is enabled
 on the <b>Launch Configuration</b> dialog.

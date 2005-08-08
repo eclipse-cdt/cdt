@@ -507,7 +507,7 @@
    <extension point="org.eclipse.core.runtime.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.asmSource"
-       file-extensions="S,s,asm"/>
+       file-extensions="s,asm"/>
    </extension> 
 
    <extension point="org.eclipse.core.runtime.contentTypes"> 

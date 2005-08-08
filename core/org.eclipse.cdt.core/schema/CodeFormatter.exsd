@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="CodeFormatter" name="CodeFormatter.name"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="CodeFormatter" name="Code Formatter"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]

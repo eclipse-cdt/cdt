@@ -99,9 +99,11 @@ public class GoToNextPreviousMemberAction extends TextEditorAction {
      * @return Found offset or actual.
      */
     private static int getNextOffset(Integer[] offsets, int actualOffset) {
-        if (actualOffset < offsets[0].intValue())
-        {
-            return offsets[0].intValue();
+    	if (offsets.length > 0) {
+        	if (actualOffset < offsets[0].intValue())
+        	{
+        		return offsets[0].intValue();
+        	}
         }
         for (int i = 0; i < offsets.length - 1; i++) {
             if (offsets[i].intValue() == actualOffset) {
@@ -121,10 +123,12 @@ public class GoToNextPreviousMemberAction extends TextEditorAction {
      * @return Found offset or actual.
      */
     private static int getPreviousOffset(Integer[] offsets, int actualOffset) {
-        if (actualOffset > offsets[offsets.length - 1].intValue())
-        {
-            return offsets[offsets.length - 1].intValue();
-        }
+    	if (offsets.length > 0) {
+    		if (actualOffset > offsets[offsets.length - 1].intValue())
+    		{
+    			return offsets[offsets.length - 1].intValue();
+    		}
+    	}
         for (int i = 1; i < offsets.length; i++) {
             if (offsets[i].intValue() == actualOffset) {
                 return offsets[i - 1].intValue();

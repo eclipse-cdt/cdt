@@ -1,3 +1,7 @@
+2005-08-08 Alain Magloire
+	Fix PR 106340: ArrayOutOfBoundException
+	* src/org/eclipse/cdt/internal/ui/actions/GoToNextPreviousMemberAction.java
+
 2005-07-28 David Inglis
 
 	Disable browsing and hierarchy views/perspectives and open hierarchy action as per

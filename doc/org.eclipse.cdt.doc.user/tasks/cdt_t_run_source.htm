@@ -13,44 +13,27 @@
 
 <h1>Specifying the location of source files</h1>
 
-<p>You can specify the location of source files used when debugging a C or C++ 
-application. By default, this information is taken from the build path of your 
-project.</p>
+<p>You can specify the locations of source files used when debugging a C or C++ 
+application. By default, this information is taken from your project.</p>
 
-<p>To specify the location of source files:</p>
+<p>To specify the locations of source files:</p>
 
 <ol>
   <li>In  the C/C++ Projects view, select a project.</li>
   <li>Click <b>Run &gt; Run</b> or <b>Run &gt; Debug</b>.</li>
   <li>In the <b>Configurations</b> box, expand <b>C/C++ Local</b>.</li>
   <li>Select a run or debug configuration.</li>
-  <li>Click the <b>Source</b> tab.<p>The Generic Source Locations list shows 
-  the location of the project selected in the C/C++ Projects view and any 
-  referenced projects.</li>
-	<li>To add an existing source locations:  
+  <li>Click the <b>Source</b> tab.</li>
+	<li>To add a source container to the source locations list:  
 	<ul>
-		<li>Click <b>Add</b> to be prompted to select a process from a list at run-time.</li>
-	    <li>In the <b>Add Source Location</b> dialog box, select a location type.</li>
-    	<li>Click <b>Next</b>.</li>
-	    <li>Do one of the following:</li>
-		    <ul><li>Select an existing project in your workspace. Click <b>Finish</b>.</li>
-			    <li>Specify a location in your file system. Click <b>Finish</b>.</li></ul>
-			</ul>
-		<li>You can change the order of source locations are used by selecting a location and clicking 
-			the <b>Up</b> or <b>Down</b> buttons.</li>
-		<li>You can remove a source location by selecting the location and clicking the <b>Remove</b> button.</li>
-		<li>To search for duplications in your source locations select the <b>Search for duplicate source files</b> checkbox.</li>
-	    <li>Click <b>Run</b> or do the following, as required:<ul><li>To specify the 
-		    execution arguments that an application uses and the working directory for a run 
-		    configuration, see <a href="cdt_t_run_arg.htm">Specifying execution arguments</a>.</li>
-		<li>To set the environment variables and values to use when an application runs, 
-			see <a href="cdt_t_run_env.htm"> Setting environment variables</a>.</li>
-		<li>To select a debugger to use when debugging an application, see
-			<a href="cdt_t_run_dbg.htm">Selecting a debugger</a>.</li>
-		<li>To specify where the run configuration is stored, how you access it, and 
-			the perspective to open when running an application, see
-			<a href="cdt_t_run_com.htm">Specifying the location of the run configuration</a>.</li>
-  </ul>
+		<li>Click <b>Add</b> to open the <b>Add Source</b> dialog box</li>
+	    <li>Select a container type.</li>
+    	<li>Select a container from the list of available containers of the selected type.</li>
+    </ul>
+	<li>You can remove or modify a source container by selecting a container and clicking the <b>Remove</b> or <b>Edit</b> button.</li>
+	<li>You can change the order of source containers by selecting a container and clicking 
+		the <b>Up</b> or <b>Down</b> buttons.</li>
+	<li>To search for duplications in your source locations select the <b>Search for duplicate source files on the path</b> checkbox.</li>
 </ol>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">

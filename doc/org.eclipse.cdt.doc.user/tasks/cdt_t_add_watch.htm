@@ -18,28 +18,20 @@
 application whenever the value of a given expression changes, without specifying 
 where this may happen. Unlike breakpoints which are line-specific watchpoints 
 are associated with files. They take effect whenever a specified condition is 
-true regardless of when or where it occurred.</p>
+true regardless of when or where it occurred.
+To set a watchpoint on a global variable highlight the variable in the editor or 
+select it in the outline view. </p>
 
-<p>To add a watchpoint:</p>
+<p>To set a watchpoint on a global variable:</p>
 
 <ol>
-  <li>Click <b>Run &gt; Add C/C++ Watchpoint</b>.</li>
-  <ol>
-    <li>If <b>Add C/C++ Watchpoint</b> is not listed on the Run menu, select <b>Window 
-    &gt; Customize Perspective</b>.</li><li>In the Customize Perspective dialog 
-    box, expand <b>Other</b> in the <b>Available Items</b> list.</li><li>Select the <b>C/C++ Debug</b> check box. Click <b>OK</b>.</li>
-  </ol>
-  <li>In the <b>Add C/C++ Watchpoint</b> dialog box, type an expression in the <b>Expression to watch</b> 
-  box. The 
-  expression may be anything that can be evaluated inside an <samp>if</samp> 
-  statement.</li>
+  <li>Highlight the variable in the editor or select it in the outline view.</li>
+  <li>Click <b>Run &gt; Toggle Watchpoint</b>.</li>
   <li>Do any of the following:</li>
   <ul><li>To stop execution when  the watch expression is read, select the
   <b>Read</b> check box.</li>
   <li>To stop execution when  the watch expression is written to, select the <b>Write</b> 
   check box.</li></ul>
-  <li>In the C/C++ editor, open the file that you added the watchpoint to.</li>
-  <li>Click <b>OK</b>.</li>
   <li>The watchpoint appears in the <b>Breakpoints</b> view 
   list.</li>
 </ol>

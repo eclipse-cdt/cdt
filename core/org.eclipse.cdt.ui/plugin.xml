@@ -859,33 +859,35 @@
    </extension> 
    <extension
    		 point="org.eclipse.ui.bindings">
+      <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
+            carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
    	 <key
-            sequence="Ctrl+Shift+F"
+            sequence="M1+M2+F"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.format"/>
      <key
-            sequence="Ctrl+/"
+            sequence="M1+/"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.comment"/>
      <key
-            sequence="Ctrl+\"
+            sequence="M1+\"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.uncomment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>    
      <key
-            sequence="Ctrl+Shift+/"
+            sequence="M1+M2+/"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.add.block.comment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
-            sequence="Ctrl+Shift+\"
+            sequence="M1+M2+\"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.remove.block.comment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>   
      <key
-            sequence="Ctrl+F3"
+            sequence="M1+F3"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.opendef"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
@@ -895,18 +897,18 @@
             commandId="org.eclipse.cdt.ui.edit.opendecl"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
-            sequence="Ctrl+Shift+T"
+            sequence="M1+M2+T"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.navigate.opentype"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
             commandId="org.eclipse.cdt.ui.search.findrefs"
-            sequence="Ctrl+Shift+G"
+            sequence="M1+M2+G"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
             commandId="org.eclipse.cdt.ui.search.finddecl"
-            sequence="Ctrl+G"
+            sequence="M1+G"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <!--key
@@ -915,32 +917,32 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.open.type.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
      <!--key
-            sequence="Ctrl+Shift+H"
+            sequence="M1+M2+H"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.navigate.open.type.in.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
      <key
-            sequence="Ctrl+Shift+N"
+            sequence="M1+M2+N"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.add.include"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
-            sequence="Ctrl+O"
+            sequence="M1+O"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.open.outline"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
-            sequence="Ctrl+Shift+ARROW_DOWN"
+            sequence="M1+M2+ARROW_DOWN"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.next.member"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
-            sequence="Ctrl+Shift+ARROW_UP"
+            sequence="M1+M2+ARROW_UP"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.prev.member"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
-            sequence="Ctrl+Shift+P"
+            sequence="M1+M2+P"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>

@@ -1,3 +1,7 @@
+2005-08-09 Chris Wiebe
+	Fix bug# 106564: platform keybindings
+	plugin.xml
+
 2005-08-08 Alain Magloire
 	Fix PR 106340: ArrayOutOfBoundException
 	* src/org/eclipse/cdt/internal/ui/actions/GoToNextPreviousMemberAction.java

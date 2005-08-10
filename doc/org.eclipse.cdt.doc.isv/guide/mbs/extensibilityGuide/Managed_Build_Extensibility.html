@@ -96,7 +96,7 @@ managed build system and how to extend it.</font></td>
     <td width="50%">11/08/2004 - Version: 2.1.0</td>
   </tr>
   <tr>
-    <td width="50%">7/22/2005 - Version 3.0.0</td>
+    <td width="50%">8/12/2005 - Version 3.0.0</td>
   </tr>
   <tr>
     <td width="50%" rowspan="4">Change History</td>
@@ -136,7 +136,7 @@ managed build system and how to extend it.</font></td>
 <div class="indent"><a href="#_TocSectionGrammar_9">3.9 InputType</a></div>
 <div class="indent"><a href="#_TocSectionGrammar_10">3.10 AdditionalInput </a></div>
 <div class="indent"><a href="#_TocSectionGrammar_11">3.11 OutputType</a></div>
-<div class="indent"><a href="#_TocSectionGrammar_12">3.13 Option Category</a></div>
+<div class="indent"><a href="#_TocSectionGrammar_12">3.12 Option Category</a></div>
 <div class="indent"><a href="#_TocSectionGrammar_13">3.13 Option</a></div>
 <div class="indent"><a href="#_TocSectionGrammar_14">3.14 List Option Value</a></div>
 <div class="indent"><a href="#_TocSectionGrammar_15">3.15 Enumerated Option Value</a></div>
@@ -163,9 +163,10 @@ managed build system and how to extend it.</font></td>
 <div class="indent"><a href="#_TocSectionTutorial_7">6.7 Adding a Builder</a></div>
 <div class="indent"><a href="#_TocSectionTutorial_8">6.8 Adding a TargetPlatform</a></div>
 <div class="indent"><a href="#_TocSectionTutorial_9">6.9 Adding a Tool</a></div>
-<div class="indent"><a href="#_TocSectionTutorial_10">6.10 Testing the ProjectType</a></div>
-<div class="indent"><a href="#_TocSectionTutorial_11">6.11 Adding Tool Options</a></div>
-<div class="indent"><a href="#_TocSectionTutorial_12">6.12 Taking the Next Step</a></div>
+<div class="indent"><a href="#_TocSectionTutorial_10">6.10 Adding Input and Output Types</a></div>
+<div class="indent"><a href="#_TocSectionTutorial_11">6.11 Testing the ProjectType</a></div>
+<div class="indent"><a href="#_TocSectionTutorial_12">6.12 Adding Tool Options</a></div>
+<div class="indent"><a href="#_TocSectionTutorial_13">6.13 Taking the Next Step</a></div>
 </div>
 <div class="indent"><a href="#_TocSectionDynamic">7 Adding Dynamic Behavior</a>
 <div class="indent"><a href="#_TocSectionDynamic_1">7.1 Overview</a></div>
@@ -204,13 +205,13 @@ functionality.&nbsp; Note that these documents are not necessarily kept up to
 date after the initial design, where-as this document attempts to be up to date.&nbsp; 
 Here is a list of some of the documents:</p>
 <ul>
-	<li>Custom Build Steps (#???)</li>
-	<li>Tool-chain Installation Support (#???)</li>
-	<li>Tool-chain Multi-version Support (#???)</li>
-	<li>Build Environment Varaibles (#???)</li>
-	<li>Build Macros (#???)</li>
-	<li>Custom Project Wizard Pages (#???)</li>
-	<li>Shared Tool Options (#???)</li>
+	<li>Custom Build Steps (#88922)</li>
+	<li>Tool-chain Installation Support (#87478)</li>
+	<li>Tool-chain Multi-version Support (#89872)</li>
+	<li>Build Environment Variables (#88497)</li>
+	<li>Build Macros (#89210)</li>
+	<li>Custom Project Wizard Pages (#90334)</li>
+	<li>Shared Tool Options (#90481)</li>
 </ul>
 <p class="subsection"><a name="_TocSectionIntro_1">1.1 Who Needs This
 Information</a></p>
@@ -1201,7 +1202,17 @@ of the build artifact name supplied by the user.&nbsp; This will work when the
 user uses one of the extensions expected by the tool, but will not work if they 
 do not.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">MBS supports multiple versions of 
-a tool-chain???</p>
+a tool-chain.&nbsp; The <i>versionsSupported</i><b> </b>attribute contains a 
+list of supported versions of a particular tool chain. This indicates that there 
+is no need to perform a conversion when user imports/loads a project with one of 
+the supported tool chain versions. When a tool integrator decides to no longer 
+support a version of a tool chain, they continue to ship the old tool chain 
+definition and specify the id with version number of the tool chain definition 
+to convert to in the <i>convertToId</i> attribute.&nbsp; If changes to the project 
+information need to be performed by the conversion, the tool chain must provide 
+a converter extension to perform the conversion.&nbsp; If no converter extension is 
+provided, then there won&#8217;t be any conversion.&nbsp; See § 8.2 for additional 
+information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">A tool-chain may define a 
 configuration level environment variable provider in the <i>configurationEnvironmentSupplier</i> attribute.&nbsp; See § 
 7.6 for additional information.<br>
@@ -1438,7 +1449,9 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
-      &nbsp;</td>
+      Specifies a comma delimited list of versions of this tool-chain that can 
+		be loaded without invoking a converter.&nbsp; See § 8.2 for additional 
+		information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1452,7 +1465,9 @@ the schema table below.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
-      &nbsp;</td>
+      The identifier of a tool-chain, that tool-chains loaded using this 
+		definition should be converted to. MBS will invoke the proper converter.&nbsp; 
+		See § 8.2 for additional information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top" height="49">
@@ -1515,6 +1530,17 @@ value of unsupported file-context macros to their actual macro value. In this
 case, a separate rule for each file will be generated when file-specific macros 
 are used.&nbsp; See the gnu tool-chain for an example of setting these 
 attributes for gnu make.</p>
+<p class="MsoNormal" style="margin-top:6.0pt">MBS supports multiple versions of 
+a builder.&nbsp; The <i>versionsSupported</i><b> </b>attribute contains a list 
+of supported versions of a particular builder. This indicates that there is no 
+need to perform a conversion when user imports/loads a project with one of the 
+supported builder versions. When a tool integrator decides to no longer support 
+a version of a builder, they continue to ship the old builder definition and 
+specify the id with version number of the new builder to convert to in the <i>
+convertToId</i> attribute.&nbsp; If changes to the project information need to be 
+performed by the conversion, the tool chain definition must provide a converter 
+extension to perform the conversion.&nbsp; If no converter extension is provided, 
+then there won&#8217;t be any conversion.&nbsp; See § 8.2 for additional information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional builder attributes are described in 
 the schema table below.</p>
 <p class="subsection">3.6.1 Schema</p>
@@ -1942,7 +1968,9 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      Specifies a comma delimited list of versions of this Builder that can be 
+		loaded without invoking a converter.&nbsp; See § 8.2 for additional 
+		information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -1956,7 +1984,9 @@ track of this specific builder.</font></td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      The identifier of a Builder that Builders loaded using this definition 
+		should be converted to. MBS will invoke the proper converter.&nbsp; See 
+		§ 8.2 for additional information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2079,7 +2109,7 @@ the workspace.</p>
  valign="top">binaryParser</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
- valign="top"><font size="2">The id of the appropriate parser for the build 
+ valign="top">Semi-colon separated list of the<font size="2"> ids of the appropriate parser(s) for the build 
 		artifact</font></td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
@@ -2093,17 +2123,17 @@ tool in the user model. <span style="color:red">&nbsp;</span>A tool must have a
 unique <i>id</i> for the build model, and a <i>name</i> that is displayed to a 
 user through the UI. &nbsp;A tool can be defined as part of a tool-chain, or as an 
 independent specification.</p>
-<p class="MsoNormal" style="margin-top:6.0pt">A tool contains one or more 
+<p class="MsoNormal" style="margin-top:6.0pt">A tool may contain one or more 
 children of type option which define the tool command line settings that can be 
 changed by the user.</p>
-<p class="MsoNormal" style="margin-top:6.0pt">A tool contains one or more 
+<p class="MsoNormal" style="margin-top:6.0pt">A tool may contain one or more 
 children of type optionCategory.&nbsp; These are used to simplify the user&#8217;s 
 managements of the tool&#8216;s settings by dividing the options into a hierarchy of 
 categories. </p>
-<p class="MsoNormal" style="margin-top:6.0pt">A tool contains one or more 
+<p class="MsoNormal" style="margin-top:6.0pt">A tool may contain one or more 
 children of type inputType and outputType.&nbsp; These define the inputs and 
 outputs of the tool in the detail necessary for build file generation.</p>
-<p class="MsoNormal" style="margin-top:6.0pt">A tool contains one or more 
+<p class="MsoNormal" style="margin-top:6.0pt">A tool may contain one or more 
 children of type envVarBuildPath.&nbsp; These specify the names of the 
 environment variables used by the tool for specifying the include and the 
 library paths.</p>
@@ -2126,6 +2156,17 @@ implementer must specify that in the <i>outputFlag</i> attribute.</p>
 attribute allows the implementer to specify a class that implements the <code>IManagedCommandLineGenerator</code>
 interface.&nbsp; An explanation of how to replace the default command line 
 generator can be found in § 7.4. </p>
+<p class="MsoNormal" style="margin-top:6.0pt">MBS supports multiple versions of 
+a tool.&nbsp; The <i>versionsSupported</i><b> </b>attribute contains a list of 
+supported versions of a particular tool. This indicates that there is no need to 
+perform a conversion when user imports/loads a project with one of the supported 
+tool versions. When a tool integrator decides to no longer support a version of 
+a tool, they continue to ship the old tool definition and specify the id with 
+version number of the tool to convert to in the <i>convertToId</i> attribute.&nbsp; 
+If changes to the project information need to be performed by the conversion, 
+the tool chain must provide a converter extension to perform the conversion.&nbsp; If 
+no converter extension is provided, then there won&#8217;t be any conversion.&nbsp; 
+See § 8.2 for additional information.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Additional tool attributes are 
 described in the schema table below.</p>
 <p class="subsection">3.8.1 Schema</p>
@@ -2392,7 +2433,9 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      Specifies a string that is written to the build output prior to each 
+		invocation of the tool. The default value is &#8220;Invoking tool-name 
+		(tool-id)&#8230;&#8221;</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2406,7 +2449,9 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      Path to a 16x16 pixel big icon that is to be displayed instead of the 
+		default icon. The path is relative to the plug-in directory which 
+		defines the build definitions.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2420,7 +2465,9 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      Specifies a comma delimited list of versions of this tool that can be 
+		loaded without invoking a converter.&nbsp; See § 8.2 for additional 
+		information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2434,7 +2481,9 @@ Gnu C compiler, or g++ for the Gnu C++ compiler.</td>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      The identifier of a tool that tools loaded using this definition should be 
+		converted to. MBS will invoke the proper converter.&nbsp; See § 8.2 for 
+		additional information.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
@@ -2494,11 +2543,12 @@ content types:</p>
 	<li>
 	<p class="MsoNormal" style="margin-top:6.0pt">cSource&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .c</li>
 	<li>
-	<p class="MsoNormal" style="margin-top:6.0pt">cHeader&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .h</li>
+	<p class="MsoNormal" style="margin-top:6.0pt">cHeader&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .h</li>
 	<li>
-	<p class="MsoNormal" style="margin-top:6.0pt">cxxSource&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .cpp,.cxx,.cc</li>
+	<p class="MsoNormal" style="margin-top:6.0pt">cxxSource&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	.C,.cpp,.cxx,.cc</li>
 	<li>
-	<p class="MsoNormal" style="margin-top:6.0pt">cxxHeader&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .hpp,.hh</li>
+	<p class="MsoNormal" style="margin-top:6.0pt">cxxHeader&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .hpp,.hh,.hxx</li>
 	<li>
 	<p class="MsoNormal" style="margin-top:6.0pt">asmSource&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .asm,.s</li>
 	<li>
@@ -2508,7 +2558,7 @@ content types:</p>
 	<li>
 	<p class="MsoNormal" style="margin-top:6.0pt">staticLibrary&nbsp;&nbsp;&nbsp;&nbsp; .lib,.a</li>
 	<li>
-	<p class="MsoNormal" style="margin-top:6.0pt">sharedLibrary&nbsp;&nbsp; .dll,.so</li>
+	<p class="MsoNormal" style="margin-top:6.0pt">sharedLibrary&nbsp;&nbsp; .dll,.so,.dylib</li>
 </ul>
 <p class="MsoNormal" style="margin-top:6.0pt">Calculated dependencies of an 
 input type are not described by a separate input type, but are instead 
@@ -3184,7 +3234,9 @@ categories. This is the ID of the owner of the category.</p>
       <td
  style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top">
-      &nbsp;</td>
+      Path to a 16x16 pixel big icon that is to be displayed instead of the 
+		default icon.&nbsp; The path is relative to the plug-in directory which 
+		defines the build definitions.</td>
       <td
  style="border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; width: 13%; vertical-align: top; border-left-style:none; border-left-width:medium; border-top-style:none; border-top-width:medium; padding-left:5.4pt; padding-right:5.4pt; padding-top:0in; padding-bottom:0in">
       no</td>
@@ -3315,7 +3367,7 @@ options the option value is appended to the value of the <i>command </i>
 attribute. The <i>command </i>attribute can be empty in order to support an area 
 for typing in additional options. &nbsp;For enumerated options, the <i>command</i> 
 associated with the selected enumerated value is used, not the command defined 
-in the option. For boolan options, the <i>command</i> is used if the option 
+in the option. For boolean options, the <i>command</i> is used if the option 
 value is set to true, otherwise the value of the <i>commandFalse</i> attribute 
 is used. For list options, the <i>command</i> is applied to each element of the 
 list.</p>
@@ -3852,7 +3904,7 @@ Configuration</p>
 user model.&nbsp; It is a place to store build attributes of individual resources 
 that are different from the configuration as a whole.&nbsp; The resourceConfiguration 
 element can have a tool child that contains the overridden attributes and 
-options.</p>
+options, and/or a tool child that contains a custom build step for the resource.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The resourceConfiguration 
 attributes are specified in the schema table below.</p>
 <p class="subsection">3.16.1 Schema</p>
@@ -4068,9 +4120,8 @@ string containing the three version tokens </td>
 </table>
 </a>
 <p class="subsection"><a name="_TocSectionGrammar_19">3.19 Dynamic Element Provider</a></p>
-<p>Tool integrators may supply this element to dynamically provided the 
-defintions that are otherwise specified in the buildDefinitions extension point.&nbsp; 
-Each configuration element returned from this IMangedConfigElementProvider 
+<p>Tool integrators may supply this element to dynamically provide the definitions that are otherwise specified in the buildDefinitions extension point.&nbsp; 
+Each configuration element returned from this IManagedConfigElementProvider 
 interface is treated as if it were a direct sub-child of a buildDefinitions 
 extension. As such it should conform to buildDefinitions.exsd. The only 
 exception is it should not contain nested dynamicElementProvider elements.</p>
@@ -4133,7 +4184,8 @@ presents to the user. The figure below shows how the list of project types is
 populated with any projectType whose <var>isTest</var> and <var>isAbstract</var>
 attribute are set to <code>false</code>. The value of the projectType's <var>name</var>
 attribute is
-used to populate the drop-down list-box selection widget. Similarly,
+used to populate the drop-down list-box selection widget. See § 2.1.1 for a 
+description of creating a new project.&nbsp; Similarly,
 the configuration
 check list is populated with all the defined configurations associated
 with the selected projectType. <br>
@@ -4146,7 +4198,7 @@ with the selected projectType. <br>
 <h5>Figure 3 New project wizard</h5>
 <p class="subsection"><a name="_TocSectionUIElements_2">4.2 Build Property Page</a></p>
 <p>The contents of the build property page for a project are created by
-examining the tools, option categories, and options defined for the
+examining the tool-chains, tools, option categories, and options defined for the
 current configuration. In this section we will look at how
 the user interface interprets the information in the build model to
 display options to the user.</p>
@@ -4165,12 +4217,12 @@ library built with GCC that has two configurations; &#8216;Release&#8217; (not s
  alt="Project property page configuration selection/edit area"></p>
 <h5>Figure 4 Configuration selection</h5>
 <p>Users change the build settings for options associated with
-categories and tools. The UI relies on the information in the build
+tool-chains and tools. The UI relies on the information in the build
 settings model for that information. The figure below shows how the
 tool
-list, displayed in a tree view, is populated. Tools are the root
+list, displayed in a tree view, is populated. Tools and tool-chain categories are the root
 elements of the tree. Categories are displayed as leaves of the tool
-they belong to. In both cases, the name defined in the plug-in manifest
+they belong to, or as root elements when they belong to a tool-chain. In all cases, the name defined in the plug-in manifest
 is used as the text of the tree elements. Note that the tool uses an
 externalized string to identify its name to help internationalize a
 tool
@@ -4233,9 +4285,9 @@ take effect in the UI.</p>
 generator. The build file generator is one of the clients of the
 information stored in the build settings model. You can use the default
 build file generator that is supplied with the CDT (for Gnu makefiles), or 
-replace it with a customized generator depending on the variant of build utility that you wish to
-use. The relationship between the builder, the build file generator, and
-the dependency calculator are shown in the model below.</p>
+replace it with a customized generator depending on the variant of build utility 
+that you wish to use. The relationship between the builder, the build file 
+generator, and a compiler dependency calculator are shown in the model below.</p>
 <p>
 <img style="border: 0px solid ;"
  src="./image031.gif"
@@ -4391,9 +4443,7 @@ header file in the dependency list. This is important because if the
 header file is moved or deleted, make will try to find a rule to build
 the dependency and if a dummy target is not present, it will stop.<br>
 </p>
-The build file generator places the all of these dependencies
-in
-a separate makefile fragment for each file participating in the build.
+The build file invokes the dependency generator command to generate a separate makefile fragment for each file participating in the build.
 The figure below
 shows the fragment for&nbsp; <span style="font-family: monospace;">Class1</span><code></code>.
 <p>
@@ -4465,7 +4515,7 @@ extension point defined in the <code>org.eclipse.cdt.managedbuilder.core</code>
 plug-in. This requires that you have access to the extension point and the 
 schema that describes it, which are available only from the SDK
 version of CDT. To confirm that the SDK is installed, select <span
- style="font-weight: bold;">Help &gt; About Eclipse Platform &gt;
+ style="font-weight: bold;">Help &gt; About Eclipse SDK &gt;
 Feature Details</span> and check that "Eclipse C/C++ Development Tools
 (Source)" and "Eclipse C/C++ Development Tools SDK" appear in the list.
 If they do not, simply install the SDK from the same update site you
@@ -4513,12 +4563,12 @@ you have a brand new project with an empty manifest file. You are now
 ready to add tool definitions to the managed build system by
 extending the <code>buildDefinitions</code> extension point.</p>
 <ol style="margin-top: 0in;" start="1" type="1">
-  <li>If the xml file for the plugin was not opened by default when you
+  <li>If the MANIFEST.MF file for the plugin was not opened by default when you
 switched to the <span style="font-weight: bold;">Plug-in Development</span>
 perspective, double click on the <code>org.eclipse.cdt.example.toolchain</code>
 project in the <span style="font-weight: bold;">Package Explorer</span>
-to expand it. Double click on
-the <span style="font-weight: bold;">plugin.xml</span> file to edit
+to expand it. Click on the expansion icon beside META-INF, and then double click on
+the <span style="font-weight: 700">MANIFEST.MF</span> file to edit
 its contents.</li>
   <li>We have to add a dependency between our project and the <code>org.eclipse.cdt.managedbuilder.core</code>
 plug-in where the extension point is defined. Click on the <b>Dependencies</b>
@@ -4591,14 +4641,15 @@ example.toolchain.configuration.release</code>.</li>
   <li>Now set the clean command for the configuration. For the purposes of
 this example, click on the <span style="font-weight: bold;">cleanCommand</span>
 property to edit it and
-enter <code>rm &#8211;f</code>.</li><a name="_TocSectionTutorial_13">
+enter <code>rm &#8211;f</code>.</li>
   <li>Finally, we should supply a default set of error parsers that
 apply to the configuration. Error parsers are used by the CDT to map input
 from the shell back to source code elements. For simplicity, assume
 that all of the default error parsers could be used to understand error
 messages for our new target. In the errorParsers property, add the
-following list <code>org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;<br>
-org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.VCErrorParser</code></li>
+following list <code>org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;<br>
+  org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;<br>
+  org.eclipse.cdt.core.VCErrorParser</code></li>
 </ol>
 <p style="font-weight: normal;" class="subsection">
 <b>
@@ -4694,21 +4745,7 @@ the tool <code>Compiler</code> and make its <span
 projects, although this is not always the case. Locate the <span
  style="font-weight: bold;">natureFilter</span>
 property and select <code>both</code> from the list of choices.</li>
-  <li>Tools declare which file extensions they operate on and,
-optionally, the file extensions they produce. Our imaginary compiler
-only works on files with a &#8216;c&#8217; or &#8216;C&#8217; extension. Locate the <span
- style="font-weight: bold;">sources</span>
-property and set its contents to be a comma-separated list containing <code>c,C</code>.
-Note that there should not be any spaces between the values. Let us
-assume that the output of the compiler is an object module that has the
-extension &#8216;o&#8217;. Set the value of the <span style="font-weight: bold;">outputs</span>
-property of the
-tool to <code>o</code>.</li>
-  <li>The build model needs to know if there are any special file
-extensions that indicate a file is a &#8216;header&#8217; file. Set the <span
- style="font-weight: bold;">headersExtension</span>
-property to be a comma-separated list containing <code>h,H</code>.</li>
-  <li>Tools often have a flag to specify the output of a tool. For the
+  <li>Tools often have a flag to specify the primary output of a tool. For the
 purposes of this example, set the <span style="font-weight: bold;">outputFlag</span>
 property to <code>-o</code>.</li>
   <li>Finally, we want to specify the command that is needed to invoke
@@ -4717,8 +4754,63 @@ real tool, so just enter <code>ccc</code> as the value for the <span
  style="font-weight: bold;">command</span>
 property.</li>
 </ol>
+  <a name="_TocSectionTutorial_18">
+<p style="font-weight: normal;" class="subsection">
+<b>
+<a name="_TocSectionTutorial_10">6.10 Adding Input and Output Types</a></b></p>
+<p style="font-weight: normal;">
+Each tool describes its inputs and outputs in InputType and OutputType elements.&nbsp; </p>
+<ol>
+	<li>
+	<p style="font-weight: normal;">Right click on <b>Compiler</b> to get the 
+	context menu and select <b>New &gt; inputType</b>.&nbsp; Name the inputType
+	<font face="Courier New">Compiler Input</font><font face="Arial"> and make 
+	its<b> id </b></font><font face="Courier New">
+	example.toolchain.compiler.input.</font></p></li>
+	<li>
+	<p style="font-weight: normal;">Our imaginary compiler only works on c 
+	source files. Locate the <span
+ style="font-weight: bold;">sourceContentType</span> property and set it to
+	<font face="Courier New">org.eclipse.cdt.core.cSource</font>.</p></li>
+	<li>
+	<p style="font-weight: normal;">The build model needs to know if there are any special file
+extensions that indicate a file is a &#8216;header&#8217; file. Set the 
+	<span style="font-weight: 700">dependencyContentType</span>
+property to be <code>org.eclipse.cdt.core.cHeader </code><font face="Arial">
+	<code><font face="Arial">and the <span style="font-weight: 700">
+	dependencyCalculator </span>property to be </font></code></font><code>
+	<font face="Courier New">
+	org.eclipse.cdt.managedbuilder.makegen.internal.DefaultIndexerDependencyCalculator</font></code>.
+	</p></li>
+	<li>
+	<p style="font-weight: normal;">Set the <b>primaryInput</b> property to
+	<font face="Courier New">true.</font></p></li>
+	<li>
+	<p style="font-weight: normal;">Right click on <b>Compiler</b> to get the 
+	context menu and select <b>New &gt; outputType</b>.&nbsp; Name the outputType
+	<font face="Courier New">Compiler Output</font><font face="Arial"> and make 
+	its<b> id </b></font><font face="Courier New">
+	example.toolchain.compiler.output.</font></p></li>
+	<li>
+	<p style="font-weight: normal;">Let us
+assume that the output of the compiler is an object module that has the
+extension &#8216;o&#8217;. Set the value of the <span style="font-weight: bold;">outputs</span>
+property of the
+tool to <code>o</code>.</p></li>
+	<li>
+	<p style="font-weight: normal;">The object modules created by your compiler 
+	are typically used as a group by another tool, for example a linker or 
+	archiver.&nbsp; Set the <b>buildVariable</b> property to be
+	<font face="Courier New">OBJS. </font><font face="Arial">You would use the 
+	same name as the <span style="font-weight: 700">buildVariable </span>with 
+	the inputType of this other tool</font><font face="Courier New">.</font></p>
+	</li>
+	<li>
+	<p style="font-weight: normal;">Set the <b>primaryOutput</b> property to
+	<font face="Courier New">true.</font></p></li>
+</ol>
 <p class="subsection">
-<a name="_TocSectionTutorial_10">6.10 Testing the ProjectType</a></p>
+<a name="_TocSectionTutorial_11">6.11 Testing the ProjectType</a></p>
 <p>We have now defined enough information to create a project for
 our
 new example project-type, so let&#8217;s go test it out.</p>
@@ -4726,7 +4818,7 @@ new example project-type, so let&#8217;s go test it out.</p>
   <li>Make sure our example project is selected in the <span
  style="font-weight: bold;">Package
 Explorer</span>. Select <span style="font-weight: bold;">Run &gt;
-Debug As &gt; Run-time Workbench</span>
+Debug As &gt; Eclipse Application</span>
 to start a new run-time workbench instance that includes the new tool
 information you have created. You may be prompted to save the resource
 you were editing. If prompted, answer <span style="font-weight: bold;">Yes</span>.<br>
@@ -4780,7 +4872,7 @@ command. That is because we
 have not defined any options yet. It is time to edit the tool 
 definition again.</p>
 <p class="subsection">
-<a name="_TocSectionTutorial_11">6.11 Adding Tool Options</a></p>
+<a name="_TocSectionTutorial_12">6.12 Adding Tool Options</a></p>
 <p>Users expect to be able to change the settings for their build tools through 
 the property page for a project. What they see is controlled by the way options 
 are defined in the tool integration. We will create an option category, and then 
@@ -4812,7 +4904,7 @@ option. Name the option <code>Include paths</code> and set the <span
   </li>
   <li>Set the <span style="font-weight: bold;">valueType</span>
 property to <code>includePath</code> from the list of choices. Please
-refer to &sect; 3.10 for a description of option value types and what
+refer to &sect; 3.13 for a description of option value types and what
 this decision implies. <br>
   </li>
   <li>We expect users to enter paths in this option, so to enable the
@@ -4855,13 +4947,13 @@ debugging your run-time workbench. You should see something like this.</p>
 <h5>Figure 9 MBS property page with tool, category, and options<br>
 </h5>
 <p class="subsection">
-<a name="_TocSectionTutorial_12">6.12 Taking the Next Step</a></p>
+<a name="_TocSectionTutorial_13">6.13 Taking the Next Step</a></p>
 <p>The purpose of the tutorial you just followed was to become familiar with the 
 steps involved in creating a simple tool-chain and to get a feeling for how the 
 choices you make in the specification of options affect the UI. In this section, 
 we will discuss some additional points that you need to consider before 
 specifying your own tool integration.</p>
-<p class="subsection">6.12.1 Adding More
+<p class="subsection">6.13.1 Adding More
 Tools</p>
 <p>Unless you just happen to have a compiler on your system that is
 invoked with &#8216;ccc&#8217;, the example tool we created is not going to build 
@@ -4873,7 +4965,7 @@ compiler and &#8220;something else&#8221; is usually sufficient, but you may hav
 to
 define additional tools if your tool-chain requires intermediate build
 steps to function properly.</p>
-<p class="subsection">6.12.2 Defined
+<p class="subsection">6.13.2 Defined
 Symbols and Header File Search
 Paths</p>
 <p>There are elements of the CDT core that require build information
@@ -4887,11 +4979,11 @@ promises to store the type and value of an option, it does not know
 anything about the contents. However, you can flag certain options as
 special so the build model will know to pay special attention to them.
 As the implementer of the tool integration, you should make sure your
-specification has options of type &#8220;includePaths&#8221; and &#8220;definedSymbols&#8221;.
-The build model will pay special attention to these options and answer
+specification has options of type &#8220;includePaths&#8221; and &#8220;definedSymbols&#8221;. 
+The build model will pay special attention to these options and provide
 them to the appropriate clients in the CDT core without any further
 intervention on your part.</p>
-<p class="subsection">6.12.3 Built-in
+<p class="subsection">6.13.3 Built-in
 Symbols and Search Paths</p>
 <p>We have automated the discovery of paths and symbols for standard
 GCC compilers that are building targets for the platform they are
@@ -4914,17 +5006,16 @@ for the user to edit these values if something changes is to directly
 edit the plug-in manifest where the extension is specified. Please
 refer to &sect; 3.11
 for more details on specifying list option values.
-<p class="subsection">6.12.4 User-Specified
+<p class="subsection">6.13.4 User-Specified
 Libraries and Object
 Modules</p>
-<p>Similarly, a user may want to specify external libraries to link
-against in the final build step. The build model needs to be told to
-pay
-special attention to an option containing libraries so that when the
-build file generator requests them, it can answer a valid list. Flag the
+<p>Similarly, a user may want to specify external libraries to link against in 
+the final build step. The build model needs to be told to pay special attention 
+to an option containing libraries so that when the build file generator requests 
+them, it can provide a valid list. Flag the
 option value type as &#8220;libs&#8221; for external libraries or &#8220;userObjs&#8221; for
 object modules.</p>
-<p class="subsection">6.12.5 ProjectType and Other 
+<p class="subsection">6.13.5 ProjectType and Other 
 Element
 Hierarchies</p>
 <p>One area of the build model that the tutorial does not touch on
@@ -4945,11 +5036,11 @@ decision; you can declare a non-abstract element as the super-class of
 another
 element.</p>
 <p>Since 2.1
-it is now possible to declare a configuration, tool-chain, tool, builder and targetPlatform independently of a project-type. So it
+it is possible to declare a configuration, tool-chain, tool, builder and targetPlatform independently of a project-type. So it
 is possible to declare a complete set of elements once, and use superClass references to those 
 elements inside many projectTypes.<br>
 </p>
-<p class="subsection">6.12.6 Publishing
+<p class="subsection">6.13.6 Publishing
 your Plug-in</p>
 <p>The subject of packaging Eclipse plug-ins is well covered in the <span
  style="font-style: italic;">Platform Plug-in Developer Guide</span>.
@@ -4970,17 +5061,14 @@ Perspective</span>, select the plugin.xml
 file for your plug-in in the package explorer. Open the <span
  style="font-weight: bold;">File &gt;
 Export...</span> wizard. On the <span style="font-weight: bold;">Select</span>
-page, chose <span style="font-weight: bold;">File system</span> from
+page, chose <span style="font-weight: bold;">Deployable Plugins and Fragments</span> from
 the export
 destination list. Click the <span style="font-weight: bold;">Next &gt;</span>
 button. </li>
-  <li style="font-weight: normal;">Make sure that <code>org.eclipse.cdt.example.toolchain</code>
-is
-selected in the left-hand list and that only plugin.xml is selected in the 
-	right. To select an export destination, click the Browse... button beside 
-	the text box labeled To directory.
-Browse to the plugins
-subdirectory of your Eclipse installation. Click the Finish
+  <li style="font-weight: normal;">In the <b>Deployable Plugins and Fragments</b> 
+	dialog, Export<font face="Arial"> </font> <code><font face="Arial">
+	Destination section, select Directory and </font></code><font face="Arial">click the</font> Browse... button.
+Browse to your Eclipse installation. Deselect all Export Options.&nbsp; Click the Finish
 button.</li>
   <li>Restart Eclipse, switch to the <span style="font-weight: bold;">C/C++
 Development Perspective</span> and run the new project wizard to create
@@ -5059,7 +5147,7 @@ good that you will also have to replace the dependency calculator or
 perform the calculation internally. The
 mechanism for replacing the dependency calculator is similar to the build file generator, except that the dependency calculator is associated
 with a tool inputType, not a builder. You must create a class that implements the <code>IManagedDependencyGenerator</code>
-shown in the figure below and specify that class in an inputType element, 
+shown in the figure below and specify that class in the inputType element, 
 dependencyCalculator attribute. </p>
 <p>
 <img style="border: 0px solid ;"
@@ -5178,7 +5266,7 @@ the CDT user and to inform the user when support needed by their project is not
 installed. If the method is not provided by the tool-chain definition, the 
 tool-chain is treated as supported.&nbsp; If all configurations defined for the 
 given project type are not supported the project type is treated as unsupported.</p>
-<p class="subsection">In order to provide this functionality, the &#8220;isToolChainSupported&#8221; 
+<p>In order to provide this functionality, the &#8220;isToolChainSupported&#8221; 
 attribute in the toolChain 
 definition must be specified. The value of this attribute should be set to the 
 name of the class which implements the I<span style="font-size: 12.0pt; font-family: Times New Roman">ManagedIsToolChainSupported</span> 
@@ -5524,7 +5612,7 @@ the buildPathResolver attribute in the envVarBuildPath
 definition must be specified. The value of this attribute should be set to the 
 name of the class which implements the IBuildPathResolver interface.&nbsp; This 
 allows the tool-integrator to provide his/her own 
-		logic of resolving the environment variable values to build paths.</p>
+		logic for resolving the environment variable values to build paths.</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
 IBuildPathResolver {</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>

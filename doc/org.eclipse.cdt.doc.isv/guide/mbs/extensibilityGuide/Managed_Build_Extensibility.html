@@ -4974,39 +4974,31 @@ function properly. Things like the indexing service, search, or content
 assist will only function correctly if the built-in parser can
 retrieve information about the paths to search for include files and
 the
-preprocessor symbols defined for the project. The build model only
-promises to store the type and value of an option, it does not know
-anything about the contents. However, you can flag certain options as
+preprocessor symbols defined for the project. </p>
+<p>MBS gathers information about the defined symbols and include paths from a 
+number of sources:</p>
+<p><b>User-defined symbols and include paths:&nbsp; </b>You can flag certain 
+tool options as
 special so the build model will know to pay special attention to them.
 As the implementer of the tool integration, you should make sure your
 specification has options of type &#8220;includePaths&#8221; and &#8220;definedSymbols&#8221;. 
 The build model will pay special attention to these options and provide
 them to the appropriate clients in the CDT core without any further
 intervention on your part.</p>
-<p class="subsection">6.13.3 Built-in
-Symbols and Search Paths</p>
-<p>We have automated the discovery of paths and symbols for standard
-GCC compilers that are building targets for the platform they are
-hosted on. Work is in progress to make this completely replaceable so
-that cross-compilers and non-GCC compilers can be more easily
-integrated. Until then, there are two approaches you can take, but both
-involve hard-coding the include path and defined symbol options with
-list
-option values containing the correct information. If you add a value to
-the include path or symbol option, it will be displayed to the user by
-default. This may be the right approach to take if you believe that
-users will change these values frequently. However, it will clutter the
-UI with values and since they are editable, users may delete them
-accidentally.</p>
-The alternative is to flag the list option value as a built-in
-value.
-In this case, the user will not be able to edit the values through the
-UI. This has the advantage of keeping the UI cleaner, but the only way
-for the user to edit these values if something changes is to directly
-edit the plug-in manifest where the extension is specified. Please
-refer to &sect; 3.11
-for more details on specifying list option values.
-<p class="subsection">6.13.4 User-Specified
+<p><b>Pre-defined symbols and include paths:&nbsp; </b>A toolChain may specify 
+the id of scanner configuration discovery profile for gathering the built-in 
+compiler settings.&nbsp; See the org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile 
+extension point description in the reference documentation for more information.&nbsp; 
+If a collector is specified, MBS invokes it to return the pre-defined symbols 
+and include paths.&nbsp; If a collector is not specified, MBS searches for 
+options of type &#8220;includePaths&#8221; and &#8220;definedSymbols&#8221; with the <b>builtIn</b> 
+attribute set to true.</p>
+<p><b>Environment include paths:&nbsp; </b>Your build definition may specify a 
+envVarBuildPath element with the <b>pathType</b> attribute set to &quot;buildpathInclude&quot;.&nbsp; 
+If specified, MBS will read the environment variable(s) for additional include 
+paths.&nbsp; See § 3.17 for additional information regarding the envVarBuildPath 
+element.</p>
+<p class="subsection">6.13.3 User-Specified
 Libraries and Object
 Modules</p>
 <p>Similarly, a user may want to specify external libraries to link against in 
@@ -5015,7 +5007,7 @@ to an option containing libraries so that when the build file generator requests
 them, it can provide a valid list. Flag the
 option value type as &#8220;libs&#8221; for external libraries or &#8220;userObjs&#8221; for
 object modules.</p>
-<p class="subsection">6.13.5 ProjectType and Other 
+<p class="subsection">6.13.4 ProjectType and Other 
 Element
 Hierarchies</p>
 <p>One area of the build model that the tutorial does not touch on
@@ -5040,7 +5032,7 @@ it is possible to declare a configuration, tool-chain, tool, builder and targetP
 is possible to declare a complete set of elements once, and use superClass references to those 
 elements inside many projectTypes.<br>
 </p>
-<p class="subsection">6.13.6 Publishing
+<p class="subsection">6.13.5 Publishing
 your Plug-in</p>
 <p>The subject of packaging Eclipse plug-ins is well covered in the <span
  style="font-style: italic;">Platform Plug-in Developer Guide</span>.
@@ -5917,12 +5909,41 @@ holds single String-type value</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 String[] getStringListValue() throws BuildMacroException;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
-<p class="subsection"><a name="_TocSectionDynamic_9">7.9 Defining a Configuration Name Provider</p>
+<p class="subsection"><a name="_TocSectionDynamic_9">7.9 Defining a Configuration Name Provider</a></p>
+<p class="MsoNormal">All the configuration names &nbsp;must be unique within a 
+project.&nbsp; Tool Integrators can provide unique configuration names in their 
+build definitions, or they can use dynamically created unique names.&nbsp; To 
+provide configuration names dynamically, <a name="_TocSectionDynamic_15">you 
+must specify and supply a class that implements the <code>IConfigurationNameProvider</code>
+interface shown below.&nbsp; The class name is assigned to the projectType element, 
+configurationNameProvider attribute. </a></p>
+<p class="MsoNormal">??The basic idea is this.&nbsp; The first configuration asked 
+gets to use the most &#8220;basic&#8221; name &#8211; e.g. &#8220;Debug&#8221;.&nbsp; When another configuration is 
+asked that uses a different tool-chain version, it would see that &#8220;Debug&#8221; was 
+already chosen, so it could return &#8220;Debug_8.1&#8221;.&nbsp; When another configuration is 
+asked that builds for a different platform, it would see that &#8220;Debug&#8221; was 
+already chosen, so it could return &#8220;Debug_IPF&#8221;.&nbsp; If the ProjectType does not 
+implement the attribute, the default name provider would add &#8220;_2&#8221; etc.. &nbsp;to the 
+configuration name if necessary to get a unique name. </p>
+<p class="MsoNormal"><font face="Courier New">public interface 
+IConfigurationNameProvider {<br>
+<br>
+&nbsp;&nbsp; /*<br>
+&nbsp;&nbsp;&nbsp; * Returns the new unique configuration name based on the 
+'configuration'<br>
+&nbsp;&nbsp;&nbsp; * object and the list of configuration names already in use 
+in the project.<br>
+&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp; */<br>
+<br>
+&nbsp;&nbsp;&nbsp; String getNewConfigurationName(IConfiguration configuration, 
+String [] usedConfigurationNames );<br>
+}<br>
+&nbsp;</font></p>
 <p class="subsection"><a name="_TocSectionDynamic_10">7.10 Defining an Output Name Provider</p>
 <p>You can specify an output name provider for an outputType. You must specify 
 and supply a class that implements the <code>IManagedOutputNameProvider</code>
-interface shown below.&nbsp; The class name is assigned to the outputType element, 
-nameProvider attribute. </p>
+interface shown below.&nbsp; The class name is assigned to the outputType element, nameProvider attribute. </p>
 <p class="MsoNormal"><span style="font-size:10.0pt;font-family:Courier">public 
 interface IManagedOutputNameProvider{</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
@@ -5949,7 +5970,10 @@ is true, an output name provider, or the outputNames attribute, is required
 </a>
 <p class="subsection"><a name="_TocSectionDynamic_11">7.11 Defining an Option Value Handler</p>
 <p class="subsection"><a name="_TocSectionDynamic_12">7.12 Defining an Option Applicability Calculator</p>
-<p class="subsection"><a name="_TocSectionDynamic_13">7.13 Defining a Dynamic Element Provider</p>
+<p class="subsection"><a name="_TocSectionDynamic_13">7.13 Defining a Dynamic Element Provider</a></p>
+<p>Tool integrators may supply a dynamic element provider to dynamically provide the definitions that are otherwise specified in the buildDefinitions 
+extension point.&nbsp; To specify a dynamic element provider, your build 
+definitions must define a dynamicElementProvider element as described in § 3.19. </p>
 <p class="section"><a name="_TocSectionAdvanced"> Advanced Features</a></p>
 <p class="subsection"><a name="_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</p>
 </a>

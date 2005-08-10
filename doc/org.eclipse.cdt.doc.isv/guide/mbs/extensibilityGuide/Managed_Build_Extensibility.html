@@ -182,6 +182,7 @@ managed build system and how to extend it.</font></td>
 <div class="indent"><a href="#_TocSectionDynamic_11">7.11 Defining an Option Value Handler</a></div>
 <div class="indent"><a href="#_TocSectionDynamic_12">7.12 Defining an Option Applicability Calculator</a></div>
 <div class="indent"><a href="#_TocSectionDynamic_13">7.13 Defining a Dynamic Element Provider</a></div>
+<div class="indent"><a href="#_TocSectionDynamic_14">7.14 Adding Custom Pages to the New Project Wizard</a></div>
 </div>
 <div class="indent"><a href="#_TocSectionAdvanced">8 Advanced Features</a>
 <div class="indent"><a href="#_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</a></div>
@@ -1188,6 +1189,9 @@ the outputs of the project can be deployed.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">The toolChain contains one child 
 of type builder.&nbsp; This defines the &#8220;build&#8221; or &#8220;make&#8221; utility that is used to 
 drive the transformation of the inputs into outputs. </p>
+<p class="MsoNormal" style="margin-top:6.0pt">The tooChain may contain one or 
+more children of type optionCategory and option.&nbsp; These define tool-chain 
+wide settings that are not specific to a particular tool.</p>
 <p class="MsoNormal" style="margin-top:6.0pt">Typically a tool-chain is hosted 
 only on a limited subset of operating system/architecture combinations. For 
 example, it does not make much sense to allow a user to try to build a Solaris 
@@ -3708,7 +3712,11 @@ needed.</td>
  valign="top"><span style="background-color: #FFFF00">applicability Calculator</span></td>
       <td
  style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
- valign="top">&nbsp;</td>
+ valign="top">The name of class which is used to determine dynamically at 
+		runtime whether the option is visible, enabled, and used in command line 
+		generation. This class must implement the IOptionApplicability 
+		interface. If no calculator is specified then the option is always 
+		visible, enabled, and used in command line generation.</td>
       <td
  style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
@@ -3898,8 +3906,7 @@ command line.</p>
     </tr>
   </tbody>
 </table>
-<p class="subsection"><a name="_TocSectionGrammar_16">3.16 Resource 
-Configuration</p>
+<p class="subsection"><a name="_TocSectionGrammar_16">3.16 Resource Configuration</a></p>
 <p class="MsoNormal">The resourceConfiguration element is not visible in the 
 user model.&nbsp; It is a place to store build attributes of individual resources 
 that are different from the configuration as a whole.&nbsp; The resourceConfiguration 
@@ -3983,7 +3990,7 @@ attributes are specified in the schema table below.</p>
     </tr>
   </tbody>
 </table>
-<p class="subsection"></a><a name="_TocSectionGrammar_17">3.17 
+<p class="subsection"><a name="_TocSectionGrammar_17">3.17 
 <span style="background-color: #FFFF00">Environment Variable Build Path</span></a></p>
 <p class="MsoNormal">The tool-integrator can specify the names of the 
 environment variables used by the tool for specifying the include and the 
@@ -4657,7 +4664,6 @@ following list <code>org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.G
 <p style="font-weight: normal;">
 Each configuration requires a toolChain child that defines the set of tools used by 
 the configuration.</p>
-<a name="_TocSectionTutorial_6">
 <ol style="margin-top: 0in;" start="1" type="1">
   <li>Right click on <span style="font-weight: 700">Test Release</span> in the <span style="font-weight: bold;">All
 Extensions</span> list. From the context menu select <span
@@ -4681,22 +4687,21 @@ of the above apply.</li>
 </ol>
 <p style="font-weight: normal;" class="subsection">
 <b>
-<a name="_TocSectionTutorial_7">6.7 Adding a </a>Builder</b></p>
+<a name="_TocSectionTutorial_7">6.7 Adding a Builder</a></b></p>
 <p style="font-weight: normal;">
 Each toolChain can have a builder child that describes the build utility used by 
 the tool-chain to create the build artifacts of the configuration.</p>
 <ol style="margin-top: 0in;" start="1" type="1">
-  <li><a name="_TocSectionTutorial_14">Right click on 
+  <li>Right click on 
 	<span style="font-weight: 700">Example Tool-chain</span> in the <span style="font-weight: bold;">All
 Extensions</span> list. From the context menu select <span
  style="font-weight: bold;">New &gt;
 	builder</span>.
-	</li><a name="_TocSectionTutorial_15">
+	</li>
   <li>Change the value of the <span style="font-weight: bold;">name</span>
 property to be <code>Example Builder </code>and the value of <span
  style="font-weight: bold;">id</span> to be <code>
 example.toolchain.builder</code>.</li>
-  </a>
 	<li>Locate the <span
  style="font-weight: bold;">Command</span>
 property, click on it to edit the value, and enter <code>make</code>.</li>
@@ -4707,14 +4712,13 @@ property, click on it to edit the value, and enter <code>make</code>.</li>
 Each toolChain can have a targetPlatform child that describes the target 
 operating system(s)/architecture(s) that build artifacts created by the 
 tool-chain are intended to execute on.</p>
-<a name="_TocSectionTutorial_8">
 <ol style="margin-top: 0in;" start="1" type="1">
-  <li><a name="_TocSectionTutorial_16">Right click on 
+  <li>Right click on 
 	<span style="font-weight: 700">Example Tool-chain</span> in the <span style="font-weight: bold;">All
 Extensions</span> list. From the context menu select <span
  style="font-weight: bold;">New &gt;
 	targetPlatform</span>.
-	</li><a name="_TocSectionTutorial_17">
+	</li>
   <li>Change the value of the <span style="font-weight: bold;">name</span>
 property and&nbsp; to be <code>Example Target Platform </code>&nbsp;and the value of <span
  style="font-weight: bold;">id</span> to be <code>
@@ -4722,7 +4726,6 @@ example.toolchain.targetplatform</code>.</li></a></a>
 	<li>Our target platform is the same as our host platform.&nbsp; Enter the 
 	same value for the <b>osList</b> property as entered for the ToolChain <b>
 	osList</b>.</li>
-  <a name="_TocSectionTutorial_8">
   <li>Set the value of the binary parser property based on the platform
 you will be using to create your example projects on. For example, if
 you
@@ -5067,7 +5070,7 @@ Development Perspective</span> and run the new project wizard to create
 a new project based on your tool integration.</li>
 </ol>
 <p class="section"><a name="_TocSectionDynamic">7 Adding Dynamic Behavior</a></p>
-<p class="subsection"><a name="_TocSectionDynamic_1">7.1 Overview</p>
+<p class="subsection"><a name="_TocSectionDynamic_1">7.1 Overview</a></p>
 <p>MBS defines a number of element attributes that allow the tool integrator to 
 customize the behavior of the MBS by implementing an MBS-defined interface in a 
 Java class.&nbsp; This section describes these attributes and the interfaces.</p>
@@ -5179,7 +5182,7 @@ instances. Obviously, if you rely on the indexer, you must wait for it
 to complete its work before it will answer, so your build may take
 longer to complete.<br>
 </p>
-<p class="subsection"><a name="_TocSectionDynamic_4">7.4 Replacing the Command Line Generator</p>
+<p class="subsection"><a name="_TocSectionDynamic_4">7.4 Replacing the Command Line Generator</a></p>
 <p>You can specify a replacement command line generator for a tool. You must specify and supply a class
 that
 implements the <code>IManagedCommandLineGenerator</code>
@@ -5249,7 +5252,6 @@ the complete command line, in the IManagedCommandLineInfo interface.&nbsp; The
 default MBS implementation does not modify any of the command line parts.&nbsp; It 
 uses the parts and the pattern to generate the complete command line that can be 
 retrieved using IManagedCommandLineInfo.getCommandLine.</p>
-</a>
 <p class="subsection"><a name="_TocSectionDynamic_5">7.5 Determining if a Tool Chain is Installed</a></p>
 <p class="MsoNormal">A tool-chain definition can provide a method to be called 
 to determine if support for the tool-chain is currently installed on the 
@@ -5597,7 +5599,6 @@ getDelimiter() method should</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
 getDelimiter();</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
-<a name="_TocSectionDynamic_14">
 <p class="subsection"><a name="_TocSectionDynamic_7">7.7 Defining a Build Path Resolver</a>&nbsp;</p>
 <p class="MsoNormal" style="margin-left: 0in">To provide a build path resolver, 
 the buildPathResolver attribute in the envVarBuildPath 
@@ -5639,6 +5640,10 @@ String variableValue,</p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 70.8pt; margin-top: 0; margin-bottom: 0">
 IConfiguration configuration);</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">See 
+org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver for an example of a 
+build path resolver.&nbsp; It converts Cygwin paths to Windows paths.</p>
 <p class="subsection"><a name="_TocSectionDynamic_8">7.8 Defining Build Macros</a></p>
 <p class="MsoNormal">The IConfigurationBuildMacroSupplier interface and the IProjectBuildMacroSupplier interface allow a tool-integrator to define build 
 macros and their values.</p>
@@ -5910,21 +5915,30 @@ holds single String-type value</span></p>
 String[] getStringListValue() throws BuildMacroException;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
 <p class="subsection"><a name="_TocSectionDynamic_9">7.9 Defining a Configuration Name Provider</a></p>
-<p class="MsoNormal">All the configuration names &nbsp;must be unique within a 
-project.&nbsp; Tool Integrators can provide unique configuration names in their 
-build definitions, or they can use dynamically created unique names.&nbsp; To 
+<p class="MsoNormal">All the configuration names must be unique within a 
+project.&nbsp; You can provide unique configuration names in your build 
+definitions, or you can dynamically created unique names.&nbsp; To 
 provide configuration names dynamically, <a name="_TocSectionDynamic_15">you 
 must specify and supply a class that implements the <code>IConfigurationNameProvider</code>
 interface shown below.&nbsp; The class name is assigned to the projectType element, 
 configurationNameProvider attribute. </a></p>
-<p class="MsoNormal">??The basic idea is this.&nbsp; The first configuration asked 
-gets to use the most &#8220;basic&#8221; name &#8211; e.g. &#8220;Debug&#8221;.&nbsp; When another configuration is 
-asked that uses a different tool-chain version, it would see that &#8220;Debug&#8221; was 
-already chosen, so it could return &#8220;Debug_8.1&#8221;.&nbsp; When another configuration is 
-asked that builds for a different platform, it would see that &#8220;Debug&#8221; was 
-already chosen, so it could return &#8220;Debug_IPF&#8221;.&nbsp; If the ProjectType does not 
-implement the attribute, the default name provider would add &#8220;_2&#8221; etc.. &nbsp;to the 
-configuration name if necessary to get a unique name. </p>
+<p class="MsoNormal">Consider the following usage for a configuration name 
+provider.&nbsp; You support multiple versions of your tool-chain within the same 
+version of CDT (see § 8.2 for a discussion of supporting multiple versions).&nbsp; 
+For the purpose of this example, assume they are versions 1.0 and 2.0.&nbsp; You 
+provide default &quot;debug&quot; and &quot;release&quot; configurations for each version of your 
+tool-chain.&nbsp; You have a choice when assigning names to these default 
+configurations.&nbsp; You can define unique names statically in your build 
+definitions (for example, &quot;Debug_1.0&quot;, &quot;Debug_2.0&quot;, etc.)&nbsp; However, these 
+names are not very &quot;user-friendly&quot;, particularly for a user who intends to use a 
+single version of your tool-chain.&nbsp; The alternative is to dynamically 
+assign unique configuration names using a configuration name provider (see the&nbsp; <font face="Courier New">
+getNewConfigurationName </font><font face="Arial">method below.)&nbsp; </font>The first configuration 
+that is created gets to use the most &#8220;basic&#8221; name &#8211; for example, &#8220;Debug&#8221;.&nbsp; When another configuration is 
+created that uses a different tool-chain version, it would see that &#8220;Debug&#8221; was 
+already chosen, so it could return a more qualified name - for example, &#8220;Debug_2.0&#8221;.&nbsp; 
+The same technique could be used when your tool-chain supports multiple 
+host/target platforms.</p>
 <p class="MsoNormal"><font face="Courier New">public interface 
 IConfigurationNameProvider {<br>
 <br>
@@ -5938,12 +5952,12 @@ in the project.<br>
 <br>
 &nbsp;&nbsp;&nbsp; String getNewConfigurationName(IConfiguration configuration, 
 String [] usedConfigurationNames );<br>
-}<br>
-&nbsp;</font></p>
-<p class="subsection"><a name="_TocSectionDynamic_10">7.10 Defining an Output Name Provider</p>
+}</font></p>
+<p class="subsection"><a name="_TocSectionDynamic_10">7.10 Defining an Output Name Provider</a></p>
 <p>You can specify an output name provider for an outputType. You must specify 
 and supply a class that implements the <code>IManagedOutputNameProvider</code>
-interface shown below.&nbsp; The class name is assigned to the outputType element, nameProvider attribute. </p>
+interface shown below.&nbsp; The class name is assigned to the outputType element, 
+<b>nameProvider</b> attribute. </p>
 <p class="MsoNormal"><span style="font-size:10.0pt;font-family:Courier">public 
 interface IManagedOutputNameProvider{</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
@@ -5964,16 +5978,81 @@ corresponding to the primary input name(s)</span></p>
 getOutputPaths(ITool tool, IPath[] primaryInputs);</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
 <span style="font-size:10.0pt;font-family:Courier">}</span></p>
-<p class="MsoNormal" style="margin-top: 6px; margin-bottom: 0">When multipleOfType 
-is true, an output name provider, or the outputNames attribute, is required 
+<p class="MsoNormal" style="margin-top: 6px; margin-bottom: 0">When <b>multipleOfType</b> 
+is true, an output name provider, or the <b>outputNames</b> attribute, is required 
 		in order for MBS to know the names of the output files.</p>
-</a>
-<p class="subsection"><a name="_TocSectionDynamic_11">7.11 Defining an Option Value Handler</p>
-<p class="subsection"><a name="_TocSectionDynamic_12">7.12 Defining an Option Applicability Calculator</p>
+<p class="subsection"><a name="_TocSectionDynamic_11">7.11 Defining an Option Value Handler</a></p>
+<p class="subsection"><a name="_TocSectionDynamic_12">7.12 Defining an Option Applicability Calculator</a></p>
+<p>You can specify an option applicability calculator for an option.&nbsp; You
+must specify and supply a 
+class that implements the <code><font face="Arial">IManagedOutputNameProvider</font></code><font face="Arial">
+interface shown below.&nbsp; The class name is assigned to the outputType element, 
+<b>nameProvider</b> attribute.&nbsp; You should implement this interface when an 
+option is not always applicable - for example, when an option is only used if 
+another option has a particular value.</font></p>
+<p><font face="Courier New">public interface IOptionApplicability {<br>
+/**<br>
+* This method is queried whenever a makefile or makefile fragment is<br>
+* generated which uses this option, and in the C/C++ Build property<br>
+* pages when displaying the current command line.<br>
+* <br>
+* @param configuration build configuration of option <br>
+* (may be IConfiguration or IResourceConfiguration)<br>
+* @param holder contains the holder of the option<br>
+* @param option the option itself<br>
+* <br>
+* @return true if this option is to be used in command line<br>
+* generation, false otherwise<br>
+*/<br>
+public boolean isOptionUsedInCommandLine(<br>
+&nbsp;&nbsp;&nbsp; IBuildObject configuration, <br>
+&nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
+&nbsp;&nbsp;&nbsp; IOption option); <br>
+<br>
+/**<br>
+* This method is queried whenever a new option category is displayed.<br>
+* <br>
+* @param configuration build configuration of option <br>
+* (may be IConfiguration or IResourceConfiguration)<br>
+* @param holder contains the holder of the option<br>
+* @param option the option itself<br>
+* <br>
+* @return true if this option should be visible in the build options page,<br>
+* false otherwise<br>
+*/<br>
+public boolean isOptionVisible(<br>
+&nbsp;&nbsp;&nbsp; IBuildObject configuration, <br>
+&nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
+&nbsp;&nbsp;&nbsp; IOption option); <br>
+<br>
+/**<br>
+* Whenever the value of an option changes in the GUI, this method is<br>
+* queried on all other visible options for the same category. Note that<br>
+* this occurs when the GUI changes - the user may opt to cancel these<br>
+* changes.<br>
+* <br>
+* @param configuration build configuration of option <br>
+* (may be IConfiguration or IResourceConfiguration)<br>
+* @param holder contains the holder of the option<br>
+* @param option the option itself<br>
+*<br>
+* @return true if this option should be enabled in the build options page,<br>
+* or false if it should be disabled (grayed out)<br>
+*/<br>
+public boolean isOptionEnabled(<br>
+&nbsp;&nbsp;&nbsp; IBuildObject configuration, <br>
+&nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
+&nbsp;&nbsp;&nbsp; IOption option); <br>
+<br>
+}</font></p>
 <p class="subsection"><a name="_TocSectionDynamic_13">7.13 Defining a Dynamic Element Provider</a></p>
 <p>Tool integrators may supply a dynamic element provider to dynamically provide the definitions that are otherwise specified in the buildDefinitions 
 extension point.&nbsp; To specify a dynamic element provider, your build 
 definitions must define a dynamicElementProvider element as described in § 3.19. </p>
+<p class="subsection"><a name="_TocSectionDynamic_14">7.14 Adding Custom Pages to the New Project Wizard</a></p>
+<p>This section will be provided in a future version of the document.&nbsp; For 
+now, refer to the Custom Project Wizard Pages design document in bugzilla 
+#90334.</p>
 <p class="section"><a name="_TocSectionAdvanced"> Advanced Features</a></p>
 <p class="subsection"><a name="_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</p>
 </a>
@@ -6108,6 +6187,9 @@ Elements</h3>
 <p class="MsoNormal">This element is supported in the same manner as in CDT 2.0, 
 with the exception that the dynamic elements returned by the provider must use 
 the new object model.</p>
-<p class="subsection"><a name="_TocSectionAdvanced_2">8.2 Supporting Multiple Versions of a Tool-chain</p>
+<p class="subsection"><a name="_TocSectionAdvanced_2">8.2 Supporting Multiple Versions of a Tool-chain</a></p>
+<p>This section will be provided in a future version of the document.&nbsp; For 
+now, refer to the Tool-chain Multi-version Support design document in bugzilla 
+#89872.</p>
 </body>
 </html>

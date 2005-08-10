@@ -77,7 +77,7 @@ managed build system and how to extend it.</font></td>
     </tr>
   </tbody>
 </table>
-<table>
+<table border="1">
  <tr>
     <td width="50%" rowspan="2">Authors</td>
     <td width="50%"> <a href="mailto:sevoy@ca.ibm.com">Sean Evoy</a></td>
@@ -3215,35 +3215,37 @@ Options'. This will be the name the user sees displayed in the UI.</p>
     </tr>
     <tr>
       <td
- style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       <p>owner</p>
       </td>
       <td
- style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">
       <p>Option categories can be nested inside other option
-categories. This is the ID of the owner of the category.</p>
+categories. This is the ID of the owner of the category.&nbsp; The default owner 
+		if the parent tool.</p>
       </td>
       <td
- style="border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; width: 13%; vertical-align: top; border-left-style:none; border-left-width:medium; border-top-style:none; border-top-width:medium; padding-left:5.4pt; padding-right:5.4pt; padding-top:0in; padding-bottom:0in">
-      <p>yes</p>
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">
+      <p>no</p>
       </td>
     </tr>
     <tr>
       <td
  style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
- valign="top">
+ valign="top" height="53">
       <span style="background-color: #FFFF00">icon</span></td>
       <td
  style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
- valign="top">
+ valign="top" height="52">
       Path to a 16x16 pixel big icon that is to be displayed instead of the 
 		default icon.&nbsp; The path is relative to the plug-in directory which 
 		defines the build definitions.</td>
       <td
- style="border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; width: 13%; vertical-align: top; border-left-style:none; border-left-width:medium; border-top-style:none; border-top-width:medium; padding-left:5.4pt; padding-right:5.4pt; padding-top:0in; padding-bottom:0in">
-      no</td>
+ style="border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; width: 13%; vertical-align: top; border-left-style:none; border-left-width:medium; border-top-style:none; border-top-width:medium; padding-left:5.4pt; padding-right:5.4pt; padding-top:0in; padding-bottom:0in" height="52">
+      <p>no</p></td>
     </tr>
   </tbody>
 </table>
@@ -3571,7 +3573,9 @@ build model.</p>
       <td
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       This is the id of the option category for this option. The id
-can be the id of the tool which is also a category.</td>
+can be the id of the tool which is also a category.&nbsp; The default category 
+		is the parent tool.&nbsp; Note that an optionCategory id must be 
+		supplied as the value for an option that is a child of a toolChain.</td>
       <td
  style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; vertical-align: top;">
       no</td>
@@ -3670,40 +3674,42 @@ needed.</td>
     </tr>
     <tr>
       <td
- style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">resourceFilter</td>
       <td
- style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top"><font size="2">Specifies the resource types that this option 
 		applies to.&nbsp; The values are &#8220;project&#8221;, &#8220;file&#8221;, and &#8220;all&#8221;.&nbsp; The default 
 		is &#8220;all&#8221;.&nbsp; Specifying &#8220;project&#8221; indicates that the option is displayed 
 		when modifying a configuration&#8217;s options, but not when modifying an 
 		individual file&#8217;s options.&nbsp; Specifying &#8220;file&#8221; indicates the opposite.</font></td>
       <td
- style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
     </tr>
     <tr>
       <td
- style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top"><span style="background-color: #FFFF00">valueHandler</span></td>
       <td
- style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
- valign="top">&nbsp;</td>
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">The name of a class that implements the IManagedOptionValueHandler 
+		interface.&nbsp; This interface is used to dynamically manage the value 
+		of an option.&nbsp; See § 7.11. </td>
       <td
- style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
     </tr>
     <tr>
       <td
- style="border-style: none solid double double; border-width: medium 1pt 1.5pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none solid solid double; border-width: medium 1pt 1pt 1.5pt; border-left: 1.5pt double windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top"><span style="background-color: #FFFF00">valueHandlerExtra</span>
 		<span style="background-color: #FFFF00">Argument</span></td>
       <td
- style="border-style: none solid double none; border-width: medium 1pt 1.5pt medium; border-right: 1pt solid windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
- valign="top">&nbsp;</td>
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
+ valign="top">An optional extra text string that is passed into the valueHandler.</td>
       <td
- style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
+ style="border-style: none double solid none; border-width: medium 1.5pt 1pt medium; border-right: 1.5pt double windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
     </tr>
     <tr>
@@ -3716,7 +3722,7 @@ needed.</td>
 		runtime whether the option is visible, enabled, and used in command line 
 		generation. This class must implement the IOptionApplicability 
 		interface. If no calculator is specified then the option is always 
-		visible, enabled, and used in command line generation.</td>
+		visible, enabled, and used in command line generation.&nbsp; See § 7.12. </td>
       <td
  style="border-style: none double double none; border-width: medium 1.5pt 1.5pt medium; border-right: 1.5pt double windowtext; border-bottom: 1.5pt double windowtext; padding: 0in 5.4pt;"
  valign="top">no</td>
@@ -4505,6 +4511,37 @@ properly determine the build order when projects involved in a build
 reference other projects. As long as the build takes place inside the
 CDT, the managed builder can trust that the build framework will build
 the projects in the proper order. </p>
+<p class="subsection">5.1.6 Makefile Generator Constraints</p>
+<p>The current implementation of the default Gnu makefile generator assumes a 
+set of constraints that must be met in your tool-chain definition in order for 
+it to generate valid makefiles:</p>
+<ol>
+	<li>Input files must be specified via project relative or absolute paths.</li>
+	<li>Output files must be specified via configuration build directory 
+	relative or absolute paths.</li>
+	<li>A tool with a primary input type where the multipleOfType attribute is 
+	set to true executes once during the build using all of the project 
+	resources and generated outputs that match its input file extensions.&nbsp; 
+	A subset of the full set of input files can be defined using the 
+	buildVariable attribute in the inputType of the tool, and the outputType of 
+	other tools.</li>
+	<li>If any inputType of a tool has the multipleOfType attribute set to true, 
+	then primary inputType of the tool must have the multipleOfType attribute 
+	set to true.</li>
+	<li>A tool with a primary input type where the multipleOfType attribute is 
+	set to false executes per project resource and generated output that match 
+	its input file extensions.&nbsp; A subset of the full set of input files can 
+	be defined using the buildVariable attribute in the inputType of the tool, 
+	and the outputType of other tools.</li>
+	<li>A tool must be able to determine all of its output file names and 
+	dependencies given the name(s) of its primary input file(s).</li>
+	<li>The main makefile contains the rules for the &quot;target&quot; tool, for all 
+	tools with a primary input type where the multipleOfType attribute is set to 
+	true, and for any tool that consumes the output of these tools.</li>
+	<li>Each fragment makefile contains the rules for all project resources in 
+	the current directory and for generated outputs that are not consumed by 
+	tools where the multipleOfType attribute is set to true.</li>
+</ol>
 <p class="section"><a name="_TocSectionTutorial">6 Tutorial: An Example Tool
 Integration</a></p>
 <p>One of the features of the MBS is that you can add custom project-types and tool 
@@ -5188,67 +5225,66 @@ that
 implements the <code>IManagedCommandLineGenerator</code>
 interface.&nbsp; The class name is assigned to the tool element, commandLineGenerator attribute. </p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">public interface 
+<span style="font-size: 10.0pt; font-family: Courier New">public interface 
 IManagedCommandLineGenerator {</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public 
 IManagedCommandLineInfo generateCommandLineInfo(</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ITool tool,</span></p>
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ITool tool,</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
 commandName,</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String[] 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String[] 
 flags,</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
 outputFlag,</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
 outputPrefix,</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
 outputName,</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String[] 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String[] 
 inputResources,</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
 commandPattern); </span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">}</span></p>
+<span style="font-size: 10.0pt; font-family: Courier New">}</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">public interface 
+<span style="font-size: 10.0pt; font-family: Courier New">public interface 
 IManagedCommandLineInfo {</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public String 
 getCommandLine();</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public String 
 getCommandName();</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public String getFlags();</span></p>
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public String getFlags();</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public String 
 getOutputFlag();</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public String 
 getOutputPrefix();</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public String 
 getOutputName();</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">&nbsp;&nbsp; public String 
+<span style="font-size: 10.0pt; font-family: Courier New">&nbsp;&nbsp; public String 
 getInputResources();</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-left: .25in; margin-top: 0; margin-bottom: 0">
-<span style="font-size: 10.0pt; font-family: Courier">}</span></p>
-<p class="MsoNormal" style="text-autospace: none">MBS calls 
-IManagedCommandLineGenerator.generateCommandLineInfo to generate the command 
+<span style="font-size: 10.0pt; font-family: Courier New">}</span></p>
+<p class="MsoNormal" style="text-autospace: none">MBS calls IManagedCommandLineGenerator.generateCommandLineInfo to generate the command 
 line information.&nbsp; The supplied IManagedCommandLineGenerator could modify the 
 command line parts if necessary and then provide the modified values, as well as 
-the complete command line, in the IManagedCommandLineInfo interface.&nbsp; The 
+the complete command line, in the <font face="Courier New">IManagedCommandLineInfo</font> interface.&nbsp; The 
 default MBS implementation does not modify any of the command line parts.&nbsp; It 
 uses the parts and the pattern to generate the complete command line that can be 
 retrieved using IManagedCommandLineInfo.getCommandLine.</p>
@@ -5263,14 +5299,17 @@ given project type are not supported the project type is treated as unsupported.
 <p>In order to provide this functionality, the &#8220;isToolChainSupported&#8221; 
 attribute in the toolChain 
 definition must be specified. The value of this attribute should be set to the 
-name of the class which implements the I<span style="font-size: 12.0pt; font-family: Times New Roman">ManagedIsToolChainSupported</span> 
+name of the class which implements the <font face="Courier New">I</font><span style="font-family: Courier New"><font size="2">ManagedIsToolChainSupported</font></span> 
 interface.</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IManagedIsToolChainSupported{</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean 
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">public interface 
+IManagedIsToolChainSupported{</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; boolean 
 isSupported(IToolChain toolChain, PluginVersionIdentifier version, String 
-instance);</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
+instance);</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">The version 
 argument specifies the version of the ToolChain, or null if the ToolChain does 
@@ -5290,630 +5329,815 @@ Configuration-level environment variable suppliers separately:&nbsp;</p>
 <p class="MsoNormal" style="margin-left: 0in">To provide a Configuration-level 
 supplier the &#8220;configurationEnvironmentSupplier&#8221; attribute in the toolChain 
 definition must be specified. The value of this attribute should be set to the 
-name of the class which implements the IConfigurationEnvironmentVariableSupplier 
+name of the class which implements the <font face="Courier New">IConfigurationEnvironmentVariableSupplier</font> 
 interface </p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IConfigurationEnvironmentVariableSupplier{</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">public interface 
+IConfigurationEnvironmentVariableSupplier{</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @variableName the variable mane</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;*</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param configuration configuration</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @variableName the variable mane</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-environment variable provider to be used for querying the</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @param configuration configuration</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* environment variables from within 
-the supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* 
-ManagedBuildManager.getEnvironmentVariableProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching the variables for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @param provider the instance of the 
+environment variable provider to be used for querying the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* environment variables from within 
+the supplier. The supplier should use this provider to obtain</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
+<span style="color: #003366">&nbsp;* the already defined environment instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
+<span style="color: #003366">&nbsp;* 
+ManagedBuildManager.getEnvironmentVariableProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; * </font>
+<font face="Courier New"><span style="color: #003366">The provider passed to a supplier will ignore 
+searching the variables for the levels </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+suppliers for the lower levels. </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+again. Also the supplier should not know anything </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* about the environment variables defined for the 
-higher levels.</span></p>
+higher levels.</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the reference to the 
-IBuildEnvironmentVariable interface representing </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* the variable of a given name</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;* @return the reference to the IBuildEnvironmentVariable interface representing </span>
+</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-IBuildEnvironmentVariable getVariable(String variableName, </p>
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
+<span style="color: #003366">&nbsp;* the variable of a given name</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp; IBuildEnvironmentVariable getVariable(String variableName,
+</font> </p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 2.95in; margin-top: 0; margin-bottom: 0">
-IConfiguration configuration,</p>
+<font face="Courier New">IConfiguration configuration,</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 2.95in; margin-top: 0; margin-bottom: 0">
-IEnvironmentVariableProvider provider);</p>
+<font face="Courier New">IEnvironmentVariableProvider provider);</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param configuration configuration</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @param configuration configuration</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-environment variable provider to be used for querying the</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @param provider the instance of the 
+environment variable provider to be used for querying the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* environment variables from within 
-the supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* 
-ManagedBuildManager.getEnvironmentVariableProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* environment variables from within 
+the supplier. The supplier should use this provider to obtain</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; *</font><font face="Courier New"><span style="color: #003366"> the already defined environment instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* 
+ManagedBuildManager.getEnvironmentVariableProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching the variables for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+searching the variables for the levels </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+suppliers for the lower levels.&nbsp; </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+again. Also the supplier should not know anything</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* about the environment variables defined for the 
-higher levels.</span></p>
+higher levels.</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the array of 
-IBuildEnvironmentVariable that represents the environment variables</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @return the array of IBuildEnvironmentVariable that represents the environment variables</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-IBuildEnvironmentVariable[] getVariables (IConfiguration configuration,</p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp; IBuildEnvironmentVariable[] getVariables (IConfiguration configuration,</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 2.95in; margin-top: 0; margin-bottom: 0">
-IEnvironmentVariableProvider provider);</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
+<font face="Courier New">IEnvironmentVariableProvider provider);</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
 <p class="MsoNormal" style="margin-left: 0in">To provide a Project-level 
 supplier the &#8220;projectEnvironmentSupplier&#8221; attribute in the projectType 
 definition must be specified. The value of this attribute should be set to the 
-name of the class which implements the IProjectEnvironmentVariableSupplier 
-interface </p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IProjectEnvironmentVariableSupplier{</p>
+name of the class which implements the <font face="Courier New">IProjectEnvironmentVariableSupplier</font> 
+interface.</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">public interface 
+IProjectEnvironmentVariableSupplier{</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp; /**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @variableName the variable mane</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @variableName the variable mane</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param project the managed project</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @param project the managed project</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-environment variable provider to be used for querying the</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* @param provider the instance of the 
+environment variable provider to be used for querying the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* environment variables from within 
-the supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* 
-ManagedBuildManager.getEnvironmentVariableProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp; &nbsp;* environment variables from within 
+the supplier. The supplier should use this provider to obtain</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* the already defined environment instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* 
+ManagedBuildManager.getEnvironmentVariableProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching the variables for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+searching the variables for the levels </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+suppliers for the lower levels. </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+again. Also the supplier should not know anything</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* about the environment variables defined for the 
-higher levels.</span></p>
+higher levels.</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the reference to the 
-IBuildEnvironmentVariable interface representing </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* the variable of a given name</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;* @return the reference to the IBuildEnvironmentVariable interface representing </span>
+</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-IBuildEnvironmentVariable getVariable(String variableName, </p>
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
+<span style="color: #003366">&nbsp;* the variable of a given name</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp; IBuildEnvironmentVariable getVariable(String variableName,
+</font> </p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 177.0pt; margin-top: 0; margin-bottom: 0">
-IManagedProject project,</p>
+<font face="Courier New">IManagedProject project,</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 177.0pt; margin-top: 0; margin-bottom: 0">
-IEnvironmentVariableProvider provider);</p>
+<font face="Courier New">IEnvironmentVariableProvider provider);</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp; /**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp; &nbsp;*</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param project the managed project</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp; &nbsp;* @param project the managed project</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-environment variable provider to be used for querying the</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp; &nbsp;* @param provider the instance of the 
+environment variable provider to be used for querying the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* environment variables from within 
-the supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined environment instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* 
-ManagedBuildManager.getEnvironmentVariableProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp; &nbsp;* environment variables from within 
+the supplier. The supplier should use this provider to obtain</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* the already defined environment instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* 
+ManagedBuildManager.getEnvironmentVariableProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching the variables for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+searching the variables for the levels </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+suppliers for the lower levels. </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
+again. Also the supplier should not know anything</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp; </font><font face="Courier New">
 <span style="color: #003366">&nbsp;* about the environment variables defined for the 
-higher levels.</span></p>
+higher levels.</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the array of 
-IBuildEnvironmentVariable that represents the environment variables </span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;* @return the array of IBuildEnvironmentVariable that represents the environment variables </span>
+</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-IBuildEnvironmentVariable[] getVariables (IManagedProject project,</p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp; IBuildEnvironmentVariable[] getVariables (IManagedProject project,</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 177.0pt; margin-top: 0; margin-bottom: 0">
-IEnvironmentVariableProvider provider);</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
-<p class="MsoNormal">The IBuildEnvironmentVariable interface returns information regarding an 
+<font face="Courier New">IEnvironmentVariableProvider provider);</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
+<p class="MsoNormal">The <font face="Courier New">IBuildEnvironmentVariable</font> interface returns information regarding an 
 individual environment variable.&nbsp;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IBuildEnvironmentVariable{</p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-public static final int ENVVAR_REPLACE = 1;</p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-public static final int ENVVAR_REMOVE = 2;</p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-public static final int ENVVAR_PREPEND = 3;</p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-public static final int ENVVAR_APPEND = 4;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">public interface 
+IBuildEnvironmentVariable{</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;
+public static final int ENVVAR_REPLACE = 1;</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;
+public static final int ENVVAR_REMOVE = 2;</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;
+public static final int ENVVAR_PREPEND = 3;</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;
+public static final int ENVVAR_APPEND = 4;</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
 &nbsp;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
-getName();</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
-getValue();</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;String getName();</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return one of the 
-IBuildEnvironmentVariable.ENVVAR_* operation types</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int 
-getOperation();</p>
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;String getValue();</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return if the variable can hold the 
-list of values this method returns the String representing</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* the delimiter that is used to separate values. 
-This information is used for the following:</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;*</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* 1. in append and prepend operations:</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* If the variable already exists and contains some 
-value the new </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* value will be calculated in the following way:</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* For the &#8220;prepend&#8221; operation:</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;New value&gt; = &lt;the value from the 
-getValue() method&gt;&lt;delimiter&gt;&lt;Old value&gt;</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* For the &#8220;append&#8221; operation:</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;New value&gt; = &lt;Old value&gt;&lt;delimiter&gt;&lt;the 
-value from the getValue() method&gt;</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* The Environment Variable Provider will also 
-remove the duplicates of &#8220;sub-values&#8221; </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* in the resulting value. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* For example:</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* If the current value is 
-&#8220;string1:string2:string3&#8221;, the getDelimiter() method returns &#8220;:&#8221; </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* and getValue() method returns &#8220;string4:string2&#8221; 
-the new value will contain:</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* For the &#8220;prepend&#8221; operation: 
-&#8220;string4:string2:string1:string3&#8221;</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* For the &#8220;append&#8221; operation: 
-&#8220;string1:string3:string4:string2&#8221;</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* 2. Since the environment variables are also 
-treated as build macros the delimiter is also used </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* by the BuildMacroProvider to determine the type 
-of the macro used to represent the</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* given environment variable. If the variable has 
-the delimiter it is treated as the Text-List macro</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* otherwise it is treated as the Text macro. (See 
-Build Macro design for more details)</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* To specify that no delimiter should be used, the 
-getDelimiter() method should</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* return null or an empty string</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @return one of the IBuildEnvironmentVariable.ENVVAR_* operation types</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
-getDelimiter();</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp; int 
+getOperation();</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;/**</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @return if the variable can hold the 
+list of values this method returns the String representing</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* the delimiter that is used to separate values. 
+This information is used for the following:</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;*</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* 1. in append and prepend operations:</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* If the variable already exists and contains some 
+value the new </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* value will be calculated in the following way:</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;prepend&#8221; operation:</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;New value&gt; = &lt;the value from the 
+getValue() method&gt;&lt;delimiter&gt;&lt;Old value&gt;</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;append&#8221; operation:</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;New value&gt; = &lt;Old value&gt;&lt;delimiter&gt;&lt;the 
+value from the getValue() method&gt;</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* The Environment Variable Provider will also 
+remove the duplicates of &#8220;sub-values&#8221; </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* in the resulting value. </span>
+</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For example:</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* If the current value is 
+&#8220;string1:string2:string3&#8221;, the getDelimiter() method returns &#8220;:&#8221; </span>
+</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* and getValue() method returns &#8220;string4:string2&#8221; 
+the new value will contain:</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;prepend&#8221; operation: 
+&#8220;string4:string2:string1:string3&#8221;</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* For the &#8220;append&#8221; operation: 
+&#8220;string1:string3:string4:string2&#8221;</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* <br>
+&nbsp;&nbsp; &nbsp;* 2. Since the environment variables are also 
+treated as build macros the delimiter is also used </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* by the BuildMacroProvider to determine the type 
+of the macro used to represent the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* given environment variable. If the variable has 
+the delimiter it is treated as the Text-List macro</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* otherwise it is treated as the Text macro. (See 
+Build Macro design for more details)</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* To specify that no delimiter should be used, the 
+getDelimiter() method should<br>
+&nbsp;&nbsp; &nbsp;* return null or an empty string</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp; String getDelimiter();</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
 <p class="subsection"><a name="_TocSectionDynamic_7">7.7 Defining a Build Path Resolver</a>&nbsp;</p>
 <p class="MsoNormal" style="margin-left: 0in">To provide a build path resolver, 
 the buildPathResolver attribute in the envVarBuildPath 
 definition must be specified. The value of this attribute should be set to the 
-name of the class which implements the IBuildPathResolver interface.&nbsp; This 
+name of the class which implements the <font face="Courier New">IBuildPathResolver</font> interface.&nbsp; This 
 allows the tool-integrator to provide his/her own 
 		logic for resolving the environment variable values to build paths.</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IBuildPathResolver {</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">public interface 
+IBuildPathResolver {</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp; /**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param pathType one of the 
-IEnvVarBuildPath.BUILDPATH _xxx</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* @param variableName represents the name of the 
-variable that holds the build paths</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* @param variableValue represents the value of the 
-value specified with the </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;*&nbsp;&nbsp; &nbsp;&nbsp;variableName argument</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* @param configuration represents configuration 
-for which the build paths are requested</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param pathType one of the 
+IEnvVarBuildPath.BUILDPATH _xxx</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-String[] resolveBuildPaths(</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int pathType,</p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 70.8pt; margin-top: 0; margin-bottom: 0">
-String variableName, </p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 70.8pt; margin-top: 0; margin-bottom: 0">
-String variableValue,</p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 70.8pt; margin-top: 0; margin-bottom: 0">
-IConfiguration configuration);</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* @param variableName represents the name of the 
+variable that holds the build paths</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* @param variableValue represents the value of the 
+value specified with the </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;*&nbsp;&nbsp; &nbsp;&nbsp;variableName argument</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* @param configuration represents configuration 
+for which the build paths are requested</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp; 
+String[] resolveBuildPaths(</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int pathType,</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+String variableName, </font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+String variableValue,</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+IConfiguration configuration);</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">See 
 org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver for an example of a 
-build path resolver.&nbsp; It converts Cygwin paths to Windows paths.</p>
+build path resolver.&nbsp; It converts Cygwin-style paths to Windows paths.</p>
 <p class="subsection"><a name="_TocSectionDynamic_8">7.8 Defining Build Macros</a></p>
-<p class="MsoNormal">The IConfigurationBuildMacroSupplier interface and the IProjectBuildMacroSupplier interface allow a tool-integrator to define build 
+<p class="MsoNormal">The <font face="Courier New">IConfigurationBuildMacroSupplier</font> interface and the 
+<font face="Courier New">IProjectBuildMacroSupplier</font> interface allow a tool-integrator to define build 
 macros and their values.</p>
-<p class="MsoNormal">All methods of the IConfigurationBuildMacroSupplier 
+<p class="MsoNormal">All methods of the <font face="Courier New">IConfigurationBuildMacroSupplier</font> 
 interface MUST return macros ONLY for the configuration context, and MUST NOT 
 search for macro values for contexts with lower precedence. This is up to 
 BuildMacroProvider to query macro suppliers passing lower-precedence context if 
 necessary in case the macro value was not found for some specified context</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IConfigurationBuildMacroSupplier {</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">public interface 
+IConfigurationBuildMacroSupplier {</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New"><span style="color: #003366">&nbsp;&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @ macroName the macro mane</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param configuration configuration</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @ macroName the macro name</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-build macro provider to be used for querying the</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param configuration configuration</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* build macros from within the 
-supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching macros for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* about the build macros defined for the higher 
-levels.</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param provider the instance of the 
+build macro provider to be used for querying the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the reference to the 
-IBuildMacro interface representing </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* the build macro of a given name or null if the 
-macro of&nbsp; that name is not defined</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* build macros from within the 
+supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-IBuildMacro getMacro(String macroName, </p>
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
+searching macros for the levels <br>
+&nbsp;&nbsp; &nbsp;* higher than the current supplier level, will 
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* for the current level and will query all 
+suppliers for the lower levels. </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
+again. Also the supplier should not know anything<br>
+&nbsp;&nbsp; &nbsp;* about the build macros defined for the higher 
+levels.</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @return the reference to the IBuildMacro interface representing </span>
+</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* the build macro of a given name or null if the 
+macro of&nbsp; that name is not defined</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New">IBuildMacro getMacro(String macroName, </font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 70.8pt; margin-top: 0; margin-bottom: 0">
-IConfiguration configuration, </p>
+<font face="Courier New">IConfiguration configuration, </font> </p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 70.8pt; margin-top: 0; margin-bottom: 0">
-IBuildMacroProvider provider);</p>
+<font face="Courier New">IBuildMacroProvider provider);</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param configuration configuration</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param configuration configuration</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-build macro provider to be used for querying the</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param provider the instance of the 
+build macro provider to be used for querying the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* build macros from within the 
-supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching macros for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* about the build macros defined for the higher 
-levels.</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* build macros from within the 
+supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the IBuildMacro[] array 
-representing defined macros </span></p>
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-IBuildMacro[] getMacros(IConfiguration configuration,</p>
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* The provider passed to a supplier will ignore 
+searching macros for the levels </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* higher than the current supplier level, will 
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* for the current level and will query all 
+suppliers for the lower levels. </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
+again. Also the supplier should not know anything</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* about the build macros defined for the higher 
+levels.</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @return the IBuildMacro[] array 
+representing defined macros </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New">IBuildMacro[] getMacros(IConfiguration configuration,</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 70.8pt; margin-top: 0; margin-bottom: 0">
-IBuildMacroProvider provider);</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
-<p class="MsoNormal">All methods of the IProjectBuildMacroSupplier interface 
+<font face="Courier New">IBuildMacroProvider provider);</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
+<p class="MsoNormal">All methods of the <font face="Courier New">IProjectBuildMacroSupplier</font> interface 
 MUST return macros ONLY for the Project context, and MUST NOT search for macro 
 values for contexts with lower precedence. This is up to the BuildMacroProvider 
 to query macro suppliers passing lower-precedence context if necessary in case 
 the macro value was not found for some specified context.</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IProjectBuildMacroSupplier {</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">public interface 
+IProjectBuildMacroSupplier {</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @ macroName the macro mane</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param project the instance of the 
-managed project</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @ macroName the macro mane</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-build macro provider to be used for querying the</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param project the instance of the 
+managed project</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* build macros from within the 
-supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching macros for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* about the build macros defined for the higher 
-levels.</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param provider the instance of the 
+build macro provider to be used for querying the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the reference to the 
-IBuildMacro interface representing </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* the build macro of a given name or null if the 
-macro of&nbsp; that name is not defined</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* build macros from within the 
+supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-IBuildMacro getMacro(String macroName, </p>
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
+searching macros for the levels </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* higher than the current supplier level, will 
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* for the current level and will query all 
+suppliers for the lower levels. </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
+again. Also the supplier should not know anything</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* about the build macros defined for the higher 
+levels.</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @return the reference to the IBuildMacro interface representing </span>
+</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* the build macro of a given name or null if the 
+macro of&nbsp; that name is not defined</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New">IBuildMacro getMacro(String macroName, </font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 106.2pt; margin-top: 0; margin-bottom: 0">
-IManagedProject project,</p>
+<font face="Courier New">IManagedProject project,</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 106.2pt; margin-top: 0; margin-bottom: 0">
-IBuildMacroProvider provider);</p>
+<font face="Courier New">IBuildMacroProvider provider);</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param project the instance of the 
-managed project</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param project the instance of the 
+managed project</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @param provider the instance of the 
-build macro provider to be used for querying the</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @param provider the instance of the 
+build macro provider to be used for querying the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* build macros from within the 
-supplier. The supplier should use this provider to obtain</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* the already defined build macros instead of using 
-the &#8220;default&#8221; provider returned by the</span></p>
-<p class="MsoNormal" style="text-indent: 3.0pt; margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
-searching macros for the levels </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* higher than the current supplier level, will 
-query only the lower-precedence suppliers </span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* for the current level and will query all 
-suppliers for the lower levels. </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
-be caused if the supplier calls the provider </span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
-again. Also the supplier should not know anything</span></p>
-<p class="MsoNormal" style="text-indent: 35.4pt; margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;* about the build macros defined for the higher 
-levels.</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* build macros from within the 
+supplier. The supplier should use this provider to obtain</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @return the IBuildMacro[] array 
-representing defined macros </span></p>
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* the already defined build macros instead of using 
+the &#8220;default&#8221; provider returned by the</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-left: 35.4pt; margin-top: 0; margin-bottom: 0">
-IBuildMacro[] getMacros(IManagedProject project,</p>
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">* ManagedBuildManager.getBuildMacroProvider().</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* The provider passed to a supplier will ignore 
+searching macros for the levels </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* higher than the current supplier level, will 
+query only the lower-precedence suppliers </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* for the current level and will query all 
+suppliers for the lower levels. </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* This is done to avoid infinite loops that could 
+be caused if the supplier calls the provider </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* and the provider in turn calls that supplier 
+again. Also the supplier should not know anything</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp; </font>
+<font face="Courier New"><span style="color: #003366">&nbsp;* about the build macros defined for the higher 
+levels.</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;* @return the IBuildMacro[] array 
+representing defined macros </span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New" color="#003366">&nbsp;&nbsp;&nbsp; </font>
+<font face="Courier New">IBuildMacro[] getMacros(IManagedProject project,</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 106.2pt; margin-top: 0; margin-bottom: 0">
-IBuildMacroProvider provider);</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
-<p class="MsoNormal">The IBuildMacro interface returns information regarding an 
+<font face="Courier New">IBuildMacroProvider provider);</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
+<p class="MsoNormal">The <font face="Courier New">IBuildMacro</font> interface returns information regarding an 
 individual build macro.&nbsp;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">public interface 
-IBuildMacro{</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
-static final int VALUE_TEXT = 1; //can hold any text string</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
-static final int VALUE_TEXT_LIST = 2; //can hold the array of text string values</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
-static final int VALUE_PATH_FILE = 3; //can hold file path</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">public interface 
+IBuildMacro{</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
+static final int VALUE_TEXT = 1; //can hold any text string</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
+static final int VALUE_TEXT_LIST = 2; //can hold the array of text string values</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
+static final int VALUE_PATH_FILE = 3; //can hold file path</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
 static final int VALUE_PATH_FILE_LIST = 4; //can hold the array of file path 
-values</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
-static final int VALUE_PATH_DIR = 5; //can hold dir path</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
+values</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
+static final int VALUE_PATH_DIR = 5; //can hold dir path</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
 static final int VALUE_PATH_DIR_LIST = 6; //can hold the array of dir path 
-values</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
-static final int VALUE_PATH_ANY = 7; //can hold both file and dir path</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public 
-static final int VALUE_PATH_ANY_LIST = 8; //can hold the array of&nbsp; PATH_ANY</p>
+values</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
+static final int VALUE_PATH_ANY = 7; //can hold both file and dir path</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;public 
+static final int VALUE_PATH_ANY_LIST = 8; //can hold the array of&nbsp; PATH_ANY</font></p>
 <p class="MsoNormal" style="text-indent: 35.4pt; margin-left: 283.2pt; margin-top: 0; margin-bottom: 0">
-// values&nbsp;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
-getName();</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @returns IBuildMacro.VALUE_xxx</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int 
-getMacroValueType();</p>
+<font face="Courier New">// values&nbsp;</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;String getName();</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @throws BuildMacroException if macro 
-holds StringList-type value</span></p>
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+</font> </p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String 
-getStringValue() throws BuildMacroException;</p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;/**</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* @returns IBuildMacro.VALUE_xxx</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;int 
+getMacroValueType();</font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /**</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;/**</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;* @throws BuildMacroException if macro 
-holds single String-type value</span></p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* @throws BuildMacroException if macro 
+holds StringList-type value</span></font></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;*/</span></p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-String[] getStringListValue() throws BuildMacroException;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">}</p>
+<font face="Courier New">
+<span style="color: #003366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;String getStringValue() throws BuildMacroException;</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp;&nbsp;&nbsp; /**</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp;&nbsp;&nbsp; &nbsp;* @throws BuildMacroException if macro 
+holds single String-type value</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New"><span style="color: #003366">&nbsp;&nbsp;&nbsp; &nbsp;*/</span></font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">&nbsp;&nbsp;&nbsp; 
+String[] getStringListValue() throws BuildMacroException;</font></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<font face="Courier New">}</font></p>
 <p class="subsection"><a name="_TocSectionDynamic_9">7.9 Defining a Configuration Name Provider</a></p>
 <p class="MsoNormal">All the configuration names must be unique within a 
 project.&nbsp; You can provide unique configuration names in your build 
@@ -5958,87 +6182,255 @@ String [] usedConfigurationNames );<br>
 and supply a class that implements the <code>IManagedOutputNameProvider</code>
 interface shown below.&nbsp; The class name is assigned to the outputType element, 
 <b>nameProvider</b> attribute. </p>
-<p class="MsoNormal"><span style="font-size:10.0pt;font-family:Courier">public 
+<p class="MsoNormal"><span style="font-size:10.0pt;font-family:Courier New">public 
 interface IManagedOutputNameProvider{</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">&nbsp;&nbsp;/**</span></p>
+<span style="font-size:10.0pt;font-family:Courier New">&nbsp;&nbsp;/**</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">&nbsp;&nbsp; *</span></p>
+<span style="font-size:10.0pt;font-family:Courier New">&nbsp;&nbsp; *</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">&nbsp;&nbsp; * Returns the output names 
+<span style="font-size:10.0pt;font-family:Courier New">&nbsp;&nbsp; * Returns the output names 
 corresponding to the primary input name(s)</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">&nbsp;&nbsp; *</span></p>
+<span style="font-size:10.0pt;font-family:Courier New">&nbsp;&nbsp; *</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">&nbsp;&nbsp; * @returns String[]</span></p>
+<span style="font-size:10.0pt;font-family:Courier New">&nbsp;&nbsp; * @returns String[]</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">&nbsp;&nbsp; */</span></p>
+<span style="font-size:10.0pt;font-family:Courier New">&nbsp;&nbsp; */</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">&nbsp;&nbsp;&nbsp;IPath[] 
+<span style="font-size:10.0pt;font-family:Courier New">&nbsp;&nbsp;&nbsp;IPath[] 
 getOutputPaths(ITool tool, IPath[] primaryInputs);</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:Courier">}</span></p>
+<span style="font-size:10.0pt;font-family:Courier New">}</span></p>
 <p class="MsoNormal" style="margin-top: 6px; margin-bottom: 0">When <b>multipleOfType</b> 
 is true, an output name provider, or the <b>outputNames</b> attribute, is required 
 		in order for MBS to know the names of the output files.</p>
 <p class="subsection"><a name="_TocSectionDynamic_11">7.11 Defining an Option Value Handler</a></p>
+<p>You can specify a value handler for an option.&nbsp; You must specify and 
+supply a class that implements the <font face="Courier New">
+IManagedOptionValueHandler</font> interface shown below.&nbsp; This interface is 
+used to dynamically manage the value of an option.</p>
+<p><font face="Courier New">public interface IManagedOptionValueHandler{ <br>
+<br>
+&nbsp;&nbsp;&nbsp; public final int EVENT_OPEN = 1;&nbsp; /** The option is 
+opened, i.e. its UI element <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* is created. The valueHandler can override <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* the value of the option. If it does not, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* the last persisted value is used. */<br>
+&nbsp;&nbsp;&nbsp; public final int EVENT_CLOSE = 2; /** The option is closed. 
+i.e. its value has been<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* destroyed when a configuration/resource gets deleted.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* The valuehandler can do various things assocaited with<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* destroying the option such as freeing the memory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* associated with this option callback, if needed. */<br>
+&nbsp;&nbsp;&nbsp; public final int EVENT_SETDEFAULT = 3; /** The default value 
+option::defaultValue has <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* been set. The handleValue callback is called <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* afterwards to give the handler a chance to <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* override the value or to update the value in <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* its back-end. Typically this event will be called <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* when the Restore Defaults button is pressed. */<br>
+&nbsp;&nbsp;&nbsp; public final int EVENT_APPLY = 4; /** The option has been set 
+by pressing the Apply <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* button (or the OK button). The valueHandler can <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* transfer the value of the option to its own <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+* back-end. */<br>
+<br>
+&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp; * Handles transfer between values between UI element and <br>
+&nbsp;&nbsp;&nbsp; * back-end in different circumstances.<br>
+&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp; * @param configuration build configuration of option <br>
+&nbsp;&nbsp;&nbsp; * (may be IConfiguration or IResourceConfiguration)<br>
+&nbsp;&nbsp;&nbsp; * @param holder contains the holder of the option<br>
+&nbsp;&nbsp;&nbsp; * @param option the option that is handled<br>
+&nbsp;&nbsp;&nbsp; * @param extraArgument extra argument for handler<br>
+&nbsp;&nbsp;&nbsp; * @param event event to be handled <br>
+&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp; * @return True when the event was handled, false otherwise.<br>
+&nbsp;&nbsp;&nbsp; * This enables default event handling can take place.<br>
+&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; boolean handleValue(IBuildObject configuration, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IOption option,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String extraArgument, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int event);<br>
+<br>
+&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp; * Checks whether the value of an option is its default value.<br>
+&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp; * @param configuration build configuration of option <br>
+&nbsp;&nbsp;&nbsp; * (may be IConfiguration or IResourceConfiguration)<br>
+&nbsp;&nbsp;&nbsp; * @param holder contains the holder of the option<br>
+&nbsp;&nbsp;&nbsp; * @param option the option that is handled<br>
+&nbsp;&nbsp;&nbsp; * @param extraArgument extra argument for handler<br>
+&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp; * The additional options besides configuration are supplied 
+to <br>
+&nbsp;&nbsp;&nbsp; * provide enough information for querying the default value 
+from <br>
+&nbsp;&nbsp;&nbsp; * a potential data storage back-end.<br>
+&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp; * @return True if the options value is its default value and<br>
+&nbsp;&nbsp;&nbsp; * False otherwise. This enables that default event handling 
+can <br>
+&nbsp;&nbsp;&nbsp; * take place.<br>
+&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; boolean isDefaultValue(IBuildObject configuration, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IOption option, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String extraArgument);<br>
+<br>
+&nbsp;&nbsp; /**<br>
+&nbsp;&nbsp;&nbsp; * Checks whether an enumeration value of an option is 
+currently a <br>
+&nbsp;&nbsp;&nbsp; * valid choice. The use-case for this method is the case, 
+where<br>
+&nbsp;&nbsp;&nbsp; * the set of valid enumerations in the plugin.xml file 
+changes.<br>
+&nbsp;&nbsp;&nbsp; * The UI will remove entries from selection lists if the 
+value <br>
+&nbsp;&nbsp;&nbsp; * returns false.<br>
+&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp; * @param configuration build configuration of option <br>
+&nbsp;&nbsp;&nbsp; * (may be IConfiguration or IResourceConfiguration)<br>
+&nbsp;&nbsp;&nbsp; * @param holder contains the holder of the option<br>
+&nbsp;&nbsp;&nbsp; * @param option the option that is handled<br>
+&nbsp;&nbsp;&nbsp; * @param extraArgument extra argument for handler<br>
+&nbsp;&nbsp;&nbsp; * @param enumValue enumeration value that is to be checked<br>
+&nbsp;&nbsp;&nbsp; *<br>
+&nbsp;&nbsp;&nbsp; * The additional options besides configuration are supplied 
+to <br>
+&nbsp;&nbsp;&nbsp; * provide enough information for querying information from a
+<br>
+&nbsp;&nbsp;&nbsp; * a potential data storage back-end.<br>
+&nbsp;&nbsp;&nbsp; * <br>
+&nbsp;&nbsp;&nbsp; * @return True if the enumeration value is valid and False
+<br>
+&nbsp;&nbsp;&nbsp; * otherwise.<br>
+&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;&nbsp;&nbsp; boolean isEnumValueAppropriate(IBuildObject configuration,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IOption option,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String extraArgument, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String enumValue);<br>
+}</font></p>
+<p><font face="Arial">See the Shared Tool Options design document in bugzilla #90481 
+for additional information.</font></p>
 <p class="subsection"><a name="_TocSectionDynamic_12">7.12 Defining an Option Applicability Calculator</a></p>
 <p>You can specify an option applicability calculator for an option.&nbsp; You
 must specify and supply a 
-class that implements the <code><font face="Arial">IManagedOutputNameProvider</font></code><font face="Arial">
+class that implements the <code><font face="Courier New">IManagedOutputNameProvider</font></code><font face="Arial">
 interface shown below.&nbsp; The class name is assigned to the outputType element, 
 <b>nameProvider</b> attribute.&nbsp; You should implement this interface when an 
 option is not always applicable - for example, when an option is only used if 
 another option has a particular value.</font></p>
 <p><font face="Courier New">public interface IOptionApplicability {<br>
+&nbsp;
 /**<br>
+&nbsp;
 * This method is queried whenever a makefile or makefile fragment is<br>
+&nbsp;
 * generated which uses this option, and in the C/C++ Build property<br>
+&nbsp;
 * pages when displaying the current command line.<br>
+&nbsp;
 * <br>
+&nbsp;
 * @param configuration build configuration of option <br>
+&nbsp;
 * (may be IConfiguration or IResourceConfiguration)<br>
+&nbsp;
 * @param holder contains the holder of the option<br>
-* @param option the option itself<br>
+&nbsp;
+* @param option the option itself&nbsp; <br>
+&nbsp;
 * <br>
+&nbsp;
 * @return true if this option is to be used in command line<br>
+&nbsp;
 * generation, false otherwise<br>
+&nbsp;
 */<br>
+&nbsp;
 public boolean isOptionUsedInCommandLine(<br>
 &nbsp;&nbsp;&nbsp; IBuildObject configuration, <br>
 &nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
 &nbsp;&nbsp;&nbsp; IOption option); <br>
 <br>
+&nbsp;
 /**<br>
+&nbsp;
 * This method is queried whenever a new option category is displayed.<br>
+&nbsp;
 * <br>
+&nbsp;
 * @param configuration build configuration of option <br>
+&nbsp;
 * (may be IConfiguration or IResourceConfiguration)<br>
+&nbsp;
 * @param holder contains the holder of the option<br>
+&nbsp;
 * @param option the option itself<br>
+&nbsp;
 * <br>
+&nbsp;
 * @return true if this option should be visible in the build options page,<br>
+&nbsp;
 * false otherwise<br>
+&nbsp;
 */<br>
+&nbsp;
 public boolean isOptionVisible(<br>
 &nbsp;&nbsp;&nbsp; IBuildObject configuration, <br>
 &nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>
 &nbsp;&nbsp;&nbsp; IOption option); <br>
 <br>
+&nbsp;
 /**<br>
+&nbsp;
 * Whenever the value of an option changes in the GUI, this method is<br>
+&nbsp;
 * queried on all other visible options for the same category. Note that<br>
+&nbsp;
 * this occurs when the GUI changes - the user may opt to cancel these<br>
+&nbsp;
 * changes.<br>
+&nbsp;
 * <br>
+&nbsp;
 * @param configuration build configuration of option <br>
+&nbsp;
 * (may be IConfiguration or IResourceConfiguration)<br>
+&nbsp;
 * @param holder contains the holder of the option<br>
+&nbsp;
 * @param option the option itself<br>
+&nbsp;
 *<br>
+&nbsp;
 * @return true if this option should be enabled in the build options page,<br>
+&nbsp;
 * or false if it should be disabled (grayed out)<br>
+&nbsp;
 */<br>
+&nbsp;
 public boolean isOptionEnabled(<br>
 &nbsp;&nbsp;&nbsp; IBuildObject configuration, <br>
 &nbsp;&nbsp;&nbsp; IHoldsOptions holder, <br>

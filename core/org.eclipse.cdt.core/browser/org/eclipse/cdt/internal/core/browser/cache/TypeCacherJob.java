@@ -119,6 +119,8 @@ public class TypeCacherJob extends BasicJob {
 	
 	private void flush(ITypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
 		// flush the cache
+	    boolean success = true;
+
 		IProject project = fTypeCache.getProject();
 
 		monitor.beginTask("", 100); //$NON-NLS-1$
@@ -126,11 +128,11 @@ public class TypeCacherJob extends BasicJob {
 		fTypeCache.flush(scope);
 		if (!scope.encloses(project)) {
 			if (project.exists() && project.isOpen()) {
-			    doIndexerJob(new IndexerDependenciesJob(fIndexManager, fTypeCache, scope), monitor);
+			    success = doIndexerJob(new IndexerDependenciesJob(fIndexManager, fTypeCache, scope), monitor);
 			}
 		}
 
-		if ( monitor.isCanceled() ) {
+		if ( !success || monitor.isCanceled() ) {
 			throw new InterruptedException();
 		}
 		
@@ -138,14 +140,15 @@ public class TypeCacherJob extends BasicJob {
 	}
 	
 	private void update(ITypeSearchScope scope, IProgressMonitor monitor) throws InterruptedException {
-		IProject project = fTypeCache.getProject();
+	    boolean success = true;
+	    IProject project = fTypeCache.getProject();
 		
 		monitor.beginTask("", 100); //$NON-NLS-1$
 		if (project.exists() && project.isOpen()) {
-		    doIndexerJob(new IndexerTypesJob(fIndexManager, fTypeCache, scope), monitor);
+		    success = doIndexerJob(new IndexerTypesJob(fIndexManager, fTypeCache, scope), monitor);
 		}
 
-		if (monitor.isCanceled()) {
+		if ( !success || monitor.isCanceled() ) {
 			throw new InterruptedException();
 		}
 		

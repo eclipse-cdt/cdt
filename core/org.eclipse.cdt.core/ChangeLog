@@ -1,4 +1,8 @@
 2005-08-04 Alain Magloire
+	According to PR 104907, this patch is needed.
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeCahcerJob.java
+
+2005-08-04 Alain Magloire
 	Fix taken from 3.0 PR 104907
 	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeCache.java
 	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeCacheJob.java

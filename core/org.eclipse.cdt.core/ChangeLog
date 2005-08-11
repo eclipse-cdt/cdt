@@ -1,3 +1,8 @@
+2005-08-11 Chris Wiebe
+	Fix PR 104907,106415: type cache always running in background
+	* browser/org/eclipse/cdt/core/browser/AllTypesCache.java
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeCacherJob.java
+
 2005-07-26 Alain Magloire
 	Fix PR 100992: IMethod were generated for implementation, we should generate
 	IFunction for method defines outside of the class shell.

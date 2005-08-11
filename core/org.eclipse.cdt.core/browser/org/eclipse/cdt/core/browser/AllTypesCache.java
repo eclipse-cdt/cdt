@@ -68,15 +68,16 @@ public class AllTypesCache {
 		fgTypeHierarchyBuilder = new TypeHierarchyBuilder();
 
 		// load prefs
-		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
-		if (prefs.contains(ENABLE_BACKGROUND_TYPE_CACHE)) {
-			fgEnableIndexing = prefs.getBoolean(ENABLE_BACKGROUND_TYPE_CACHE);
-		} else {
-			prefs.setDefault(ENABLE_BACKGROUND_TYPE_CACHE, true);
-			prefs.setValue(ENABLE_BACKGROUND_TYPE_CACHE, true);
-			CCorePlugin.getDefault().savePluginPreferences();
-			fgEnableIndexing = true;
-		}
+//		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
+//		if (prefs.contains(ENABLE_BACKGROUND_TYPE_CACHE)) {
+//			fgEnableIndexing = prefs.getBoolean(ENABLE_BACKGROUND_TYPE_CACHE);
+//		} else {
+//			prefs.setDefault(ENABLE_BACKGROUND_TYPE_CACHE, false);
+//			prefs.setValue(ENABLE_BACKGROUND_TYPE_CACHE, false);
+//			CCorePlugin.getDefault().savePluginPreferences();
+//			fgEnableIndexing = true;
+//		}
+		fgEnableIndexing = false;
 		
 		// start jobs in background after INITIAL_DELAY
 		TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, INITIAL_DELAY);
@@ -89,22 +90,22 @@ public class AllTypesCache {
 		};
 		CoreModel.getDefault().addElementChangedListener(fgElementChangedListener);
 
-		// add property change listener
-		fgPropertyChangeListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (property.equals(ENABLE_BACKGROUND_TYPE_CACHE)) {
-					String value = (String) event.getNewValue();
-					fgEnableIndexing = Boolean.valueOf(value).booleanValue();
-					if (!fgEnableIndexing) {
-						TypeCacheManager.getInstance().cancelJobs();
-					} else {
-						TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, 0);
-					}
-				}
-			}
-		};
-		prefs.addPropertyChangeListener(fgPropertyChangeListener);
+//		// add property change listener
+//		fgPropertyChangeListener = new IPropertyChangeListener() {
+//			public void propertyChange(PropertyChangeEvent event) {
+//				String property = event.getProperty();
+//				if (property.equals(ENABLE_BACKGROUND_TYPE_CACHE)) {
+//					String value = (String) event.getNewValue();
+//					fgEnableIndexing = Boolean.valueOf(value).booleanValue();
+//					if (!fgEnableIndexing) {
+//						TypeCacheManager.getInstance().cancelJobs();
+//					} else {
+//						TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, 0);
+//					}
+//				}
+//			}
+//		};
+//		prefs.addPropertyChangeListener(fgPropertyChangeListener);
 	}
 	
 	/**

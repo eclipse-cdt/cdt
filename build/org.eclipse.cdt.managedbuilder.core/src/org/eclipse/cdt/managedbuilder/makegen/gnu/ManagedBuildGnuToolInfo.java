@@ -179,9 +179,9 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 						//myCommandInputs.add(inputs);
 						if (primaryInput) {
-							myCommandDependencies.add(0, inputs);
+							myCommandDependencies.addAll(0, inputs);
 						} else {
-							myCommandDependencies.add(inputs);
+							myCommandDependencies.addAll(inputs);
 						}
 						//myEnumeratedInputs.add(inputs);
 					} catch( BuildException ex ) {

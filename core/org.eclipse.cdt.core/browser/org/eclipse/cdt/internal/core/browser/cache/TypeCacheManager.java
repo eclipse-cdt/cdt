@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -306,7 +307,7 @@ public class TypeCacheManager implements ITypeCacheChangedListener, IndexManager
 		for (int i = 0; i < projects.length; ++i) {
 			IProject project = projects[i];
 			// wait for any running jobs to finish
-			getCache(project).reconcileAndWait(true, Job.SHORT, monitor);
+			getCache(project).reconcileAndWait(true, Job.SHORT, new SubProgressMonitor(monitor, 1));
 		}
 		monitor.done();
 	}

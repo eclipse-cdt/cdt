@@ -38,16 +38,27 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 	}
 
 	protected boolean processIndex(IProgressMonitor progressMonitor) throws InterruptedException {
+		IndexInput input = null;
 		try {
-			updateNamespaces(progressMonitor);
-			updateTypes(progressMonitor);
+			input = new BlocksIndexInput( fProjectIndex.getIndexFile() );	
+			input.open();
+			updateNamespaces(input, progressMonitor);
+			updateTypes(input, progressMonitor);
 			return true;
 		} catch (IOException e) {
 			return false;
-		} 
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
+		}
 	}
 
-	private void updateNamespaces(IProgressMonitor monitor)
+	private void updateNamespaces(IndexInput input, IProgressMonitor monitor)
 		throws InterruptedException, IOException {
 		if (monitor.isCanceled())
 			throw new InterruptedException();
@@ -65,13 +76,13 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 				String name = entry.getName();
 				if (name.length() != 0) {
 					String[] enclosingNames = entry.getEnclosingNames();
-					addType(entry, namespacePaths[i].getPath(), ICElement.C_NAMESPACE, name, enclosingNames, monitor);
+					addType(input, entry, namespacePaths[i].getPath(), ICElement.C_NAMESPACE, name, enclosingNames, monitor);
 				}
 			}
 		}
 	}
 	
-	private void updateTypes(IProgressMonitor monitor)
+	private void updateTypes(IndexInput input, IProgressMonitor monitor)
 		throws InterruptedException, IOException {
 		if (monitor.isCanceled())
 			throw new InterruptedException();
@@ -96,7 +107,7 @@ public class IndexerTypesJob2 extends IndexerJob2 {
     				case IIndex.TYPE_ENUM :
     				case IIndex.TYPE_UNION :			
     					if (counter != 0 && name.length() != 0) {  // skip anonymous structs
-    						addType(entry, getPathForEntry( entry ), index2ICElement( entry.getKind() ), name, entry.getEnclosingNames(), monitor);
+    						addType(input, entry, null, index2ICElement( entry.getKind() ), name, entry.getEnclosingNames(), monitor);
     					}
     					break;
     				default:
@@ -119,7 +130,7 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 	            {
 	              case IIndex.TYPE_DERIVED :
 	                  if (name.length() != 0) {  // skip anonymous structs
-	                      addSuperTypeReference(entry, name, entry.getEnclosingNames(), monitor);
+	                      addSuperTypeReference(input, entry, name, entry.getEnclosingNames(), monitor);
 	                  }
 	                  break;
 	              default:
@@ -129,12 +140,8 @@ public class IndexerTypesJob2 extends IndexerJob2 {
         }
 	}
 
-	private String getPathForEntry(IEntryResult entry) {
-        return getPathForEntry(entry, 0);
-    }
-
-    private void addType(IEntryResult entry, String pth, int type, String name, String[] enclosingNames, IProgressMonitor monitor)
-		throws InterruptedException, IOException {
+    	private void addType(IndexInput input, IEntryResult entry, String pth, int type, String name, String[] enclosingNames, IProgressMonitor monitor)
+    		throws InterruptedException, IOException {
 		QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
 		ITypeInfo info = fTypeCache.getType(type, qualifiedName);
 		if (info == null || info.isUndefinedType()) {
@@ -158,6 +165,10 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 //						info.addReference(new TypeReference(path, project));
 //					}
 //				}				
+				if (pth == null) {
+		            pth = input.getIndexedFile( references[0] ).getPath();
+				}
+				
 				final IPath workspaceRelativePath = PathUtil.getWorkspaceRelativePath(pth);
                 int offset = entry.getOffsets()[0][0];
 //                int offsetType = Integer.valueOf(String.valueOf(offsets[i][j]).substring(0,1)).intValue();
@@ -183,7 +194,7 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 		}
 	}
 
-	private void addSuperTypeReference(IEntryResult entry, String name, String[] enclosingNames, IProgressMonitor monitor) throws InterruptedException, IOException {
+	private void addSuperTypeReference(IndexInput input, IEntryResult entry, String name, String[] enclosingNames, IProgressMonitor monitor) throws InterruptedException, IOException {
 		QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
 		ITypeInfo info = fTypeCache.getType(ICElement.C_CLASS, qualifiedName);
 		if (info == null)
@@ -198,8 +209,9 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 			for (int i = 0; i < references.length; ++i) {
 				if (monitor.isCanceled())
 					throw new InterruptedException();
-
-				IPath path = PathUtil.getWorkspaceRelativePath(getPathForEntry( entry, i ));
+				
+				String pth = input.getIndexedFile( references[i] ).getPath();
+				IPath path = PathUtil.getWorkspaceRelativePath(pth);
 
                 info.addDerivedReference(new TypeReference(path, fProject));
 //
@@ -214,30 +226,4 @@ public class IndexerTypesJob2 extends IndexerJob2 {
 			}
 		}
 	}
-
-    private String getPathForEntry(IEntryResult entry, int i) {
-        int [] references = entry.getFileReferences();
-        IndexInput input = new BlocksIndexInput( fProjectIndex.getIndexFile() );
-        try {
-            input.open();
-        } catch (IOException e) {
-            return ""; //$NON-NLS-1$
-        }
-        try
-        {
-            return input.getIndexedFile( references[i] ).getPath();
-        }
-        catch( IOException io )
-        {
-        }
-        finally
-        {
-            try {
-                input.close();
-            } catch (IOException e) {
-            }
-        }
-        return ""; //$NON-NLS-1$
-    }
-    
 }

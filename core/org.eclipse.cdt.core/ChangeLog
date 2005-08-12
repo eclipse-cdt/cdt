@@ -1,3 +1,9 @@
+2005-08-12 Chris Wiebe
+	Fix PR 106778: IndexerTypesJob2 painfully slow
+	* browser/org/eclipse/cdt/internal/core/browser/cache/IndexerTypesJob2.java
+	Fix progress monitor
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeCacheManager.java
+
 2005-08-11 Chris Wiebe
 	Fix PR 104907,106415: type cache always running in background
 	* browser/org/eclipse/cdt/core/browser/AllTypesCache.java

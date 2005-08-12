@@ -56,12 +56,6 @@
    	label="&modulesView;"/>
 </context>
 
-<context id ="shared_libraries_preference_page_context">
-   <description>Set the refresh preference for the Shared Libraries view. </description>
-   <topic href="reference/cdt_u_shared_lib_view_pref.htm"
-   	label="&sharedLibsViewPrefs;"/>
-</context>
-
 <context id ="signals_view_context">
    <description>Click below to see help</description>
    <topic href="reference/cdt_u_signals_view.htm"

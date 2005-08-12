@@ -25,6 +25,7 @@
 			</topic>
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
+			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_definitions.htm"/>
 			<topic label="Refactoring" href="tasks/cdt_t_refactoring.htm"/>
 		</topic>
 		<topic label="Building projects" href="tasks/cdt_o_build_task.htm">

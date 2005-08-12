@@ -19,7 +19,8 @@
 	<topic label="Navigation aids" href="concepts/cdt_o_nav.htm"> 
 		<topic label="Outline View" href="concepts/cdt_c_outlineview.htm"/> 
 		<topic label="Project File views" href="concepts/cdt_c_proj_file_views.htm"/> 
-		<topic label="Open declarations" href="concepts/cdt_c_open_declarations.htm"/> 
+		<topic label="Open declarations" href="concepts/cdt_c_open_declarations.htm"/>
+		<topic label="Open definitions" href="concepts/cdt_c_open_definitions.htm"/>
 	</topic>
 	<topic label="Build" href="concepts/cdt_o_build_conc.htm"> 
 		<topic label="Building C/C++ Projects" href="concepts/cdt_c_build_over.htm"/> 

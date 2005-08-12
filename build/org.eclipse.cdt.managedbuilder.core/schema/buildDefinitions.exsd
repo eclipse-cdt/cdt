@@ -577,7 +577,7 @@
          <attribute name="commandLinePattern" type="string">
             <annotation>
                <documentation>
-                  Specifies the command &quot;pattern&quot; that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables command, flags, outputFlag, output, and inputs.  The default pattern is ${command} ${flags} ${outputflag}${output} ${inputs}, except when customBuildStep is true, where the default is $(command).  White space and other characters are significant and are copied to the generated command.
+                  Specifies the command &quot;pattern&quot; that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables COMMAND, FLAGS, OUTPUT_FLAG, OUTPUT_PREFIX, OUTPUT and INPUTS.  The default command line pattern is ${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}, except when customBuildStep is true, where the default is $(COMMAND). White space and other characters are significant and are copied to the generated command.
                </documentation>
             </annotation>
          </attribute>

@@ -308,14 +308,14 @@
          <attribute name="osList" type="string">
             <annotation>
                <documentation>
-                  This field lists the host operating systems on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+                  This field lists the host operating systems on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOS() and include strings like &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot;.  Do not specify this attribute or specify &quot;all&quot; to allow all host operating systems.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="archList" type="string">
             <annotation>
                <documentation>
-                  This field lists the host architectures on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+                  This field lists the host architectures on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOSArch() and include strings like &quot;ia32&quot;.  Do not specify this attribute or specify &quot;all&quot; to allow all host architectures.
                </documentation>
             </annotation>
          </attribute>
@@ -1472,14 +1472,14 @@ If this attribute is not specified, MBS will assume that there are no reserved m
          <attribute name="osList" type="string">
             <annotation>
                <documentation>
-                  This field lists the target operating systems on which the outputs of a tool-chain runs.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+                  This field lists the target operating systems on which the outputs of a tool-chain runs.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOS() and include strings like &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot;.  Do not specify this attribute or specify &quot;all&quot; to allow all target operating systems.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="archList" type="string">
             <annotation>
                <documentation>
-                  This field lists the target architectures on which the outputs of a tool-chain runs.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+                  This field lists the target architectures on which the outputs of a tool-chain runs.  The value should be a comma-separated list.  Valid values are the strings returned by the Eclipse API Platform.getOSArch() and include strings like &quot;ia32&quot;.  Do not specify this attribute or specify &quot;all&quot; to allow all target architectures.
                </documentation>
             </annotation>
          </attribute>

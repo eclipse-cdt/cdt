@@ -1,4 +1,9 @@
 2005-08-12 Chris Wiebe
+	Fix PR 106577: NPE in CTags Indexer
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsFileReader.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexAll.java
+
+2005-08-12 Chris Wiebe
 	Fix PR 106778: IndexerTypesJob2 painfully slow
 	* browser/org/eclipse/cdt/internal/core/browser/cache/IndexerTypesJob2.java
 	Fix progress monitor

@@ -98,7 +98,11 @@ public class CTagsFileReader {
 				      indexer = new MiniIndexer(currentFile.getFullPath());
 				      index.add(currentFile,indexer);
 				  } else {
-					  indexer = new MiniIndexer(rootDirectory.append(fileName));
+					  IPath filePath = new Path(fileName);
+					  if (!filePath.isAbsolute()) {
+						  filePath = rootDirectory.append(fileName);
+					  }
+					  indexer = new MiniIndexer(filePath);
 					  try {
 						IResource[] resources = project.members();
 						IFile tempFile=null;

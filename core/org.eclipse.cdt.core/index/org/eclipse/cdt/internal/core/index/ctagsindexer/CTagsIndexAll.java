@@ -111,6 +111,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 			     //Parse the CTag File
 			     CTagsFileReader reader = new CTagsFileReader(project,ctagsFileToUse,indexer);
 			     reader.setIndex(index);
+			     reader.setRootDirectory(project.getLocation());
 			     reader.parse();
 			     
 			     // request to save index when all cus have been indexed

@@ -1,3 +1,10 @@
+2005-08-20 Alain Magloire
+	Fix PR 86802 106911 87497 : Assembly editor fixes.
+	* src/org/eclipse/cdt/internal/ui/editor/asm/ASMEditorActionContributor.java
+	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmSourceViewerConfiguration.java
+	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmTextEditor.java
+	* plugin.xml
+
 2005-08-09 Chris Wiebe
 	Fix bug# 106564: platform keybindings
 	plugin.xml

@@ -537,6 +537,8 @@
             name="%AsmEditor.name"
             icon="icons/obj16/s_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
+            contributorClass="org.eclipse.cdt.internal.ui.editor.asm.ASMEditorActionContributor"
+            symbolicFontName="org.eclipse.cdt.ui.editors.textfont"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
             <contentTypeBinding contentTypeId="org.eclipse.cdt.core.asmSource"/>
       </editor>

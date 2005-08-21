@@ -870,16 +870,13 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 		if (selection.size() == 1) {
 			Object obj = selection.getFirstElement();
-			if (obj instanceof ISourceReference) {
-				ITranslationUnit tu = ((ISourceReference) obj).getTranslationUnit();
-				if (tu != null) {
-					IEditorPart part = EditorUtility.isOpenInEditor(obj);
-					if (part != null) {
-						IWorkbenchPage page = getSite().getPage();
-						page.bringToTop(part);
-						if (obj instanceof ICElement) {
-							EditorUtility.revealInEditor(part, (ICElement) obj);
-						}
+			IEditorPart part = EditorUtility.isOpenInEditor(obj);
+			if (part != null) {
+				IWorkbenchPage page = getSite().getPage();
+				page.bringToTop(part);
+				if (obj instanceof ISourceReference) {
+					if (obj instanceof ICElement) {
+						EditorUtility.revealInEditor(part, (ICElement) obj);
 					}
 				}
 			}

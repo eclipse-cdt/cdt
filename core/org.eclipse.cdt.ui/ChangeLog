@@ -1,4 +1,8 @@
 2005-08-20 Alain Magloire
+	Fix for PR 106540: Link with editor did not work correctly for non C resources.
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+
+2005-08-20 Alain Magloire
 	Fix PR 86802 106911 87497 : Assembly editor fixes.
 	* src/org/eclipse/cdt/internal/ui/editor/asm/ASMEditorActionContributor.java
 	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmSourceViewerConfiguration.java

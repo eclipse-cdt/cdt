@@ -1,4 +1,8 @@
 2005-08-20 Alain Magloire
+	Fix PR 105613:  Preview label duplicated
+	* src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java
+
+2005-08-20 Alain Magloire
 	Fix for PR 106540: Link with editor did not work correctly for non C resources.
 	* src/org/eclipse/cdt/internal/ui/cview/CView.java
 

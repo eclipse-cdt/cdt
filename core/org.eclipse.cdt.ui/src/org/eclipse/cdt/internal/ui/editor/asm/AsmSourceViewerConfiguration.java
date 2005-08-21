@@ -18,9 +18,10 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 
-public class AsmSourceViewerConfiguration extends SourceViewerConfiguration {
+public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 
 	private AsmTextEditor fEditor;

@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
@@ -69,12 +68,6 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected SourceViewer createViewer(Composite parent) {
-		Label label= new Label(parent, SWT.NONE);
-		label.setText(PreferencesMessages.getString("TemplatePreferencePage.Viewer.preview")); //$NON-NLS-1$
-		GridData data= new GridData();
-		data.horizontalSpan= 2;
-		label.setLayoutData(data);
-		
 		SourceViewer viewer= new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		viewer.configure(new CSourceViewerConfiguration(tools, null));
@@ -86,7 +79,7 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 		viewer.getTextWidget().setFont(font);
 		
 		Control control= viewer.getControl();
-		data= new GridData(GridData.FILL_BOTH);
+		GridData data= new GridData(GridData.FILL_BOTH);
 		data.heightHint= convertHeightInCharsToPixels(5);
 		control.setLayoutData(data);
 	

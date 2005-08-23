@@ -2511,7 +2511,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		case IManagedDependencyGenerator.TYPE_EXTERNAL:
 			IResource[] res = depGen.findDependencies(resource, project);
 			for (int i=0; i<res.length; i++) {
-				IPath dep = res[i].getFullPath();
+				IPath dep = res[i].getProjectRelativePath();
 				deps.add(dep);
 			}
 			break;

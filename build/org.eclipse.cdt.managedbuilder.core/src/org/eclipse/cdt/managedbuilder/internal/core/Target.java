@@ -1091,6 +1091,7 @@ public class Target extends BuildObject implements ITarget {
 					// Set the option attributes
 					newOption.setValue(optRef.getValue());
 					newOption.setValueType(optRef.getValueType());
+					((Option)newOption).setWasOptRef(true);
 				}
 			}
 			

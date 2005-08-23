@@ -395,6 +395,7 @@ public interface IOption extends IBuildObject {
 	 * of its superclass and <code>false</code> if it overrides other attributes.
 	 * 
 	 * @return boolean
+	 * @deprecated
 	 */
 	public boolean overridesOnlyValue();
 	

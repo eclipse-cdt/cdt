@@ -704,13 +704,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 		IOption retOpt = option;
 		if (option.getBooleanValue() != value) {
 			if (option.isExtensionElement()) {
-				//  If the extension element is only overriding the "value" of its superclass, hook the
+				//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
 				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
 				//  elements that are automatically generated from V2.0 model optionReferences.  If these
 				//  end up in the project file, then the project could have a problem when the integration
 				//  provider switches to providing the new model.
 				IOption newSuperClass = option;
-				if (option.overridesOnlyValue()) {
+				if (((Option)option).wasOptRef()) {
 					newSuperClass = option.getSuperClass();
 				}
 				//  Create an Option element for the managed build project file (.CDTBUILD)
@@ -738,13 +738,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 		oldValue = option.getStringValue(); 
 		if (oldValue != null && !oldValue.equals(value)) {
 			if (option.isExtensionElement()) {
-				//  If the extension element is only overriding the "value" of its superclass, hook the
+				//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
 				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
 				//  elements that are automatically generated from V2.0 model optionReferences.  If these
 				//  end up in the project file, then the project could have a problem when the integration
 				//  provider switches to providing the new model.
 				IOption newSuperClass = option;
-				if (option.overridesOnlyValue()) {
+				if (((Option)option).wasOptRef()) {
 					newSuperClass = option.getSuperClass();
 				}
 				//  Create an Option element for the managed build project file (.CDTBUILD)
@@ -792,13 +792,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 		}
 		if(!Arrays.equals(value, oldValue)) {
 			if (option.isExtensionElement()) {
-				//  If the extension element is only overriding the "value" of its superclass, hook the
+				//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
 				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
 				//  elements that are automatically generated from V2.0 model optionReferences.  If these
 				//  end up in the project file, then the project could have a problem when the integration
 				//  provider switches to providing the new model.
 				IOption newSuperClass = option;
-				if (option.overridesOnlyValue()) {
+				if (((Option)option).wasOptRef()) {
 					newSuperClass = option.getSuperClass();
 				}
 				//  Create an Option element for the managed build project file (.CDTBUILD)

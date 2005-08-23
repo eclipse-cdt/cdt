@@ -232,7 +232,7 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 				IOption ourOpt = (IOption)ourOpts.get(i);
 				int j;
 				for (j = 0; j < options.length; j++) {
-					if (options[j].overridesOnlyValue()) {
+					if (((Option)options[j]).wasOptRef()) {
 						if (ourOpt.getSuperClass() != null  // Remove assumption that ALL options must have superclasses
 								&& ourOpt.getSuperClass().getId().equals(options[j].getSuperClass().getId())) {
 							options[j] = ourOpt;

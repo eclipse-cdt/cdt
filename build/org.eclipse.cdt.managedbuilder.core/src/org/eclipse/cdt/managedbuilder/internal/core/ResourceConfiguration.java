@@ -777,12 +777,12 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 					newSuperClass = newSuperClass.getSuperClass();
 				}
 				if (newSuperClass.isExtensionElement()) {
-					//  If the extension element is only overriding the "value" of its superclass, hook the
+					//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
 					//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
 					//  elements that are automatically generated from V2.0 model optionReferences.  If these
 					//  end up in the project file, then the project could have a problem when the integration
 					//  provider switches to providing the new model.
-					if (newSuperClass.overridesOnlyValue()) {
+					if (((Option)newSuperClass).wasOptRef()) {
 						newSuperClass = newSuperClass.getSuperClass();
 					}
 				}
@@ -817,12 +817,12 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 					newSuperClass = newSuperClass.getSuperClass();
 				}
 				if (newSuperClass.isExtensionElement()) {
-					//  If the extension element is only overriding the "value" of its superclass, hook the
+					//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
 					//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
 					//  elements that are automatically generated from V2.0 model optionReferences.  If these
 					//  end up in the project file, then the project could have a problem when the integration
 					//  provider switches to providing the new model.
-					if (newSuperClass.overridesOnlyValue()) {
+					if (((Option)newSuperClass).wasOptRef()) {
 						newSuperClass = newSuperClass.getSuperClass();
 					}
 				}
@@ -880,12 +880,12 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 					newSuperClass = newSuperClass.getSuperClass();
 				}
 				if (newSuperClass.isExtensionElement()) {
-					//  If the extension element is only overriding the "value" of its superclass, hook the
+					//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
 					//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
 					//  elements that are automatically generated from V2.0 model optionReferences.  If these
 					//  end up in the project file, then the project could have a problem when the integration
 					//  provider switches to providing the new model.
-					if (newSuperClass.overridesOnlyValue()) {
+					if (((Option)newSuperClass).wasOptRef()) {
 						newSuperClass = newSuperClass.getSuperClass();
 					}
 				}

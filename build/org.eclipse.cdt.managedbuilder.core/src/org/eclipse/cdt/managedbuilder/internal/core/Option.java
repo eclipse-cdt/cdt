@@ -78,6 +78,8 @@ public class Option extends BuildObject implements IOption {
 	private boolean verified = false;
 	private boolean isValid = true; /** False for options which are invalid. getOption() 
 	                                  * routines will ignore invalid options. */
+	private boolean wasOptRef = false; /** True for options which are created because of an
+	                                     * MBS 2.0 model OptionReference element
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -303,7 +305,13 @@ public class Option extends BuildObject implements IOption {
 		
 		// Determine if there needs to be a browse button
 		String browseTypeStr = element.getAttribute(BROWSE_TYPE);
-		if (browseTypeStr == null || browseTypeStr.equals(NONE)) {
+		if (browseTypeStr == null) {
+			// Set to null, to indicate no browse type specification
+			// This will allow any superclasses to be searched for the
+			// browse type specification, and thus inherited, if found,
+			// which they should be
+			browseType = null;
+		} else if (browseTypeStr.equals(NONE)) {
 			browseType = new Integer(BROWSE_NONE);
 		} else if (browseTypeStr.equals(FILE)) {
 			browseType = new Integer(BROWSE_FILE);
@@ -315,7 +323,13 @@ public class Option extends BuildObject implements IOption {
 		
 		// Get the resourceFilter attribute
 		String resFilterStr = element.getAttribute(RESOURCE_FILTER);
-		if (resFilterStr == null || resFilterStr.equals(ALL)) {
+		if (resFilterStr == null) {
+			// Set to null, to indicate no resource filter specification
+			// This will allow any superclasses to be searched for the
+			// resource filter specification, and thus inherited, if found,
+			// which they should be
+			resourceFilter = null;
+		} else if (resFilterStr.equals(ALL)) {
 			resourceFilter = new Integer(FILTER_ALL);
 		} else if (resFilterStr.equals(FILE)) {
 			resourceFilter = new Integer(FILTER_FILE);
@@ -496,8 +510,15 @@ public class Option extends BuildObject implements IOption {
 		// Determine if there needs to be a browse button
 		if (element.hasAttribute(BROWSE_TYPE)) {
 			String browseTypeStr = element.getAttribute(BROWSE_TYPE);
-			if (browseTypeStr == null || browseTypeStr.equals(NONE)) {
-				browseType = new Integer(BROWSE_NONE);
+
+			if (browseTypeStr == null) {
+				// Set to null, to indicate no browse type specification
+				// This will allow any superclasses to be searched for the
+				// browse type specification, and thus inherited, if found,
+				// which they should be
+				browseType = null;
+			} else if (browseTypeStr.equals(NONE)) {
+				browseType = new Integer(BROWSE_NONE);						
 			} else if (browseTypeStr.equals(FILE)) {
 				browseType = new Integer(BROWSE_FILE);
 			} else if (browseTypeStr.equals(DIR)) {
@@ -515,8 +536,14 @@ public class Option extends BuildObject implements IOption {
 		// Get the resourceFilter attribute
 		if (element.hasAttribute(RESOURCE_FILTER)) {
 			String resFilterStr = element.getAttribute(RESOURCE_FILTER);
-			if (resFilterStr == null || resFilterStr.equals(ALL)) {
-				resourceFilter = new Integer(FILTER_ALL);
+			if (resFilterStr == null) {
+				// Set to null, to indicate no resource filter specification
+				// This will allow any superclasses to be searched for the
+				// resource filter specification, and thus inherited, if found,
+				// which they should be
+				resourceFilter = null;
+			} else if (resFilterStr.equals(ALL)) {
+				resourceFilter = new Integer(FILTER_ALL);			
 			} else if (resFilterStr.equals(FILE)) {
 				resourceFilter = new Integer(FILTER_FILE);
 			} else if (resFilterStr.equals(PROJECT)) {
@@ -1477,6 +1504,7 @@ public class Option extends BuildObject implements IOption {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#overridesOnlyValue()
+	 * Deprecated since 3.0.1
 	 */
 	public boolean overridesOnlyValue() {
 		if (superClass != null &&
@@ -1707,6 +1735,18 @@ public class Option extends BuildObject implements IOption {
 			verify();			
 		}
 		return isValid;
+	}
+	
+	/**
+	 * @return Returns true if this Option was created from an MBS 2.0 model
+	 *         OptionReference element.
+	 */
+	public boolean wasOptRef() {
+		return wasOptRef;
+	}
+
+	public void setWasOptRef(boolean was) {
+		wasOptRef = was;
 	}
 	
 	/**

@@ -250,7 +250,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 			requestFailed( e.getMessage(), null );
 		}
 		for( int i = 0; i < cdiVars.length; ++i )
-			fVariables[i + index * prefSize] = CVariableFactory.createLocalVariable( getParentVariable(), cdiVars[i] );
+			fVariables[i + index * prefSize] = CVariableFactory.createLocalVariable( this, cdiVars[i] );
 	}
 
 	private int getSize0() {

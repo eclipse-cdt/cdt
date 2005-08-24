@@ -1,3 +1,7 @@
+2005-08-24 Mikhail Khodjaiants
+	Bug 107208: toggle breakpoint with external sources doesn't work.
+	* ToggleBreakpointAdapter.java
+
 2005-07-26 Mikhail Khodjaiants
 	Bug 105224: Two identical directory source container types.
 	+ icons\obj16\directory_obj.gif

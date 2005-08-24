@@ -47,6 +47,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -317,6 +318,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		}
 		if ( input instanceof IStorageEditorInput ) {
 			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
+		}
+		if ( input instanceof IPathEditorInput ) {
+			return ((IPathEditorInput)input).getPath().toOSString();
 		}
 		if ( input instanceof DisassemblyEditorInput ) {
 			String sourceFile = ((DisassemblyEditorInput)input).getSourceFile();

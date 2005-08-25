@@ -311,6 +311,9 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	// temporary fix for #66015
+	/**
+	 * @deprecated
+	 */
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));

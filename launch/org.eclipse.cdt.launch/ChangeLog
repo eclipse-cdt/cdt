@@ -1,3 +1,8 @@
+2005-08-25 Mikhail Khodjaiants
+	Bug 66446: Use the debugger path as a debugger process label.
+	Deprecated the "renderDebuggerProcessLabel" method.
+	* AbstractCLaunchDelegate.java
+
 2005-07-18 Alain Magloire
 	New combo to choose the MIVersion.
 	* src/org/eclipse/cdt/launch/ui/CDEbuggerTab.java

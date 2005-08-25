@@ -1,3 +1,7 @@
+2005-08-25 Mikhail Khodjaiants
+	Bug 66446: Use the debugger path as a debugger process label.
+	* src/org/eclipse/cdt/debug/mi/core/GDBCDIDebugger.java
+
 2005-07-28 Alain Magloire
 	Fix Pr 104421: The register did not update.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java

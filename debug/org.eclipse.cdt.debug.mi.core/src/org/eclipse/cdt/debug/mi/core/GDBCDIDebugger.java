@@ -80,7 +80,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 			for (int i = 0; i < dtargets.length; i++) {
 				Process debugger = dsession.getSessionProcess(dtargets[i]);
 				if (debugger != null) {
-					IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
+					IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel(config));
 					launch.addProcess(debuggerProcess);
 				}
 			}
@@ -252,11 +252,16 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		return fLaunch;
 	}
 
-	protected String renderDebuggerProcessLabel() {
+	protected String renderDebuggerProcessLabel(ILaunchConfiguration config) {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		String message = MIPlugin.getResourceString("src.GDBDebugger.Debugger_process"); //$NON-NLS-1$
-		return MessageFormat.format(format, new String[]{message, timestamp}); //$NON-NLS-1$
+		String label = MIPlugin.getResourceString("src.GDBDebugger.Debugger_process"); //$NON-NLS-1$
+		try {
+			label = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
+		}
+		catch( CoreException e ) {
+		}
+		return MessageFormat.format(format, new String[]{label, timestamp}); //$NON-NLS-1$
 	}
 
 	/**

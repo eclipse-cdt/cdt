@@ -1,3 +1,7 @@
+2005-08-25 Mikhail Khodjaiants
+	Bug 108028: Duplicate watchpointes.
+	* CBreakpointManager.java
+
 2005-08-23 Mikhail Khodjaiants
 	Bug 107787: Casting variable to array causes NPE.
 	* CIndexedValue.java

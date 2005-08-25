@@ -87,9 +87,8 @@ public class CDIDebugModel {
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 
 			public void run( IProgressMonitor m ) throws CoreException {
-				boolean stop = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
 				target[0] = new CDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect );
-				((CDebugTarget)target[0]).start( stop, resumeTarget );
+				((CDebugTarget)target[0]).start( stopInMain, resumeTarget );
 			}
 		};
 		try {

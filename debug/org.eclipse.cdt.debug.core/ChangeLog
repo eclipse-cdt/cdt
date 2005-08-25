@@ -1,4 +1,8 @@
 2005-08-25 Mikhail Khodjaiants
+	Bug 106241: Argument stopInMain has no impact in method org.eclipse.cdt.debug.core.CDIDebugModel#newDebugTarget.
+	* CDIDebugModel.java
+
+2005-08-25 Mikhail Khodjaiants
 	Bug 108028: Duplicate watchpointes.
 	* CBreakpointManager.java
 

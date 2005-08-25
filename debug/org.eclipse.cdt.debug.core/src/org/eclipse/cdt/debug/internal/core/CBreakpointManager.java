@@ -191,6 +191,17 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 						return sourceHandle.equals( ((ICLineBreakpoint)breakpoint).getSourceHandle() ) && location.getLineNumber() == ((ICLineBreakpoint)breakpoint).getLineNumber(); 
 					}
 				}
+				if ( breakpoint instanceof ICWatchpoint && cdiBreakpoint instanceof ICDIWatchpoint ) {
+					try {
+						ICWatchpoint watchpoint = (ICWatchpoint)breakpoint;
+						ICDIWatchpoint cdiWatchpoint = (ICDIWatchpoint)cdiBreakpoint;
+						return ( watchpoint.getExpression().compareTo( cdiWatchpoint.getWatchExpression() ) == 0 && 
+								 watchpoint.isReadType() == cdiWatchpoint.isReadType() &&
+								 watchpoint.isWriteType() == cdiWatchpoint.isWriteType() );
+					}
+					catch( CDIException e ) {
+					}
+				}
 			}
 			catch( CoreException e ) {
 			}

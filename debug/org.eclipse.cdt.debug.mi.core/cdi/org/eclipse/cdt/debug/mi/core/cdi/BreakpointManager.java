@@ -419,10 +419,10 @@ public class BreakpointManager extends Manager {
 				if (allMIBreakpoints[i].isWatchpoint()) {
 					int watchType = 0;
 					if (allMIBreakpoints[i].isAccessWatchpoint() || allMIBreakpoints[i].isReadWatchpoint()) {
-						watchType &= ICDIWatchpoint.READ;
+						watchType |= ICDIWatchpoint.READ;
 					}
 					if (allMIBreakpoints[i].isAccessWatchpoint() || allMIBreakpoints[i].isWriteWatchpoint()) {
-						watchType &= ICDIWatchpoint.WRITE;
+						watchType |= ICDIWatchpoint.WRITE;
 					}
 					Watchpoint wpoint = new Watchpoint(target, allMIBreakpoints[i].getWhat(), type, watchType, condition);
 					wpoint.setMIBreakpoints(new MIBreakpoint[] {allMIBreakpoints[i]});

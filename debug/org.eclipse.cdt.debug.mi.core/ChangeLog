@@ -1,3 +1,7 @@
+2005-08-26 Mikhail Khodjaiants
+	Bug 108130: wrong type shown on breakpoint view for R watchpoint created from gdb console.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+
 2005-08-25 Mikhail Khodjaiants
 	Bug 66446: Use the debugger path as a debugger process label.
 	* src/org/eclipse/cdt/debug/mi/core/GDBCDIDebugger.java

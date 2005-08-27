@@ -10,26 +10,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
-public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter
-    implements IDeferredWorkbenchAdapter {
+public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDeferredWorkbenchAdapter {
 
-	private static boolean fSerializeFetching = false;
-	private static boolean fBatchFetchedChildren = true;
-    
-	final ISchedulingRule mutexRule = new ISchedulingRule() {
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule == mutexRule;
-		}
-		public boolean contains(ISchedulingRule rule) {
-			return rule == mutexRule;
-		}
-	};
+	private ICElement fCElement;
+
+	public DeferredCWorkbenchAdapter(ICElement element) {
+		super();
+		fCElement = element;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -39,25 +34,12 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter
 	 *           org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-	    if (object instanceof IParent) {
-			if (fBatchFetchedChildren) {
-				Object[] children = getChildren(object);
-				if (children.length > 0)
-				    collector.add(children, monitor);
-			} else {
-			    // TODO right now there is no advantage to this
-			    // over the batched case above, but in the future
-			    // we could have another method of progressively
-			    // iterating over an ICElement's children
-				Object[] children = getChildren(object);
-				for (int i = 0; i < children.length; i++) {
-					if (monitor.isCanceled()) {
-						return;
-					}
-					collector.add(children[i], monitor);
-				}
-			}
+		Object[] children = getChildren(object);
+		if (monitor.isCanceled()) {
+			return;
 		}
+		collector.add(children, monitor);
+	    collector.done();
 	}
 
 	/*
@@ -66,7 +48,7 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
 	 */
 	public boolean isContainer() {
-		return true;
+		return fCElement instanceof IParent;
 	}
 
 	/*
@@ -75,11 +57,6 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
 	 */
 	public ISchedulingRule getRule(final Object object) {
-	    if (fSerializeFetching) {
-	        // only one ICElement parent can fetch children at a time
-	        return mutexRule;
-	    } 
-	    // allow several ICElement parents to fetch children concurrently
-	    return null;
+    	return fCElement.getResource();
 	}
 }

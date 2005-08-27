@@ -40,8 +40,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		IActionFilter.class 
 	};
 	
-	private static CWorkbenchAdapter fgCWorkbenchAdapter= new CWorkbenchAdapter();
-	private static DeferredCWorkbenchAdapter fgDeferredCWorkbenchAdapter= new DeferredCWorkbenchAdapter();
+	private static CWorkbenchAdapter fgCWorkbenchAdapter;
 	
 	/**
 	 * @see CElementAdapterFactory#getAdapterList
@@ -55,37 +54,63 @@ public class CElementAdapterFactory implements IAdapterFactory {
 	 */	
 	public Object getAdapter(Object element, Class key) {
 		ICElement celem = (ICElement) element;
-		IResource res = null;
 		
 		if (IPropertySource.class.equals(key)) {
-			if (celem instanceof IBinary) {
-				return new BinaryPropertySource((IBinary)celem);				
-			}
-			res = celem.getResource();
-			if (res != null) {
-				if (res instanceof IFile) {
-					return new FilePropertySource((IFile)res);
-				}
-				return new ResourcePropertySource(res);
-			}
-			return new CElementPropertySource(celem);
+			return getPropertySource(celem);
 		} else if (IWorkspaceRoot.class.equals(key)) {
-			 res = celem.getUnderlyingResource();
-			if (res != null)
-				return res.getWorkspace().getRoot();
+			return getWorkspaceRoot(celem);
 		} else if (IProject.class.equals(key)) {
-			res = celem.getResource();
-			if (res != null)
-				return res.getProject();
+			return getProject(celem);
 		} else if (IResource.class.equals(key)) {
-			return celem.getResource();
+			return getResource(celem);
 		} else if (IDeferredWorkbenchAdapter.class.equals(key)) {
-		    return fgDeferredCWorkbenchAdapter;
+			return getDeferredWorkbenchAdapter(celem);
 		} else if (IWorkbenchAdapter.class.equals(key)) {
-			return fgCWorkbenchAdapter;
+			return getWorkbenchAdapter(celem);
 		} else if (IActionFilter.class.equals(key)) {
-			return fgCWorkbenchAdapter;
+			return getWorkbenchAdapter(celem);
 		}
 		return null; 
+	}
+
+	private IPropertySource getPropertySource(ICElement celement) {
+		if (celement instanceof IBinary) {
+			return new BinaryPropertySource((IBinary)celement);				
+		}
+		IResource res = celement.getResource();
+		if (res != null) {
+			if (res instanceof IFile) {
+				return new FilePropertySource((IFile)res);
+			}
+			return new ResourcePropertySource(res);
+		}
+		return new CElementPropertySource(celement);		
+	}
+
+	private IWorkspaceRoot getWorkspaceRoot(ICElement celement) {
+		IResource res = celement.getUnderlyingResource();
+		if (res != null) {
+			return res.getWorkspace().getRoot();
+		}
+		return null;
+	}
+
+	private IProject getProject(ICElement celement) {
+		return celement.getCProject().getProject();
+	}
+
+	private IResource getResource(ICElement celement) {
+		return celement.getResource();
+	}
+
+	private IDeferredWorkbenchAdapter getDeferredWorkbenchAdapter(ICElement celement) {
+		return new DeferredCWorkbenchAdapter(celement);
+	}
+
+	private IWorkbenchAdapter getWorkbenchAdapter(ICElement celement) {
+		if (fgCWorkbenchAdapter == null) {
+			fgCWorkbenchAdapter = new CWorkbenchAdapter();
+		}
+		return fgCWorkbenchAdapter;
 	}
 }

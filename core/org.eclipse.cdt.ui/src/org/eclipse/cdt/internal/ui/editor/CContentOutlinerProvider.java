@@ -30,287 +30,323 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
 
 /**
- * Manages contents of the outliner. 
+ * Manages contents of the outliner.
  */
 public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
-    /** Tree viewer which handles this content provider. */
-    TreeViewer treeViewer;
-    /** Translation unit's root. */
-    ITranslationUnit root;
-    /** Something changed listener. */
-    private ElementChangedListener fListener;
-    /** Property change listener. */
-	private IPropertyChangeListener fPropertyListener;    
-    /** Filter for files to outline. */
-    private String filter = "*"; //$NON-NLS-1$
+	/** Tree viewer which handles this content provider. */
+	TreeViewer treeViewer;
 
-    /**
-     * Creates new content provider for dialog.
-     * @param viewer Tree viewer.
-     */
-    public CContentOutlinerProvider(TreeViewer viewer)
-    {
-        super(true, true);
-        treeViewer = viewer;
-        setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
-    }
+	/** Translation unit's root. */
+	ITranslationUnit root;
 
-    /**
-     * Sets new filter and updates contents.
-     * @param newFilter New filter.
-     */
-    public void updateFilter(String newFilter)
-    {
-        filter = newFilter;
-        contentUpdated();
-    }
+	/** Something changed listener. */
+	private ElementChangedListener fListener;
 
-    /**
-     * Called by the editor to signal that the content has updated.
-     */
-    public void contentUpdated()
-    {
-        if (treeViewer != null && !treeViewer.getControl().isDisposed())
-        {
-            treeViewer.getControl().getDisplay().asyncExec(new Runnable()
-                {
-                    public void run()
-                    {
-                        if (!treeViewer.getControl().isDisposed())
-                        {
-                            final ISelection sel = treeViewer.getSelection();
-                            treeViewer.setSelection(updateSelection(sel));
-                            treeViewer.refresh();
-                        }
-                    }
-                }
-            );
-        }
-    }
+	/** Property change listener. */
+	private IPropertyChangeListener fPropertyListener;
 
-    /**
-     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-     */
-    public void dispose()
-    {
-        super.dispose();
-        if (fListener != null)
-        {
-            CoreModel.getDefault().removeElementChangedListener(fListener);
-            fListener = null;
-        }
-        if (fPropertyListener != null) {
-            PreferenceConstants.getPreferenceStore().removePropertyChangeListener(fPropertyListener);
-            fPropertyListener = null;
-        }
-    }
+	/** Filter for files to outline. */
+	private StringMatcher filter = new StringMatcher("*", true, false); //$NON-NLS-1$
 
-    /**
-     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-     */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-    {
-        final boolean isTU = newInput instanceof ITranslationUnit;
+	/**
+	 * Remote content manager to retrieve content in the background.
+	 */
+	private DeferredTreeContentManager fManager;
 
-        if (isTU && fListener == null)
-        {
-            root = (ITranslationUnit) newInput;
-            fListener = new ElementChangedListener();
-            CoreModel.getDefault().addElementChangedListener(fListener);
-            fPropertyListener = new PropertyListener();
-            PreferenceConstants.getPreferenceStore().addPropertyChangeListener(fPropertyListener);
-        }
-        else if (!isTU && fListener != null)
-        {
-            CoreModel.getDefault().removeElementChangedListener(fListener);
-            fListener = null;
-            root = null;
-        }
-    }
+	/**
+	 * We only want to use the DeferredContentManager, the first time
+	 * because the Outliner is initialize in the UI thread.  So to not block
+	 * the UI thread we deferred, after it is not necessary the reconciler is
+	 * running in a separate thread not affecting the UI.
+	 */
+	private boolean fUseContentManager = false;
 
-    /**
-     * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#getChildren(java.lang.Object)
-     */
-    public Object[] getChildren(Object element)
-    {
-        final StringMatcher stringMatcher = new StringMatcher(filter, true, false);
-        Object[] children = super.getChildren(element);
-        final List filtered = new ArrayList();
-        for (int i = 0; i < children.length; i++)
-        {
-            if (stringMatcher.match(children[i].toString()))
-            {
-                filtered.add(children[i]);
-            }
-        }
-        final int size = filtered.size();
-        children = new Object[size];
-        filtered.toArray(children);
-        return children;
-    }
+	public CContentOutlinerProvider(TreeViewer viewer) {
+		this(viewer, null);
+	}
 
-    /**
-     * Updates current selection.
-     * @param sel Selection to update.
-     * @return Updated selection.
-     */
-    protected ISelection updateSelection(ISelection sel)
-    {
-        final ArrayList newSelection = new ArrayList();
-        if (sel instanceof IStructuredSelection)
-        {
-            final Iterator iter = ((IStructuredSelection) sel).iterator();
-            while (iter.hasNext())
-            {
-                final Object o = iter.next();
-                if (o instanceof ICElement)
-                {
-                    newSelection.add(o);
-                }
-            }
-        }
-        return new StructuredSelection(newSelection);
-    }
+	/**
+	 * Creates new content provider for dialog.
+	 * 
+	 * @param viewer
+	 *            Tree viewer.
+	 */
+	public CContentOutlinerProvider(TreeViewer viewer, IWorkbenchPartSite site) {
+		super(true, true);
+		treeViewer = viewer;
+		setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
+		fManager = createContentManager(viewer, site);
+	}
 
-    /**
-     * The element change listener of the C outline viewer.
-     * @see IElementChangedListener
-     */
-    class ElementChangedListener implements IElementChangedListener
-    {
+	protected DeferredTreeContentManager createContentManager(TreeViewer viewer, IWorkbenchPartSite site) {
+		if (site == null) {
+			return new DeferredTreeContentManager(this, viewer);
+		}
+		return new DeferredTreeContentManager(this, viewer, site);
+	}
 
-        /**
-         * Default constructor.
-         */
-        public ElementChangedListener()
-        {
-            // nothing to initialize.
-        }
+	/**
+	 * Sets new filter and updates contents.
+	 * 
+	 * @param newFilter
+	 *            New filter.
+	 */
+	public void updateFilter(String newFilter) {
+		filter = new StringMatcher(newFilter, true, false);
+		contentUpdated();
+	}
 
-        /**
-         * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
-         */
-        public void elementChanged(final ElementChangedEvent e)
-        {
-            final ICElementDelta delta = findElement(root, e.getDelta());
-            if (delta != null)
-            {
-                contentUpdated();
-                return;
-            }
-        }
+	/**
+	 * Called by the editor to signal that the content has updated.
+	 */
+	public void contentUpdated() {
+		if (treeViewer != null && !treeViewer.getControl().isDisposed()) {
+			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!treeViewer.getControl().isDisposed()) {
+						final ISelection sel = treeViewer.getSelection();
+						treeViewer.setSelection(updateSelection(sel));
+						treeViewer.refresh();
+					}
+				}
+			});
+		}
+	}
 
-        /**
-         * Determines is structural change.
-         * @param cuDelta Delta to check.
-         * @return <b>true</b> if structural change.
-         */
-        private boolean isPossibleStructuralChange(ICElementDelta cuDelta)
-        {
-            boolean ret;
-            if (cuDelta.getKind() != ICElementDelta.CHANGED)
-            {
-                ret = true; // add or remove
-            }
-            else
-            {
-                final int flags = cuDelta.getFlags();
-                if ((flags & ICElementDelta.F_CHILDREN) != 0)
-                {
-                    ret = true;
-                }
-                else
-                {
-                    ret = (flags & (ICElementDelta.F_CONTENT | ICElementDelta.F_FINE_GRAINED)) == ICElementDelta.F_CONTENT;
-                }
-            }
-            return ret;
-        }
+	/**
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (fListener != null) {
+			CoreModel.getDefault().removeElementChangedListener(fListener);
+			fListener = null;
+		}
+		if (fPropertyListener != null) {
+			PreferenceConstants.getPreferenceStore().removePropertyChangeListener(fPropertyListener);
+			fPropertyListener = null;
+		}
+		if (root != null) {
+			fManager.cancel(root);
+		}
+	}
 
-        /**
-         * Searches for element.
-         * @param unit Unit to search in.
-         * @param delta Delta.
-         * @return Found element.
-         */
-        protected ICElementDelta findElement(ICElement unit, ICElementDelta delta)
-        {
-            if (delta == null || unit == null)
-            {
-                return null;
-            }
+	/**
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+	 *      java.lang.Object, java.lang.Object)
+	 */
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		boolean isTU = newInput instanceof ITranslationUnit;
 
-            final ICElement element = delta.getElement();
+		if (isTU && fListener == null) {
+			fUseContentManager = true;
+			if (root != null) {
+				fManager.cancel(root);
+			}
+			root = (ITranslationUnit) newInput;
+			fListener = new ElementChangedListener();
+			CoreModel.getDefault().addElementChangedListener(fListener);
+			fPropertyListener = new PropertyListener();
+			PreferenceConstants.getPreferenceStore().addPropertyChangeListener(
+					fPropertyListener);
+		} else if (!isTU && fListener != null) {
+			fUseContentManager = false;
+			CoreModel.getDefault().removeElementChangedListener(fListener);
+			fListener = null;
+			root = null;
+			if (oldInput != null) {
+				fManager.cancel(oldInput);
+			}
+		}
+	}
 
-            if (unit.equals(element))
-            {
-                if (isPossibleStructuralChange(delta))
-                {
-                    return delta;
-                }
-                return null;
-            }
+	/**
+	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object element) {
+		Object[] children = null;
+		// Use the deferred manager for the first time (when parsing)
+		if (fUseContentManager && element instanceof ITranslationUnit) {
+			children = fManager.getChildren(element);
+			fUseContentManager = false;
+		}
+		if (children == null) {
+			children = super.getChildren(element);
+		}
+		List filtered = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			if (filter.match(children[i].toString())) {
+				filtered.add(children[i]);
+			}
+		}
+		int size = filtered.size();
+		children = new Object[size];
+		filtered.toArray(children);
+		return children;
+	}
 
-            if (element.getElementType() > ICElement.C_UNIT)
-            {
-                return null;
-            }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+	 */
+	public boolean hasChildren(Object element) {
+		if (fUseContentManager) {
+			return fManager.mayHaveChildren(element);
+		}
+		return super.hasChildren(element);
+	}
 
-            final ICElementDelta[] children = delta.getAffectedChildren();
-            if (children == null || children.length == 0)
-            {
-                return null;
-            }
+	/**
+	 * Updates current selection.
+	 * 
+	 * @param sel
+	 *            Selection to update.
+	 * @return Updated selection.
+	 */
+	protected ISelection updateSelection(ISelection sel) {
+		final ArrayList newSelection = new ArrayList();
+		if (sel instanceof IStructuredSelection) {
+			final Iterator iter = ((IStructuredSelection) sel).iterator();
+			while (iter.hasNext()) {
+				final Object o = iter.next();
+				if (o instanceof ICElement) {
+					newSelection.add(o);
+				}
+			}
+		}
+		return new StructuredSelection(newSelection);
+	}
 
-            for (int i = 0; i < children.length; i++)
-            {
-                final ICElementDelta d = findElement(unit, children[i]);
-                if (d != null)
-                {
-                    return d;
-                }
-            }
+	/**
+	 * The element change listener of the C outline viewer.
+	 * 
+	 * @see IElementChangedListener
+	 */
+	class ElementChangedListener implements IElementChangedListener {
 
-            return null;
-        }
-    }
+		/**
+		 * Default constructor.
+		 */
+		public ElementChangedListener() {
+			// nothing to initialize.
+		}
 
-    /**
-     * 
-     * Property change listener.
-     * @author P.Tomaszewski
-     */
-    class PropertyListener implements IPropertyChangeListener {
+		/**
+		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
+		 */
+		public void elementChanged(final ElementChangedEvent e) {
+			final ICElementDelta delta = findElement(root, e.getDelta());
+			if (delta != null) {
+				contentUpdated();
+				return;
+			}
+		}
 
-        /**
-         * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-         */
-        public void propertyChange(PropertyChangeEvent event){
-            String prop = event.getProperty();
-            if (prop.equals(PreferenceConstants.OUTLINE_GROUP_INCLUDES)) {
-                Object newValue = event.getNewValue();
-                if (newValue instanceof Boolean) {
-                    boolean value = ((Boolean)newValue).booleanValue();
-                    if (areIncludesGroup() != value) {
-                        setIncludesGrouping(value);
-                        contentUpdated();
-                    }
-                }
-            } else if (prop.equals(PreferenceConstants.OUTLINE_GROUP_NAMESPACES)) {
-                Object newValue = event.getNewValue();
-                if (newValue instanceof Boolean) {
-                    boolean value = ((Boolean)newValue).booleanValue();
-                    if (areNamespacesGroup() != value) {
-                        setNamespacesGrouping(value);
-                        contentUpdated();
-                    }
-                }
-            }
-        }
+		/**
+		 * Determines is structural change.
+		 * 
+		 * @param cuDelta
+		 *            Delta to check.
+		 * @return <b>true</b> if structural change.
+		 */
+		private boolean isPossibleStructuralChange(ICElementDelta cuDelta) {
+			boolean ret;
+			if (cuDelta.getKind() != ICElementDelta.CHANGED) {
+				ret = true; // add or remove
+			} else {
+				final int flags = cuDelta.getFlags();
+				if ((flags & ICElementDelta.F_CHILDREN) != 0) {
+					ret = true;
+				} else {
+					ret = (flags & (ICElementDelta.F_CONTENT | ICElementDelta.F_FINE_GRAINED)) == ICElementDelta.F_CONTENT;
+				}
+			}
+			return ret;
+		}
 
-    }
+		/**
+		 * Searches for element.
+		 * 
+		 * @param unit
+		 *            Unit to search in.
+		 * @param delta
+		 *            Delta.
+		 * @return Found element.
+		 */
+		protected ICElementDelta findElement(ICElement unit,
+				ICElementDelta delta) {
+			if (delta == null || unit == null) {
+				return null;
+			}
+
+			final ICElement element = delta.getElement();
+
+			if (unit.equals(element)) {
+				if (isPossibleStructuralChange(delta)) {
+					return delta;
+				}
+				return null;
+			}
+
+			if (element.getElementType() > ICElement.C_UNIT) {
+				return null;
+			}
+
+			final ICElementDelta[] children = delta.getAffectedChildren();
+			if (children == null || children.length == 0) {
+				return null;
+			}
+
+			for (int i = 0; i < children.length; i++) {
+				final ICElementDelta d = findElement(unit, children[i]);
+				if (d != null) {
+					return d;
+				}
+			}
+
+			return null;
+		}
+	}
+
+	/**
+	 * 
+	 * Property change listener.
+	 * 
+	 * @author P.Tomaszewski
+	 */
+	class PropertyListener implements IPropertyChangeListener {
+
+		/**
+		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			String prop = event.getProperty();
+			if (prop.equals(PreferenceConstants.OUTLINE_GROUP_INCLUDES)) {
+				Object newValue = event.getNewValue();
+				if (newValue instanceof Boolean) {
+					boolean value = ((Boolean) newValue).booleanValue();
+					if (areIncludesGroup() != value) {
+						setIncludesGrouping(value);
+						contentUpdated();
+					}
+				}
+			} else if (prop
+					.equals(PreferenceConstants.OUTLINE_GROUP_NAMESPACES)) {
+				Object newValue = event.getNewValue();
+				if (newValue instanceof Boolean) {
+					boolean value = ((Boolean) newValue).booleanValue();
+					if (areNamespacesGroup() != value) {
+						setNamespacesGrouping(value);
+						contentUpdated();
+					}
+				}
+			}
+		}
+
+	}
 
 }

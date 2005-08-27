@@ -1,3 +1,15 @@
+2005-08-27 Alain Magloire
+	Fix PR 108206: Do not use the UI thread when parsing
+	the working copy for the outliner.
+	* src/org/eclipse/cdt/internal/ui/CElementAdapterFactory.java
+	* src/org/eclipse/cdt/internal/ui/DeferredCWorkbenchAdapter.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlineProvider.java
+
+2005-08-27 Alain Magloire
+	Fix PR 108205: limit the number of refresh by ignoring WorkingCopies events.
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java
+
 2005-08-20 Alain Magloire
 	Fix PR 105613:  Preview label duplicated
 	* src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java

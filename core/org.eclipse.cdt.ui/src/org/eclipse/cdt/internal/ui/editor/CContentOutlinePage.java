@@ -72,10 +72,11 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
 	private ITranslationUnit fInput;
-	private ProblemTreeViewer treeViewer;
+	private ProblemTreeViewer fTreeViewer;
 	private ListenerList selectionChangedListeners = new ListenerList();
 	private TogglePresentationAction fTogglePresentation;
 	private String fContextMenuId;
+	private Menu fMenu;
 	
 	protected OpenIncludeAction fOpenIncludeAction;
 	private IncludeGroupingAction fIncludeGroupingAction;
@@ -247,20 +248,26 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		fRefactoringActionGroup.fillContextMenu(menu);
 	}
-	
+
+	protected CContentOutlinerProvider createContentProvider(TreeViewer viewer) {
+		return new CContentOutlinerProvider(viewer, CUIPlugin.getActiveWorkbenchWindow().getActivePage().getActivePart().getSite());
+	}
+
+	protected ProblemTreeViewer createTreeViewer(Composite parent) {
+		fTreeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		fTreeViewer.setContentProvider(createContentProvider(fTreeViewer));
+		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(new StandardCElementLabelProvider(), true));
+		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		fTreeViewer.setUseHashlookup(true);
+		fTreeViewer.addSelectionChangedListener(this);
+		return fTreeViewer;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		treeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		
-		//treeViewer.setContentProvider(new CElementContentProvider(true, true));
-		treeViewer.setContentProvider(new CContentOutlinerProvider(treeViewer));
-		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new StandardCElementLabelProvider(), true));
-		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-		treeViewer.setUseHashlookup(true);
-		treeViewer.addSelectionChangedListener(this);
-
+		fTreeViewer = createTreeViewer(parent);
 		initDragAndDrop();
 
 		MenuManager manager= new MenuManager(fContextMenuId);
@@ -270,11 +277,11 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 				contextMenuAboutToShow(manager);
 			}
 		});
-		Control control= treeViewer.getControl();
-		Menu menu= manager.createContextMenu(control);
-		control.setMenu(menu);
+		Control control= fTreeViewer.getControl();
+		fMenu= manager.createContextMenu(control);
+		control.setMenu(fMenu);
 	
-		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
 			 */
@@ -286,8 +293,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		});
 		// register global actions
 		IPageSite site= getSite();
-		site.registerContextMenu(fContextMenuId, manager, treeViewer);
-		site.setSelectionProvider(treeViewer);
+		site.registerContextMenu(fContextMenuId, manager, fTreeViewer);
+		site.setSelectionProvider(fTreeViewer);
 		
 		IActionBars bars= site.getActionBars();		
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
@@ -298,13 +305,16 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		// Custom filter group
 		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.eclipse.cdt.ui.COutlinePage", getTreeViewer()); //$NON-NLS-1$
 
-		treeViewer.setInput(fInput);
+		// Do this before setting input but after the initializations of the fields filtering
+		registerActionBars(bars);
+
+		fTreeViewer.setInput(fInput);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
 	}
 	
 	public void dispose() {
-		if (treeViewer != null) {
-			treeViewer.removeSelectionChangedListener(this);
+		if (fTreeViewer != null) {
+			fTreeViewer.removeSelectionChangedListener(this);
 		}
 		
 		if (fTogglePresentation != null) {
@@ -330,27 +340,34 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			fSelectionSearchGroup.dispose();
 			fSelectionSearchGroup= null;
 		}
-				
+
+		if (fCustomFiltersActionGroup != null) {
+			fCustomFiltersActionGroup.dispose();
+			fCustomFiltersActionGroup= null;
+		}
+
 		if (selectionChangedListeners != null) {
 			selectionChangedListeners.clear();
 			selectionChangedListeners= null;
 		}
-		
+
+		if (fMenu != null && !fMenu.isDisposed()) {
+			fMenu.dispose();
+			fMenu= null;
+		}
+
 		fInput= null;
 		
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-	 */
-	public void setActionBars(IActionBars actionBars) {
+	private void registerActionBars(IActionBars actionBars) {
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();
 		
 		LexicalSortingAction action= new LexicalSortingAction(getTreeViewer());
 		toolBarManager.add(action);
 
-		fMemberFilterActionGroup= new MemberFilterActionGroup(treeViewer, "COutlineViewer"); //$NON-NLS-1$
+		fMemberFilterActionGroup= new MemberFilterActionGroup(fTreeViewer, "COutlineViewer"); //$NON-NLS-1$
 		fMemberFilterActionGroup.fillActionBars(actionBars);
 
 		fCustomFiltersActionGroup.fillActionBars(actionBars);
@@ -391,18 +408,18 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	 * Method declared on IPage (and Page).
 	 */
 	public Control getControl() {
-		if (treeViewer == null)
+		if (fTreeViewer == null)
 			return null;
-		return treeViewer.getControl();
+		return fTreeViewer.getControl();
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
 	public ISelection getSelection() {
-		if (treeViewer == null)
+		if (fTreeViewer == null)
 			return StructuredSelection.EMPTY;
-		return treeViewer.getSelection();
+		return fTreeViewer.getSelection();
 	}
 
 	/**
@@ -412,7 +429,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	 *   <code>createControl</code> has not been called yet
 	 */
 	protected TreeViewer getTreeViewer() {
-		return treeViewer;
+		return fTreeViewer;
 	}
 
 	/* (non-Javadoc)
@@ -434,15 +451,15 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	 * Sets focus to a part in the page.
 	 */
 	public void setFocus() {
-		treeViewer.getControl().setFocus();
+		fTreeViewer.getControl().setFocus();
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
 	public void setSelection(ISelection selection) {
-		if (treeViewer != null) 
-			treeViewer.setSelection(selection);
+		if (fTreeViewer != null) 
+			fTreeViewer.setSelection(selection);
 	}
 
 	/**
@@ -451,8 +468,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	 */
 	public void setInput(ITranslationUnit unit) {
 		fInput = unit;
-		if (treeViewer != null) {
-			treeViewer.setInput (fInput);
+		if (fTreeViewer != null) {
+			fTreeViewer.setInput (fInput);
 		}
 	}
 
@@ -464,15 +481,15 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		// Drop Adapter
 		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
-			new SelectionTransferDropAdapter(treeViewer)
+			new SelectionTransferDropAdapter(fTreeViewer)
 		};
-		treeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new DelegatingDropAdapter(dropListeners));
+		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new DelegatingDropAdapter(dropListeners));
 		
 		// Drag Adapter
 		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {
-			new SelectionTransferDragAdapter(treeViewer)
+			new SelectionTransferDragAdapter(fTreeViewer)
 		};
-		treeViewer.addDragSupport(ops, transfers, new CDTViewerDragAdapter(treeViewer, dragListeners));
+		fTreeViewer.addDragSupport(ops, transfers, new CDTViewerDragAdapter(fTreeViewer, dragListeners));
 	}
 
 }

@@ -163,6 +163,14 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			postRefresh(element);
 		}
 
+		// We do not care about changes in Working copies
+		if (element instanceof ITranslationUnit) {
+			ITranslationUnit unit = (ITranslationUnit) element;
+			if (unit.isWorkingCopy()) {
+				return;
+			}
+		}
+
 		if (kind == ICElementDelta.REMOVED) {
 			Object parent = internalGetParent(element);
 			postRemove(element);

@@ -6205,6 +6205,13 @@ getOutputPaths(ITool tool, IPath[] primaryInputs);</span></p>
 <p class="MsoNormal" style="margin-top: 6px; margin-bottom: 0">When <b>multipleOfType</b> 
 is true, an output name provider, or the <b>outputNames</b> attribute, is required 
 		in order for MBS to know the names of the output files.</p>
+<p class="MsoNormal" style="margin-top: 6px; margin-bottom: 0">The returned 
+paths must be relative to the top-level build directory. However, if only a file 
+name is returned, MBS will automatically add on the directory path relative to 
+the top-level build directory. The relative path comes from the source file 
+location. In order to specify that this output file is always in the top-level 
+build directory, regardless of the source file directory structure, return 
+&quot;./path&quot;.</p>
 <p class="subsection"><a name="_TocSectionDynamic_11">7.11 Defining an Option Value Handler</a></p>
 <p>You can specify a value handler for an option.&nbsp; You must specify and 
 supply a class that implements the <font face="Courier New">

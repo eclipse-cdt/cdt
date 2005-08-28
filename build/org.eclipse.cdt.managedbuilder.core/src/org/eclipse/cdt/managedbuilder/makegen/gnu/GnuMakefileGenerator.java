@@ -289,6 +289,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private IProject project;
 	private IResource[] projectResources;
 	private Vector ruleList;
+	private Vector depLineList;
 	private Vector subdirList;
 	private IPath topBuildDir;
 	private Set outputExtensionsSet;
@@ -1505,87 +1506,90 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				
 		// We can't have duplicates in a makefile
 		if (getRuleList().contains(buildRule)) {
-			return true;
 		}
 		else {
 			getRuleList().add(buildRule);
-		}
-		buffer.append(buildRule + NEWLINE);
-		if (bTargetTool) {
-			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
-		}
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
-		
-		// Get the command line for this tool invocation
-		String[] flags;
-		try { 
-			flags = tool.getToolCommandFlags(null,null);
-		} catch( BuildException ex ) {
-			// TODO  report error
-			flags = EMPTY_STRING_ARRAY;
-		}
-		String command = tool.getToolCommand();
-		try{
-			//try to resolve the build macros in the tool command
-			String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(command,
-					EMPTY_STRING,
-					WHITESPACE,
-					IBuildMacroProvider.CONTEXT_FILE,
-					new FileContextData(null,null,null,info.getDefaultConfiguration().getToolChain()));
-			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
-				command = resolvedCommand;
-				
-		} catch (BuildMacroException e){
-		}
-		String[] cmdInputs = (String[])inputs.toArray(new String[inputs.size()]);
-		IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
-		IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, command, 
-				flags, outflag, outputPrefix, primaryOutputs, cmdInputs, tool.getCommandLinePattern() );
-		// The command to build
-		String buildCmd = null;
-		if( cmdLInfo == null ) {
-			String toolFlags;
-			try { 
-				toolFlags = tool.getToolCommandFlagsString(null,null);
-			} catch( BuildException ex ) {
-				// TODO report error
-				toolFlags = EMPTY_STRING;
+			buffer.append(buildRule + NEWLINE);
+			if (bTargetTool) {
+				buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
 			}
-			buildCmd = command + WHITESPACE + toolFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + primaryOutputs + WHITESPACE + IN_MACRO;
-		}
-		else buildCmd = cmdLInfo.getCommandLine();
-		buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
-		buffer.append(TAB + AT + buildCmd);
-
-		// TODO
-		// NOTE WELL:  Dependency file generation is not handled for this type of Tool
-		 
-		// Echo finished message
-		buffer.append(NEWLINE);
-		if (bTargetTool) {
-			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
-		} else {
-			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
-		}
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE);				
-		
-		// If there is a post build step, then add a recursive invocation of MAKE to invoke it after the main build
-	    // Note that $(MAKE) will instantiate in the recusive invocation to the make command that was used to invoke
-	    // the makefile originally 
-	    if (bEmitPostBuildStepCall) {
-	        buffer.append(TAB + MAKE + WHITESPACE + NO_PRINT_DIR + WHITESPACE + POSTBUILD + NEWLINE + NEWLINE);       
-	    }
-	    else {
-			// Just emit a blank line
+			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
+			
+			// Get the command line for this tool invocation
+			String[] flags;
+			try { 
+				flags = tool.getToolCommandFlags(null,null);
+			} catch( BuildException ex ) {
+				// TODO  report error
+				flags = EMPTY_STRING_ARRAY;
+			}
+			String command = tool.getToolCommand();
+			try{
+				//try to resolve the build macros in the tool command
+				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(command,
+						EMPTY_STRING,
+						WHITESPACE,
+						IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(null,null,null,info.getDefaultConfiguration().getToolChain()));
+				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+					command = resolvedCommand;
+					
+			} catch (BuildMacroException e){
+			}
+			String[] cmdInputs = (String[])inputs.toArray(new String[inputs.size()]);
+			IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
+			IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, command, 
+					flags, outflag, outputPrefix, primaryOutputs, cmdInputs, tool.getCommandLinePattern() );
+			// The command to build
+			String buildCmd = null;
+			if( cmdLInfo == null ) {
+				String toolFlags;
+				try { 
+					toolFlags = tool.getToolCommandFlagsString(null,null);
+				} catch( BuildException ex ) {
+					// TODO report error
+					toolFlags = EMPTY_STRING;
+				}
+				buildCmd = command + WHITESPACE + toolFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + primaryOutputs + WHITESPACE + IN_MACRO;
+			}
+			else buildCmd = cmdLInfo.getCommandLine();
+			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
+			buffer.append(TAB + AT + buildCmd);
+	
+			// TODO
+			// NOTE WELL:  Dependency file generation is not handled for this type of Tool
+			 
+			// Echo finished message
 			buffer.append(NEWLINE);
-	    }
+			if (bTargetTool) {
+				buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_BUILD + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
+			} else {
+				buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + OUT_MACRO + SINGLE_QUOTE + NEWLINE);
+			}
+			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE);				
+			
+			// If there is a post build step, then add a recursive invocation of MAKE to invoke it after the main build
+		    // Note that $(MAKE) will instantiate in the recusive invocation to the make command that was used to invoke
+		    // the makefile originally 
+		    if (bEmitPostBuildStepCall) {
+		        buffer.append(TAB + MAKE + WHITESPACE + NO_PRINT_DIR + WHITESPACE + POSTBUILD + NEWLINE + NEWLINE);       
+		    }
+		    else {
+				// Just emit a blank line
+				buffer.append(NEWLINE);
+		    }
+		}
 		
 		// If we have secondary outputs, output dependency rules without commands
 		if (enumeratedSecondaryOutputs.size() > 0) {
 			String primaryOutput = (String)enumeratedPrimaryOutputs.get(0);
 			for (int i=0; i<enumeratedSecondaryOutputs.size(); i++) {
 				String output = (String)enumeratedSecondaryOutputs.get(0);
-				buffer.append(output + COLON + WHITESPACE + primaryOutput + NEWLINE);
+				String depLine = output + COLON + WHITESPACE + primaryOutput + NEWLINE;
+				if (!getDepLineList().contains(depLine)) {
+					getDepLineList().add(depLine);
+					buffer.append(depLine);
+				}
 			}
 			buffer.append(NEWLINE);
 		}
@@ -2177,133 +2181,159 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buildRule += WHITESPACE + addlPath.toString();
 		}
 				
-		// No duplicates in a makefile.  If we already have this rule, return
+		// No duplicates in a makefile.  If we already have this rule, don't add it or the commands to build the file
 		if (getRuleList().contains(buildRule)) {
 			//  TODO:  Should we assert that this is a pattern rule?
-			return;
 		}
 		else {
 			getRuleList().add(buildRule);
-		}
 		
-		// Echo starting message
-		buffer.append(buildRule + NEWLINE);
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
-		 
-		//  Generate the command line
-		IManagedCommandLineInfo cmdLInfo = null;
-		Vector inputs = new Vector(); 
-		inputs.add(IN_MACRO);
-		String outflag = null;
-		String outputPrefix = null;
-		
-		if( resConfig != null || fileExplicitMacrosReferenced) {
-			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
-			outflag = tool.getOutputFlag();
-			outputPrefix = tool.getOutputPrefix();
-			String[] flags = null;
-			try { 
-				flags = tool.getToolCommandFlags(sourceLocation, outputLocation);
-			} catch( BuildException ex ) {
-				// TODO add some routines to catch this
-				flags = EMPTY_STRING_ARRAY;
-			}
-			// Other additional inputs
-			// Get any additional dependencies specified for the tool in other InputType elements and AdditionalInput elements
-			IPath[] addlInputPaths = tool.getAdditionalResources();
-			for (int i=0; i<addlInputPaths.length; i++) {
-				// Translate the path from project relative to
-				// build directory relative
-				IPath addlPath = addlInputPaths[i];
-				if (!(addlPath.toString().startsWith("$("))) {		//$NON-NLS-1$
-					if (!addlPath.isAbsolute()) {
-						IPath tempPath = project.getLocation().append(addlPath);
-						if (tempPath != null) {
-							addlPath = calculateRelativePath(getTopBuildDir(), tempPath);
+			// Echo starting message
+			buffer.append(buildRule + NEWLINE);
+			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
+			 
+			//  Generate the command line
+			IManagedCommandLineInfo cmdLInfo = null;
+			Vector inputs = new Vector(); 
+			inputs.add(IN_MACRO);
+			String outflag = null;
+			String outputPrefix = null;
+			
+			if( resConfig != null || fileExplicitMacrosReferenced) {
+				buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
+				outflag = tool.getOutputFlag();
+				outputPrefix = tool.getOutputPrefix();
+				String[] flags = null;
+				try { 
+					flags = tool.getToolCommandFlags(sourceLocation, outputLocation);
+				} catch( BuildException ex ) {
+					// TODO add some routines to catch this
+					flags = EMPTY_STRING_ARRAY;
+				}
+				// Other additional inputs
+				// Get any additional dependencies specified for the tool in other InputType elements and AdditionalInput elements
+				IPath[] addlInputPaths = tool.getAdditionalResources();
+				for (int i=0; i<addlInputPaths.length; i++) {
+					// Translate the path from project relative to
+					// build directory relative
+					IPath addlPath = addlInputPaths[i];
+					if (!(addlPath.toString().startsWith("$("))) {		//$NON-NLS-1$
+						if (!addlPath.isAbsolute()) {
+							IPath tempPath = project.getLocation().append(addlPath);
+							if (tempPath != null) {
+								addlPath = calculateRelativePath(getTopBuildDir(), tempPath);
+							}
 						}
 					}
+					inputs.add(addlPath.toString());
 				}
-				inputs.add(addlPath.toString());
-			}
-			// Call the command line generator
-			IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
-			cmdLInfo = cmdLGen.generateCommandLineInfo( tool, cmd, flags, outflag, outputPrefix,
-					OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]), tool.getCommandLinePattern() );
-	
-			String buildCmd = cmdLInfo.getCommandLine();
-			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
-			buffer.append(TAB + AT + buildCmd);
-		} else {
-			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
-			String buildFlags = EMPTY_STRING;
-			try {
-				buildFlags = tool.getToolCommandFlagsString(sourceLocation, outputLocation);
-			} catch (BuildException e) {
-			}
-			outflag = info.getOutputFlag(outputExtension);
-			outputPrefix = info.getOutputPrefix(outputExtension);
-			String[] flags = buildFlags.split( "\\s" ); //$NON-NLS-1$
-			// Other additional inputs
-			// Get any additional dependencies specified for the tool in other InputType elements and AdditionalInput elements
-			IPath[] addlInputPaths = tool.getAdditionalResources();
-			for (int i=0; i<addlInputPaths.length; i++) {
-				// Translate the path from project relative to
-				// build directory relative
-				IPath addlPath = addlInputPaths[i];
-				if (!(addlPath.toString().startsWith("$("))) {		//$NON-NLS-1$
-					if (!addlPath.isAbsolute()) {
-						IPath tempPath = project.getLocation().append(addlPath);
-						if (tempPath != null) {
-							addlPath = calculateRelativePath(getTopBuildDir(), tempPath);
+				// Call the command line generator
+				IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
+				cmdLInfo = cmdLGen.generateCommandLineInfo( tool, cmd, flags, outflag, outputPrefix,
+						OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]), tool.getCommandLinePattern() );
+		
+				String buildCmd = cmdLInfo.getCommandLine();
+				buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
+				buffer.append(TAB + AT + buildCmd);
+			} else {
+				buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + tool.getAnnouncement() + SINGLE_QUOTE + NEWLINE);
+				String buildFlags = EMPTY_STRING;
+				try {
+					buildFlags = tool.getToolCommandFlagsString(sourceLocation, outputLocation);
+				} catch (BuildException e) {
+				}
+				outflag = info.getOutputFlag(outputExtension);
+				outputPrefix = info.getOutputPrefix(outputExtension);
+				String[] flags = buildFlags.split( "\\s" ); //$NON-NLS-1$
+				// Other additional inputs
+				// Get any additional dependencies specified for the tool in other InputType elements and AdditionalInput elements
+				IPath[] addlInputPaths = tool.getAdditionalResources();
+				for (int i=0; i<addlInputPaths.length; i++) {
+					// Translate the path from project relative to
+					// build directory relative
+					IPath addlPath = addlInputPaths[i];
+					if (!(addlPath.toString().startsWith("$("))) {		//$NON-NLS-1$
+						if (!addlPath.isAbsolute()) {
+							IPath tempPath = project.getLocation().append(addlPath);
+							if (tempPath != null) {
+								addlPath = calculateRelativePath(getTopBuildDir(), tempPath);
+							}
 						}
 					}
+					inputs.add(addlPath.toString());
 				}
-				inputs.add(addlPath.toString());
+				// Call the command line generator
+				cmdLInfo = info.generateToolCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
+						OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]), sourceLocation, outputLocation );
+				// The command to build
+				String buildCmd = null;
+				if( cmdLInfo == null ) buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + 
+						outflag + WHITESPACE + outputPrefix + OUT_MACRO + otherPrimaryOutputs + WHITESPACE + IN_MACRO;
+				else buildCmd = cmdLInfo.getCommandLine();
+				buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
+				buffer.append(TAB + AT + buildCmd);
 			}
-			// Call the command line generator
-			cmdLInfo = info.generateToolCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
-					OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]), sourceLocation, outputLocation );
-			// The command to build
-			String buildCmd = null;
-			if( cmdLInfo == null ) buildCmd = cmd + WHITESPACE + buildFlags + WHITESPACE + 
-					outflag + WHITESPACE + outputPrefix + OUT_MACRO + otherPrimaryOutputs + WHITESPACE + IN_MACRO;
-			else buildCmd = cmdLInfo.getCommandLine();
-			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
-			buffer.append(TAB + AT + buildCmd);
+			
+			// Determine if there are any dependencies to calculate
+			// TODO:  Note that there is an assumption built into this method that if the build rule is the same
+			//        for a set of resources, the dependency command will also be the same.  That is, this method
+			//        will not reach this code if the build rule is the same (see above).
+			if (doDepGen && depGen.getCalculatorType() == IManagedDependencyGenerator.TYPE_COMMAND) {
+				buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
+				// Get the dependency rule out of the generator
+				String depCmd = depGen.getDependencyCommand(resource, info);
+				buffer.append(depCmd);
+			}
+			
+			// Echo finished message
+			buffer.append(NEWLINE);
+			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
+			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
 		}
-		
-		// Determine if there are any dependencies to calculate
-		if (doDepGen && depGen.getCalculatorType() == IManagedDependencyGenerator.TYPE_COMMAND) {
-			buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
-			// Get the dependency rule out of the generator
-			String depCmd = depGen.getDependencyCommand(resource, info);
-			buffer.append(depCmd);
-		}
-		
-		// Echo finished message
-		buffer.append(NEWLINE);
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
-		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE + NEWLINE);
 
-
-		//  Add separate dependency lines per file if necessary
-		boolean addedDepLines = false; 
+		//  Determine if there are calculated dependencies
+		String calculatedDependencies = null;
+		boolean addedDepLines = false;
+		String depLine;
 		if (depGen != null && depGen.getCalculatorType() != IManagedDependencyGenerator.TYPE_COMMAND) { 
 			Vector addlDepsVector = calculateDependenciesForSource(depGen, tool, relativePath, resource);
-			for (int i=0; i<addlDepsVector.size(); i++) {
-				buffer.append(primaryOutputName + COLON + WHITESPACE + addlDepsVector.get(i).toString() + NEWLINE);
+			if (addlDepsVector != null && addlDepsVector.size() > 0) { 
+				calculatedDependencies = new String();
+				for (int i=0; i<addlDepsVector.size(); i++) {
+					calculatedDependencies += WHITESPACE + addlDepsVector.get(i).toString();
+				}
+			}
+		}			
+			
+		if (calculatedDependencies != null) {
+			depLine = primaryOutputName + COLON + calculatedDependencies + NEWLINE;
+			if (!getDepLineList().contains(depLine)) {
+				getDepLineList().add(depLine);
 				addedDepLines = true;
+				buffer.append(depLine);
 			}
 		}
 
 		// Add any additional outputs here using dependency lines
 		for (int i=1; i<enumeratedPrimaryOutputs.size(); i++) {		// Starting a 1 is intentional
-			buffer.append(((IPath)enumeratedPrimaryOutputs.get(i)).toString() + COLON + WHITESPACE + primaryOutputName + NEWLINE);
-			addedDepLines = true;
+			depLine = ((IPath)enumeratedPrimaryOutputs.get(i)).toString() + COLON + WHITESPACE + primaryOutputName;
+			if (calculatedDependencies != null) depLine += calculatedDependencies;
+			depLine += NEWLINE;
+			if (!getDepLineList().contains(depLine)) {
+				getDepLineList().add(depLine);
+				addedDepLines = true;
+				buffer.append(depLine);
+			}
 		}
 		for (int i=0; i<enumeratedSecondaryOutputs.size(); i++) {
-			buffer.append(((IPath)enumeratedSecondaryOutputs.get(i)).toString() + COLON + WHITESPACE + primaryOutputName + NEWLINE);
-			addedDepLines = true;
+			depLine = ((IPath)enumeratedSecondaryOutputs.get(i)).toString() + COLON + WHITESPACE + primaryOutputName;
+			if (calculatedDependencies != null) depLine += calculatedDependencies;
+			depLine += NEWLINE;
+			if (!getDepLineList().contains(depLine)) {
+				getDepLineList().add(depLine);
+				addedDepLines = true;
+				buffer.append(depLine);
+			}
 		}
 		if (addedDepLines) {
 			buffer.append(NEWLINE);			
@@ -2510,9 +2540,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		case IManagedDependencyGenerator.TYPE_INDEXER:
 		case IManagedDependencyGenerator.TYPE_EXTERNAL:
 			IResource[] res = depGen.findDependencies(resource, project);
-			for (int i=0; i<res.length; i++) {
-				IPath dep = res[i].getProjectRelativePath();
-				deps.add(dep);
+			if (res != null) {
+				for (int i=0; i<res.length; i++) {
+					IPath dep = null;
+					if (res[i] != null) {
+						IPath addlPath = res[i].getLocation();
+						if (addlPath != null) {
+							dep = calculateRelativePath(getTopBuildDir(), addlPath);
+						}
+					}
+					if (dep != null) {
+						deps.add(dep);
+					}
+				}
 			}
 			break;
 			
@@ -2982,6 +3022,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			ruleList = new Vector();
 		}
 		return ruleList;
+	}
+	
+	/* (non-javadoc)
+	 * Returns the list of known dependency lines. This keeps me from generating duplicate
+	 * lines.
+	 * 
+	 * @return List
+	 */
+	protected Vector getDepLineList() {
+		if (depLineList == null) {
+			depLineList = new Vector();
+		}
+		return depLineList;
 	}
 	
 	/*************************************************************************

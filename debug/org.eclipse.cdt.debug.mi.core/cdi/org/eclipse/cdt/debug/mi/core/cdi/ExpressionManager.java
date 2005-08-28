@@ -165,12 +165,16 @@ public class ExpressionManager extends Manager {
 		List varList = getVariableList(target);
 		Variable[] vars = (Variable[])varList.toArray(new Variable[0]);
 		for (int i = 0; i < vars.length; i++) {
-			if (vars[i].getMIVar().getVarName().equals(varName)) {
-				return vars[i];
-			}
-			Variable v = vars[i].getChild(varName);
-			if (v != null) {
-				return v;
+			try {
+				if (vars[i].getMIVar().getVarName().equals(varName)) {
+					return vars[i];
+				}
+				Variable v = vars[i].getChild(varName);
+				if (v != null) {
+					return v;
+				}
+			} catch (CDIException e) {
+				// ignore
 			}
 		}
 		return null;

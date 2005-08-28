@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**
@@ -24,7 +25,7 @@ public class GlobalVariable extends Variable implements ICDIGlobalVariable {
 	 * @param obj
 	 * @param v
 	 */
-	public GlobalVariable(VariableDescriptor obj, MIVar v) {
+	public GlobalVariable(VariableDescriptor obj, MIVarCreate v) {
 		super(obj, v);
 	}
 
@@ -38,8 +39,8 @@ public class GlobalVariable extends Variable implements ICDIGlobalVariable {
 	 * @param depth
 	 * @param v
 	 */
-	public GlobalVariable(Target target, Thread thread, StackFrame frame, String n, String q, int pos, int depth, MIVar v) {
-		super(target, thread, frame, n, q, pos, depth, v);
+	public GlobalVariable(Target target, Thread thread, StackFrame frame, String n, String q, int pos, int depth, MIVar miVar) {
+		super(target, thread, frame, n, q, pos, depth, miVar);
 	}
 
 	/* (non-Javadoc)

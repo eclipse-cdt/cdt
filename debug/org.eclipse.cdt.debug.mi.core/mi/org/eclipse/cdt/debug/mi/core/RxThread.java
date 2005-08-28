@@ -220,6 +220,9 @@ public class RxThread extends Thread {
 					processMIOOBRecord(rr, list);
 				}
 
+				// Set the accumulate console Stream
+				response.setMIOOBRecords(oobRecords);
+
 				// Notify the waiting command.
 				// Notify any command waiting for a ResultRecord.
 				if (cmd != null) {
@@ -231,8 +234,6 @@ public class RxThread extends Thread {
 					}
 
 					synchronized (cmd) {
-						// Set the accumulate console Stream
-						response.setMIOOBRecords(oobRecords);
 						cmd.setMIOutput(response);
 						cmd.notifyAll();
 					}

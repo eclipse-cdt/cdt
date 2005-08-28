@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariable;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**
@@ -23,15 +24,13 @@ public class LocalVariable extends Variable implements ICDILocalVariable {
 	 * @param obj
 	 * @param v
 	 */
-	public LocalVariable(LocalVariableDescriptor obj, MIVar v) {
+	public LocalVariable(LocalVariableDescriptor obj, MIVarCreate v) {
 		super(obj, v);
 	}
 
-	/**
-	 */
 	public LocalVariable(Target target, Thread thread, StackFrame frame, String n, String q,
-			int pos, int depth, MIVar v) {
-		super(target, thread, frame, n, q, pos, depth, v);
+			int pos, int depth, MIVar miVar) {
+		super(target, thread, frame, n, q, pos, depth, miVar);
 	}
 
 	/* (non-Javadoc)

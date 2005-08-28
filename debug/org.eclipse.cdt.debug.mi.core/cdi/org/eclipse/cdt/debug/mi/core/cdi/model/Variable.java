@@ -31,6 +31,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharType;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
@@ -56,6 +57,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.StructValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarInfoExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIVarInfoType;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
@@ -64,6 +66,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIVarShowAttributes;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
+import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarInfoExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarInfoTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
@@ -73,7 +76,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
  */
 public abstract class Variable extends VariableDescriptor implements ICDIVariable {
 
-	protected MIVar fMiVar;
+	protected MIVarCreate fVarCreateCMD;
+	protected MIVar fMIVar;
 	Value value;
 	public ICDIVariable[] children = new ICDIVariable[0];
 	String editable = null;
@@ -81,14 +85,14 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	boolean isFake = false;
 	boolean isUpdated = true;
 
-	public Variable(VariableDescriptor obj, MIVar v) {
+	public Variable(VariableDescriptor obj, MIVarCreate var) {
 		super(obj);
-		fMiVar = v;
+		fVarCreateCMD = var;
 	}
 
-	public Variable(Target target, Thread thread, StackFrame frame, String n, String q, int pos, int depth, MIVar v) {
+	public Variable(Target target, Thread thread, StackFrame frame, String n, String q, int pos, int depth, MIVar miVar) {
 		super(target, thread, frame, n, q, pos, depth);
-		fMiVar = v;
+		fMIVar = miVar;
 	}
 
 	public void setUpdated(boolean update) {
@@ -105,20 +109,58 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		mgr.update(this);
 	}
 
-	public MIVar getMIVar() {
-		return fMiVar;
+	public MIVar getMIVar() throws CDIException {
+		if (fMIVar == null) {
+
+			// Oops! what's up here, we should use Assert
+			if (fVarCreateCMD == null) {
+				throw new CDIException("Incomplete initialization of variable"); //$NON-NLS-1$
+			}
+
+			try {
+				MISession mi = ((Target)getTarget()).getMISession();
+				MIVarCreateInfo info = null;
+				// Wait for the response or timedout
+				synchronized (fVarCreateCMD) {
+					// RxThread will set the MIOutput on the cmd
+					// when the response arrive.
+					while ((info = fVarCreateCMD.getMIVarCreateInfo()) == null) {
+						try {
+							fVarCreateCMD.wait(mi.getCommandTimeout());
+							info = fVarCreateCMD.getMIVarCreateInfo();
+							if (info == null) {
+								throw new MIException(MIPlugin.getResourceString("src.MISession.Target_not_responding")); //$NON-NLS-1$
+							}
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+				
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+				fMIVar = info.getMIVar();
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
+		}
+		return fMIVar;
 	}
 
 	public Variable getChild(String name) {
 		for (int i = 0; i < children.length; i++) {
 			Variable variable = (Variable) children[i];
-			if (name.equals(variable.getMIVar().getVarName())) {
-				return variable;
-			}
-			// Look also in the grandchildren.
-			Variable grandChild = variable.getChild(name);
-			if (grandChild != null) {
-				return grandChild;
+			try {
+				if (name.equals(variable.getMIVar().getVarName())) {
+					return variable;
+				}
+				// Look also in the grandchildren.
+				Variable grandChild = variable.getChild(name);
+				if (grandChild != null) {
+					return grandChild;
+				}
+			} catch (CDIException e) {
+				// ignore;
 			}
 		}
 		return null;
@@ -432,7 +474,12 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	 * @return
 	 */
 	public boolean equals(Variable variable) {
-		return getMIVar().getVarName().equals(variable.getMIVar().getVarName());
+		try {
+			return getMIVar().getVarName().equals(variable.getMIVar().getVarName());
+		} catch (CDIException e) {
+			// ignore.
+		}
+		return super.equals(variable);
 	}
 
 	/* (non-Javadoc)

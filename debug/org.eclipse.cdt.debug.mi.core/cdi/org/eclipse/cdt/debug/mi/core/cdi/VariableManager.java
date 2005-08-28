@@ -59,7 +59,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
-import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
@@ -96,6 +95,7 @@ public class VariableManager extends Manager {
 		Target target = ((Session)getSession()).getTarget(miSession);
 		return getVariable(target, varName);
 	}
+
 	/**
 	 * Return the element that have the uniq varName.
 	 * null is return if the element is not in the cache.
@@ -103,12 +103,16 @@ public class VariableManager extends Manager {
 	public Variable getVariable(Target target, String varName) {
 		Variable[] vars = getVariables(target);
 		for (int i = 0; i < vars.length; i++) {
-			if (vars[i].getMIVar().getVarName().equals(varName)) {
-				return vars[i];
-			}
-			Variable v = vars[i].getChild(varName);
-			if (v != null) {
-				return v;
+			try {
+				if (vars[i].getMIVar().getVarName().equals(varName)) {
+					return vars[i];
+				}
+				Variable v = vars[i].getChild(varName);
+				if (v != null) {
+					return v;
+				}
+			} catch (CDIException e) {
+				// 
 			}
 		}
 		return null;
@@ -224,9 +228,13 @@ public class VariableManager extends Manager {
 		synchronized (varList) {
 			for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
 				Variable variable = (Variable)iterator.next();
-				if (variable.getMIVar().getVarName().equals(varName)) {
-					iterator.remove();
-					return variable;
+				try {
+					if (variable.getMIVar().getVarName().equals(varName)) {
+						iterator.remove();
+						return variable;
+					}
+				} catch (CDIException e) {
+					//
 				}
 			}
 		}
@@ -365,12 +373,14 @@ public class VariableManager extends Manager {
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIVarCreate var = factory.createMIVarCreate(name);
-				mi.postCommand(var);
-				MIVarCreateInfo info = var.getMIVarCreateInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-				}
-				argument = new Argument(argDesc, info.getMIVar());
+				mi.postCommand(var, -1);
+				argument = new Argument(argDesc, var);
+//				mi.postCommand(var);
+//				MIVarCreateInfo info = var.getMIVarCreateInfo();
+//				if (info == null) {
+//					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+//				}
+//				argument = new Argument(argDesc, info.getMIVar());
 				List variablesList = getVariablesList(target);
 				variablesList.add(argument);
 			} catch (MIException e) {
@@ -457,12 +467,14 @@ public class VariableManager extends Manager {
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIVarCreate var = factory.createMIVarCreate(name);
-				mi.postCommand(var);
-				MIVarCreateInfo info = var.getMIVarCreateInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-				}
-				global = new GlobalVariable(varDesc, info.getMIVar());
+				mi.postCommand(var, -1);
+				global = new GlobalVariable(varDesc, var);
+//				mi.postCommand(var;
+//				MIVarCreateInfo info = var.getMIVarCreateInfo();
+//				if (info == null) {
+//					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+//				}
+//				global = new GlobalVariable(varDesc, info.getMIVar());
 				List variablesList = getVariablesList(target);
 				variablesList.add(global);
 			} catch (MIException e) {
@@ -524,12 +536,14 @@ public class VariableManager extends Manager {
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIVarCreate var = factory.createMIVarCreate(name);
-				mi.postCommand(var);
-				MIVarCreateInfo info = var.getMIVarCreateInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-				}
-				local = new LocalVariable(varDesc, info.getMIVar());
+				mi.postCommand(var, -1);
+				local = new LocalVariable(varDesc, var);
+//				mi.postCommand(var);
+//				MIVarCreateInfo info = var.getMIVarCreateInfo();
+//				if (info == null) {
+//					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+//				}
+//				local = new LocalVariable(varDesc, info.getMIVar());
 				List variablesList = getVariablesList(target);
 				variablesList.add(local);
 			} catch (MIException e) {

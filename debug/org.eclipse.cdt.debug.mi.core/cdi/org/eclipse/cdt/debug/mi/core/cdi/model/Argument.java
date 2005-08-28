@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**
@@ -22,7 +23,7 @@ public class Argument extends Variable implements ICDIArgument {
 		super(target, thread, frame, n, q, pos, depth, v);
 	}
 
-	public Argument(ArgumentDescriptor obj, MIVar var) {
+	public Argument(ArgumentDescriptor obj, MIVarCreate var) {
 		super(obj, var);
 	}
 

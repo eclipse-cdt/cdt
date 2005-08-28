@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorage;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**
@@ -23,7 +24,7 @@ public class ThreadStorage extends Variable implements ICDIThreadStorage {
 	 * @param obj
 	 * @param v
 	 */
-	public ThreadStorage(VariableDescriptor obj, MIVar v) {
+	public ThreadStorage(VariableDescriptor obj, MIVarCreate v) {
 		super(obj, v);
 	}
 
@@ -38,8 +39,8 @@ public class ThreadStorage extends Variable implements ICDIThreadStorage {
 	 * @param v
 	 */
 	public ThreadStorage(Target target, Thread thread, StackFrame frame,
-			String n, String q, int pos, int depth, MIVar v) {
-		super(target, thread, frame, n, q, pos, depth, v);
+			String n, String q, int pos, int depth, MIVar miVar) {
+		super(target, thread, frame, n, q, pos, depth, miVar);
 	}
 
 	/* (non-Javadoc)
@@ -48,7 +49,7 @@ public class ThreadStorage extends Variable implements ICDIThreadStorage {
 	protected Variable createVariable(Target target, Thread thread,
 			StackFrame frame, String name, String fullName, int pos, int depth,
 			MIVar miVar) {
-		return null;
+		return new Register(target, thread, frame, name, fullName, pos, depth, miVar);
 	}
 
 }

@@ -107,19 +107,15 @@ public class RegisterManager extends Manager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#getMIVar()
 		 */
-		public MIVar getMIVar() {
-			if (fMiVar == null) {
-				try {
-					fMiVar = createMiVar((StackFrame)getStackFrame(), getName());
-				} catch (CDIException e) {
-					//
-				}
+		public MIVar getMIVar() throws CDIException {
+			if (fMIVar == null) {
+				fMIVar = createMiVar((StackFrame)getStackFrame(), getName());
 			}
-			return fMiVar;
+			return fMIVar;
 		}
 
 		public void setMIVar(MIVar newMIVar) {
-			fMiVar = newMIVar;
+			fMIVar = newMIVar;
 		}
 	}
 
@@ -196,12 +192,14 @@ public class RegisterManager extends Manager {
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIVarCreate var = factory.createMIVarCreate(name);
-				mi.postCommand(var);
-				MIVarCreateInfo info = var.getMIVarCreateInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-				}
-				reg = new Register(regDesc, info.getMIVar());
+				mi.postCommand(var, -1);
+//				mi.postCommand(var);
+//				MIVarCreateInfo info = var.getMIVarCreateInfo();
+//				if (info == null) {
+//					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+//				}
+//				reg = new Register(regDesc, info.getMIVar());
+				reg = new Register(regDesc, var);
 				List regList = getRegistersList(target);
 				regList.add(reg);
 			} catch (MIException e) {
@@ -280,15 +278,20 @@ public class RegisterManager extends Manager {
 		Target target = ((Session)getSession()).getTarget(miSession);
 		Register[] regs = getRegisters(target);
 		for (int i = 0; i < regs.length; i++) {
-			if (regs[i].getMIVar().getVarName().equals(varName)) {
-				return regs[i];
-			}
 			try {
-				Register r = (Register)regs[i].getChild(varName);
-				if (r != null) {
-					return r;
+				if (regs[i].getMIVar().getVarName().equals(varName)) {
+					return regs[i];
 				}
-			} catch (ClassCastException e) {
+				try {
+					Register r = (Register)regs[i].getChild(varName);
+					if (r != null) {
+						return r;
+					}
+				} catch (ClassCastException e) {
+					// ignore ???
+				}
+			} catch (CDIException e1) {
+				// ignore;
 			}
 		}
 		return null;
@@ -372,13 +375,13 @@ public class RegisterManager extends Manager {
 		return new Register[0];
 	}
 
-	private Variable[] getVariables(Target target) {
-		List varList = (List)varsMap.get(target);
-		if (varList != null) {
-			return (Variable[]) varList.toArray(new Variable[varList.size()]);
-		}
-		return new Register[0];
-	}
+//	private Variable[] getVariables(Target target) {
+//		List varList = (List)varsMap.get(target);
+//		if (varList != null) {
+//			return (Variable[]) varList.toArray(new Variable[varList.size()]);
+//		}
+//		return new Register[0];
+//	}
 
 	/**
 	 * Return the Element with this thread/stackframe, and with this name.

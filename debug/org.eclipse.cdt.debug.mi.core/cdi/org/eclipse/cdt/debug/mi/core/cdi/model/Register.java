@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**
@@ -35,11 +36,11 @@ public class Register extends Variable implements ICDIRegister {
 	 * @param v
 	 */
 	public Register(Target target, Thread thread, StackFrame frame,
-			String n, String q, int pos, int depth, MIVar v) {
-		super(target, thread, frame, n, q, pos, depth, v);
+			String n, String q, int pos, int depth, MIVar miVar) {
+		super(target, thread, frame, n, q, pos, depth, miVar);
 	}
 
-	public Register(RegisterDescriptor obj, MIVar var) {
+	public Register(RegisterDescriptor obj, MIVarCreate var) {
 		super(obj, var);
 	}
 

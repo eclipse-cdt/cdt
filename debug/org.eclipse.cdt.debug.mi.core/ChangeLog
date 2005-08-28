@@ -1,3 +1,25 @@
+2005-08-28 Alain Magloire
+	Speed improvement after exchanging with the HP folks.
+	HP has apps having hundred of local variable running on machine
+	with hundred of registers.  The latency of the command "-var-create"
+	is too taxing.  So we take the approach of not waiting for post command
+	MISession.postCommand(MIVarCreate, -1) and synchronize when we need the
+	mi varObj.
+
+	The next step will be to cache the types, since sending ptype/whatis
+	is also time consuming.
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ExpressionManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Argument.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/GlobalVariable.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/LocalVariable.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/ThreadStorage.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+	* mi/org/eclipse/cdt/debug/mi/core/RxThread.java
+
 2005-08-26 Mikhail Khodjaiants
 	Bug 108130: wrong type shown on breakpoint view for R watchpoint created from gdb console.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java

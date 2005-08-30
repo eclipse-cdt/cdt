@@ -1739,6 +1739,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(mark.getOffset(), mark.getLength());
         }
 
+        if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class and before the identifier
+        	__attribute__();
+        
         IToken nameToken = null;
         // class name
         if (LT(1) == IToken.tIDENTIFIER) {

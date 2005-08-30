@@ -3966,6 +3966,16 @@ abstract class BaseScanner implements IScanner {
                 return null;
             }
         }
+
+        // fix for 107150: the scanner stops at the \n or \r after skipOverWhiteSpace() take that into consideration
+        while (bufferPos[bufferStackPos] + 1 < limit && (buffer[bufferPos[bufferStackPos]] == '\n' || buffer[bufferPos[bufferStackPos]] == '\r')) {
+        	bufferPos[bufferStackPos]++; // skip \n or \r
+        	skipOverWhiteSpace(); // skip any other spaces after the \n
+        	
+        	if (bufferPos[bufferStackPos] + 1 < limit && buffer[bufferPos[bufferStackPos]] != '(' && buffer[bufferPos[bufferStackPos] + 1] == '(')
+        		bufferPos[bufferStackPos]++; // advance to ( if necessary
+        }
+
         if (buffer[bufferPos[bufferStackPos]] != '(') {
             bufferPos[bufferStackPos]--;
             return null;

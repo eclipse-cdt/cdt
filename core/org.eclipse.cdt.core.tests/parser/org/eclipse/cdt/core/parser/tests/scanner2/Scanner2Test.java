@@ -2364,4 +2364,46 @@ public class Scanner2Test extends BaseScanner2Test
 	   fullyTokenize();
    }
    
+   public void testBug107150() throws Exception {
+	   Writer writer = new StringWriter();
+	   writer.write("#define FUNC_PROTOTYPE_PARAMS(list)    list\r\n"); //$NON-NLS-1$
+	   writer.write("int func2 FUNC_PROTOTYPE_PARAMS\r\n"); //$NON-NLS-1$
+	   writer.write("((int arg1)){\r\n"); //$NON-NLS-1$
+	   writer.write("    return 0;\r\n"); //$NON-NLS-1$
+	   writer.write("}\r\n"); //$NON-NLS-1$
+	   initializeScanner( writer.toString() );
+	   validateToken( IToken.t_int );
+	   validateIdentifier( "func2" ); //$NON-NLS-1$
+	   validateToken( IToken.tLPAREN );
+	   validateToken( IToken.t_int );
+	   validateIdentifier( "arg1" ); //$NON-NLS-1$
+	   validateToken( IToken.tRPAREN );
+	   validateToken( IToken.tLBRACE );
+	   validateToken( IToken.t_return );
+	   validateInteger( "0" );
+	   validateToken( IToken.tSEMI );
+	   validateToken( IToken.tRBRACE );
+	   validateEOF();
+	   
+	   writer = new StringWriter();
+	   writer.write("#define FUNC_PROTOTYPE_PARAMS(list)    list\n"); //$NON-NLS-1$
+	   writer.write("int func2 FUNC_PROTOTYPE_PARAMS\n"); //$NON-NLS-1$
+	   writer.write("((int arg1)){\n"); //$NON-NLS-1$
+	   writer.write("    return 0;\n"); //$NON-NLS-1$
+	   writer.write("}\n"); //$NON-NLS-1$
+	   initializeScanner( writer.toString() );
+	   validateToken( IToken.t_int );
+	   validateIdentifier( "func2" ); //$NON-NLS-1$
+	   validateToken( IToken.tLPAREN );
+	   validateToken( IToken.t_int );
+	   validateIdentifier( "arg1" ); //$NON-NLS-1$
+	   validateToken( IToken.tRPAREN );
+	   validateToken( IToken.tLBRACE );
+	   validateToken( IToken.t_return );
+	   validateInteger( "0" );
+	   validateToken( IToken.tSEMI );
+	   validateToken( IToken.tRBRACE );
+	   validateEOF();
+   }
+   
 }

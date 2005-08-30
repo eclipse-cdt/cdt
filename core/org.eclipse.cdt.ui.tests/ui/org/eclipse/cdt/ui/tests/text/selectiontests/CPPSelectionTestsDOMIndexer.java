@@ -130,6 +130,7 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug103323")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug103697")); //$NON-NLS-1$
 		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug76043")); //$NON-NLS-1$
+		suite.addTest(new CPPSelectionTestsDOMIndexer("testBug108202")); //$NON-NLS-1$
 		
 		return suite;
 	}
@@ -1140,6 +1141,29 @@ public class CPPSelectionTestsDOMIndexer extends BaseSelectionTestsIndexer imple
         assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 4);
         assertEquals(((ASTNode)decl).getLength(), 1);
+    }
+    
+    public void testBug108202() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("class __attribute__((visibility(\"default\"))) FooClass\n"); //$NON-NLS-1$
+    	buffer.append("{\n"); //$NON-NLS-1$
+    	buffer.append("int foo();\n"); //$NON-NLS-1$
+    	buffer.append("};\n"); //$NON-NLS-1$
+    	buffer.append("int FooClass::foo() {\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	
+    	String code = buffer.toString(); 
+    	
+    	IFile file = importFile("testBug108202.cpp", code); //$NON-NLS-1$
+    	
+        int offset = code.indexOf("foo();\n"); //$NON-NLS-1$
+        IASTNode def = testCtrl_F3(file, offset);
+        IASTNode decl = testF3(file, offset);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName)def).toString(), "foo"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), 84);
+        assertEquals(((ASTNode)def).getLength(), 3);
     }
     
     // REMINDER: see CPPSelectionTestsDomIndexer#suite() when appending new tests to this suite

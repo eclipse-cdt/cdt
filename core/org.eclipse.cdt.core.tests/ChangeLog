@@ -1,4 +1,8 @@
 2005-08-30 Alain Magloire
+	New test for PR 109202 (written by Devin Steffler)
+	* parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java
+
+2005-08-30 Alain Magloire
 	New test in PR 107150 (written by Devin Steffler)
 	* parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java
 	* parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java

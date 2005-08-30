@@ -5126,4 +5126,17 @@ public class AST2CPPTests extends AST2BaseTest {
     	tu = parse(buffer.toString(), ParserLanguage.CPP);
     	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     }
+
+    public void testBug108202() throws Exception {
+    	StringBuffer buffer = new StringBuffer( );
+    	buffer.append( "class __attribute__((visibility(\"default\"))) FooClass\n"); //$NON-NLS-1$
+    	buffer.append( "{\n"); //$NON-NLS-1$
+    	buffer.append( "int foo();\n"); //$NON-NLS-1$
+    	buffer.append( "};\n"); //$NON-NLS-1$
+    	buffer.append( "int FooClass::foo() {\n"); //$NON-NLS-1$
+    	buffer.append( "return 0;\n"); //$NON-NLS-1$
+    	buffer.append( "}\n"); //$NON-NLS-1$
+    	
+    	parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    }
 }

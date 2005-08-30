@@ -1,3 +1,9 @@
+2005-08-30 Alain Magloire
+	New test in PR 107150 (written by Devin Steffler)
+	* parser/org/eclipse/cdt/core/parser/tests/ast2/AST2CPPTests.java
+	* parser/org/eclipse/cdt/core/parser/tests/ast2/AST2Tests.java
+	* parser/org/eclipse/cdt/core/parser/tests/scanner2/Scanner2Test.java
+
 2005-06-26 Alain Magloire
 	* model/org/eclipse/cdt/core/model/tests/StructuralTemplateTests.java
 

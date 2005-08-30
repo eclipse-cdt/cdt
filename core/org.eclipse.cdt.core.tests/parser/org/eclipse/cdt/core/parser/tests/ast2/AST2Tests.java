@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -3366,5 +3367,61 @@ public class AST2Tests extends AST2BaseTest {
         IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
         IASTCompoundStatement body = (IASTCompoundStatement) f.getBody();
         assertEquals( body.getStatements().length, 3 );
+    }
+    
+    public void testBug107150() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("#define FUNC_PROTOTYPE_PARAMS(list)    list\r\n"); //$NON-NLS-1$
+    	buffer.append("int func1 FUNC_PROTOTYPE_PARAMS((int arg1)){\r\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\r\n"); //$NON-NLS-1$
+    	buffer.append("}\r\n"); //$NON-NLS-1$
+    	buffer.append("int func2 FUNC_PROTOTYPE_PARAMS\r\n"); //$NON-NLS-1$
+    	buffer.append("((int arg1)){\r\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\r\n"); //$NON-NLS-1$
+    	buffer.append("}\r\n"); //$NON-NLS-1$
+    	parse(buffer.toString(), ParserLanguage.C);
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
+    	
+    	buffer = new StringBuffer();
+    	buffer.append("#define FUNC_PROTOTYPE_PARAMS(list)    list\n"); //$NON-NLS-1$
+    	buffer.append("int func1 FUNC_PROTOTYPE_PARAMS((int arg1)){\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	buffer.append("int func2 FUNC_PROTOTYPE_PARAMS\n"); //$NON-NLS-1$
+    	buffer.append("((int arg1)){\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	parse(buffer.toString(), ParserLanguage.C);
+    	tu = parse(buffer.toString(), ParserLanguage.CPP);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
+    }
+    
+    public void testBug107150b() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("#define FUNC_PROTOTYPE_PARAMS(list)    list\r\n"); //$NON-NLS-1$
+    	buffer.append("int func1 FUNC_PROTOTYPE_PARAMS((int arg1)){\r\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\r\n"); //$NON-NLS-1$
+    	buffer.append("}\r\n"); //$NON-NLS-1$
+    	buffer.append("int func2 FUNC_PROTOTYPE_PARAMS\r\n \r\n \t \r\n    \r\n "); //$NON-NLS-1$
+    	buffer.append("((int arg1)){\r\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\r\n"); //$NON-NLS-1$
+    	buffer.append("}\r\n"); //$NON-NLS-1$
+    	parse(buffer.toString(), ParserLanguage.C);
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
+    	
+    	buffer = new StringBuffer();
+    	buffer.append("#define FUNC_PROTOTYPE_PARAMS(list)    list\n"); //$NON-NLS-1$
+    	buffer.append("int func1 FUNC_PROTOTYPE_PARAMS((int arg1)){\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	buffer.append("int func2 FUNC_PROTOTYPE_PARAMS\n"); //$NON-NLS-1$
+    	buffer.append("((int arg1)){\n"); //$NON-NLS-1$
+    	buffer.append("return 0;\n"); //$NON-NLS-1$
+    	buffer.append("}\n"); //$NON-NLS-1$
+    	parse(buffer.toString(), ParserLanguage.C);
+    	tu = parse(buffer.toString(), ParserLanguage.CPP);
+    	assertFalse( tu.getDeclarations()[1] instanceof IASTProblemDeclaration );
     }
 }

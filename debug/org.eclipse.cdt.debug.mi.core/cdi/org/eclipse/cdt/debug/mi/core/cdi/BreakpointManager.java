@@ -490,13 +490,14 @@ public class BreakpointManager extends Manager {
 
 	public void deleteBreakpoints(Target target, ICDIBreakpoint[] breakpoints) throws CDIException {
 		List bList = (List)breakMap.get(target);
+		List dList = (List)deferredMap.get(target);
 
 		// Do the sanity check first, we will accept all or none
 		if (bList == null) {
 			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$			
 		}
 		for (int i = 0; i < breakpoints.length; i++) {
-			if (!(breakpoints[i] instanceof Breakpoint && bList.contains(breakpoints[i]))) {
+			if (!(breakpoints[i] instanceof Breakpoint && (bList.contains(breakpoints[i]) || (dList != null && dList.contains(breakpoints[i]))))) {
 				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$			
 			}
 		}
@@ -504,10 +505,12 @@ public class BreakpointManager extends Manager {
 		MISession miSession = target.getMISession();
 		List eventList = new ArrayList(breakpoints.length);
 		for (int i = 0; i < breakpoints.length; i++) {
-			MIBreakpoint[] miBreakpoints = ((Breakpoint)breakpoints[i]).getMIBreakpoints();
-			if (miBreakpoints.length > 0) {
-				deleteMIBreakpoints(target, miBreakpoints);
-				eventList.add(new MIBreakpointDeletedEvent(miSession, miBreakpoints[0].getNumber()));
+			if (!(dList != null && dList.remove(breakpoints[i]))) {
+				MIBreakpoint[] miBreakpoints = ((Breakpoint)breakpoints[i]).getMIBreakpoints();
+				if (miBreakpoints.length > 0) {
+					deleteMIBreakpoints(target, miBreakpoints);
+					eventList.add(new MIBreakpointDeletedEvent(miSession, miBreakpoints[0].getNumber()));
+				}
 			}
 		}
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);

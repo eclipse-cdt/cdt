@@ -1,3 +1,7 @@
+2005-08-31 Mikhail Khodjaiants
+	Bug 108424: Debugger stops on removed breakpoints.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+
 2005-08-04 Alain Magloire
 	Fix for 92446
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java

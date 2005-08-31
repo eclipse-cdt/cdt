@@ -9,4 +9,4 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/home/eclipse \
 cd ..
 
 java -cp tools/org.eclipse.releng.basebuilder/startup.jar org.eclipse.core.launcher.Main \
-	-ws gtk -application org.eclipse.ant.core.antRunner $* 2>&1 | tee build.log
+	-ws gtk -application org.eclipse.ant.core.antRunner $*

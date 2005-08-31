@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.testing"
       label="%featureName"
-      version="3.0.0"
+      version="3.0.1"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -50,7 +50,7 @@
          id="org.eclipse.cdt.testing"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
    <plugin
          id="org.eclipse.cdt.core.tests"

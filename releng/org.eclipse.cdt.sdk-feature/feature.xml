@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.sdk"
       label="%featureName"
-      version="3.0.0"
+      version="3.0.1"
       provider-name="%providerName">
 
    <description>
@@ -23,7 +23,7 @@
 
    <includes
          id="org.eclipse.cdt.source"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
    <includes
          id="org.eclipse.cdt"

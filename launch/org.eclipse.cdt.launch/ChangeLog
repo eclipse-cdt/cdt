@@ -1,3 +1,8 @@
+2005-08-31 Alain Magloire
+	Fix Pr 107571: Part of this fix is to add the
+	inferior process in the session
+	* src/org/eclipse/cdt/launch/internal/LocalAttachLaunchDelegate.java
+
 2005-08-25 Mikhail Khodjaiants
 	Bug 66446: Use the debugger path as a debugger process label.
 	Deprecated the "renderDebuggerProcessLabel" method.

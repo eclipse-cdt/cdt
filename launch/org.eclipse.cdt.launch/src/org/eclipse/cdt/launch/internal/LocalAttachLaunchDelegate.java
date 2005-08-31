@@ -37,6 +37,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.model.IProcess;
 
 public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -104,8 +105,13 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 							setDefaultSourceLocator(launch, config);
 							ICDITarget[] targets = dsession.getTargets();
 							for (int i = 0; i < targets.length; i++) {
+								Process process = targets[i].getProcess();
+								IProcess iprocess = null;
+								if (process != null) {
+									iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()), getDefaultProcessMap());
+								}
 								CDIDebugModel.newDebugTarget(launch, cproject.getProject(), targets[i],
-										renderTargetLabel(debugConfig), null, exeFile, true, true, false);
+										renderTargetLabel(debugConfig), iprocess, exeFile, true, true, false);
 							}
 						} catch (CoreException e) {
 							try {

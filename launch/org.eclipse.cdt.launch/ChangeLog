@@ -1,3 +1,8 @@
+2005-08-31 Alain Magloire
+	Fix Pr 107571: Part of this fix is to add the
+	inferior process in the session
+	* src/org/eclipse/cdt/launch/internal/LocalAttachLaunchDelegate.java
+
 2005-07-18 Alain Magloire
 	New combo to choose the MIVersion.
 	* src/org/eclipse/cdt/launch/ui/CDEbuggerTab.java

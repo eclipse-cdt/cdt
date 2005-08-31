@@ -1,3 +1,8 @@
+2005-08-31 Alain Magloire
+	Fix Pr 107571:  Do not create the Console pipe is we
+	have no consumer.
+	* mi/org/eclipse/cdt/debug/mi/core/MISession.java
+
 2005-08-28 Alain Magloire
 	Speed improvement after exchanging with the HP folks.
 	HP has apps having hundred of local variable running on machine

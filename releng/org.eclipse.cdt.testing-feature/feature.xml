@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.testing"
       label="%featureName"
-      version="3.0.0"
+      version="3.1.0"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 

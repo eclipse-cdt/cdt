@@ -11,7 +11,7 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="branchVersion" value="3.0.0"/>
+		<property name="branchVersion" value="3.1.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
@@ -150,14 +150,14 @@
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
 		<mail subject="CDT ${branchVersion} Build ${buildId} completed"
- 			tolist="${mailto}" from="dschaefe@ca.ibm.com">
+ 			tolist="${mailto}" from="dschaefer@qnx.com">
 			<message src="message.txt"/>
 		</mail>
 	</target>
 
 	<target name="mailFail" if="hasErrors">
 		<mail subject="CDT ${branchVersion} Build ${buildId} failed"
-			tolist="${mailto}" from="dschaefe@ca.ibm.com">
+			tolist="${mailto}" from="dschaefer@qnx.com">
 			<message src="compilelog.txt"/>
 		</mail>
 	</target>

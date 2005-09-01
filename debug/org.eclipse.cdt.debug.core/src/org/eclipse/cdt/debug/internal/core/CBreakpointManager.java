@@ -75,18 +75,16 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 	static private class BreakpointInProgess {
 		
-		private boolean fDeleted = false;
-		
-		boolean isDeleted() {
-			return fDeleted;
+		private ICDIBreakpoint fCDIBreakpoint;
+
+		void setCDIBreakpoint( ICDIBreakpoint b ) {
+			fCDIBreakpoint = b;
 		}
-		
-		void delete() {
-			fDeleted = true;
+
+		ICDIBreakpoint getCDIBreakpoint() {
+			return fCDIBreakpoint;
 		}
 	}
-
-	static final protected BreakpointInProgess BREAKPOINT_IN_PROGRESS = new BreakpointInProgess(); 
 
 	private class BreakpointMap {
 
@@ -106,12 +104,16 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 
 		void register( ICBreakpoint breakpoint ) {
-			fCBreakpoints.put( breakpoint, BREAKPOINT_IN_PROGRESS );
+			fCBreakpoints.put( breakpoint, new BreakpointInProgess() );
 		}
 
 		void put( ICBreakpoint breakpoint, ICDIBreakpoint cdiBreakpoint ) {
 			fCBreakpoints.put( breakpoint, cdiBreakpoint );
 			fCDIBreakpoints.put( cdiBreakpoint, breakpoint );
+		}
+
+		Object get( ICBreakpoint breakpoint ) {
+			return fCBreakpoints.get( breakpoint );
 		}
 
 		ICDIBreakpoint getCDIBreakpoint( ICBreakpoint breakpoint ) {
@@ -146,7 +148,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 
 		boolean isInProgress( ICBreakpoint breakpoint ) {
-			return ( fCBreakpoints.get( breakpoint ) == BREAKPOINT_IN_PROGRESS );
+			return ( fCBreakpoints.get( breakpoint ) instanceof BreakpointInProgess );
 		}
 
 		ICBreakpoint[] getAllCBreakpoints() {
@@ -165,7 +167,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			Iterator it = set.iterator();
 			while ( it.hasNext() ) {
 				Map.Entry entry = (Map.Entry)it.next();
-				if ( entry.getValue() == BREAKPOINT_IN_PROGRESS ) {
+				if ( entry.getValue() instanceof BreakpointInProgess ) {
 					list.add( entry.getKey() );
 				}
 			}
@@ -239,10 +241,18 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		ArrayList list = new ArrayList( breakpoints.length );
 		synchronized( getBreakpointMap() ) {
 			for ( int i = 0; i < breakpoints.length; ++i ) {
-				if ( breakpoints[i] instanceof ICBreakpoint && !getBreakpointMap().isInProgress( (ICBreakpoint)breakpoints[i] ) ) {
-					ICDIBreakpoint b = getBreakpointMap().getCDIBreakpoint( (ICBreakpoint)breakpoints[i] );
-					if ( b != null )
+				if ( breakpoints[i] instanceof ICBreakpoint ) {
+					Object obj = getBreakpointMap().get( (ICBreakpoint)breakpoints[i] );
+					ICDIBreakpoint b = null;
+					if ( obj instanceof ICDIBreakpoint ) {
+						b = (ICDIBreakpoint)obj;
+					}
+					else if ( obj instanceof BreakpointInProgess ) {
+						b = ((BreakpointInProgess)obj).getCDIBreakpoint();
+					}
+					if ( b != null ) {
 						list.add( b );
+					}
 				}
 			}
 		}
@@ -593,7 +603,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					ICDICondition condition = createCondition( watchpoint );
 					b = cdiTarget.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
 				}
-				// Hack: see bug 105196: [CDI]: Add "enabled" flag to the "set...Breakpoint" methods 
+				if ( b != null ) {
+					Object obj = getBreakpointMap().get( breakpoints[i] );
+					if ( obj instanceof BreakpointInProgess ) {
+						((BreakpointInProgess)obj).setCDIBreakpoint( b );
+					}
+				}
+				// Hack: see bug 105196: [CDI]: Add "enabled" flag to the "set...Breakpoint" methods
 				if ( b != null && b.isEnabled() != breakpoints[i].isEnabled() ) {
 					b.setEnabled( breakpoints[i].isEnabled() );
 				}

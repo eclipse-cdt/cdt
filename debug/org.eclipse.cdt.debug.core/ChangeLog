@@ -1,3 +1,7 @@
+2005-09-01 Mikhail Khodjaiants
+	Bug 108424: Debugger stops on removed breakpoints.
+	* CBreakpointManager.java
+
 2005-08-25 Mikhail Khodjaiants
 	Bug 106241: Argument stopInMain has no impact in method org.eclipse.cdt.debug.core.CDIDebugModel#newDebugTarget.
 	* CDIDebugModel.java

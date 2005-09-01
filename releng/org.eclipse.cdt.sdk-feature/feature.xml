@@ -27,7 +27,7 @@
 
    <includes
          id="org.eclipse.cdt"
-         version="3.0.0"
+         version="3.0.1"
          name="%featureName"/>
 
    <plugin

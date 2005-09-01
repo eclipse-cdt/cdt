@@ -1,3 +1,7 @@
+2005-09-01 Mikhail Khodjaiants
+	Bug 108424: Debugger stops on removed breakpoints.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+
 2005-08-31 Alain Magloire
 	Improve performance by caching the type result on the frame
 	and on the RegisterManager.  The patch is originally from Chris Wiebe

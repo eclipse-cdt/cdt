@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -45,6 +47,10 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	ICDIArgumentDescriptor[] argDescs;
 	ICDILocalVariableDescriptor[] localDescs;
 	Locator fLocator;
+	/**
+	 * 
+	 */
+	private HashMap fTypeCache;
 
 	/*
  	 * 
@@ -74,10 +80,18 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		cthread = thread;
 		frame = f;
 		level = l;
+		fTypeCache = new HashMap();
 	}
 
 	public MIFrame getMIFrame() {
 		return frame;
+	}
+
+	public ICDIType getFromTypeCache(String typeName) {
+		return (ICDIType)fTypeCache.get(typeName);
+	}
+	public void addToTypeCache(String typeName, ICDIType typeDefinition) {
+		fTypeCache.put(typeName, typeDefinition);
 	}
 
 	/**

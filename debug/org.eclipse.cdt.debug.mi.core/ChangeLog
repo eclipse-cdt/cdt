@@ -1,4 +1,13 @@
 2005-08-31 Alain Magloire
+	Improve performance by caching the type result on the frame
+	and on the RegisterManager.  The patch is originally from Chris Wiebe
+	with modifications.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/StackFrame.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/VariableDescriptor.java
+
+2005-08-31 Alain Magloire
 	Fix Pr 107571:  Do not create the Console pipe is we
 	have no consumer.
 	* mi/org/eclipse/cdt/debug/mi/core/MISession.java

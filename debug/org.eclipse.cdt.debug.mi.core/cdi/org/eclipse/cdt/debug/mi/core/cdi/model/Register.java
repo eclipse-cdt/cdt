@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
@@ -42,6 +43,19 @@ public class Register extends Variable implements ICDIRegister {
 
 	public Register(RegisterDescriptor obj, MIVarCreate var) {
 		super(obj, var);
+	}
+
+	
+	protected void addToTypeCache(String nameType, ICDIType type) throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		RegisterManager mgr = session.getRegisterManager();
+		mgr.addToTypeCache(nameType, type);
+	}
+
+	protected ICDIType getFromTypeCache(String nameType) throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		RegisterManager mgr = session.getRegisterManager();
+		return mgr.getFromTypeCache(nameType);
 	}
 
 	/* (non-Javadoc)

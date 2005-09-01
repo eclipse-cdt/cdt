@@ -155,6 +155,22 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 		return fFullName;
 	}
 
+	protected ICDIType getFromTypeCache(String nameType) throws CDIException {
+		StackFrame frame = (StackFrame)getStackFrame();
+		ICDIType detailedType = null;
+		if (frame != null) {
+			detailedType = frame.getFromTypeCache(nameType);
+		}
+		return detailedType;
+	}
+
+	protected void addToTypeCache(String nameType, ICDIType typeDefinition) throws CDIException {
+		StackFrame frame = (StackFrame)getStackFrame();
+		if (frame != null) {
+			frame.addToTypeCache(nameType, typeDefinition);
+		}
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableDescriptor#getName()
 	 */
@@ -174,34 +190,45 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			try {
 				fType = sourceMgr.getType(target, nametype);
 			} catch (CDIException e) {
-				// Try with ptype.
-				try {
-					String ptype = sourceMgr.getDetailTypeName(target, nametype);
-					fType = sourceMgr.getType(target, ptype);
-				} catch (CDIException ex) {
-					// Some version of gdb does not work on the name of the class
-					// ex: class data foo --> ptype data --> fails
-					// ex: class data foo --> ptype foo --> succeed
-					StackFrame frame = (StackFrame)getStackFrame();
-					if (frame == null) {
-						Thread thread = (Thread)getThread();
-						if (thread != null) {
-							frame = thread.getCurrentStackFrame();
-						} else {
-							frame = ((Thread)target.getCurrentThread()).getCurrentStackFrame();
-						}
-					}
+				// We are here because the parser did not recognize the type, it may be something
+				// like "builtin_x86_vector" or even a class or a typedef
+				// typedef struct foobar Foobar_t
+				// for this case we need to call "Ptype" for more details.
+
+				// For speed we save the type definitions in the stackframe, try it first.
+				fType = getFromTypeCache(nametype);
+				if (fType == null) {
+					// Try with ptype.
 					try {
-						String ptype = sourceMgr.getDetailTypeNameFromVariable(frame, getQualifiedName());
+						String ptype = sourceMgr.getDetailTypeName(target, nametype);
 						fType = sourceMgr.getType(target, ptype);
-					} catch (CDIException e2) {
-						// give up.
+					} catch (CDIException ex) {
+						// Some version of gdb does not work on the name of the class
+						// ex: class data foo --> ptype data --> fails
+						// ex: class data foo --> ptype foo --> succeed
+						StackFrame frame = (StackFrame)getStackFrame();
+						if (frame == null) {
+							Thread thread = (Thread)getThread();
+							if (thread != null) {
+								frame = thread.getCurrentStackFrame();
+							} else {
+								frame = ((Thread)target.getCurrentThread()).getCurrentStackFrame();
+							}
+						}
+						try {
+							String ptype = sourceMgr.getDetailTypeNameFromVariable(frame, getQualifiedName());
+							fType = sourceMgr.getType(target, ptype);
+						} catch (CDIException e2) {
+							// give up.
+						}
 					}
 				}
 			}
 			if (fType == null) {
 				fType = new IncompleteType(target, nametype);
 			}
+			// cache the result
+			addToTypeCache(nametype, fType);
 		}
 		return fType;
 	}
@@ -381,14 +408,5 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 		VariableManager mgr = session.getVariableManager();
 		return mgr.getVariableDescriptorAsType(this, type);
 	}
-
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#createVariable()
-//	 */
-//	public ICDIVariable createVariable() throws CDIException {
-//		Session session = (Session)getTarget().getSession();
-//		VariableManager mgr = session.getVariableManager();
-//		return mgr.createVariable(this);
-//	}
 
 }

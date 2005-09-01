@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
@@ -122,6 +124,7 @@ public class RegisterManager extends Manager {
 	Map regsMap;
 	Map varsMap;
 	MIVarChange[] noChanges = new MIVarChange[0];
+	HashMap fTypeCache;
 
 	public RegisterManager(Session session) {
 		super(session, true);
@@ -129,7 +132,16 @@ public class RegisterManager extends Manager {
 		varsMap = new Hashtable();
 		// The register bookkeeping provides better update control.
 		setAutoUpdate( true );
+		fTypeCache = new HashMap();
 	}
+
+	public ICDIType getFromTypeCache(String typeName) {
+		return (ICDIType)fTypeCache.get(typeName);
+	}
+	public void addToTypeCache(String typeName, ICDIType type) {
+		fTypeCache.put(typeName, type);
+	}
+
 
 	synchronized List getRegistersList(Target target) {
 		List regsList = (List)regsMap.get(target);

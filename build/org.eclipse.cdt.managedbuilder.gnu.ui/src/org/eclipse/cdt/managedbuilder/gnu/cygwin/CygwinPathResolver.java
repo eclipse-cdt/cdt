@@ -77,7 +77,6 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		File file = new File(exePath); 
 		if (!file.exists() || !file.isDirectory()) { return result; } // no changes
 		
-		ArrayList ls = new ArrayList();
 		String s = exePath + TOOL + variableValue;
 		String[] lines = exec(s, configuration);
 		if (lines != null && lines.length > 0) {
@@ -121,35 +120,39 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	 */
 	
 	private static synchronized void checkRegistry() {
-		checked = true;
-		etcCygwin  = null; 
-		binCygwin  = null;
-		rootCygwin = null;  
-		if (!isWindows()) return;
-		for(int i = 0; i < REGISTRY_ROOTS.length; i++){
-			IPath toSave = GnuUIPlugin.getDefault().getStateLocation();
-			toSave = toSave.addTrailingSeparator().append(OUTFILE);
-			String[] args = {ARG0, ARG1, toSave.toOSString(), REGISTRY_ROOTS[i]+REGISTRY_KEY+QUOT };
-			try {
-				File f = new File(toSave.toOSString());
-				f.delete();
-				if (ProcessFactory.getFactory().exec(args).waitFor() == 0 && f.exists() && f.canRead()) {
-					BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-					ArrayList ls = new ArrayList(1);
-					String s;
-					while ((s = r.readLine() ) != null ) ls.add(s);
-					r.close();
+		if (checked) return;
+		try {
+			etcCygwin  = null; 
+			binCygwin  = null;
+			rootCygwin = null;  
+			if (!isWindows()) return;
+			for(int i = 0; i < REGISTRY_ROOTS.length; i++){
+				IPath toSave = GnuUIPlugin.getDefault().getStateLocation();
+				toSave = toSave.addTrailingSeparator().append(OUTFILE);
+				String[] args = {ARG0, ARG1, toSave.toOSString(), REGISTRY_ROOTS[i]+REGISTRY_KEY+QUOT };
+				try {
+					File f = new File(toSave.toOSString());
 					f.delete();
-					String[] aus = (String[])ls.toArray(new String[0]); 	
-					if (etcCygwin  == null) { etcCygwin  = getDir(aus, ETCPATTERN); }
-					if (binCygwin  == null) { binCygwin  = getDir(aus, BINPATTERN); }
-					if (rootCygwin == null) { rootCygwin = getDir(aus, ROOTPATTERN);}
+					if (ProcessFactory.getFactory().exec(args).waitFor() == 0 && f.exists() && f.canRead()) {
+						BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+						ArrayList ls = new ArrayList(1);
+						String s;
+						while ((s = r.readLine() ) != null ) ls.add(s);
+						r.close();
+						f.delete();
+						String[] aus = (String[])ls.toArray(new String[0]); 	
+						if (etcCygwin  == null) { etcCygwin  = getDir(aus, ETCPATTERN); }
+						if (binCygwin  == null) { binCygwin  = getDir(aus, BINPATTERN); }
+						if (rootCygwin == null) { rootCygwin = getDir(aus, ROOTPATTERN);}
+					}
+				} catch (FileNotFoundException e) {
+				} catch (IOException e) {					
+				} catch (InterruptedException e) {
+				} catch (SecurityException e) {
 				}
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {					
-			} catch (InterruptedException e) {
-			} catch (SecurityException e) {
 			}
+		} finally {
+			checked = true;			
 		}
 	}
 	

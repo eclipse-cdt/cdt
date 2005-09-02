@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.internal.ui;
 
-import java.io.File;
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ComboDialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
@@ -22,16 +21,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -65,101 +57,16 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage {
 		fSerialBlock.addObserver( this );
 	}
 
-	public void createMainTab( TabFolder tabFolder ) {
+	protected void createConnectionTab( TabFolder tabFolder ) {
 		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
-		tabItem.setText( MIUIMessages.getString( "GDBServerDebuggerPage.2" ) ); //$NON-NLS-1$
-		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
+		tabItem.setText( MIUIMessages.getString( "GDBServerDebuggerPage.10" ) ); //$NON-NLS-1$
+		Composite comp1 = ControlFactory.createCompositeEx( tabFolder, 1, GridData.FILL_BOTH );
+		((GridLayout)comp1.getLayout()).makeColumnsEqualWidth = false;
+		comp1.setFont( tabFolder.getFont() );
+		tabItem.setControl( comp1 );
+		Composite comp = ControlFactory.createCompositeEx( comp1, 2, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-		tabItem.setControl( comp );
-		Composite subComp = ControlFactory.createCompositeEx( comp, 3, GridData.FILL_HORIZONTAL );
-		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
-		Label label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.3" ) ); //$NON-NLS-1$
-		GridData gd = new GridData();
-		//		gd.horizontalSpan = 2;
-		label.setLayoutData( gd );
-		fGDBCommandText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
-		fGDBCommandText.addModifyListener( new ModifyListener() {
-
-			public void modifyText( ModifyEvent evt ) {
-				if ( !isInitializing() )
-					updateLaunchConfigurationDialog();
-			}
-		} );
-		Button button = createPushButton( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.4" ), null ); //$NON-NLS-1$
-		button.addSelectionListener( new SelectionAdapter() {
-
-			public void widgetSelected( SelectionEvent evt ) {
-				if ( !isInitializing() ) {
-					handleGDBButtonSelected();
-					updateLaunchConfigurationDialog();
-				}
-			}
-
-			private void handleGDBButtonSelected() {
-				FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-				dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.5" ) ); //$NON-NLS-1$
-				String gdbCommand = fGDBCommandText.getText().trim();
-				int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
-				if ( lastSeparatorIndex != -1 ) {
-					dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
-				}
-				String res = dialog.open();
-				if ( res == null ) {
-					return;
-				}
-				fGDBCommandText.setText( res );
-			}
-		} );
-		label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.6" ) ); //$NON-NLS-1$
-		gd = new GridData();
-		//		gd.horizontalSpan = 2;
-		label.setLayoutData( gd );
-		fGDBInitText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
-		gd = new GridData( GridData.FILL_HORIZONTAL );
-		fGDBInitText.setLayoutData( gd );
-		fGDBInitText.addModifyListener( new ModifyListener() {
-
-			public void modifyText( ModifyEvent evt ) {
-				if ( !isInitializing() )
-					updateLaunchConfigurationDialog();
-			}
-		} );
-		button = createPushButton( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.7" ), null ); //$NON-NLS-1$
-		button.addSelectionListener( new SelectionAdapter() {
-
-			public void widgetSelected( SelectionEvent evt ) {
-				if ( !isInitializing() ) {
-					handleGDBInitButtonSelected();
-					updateLaunchConfigurationDialog();
-				}
-			}
-
-			private void handleGDBInitButtonSelected() {
-				FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-				dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.8" ) ); //$NON-NLS-1$
-				String gdbCommand = fGDBInitText.getText().trim();
-				int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
-				if ( lastSeparatorIndex != -1 ) {
-					dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
-				}
-				String res = dialog.open();
-				if ( res == null ) {
-					return;
-				}
-				fGDBInitText.setText( res );
-			}
-		} );
-		extendMainTab( comp );
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#extendMainTab(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void extendMainTab( Composite parent ) {
-		Composite comp = ControlFactory.createCompositeEx( parent, 2, GridData.FILL_BOTH );
-		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
+		comp.setFont( comp1.getFont() );
 		fConnectionField.doFillIntoGrid( comp, 2 );
 		((GridData)fConnectionField.getComboControl( null ).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
 		PixelConverter converter = new PixelConverter( comp );
@@ -169,7 +76,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage {
 		fConnectionStack.setLayout( stackLayout );
 		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 2;
 		fTCPBlock.createBlock( fConnectionStack );
-		fSerialBlock.createBlock( fConnectionStack );
+		fSerialBlock.createBlock( fConnectionStack );		
 	}
 
 	private ComboDialogField createConnectionField() {
@@ -266,5 +173,13 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage {
 
 	private void setInitializing( boolean isInitializing ) {
 		fIsInitializing = isInitializing;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse.swt.widgets.TabFolder)
+	 */
+	public void createTabs( TabFolder tabFolder ) {
+		super.createTabs( tabFolder );
+		createConnectionTab( tabFolder );
 	}
 }

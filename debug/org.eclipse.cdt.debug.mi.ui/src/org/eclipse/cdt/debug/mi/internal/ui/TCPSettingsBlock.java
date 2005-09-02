@@ -21,7 +21,6 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -56,7 +55,7 @@ public class TCPSettingsBlock extends Observable {
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
 		((GridLayout)comp.getLayout()).marginHeight = 0;
 		((GridLayout)comp.getLayout()).marginWidth = 0;
-		comp.setFont( JFaceResources.getDialogFont() );
+		comp.setFont( parent.getFont() );
 		PixelConverter converter = new PixelConverter( comp );
 		fHostNameField.doFillIntoGrid( comp, 2 );
 		LayoutUtil.setWidthHint( fHostNameField.getTextControl( null ), converter.convertWidthInCharsToPixels( 20 ) );

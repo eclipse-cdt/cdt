@@ -29,7 +29,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
@@ -209,7 +208,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
 		((GridLayout)comp.getLayout()).marginHeight = 0;
 		((GridLayout)comp.getLayout()).marginWidth = 0;
-		comp.setFont( JFaceResources.getDialogFont() );
+		comp.setFont( parent.getFont() );
 		PixelConverter converter = new PixelConverter( comp );
 		fDirList.doFillIntoGrid( comp, 3 );
 		LayoutUtil.setHorizontalSpan( fDirList.getLabelControl( null ), 2 );

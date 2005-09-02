@@ -1,3 +1,12 @@
+2005-09-02 Mikhail Khodjaiants
+	Bug 108723: Create a separate tab for gdb server's conection options.
+	* GDBDebuggerPage.java
+	* GDBServerDebuggerPage.java
+	* MIUIMessages.properties
+	* SerialPortSettingsBlock.java
+	* TCPSettingsBlock.java
+	* SolibSearchPathBlock.java
+
 2005-07-22 Alain Magloire
 	Fix the copyright.
 

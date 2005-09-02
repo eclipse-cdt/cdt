@@ -154,11 +154,13 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 	public void createMainTab( TabFolder tabFolder ) {
 		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
 		tabItem.setText( MIUIMessages.getString( "GDBDebuggerPage.2" ) ); //$NON-NLS-1$
-		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
+		Composite comp = ControlFactory.createCompositeEx( tabFolder, 1, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
+		comp.setFont( tabFolder.getFont() );
 		tabItem.setControl( comp );
 		Composite subComp = ControlFactory.createCompositeEx( comp, 3, GridData.FILL_HORIZONTAL );
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
+		subComp.setFont( tabFolder.getFont() );
 		Label label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBDebuggerPage.3" ) ); //$NON-NLS-1$
 		GridData gd = new GridData();
 		//		gd.horizontalSpan = 2;
@@ -243,6 +245,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
 		tabItem.setText( MIUIMessages.getString( "GDBDebuggerPage.10" ) ); //$NON-NLS-1$
 		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
+		comp.setFont( tabFolder.getFont() );
 		tabItem.setControl( comp );
 		fSolibBlock = createSolibBlock( comp );
 		if ( fSolibBlock instanceof Observable )

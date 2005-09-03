@@ -3956,4 +3956,262 @@
 	  </projectType>
 
    </extension>
+
+   <extension
+         id="cdt.test.fortran.toolchain"
+         name="CDT Test Fortran Toolchain"
+         point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+
+    <!-- This tool-chain tests external dependency calulation using Fortran -->
+
+    <!-- Compiler tool -->
+
+	<tool
+		natureFilter="both"
+		name="Test Fortran Compiler"
+		outputFlag="-c -object:"
+		command="myfort"
+		commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
+		id="cdt.test.fortran.compilestep">
+		<inputType
+		    sources="f,F,for,FOR,f90,F90"
+			dependencyCalculator="org.eclipse.cdt.managedbuilder.core.tests.DefaultFortranDependencyCalculator"
+            id="cdt.test.fortran.compilestep.input">
+        </inputType>
+        <outputType
+			outputs="obj"
+            buildVariable="OBJS"
+            id="cdt.test.fortran.compilestep.output">
+        </outputType>		
+        <outputType
+			outputs="mod"
+            buildVariable="MODS"
+            multipleOfType="true"
+            nameProvider="org.eclipse.cdt.managedbuilder.core.tests.DefaultFortranDependencyCalculator"
+            id="cdt.test.fortran.compilestep.output.modules">
+        </outputType>		
+		<!-- pp General -->
+        <optionCategory
+			owner="cdt.test.fortran.compilestep"
+            name="General"
+            id="cdt.test.fortran.compilestep.category.general">
+        </optionCategory>
+		<option
+			defaultValue="false"
+			name="Include Debug Information (-debug)"
+			category="cdt.test.fortran.compilestep.category.general"
+			command="-debug"
+			valueType="boolean"
+			id="cdt.test.fortran.compilestep.general.debug">
+		</option>
+		<option
+			name="Optimization Level"
+			category="cdt.test.fortran.compilestep.category.general"
+			valueType="enumerated"
+			id="cdt.test.fortran.compilestep.general.optimization">
+		    <enumeratedOptionValue
+				name="Disable (-Od)"
+				command="-Od"
+				id="general.opt.none">
+		    </enumeratedOptionValue>
+		    <enumeratedOptionValue
+				name="Minimize Size (-O1)"
+				command="-O1"
+				id="general.opt.size">
+		    </enumeratedOptionValue>
+		    <enumeratedOptionValue
+				name="Maximize Speed (-O2)"
+				isDefault="true"
+				command=""
+				id="general.opt.speed">
+		    </enumeratedOptionValue>
+		</option>
+		<option
+			name="Additional Include Directories (-I)"
+			category="cdt.test.fortran.compilestep.category.general"
+			command="-I"
+			valueType="includePath"
+			browseType="directory"
+			id="cdt.test.fortran.compilestep.preprocessor.includedirectories">
+		</option>
+		<!-- pp Compiler Command Line  -->
+		<optionCategory
+			owner="cdt.test.fortran.compilestep"
+			name="Command Line"
+			id="cdt.test.fortran.compilestep.category.comline">
+		</optionCategory>
+		<option
+			name="Additional Options"
+			category="cdt.test.fortran.compilestep.category.comline"
+			valueType="string"
+			id="cdt.test.fortran.compilestep.coptions">
+		</option>
+	</tool>
+    
+    <!-- Linker tool -->
+    
+    <tool
+        natureFilter="both"
+        name="Linker"
+        outputFlag="-o"
+        command="mylink"
+		commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
+        id="cdt.test.fortran.linkstep">
+        <inputType
+            sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+            sources="o"
+			multipleOfType="true"
+            dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.internal.DefaultNoDependencyCalculator"
+            buildVariable="OBJS"
+            id="cdt.test.fortran.linkstep.input">
+            <additionalInput
+            	paths="$(USER_OBJS)"
+            	kind="additionalinputdependency">
+            </additionalInput>
+            <additionalInput
+            	paths="$(LIBS)"
+            	kind="additionalinput">
+            </additionalInput>
+        </inputType>
+        <outputType
+			outputs="exe"
+            buildVariable="EXECUTABLES"
+            primaryOutput="true"
+            id="cdt.test.fortran.linkstep.output">
+        </outputType>        
+		<!-- pp Libraries  -->
+		<optionCategory
+            owner="cdt.test.fortran.linkstep"
+            name="Libraries"
+            id="cdt.test.fortran.linkstep.category.options">
+		</optionCategory>
+		<option
+            name="Additional Libraries (-l)"
+            category="cdt.test.fortran.linkstep.category.options"
+            command="-l"
+            valueType="libs"
+            id="cdt.test.fortran.linkstep.libname">
+		</option>
+		<option
+            name="Search Directory for Libraries (-L)"
+            category="cdt.test.fortran.linkstep.category.options"
+            command="-L"
+            valueType="stringList"
+            id="cdt.test.fortran.linkstep.libpath">
+		</option>
+
+		<!-- pp Linker Command Line  -->
+		<optionCategory
+            owner="cdt.test.fortran.linkstep"
+            name="Command Line"
+            id="cdt.test.fortran.linkstep.category.comline">
+		</optionCategory>
+		<option
+            name="Additional Options"
+            category="cdt.test.fortran.linkstep.category.comline"
+            valueType="string"
+            id="cdt.test.fortran.linkstep.loptions">
+		</option>
+    </tool>
+                         
+    <!-- Executable project type -->
+      
+    <projectType      
+        isTest="false"
+        isAbstract="false"
+        name="Fortran Executable"
+        id="cdt.test.fortran.executable">
+        <configuration
+            name="Release"
+            id="cdt.test.fortran.executable.release"
+            cleanCommand="rm -rf">
+            <toolChain
+		        id="cdt.test.fortran.toolchain.executable.release"
+		        name="ToolChain.Executable.Release"
+		        targetTool="cdt.test.fortran.linkstep.executable.release"
+                osList="win32"
+                archList="x86">
+				<targetPlatform
+		            id="cdt.test.fortran.platform.executable.release"
+		            name="Platform.Executable.Release"
+		            binaryParser="org.eclipse.cdt.core.PE"
+		            osList="win32"
+		            archList="x86">		              
+		        </targetPlatform>
+				<builder
+				    id="cdt.test.fortran.builder.executable.release"
+		            name="Builder.Executable.Release"		              
+		            command="make"
+                    arguments="-k"
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+				</builder> 				  				  
+				<tool
+				    id="cdt.test.fortran.compilestep.executable.release"
+					superClass="cdt.test.fortran.compilestep">					
+				    <option
+				        id="cdt.test.fortran.compilestep.general.optimization.executable.release"
+						defaultValue="general.opt.speed"
+						superClass="cdt.test.fortran.compilestep.general.optimization">
+				    </option>
+				    <option
+				        id="cdt.test.fortran.compilestep.general.debug.executable.release"
+						defaultValue="false"
+						superClass="cdt.test.fortran.compilestep.general.debug">
+				    </option>
+				</tool>
+				<tool               
+					id="cdt.test.fortran.linkstep.executable.release"
+					superClass="cdt.test.fortran.linkstep">
+				</tool>
+		    </toolChain>
+        </configuration>
+        <configuration
+            name="Debug"
+            id="cdt.test.fortran.executable.debug"
+            cleanCommand="rm -rf">
+            <toolChain
+		        id="cdt.test.fortran.toolchain.executable.debug"
+		        name="ToolChain.Executable.Debug"
+		        targetTool="cdt.test.fortran.linkstep.executable.debug"
+                osList="win32"
+                archList="x86">
+                <targetPlatform
+		            id="cdt.test.fortran.platform.executable.debug"
+		            name="Platform.Executable.Debug"		            
+		            binaryParser="org.eclipse.cdt.core.PE"
+		            osList="win32"
+		            archList="x86">		              
+		        </targetPlatform>
+				<builder
+				    id="cdt.test.fortran.builder.executable.debug"
+		            name="Builder.Executable.Debug"		              
+		            command="make"
+                    arguments="-k"
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+				</builder> 				  				  
+				<tool
+				    id="cdt.test.fortran.compilestep.executable.debug"
+					superClass="cdt.test.fortran.compilestep">
+					<option
+					    id="cdt.test.fortran.compilestep.general.optimization.executable.debug"
+						defaultValue="general.opt.none"
+						superClass="cdt.test.fortran.compilestep.general.optimization">
+					</option>
+					<option
+					    id="cdt.test.fortran.compilestep.general.debug.executable.debug"
+						defaultValue="true"
+						superClass="cdt.test.fortran.compilestep.general.debug">
+					</option>
+				</tool>
+				<tool               
+					id="cdt.test.fortran.linkstep.executable.debug"
+					superClass="cdt.test.fortran.linkstep">
+				</tool>
+		    </toolChain>		  
+        </configuration>
+    </projectType>
+    
+    <!-- Executable project type end -->
+      
+   </extension>
 </plugin>

@@ -115,9 +115,9 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		try {
 			Map attrs = configuration.getAttributes();
 			if ( fAutoSoLibButton != null )
-				attrs.put( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, new Boolean( fAutoSoLibButton.getSelection() ) );
+				attrs.put( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, Boolean.valueOf( fAutoSoLibButton.getSelection() ) );
 			if ( fStopOnSolibEventsButton != null )
-				attrs.put( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, new Boolean( fStopOnSolibEventsButton.getSelection() ) );
+				attrs.put( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, Boolean.valueOf( fStopOnSolibEventsButton.getSelection() ) );
 			configuration.setAttributes( attrs );
 		}
 		catch( CoreException e ) {

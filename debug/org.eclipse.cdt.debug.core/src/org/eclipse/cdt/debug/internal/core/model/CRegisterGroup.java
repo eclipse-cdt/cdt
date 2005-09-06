@@ -161,7 +161,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 		Document document = DebugPlugin.newDocument();
 		Element element = document.createElement( ELEMENT_REGISTER_GROUP );
 		element.setAttribute( ATTR_REGISTER_GROUP_NAME, getName() );
-		element.setAttribute( ATTR_REGISTER_GROUP_ENABLED, isEnabled() ? Boolean.TRUE.toString() : Boolean.FALSE.toString() );
+		element.setAttribute( ATTR_REGISTER_GROUP_ENABLED, Boolean.valueOf( isEnabled() ).toString() );
 		for ( int i = 0; i < fRegisterDescriptors.length; ++i ) {
 			Element child = document.createElement( ELEMENT_REGISTER );
 			child.setAttribute( ATTR_REGISTER_NAME, fRegisterDescriptors[i].getName() );

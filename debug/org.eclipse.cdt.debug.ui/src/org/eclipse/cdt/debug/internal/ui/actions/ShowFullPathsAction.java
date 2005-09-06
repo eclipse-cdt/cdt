@@ -51,7 +51,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 		if (view != null) {
 			IDebugModelPresentation pres = view.getPresentation( CDIDebugModel.getPluginIdentifier() );
 			if ( pres != null ) {
-				pres.setAttribute( CDebugModelPresentation.DISPLAY_FULL_PATHS, ( getValue() ? Boolean.TRUE : Boolean.FALSE ) );
+				pres.setAttribute( CDebugModelPresentation.DISPLAY_FULL_PATHS, Boolean.valueOf( getValue() ) );
 				BusyIndicator.showWhile( viewer.getControl().getDisplay(), 
 										new Runnable() {
 											public void run() {

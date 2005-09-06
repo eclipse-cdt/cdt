@@ -37,6 +37,6 @@ public class QuestionStatusHandler implements IStatusHandler {
 				}
 			} );
 		}
-		return new Boolean( result[0] );
+		return Boolean.valueOf( result[0] );
 	}
 }

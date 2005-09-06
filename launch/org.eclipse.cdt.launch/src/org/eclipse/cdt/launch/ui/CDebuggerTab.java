@@ -99,9 +99,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 		private void saveValues() {
 			Map attr = getAdvancedAttributes();
-			Boolean varBookkeeping = (fVarBookKeeping.getSelection()) ? Boolean.FALSE : Boolean.TRUE;
+			Boolean varBookkeeping = Boolean.valueOf( fVarBookKeeping.getSelection() );
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, varBookkeeping);
-			Boolean regBookkeeping = (fRegBookKeeping.getSelection()) ? Boolean.FALSE : Boolean.TRUE;
+			Boolean regBookkeeping = Boolean.valueOf( fRegBookKeeping.getSelection() );
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
 			updateLaunchConfigurationDialog();
 		}

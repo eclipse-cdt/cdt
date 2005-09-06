@@ -76,7 +76,7 @@ public class ModuleProperties {
 		fProperties.add( new Property( CPU, module.getCPU() ) );
 		fProperties.add( new Property( BASE_ADDRESS, module.getBaseAddress() ) );
 		fProperties.add( new Property( SIZE, new Long( module.getSize() ) ) );
-		fProperties.add( new Property( SYMBOLS_LOADED, new Boolean( module.areSymbolsLoaded() ) ) );
+		fProperties.add( new Property( SYMBOLS_LOADED, Boolean.valueOf( module.areSymbolsLoaded() ) ) );
 		fProperties.add( new Property( SYMBOLS_FILE, module.getSymbolsFileName() ) );
 	}
 

@@ -281,7 +281,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			ICSourceLocation[] locations = getSourceLocations();
 			saveDisabledGenericSourceLocations( locations, document, node );
 			saveAdditionalSourceLocations( locations, document, node );
-			node.setAttribute( ATTR_DUPLICATE_FILES, new Boolean( searchForDuplicateFiles() ).toString() );
+			node.setAttribute( ATTR_DUPLICATE_FILES, Boolean.valueOf( searchForDuplicateFiles() ).toString() );
 			return CDebugUtils.serializeDocument( document );
 		}
 		catch( ParserConfigurationException e ) {

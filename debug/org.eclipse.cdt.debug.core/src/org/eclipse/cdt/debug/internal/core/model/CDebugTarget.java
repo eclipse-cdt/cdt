@@ -1246,7 +1246,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			IBinaryObject file;
 			file = getBinaryFile();
 			if ( file != null ) {
-				fIsLittleEndian = new Boolean( file.isLittleEndian() );
+				fIsLittleEndian = Boolean.valueOf( file.isLittleEndian() );
 			}
 		}
 		return fIsLittleEndian.booleanValue();

@@ -13,12 +13,6 @@ package org.eclipse.cdt.debug.internal.core.model;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.debug.core.DebugException;
 
-/**
- *
- * Enter type comment.
- * 
- * @since: Oct 2, 2002
- */
 public class CGlobalValue extends CValue
 {
 	private Boolean fHasChildren = null;
@@ -41,7 +35,7 @@ public class CGlobalValue extends CValue
 	{
 		if ( fHasChildren == null )
 		{
-			fHasChildren = new Boolean( super.hasVariables() );
+			fHasChildren = Boolean.valueOf( super.hasVariables() );
 		}
 		return fHasChildren.booleanValue();
 	}

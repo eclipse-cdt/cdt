@@ -1,3 +1,10 @@
+2005-09-06 Mikhail Khodjaiants
+	Cleanup: replaced "new Boolean" by the static Boolean objects (Java 1.4).
+	* QuestionStatusHandler.java
+	* ShowFullPathsAction.java
+	* CBreakpointPreferenceStore.java
+	* ModuleProperties.java
+
 2005-08-24 Mikhail Khodjaiants
 	Bug 107208: toggle breakpoint with external sources doesn't work.
 	* ToggleBreakpointAdapter.java

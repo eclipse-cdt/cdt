@@ -473,10 +473,10 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			Map map = new HashMap( 3 );
 			try {
 				if ( !fSkipBreakpoint && DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
-						map.put( IBreakpoint.ENABLED, new Boolean( cdiBreakpoint.isEnabled() ) );
+						map.put( IBreakpoint.ENABLED, Boolean.valueOf( cdiBreakpoint.isEnabled() ) );
 				}
 				else {
-					map.put( IBreakpoint.ENABLED, new Boolean( breakpoint.isEnabled() ) );
+					map.put( IBreakpoint.ENABLED, Boolean.valueOf( breakpoint.isEnabled() ) );
 				}
 			}
 			catch( CDIException e ) {
@@ -768,7 +768,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			Boolean enabled0 = null;
 			ICDICondition condition0 = null;
 			if ( enabled != oldEnabled && enabled != cdiBreakpoint.isEnabled() ) {
-				enabled0 = ( enabled ) ? Boolean.TRUE : Boolean.FALSE;
+				enabled0 = Boolean.valueOf( enabled );
 			}
 			if ( ignoreCount != oldIgnoreCount || condition.compareTo( oldCondition ) != 0 || areThreadFiltersChanged( newThreadIs, cdiBreakpoint ) ) {
 				ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );

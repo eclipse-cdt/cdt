@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
 public class CDebugUtils {
 
 	public static boolean question( IStatus status, Object source ) {
-		Boolean result = new Boolean( false );
+		Boolean result = Boolean.FALSE;
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler( status );
 		if ( handler != null ) {
 			try {

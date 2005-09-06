@@ -150,7 +150,7 @@ public class CDIDebugModel {
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
-		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
@@ -211,7 +211,7 @@ public class CDIDebugModel {
 		attributes.put( IMarker.CHAR_END, new Integer( -1 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( ICLineBreakpoint.ADDRESS, address.toHexAddressString() );
-		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
@@ -244,13 +244,13 @@ public class CDIDebugModel {
 	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
-		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
 		attributes.put( ICWatchpoint.EXPRESSION, expression );
-		attributes.put( ICWatchpoint.READ, new Boolean( readAccess ) );
-		attributes.put( ICWatchpoint.WRITE, new Boolean( writeAccess ) );
+		attributes.put( ICWatchpoint.READ, Boolean.valueOf( readAccess ) );
+		attributes.put( ICWatchpoint.WRITE, Boolean.valueOf( writeAccess ) );
 		return new CWatchpoint( resource, attributes, register );
 	}
 
@@ -291,13 +291,13 @@ public class CDIDebugModel {
 		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
 		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
-		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
 		attributes.put( ICWatchpoint.EXPRESSION, expression );
-		attributes.put( ICWatchpoint.READ, new Boolean( readAccess ) );
-		attributes.put( ICWatchpoint.WRITE, new Boolean( writeAccess ) );
+		attributes.put( ICWatchpoint.READ, Boolean.valueOf( readAccess ) );
+		attributes.put( ICWatchpoint.WRITE, Boolean.valueOf( writeAccess ) );
 		return new CWatchpoint( resource, attributes, register );
 	}
 
@@ -337,7 +337,7 @@ public class CDIDebugModel {
 		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( ICLineBreakpoint.FUNCTION, function );
-		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );

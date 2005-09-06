@@ -1,4 +1,8 @@
-2005-09-01 Mikhail Khodjaiants
+2005-09-06 Mikhail Khodjaiants
+	Cleanup: replaced "new Boolean" by the static Boolean objects (Java 1.4).
+	* GDBSolibBlock.java
+
+2005-09-06 Mikhail Khodjaiants
 	Bug 108636: mi level selection option should be moved to the gdb page.
 	* MIUIMessages.properties
 	* GDBDebuggerPage.java

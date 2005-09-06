@@ -1,3 +1,8 @@
+2005-09-01 Mikhail Khodjaiants
+	Bug 108636: mi level selection option should be moved to the gdb page.
+	* MIUIMessages.properties
+	* GDBDebuggerPage.java
+
 2005-09-02 Mikhail Khodjaiants
 	Bug 108723: Create a separate tab for gdb server's conection options.
 	* GDBDebuggerPage.java

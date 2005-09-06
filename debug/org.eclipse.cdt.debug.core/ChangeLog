@@ -1,4 +1,8 @@
 2005-09-01 Mikhail Khodjaiants
+	Bug 108636: mi level selection option should be moved to the gdb page.
+	* ICDTLaunchConfigurationConstants.java
+
+2005-09-01 Mikhail Khodjaiants
 	Bug 108424: Debugger stops on removed breakpoints.
 	* CBreakpointManager.java
 

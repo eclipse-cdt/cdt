@@ -151,6 +151,7 @@ public interface ICDTLaunchConfigurationConstants {
 	/**
 	 * launch configuration attribute key.  The value is a string specifying the protocol to
 	 * use.  For now only "mi", "mi1", "m2", "mi3" are supported.
+	 * @deprecated
 	 */
 	public static final String ATTR_DEBUGGER_PROTOCOL = CDT_LAUNCH_ID + ".protocol"; //$NON-NLS-1$
 

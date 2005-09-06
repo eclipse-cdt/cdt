@@ -1,3 +1,7 @@
+2005-09-01 Mikhail Khodjaiants
+	Bug 108636: mi level selection option should be moved to the gdb page.
+	* CDebuggerTab.java
+
 2005-08-31 Alain Magloire
 	Fix Pr 107571: Part of this fix is to add the
 	inferior process in the session

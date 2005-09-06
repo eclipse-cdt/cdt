@@ -49,4 +49,10 @@ public interface IMILaunchConfigurationConstants {
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS.
 	 */
 	public static boolean DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT = false;
+
+	/**
+	 * launch configuration attribute key.  The value is a string specifying the protocol to
+	 * use.  For now only "mi", "mi1", "m2", "mi3" are supported.
+	 */
+	public static final String ATTR_DEBUGGER_PROTOCOL = MIPlugin.getUniqueIdentifier() + ".protocol"; //$NON-NLS-1$
 }

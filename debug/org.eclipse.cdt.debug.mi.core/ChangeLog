@@ -1,4 +1,11 @@
 2005-09-01 Mikhail Khodjaiants
+	Bug 108636: mi level selection option should be moved to the gdb page.
+	* src/org/eclipse/cdt/debug/mi/core/GDBCDIDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerCDIDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/IMILaunchConfigurationConstants.java
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
+2005-09-01 Mikhail Khodjaiants
 	Bug 108424: Debugger stops on removed breakpoints.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
 

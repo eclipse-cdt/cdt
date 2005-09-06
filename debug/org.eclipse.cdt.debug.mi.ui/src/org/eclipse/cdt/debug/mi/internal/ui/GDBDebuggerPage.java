@@ -13,8 +13,8 @@ package org.eclipse.cdt.debug.mi.internal.ui;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
-
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.ui.IMILaunchConfigurationComponent;
 import org.eclipse.cdt.debug.mi.ui.MIUIUtils;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -27,9 +27,11 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -43,11 +45,16 @@ import org.eclipse.swt.widgets.Text;
  */
 public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements Observer {
 
+	final private static String DEFAULT_MI_PROTOCOL = MIUIMessages.getString( "GDBDebuggerPage.12" );  //$NON-NLS-1$
+	final protected String[] protocolItems = new String[] { DEFAULT_MI_PROTOCOL, "mi1", "mi2", "mi3" };  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+
 	protected TabFolder fTabFolder;
 
 	protected Text fGDBCommandText;
 
 	protected Text fGDBInitText;
+
+	protected Combo fProtocolCombo;
 
 	private IMILaunchConfigurationComponent fSolibBlock;
 	
@@ -67,6 +74,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" ); //$NON-NLS-1$
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, "" ); //$NON-NLS-1$
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi" ); //$NON-NLS-1$
 		if ( fSolibBlock != null )
 			fSolibBlock.setDefaults( configuration );
 	}
@@ -90,24 +98,47 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 		String gdbInit = ""; //$NON-NLS-1$
 		try {
 			gdbCommand = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" ); //$NON-NLS-1$
+		}
+		catch( CoreException e ) {
+		}
+		try {
 			gdbInit = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, "" ); //$NON-NLS-1$
 		}
 		catch( CoreException e ) {
+		}
+		String miVersion = MIPlugin.getMIVersion( configuration );
+		if ( miVersion.compareTo( "mi" ) == 0 ) { //$NON-NLS-1$
+			miVersion = DEFAULT_MI_PROTOCOL;
 		}
 		if ( fSolibBlock != null )
 			fSolibBlock.initializeFrom( configuration );
 		fGDBCommandText.setText( gdbCommand );
 		fGDBInitText.setText( gdbInit );
+		int index = 0;
+		if ( miVersion.length() > 0 ) {
+			for( int i = 0; i < protocolItems.length; ++i ) {
+				if ( protocolItems[i].equals( miVersion ) ) {
+					index = i;
+					break;
+				}
+			}
+		}
+		fProtocolCombo.select( index );
 		setInitializing( false ); 
 	}
 
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
-		String gdbStr = fGDBCommandText.getText();
-		gdbStr.trim();
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbStr );
-		gdbStr = fGDBInitText.getText();
-		gdbStr.trim();
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, gdbStr );
+		String str = fGDBCommandText.getText();
+		str.trim();
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, str );
+		str = fGDBInitText.getText();
+		str.trim();
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, str );
+		str = fProtocolCombo.getText();
+		if ( str.compareTo( DEFAULT_MI_PROTOCOL ) == 0 ) {
+			str = "mi"; //$NON-NLS-1$
+		}
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, str );
 		if ( fSolibBlock != null )
 			fSolibBlock.performApply( configuration );
 	}
@@ -233,12 +264,13 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 				fGDBInitText.setText( res );
 			}
 		} );
-		label = ControlFactory.createLabel( comp, MIUIMessages.getString( "GDBDebuggerPage.9" ), //$NON-NLS-1$
+		label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBDebuggerPage.9" ), //$NON-NLS-1$
 				200, SWT.DEFAULT, SWT.WRAP );
 		gd = new GridData( GridData.FILL_HORIZONTAL );
-		gd.horizontalSpan = 1;
+		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
 		label.setLayoutData( gd );
+		createProtocolCombo( subComp );
 	}
 
 	public void createSolibTab( TabFolder tabFolder ) {
@@ -279,5 +311,24 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 
 	private void setInitializing( boolean isInitializing ) {
 		fIsInitializing = isInitializing;
+	}
+
+	protected void createProtocolCombo( Composite parent ) {
+		Label label = new Label( parent, SWT.NONE );
+		label.setText( MIUIMessages.getString( "GDBDebuggerPage.11" ) ); //$NON-NLS-1$
+		fProtocolCombo = new Combo( parent, SWT.READ_ONLY | SWT.DROP_DOWN );
+		fProtocolCombo.setItems( protocolItems );
+		fProtocolCombo.addSelectionListener( new SelectionListener() {
+
+			public void widgetDefaultSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+			
+			public void widgetSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+		} );
 	}
 }

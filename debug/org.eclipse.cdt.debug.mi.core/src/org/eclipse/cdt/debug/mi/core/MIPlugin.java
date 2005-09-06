@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -25,10 +26,12 @@ import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -413,4 +416,21 @@ public class MIPlugin extends Plugin {
 		super.stop(context);
 	}
 
+	public static String getMIVersion( ILaunchConfiguration config ) {
+		String miVersion = ""; //$NON-NLS-1$
+		try {
+			miVersion = config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "" ); //$NON-NLS-1$
+		}
+		catch( CoreException e ) {
+		}
+		if ( miVersion.length() == 0 ) {
+			try {
+				miVersion = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi" ); //$NON-NLS-1$
+			}
+			catch( CoreException e ) {
+				miVersion = "mi"; //$NON-NLS-1$
+			}
+		}
+		return miVersion;
+	}
 }

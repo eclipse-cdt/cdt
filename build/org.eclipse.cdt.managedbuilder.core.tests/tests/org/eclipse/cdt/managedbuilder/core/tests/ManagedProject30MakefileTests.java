@@ -78,6 +78,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("test30_2"));
 		suite.addTest(new ManagedProject30MakefileTests("testTopTC"));
 		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest1"));
+		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest2"));
 		return suite;
 	}
 
@@ -554,6 +555,20 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("sources.mk"), 
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("CDTFortranTest1", null, null, true);
+		buildProjects(projects, makefiles);
+	}
+
+	/* (non-Javadoc)
+	 * tests external dependency calculation using Fortran modules
+	 */
+	public void CDTFortranTest2(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("module/subdir.mk"),
+				 Path.fromOSString("sources/subdir.mk")};
+		IProject[] projects = createProjects("CDTFortranTest2", null, null, true);
 		buildProjects(projects, makefiles);
 	}
 }

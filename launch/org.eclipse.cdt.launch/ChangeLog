@@ -1,3 +1,7 @@
+2005-09-08 Mikhail Khodjaiants
+	Bug 109106: The "Debugger" tab of the launch configuration dialog is too wide.
+	* CDebuggerTab.java
+	
 2005-08-31 Alain Magloire
 	Fix Pr 107571: Part of this fix is to add the
 	inferior process in the session

@@ -171,7 +171,8 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		setControl(comp);
 		LaunchUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(),
 				ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
-		GridLayout layout = new GridLayout(2, true);
+		int numberOfColumns = ( fAttachMode ) ? 2 : 1;
+		GridLayout layout = new GridLayout(numberOfColumns, false);
 		comp.setLayout(layout);
 		GridData gd = new GridData( GridData.BEGINNING, GridData.CENTER, true, false );
 		comp.setLayoutData(gd);
@@ -363,19 +364,12 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	protected void createOptionsComposite(Composite parent) {
 		Composite optionsComp = new Composite(parent, SWT.NONE);
-
-		if (fAttachMode == true) {
-			GridLayout layout = new GridLayout( 1, false );
-			optionsComp.setLayout( layout );
-			optionsComp.setLayoutData( new GridData( GridData.BEGINNING, GridData.CENTER, true, false, 1, 1 ) );
-		} else {
-			GridLayout layout = new GridLayout( 2, false );
-			optionsComp.setLayout( layout );
-			optionsComp.setLayoutData( new GridData( GridData.BEGINNING, GridData.CENTER, true, false, 2, 1 ) );
+		int numberOfColumns = (fAttachMode) ? 1 : 2;
+		GridLayout layout = new GridLayout( numberOfColumns, false );
+		optionsComp.setLayout( layout );
+		optionsComp.setLayoutData( new GridData( GridData.BEGINNING, GridData.CENTER, true, false, 1, 1 ) );
+		if (fAttachMode == false) {
 			fStopInMain = createCheckButton( optionsComp, LaunchMessages.getString( "CDebuggerTab.Stop_at_main_on_startup" ) ); //$NON-NLS-1$
-			GridData data = new GridData();
-			data.horizontalAlignment = GridData.BEGINNING;
-			fStopInMain.setLayoutData(data);
 			fStopInMain.addSelectionListener(new SelectionAdapter() {
 
 				public void widgetSelected(SelectionEvent e) {
@@ -386,11 +380,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			});
 		}
 		fAdvancedButton = createPushButton(optionsComp, LaunchMessages.getString("CDebuggerTab.Advanced"), null); //$NON-NLS-1$
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.END;
-		PixelConverter pc = new PixelConverter(parent);
-		data.widthHint = pc.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		fAdvancedButton.setLayoutData(data);
+		((GridData)fAdvancedButton.getLayoutData()).horizontalAlignment = GridData.END;
 		fAdvancedButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {

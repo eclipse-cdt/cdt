@@ -469,6 +469,10 @@ public class NewConfigurationDialog extends StatusDialog {
 	 * @return <I>true</i> is the name is a valid directory name with no whitespaces
 	 */
 	private boolean validateName(String name) {
+		// Names must be at least one character in length
+		if (name.trim().length() == 0)
+			return false;
+		
 		// Iterate over the name checking for bad characters
 		char[] chars = name.toCharArray();
 		// No whitespaces at the start of a name
@@ -503,14 +507,18 @@ public class NewConfigurationDialog extends StatusDialog {
 	private void validateState() {
 		StatusInfo status= new StatusInfo();
 		String currentName = configName.getText(); 
-		int nameLength = currentName.length();
-		// Make sure the name is not a duplicate
-		if (nameLength == 0) {
-			// Not an error
+		// Trim trailing whitespace
+		while (currentName.length() > 0 && Character.isWhitespace(currentName.charAt(currentName.length()-1))) {
+			currentName = currentName.substring(0, currentName.length()-1);
+		}
+		// Make sure that the name is at least one character in length
+		if (currentName.length() == 0) {
+			// No error message, but cannot select OK
 			status.setError("");	//$NON-NLS-1$
 		} else if(clone ? definedConfigs.length == 0 : defaultConfigs.length == 0) {
 			// Not an error
 			status.setError("");	//$NON-NLS-1$
+			// Make sure the name is not a duplicate
 		} else if (isDuplicateName(currentName)) {
 			status.setError(ManagedBuilderUIMessages.getFormattedString(DUPLICATE, currentName));
 		} else if (isSimilarName(currentName)) {

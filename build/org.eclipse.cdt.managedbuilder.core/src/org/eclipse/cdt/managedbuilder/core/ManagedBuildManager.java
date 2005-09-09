@@ -2640,7 +2640,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			if (element != null) {
 				// If there is a converter element for toolChain, invoke it
 				// toolChain converter should take care of invoking converters of it's children
-				if ( invokeConverter(toolChain, buildInfo, element) != true ) { 
+				if ( invokeConverter(toolChain, element) == null ) { 
 					buildInfo.getManagedProject().setValid(false);
 					return false;
 				}
@@ -2655,7 +2655,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						element = ((Tool)tool).getPreviousMbsVersionConversionElement();
 					}
 					if (element != null) {
-						if ( invokeConverter(tool, buildInfo, element) != true ) {
+						if ( invokeConverter(tool, element) == null ) {
 							buildInfo.getManagedProject().setValid(false);
 							return false;
 						}
@@ -2670,7 +2670,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					}
 	
 					if (element != null) {
-						if ( invokeConverter(builder, buildInfo, element) != true ) {
+						if ( invokeConverter(builder, element) == null ) {
 							buildInfo.getManagedProject().setValid(false);
 							return false;
 						}
@@ -2683,15 +2683,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return true;
 	}
 
-	private static boolean invokeConverter(IBuildObject buildObject,
-			IManagedBuildInfo buildInfo, IConfigurationElement element) {
-		String toId = null;
-		String fromId = null;
-		IConvertManagedBuildObject convertBuildObject = null;
+	private static IBuildObject invokeConverter(IBuildObject buildObject, IConfigurationElement element) {
 
 		if (element != null) {
-			toId = element.getAttribute("toId"); //$NON-NLS-1$
-			fromId = element.getAttribute("fromId"); //$NON-NLS-1$
+			IConvertManagedBuildObject convertBuildObject = null;
+			String toId = element.getAttribute("toId"); //$NON-NLS-1$
+			String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
 
 			try {
 				convertBuildObject = (IConvertManagedBuildObject) element
@@ -2703,16 +2700,181 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 			if (convertBuildObject != null) {
 				// invoke the converter
-				if (convertBuildObject
-						.convert(buildObject, fromId, toId, false) != null) {
-					// If it is successful, return 'true'
-					return true;
-				}
+				return convertBuildObject.convert(buildObject, fromId, toId, false);
 			}
 		}
 		// if control comes here, it means that either 'convertBuildObject' is null or 
 		// converter did not convert the object successfully
-		return false;
+		return null;
 	}
 		
+	/*
+	 * Generic Converter function.
+	 * If the converter is available for the given Build Object, it calls the corresponding converter.
+	 * It returns null if there are no converters or if the conversion is not successful
+	 * It returns 'IBuildObject' if the conversion is successful.
+	 */
+
+	public static IBuildObject convert(IBuildObject buildObj, String toId,
+			boolean userhasConfirmed) {
+
+		String tmpToId = null;
+
+		// Get the Converter Extension Point
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+						"projectConverter"); //$NON-NLS-1$
+		if (extensionPoint != null) {
+			// Get the extensions
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				// Get the configuration elements of each extension
+				IConfigurationElement[] configElements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+
+					IConfigurationElement element = configElements[j];
+					if (element.getName().equals("converter") && (isBuildObjectApplicableForConversion(buildObj, element) == true)) { //$NON-NLS-1$
+						tmpToId = element.getAttribute("toId");	//$NON-NLS-1$
+						if (tmpToId.equals(toId)) {
+							return invokeConverter(buildObj, element);
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * Generic routine for checking the availability of converters for the given
+	 * Build Object. 
+	 * @param IBuildObject, This function takes a 'IBuildObject' as an argument 
+	 * @return true if there are converters for the given Build Object
+	 * @return false if there are no converters
+	 */
+
+	public static boolean hasTargetConversionElements(IBuildObject buildObj) {
+
+		// Get the Converter Extension Point
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+						"projectConverter"); //$NON-NLS-1$
+		if (extensionPoint != null) {
+			// Get the extensions
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				// Get the configuration elements of each extension
+				IConfigurationElement[] configElements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+
+					IConfigurationElement element = configElements[j];
+					if (element.getName().equals("converter") && (isBuildObjectApplicableForConversion(buildObj, element) == true)) //$NON-NLS-1$
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * Generic function for getting the list of converters for the given Build Object
+	 */
+
+	public static Map getConversionElements(IBuildObject buildObj) {
+
+		Map conversionTargets = new HashMap();
+
+		// Get the Converter Extension Point
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+						"projectConverter"); //$NON-NLS-1$
+		if (extensionPoint != null) {
+			// Get the extensions
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				// Get the configuration elements of each extension
+				IConfigurationElement[] configElements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+					IConfigurationElement element = configElements[j];
+					if (element.getName().equals("converter") && (isBuildObjectApplicableForConversion(buildObj, element) == true)) { //$NON-NLS-1$
+						conversionTargets.put((String) element
+								.getAttribute("name"), element); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+		return conversionTargets;
+	}
+
+	/*
+	 * Generic function that checks whether the given conversion element can be used to convert the given 
+	 * build object. It returns true if the given build object is convertable, otherwise it returns false.
+	 */
+
+	private static boolean isBuildObjectApplicableForConversion(
+			IBuildObject buildObj, IConfigurationElement element) {
+
+		String id = null;
+		String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
+
+		// Check whether the current converter can be used for conversion
+
+		if (buildObj instanceof IProjectType) {
+			IProjectType projType = (IProjectType) buildObj;
+			
+			// Check whether the converter's 'fromId' and the
+			// given projType 'id' are equal			
+			while (projType != null) {
+				id = projType.getId();
+
+				if (fromId.equals(id)) {
+					return true;
+				}
+				projType = projType.getSuperClass();
+			}
+		} else if (buildObj instanceof IToolChain) {
+			IToolChain toolChain = (IToolChain) buildObj;
+			
+			// Check whether the converter's 'fromId' and the
+			// given toolChain 'id' are equal
+			while (toolChain != null) {
+				id = toolChain.getId();
+
+				if (fromId.equals(id)) {
+					return true;
+				}
+				toolChain = toolChain.getSuperClass();
+			}
+		} else if (buildObj instanceof ITool) {
+			ITool tool = (ITool) buildObj;
+			
+			// Check whether the converter's 'fromId' and the
+			// given tool 'id' are equal
+			while (tool != null) {
+				id = tool.getId();
+
+				if (fromId.equals(id)) {
+					return true;
+				}
+				tool = tool.getSuperClass();
+			}
+		} else if (buildObj instanceof IBuilder) {
+			IBuilder builder = (IBuilder) buildObj;
+			
+			// Check whether the converter's 'fromId' and the
+			// given builder 'id' are equal
+			while (builder != null) {
+				id = builder.getId();
+
+				if (fromId.equals(id)) {
+					return true;
+				}
+				builder = builder.getSuperClass();
+			}
+		}
+		return false;
+	}
 }

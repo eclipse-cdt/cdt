@@ -266,7 +266,7 @@ public class CRegisterManager {
 			}
 			current = d.getGroupName();
 		}
-		if ( startIndex < fRegisterDescriptors.length - 1 ) {
+		if ( startIndex < fRegisterDescriptors.length ) {
 			IRegisterDescriptor[] descriptors = new IRegisterDescriptor[fRegisterDescriptors.length - startIndex];
 			System.arraycopy( fRegisterDescriptors, startIndex, descriptors, 0, descriptors.length );
 			fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), current, descriptors ) );

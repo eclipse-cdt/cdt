@@ -1,3 +1,7 @@
+2005-09-09 Mikhail Khodjaiants
+	Bug 109206: Last register group is not added if it has only one register.
+	* CRegisterManager.java
+
 2005-09-01 Mikhail Khodjaiants
 	Bug 108424: Debugger stops on removed breakpoints.
 	* CBreakpointManager.java

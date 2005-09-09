@@ -1,3 +1,7 @@
+2005-09-09 Mikhail Khodjaiants
+	Bug 109206: Last register group is not added if it has only one register.
+	* CRegisterManager.java
+
 2005-09-06 Mikhail Khodjaiants
 	Cleanup: replaced "new Boolean" by the static Boolean objects (Java 1.4).
 	* CDebugUtils.java

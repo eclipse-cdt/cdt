@@ -4198,7 +4198,7 @@
  
  	<projectType      
             isAbstract="false"     
-            isTest="false"
+            isTest="true"
             name="Test - Version 1.0"
             id="test_1.0.0">
          <configuration
@@ -4242,7 +4242,7 @@
 
 	 <projectType      
             isAbstract="false"     
-            isTest="false"
+            isTest="true"
             name="Test - Version 2.0"
             id="test_2.0.0">
          <configuration
@@ -4313,6 +4313,7 @@
       
       <projectType
             isAbstract="false"
+            isTest="true"
             name="Test 1.2.0"
             superClass="cdt.managedbuild.target.gnu.exe"
             id="test.target_1.2.0">
@@ -4513,7 +4514,7 @@
     <!-- Executable project type -->
       
     <projectType      
-        isTest="false"
+        isTest="true"
         isAbstract="false"
         name="Fortran Executable"
         id="cdt.test.fortran.executable">

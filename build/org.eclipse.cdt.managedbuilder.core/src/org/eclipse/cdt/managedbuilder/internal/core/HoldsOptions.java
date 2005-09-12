@@ -229,22 +229,24 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 		Vector ourOpts = getOptionList();
 		if (options != null) {
 			for (int i = 0; i < ourOpts.size(); i++) {
+				int j = options.length;
 				IOption ourOpt = (IOption)ourOpts.get(i);
-				int j;
-				for (j = 0; j < options.length; j++) {
-					if (((Option)options[j]).wasOptRef()) {
-						if (ourOpt.getSuperClass() != null  // Remove assumption that ALL options must have superclasses
-								&& ourOpt.getSuperClass().getId().equals(options[j].getSuperClass().getId())) {
-							options[j] = ourOpt;
-							break;
+				if (ourOpt.getSuperClass() != null) {
+					String matchId = ourOpt.getSuperClass().getId();
+					search:
+						for (j = 0; j < options.length; j++) {
+							IOption superHolderOption = options[j];
+							if (((Option)superHolderOption).wasOptRef()) {
+								superHolderOption = superHolderOption.getSuperClass();
+							}
+							while (superHolderOption != null) {
+								if (matchId.equals(superHolderOption.getId())) {
+									options[j] = ourOpt;
+									break search;
+								}
+								superHolderOption = superHolderOption.getSuperClass();
+							}
 						}
-					} else {
-						if (ourOpt.getSuperClass() != null  // Remove assumption that ALL options must have superclasses
-								&& ourOpt.getSuperClass().getId().equals(options[j].getId())) {
-							options[j] = ourOpt;
-							break;
-						}
-					}
 				}
 				//  No Match?  Add it.
 				if (j == options.length) {

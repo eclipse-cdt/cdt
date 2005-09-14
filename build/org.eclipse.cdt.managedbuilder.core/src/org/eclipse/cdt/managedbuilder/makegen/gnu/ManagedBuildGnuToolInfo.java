@@ -20,16 +20,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -140,7 +145,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	 * Other Methods
 	 */
 	
-	public boolean calculateInputs(GnuMakefileGenerator makeGen, IResource[] projResources, boolean lastChance) {
+	public boolean calculateInputs(GnuMakefileGenerator makeGen, IConfiguration config, IResource[] projResources, boolean lastChance) {
 		// Get the inputs for this tool invocation
 		// Note that command inputs that are also dependencies are also added to the command dependencies list
 		
@@ -177,13 +182,29 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								optType == IOption.OBJECTS) {
 							inputs = (List)option.getValue();
 						}
-						//myCommandInputs.add(inputs);
-						if (primaryInput) {
-							myCommandDependencies.addAll(0, inputs);
-						} else {
-							myCommandDependencies.addAll(inputs);
+						for (int j=0; j<inputs.size(); j++) {
+							String inputName = (String)inputs.get(j); 
+							try{
+								//try to resolve the build macros in the output names
+								String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+										inputName,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_OPTION,
+										new OptionContextData(option, config.getToolChain()));
+								if((resolved = resolved.trim()).length() > 0)
+									inputName = resolved;
+							} catch (BuildMacroException e){
+							}
+	
+							if (primaryInput) {
+								myCommandDependencies.add(j, inputName);
+							} else {
+								myCommandDependencies.add(inputName);
+							}
+							// NO - myCommandInputs.add(inputName);
+							// NO - myEnumeratedInputs.add(inputName);
 						}
-						//myEnumeratedInputs.add(inputs);
 					} catch( BuildException ex ) {
 					}
 					
@@ -341,7 +362,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	 * NOTE: If an option is not specified and this is not the primary output type, the outputs
 	 *       from the type are not added to the command line     
 	 */  
-	public boolean calculateOutputs(GnuMakefileGenerator makeGen, HashSet handledInputExtensions, boolean lastChance) {
+	public boolean calculateOutputs(GnuMakefileGenerator makeGen, IConfiguration config, HashSet handledInputExtensions, boolean lastChance) {
 
 		boolean done = true;
 		Vector myCommandOutputs = new Vector();
@@ -396,15 +417,35 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								}
 							}
 						}
-						//myCommandOutputs.addAll(outputs);
+						for (int j=0; j<outputs.size(); j++) {
+							String outputName = (String)outputs.get(j); 
+							try{
+								//try to resolve the build macros in the output names
+								String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+										outputName,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_OPTION,
+										new OptionContextData(option, config.getToolChain()));
+								if((resolved = resolved.trim()).length() > 0)
+									outputs.set(j, resolved);
+							} catch (BuildMacroException e){
+							}
+						}
+						
+						// NO - myCommandOutputs.addAll(outputs);
 						typeEnumeratedOutputs.addAll(outputs);
 						if (variable.length() > 0) {
+							List outputPaths = new ArrayList();
+							for (int j=0; j<outputs.size(); j++) {
+								outputPaths.add(Path.fromOSString((String)outputs.get(j)));
+							}
 							if (myOutputMacros.containsKey(variable)) {
 								List currList = (List)myOutputMacros.get(variable);
-								currList.addAll(outputs);
+								currList.addAll(outputPaths);
 								myOutputMacros.put(variable, currList);
 							} else {
-								myOutputMacros.put(variable, outputs);
+								myOutputMacros.put(variable, outputPaths);
 							}
 						}
 					} catch( BuildException ex ) {
@@ -424,13 +465,27 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 						outNames = nameProvider.getOutputNames(tool, inputPaths);
 						if (outNames != null) {
-							if (primaryOutput) {
-								for (int j=0; j<outNames.length; j++) {
-									myCommandOutputs.add(outNames[j].toString());
-								}
-							}
 							for (int j=0; j<outNames.length; j++) {
-								typeEnumeratedOutputs.add(outNames[j].toString());
+								String outputName = outNames[j].toString(); 
+								try{
+									//try to resolve the build macros in the output names
+									String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+											outputName,
+											"", //$NON-NLS-1$
+											" ", //$NON-NLS-1$
+											IBuildMacroProvider.CONTEXT_CONFIGURATION,
+											config);
+									if((resolved = resolved.trim()).length() > 0) {
+										outputName = resolved;
+										outNames[j] = Path.fromOSString(resolved);
+									}
+								} catch (BuildMacroException e){
+								}
+
+								if (primaryOutput) {
+									myCommandOutputs.add(outputName);
+								}
+								typeEnumeratedOutputs.add(outputName);
 							}
 						}
 					}
@@ -447,18 +502,37 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				//  4.  If outputNames is specified, use it
 				if (outputNames != null) {
 					if (outputNames.length > 0) {
+						for (int j=0; j<outputNames.length; j++) {
+							String outputName = outputNames[j]; 
+							try{
+								//try to resolve the build macros in the output names
+								String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+										outputName,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_OPTION,
+										new OptionContextData(option, config.getToolChain()));
+								if((resolved = resolved.trim()).length() > 0)
+									outputNames[j] = resolved;
+							} catch (BuildMacroException e){
+							}
+						}
 						List namesList = Arrays.asList(outputNames);
 						if (primaryOutput) {
 							myCommandOutputs.addAll(namesList);
 						}
 						typeEnumeratedOutputs.addAll(namesList);
 						if (variable.length() > 0) {
+							List outputPaths = new ArrayList();
+							for (int j=0; j<namesList.size(); j++) {
+								outputPaths.add(Path.fromOSString((String)namesList.get(j)));
+							}
 							if (myOutputMacros.containsKey(variable)) {
 								List currList = (List)myOutputMacros.get(variable);
-								currList.addAll(namesList);
+								currList.addAll(outputPaths);
 								myOutputMacros.put(variable, currList);
 							} else {
-								myOutputMacros.put(variable, namesList);
+								myOutputMacros.put(variable, outputPaths);
 							}
 						}
 					}
@@ -508,7 +582,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							typeEnumeratedOutputs.add(namePattern.replaceAll("%", fileName)); //$NON-NLS-1$
 							if (variable.length() > 0) {
 								List outputs = new ArrayList();
-								outputs.add(fileName);
+								outputs.add(Path.fromOSString(fileName));
 								if (myOutputMacros.containsKey(variable)) {
 									List currList = (List)myOutputMacros.get(variable);
 									currList.addAll(outputs);
@@ -608,7 +682,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										IManagedBuilderMakefileGenerator.WILDCARD);
 
 								List depsList = new ArrayList();
-								depsList.add(depsMacro);
+								depsList.add(Path.fromOSString(depsMacro));
 								if (myOutputMacros.containsKey(DEPS_MACRO)) {
 									List currList = (List)myOutputMacros.get(DEPS_MACRO);
 									currList.addAll(depsList);
@@ -706,7 +780,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										IManagedBuilderMakefileGenerator.WILDCARD);
 
 								List depsList = new ArrayList();
-								depsList.add(depsMacro);
+								depsList.add(Path.fromOSString(depsMacro));
 								if (myOutputMacros.containsKey(DEPS_MACRO)) {
 									List currList = (List)myOutputMacros.get(DEPS_MACRO);
 									currList.addAll(depsList);

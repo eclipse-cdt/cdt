@@ -2403,7 +2403,21 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 							}
 						}
 						for (int j=0; j<outputList.size(); j++) {
-							IPath outPath = Path.fromOSString((String)outputList.get(j));
+							String outputName = (String)outputList.get(j); 
+							try{
+								//try to resolve the build macros in the output names
+								String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+										outputName,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_FILE,
+										new FileContextData(sourceLocation, null, option, tool));
+								if((resolved = resolved.trim()).length() > 0)
+									outputName = resolved;
+							} catch (BuildMacroException e){
+							}
+
+							IPath outPath = Path.fromOSString(outputName);
 							//  If only a file name is specified, add the relative path of this output directory
 							if (outPath.segmentCount() == 1) {
 								outPath = Path.fromOSString(relativePath + (String)outputList.get(j)); 
@@ -2425,6 +2439,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					IPath[] outPaths = nameProvider.getOutputNames(tool, inPaths);
 					for (int j=0; j<outPaths.length; j++) {
 						IPath outPath = outPaths[j];
+						String outputName = outPaths[j].toString(); 
+						try{
+							//try to resolve the build macros in the output names
+							String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+									outputName,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(sourceLocation, null, option, tool));
+							if((resolved = resolved.trim()).length() > 0)
+								outPath = Path.fromOSString(resolved);
+						} catch (BuildMacroException e){
+						}
+
 						//  If only a file name is specified, add the relative path of this output directory
 						if (outPath.segmentCount() == 1) {
 							outPath = Path.fromOSString(relativePath + outPath.toString()); 
@@ -2441,7 +2469,21 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				//  4.  If outputNames is specified, use it
 				if (outputNames != null) {
 					for (int j = 0; j < outputNames.length; j++) {
-						IPath outPath = Path.fromOSString(outputNames[j]);
+						String outputName = outputNames[j]; 
+						try{
+							//try to resolve the build macros in the output names
+							String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+									outputName,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(sourceLocation, null, option, tool));
+							if((resolved = resolved.trim()).length() > 0)
+								outputName = resolved;
+						} catch (BuildMacroException e){
+						}
+
+						IPath outPath = Path.fromOSString(outputName);
 						//  If only a file name is specified, add the relative path of this output directory
 						if (outPath.segmentCount() == 1) {
 							outPath = Path.fromOSString(relativePath + outPath.toString()); 
@@ -2878,7 +2920,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				if (gnuToolInfos[i].areInputsCalculated()) {
 					testState[i]++;
 				} else {
-					if (gnuToolInfos[i].calculateInputs(this, projectResources, lastChance)) {
+					if (gnuToolInfos[i].calculateInputs(this, info.getDefaultConfiguration(), projectResources, lastChance)) {
 						testState[i]++;
 					}
 				}
@@ -2898,7 +2940,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				if (gnuToolInfos[i].areOutputsCalculated()) {
 					testState[i]++;
 				} else {
-					if (gnuToolInfos[i].calculateOutputs(this, handledOutsInputExtensions, lastChance)) {
+					if (gnuToolInfos[i].calculateOutputs(this, info.getDefaultConfiguration(), handledOutsInputExtensions, lastChance)) {
 						testState[i]++;
 					}
 				}

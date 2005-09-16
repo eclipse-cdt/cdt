@@ -498,7 +498,6 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		String t_ToolsToInvoke = EMPTY_STRING;
 		ITool[] resConfigTools;
 		ITool[] tools;
-		String id;
 		String rcbsToolId = EMPTY_STRING;
 		int len;
 		int j;
@@ -621,7 +620,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			toolsToInvoke = t_ToolsToInvoke;
 		}
 		return tools;
-		}
+	}
 
 	
 	/* (non-Javadoc)

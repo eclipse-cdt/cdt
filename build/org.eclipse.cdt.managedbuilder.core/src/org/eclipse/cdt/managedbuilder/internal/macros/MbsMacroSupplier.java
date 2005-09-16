@@ -579,10 +579,12 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 	private IPath getOutputFilePath(IPath inputPath, IConfiguration cfg){
 		ITool buildTools[] = null; 
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(inputPath.toString());
-		if(rcCfg != null)
+		if(rcCfg != null) {
 			buildTools = rcCfg.getToolsToInvoke();
-		else
+		}
+		if (buildTools == null || buildTools.length == 0) {
 			buildTools = cfg.getFilteredTools();
+		}
 		
 		String name = null;
 		IPath path = null;

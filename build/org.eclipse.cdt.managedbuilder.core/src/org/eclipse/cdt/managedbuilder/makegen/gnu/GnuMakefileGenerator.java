@@ -2014,11 +2014,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		String inputExtension = sourceLocation.getFileExtension();
 		String outputExtension = info.getOutputExtension(inputExtension);
 
-		ITool tool;
+		ITool tool = null;
 		if( resConfig != null) {
 			ITool[] tools = resConfig.getToolsToInvoke();
-			tool = tools[0];
-		} else {
+			if (tools != null && tools.length > 0) {
+				tool = tools[0];
+			}
+		}
+		if (tool == null) {
 			tool = info.getToolFromInputExtension(inputExtension);
 		}
 

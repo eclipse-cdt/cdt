@@ -2442,7 +2442,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	 * converters and stores them.
 	 */
 
-	private void checkForMigrationSupport() {
+	public void checkForMigrationSupport() {
 
 		boolean isExists = false;
 	

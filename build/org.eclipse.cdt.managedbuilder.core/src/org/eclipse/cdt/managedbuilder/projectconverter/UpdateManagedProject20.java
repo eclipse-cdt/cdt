@@ -34,7 +34,10 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -216,7 +219,8 @@ class UpdateManagedProject20 {
 		// Convert the tool references
 		
 		IToolChain toolChain = newConfig.getToolChain();
-		
+		((ToolChain)toolChain).checkForMigrationSupport();
+
 		if(targetEl.hasAttribute(ITarget.OS_LIST)){
 			String oses = targetEl.getAttribute(ITarget.OS_LIST);
 			String osList[] = oses.split(","); //$NON-NLS-1$
@@ -269,6 +273,12 @@ class UpdateManagedProject20 {
 				builder = toolChain.createBuilder(builder, subId, builderName, false);
 			}
 			builder.setArguments(makeArguments);
+		}
+
+//		 by now if a builder is going to be created, it will have been
+		Builder builder = (Builder)toolChain.getBuilder();
+		if (! builder.isExtensionElement()) {
+			builder.checkForMigrationSupport();
 		}
 
 		NodeList toolRefNodes = oldConfig.getElementsByTagName(IConfigurationV2.TOOLREF_ELEMENT_NAME);
@@ -334,6 +344,9 @@ class UpdateManagedProject20 {
 					ConverterMessages.getFormattedString("UpdateManagedProject20.5",toolId), null)); //$NON-NLS-1$
 		}
 			
+		// Check for migration support 
+		((Tool)tool).checkForMigrationSupport();
+		
 		//the tool found, proceed with conversion ...
 
 		if(oldToolRef.hasAttribute(IToolReference.COMMAND))

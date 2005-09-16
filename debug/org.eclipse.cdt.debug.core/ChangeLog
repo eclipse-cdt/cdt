@@ -1,3 +1,7 @@
+2005-09-16 Mikhail Khodjaiants
+	Bug 109785: "mi_cmd_var_create: unable to create variable object" when stepping out of stack frame.
+	* CStackFrame.java
+
 2005-09-09 Mikhail Khodjaiants
 	Bug 109206: Last register group is not added if it has only one register.
 	* CRegisterManager.java

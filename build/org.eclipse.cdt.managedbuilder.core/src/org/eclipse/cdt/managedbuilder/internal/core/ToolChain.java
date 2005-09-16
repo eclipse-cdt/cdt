@@ -1475,7 +1475,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * converters and adds them to the list.
 	 */
 
-	private void checkForMigrationSupport() {
+	public void checkForMigrationSupport() {
 
 		String tmpId = null;
 		boolean isExists = false;
@@ -1507,7 +1507,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			// toolChain version is supported
 
 			String baseId = ManagedBuildManager.getIdFromIdAndVersion(superClassId);
-			String version = ManagedBuildManager.getVersionFromIdAndVersion(superClassId);
+			String version = getVersionFromId().toString();
 
 			IToolChain[] toolChainElements = (IToolChain[]) subMap.values().toArray();
 			

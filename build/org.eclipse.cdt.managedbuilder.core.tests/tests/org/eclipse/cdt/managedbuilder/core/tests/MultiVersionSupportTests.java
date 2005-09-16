@@ -12,6 +12,14 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import junit.framework.Test;
@@ -31,16 +39,24 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
+import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 
 public class MultiVersionSupportTests extends TestCase {
@@ -62,6 +78,8 @@ public class MultiVersionSupportTests extends TestCase {
 		suite.addTest(new MultiVersionSupportTests("testConfigurationDescription"));	//$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testVersionInfo"));	//$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testVersionsSupportedAttribute"));	//$NON-NLS-1$
+		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT20")); //$NON-NLS-1$
+		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT21")); //$NON-NLS-1$
 
 		//$JUnit-END$
 		return suite;
@@ -374,4 +392,164 @@ public class MultiVersionSupportTests extends TestCase {
 		cfgs = mproj.getConfigurations();
 		assertNotNull(cfgs);		
 	}
+	
+	public void testToolChainConversion_CDT20() throws Exception {
+		// Pass CDT version as '2.0', and 'true' to update Project
+		doTestProjectUpdate("2.0", true);	//$NON-NLS-1$
+		
+		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
+		
+		File inputFile = new File(tmpDir + "/converterOutput20.txt");	//$NON-NLS-1$
+		try {
+			assertTrue(inputFile.exists());
+			
+			String expectedContent = "Converter for CDT 2.0 Project is invoked";	//$NON-NLS-1$
+			
+			BufferedReader data = new BufferedReader(new FileReader(inputFile));
+			String actualContent;
+			
+			if ((actualContent = data.readLine()) != null) {
+				assertEquals(actualContent,expectedContent);
+			}			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
+		}
+	}
+	
+	public void testToolChainConversion_CDT21() throws Exception {
+		// Pass CDT version as '2.1', and 'true' to update Project
+		doTestProjectUpdate("2.1", true);	//$NON-NLS-1$
+		
+		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
+		
+		File inputFile = new File(tmpDir + "/converterOutput21.txt");	//$NON-NLS-1$
+		try {
+			assertTrue(inputFile.exists());
+			
+			String expectedContent = "Converter for CDT 2.1 Project is invoked";	//$NON-NLS-1$
+			
+			BufferedReader data = new BufferedReader(new FileReader(inputFile));
+			String actualContent;
+			
+			if ((actualContent = data.readLine()) != null) {
+				assertEquals(actualContent,expectedContent);
+			}			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
+		}
+	}
+	
+	
+	
+	private IProject getCDT_TestProject(String cdtVersion) {
+
+		IProject project = null;
+		File file = null;
+		
+		if (cdtVersion.equalsIgnoreCase("2.0")) {	//$NON-NLS-1$
+			file = CTestPlugin.getFileInPlugin(new Path(
+					"resources/toolChainConversionProjects/test20"));	//$NON-NLS-1$
+		} else if (cdtVersion.equals("2.1")) {	//$NON-NLS-1$
+			file = CTestPlugin.getFileInPlugin(new Path(
+			"resources/toolChainConversionProjects/test21"));	//$NON-NLS-1$
+		}
+
+		if (file == null) {
+			fail("Test project directory " + file.getName()	//$NON-NLS-1$
+					+ " is missing.");	//$NON-NLS-1$
+			return null;
+		}
+
+		File projectZips[] = file.listFiles(new FileFilter() {
+			public boolean accept(File pathname) {
+				if (pathname.isDirectory())
+					return false;
+				return true;
+			}
+		});
+
+		ArrayList projectList = new ArrayList(projectZips.length);
+		assertEquals(projectZips.length, 1);
+
+		try {
+			String projectName = projectZips[0].getName();
+			if (!projectName.endsWith(".zip"))
+				fail("No projects found in test 'toolChainConversionProjects' project directory "	//$NON-NLS-1$
+						+ file.getName()
+						+ ".  The .zip file may be missing or corrupt.");	//$NON-NLS-1$
+
+			projectName = projectName.substring(0, projectName.length()
+					- ".zip".length());	//$NON-NLS-1$
+			if (projectName.length() == 0)
+				fail("No projects found in test 'toolChainConversionProjects' project directory "	//$NON-NLS-1$
+						+ file.getName()
+						+ ".  The .zip file may be missing or corrupt.");	//$NON-NLS-1$
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// Path path = (Path) root.getLocation();
+			IPath location = new Path( root.getLocation().toString() );
+			project = ManagedBuildTestHelper.createProject(
+					projectName, projectZips[0], null, null);
+			if (project != null)
+				projectList.add(project);
+		} catch (Exception e) {
+			System.out.println("Exception Occured.");	//$NON-NLS-1$
+		}
+
+		if (projectList.size() == 0) {
+			fail("No projects found in test project directory "		//$NON-NLS-1$
+					+ file.getName()
+					+ ".  The .zip file may be missing or corrupt.");	//$NON-NLS-1$
+			return null;
+		}
+		return project;
+	}
+	
+	private void doTestProjectUpdate(String cdtVersion, boolean updateProject) {
+		IOverwriteQuery queryALL = new IOverwriteQuery(){
+			public String queryOverwrite(String file) {
+				return ALL;
+			}};
+		IOverwriteQuery queryNOALL = new IOverwriteQuery(){
+			public String queryOverwrite(String file) {
+				return NO_ALL;
+			}};
+		
+		UpdateManagedProjectManager.setUpdateProjectQuery(updateProject ? queryALL : queryNOALL);
+
+		final IProject project = getCDT_TestProject(cdtVersion);
+		if (project == null)
+			return;
+
+		// the project conversion occurs the first time
+		// ManagedBuildManager.getBuildInfo gets called
+		// If requires it also invokes converters for the project.
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+
+		// check whether the managed build info is converted
+		boolean isCompatible = UpdateManagedProjectManager
+				.isCompatibleProject(info);
+		assertTrue(isCompatible);
+
+		if (isCompatible) {
+			// check for correct update
+			if (!updateProject) {
+				// TODO: if the user has chosen not to update the
+				// project the
+				// .cdtbuild file should not change
+			} else {
+				// Make sure that we have a valid project
+				if (info == null || info.getManagedProject() == null
+						|| info.getManagedProject().isValid() == false) {
+					fail("the project \"" + project.getName()	//$NON-NLS-1$
+							+ "\" was not properly converted");	//$NON-NLS-1$
+				}
+			}
+		}
+		ManagedBuildTestHelper.removeProject(project.getName());
+	}
+	
 }

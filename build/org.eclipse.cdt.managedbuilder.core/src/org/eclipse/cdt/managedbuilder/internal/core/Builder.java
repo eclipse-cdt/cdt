@@ -792,7 +792,7 @@ public class Builder extends BuildObject implements IBuilder {
 	 * converters and stores them.
 	 */
 
-	private void checkForMigrationSupport() {
+	public void checkForMigrationSupport() {
 
 		String tmpId = null;
 		boolean isExists = false;

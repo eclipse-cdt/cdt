@@ -111,6 +111,9 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
+		if ( isDisposed() ) {
+			return new IVariable[0];
+		}
 		ICGlobalVariable[] globals = getGlobals();
 		List vars = getVariables0();
 		List all = new ArrayList( globals.length + vars.size() );
@@ -120,6 +123,9 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	}
 
 	protected synchronized List getVariables0() throws DebugException {
+		if ( isDisposed() ) {
+			return Collections.EMPTY_LIST;
+		}
 		CThread thread = (CThread)getThread();
 		if ( thread.isSuspended() ) {
 			if ( fVariables == null ) {			
@@ -175,7 +181,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
 	public boolean hasVariables() throws DebugException {
-		return getVariables0().size() > 0;
+		return ( isDisposed() ) ? false : getVariables0().size() > 0;
 	}
 
 	/* (non-Javadoc)
@@ -232,14 +238,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException {
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this );
+		return ( isDisposed() ) ? new IRegisterGroup[0] : ((CDebugTarget)getDebugTarget()).getRegisterGroups( this );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasRegisterGroups()
 	 */
 	public boolean hasRegisterGroups() throws DebugException {
-		return ((CDebugTarget)getDebugTarget()).getRegisterGroups( this ).length > 0;
+		return ( isDisposed() ) ? false : ((CDebugTarget)getDebugTarget()).getRegisterGroups( this ).length > 0;
 	}
 
 	/* (non-Javadoc)

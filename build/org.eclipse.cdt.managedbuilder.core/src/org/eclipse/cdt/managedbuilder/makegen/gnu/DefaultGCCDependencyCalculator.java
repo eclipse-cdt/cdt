@@ -113,9 +113,10 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		String outflag = "";  //$NON-NLS-1$
 		String outputPrefix = "";   //$NON-NLS-1$
 		String outputFile = "";   //$NON-NLS-1$
-		if( resConfig != null) {
-			ITool[] tools = resConfig.getToolsToInvoke(); 
-			String cmd = tools[0].getToolCommand();
+		ITool[] tools;
+		if( resConfig != null && (tools = resConfig.getToolsToInvoke()) != null && tools.length > 0) {
+			ITool tool = tools[0];
+			String cmd = tool.getToolCommand();
 			//try to resolve the build macros in the tool command
 			try{
 				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
@@ -131,7 +132,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 
 			String[] toolFlags = null;
 			try { 
-				toolFlags = tools[0].getToolCommandFlags(resource.getLocation(),null);
+				toolFlags = tool.getToolCommandFlags(resource.getLocation(),null);
 			} catch( BuildException ex ) {
 				// TODO add some routines to catch this
 				toolFlags = EMPTY_STRING_ARRAY;
@@ -144,9 +145,9 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			for (int i=0; i<toolFlags.length; i++) {
 				flags[4+i] = toolFlags[i];
 			}
-			IManagedCommandLineGenerator cmdLGen = tools[0].getCommandLineGenerator();
-			cmdLInfo = cmdLGen.generateCommandLineInfo( tools[0], cmd, flags, outflag, outputPrefix,
-					outputFile, inputs, tools[0].getCommandLinePattern() );
+			IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
+			cmdLInfo = cmdLGen.generateCommandLineInfo( tool, cmd, flags, outflag, outputPrefix,
+					outputFile, inputs, tool.getCommandLinePattern() );
 			buildCmd = cmdLInfo.getCommandLine();
 		} else {
 			String cmd = info.getToolForSource(inputExtension);

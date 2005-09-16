@@ -567,7 +567,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("objects.mk"), 
 				 Path.fromOSString("sources.mk"), 
 				 Path.fromOSString("module/subdir.mk"),
-				 Path.fromOSString("sources/subdir.mk")};
+				 Path.fromOSString("Sources/subdir.mk")};
 		IProject[] projects = createProjects("CDTFortranTest2", null, null, true);
 		buildProjects(projects, makefiles);
 	}

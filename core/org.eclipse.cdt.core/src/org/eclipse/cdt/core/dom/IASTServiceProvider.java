@@ -33,7 +33,7 @@ public interface IASTServiceProvider {
      */
     public static class UnsupportedDialectException extends Exception 
     {
-    	
+    	public static final long serialVersionUID = 0;
     }
 
     /**

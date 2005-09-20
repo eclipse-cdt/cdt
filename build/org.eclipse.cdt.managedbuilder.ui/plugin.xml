@@ -121,5 +121,25 @@
             id="org.eclipse.cdt.managedbuilder.ui.preferences.BuildPreferences">
       </page>
    </extension>
-  
+   
+   <!-- Action for Project Converter in context menu -->
+  <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="org.eclipse.cdt.managedbuilder.ui.popupMenu.ConvertTargetContribution">
+         <action
+               label="%ConvertTargetAction.label"
+               class="org.eclipse.cdt.managedbuilder.ui.actions.ConvertTargetAction"
+               menubarPath="convertGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.managedbuilder.ui.ConvertTargetAction">
+         </action>         
+         <filter
+               name="projectNature"
+               value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
+         </filter>
+      </objectContribution>
+   </extension>   
 </plugin>

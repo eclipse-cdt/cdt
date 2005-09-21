@@ -2677,7 +2677,32 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					}
 				}
 			}
+			
+			// walk through each resource configuration and look if there are any converters
+			// available. If so, invoke them.
+			IResourceConfiguration [] resourceConfigs = configuration.getResourceConfigurations();
+			if ( ( resourceConfigs != null) && ( resourceConfigs.length > 0)) {
+				for (int j = 0; j < resourceConfigs.length; j++) {
+					IResourceConfiguration resConfig = resourceConfigs[j];
+					ITool [] resTools = resConfig.getTools();
+					for (int k = 0; k < resTools.length; k++) {
+						ITool resTool = resTools[k];
+						if (forCurrentMbsVersion) {
+							element = ((Tool)resTool).getCurrentMbsVersionConversionElement();
+						} else {
+							element = ((Tool)resTool).getPreviousMbsVersionConversionElement();
+						}
+						if (element != null) {
+							if ( invokeConverter(resTool, element) == null ) {
+								buildInfo.getManagedProject().setValid(false);
+								return false;
+							}
+						}
+					}
+				}
+			}   // end of if			
 		}		
+		
 		// If control comes here, it means either there is no converter element
 		// or converters are invoked successfully
 		return true;

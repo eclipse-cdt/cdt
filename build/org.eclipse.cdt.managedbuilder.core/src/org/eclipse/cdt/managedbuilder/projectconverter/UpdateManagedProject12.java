@@ -38,6 +38,8 @@ import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -217,7 +219,8 @@ class UpdateManagedProject12 {
 		
 		// Convert the tool references
 		IToolChain toolChain = newConfig.getToolChain();
-
+		((ToolChain)toolChain).checkForMigrationSupport();
+		
 		NodeList toolRefNodes = oldConfig.getElementsByTagName(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 		for (int refIndex = 0; refIndex < toolRefNodes.getLength(); ++refIndex) {
 			try{
@@ -628,6 +631,9 @@ class UpdateManagedProject12 {
 		if(newTool == null)
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getFormattedString("UpdateManagedProject12.11",toolId), null)); //$NON-NLS-1$
+		
+//		 Check for migration support 
+		((Tool)newTool).checkForMigrationSupport();
 		
 		// The ref may or may not contain overridden options
 		NodeList optRefs = oldToolRef.getElementsByTagName(ITool.OPTION_REF);

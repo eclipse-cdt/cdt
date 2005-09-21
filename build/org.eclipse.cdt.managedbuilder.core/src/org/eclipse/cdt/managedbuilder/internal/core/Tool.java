@@ -570,11 +570,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				IResourceConfiguration resConfig = (IResourceConfiguration) getParent();
 				setSuperClass( resConfig.getParent().getTool(superClassId) );
 			} else {
-				setSuperClass( ManagedBuildManager.getExtensionTool(superClassId) );
-			
-				// Check for migration support
-				checkForMigrationSupport();
+				setSuperClass( ManagedBuildManager.getExtensionTool(superClassId) );			
 			}
+			
+			// Check for migration support
+			checkForMigrationSupport();
+
 		}
 
 		// Get the unused children, if any

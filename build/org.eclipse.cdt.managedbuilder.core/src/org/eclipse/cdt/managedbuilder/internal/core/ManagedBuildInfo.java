@@ -485,9 +485,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if (getDefaultConfiguration() != null) {
 			IToolChain toolChain = getDefaultConfiguration().getToolChain();
 			IBuilder builder = toolChain.getBuilder();
-			return builder.getArguments();
+			if (builder != null) {
+			    return builder.getArguments();		
+			}
 		}
-		return EMPTY_STRING;
+		return new String("-k"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -497,9 +499,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if (getDefaultConfiguration() != null) {
 			IToolChain toolChain = getDefaultConfiguration().getToolChain();
 			IBuilder builder = toolChain.getBuilder();
-			return builder.getCommand();
+			if (builder != null) {
+			    return builder.getCommand();		
+			}
 		}
-		return EMPTY_STRING;
+		return new String("make"); //$NON-NLS-1$
 	}
 
 	/*

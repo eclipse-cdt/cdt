@@ -291,6 +291,17 @@ public class ToolReference implements IToolReference {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#buildsFileType(java.lang.String)
+	 */
+	public boolean isInputFileType(String extension) {
+		if (parent == null) {
+			// bad reference
+			return false;
+		}
+		return parent.isInputFileType(extension);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#createOptionReference(org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	public OptionReference createOptionReference(IOption option) {

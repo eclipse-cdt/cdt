@@ -210,7 +210,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			if(inputFileLocation != null && inputFileLocation.segmentCount() > 0){
 				IPath workingDirectory = getBuilderCWD(cfg);
 				if(workingDirectory != null){
-					IPath filePath = calculateRelPath(workingDirectory, inputFileLocation);
+					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, inputFileLocation);
 					if(filePath != null)
 						value = filePath.toOSString();
 				}
@@ -220,7 +220,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			if(inputFileLocation != null && inputFileLocation.segmentCount() > 0){
 				IPath workingDirectory = getBuilderCWD(cfg);
 				if(workingDirectory != null){
-					IPath filePath = calculateRelPath(workingDirectory, inputFileLocation.removeLastSegments(1).addTrailingSeparator());
+					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, inputFileLocation.removeLastSegments(1).addTrailingSeparator());
 					if(filePath != null)
 						value = filePath.toOSString();
 				}
@@ -239,7 +239,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			if(outputFileLocation != null && outputFileLocation.segmentCount() > 0){
 				IPath workingDirectory = getBuilderCWD(cfg);
 				if(workingDirectory != null){
-					IPath filePath = calculateRelPath(workingDirectory, outputFileLocation);
+					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, outputFileLocation);
 					if(filePath != null)
 						value = filePath.toOSString();
 				}
@@ -248,7 +248,7 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			if(outputFileLocation != null && outputFileLocation.segmentCount() > 0){
 				IPath workingDirectory = getBuilderCWD(cfg);
 				if(workingDirectory != null){
-					IPath filePath = calculateRelPath(workingDirectory, outputFileLocation.removeLastSegments(1).addTrailingSeparator());
+					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, outputFileLocation.removeLastSegments(1).addTrailingSeparator());
 					if(filePath != null)
 						value = filePath.toOSString();
 				}
@@ -547,35 +547,6 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		return workingDirectory;
 	}
 	
-	private IPath calculateRelPath(IPath container, IPath contents){
-		IPath path = contents;
-		if(container.isPrefixOf(contents)){
-			path = contents.setDevice(null).removeFirstSegments(container.segmentCount());
-		} else {
-			String file = null;
-			container = container.addTrailingSeparator();
-			if(!contents.hasTrailingSeparator()){
-				file = contents.lastSegment();
-				contents = contents.removeLastSegments(1);
-				contents = contents.addTrailingSeparator();
-			}
-			
-			IPath prefix = contents;
-			for(;prefix.segmentCount() > 0 && !prefix.isPrefixOf(container);prefix = prefix.removeLastSegments(1)){
-			}
-			if(prefix.segmentCount() > 0){
-				int diff = container.segmentCount() - prefix.segmentCount();
-				StringBuffer buff = new StringBuffer();
-				while(diff-- > 0)
-					buff.append("../");	//$NON-NLS-1$
-				path = new Path(buff.toString()).append(contents.removeFirstSegments(prefix.segmentCount()));
-				if(file != null)
-					path = path.append(file);
-			}
-		}
-		return path;
-	}
-	
 	private IPath getOutputFilePath(IPath inputPath, IConfiguration cfg){
 		ITool buildTools[] = null; 
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(inputPath.toString());
@@ -838,7 +809,6 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			
 			IToolChain toolChain = null;
 			IConfiguration cfg = null;
-			String optId = option.getId();
 			
 			IResourceConfiguration rc = (IResourceConfiguration)bo;
 			cfg = rc.getParent();

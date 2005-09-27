@@ -716,7 +716,14 @@
          <attribute name="option" type="string">
             <annotation>
                <documentation>
-                  The id of an Option element that is used on the command line to identify inputs of this type. The default when not specified is to assign the inputs to the ${Inputs} part of the command line.
+                  The id of an Option element that is used on the command line to identify inputs of this type.  If specified, the name(s) of the input files for this input type are taken from the value specified for the option.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="assignToOption" type="string">
+            <annotation>
+               <documentation>
+                  The id of an Option element whose value is to be assigned to the file(s) calculated for this input type.  The default is not to assign the input file(s) to a command line option but to assign the files to the ${Inputs} part of the command line.  Note that the option value is only updated during build file generation and therefore could be out of sync with the project until build file generation occurs.
                </documentation>
             </annotation>
          </attribute>

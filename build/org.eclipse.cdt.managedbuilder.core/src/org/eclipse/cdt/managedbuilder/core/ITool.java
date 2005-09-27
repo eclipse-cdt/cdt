@@ -635,6 +635,17 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @return boolean
 	 */
 	public boolean buildsFileType(String extension);
+
+	/**
+	 * Return <code>true</code> if the receiver uses files with the
+	 * specified extension as input, else <code>false</code>.  This
+	 * returns true for a superset of the extensions that buildFileType
+	 * returns true for - it includes secondary inputs.
+	 * 
+	 * @param extension file extension of the source
+	 * @return boolean
+	 */
+	public boolean isInputFileType(String extension);
 	
 	/**
 	 * Answers <code>true</code> if the tool considers the file extension to be 

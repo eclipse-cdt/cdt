@@ -28,6 +28,7 @@ public interface IInputType extends IBuildObject {
 	public static final String DEPENDENCY_CONTENT_TYPE = "dependencyContentType";	//$NON-NLS-1$
 	public static final String DEPENDENCY_EXTENSIONS = "dependencyExtensions";	//$NON-NLS-1$
 	public static final String OPTION = "option";	//$NON-NLS-1$
+	public static final String ASSIGN_TO_OPTION = "assignToOption";	//$NON-NLS-1$
 	public static final String MULTIPLE_OF_TYPE = "multipleOfType";	//$NON-NLS-1$
 	public static final String PRIMARY_INPUT = "primaryInput";	//$NON-NLS-1$
 	public static final String BUILD_VARIABLE = "buildVariable";	//$NON-NLS-1$
@@ -260,22 +261,50 @@ public interface IInputType extends IBuildObject {
 	public boolean isDependencyExtension(ITool tool, String ext);
 
 	/**
-	 * Returns the id of the option that is associated with this
-	 * input type on the command line.  The default is to not use a command 
-	 * line option and to assign this input to the ${Inputs} part of the command line. 
+	 * Returns the id of the option that is associated with this input
+	 * type on the command line.  If specified, the name(s) of the input
+	 * files for this input type are taken from the value specified 
+	 * for the option.
 	 * 
 	 * @return String
 	 */
 	public String getOptionId();
 
 	/**
-	 * Sets the id of the option that is associated with this
-	 * input type on the command line. 
+	 * Sets the id of the option that is associated with this input type on 
+	 * the command line.  If specified, the name(s) of the input files for 
+	 * this input type are taken from the value specified for the option.
 	 * 
 	 * @param optionId  
 	 */
 	public void setOptionId(String optionId);
-	
+
+	/**
+	 * Returns the id of the option whose value is to be assigned to the 
+	 * file(s) calculated for this input type.  The default is not to 
+	 * assign the input file(s) to a command line option but to assign the 
+	 * files to the ${Inputs} part of the command line.  Note that the
+	 * option value is only updated during build file generation and therefore
+	 * could be out of sync with the project until build file generation 
+	 * occurs.
+	 * 
+	 * @return String
+	 */
+	public String getAssignToOptionId();
+
+	/**
+	 * Sets the id of the option whose value is to be assigned to the 
+	 * file(s) calculated for this input type.  The default is not to 
+	 * assign the input file(s) to a command line option but to assign the 
+	 * files to the ${Inputs} part of the command line.  Note that the
+	 * option value is only updated during build file generation and therefore
+	 * could be out of sync with the project until build file generation 
+	 * occurs.
+	 * 
+	 * @param optionId  
+	 */
+	public void setAssignToOptionId(String optionId);
+		
 	/**
 	 * Returns <code>true</code> if this inputType can contain multiple input
 	 * resources, else <code>false</code>.  The inputs can be project resources, 

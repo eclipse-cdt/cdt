@@ -4609,6 +4609,111 @@
     </projectType>
     
     <!-- Executable project type end -->
+
+    <!-- Project type for testing assignToOption -->
+
+    <projectType
+            id="cdt.test.assignToOption.executableProjectType"
+            isAbstract="false"
+            isTest="true"
+            name="AssignToOption Executable">
+         <configuration
+               artifactExtension="out"
+               cleanCommand="rm -rf"
+               id="cdt.test.assignToOption.debug"
+               name="Debug">
+            <toolChain
+                  id="cdt.test.assignToOption.exeDebugToolchain"
+                  isAbstract="false"
+                  name="AssingToOption Tools"
+                  targetTool="cdt.test.assignToOption.exeLinkerDebug">
+               <tool
+                     id="cdt.test.assignToOption.compilerDebug"
+                     isAbstract="false"
+                     name="AssignToOption Compiler"
+                     superClass="cdt.test.assignToOption.compiler"/>
+               <tool
+                     id="cdt.test.assignToOption.exeLinkerDebug"
+                     isAbstract="false"
+                     name="AssignToOption Executable Linker"
+                     superClass="cdt.test.assignToOption.exeLinker"/>
+            </toolChain>
+         </configuration>
+    </projectType>
+    <tool
+            command="ATOC"
+            id="cdt.test.assignToOption.compiler"
+            isAbstract="false"
+            name="AssignToOption Compiler"
+            natureFilter="both">
+         <inputType
+               id="cdt.test.assignToOption.compilerSources"
+               multipleOfType="false"
+               name="ATOC Sources"
+               primaryInput="true"
+               sources="c,C,cpp,CPP"/>
+         <inputType
+               id="cdt.test.assignToOption.compilerSecondary"
+               name="Compiler Option Files"
+               assignToOption="cdt.test.assignToOption.compilerFileOption"
+               sources="cop"/>
+         <outputType
+               buildVariable="OBJS"
+               id="cdt.test.assignToOption.compilerObjectFilesTypeOutput"
+               multipleOfType="false"
+               name="Object Files"
+               outputs="obj"
+               primaryInputType="cdt.test.assignToOption.compilerSources"
+               primaryOutput="true"/>
+         <option
+               command="-opt"
+               id="cdt.test.assignToOption.compilerFileOption"
+               isAbstract="false"
+               name="Compiler Option File"
+	           applicabilityCalculator="org.eclipse.cdt.managedbuilder.core.tests.CmdLineApplicabilityCalculator"
+               valueType="string"/>
+    </tool>
+    <tool
+            command="ATOL"
+            id="cdt.test.assignToOption.exeLinker"
+            isAbstract="false"
+            name="AssignToOption Executable Linker"
+            natureFilter="both"
+            outputFlag="-o">
+         <inputType
+               buildVariable="OBJS"
+               id="cdt.test.assignToOption.compilerObjectFilesTypeInput"
+               multipleOfType="true"
+               name="Object Files"
+               primaryInput="true"
+               sources="obj"/>
+         <inputType
+               id="cdt.test.assignToOption.linkerFileInputType"
+               multipleOfType="true"
+               name="Linker Option Files"
+               assignToOption="cdt.test.assignToOption.linkerFileOption"
+               primaryInput="false"
+               sources="opt"/>
+         <outputType
+               id="cdt.test.assignToOption.exeOutputType"
+               name="AssignToOption Executable"
+               outputs="out"
+               primaryInputType="cdt.test.assignToOption.compilerObjectFilesTypeInput"
+               primaryOutput="true"/>
+         <option
+               browseType="file"
+               category="cdt.test.assignToOption.optionCategory1"
+               command="-opt"
+               id="cdt.test.assignToOption.linkerFileOption"
+               isAbstract="false"
+               name="Linker Option File"
+               resourceFilter="project"
+               valueType="stringList"/>
+         <optionCategory
+               id="cdt.test.assignToOption.optionCategory1"
+               name="Linker Options"
+               owner="cdt.test.assignToOption.exeLinker"/>
+    </tool>
       
    </extension>
 </plugin>

@@ -201,7 +201,7 @@ public class GCCErrorParser implements IErrorParser {
 						eoParser.clearScratchBuffer();
 						int from = -1;
 						String inclusionError = fileName + ":" + num; //$NON-NLS-1$
-						while ((from = buffer.indexOf("from ")) != -1) { //$NON-NLS-1$
+						while ((from = buffer.indexOf("from ")) != -1) { //$NON-NLS-1$: " + name + "
 							int coma = buffer.indexOf(',', from);
 							String buf;
 							if (coma != -1) {
@@ -231,7 +231,7 @@ public class GCCErrorParser implements IErrorParser {
 					IFile file = eoParser.findFileName(fileName);
 					if (file != null) {
 						if (eoParser.isConflictingName(fileName)) {
-							desc = "[Conflicting names: " + fileName + " ] " + desc; //$NON-NLS-1$ //$NON-NLS-2$
+							desc = desc + " [Conflicting names] "; //$NON-NLS-1$
 							file = null;							
 						}
 					} else {
@@ -244,11 +244,10 @@ public class GCCErrorParser implements IErrorParser {
 							// the user do a cd(1).
 							IPath path = new Path(fileName);
 							if (path.segmentCount() > 1) {
-								String name = path.lastSegment();
 								file = eoParser.findFileName(fileName);
 								if (file != null) {
 									if (eoParser.isConflictingName(fileName)) {
-										desc = "[Conflicting names: " + name + " ] " + desc; //$NON-NLS-1$ //$NON-NLS-2$
+										desc = desc + " [Conflicting names] "; //$NON-NLS-1$
 										file = null;							
 									}
 								}
@@ -271,7 +270,7 @@ public class GCCErrorParser implements IErrorParser {
 					
 					// Display the fileName.
 					if (file == null) {
-						desc = desc +"[" + fileName + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+						desc = desc + " [" + fileName + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 
 					eoParser.generateMarker(file, num, desc, severity, varName);

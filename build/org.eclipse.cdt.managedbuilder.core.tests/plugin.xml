@@ -4637,6 +4637,13 @@
                      isAbstract="false"
                      name="AssignToOption Executable Linker"
                      superClass="cdt.test.assignToOption.exeLinker"/>
+				<builder
+				    id="cdt.test.assignToOption.builder"
+		            name="AssignToOption Builder"		              
+		            command="make"
+                    arguments="-k"
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+				</builder> 				  				  
             </toolChain>
          </configuration>
     </projectType>

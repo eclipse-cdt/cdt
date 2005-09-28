@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -58,6 +59,8 @@ public class CASTTranslationUnit extends CASTNode implements
 	private CScope compilationUnit = null;
 
 	private ILocationResolver resolver;
+	
+	private IPDOM pdom;
 
 	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
 
@@ -511,4 +514,12 @@ public class CASTTranslationUnit extends CASTNode implements
         return ParserLanguage.C;
     }
 
+    public IPDOM getPDOM() {
+    	return pdom;
+    }
+    
+    public void setPDOM(IPDOM pdom) {
+    	this.pdom = pdom;
+    }
+    
 }

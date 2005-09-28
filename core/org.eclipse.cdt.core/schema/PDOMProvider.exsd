@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="PDOMDatabaseProvider" name="%PDOMDatabaseProvider"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="PDOMProvider" name="%PDOMProviderName"/>
       </appInfo>
       <documentation>
-         This extension point provides the database to be used for the Persistent DOM.
+         [Enter description of this extension point.]
       </documentation>
    </annotation>
 
@@ -44,20 +44,27 @@
 
    <element name="provider">
       <complexType>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.pdom.IPDOMDatabaseProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.dom.IPDOMProvider"/>
                </appInfo>
             </annotation>
          </attribute>

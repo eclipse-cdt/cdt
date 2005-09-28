@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
@@ -188,5 +189,18 @@ public interface IASTTranslationUnit extends IASTNode {
      */
     public ParserLanguage getParserLanguage();
     
+    /**
+     * Return the PDOM associated with this translation unit.
+     * 
+     * @return the PDOM for this translation unit
+     */
+    public IPDOM getPDOM();
+    
+    /**
+     * Set the PDOM to be used for this translation unit.
+     * 
+     * @param pdom
+     */
+    public void setPDOM(IPDOM pdom);
     
 }

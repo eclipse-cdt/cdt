@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.IPDOMProvider;
 import org.eclipse.cdt.core.dom.IParserConfiguration;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -42,6 +43,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
@@ -49,18 +55,45 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public class InternalASTServiceProvider implements IASTServiceProvider {
 
-    protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
-   protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = new GPPScannerExtensionConfiguration();
-   private static final String[] dialects = { "C99",  //$NON-NLS-1$
-            "C++98",  //$NON-NLS-1$
-            "GNUC",  //$NON-NLS-1$
-            "GNUC++" };  //$NON-NLS-1$
+	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
+    protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = new GPPScannerExtensionConfiguration();
+    private static final String[] dialects = {
+   		"C99",   //$NON-NLS-1$
+   		"C++98", //$NON-NLS-1$
+   		"GNUC",  //$NON-NLS-1$
+    	"GNUC++" //$NON-NLS-1$
+   	};
 
-
+    private IPDOMProvider pdomProvider;
+    
+    private IPDOMProvider getPDOMProvider() {
+    	if (pdomProvider == null) {
+    		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(IPDOMProvider.ID);
+    		IExtension[] extensions = extensionPoint.getExtensions();
+    		if (extensions.length > 0) {
+    			// For now just take the first one
+    			IConfigurationElement[] elements= extensions[0].getConfigurationElements();
+    			if (elements.length > 0) {
+    				// For now just take the first provider
+    				try {
+    					pdomProvider = (IPDOMProvider)elements[0].createExecutableExtension("class"); //$NON-NLS-1$
+    					return pdomProvider;
+    				} catch (CoreException e) {
+    				}
+    			}
+    		}
+    		
+    		// Couldn't find one
+    		pdomProvider = new NullPDOMProvider();
+    	}
+    	return pdomProvider;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getName()
      */
     public String getName() {
+    	// TODO is this a name or an id?
         return "CDT AST Service"; //$NON-NLS-1$
     }
 
@@ -165,7 +198,10 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );		        
 		    }
 		}
+		// Parse
 		IASTTranslationUnit tu = parser.parse();
+		// Set the PDOM if we can find one
+		tu.setPDOM(getPDOMProvider().getPDOM(project));
 		return tu;
     }
 

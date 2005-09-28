@@ -35,7 +35,7 @@ public class BuildConsolePartition extends TypedRegion {
 	 */
 	public boolean equals(Object partition) {
 		if (super.equals(partition)) {
-			fStream.equals(((BuildConsolePartition) partition).getStream());
+			return fStream.equals(((BuildConsolePartition) partition).getStream());
 		}
 		return false;
 	}

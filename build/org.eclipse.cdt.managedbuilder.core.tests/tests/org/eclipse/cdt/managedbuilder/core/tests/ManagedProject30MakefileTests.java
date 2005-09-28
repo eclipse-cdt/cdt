@@ -33,7 +33,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -79,6 +78,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("testTopTC"));
 		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest1"));
 		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest2"));
+		suite.addTest(new ManagedProject30MakefileTests("TestATO"));
 		return suite;
 	}
 
@@ -569,6 +569,19 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("module/subdir.mk"),
 				 Path.fromOSString("Sources/subdir.mk")};
 		IProject[] projects = createProjects("CDTFortranTest2", null, null, true);
+		buildProjects(projects, makefiles);
+	}
+
+	/* (non-Javadoc)
+	 * tests the InputType assignToOption attribute
+	 */
+	public void TestATO(){
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		IProject[] projects = createProjects("TestATO", null, null, true);
 		buildProjects(projects, makefiles);
 	}
 }

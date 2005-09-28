@@ -93,10 +93,12 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		return inputsCalculated;
 	}
 
+	//  Command inputs are top build directory relative
 	public Vector getCommandInputs() {
 		return commandInputs;
 	}
 
+	//  Enumerated inputs are project relative
 	public Vector getEnumeratedInputs() {
 		return enumeratedInputs;
 	}
@@ -105,6 +107,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		return outputsCalculated;
 	}
 
+	//  Command outputs are top build directory relative
 	public Vector getCommandOutputs() {
 		return commandOutputs;
 	}
@@ -164,10 +167,14 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		if (inTypes != null && inTypes.length > 0) {
 			for (int i=0; i<inTypes.length; i++) {
 				IInputType type = inTypes[i];
+				Vector itCommandInputs = new Vector();			// Inputs for the tool command line for this input-type
+				Vector itCommandDependencies = new Vector();	// Dependencies for the make rule for this input-type
+				Vector itEnumeratedInputs = new Vector();		// Complete list of individual inputs for this input-type				
 				String variable = type.getBuildVariable();
 				boolean primaryInput = type.getPrimaryInput();
 				boolean useFileExts = false;
 				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
+				IOption assignToOption = tool.getOptionBySuperClassId(type.getAssignToOptionId());
 				
 				//  Option?
 				if (option != null) {
@@ -198,33 +205,33 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							}
 	
 							if (primaryInput) {
-								myCommandDependencies.add(j, inputName);
+								itCommandDependencies.add(j, inputName);
 							} else {
-								myCommandDependencies.add(inputName);
+								itCommandDependencies.add(inputName);
 							}
-							// NO - myCommandInputs.add(inputName);
-							// NO - myEnumeratedInputs.add(inputName);
+							// NO - itCommandInputs.add(inputName);
+							// NO - itEnumeratedInputs.add(inputName);
 						}
 					} catch( BuildException ex ) {
 					}
 					
 				} else {
-				
+
 					//  Build Variable?
 					if (variable.length() > 0) {
 						String cmdVariable = variable = "$(" + variable + ")";			//$NON-NLS-1$	//$NON-NLS-2$
-						myCommandInputs.add(cmdVariable);
+						itCommandInputs.add(cmdVariable);
 						if (primaryInput) {
-							myCommandDependencies.add(0, cmdVariable);
+							itCommandDependencies.add(0, cmdVariable);
 						} else {
-							myCommandDependencies.add(cmdVariable);
+							itCommandDependencies.add(cmdVariable);
 						}
 						// If there is an output variable with the same name, get
 						// the files associated with it.
-						List outMacroList = makeGen.getBuildVariableList(variable, GnuMakefileGenerator.PROJECT_SUBDIR_RELATIVE,
-								makeGen.getBuildWorkingDir(), true);
+						List outMacroList = makeGen.getBuildVariableList(variable, GnuMakefileGenerator.PROJECT_RELATIVE,
+								null, true);
 						if (outMacroList != null) {
-							myEnumeratedInputs.addAll(outMacroList);
+							itEnumeratedInputs.addAll(outMacroList);
 						} else {
 							// If "last chance", then calculate using file extensions below
 							if (lastChance) {
@@ -239,7 +246,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					//  Use file extensions
 					if (variable.length() == 0 || useFileExts) {
 						//if (type.getMultipleOfType()) {
-							// Calculate myEnumeratedInputs using the file extensions and the resources in the project
+							// Calculate EnumeratedInputs using the file extensions and the resources in the project
 							// Note:  This is only correct for tools with multipleOfType == true, but for other tools
 							//        it gives us an input resource for generating default names
 							// Determine the set of source input macros to use
@@ -262,22 +269,17 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 													if(!handledInputExtensions.contains(fileExt)) {
 									 					handledInputExtensions.add(fileExt);
 									 					String buildMacro = "$(" + makeGen.getSourceMacroName(fileExt).toString() + ")";	//$NON-NLS-1$ //$NON-NLS-2$
-														myCommandInputs.add(buildMacro);
+														itCommandInputs.add(buildMacro);
 														if (primaryInput) {
-															myCommandDependencies.add(0, buildMacro);
+															itCommandDependencies.add(0, buildMacro);
 														} else {
-															myCommandDependencies.add(buildMacro);
+															itCommandDependencies.add(buildMacro);
 														}
 									 				}
 												}
-												if (type.getMultipleOfType() || myEnumeratedInputs.size() == 0) {
-													//  Return a path that is relative to the build directory
-													IPath resPath = projResources[j].getLocation();
-													IPath bldLocation = project.getLocation().append(makeGen.getBuildWorkingDir());
-													if (bldLocation.isPrefixOf(resPath)) {
-														resPath = resPath.removeFirstSegments(bldLocation.segmentCount()).setDevice(null);
-													}
-													myEnumeratedInputs.add(resPath.toString());
+												if (type.getMultipleOfType() || itEnumeratedInputs.size() == 0) {
+													//  Add a path that is relative to the project directory
+													itEnumeratedInputs.add(projResources[j].getProjectRelativePath().toString());
 												}
 												break;
 											}
@@ -300,30 +302,82 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							String[] paths = addlInput.getPaths();
 							if (paths != null) {
 								for (int k = 0; k < paths.length; k++) {
+									String path = paths[k];
+									itEnumeratedInputs.add(path);
 									// Translate the path from project relative to
 									// build directory relative
-									String path = paths[k];
 									if (!(path.startsWith("$("))) {		//$NON-NLS-1$
 										IResource addlResource = project.getFile(path);
 										if (addlResource != null) {
 											IPath addlPath = addlResource.getLocation();
 											if (addlPath != null) {
-												path = makeGen.calculateRelativePath(makeGen.getTopBuildDir(), addlPath).toString();
+												path = ManagedBuildManager.calculateRelativePath(makeGen.getTopBuildDir(), addlPath).toString();
 											}
 										}
 									}
-									myCommandInputs.add(path);
-									myEnumeratedInputs.add(path);
+									itCommandInputs.add(path);
 								}
 							}
 						}
 					}
 				}
+				
+				//  If the assignToOption attribute is specified, set the input(s) as the value of that option
+				if (assignToOption != null && option == null) {
+					try {
+						int optType = assignToOption.getValueType();
+						if (optType == IOption.STRING) {
+							String optVal = "";	   //$NON-NLS-1$
+							for (int j=0; j<itCommandInputs.size(); j++) {
+								if (j != 0) {
+									optVal += " ";	   //$NON-NLS-1$
+								}
+								optVal += itCommandInputs.get(j);
+							}
+							ManagedBuildManager.setOption(config, tool, assignToOption, optVal);							
+						} else if (
+								optType == IOption.STRING_LIST ||
+								optType == IOption.LIBRARIES ||
+								optType == IOption.OBJECTS) {
+							//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
+							//  to top build directory relative
+							String[] paths = new String[itEnumeratedInputs.size()];
+							for (int j=0; j<itEnumeratedInputs.size(); j++) {
+								paths[j] = (String)itEnumeratedInputs.get(j);
+								IResource enumResource = project.getFile(paths[j]);
+								if (enumResource != null) {
+									IPath enumPath = enumResource.getLocation();
+									if (enumPath != null) {
+										paths[j] = ManagedBuildManager.calculateRelativePath(makeGen.getTopBuildDir(), enumPath).toString();
+									}
+								}								
+							}
+							ManagedBuildManager.setOption(config, tool, assignToOption, paths);
+						} else if (optType == IOption.BOOLEAN) {
+							if (itEnumeratedInputs.size() > 0) {
+								ManagedBuildManager.setOption(config, tool, assignToOption, true);
+							} else {
+								ManagedBuildManager.setOption(config, tool, assignToOption, false);
+							}
+						} else if (optType == IOption.ENUMERATED) {
+							if (itCommandInputs.size() > 0) {
+								ManagedBuildManager.setOption(config, tool, assignToOption, (String)itCommandInputs.firstElement());
+							}
+						}
+						itCommandInputs.removeAllElements();
+						//itEnumeratedInputs.removeAllElements();
+					} catch( BuildException ex ) {
+					}
+				}
+				
+				myCommandInputs.addAll(itCommandInputs);
+				myCommandDependencies.addAll(itCommandDependencies);
+				myEnumeratedInputs.addAll(itEnumeratedInputs);
 			}
 		} else {
 			// For support of pre-CDT 3.0 integrations.
 			if (bIsTargetTool) {
-				// NOTE WELL:  This only suuports the case of a single "target tool"
+				// NOTE WELL:  This only supports the case of a single "target tool"
 				//      with the following characteristics:
 				// 1.  The tool consumes exactly all of the object files produced
 				//     by other tools in the build and produces a single output
@@ -736,7 +790,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										if (addlResource != null) {
 											IPath addlPath = addlResource.getLocation();
 											if (addlPath != null) {
-												path = makeGen.calculateRelativePath(makeGen.getTopBuildDir(), addlPath).toString();
+												path = ManagedBuildManager.calculateRelativePath(makeGen.getTopBuildDir(), addlPath).toString();
 											}
 										}
 									}

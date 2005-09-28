@@ -1487,7 +1487,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		IInputType[] types = getInputTypes();
 		for (int i=0; i<types.length; i++) {
 			IInputType type = types[i];
-			//  Additional dependencies come from 2 places.
+			//  Additional resources come from 2 places.
 			//  1.  From AdditionalInput childen
 			IPath[] res = type.getAdditionalResources();
 			for (int j=0; j<res.length; j++) {
@@ -2216,10 +2216,44 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (extension == null)  { 
 			return false;
 		}
-		if (getInputType(extension) != null) {
+		IInputType it = getInputType(extension); 
+		if (it != null) {
+			//  Decide whether we "build" this type of file
+			//
+			//  1.  If this is the primary input, yes
+			if (it == getPrimaryInputType()) {			
+				return true;
+			}
+			//  2.  If the option attribute is specified, no
+			if (it.getOptionId() != null && it.getOptionId().length() > 0) {			
+				return false;
+			}
+			//  3.  If the assignToOption attribute is specified, no
+			if (it.getAssignToOptionId() != null && it.getAssignToOptionId().length() > 0) {			
+				return false;
+			}
+			//  Else, yes
 			return true;
 		}
-		//  If no InputTypes, check the attribute
+		//  If no InputTypes, check the inputExtensions attribute
+		if (!hasInputTypes()) {
+			return getInputExtensionsAttribute().contains(extension);
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#isInputFileType(java.lang.String)
+	 */
+	public boolean isInputFileType(String extension) {
+		if (extension == null)  { 
+			return false;
+		}
+		IInputType it = getInputType(extension); 
+		if (it != null) {			
+			return true;
+		}
+		//  If no InputTypes, check the inputExtensions attribute
 		if (!hasInputTypes()) {
 			return getInputExtensionsAttribute().contains(extension);
 		}

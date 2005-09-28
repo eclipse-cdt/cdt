@@ -82,6 +82,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
@@ -2901,5 +2902,37 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Calculate a relative path given the full path to a folder and a file 
+	 */
+	public static IPath calculateRelativePath(IPath container, IPath contents){
+		IPath path = contents;
+		if(container.isPrefixOf(contents)){
+			path = contents.setDevice(null).removeFirstSegments(container.segmentCount());
+		} else {
+			String file = null;
+			container = container.addTrailingSeparator();
+			if(!contents.hasTrailingSeparator()){
+				file = contents.lastSegment();
+				contents = contents.removeLastSegments(1);
+				contents = contents.addTrailingSeparator();
+			}
+			
+			IPath prefix = contents;
+			for(;prefix.segmentCount() > 0 && !prefix.isPrefixOf(container);prefix = prefix.removeLastSegments(1)){
+			}
+			if(prefix.segmentCount() > 0){
+				int diff = container.segmentCount() - prefix.segmentCount();
+				StringBuffer buff = new StringBuffer();
+				while(diff-- > 0)
+					buff.append("../");	//$NON-NLS-1$
+				path = new Path(buff.toString()).append(contents.removeFirstSegments(prefix.segmentCount()));
+				if(file != null)
+					path = path.append(file);
+			}
+		}
+		return path;
 	}
 }

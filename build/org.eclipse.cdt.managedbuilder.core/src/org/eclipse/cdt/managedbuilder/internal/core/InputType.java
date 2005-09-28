@@ -16,16 +16,10 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IInputOrder;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
@@ -63,6 +57,7 @@ public class InputType extends BuildObject implements IInputType {
 	private IContentType dependencyContentType;
 	private List dependencyExtensions;
 	private String optionId;
+	private String assignToOptionId;
 	private String buildVariable;
 	private Boolean multipleOfType;
 	private Boolean primaryInput;
@@ -208,6 +203,9 @@ public class InputType extends BuildObject implements IInputType {
 		if (inputType.optionId != null) {
 			optionId = new String(inputType.optionId);
 		}
+		if (inputType.assignToOptionId != null) {
+			assignToOptionId = new String(inputType.assignToOptionId);
+		}
 		if (inputType.buildVariable != null) {
 			buildVariable = new String(inputType.buildVariable);
 		}
@@ -289,6 +287,9 @@ public class InputType extends BuildObject implements IInputType {
 		
 		// option
 		optionId = element.getAttribute(IInputType.OPTION); 
+		
+		// assignToOption
+		assignToOptionId = element.getAttribute(IInputType.ASSIGN_TO_OPTION); 
 		
 		// multipleOfType
         String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
@@ -382,6 +383,11 @@ public class InputType extends BuildObject implements IInputType {
 			optionId = element.getAttribute(IInputType.OPTION);
 		}
 		
+		// assignToOption
+		if (element.hasAttribute(IInputType.ASSIGN_TO_OPTION)) { 
+			assignToOptionId = element.getAttribute(IInputType.ASSIGN_TO_OPTION);
+		}
+		
 		// multipleOfType
 		if (element.hasAttribute(IInputType.MULTIPLE_OF_TYPE)) {
 			String isMOT = element.getAttribute(IInputType.MULTIPLE_OF_TYPE);
@@ -466,6 +472,10 @@ public class InputType extends BuildObject implements IInputType {
 		
 		if (optionId != null) {
 			element.setAttribute(IInputType.OPTION, optionId);
+		}
+		
+		if (assignToOptionId != null) {
+			element.setAttribute(IInputType.ASSIGN_TO_OPTION, assignToOptionId);
 		}
 		
 		if (multipleOfType != null) {
@@ -947,6 +957,31 @@ public class InputType extends BuildObject implements IInputType {
 		if (id == null && optionId == null) return;
 		if (id == null || optionId == null || !(optionId.equals(id))) {
 			optionId = id;
+			setDirty(true);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IInputType#getAssignToOptionId()
+	 */
+	public String getAssignToOptionId() {
+		if (assignToOptionId == null) {
+			if (superClass != null) {
+				return superClass.getAssignToOptionId();
+			} else {
+				return null;
+			}			
+		}
+		return assignToOptionId; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IInputType#setAssignToOptionId()
+	 */
+	public void setAssignToOptionId(String id) {
+		if (id == null && assignToOptionId == null) return;
+		if (id == null || assignToOptionId == null || !(assignToOptionId.equals(id))) {
+			assignToOptionId = id;
 			setDirty(true);
 		}
 	}

@@ -80,7 +80,7 @@
          <attribute name="isAbstract" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                  An optional field that flags a project type as abstract.  If true, the project type will not appear in the UI.  The project type is used by other project types as their &quot;superclass&quot;.
+                  An optional field that flags a project type as abstract.  If true, the project type will not appear in the UI.  The project type is used by other project types as their &quot;superclass&quot;.  The default value is false.
                </documentation>
             </annotation>
          </attribute>
@@ -94,14 +94,14 @@
          <attribute name="isTest" type="boolean">
             <annotation>
                <documentation>
-                  An optional field that flags a project type as test-only. If true, the project type will not appear in the UI.  The project type can be manipulated programmatically in JUnit tests, for example.
+                  An optional field that flags a project type as test-only. If true, the project type will not appear in the UI.  The project type can be manipulated programmatically in JUnit tests, for example.  The default value is false.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="projectEnvironmentSupplier" type="string">
             <annotation>
                <documentation>
-                  Specifies the name of the class that implements IProjectEnvironmentVariableSupplier
+                  Specifies the name of the class that implements IProjectEnvironmentVariableSupplier in order to provide project level environment variables.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier"/>
@@ -111,7 +111,7 @@
          <attribute name="projectMacroSupplier" type="string">
             <annotation>
                <documentation>
-                  Specifies the name of the class that implements IProjectBuildMacroSupplier
+                  Specifies the name of the class that implements IProjectBuildMacroSupplier in order to provide project level build macros.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier"/>
@@ -121,7 +121,7 @@
          <attribute name="configurationNameProvider" type="string">
             <annotation>
                <documentation>
-                  Contains the name of a class that implements an interface with a method for returning a default name for a configuration
+                  Contains the name of a class that implements an interface with a method for returning a default name for a configuration.  The configuration names in a user's project must be unique.  A projectType can contain configuration children with the same name.  In this case, a configurationNameProvider must be specified to make the names unique before they are displayed to the user in the New Project and New Configuration dialog boxes.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider"/>
@@ -214,7 +214,7 @@
          <attribute name="errorParsers" type="string">
             <annotation>
                <documentation>
-                  Specifies the default list of error parsers used by the configuration.  This attribute overrides the error parsers specified in the toolChain element.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+                  The semi-colon separated list of the default error parsers to be used with this configuration. The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  The list of error parsers to be used may be changed by the user on a per-configuration basis.  When specified, this overrides the tool-chain errorParsers attribute.
                </documentation>
             </annotation>
          </attribute>
@@ -249,7 +249,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  Specifies the description of the configuration that will be displayed to the user while creating a project and managing configurations
+                  Specifies the description of the configuration that will be displayed to the user while creating a project and managing configurations.  The description is only displayed in the UI - it is not considered to be part of the configuration name.
                </documentation>
             </annotation>
          </attribute>
@@ -322,7 +322,7 @@
          <attribute name="errorParsers" type="string">
             <annotation>
                <documentation>
-                  Specifies the default list of error parsers used by the tool-chain.  Error parsers specified by child tool elements are added to this list.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+                  The semi-colon separated list of the default error parsers to be used with this tool-chain. The list is ordered with the first error parser on the list invoked first, the second error parser second, and so on.  The list may contain the error parsers defined by CDT and/or other installed error parser extensions.  When specified, this overrides the tool errorParsers attributes of the tool children of the tool-chain and the builder child of the tool-chain.
                </documentation>
             </annotation>
          </attribute>
@@ -343,14 +343,14 @@
          <attribute name="secondaryOutputs" type="string">
             <annotation>
                <documentation>
-                  A semi-colon separated list of IDs of other outputTypes, besides the primary outputType of the targetTool, that are also considered to be build artifacts.
+                  A semi-colon separated list of IDs of other outputTypes, besides the primary outputType of the targetTool, that are also considered to be build artifacts.  The build file generator will ensure that the outputs get built.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="isToolChainSupported" type="string">
             <annotation>
                <documentation>
-                  Specifies the name of the class that implements IManagedIsToolChainSupported
+                  Specifies the name of the class that implements IManagedIsToolChainSupported.  This provides a method to be called to determine if support for the tool-chain is currently installed on the system.  MBS uses this information in order to filter the choices presented to the CDT user and to inform the user when support needed by their project is not installed. If the isToolChainSupported callback is not provided by the tool-chain definition, the tool-chain is treated as supported.  If all configurations defined for the given project type are not supported the project type is treated as unsupported.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported"/>
@@ -360,7 +360,7 @@
          <attribute name="configurationEnvironmentSupplier" type="string">
             <annotation>
                <documentation>
-                  Specifies the name of the class that implements IConfigurationEnvironmentVariableSupplier
+                  Specifies the name of the class that implements IConfigurationEnvironmentVariableSupplier in order to provide configuration level environment variables.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier"/>
@@ -370,7 +370,7 @@
          <attribute name="configurationMacroSupplier" type="string">
             <annotation>
                <documentation>
-                  Specifies the name of the class that implements IConfigurationBuildMacroSupplier
+                  Specifies the name of the class that implements IConfigurationBuildMacroSupplier in order to provide configuration level build macros.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier"/>
@@ -414,7 +414,7 @@
          <attribute name="exclude" type="boolean">
             <annotation>
                <documentation>
-                  Specifies whether the resource is excluded from building in the parent configuration.  The default is false.
+                  Specifies whether the resource is excluded from building in the parent configuration.  The default is false.  The resourceConfiguration element retains its tool children, if any exist, even when excluded from the build.
                </documentation>
             </annotation>
          </attribute>
@@ -553,7 +553,7 @@
          <attribute name="natureFilter">
             <annotation>
                <documentation>
-                  Filter the display (and use) of the tool by the nature of the project. Selecting a value of &apos;cnature&apos; insures that the tool will be displayed IFF there is a cnature associated with the project. A ccnature will filter this tool out. If &apos;ccnature&apos; is selected, the tool will only be available for C++ projects. If &apos;both&apos; is selected, the tool will be displayed when either nature is present.  This attribute is required if it is not inherited from its superClass.
+                  Filters the display (and use) of the tool by the nature of the project. Selecting a value of &apos;cnature&apos; insures that the tool will be displayed IFF there is a cnature associated with the project. A ccnature will filter this tool out. If &apos;ccnature&apos; is selected, the tool will only be available for C++ projects. If &apos;both&apos; is selected, the tool will be displayed when either nature is present.  This attribute is required if it is not inherited from its superClass.  The default value is &quot;both&quot;.
                </documentation>
             </annotation>
             <simpleType>
@@ -584,7 +584,7 @@
          <attribute name="commandLineGenerator" type="string">
             <annotation>
                <documentation>
-                  Specifies the name of the class that implements IManagedCommandLineGenerator (TBS).
+                  Specifies the name of the class that implements IManagedCommandLineGenerator in order to provide custom command line generation logic.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -618,7 +618,7 @@
          <attribute name="customBuildStep" type="boolean">
             <annotation>
                <documentation>
-                  Specifies whether this Tool represents a user-define custom build step.  The default is false.
+                  Specifies whether this Tool represents a user-define custom build step.  The default is false.  When True, the default value of the commandLinePattern attribute changes to “$(command)”.
                </documentation>
             </annotation>
          </attribute>
@@ -754,7 +754,7 @@
          <attribute name="buildVariable" type="string">
             <annotation>
                <documentation>
-                  A variable used in the build file to represent the input files.  The same variable name can be used in an outputType element to identify a set of output files that contribute to this tool&apos;s input.  This attribute is ignored when multipleOfType is false this is the primary input of the tool.  The default name is chosen by MBS.
+                  A variable used in the build file to represent the input files.  The same variable name can be used in an outputType element to identify a set of output files that contribute to this tool&apos;s input.  This attribute is ignored when multipleOfType is false and this is the primary input of the tool.  The default name is chosen by MBS.
                </documentation>
             </annotation>
          </attribute>
@@ -809,7 +809,7 @@
          <attribute name="kind">
             <annotation>
                <documentation>
-                  Defines the type of additional input, whether the resource is added to the dependency list, the inputs on the command line, or both.
+                  Defines the type of additional input, whether the resource is added to the dependency list, the inputs on the command line, or both.  The default is to add the inputs to both.
                </documentation>
             </annotation>
             <simpleType>
@@ -871,7 +871,7 @@
          <attribute name="option" type="string">
             <annotation>
                <documentation>
-                  The id of an Option element that is used on the command line to identify outputs of this type. The default is to use the Tool outputFlag attribute if primaryOutput is True. If primaryOutput is False, the default is to not add the output(s) to the command line.  If specified, the nameProvider, namePattern and outputNames are ignored.
+                  The id of an Option element that is used on the command line to specify this output. The default is to use the Tool outputFlag attribute if primaryOutput is True. If option is not specified, and primaryOutput is False, then the output file(s) of this outputType are not added to the command line.  If specified, the nameProvider, namePattern and outputNames are ignored.
                </documentation>
             </annotation>
          </attribute>
@@ -885,7 +885,7 @@
          <attribute name="primaryInputType" type="string">
             <annotation>
                <documentation>
-                  The id of the input-type that this output-type is created from. It is used in determining the build &quot;rules&quot; for the output-type, and for the default name of the output file.
+                  The id of the input type that is used in determining the build “rules” for the output type and for the default name of the output file.  The default is the input type with primaryInput == true.
                </documentation>
             </annotation>
          </attribute>
@@ -899,7 +899,7 @@
          <attribute name="outputPrefix" type="string">
             <annotation>
                <documentation>
-                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.  The default is to use the Tool “outputPrefix” attribute if primaryOutput is True, otherwise the default is an empty string.
                </documentation>
             </annotation>
          </attribute>
@@ -913,14 +913,14 @@
          <attribute name="namePattern" type="string">
             <annotation>
                <documentation>
-                  Specifies a pattern, using the Gnu Make pattern rule syntax, for deriving the output resource name from the input resource name. The default is to use the input resource base name with the first output extension.
+                  Specifies a pattern, using the Gnu Make pattern rule syntax, for deriving the output resource name from the input resource name. The default, &quot;%&quot; is to use the input resource base name with the first output extension.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="nameProvider" type="string">
             <annotation>
                <documentation>
-                  The name of the class that implements the &lt;code&gt;IManagedOutputNameProvider&lt;/code&gt; interface.  If specified, the outputNames and namePattern are ignored.  This attribute must be specified when multipleOfType is True.
+                  The name of the class that implements the &lt;code&gt;IManagedOutputNameProvider&lt;/code&gt; interface.  If specified, the outputNames and namePattern are ignored.  When multipleOfType is true, this attribute, or the outputNames attribute, is required in order for MBS to know the names of the output files.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider"/>
@@ -961,7 +961,7 @@
          <attribute name="owner" type="string">
             <annotation>
                <documentation>
-                  Option categories can belong to a tool, a toolChain or be nested inside other option categories. This is the ID of the owner of the category.
+                  Option categories can belong to a tool, a toolChain or be nested inside other option categories. This is the ID of the owner of the category.  The default owner if the parent tool or tool-chain.
                </documentation>
             </annotation>
          </attribute>
@@ -1026,14 +1026,14 @@ Options can also be associated with a toolchain. However in such a case the opti
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  This is the id of the option category for this option.  The id can be the id of the tool which is also a category.
+                  The id of the option category for this option. The id can be the id of the tool which is also a category.  The default category is the parent tool.  Note that an optionCategory id must be supplied as the value for an option that is a child of a toolChain.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="resourceFilter" use="default" value="all">
             <annotation>
                <documentation>
-                  Filter the display (and use) of the option by the type of the resource (currently Project or File). The value &apos;project&apos; causes the option to be used when applied to a project.  The value &apos;file&apos; causes the option to be used when applied to a file. If &apos;all&apos; is selected, the option applies to all types of resources.  The default is &quot;all&quot;.
+                  Filters the display (and use) of the option by the type of the resource (currently Project or File). The value &apos;project&apos; causes the option to be used when applied to a project.  The value &apos;file&apos; causes the option to be used when applied to a file. If &apos;all&apos; is selected, the option applies to all types of resources.  The default is &quot;all&quot;.
                </documentation>
             </annotation>
             <simpleType>
@@ -1052,7 +1052,7 @@ Options can also be associated with a toolchain. However in such a case the opti
                <documentation>
                   General options can be one of the following types; &apos;string&apos; for catch-all entries for options that cannot be easily defined any other way, &apos;string list&apos; for entries that consist of a list of values such as defined symbols or paths, &apos;boolean&apos; for options that have two values, and &apos;enumerated&apos; for options that are one-of a list of values.
 
-Additional special types exist to flag options of special relevance to the build model; &apos;include&apos;, &apos;libs&apos;, &apos;userObjs&apos; and &apos;definedSymbols&apos;. You can pre-populate with optionValues, and they will display in the UI the same way the &apos;stringList&apos; options do. The build model will look specifically for these value types when clients query for include paths and preprocessor defines. The makefile generator will treat the libs and userObjs entries differently than other stringLists.
+Additional special types exist to flag options of special relevance to the build model; &apos;include&apos;, &apos;libs&apos;, &apos;userObjs&apos; and &apos;definedSymbols&apos;. You can pre-populate with optionValues, and they will display in the UI the same way the &apos;stringList&apos; options do. The build model will look specifically for these value types when clients query for include paths and preprocessor defines. The makefile generator treats the libs and userObjs entries differently than other stringLists.
                </documentation>
             </annotation>
             <simpleType>
@@ -1079,7 +1079,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="browseType">
             <annotation>
                <documentation>
-                  This value is used for list (and related) options only. If you need a list option to prompt the user to browse for a file or directory when adding a new value, set the value of the attribute accordingly. By default the value is treated as no browsing needed.
+                  This value is used for string and stringlist (and related) options only. If you need a list option to prompt the user to browse for a file or directory when adding a new value, set the value of the attribute accordingly. By default the value is treated as no browsing needed.
                </documentation>
             </annotation>
             <simpleType>
@@ -1141,7 +1141,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="valueHandler" type="string">
             <annotation>
                <documentation>
-                  The id of a class that implements the IManagedOptionValueHandler interface
+                  The id of a class that implements the IManagedOptionValueHandler interface.  This interface is used to dynamically manage the value of an option. 
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler"/>
@@ -1151,7 +1151,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="valueHandlerExtraArgument" type="string">
             <annotation>
                <documentation>
-                  An optional extra text string that is passed into the valueHandler
+                  An optional extra text string that is passed into the valueHandler.
                </documentation>
             </annotation>
          </attribute>
@@ -1216,7 +1216,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  The contents of the list item.
+                  The contents of the list item.  The build model will apply the command defined in the option to each value in the list.
                </documentation>
             </annotation>
          </attribute>
@@ -1275,14 +1275,14 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  Specifies the default command to start the build utility for your toolchain. If the user changes this through the UI, the overriden value will be stored in the project build file. The build model will default to this value if the user ever resets a change.
+                  Specifies the default command to start the build utility for your toolchain. If the user changes this through the UI, the overriden value will be stored in the project build file. The build model will default to this value if the user ever resets a change.  The default is &apos;make&apos;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="arguments" type="string">
             <annotation>
                <documentation>
-                  Specifies the additional, default arguments that will be passed to the build utility when it is called by the builder. If the user changes the flags through the UI, the overriden value will be stored in the project build settings file. The build model will default to this value if the user ever resets a change.
+                  Specifies the additional, default arguments that will be passed to the build utility when it is called by the builder. If the user changes the flags through the UI, the overriden value will be stored in the project build settings file. The build model will default to this value if the user ever resets a change.  The default is &apos;-k&apos;.
                </documentation>
             </annotation>
          </attribute>
@@ -1493,7 +1493,7 @@ If this attribute is not specified, MBS will assume that there are no reserved m
          <attribute name="binaryParser" type="string">
             <annotation>
                <documentation>
-                  Set this to the ID of the binary parser for the output format of your configuration. Currently there are only 2 choices: org.eclipse.cdt.core.ELF for *nix executable artifacts, and &quot;org.eclipse.cdt.core.PE&quot; for artifacts that build for Windows, like Cygwin.
+                  Set this to the ID of the binary parser for the output format of your configuration.
                </documentation>
             </annotation>
          </attribute>

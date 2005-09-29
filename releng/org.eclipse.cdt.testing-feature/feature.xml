@@ -38,13 +38,13 @@
          id="org.eclipse.cdt.debug.ui.tests"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
    <plugin
          id="org.eclipse.cdt.ui.tests"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
    <plugin
          id="org.eclipse.cdt.testing"
@@ -56,7 +56,7 @@
          id="org.eclipse.cdt.core.tests"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
    <plugin
          id="org.eclipse.ant.optional.junit"
@@ -75,18 +75,18 @@
          id="org.eclipse.cdt.managedbuilder.core.tests"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
    <plugin
          id="org.eclipse.cdt.managedbuilder.ui.tests"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
    <plugin
          id="org.eclipse.cdt.refactoring.tests"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="3.0.1"/>
 
 </feature>

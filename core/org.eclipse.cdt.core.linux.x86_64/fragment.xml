@@ -3,9 +3,9 @@
 <fragment
    id="org.eclipse.cdt.core.linux.x86_64"
    name="CDT Core x86_64 Fragment"
-   version="3.0.0"
+   version="3.0.1"
    provider-name="Eclipse.org"
    plugin-id="org.eclipse.cdt.core"
-   plugin-version="3.0.0">
+   plugin-version="3.0.1">
 
 </fragment>

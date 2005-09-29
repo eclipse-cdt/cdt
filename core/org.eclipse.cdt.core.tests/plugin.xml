@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.core.tests"
    name="org.eclipse.cdt.core.tests"
-   version="3.0.0"
+   version="3.0.1"
    class="org.eclipse.cdt.core.testplugin.CTestPlugin">
 
    <runtime>

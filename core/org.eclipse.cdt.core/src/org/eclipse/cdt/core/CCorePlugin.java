@@ -24,6 +24,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.dom.CDOM;
+import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -291,6 +292,9 @@ public class CCorePlugin extends Plugin {
 
 		//Fired up the indexer
 		fCoreModel.startIndexing();
+		
+		// Fire up the PDOM
+		PDOM.startup();
 
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);

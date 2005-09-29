@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.core.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.IPDOMProvider;
 import org.eclipse.cdt.core.dom.IParserConfiguration;
+import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -43,11 +43,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
@@ -64,31 +59,6 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     	"GNUC++" //$NON-NLS-1$
    	};
 
-    private IPDOMProvider pdomProvider;
-    
-    private IPDOMProvider getPDOMProvider() {
-    	if (pdomProvider == null) {
-    		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(IPDOMProvider.ID);
-    		IExtension[] extensions = extensionPoint.getExtensions();
-    		if (extensions.length > 0) {
-    			// For now just take the first one
-    			IConfigurationElement[] elements= extensions[0].getConfigurationElements();
-    			if (elements.length > 0) {
-    				// For now just take the first provider
-    				try {
-    					pdomProvider = (IPDOMProvider)elements[0].createExecutableExtension("class"); //$NON-NLS-1$
-    					return pdomProvider;
-    				} catch (CoreException e) {
-    				}
-    			}
-    		}
-    		
-    		// Couldn't find one
-    		pdomProvider = new NullPDOMProvider();
-    	}
-    	return pdomProvider;
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getName()
      */
@@ -201,7 +171,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		// Parse
 		IASTTranslationUnit tu = parser.parse();
 		// Set the PDOM if we can find one
-		tu.setPDOM(getPDOMProvider().getPDOM(project));
+		tu.setPDOM(PDOM.getPDOM(project));
 		return tu;
     }
 

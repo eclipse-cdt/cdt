@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -33,5 +34,13 @@ public interface IPDOMProvider {
 	 * @return the PDOM for the project
 	 */
 	public IPDOM getPDOM(IProject project);
+
+	/**
+	 * Return the element changed listener that will handled change
+	 * events that require the PDOM be updated.
+	 * 
+	 * @return the element changed listener
+	 */
+	public IElementChangedListener getElementChangedListener();
 	
 }

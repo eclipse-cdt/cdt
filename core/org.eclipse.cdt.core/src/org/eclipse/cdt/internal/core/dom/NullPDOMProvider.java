@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMProvider;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -22,6 +23,11 @@ public class NullPDOMProvider implements IPDOMProvider {
 
 	public IPDOM getPDOM(IProject project) {
 		// by default return null.
+		return null;
+	}
+	
+	public IElementChangedListener getElementChangedListener() {
+		// here too
 		return null;
 	}
 	

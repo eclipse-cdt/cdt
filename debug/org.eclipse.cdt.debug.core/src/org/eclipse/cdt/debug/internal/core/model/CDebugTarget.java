@@ -1620,41 +1620,55 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	private void setSourceLookupPath( ISourceContainer[] containers ) {
-		ArrayList list = new ArrayList( containers.length );
-		getSourceLookupPath( list, containers );
+		String[] paths = getSourceLookupPath( containers );
 		try {
-			getCDITarget().setSourcePaths( (String[])list.toArray( new String[list.size()] ) );
+			getCDITarget().setSourcePaths( paths );
 		}
 		catch( CDIException e ) {
 			CDebugCorePlugin.log( e );
 		}
 	}
 
-	private void getSourceLookupPath( List list, ISourceContainer[] containers ) {
-		for ( int i = 0; i < containers.length; ++i ) {
-			if ( containers[i] instanceof ProjectSourceContainer ) {
-				IProject project = ((ProjectSourceContainer)containers[i]).getProject();
+	private String[] getSourceLookupPath( ISourceContainer[] containers ) {
+		ArrayList cList = new ArrayList( containers.length );
+		getSourceContainers( cList, containers );
+		ArrayList list = new ArrayList( cList.size() );
+		Iterator it = cList.iterator();
+		while( it.hasNext() ) {
+			ISourceContainer c = (ISourceContainer)it.next();
+			if ( c instanceof ProjectSourceContainer ) {
+				IProject project = ((ProjectSourceContainer)c).getProject();
 				if ( project != null && project.exists() )
 					list.add( project.getLocation().toPortableString() );
 			}
-			if ( containers[i] instanceof FolderSourceContainer ) {
-				IContainer container = ((FolderSourceContainer)containers[i]).getContainer();
+			if ( c instanceof FolderSourceContainer ) {
+				IContainer container = ((FolderSourceContainer)c).getContainer();
 				if ( container != null && container.exists() )
 					list.add( container.getLocation().toPortableString() );
 			}
-			if ( containers[i] instanceof CDirectorySourceContainer ) {
-				File dir = ((CDirectorySourceContainer)containers[i]).getDirectory();
+			if ( c instanceof CDirectorySourceContainer ) {
+				File dir = ((CDirectorySourceContainer)c).getDirectory();
 				if ( dir != null && dir.exists() ) {
 					IPath path = new Path( dir.getAbsolutePath() );
 					list.add( path.toPortableString() );
 				}
 			}
-			if ( containers[i].isComposite() ) {
-				try {
-					getSourceLookupPath( list, containers[i].getSourceContainers() );
-				}
-				catch( CoreException e ) {
-					CDebugCorePlugin.log( e.getStatus() );
+		}
+		cList.clear();
+		return (String[])list.toArray( new String[list.size()] );
+	}
+
+	private void getSourceContainers( List list, ISourceContainer[] containers ) {
+		for ( int i = 0; i < containers.length; ++i ) {
+			if ( !list.contains( containers[i] ) ) {
+				list.add( containers[i] );
+				if ( containers[i].isComposite() ) {
+					try {
+						getSourceContainers( list, containers[i].getSourceContainers() );
+					}
+					catch( CoreException e ) {
+						CDebugCorePlugin.log( e.getStatus() );
+					}
 				}
 			}
 		}

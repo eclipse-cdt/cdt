@@ -11,7 +11,9 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
@@ -63,8 +65,9 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		try {
 			String handle = breakpoint.getSourceHandle();
 			ISourceContainer[] containers = getSourceContainers();
+			List list = new ArrayList( containers.length );
 			for ( int i = 0; i < containers.length; ++i ) {
-				if ( contains( containers[i], handle ) )
+				if ( contains( list, containers[i], handle ) )
 					return true;
 			}
 		}
@@ -75,14 +78,15 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 
 	public boolean contains( IProject project ) {
 		ISourceContainer[] containers = getSourceContainers();
+		List list = new ArrayList( containers.length );
 		for ( int i = 0; i < containers.length; ++i ) {
-			if ( contains( containers[i], project ) )
+			if ( contains( list, containers[i], project ) )
 				return true;
 		}
 		return false;
 	}
 
-	private boolean contains( ISourceContainer container, IProject project ) {
+	private boolean contains( List all, ISourceContainer container, IProject project ) {
 		if ( container instanceof ProjectSourceContainer && ((ProjectSourceContainer)container).getProject().equals( project ) ) {
 			return true;
 		}
@@ -90,8 +94,11 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			ISourceContainer[] containers;
 			containers = container.getSourceContainers();
 			for ( int i = 0; i < containers.length; ++i ) {
-				if ( contains( containers[i], project ) )
+				if ( !all.contains( containers[i] ) ) {
+					all.add( containers[i] );
+					if ( contains( all, containers[i], project ) )
 					return true;
+				}
 			}
 		}
 		catch( CoreException e ) {
@@ -99,7 +106,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return false;
 	}
 
-	private boolean contains( ISourceContainer container, String sourceName ) {
+	private boolean contains( List all, ISourceContainer container, String sourceName ) {
 		IPath path = new Path( sourceName );
 		if ( !path.isValidPath( sourceName ) )
 			return false;
@@ -133,8 +140,11 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 			ISourceContainer[] containers;
 			containers = container.getSourceContainers();
 			for ( int i = 0; i < containers.length; ++i ) {
-				if ( contains( containers[i], sourceName ) )
-					return true;
+				if ( !all.contains( containers[i] ) ) {
+					all.add( containers[i] );
+					if ( contains( all, containers[i], sourceName ) )
+						return true;
+				}
 			}
 		}
 		catch( CoreException e ) {
@@ -145,8 +155,9 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	public IPath getCompilationPath( String sourceName ) {
 		IPath path = null;
 		ISourceContainer[] containers = getSourceContainers();
+		List all = new ArrayList( containers.length );
 		for ( int i = 0; i < containers.length; ++i ) {
-			IPath cp = getCompilationPath( containers[i], sourceName );
+			IPath cp = getCompilationPath( all, containers[i], sourceName );
 			if ( cp != null ) {
 				path = cp;
 				break;
@@ -155,7 +166,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		return path;
 	}
 
-	private IPath getCompilationPath( ISourceContainer container, String sourceName ) {
+	private IPath getCompilationPath( List all, ISourceContainer container, String sourceName ) {
 		IPath path = null;
 		if ( container instanceof MappingSourceContainer ) {
 			path = ((MappingSourceContainer)container).getCompilationPath( sourceName );
@@ -165,9 +176,12 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 				ISourceContainer[] containers;
 				containers = container.getSourceContainers();
 				for ( int i = 0; i < containers.length; ++i ) {
-					path = getCompilationPath( containers[i], sourceName );
-					if ( path != null )
-						break;
+					if ( !all.contains( containers[i] ) ) {
+						all.add( containers[i] );
+						path = getCompilationPath( all, containers[i], sourceName );
+						if ( path != null )
+							break;
+					}
 				}
 			}
 			catch( CoreException e ) {

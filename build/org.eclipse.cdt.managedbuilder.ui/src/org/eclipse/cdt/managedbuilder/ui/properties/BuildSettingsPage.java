@@ -19,14 +19,15 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 public abstract class BuildSettingsPage extends FieldEditorPreferencePage {
-	protected IConfiguration configuration;
-	protected IResourceConfiguration resConfig;
+	protected IConfiguration clonedConfig;
+	protected IResourceConfiguration clonedResConfig;
+
 	private boolean dirty = false; 
 
 	/**
 	 * @param style
 	 */
-	protected BuildSettingsPage(IConfiguration config) {
+	protected BuildSettingsPage(IConfiguration clonedConfig) {
  		// fix for PR 63973
  		// If we use a grid layout then widgets that should be layed out horizontally,
  		// e.g. StringButtonFieldEditor, will have their component widgets
@@ -36,10 +37,10 @@ public abstract class BuildSettingsPage extends FieldEditorPreferencePage {
  		super(FLAT);
  		// end fix for 63973
 		noDefaultAndApplyButton();
-		configuration = config;
+		this.clonedConfig = clonedConfig;
 	}
 
-	protected BuildSettingsPage(IResourceConfiguration resConfig) {
+	protected BuildSettingsPage(IResourceConfiguration clonedResConfig) {
  		// fix for PR 63973
  		// If we use a grid layout then widgets that should be layed out horizontally,
  		// e.g. StringButtonFieldEditor, will have their component widgets
@@ -49,8 +50,11 @@ public abstract class BuildSettingsPage extends FieldEditorPreferencePage {
  		super(FLAT);
  		// end fix for 63973
 		noDefaultAndApplyButton();
-		this.resConfig = resConfig;
+		
+		this.clonedResConfig = clonedResConfig;
+		this.clonedConfig = clonedResConfig.getParent();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
@@ -63,7 +67,7 @@ public abstract class BuildSettingsPage extends FieldEditorPreferencePage {
 	/**
 	 * Return the tool settings preference store
 	 */
-	protected IPreferenceStore getToolSettingsPreferenceStore() {
+	protected BuildToolSettingsPreferenceStore getToolSettingsPreferenceStore() {
 		IPreferencePageContainer container = getContainer();
 		if (container instanceof BuildPropertyPage) {
 			return ((BuildPropertyPage)container).getToolSettingsPreferenceStore();

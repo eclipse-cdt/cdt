@@ -17,21 +17,25 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.ui.properties.AbstractBuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildOptionSettingsPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildSettingsPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolSettingsPage;
-import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolsSettingsStore;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolSettingsPreferenceStore;
 import org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.ToolListContentProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.ToolListLabelProvider;
@@ -43,15 +47,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -62,7 +64,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Shell;
 
 public class ToolsSettingsBlock extends AbstractCOptionPage {
 
@@ -90,8 +91,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * Bookeeping variables
 	 */
 	private Map configToPageListMap;
-	private BuildToolsSettingsStore settingsStore;
-	private Map settingsStoreMap;
+	private BuildToolSettingsPreferenceStore settingsStore;
 	private BuildPropertyPage parent;
 	private ResourceBuildPropertyPage resParent;
 	private BuildSettingsPage currentSettingsPage;
@@ -99,6 +99,8 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	private ToolListContentProvider provider;
 	private ITool selectedTool;
 	private Object element;
+	
+	private boolean defaultNeeded;
 
 	/**
 	 * The minimum page size; 200 by 200 by default.
@@ -152,6 +154,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		this.parent = parent;
 		configToPageListMap = new HashMap();
 		this.element = element;
+		settingsStore = new BuildToolSettingsPreferenceStore(this);
 	}
 
 	public ToolsSettingsBlock(ResourceBuildPropertyPage resParent, Object element)
@@ -161,6 +164,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		this.resParent = resParent;
 		configToPageListMap = new HashMap();
 		this.element = element;
+		settingsStore = new BuildToolSettingsPreferenceStore(this);
 	}
 	
 	public void createControl(Composite parent)  {
@@ -232,11 +236,11 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		if (currentSettingsPage == null) {
 			if ( this.element instanceof IProject) {
-				currentSettingsPage = new BuildOptionSettingsPage(parent.getSelectedConfiguration(), category);
+				currentSettingsPage = new BuildOptionSettingsPage(parent,parent.getSelectedConfigurationClone(), category);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(parent);
 			} else if ( this.element instanceof IFile) {
-				currentSettingsPage = new BuildOptionSettingsPage(resParent.getCurrentResourceConfig(), category);
+				currentSettingsPage = new BuildOptionSettingsPage(resParent,resParent.getCurrentResourceConfigClone(), category);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(resParent);
 			}
@@ -254,18 +258,6 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		currentSettingsPage.setVisible(true);
 
-		// save the last page build options.
-		// If the last page is tool page then parse all the options
-		// and put it in the appropriate preference store.
-		if (oldPage != null && oldPage != currentSettingsPage){
-			if(oldPage instanceof BuildOptionSettingsPage) {
-				((BuildOptionSettingsPage)oldPage).storeSettings();
-			}
-			else if(oldPage instanceof BuildToolSettingsPage) {
-				((BuildToolSettingsPage)oldPage).storeSettings();
-				//((BuildToolSettingsPage)oldPage).parseAllOptions();
-			}
-		}
 		//update the field editors in the current page
 		if(currentSettingsPage instanceof BuildOptionSettingsPage)
 			((BuildOptionSettingsPage)currentSettingsPage).updateFields();
@@ -305,11 +297,13 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		if (currentSettingsPage == null) {
 			if ( this.element instanceof IProject) {
-				currentSettingsPage = new BuildToolSettingsPage(parent.getSelectedConfiguration(), tool, obtainMacroProvider());
+				currentSettingsPage = new BuildToolSettingsPage(parent, 
+						parent.getSelectedConfigurationClone(), tool);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(parent);
 			} else if(this.element instanceof IFile) {
-				currentSettingsPage = new BuildToolSettingsPage(resParent.getCurrentResourceConfig(), tool, obtainMacroProvider());
+				currentSettingsPage = new BuildToolSettingsPage(resParent,
+						resParent.getCurrentResourceConfigClone(), tool);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(resParent);
 			}
@@ -340,7 +334,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		// Update the field editor that displays all the build options
 		if(currentSettingsPage instanceof BuildToolSettingsPage)
-			((BuildToolSettingsPage)currentSettingsPage).updateAllOptionField();
+			((BuildToolSettingsPage)currentSettingsPage).setValues();
 
 		if (oldPage != null && oldPage != currentSettingsPage)
 			oldPage.setVisible(false);
@@ -384,9 +378,12 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	}
 
 	public void setVisible(boolean visible){
-		// Update the field editor that displays all the build options
-		if(visible && currentSettingsPage instanceof BuildToolSettingsPage)
-			((BuildToolSettingsPage)currentSettingsPage).updateAllOptionField();
+		if(visible){
+			selectedCategory = null;
+			selectedTool = null;
+			handleOptionSelection();
+		}
+		super.setVisible(visible);
 	}
 
 	protected void setValues() {
@@ -401,31 +398,14 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			optionList.setContentProvider(provider);
 		}
 		if ( element instanceof IProject ) {
-			config = parent.getSelectedConfiguration();	
+			config = parent.getSelectedConfigurationClone();	
 			optionList.setInput(config);	
 		} else if ( element instanceof IFile){
-			resConfig = resParent.getCurrentResourceConfig();
+			resConfig = resParent.getCurrentResourceConfigClone();
 			optionList.setInput(resConfig);
 		}
 		
 		optionList.expandAll();
-		
-		// Create (or retrieve) the settings store for the configuration/resource configuration
-		BuildToolsSettingsStore store = null;
-		if ( element instanceof IProject ) {
-			store = (BuildToolsSettingsStore) getSettingsStoreMap().get(parent.getSelectedConfiguration().getId());
-			if (store == null) {
-				store = new BuildToolsSettingsStore(parent.getSelectedConfiguration());
-				getSettingsStoreMap().put(parent.getSelectedConfiguration().getId(), store);
-			}
-		} else if ( element instanceof IFile) {
-			store = (BuildToolsSettingsStore) getSettingsStoreMap().get(resParent.getCurrentResourceConfig().getId());
-			if (store == null) {
-				store = new BuildToolsSettingsStore(resParent.getCurrentResourceConfig());
-				getSettingsStoreMap().put(resParent.getCurrentResourceConfig().getId(), store);
-			}
-		}
-		settingsStore = store; 
 		
 		// Determine what the selection in the tree should be
 		Object primary = null;
@@ -476,20 +456,25 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			// Select the first tool in the list
 			Object[] elements = null;
 			if( element instanceof IProject){
-				elements = provider.getElements(parent.getSelectedConfiguration());
+				elements = provider.getElements(parent.getSelectedConfigurationClone());
 			} else if ( element instanceof IFile) {
-				elements = provider.getElements(resParent.getCurrentResourceConfig());
+				elements = provider.getElements(resParent.getCurrentResourceConfigClone());
 			}
 			primary = elements.length > 0 ? elements[0] : null;			
 		}
 		
 		if (primary != null) {
+			if(primary instanceof IOptionCategory){
+				if(resConfig != null)
+					settingsStore.setSelection(resConfig,(IOptionCategory)primary);
+				else
+					settingsStore.setSelection(config,(IOptionCategory)primary);
+			}
 			optionList.setSelection(new StructuredSelection(primary), true);
 		}
 	}
 
 	public void removeValues(String id) {
-		getSettingsStoreMap().remove(id);
 	}
 
 	private void handleOptionSelection() {
@@ -498,6 +483,12 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	
 		// Set the option page based on the selection
 		Object element = selection.getFirstElement();
+		if(element instanceof IOptionCategory){
+			if(resParent != null)
+				settingsStore.setSelection(resParent.getCurrentResourceConfigClone(),(IOptionCategory)element);
+			else
+				settingsStore.setSelection(parent.getSelectedConfigurationClone(),(IOptionCategory)element);
+		}
 		if (element instanceof ITool) {
 			displayOptionsForTool((ITool)element);
 		} else if (element instanceof IOptionCategory) {
@@ -517,7 +508,9 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			ManagedBuildManager.performValueHandlerEvent(parent.getSelectedConfiguration(), 
 					IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
 		} else if ( element instanceof IFile) {
-			ManagedBuildManager.performValueHandlerEvent(resParent.getCurrentResourceConfig(), 
+			IResourceConfiguration rcCfg = resParent.getCurrentResourceConfig(false);
+			if(rcCfg != null)
+				ManagedBuildManager.performValueHandlerEvent(rcCfg, 
 					IManagedOptionValueHandler.EVENT_SETDEFAULT);
 		}
 	}
@@ -532,6 +525,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		} else if ( element instanceof IFile) {
 			performDefaults( (IFile)element);
 		}
+		defaultNeeded = true;
 		return;
 	}
 	
@@ -539,76 +533,41 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		// TODO:  Should this reset all tools of the configuration, or just
 		//        the currently selected tool category?  Right now it is all tools.
 		
-		// Display a "Confirm" dialog box, since:
-		//        1.  The defaults are immediately applied
-		//        2.  The action cannot be undone
-		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
-		boolean shouldDefault = MessageDialog.openConfirm(shell,
-					ManagedBuilderUIMessages.getResourceString("BuildPropertyPage.defaults.title"), //$NON-NLS-1$
-					ManagedBuilderUIMessages.getResourceString("BuildPropertyPage.defaults.message")); //$NON-NLS-1$
-		if (!shouldDefault) return;
-		
-		// Empty the page list
-		List pages = getPagesForConfig();
-		pages.clear();
 		
 		// Get the build manager to reset build info for project
-		ManagedBuildManager.resetConfiguration(parent.getProject(), parent.getSelectedConfiguration());
+		ManagedBuildManager.resetConfiguration(parent.getProject(), parent.getSelectedConfigurationClone());
+		ITool tools[] = parent.getSelectedConfigurationClone().getFilteredTools();
+		for( int i = 0; i < tools.length; i++ ){
+			if(!tools[i].getCustomBuildStep())
+				tools[i].setToolCommand(null);
+		}
 		
-		// Recreate the settings store for the configuration
-		settingsStore = new BuildToolsSettingsStore(parent.getSelectedConfiguration());
-	
-		// Write out the build model info
-		ManagedBuildManager.setDefaultConfiguration(parent.getProject(), parent.getSelectedConfiguration());
-		ManagedBuildManager.saveBuildInfo(parent.getProject(), false);
-
-		// Call an MBS CallBack function to inform that default settings have been applied.
-		performSetDefaultsEventCallBack();
-			
 		// Reset the category or tool selection and run selection event handler
 		selectedCategory = null;
 		selectedTool = null;
 		handleOptionSelection();
 		
-		setDirty(false);
+		setDirty(true);
 	}
 
 	public void performDefaults(IFile file) {
 		// TODO:  Should this reset all options of the tool in current resource configuration, or just
 		//        the currently selected tool category?  Right now it is all options.
 		
-		// Display a "Confirm" dialog box, since:
-		//        1.  The defaults are immediately applied
-		//        2.  The action cannot be undone
-		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
-		boolean shouldDefault = MessageDialog.openConfirm(shell,
-					ManagedBuilderUIMessages.getResourceString("ResourceBuildPropertyPage.defaults.title"), //$NON-NLS-1$
-					ManagedBuilderUIMessages.getResourceString("ResourceBuildPropertyPage.defaults.message")); //$NON-NLS-1$
-		if (!shouldDefault) return;
-		
-		// Empty the page list
-		List pages = getPagesForConfig();
-		pages.clear();
-		
 		// Get the build manager to reset build info for project
-		ManagedBuildManager.resetResourceConfiguration(resParent.getProject(), resParent.getCurrentResourceConfig());
-		
-		// Recreate the settings store for the configuration
-		settingsStore = new BuildToolsSettingsStore(resParent.getCurrentResourceConfig());
-	
-		// Write out the build model info
-		ManagedBuildManager.setDefaultConfiguration(resParent.getProject(), resParent.getSelectedConfiguration());
-		ManagedBuildManager.saveBuildInfo(resParent.getProject(), false);
-
-		// Call an MBS CallBack function to inform that default settings have been applied.
-		performSetDefaultsEventCallBack();
+		ManagedBuildManager.resetResourceConfiguration(resParent.getProject(), resParent.getCurrentResourceConfigClone());
+		ITool tools[] = resParent.getCurrentResourceConfigClone().getTools();
+		for( int i = 0; i < tools.length; i++ ){
+			if(!tools[i].getCustomBuildStep())
+				tools[i].setToolCommand(null);
+		}
 
 		// Reset the category or tool selection and run selection event handler
 		selectedCategory = null;
 		selectedTool = null;
 		handleOptionSelection();
 		
-		setDirty(false);
+		setDirty(true);
 	}
 	
 	/*
@@ -617,30 +576,233 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		
-		// Force each settings page to update
-		List pages = getPagesForConfig();
-		// Make sure we have something to work on
-		if (pages == null) {
-			// Nothing to do
-			return;
+		if(element instanceof IFile)
+			resParent.getCurrentResourceConfig(true);
+		
+		if(defaultNeeded){
+			if(element instanceof IFile)
+				ManagedBuildManager.resetResourceConfiguration(resParent.getProject(), resParent.getCurrentResourceConfig(true));
+			else
+				ManagedBuildManager.resetConfiguration(parent.getProject(), parent.getSelectedConfiguration());
+
+			performSetDefaultsEventCallBack();
+			
+			defaultNeeded = false;
 		}
-		ListIterator iter = pages.listIterator();
-		while (iter.hasNext()) {
-			BuildSettingsPage page = (BuildSettingsPage) iter.next();
-			if (page == null) continue;
-			if (page instanceof BuildToolSettingsPage) {
-				// if the currentsettings page is not the tool settings page
-				// then update the all build options field editor based on the 
-				// build options in other options settings page.
-				if (!(currentSettingsPage instanceof BuildToolSettingsPage))
-					((BuildToolSettingsPage)page).updateAllOptionField();
-				((BuildToolSettingsPage)page).performOk();
-			} else if (page instanceof BuildOptionSettingsPage) {
-				((BuildOptionSettingsPage)page).performOk();				
-			}
-		}
+		//some options might be changed that do not belong to the created pages,
+		//we need to save all options instead
+		saveAll();
 		
 		setDirty(false);
+	}
+	
+	private void saveAll(){
+		if(resParent != null)
+			saveResourceConfig();
+		else
+			saveConfig();
+	}
+	
+	private void saveResourceConfig(){
+		IResourceConfiguration cloneRcCfg = resParent.getCurrentResourceConfigClone();
+		
+		ITool tools[] = cloneRcCfg.getTools();
+		
+		for(int i = 0; i < tools.length; i++){
+			saveHoldsOptions(tools[i]);
+		}
+	}
+	
+	private void saveHoldsOptions(IHoldsOptions holder){
+		if(holder instanceof ITool && ((ITool)holder).getCustomBuildStep())
+			return;
+		AbstractBuildPropertyPage page = resParent != null ? 
+				(AbstractBuildPropertyPage)resParent : (AbstractBuildPropertyPage)parent;
+		
+		IHoldsOptions realHo = page.getRealHoldsOptions(holder);
+		
+		if(realHo != null){
+			if(holder instanceof ITool)
+				((ITool)realHo).setToolCommand(((ITool)holder).getToolCommand());
+			
+			IOption options[] = holder.getOptions();
+			for(int i = 0; i < options.length; i++){
+				saveOption(options[i], holder);
+			}
+		}
+	}
+	private void saveOption(IOption clonedOption, IHoldsOptions cloneHolder){
+		IConfiguration realCfg = null;
+		IResourceConfiguration realRcCfg = null;
+		IBuildObject handler = null;
+		IOption realOption;
+		IHoldsOptions realHolder;
+		
+		if(resParent != null){ 
+			realOption = resParent.getRealOption(clonedOption,cloneHolder);
+			realHolder = resParent.getRealHoldsOptions(cloneHolder);
+			realRcCfg = (IResourceConfiguration)((ITool)realHolder).getParent();
+			realCfg = realRcCfg.getParent();
+			handler = realRcCfg;
+		} else {
+			realOption = parent.getRealOption(clonedOption,cloneHolder);
+			realHolder = parent.getRealHoldsOptions(cloneHolder);
+			realCfg = parent.getConfigurationFromHoldsOptions(realHolder);
+			handler = realCfg;
+		}		
+		
+		try {
+			// Transfer value from preference store to options
+			IOption setOption = null;
+			switch (clonedOption.getValueType()) {
+				case IOption.BOOLEAN :
+					boolean boolVal = clonedOption.getBooleanValue();
+					if(realRcCfg != null) {
+						setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, boolVal);
+					} else {
+						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, boolVal);
+					}
+					// Reset the preference store since the Id may have changed
+//					if (setOption != option) {
+//						getToolSettingsPreferenceStore().setValue(setOption.getId(), boolVal);
+//						FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//						fe.setPreferenceName(setOption.getId());
+//					}
+					break;
+				case IOption.ENUMERATED :
+					String enumVal = clonedOption.getStringValue();
+					String enumId = clonedOption.getEnumeratedId(enumVal);
+					if(realRcCfg != null) {
+						setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, 
+								(enumId != null && enumId.length() > 0) ? enumId : enumVal);
+					} else {
+						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, 
+								(enumId != null && enumId.length() > 0) ? enumId : enumVal);
+					}
+					// Reset the preference store since the Id may have changed
+//					if (setOption != option) {
+//						getToolSettingsPreferenceStore().setValue(setOption.getId(), enumVal);
+//						FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//						fe.setPreferenceName(setOption.getId());
+//					}
+					break;
+				case IOption.STRING :
+					String strVal = clonedOption.getStringValue();
+					if(realRcCfg != null){
+						setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, strVal);
+					} else {
+						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, strVal);	
+					}
+					
+					// Reset the preference store since the Id may have changed
+//					if (setOption != option) {
+//						getToolSettingsPreferenceStore().setValue(setOption.getId(), strVal);
+//						FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//						fe.setPreferenceName(setOption.getId());
+//					}
+					break;
+				case IOption.STRING_LIST :
+				case IOption.INCLUDE_PATH :
+				case IOption.PREPROCESSOR_SYMBOLS :
+				case IOption.LIBRARIES :
+				case IOption.OBJECTS :
+					String[] listVal = (String[])((List)clonedOption.getValue()).toArray(new String[0]);
+					if( realRcCfg != null){
+						setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, listVal);
+					}else {
+						setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, listVal);	
+					}
+					
+					// Reset the preference store since the Id may have changed
+//					if (setOption != option) {
+//						getToolSettingsPreferenceStore().setValue(setOption.getId(), listStr);
+//						FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//						fe.setPreferenceName(setOption.getId());
+//					}
+					break;
+				default :
+					break;
+			}
+
+			// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
+			// press have been applied.
+			if (setOption == null)
+				setOption = realOption;
+			
+			if (setOption.getValueHandler().handleValue(
+					handler, 
+					setOption.getOptionHolder(), 
+					setOption,
+					setOption.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+		} catch (BuildException e) {
+		} catch (ClassCastException e) {
+		}
+
+	}
+
+	private void saveConfig(){
+		IConfiguration cfg = parent.getSelectedConfigurationClone();
+		
+		IToolChain tc = cfg.getToolChain();
+		saveHoldsOptions(tc);
+		
+		ITool tools[] = tc.getTools();
+		for(int i = 0; i < tools.length; i++){
+			saveHoldsOptions(tools[i]);
+		}
+	}
+	
+	public boolean containsDefaults(){
+		if(resParent == null)
+			return false;
+		return containsDefaults(resParent.getCurrentResourceConfigClone());
+	}
+	
+	protected boolean containsDefaults(IResourceConfiguration rcCfg){
+		IConfiguration cfg = rcCfg.getParent();
+		ITool tools[] = rcCfg.getTools();
+		for(int i = 0; i < tools.length; i++){
+			ITool tool = tools[i];
+			if(!tool.getCustomBuildStep()){
+				IOption options[] = tool.getOptions();
+				for( int j = 0; j < options.length; j++){
+					IOption option = options[j];
+					if(option.getParent() == tool){
+						IOption ext = option;
+						do{
+							if(ext.isExtensionElement())
+								break;
+						} while((ext = ext.getSuperClass()) != null);
+
+						if(ext != null){
+							ITool cfgTool = cfg.getToolChain().getTool(tool.getSuperClass().getId());
+							if(cfgTool != null){
+								IOption defaultOpt = cfgTool.getOptionBySuperClassId(ext.getId());
+								try {								
+									if(defaultOpt != null && defaultOpt.getValueType() == option.getValueType()){
+										Object value = option.getValue();
+										Object defaultVal = defaultOpt.getValue();
+										
+										if(value.equals(defaultVal))
+											continue;
+										//TODO: check list also
+									}
+								}catch (BuildException e) {
+								}
+							}
+						}
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -651,42 +813,30 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		List pages = null;
 		if ( element instanceof IProject) {
 //			 Make sure that something was selected
-			if (parent.getSelectedConfiguration() == null) {
+			if (parent.getSelectedConfigurationClone() == null) {
 				return null;
 			}
-			pages = (List) configToPageListMap.get(parent.getSelectedConfiguration().getId());	
+			pages = (List) configToPageListMap.get(parent.getSelectedConfigurationClone().getId());	
 		} else if (element instanceof IFile) {
-			if ( resParent.getCurrentResourceConfig() == null ) {
+			if ( resParent.getCurrentResourceConfigClone() == null ) {
 				return null;
 			}
-			pages = (List) configToPageListMap.get(resParent.getCurrentResourceConfig().getId());
+			pages = (List) configToPageListMap.get(resParent.getCurrentResourceConfigClone().getId());
 		}
 		
 		if (pages == null) {
 			pages = new ArrayList();
 			if ( element instanceof IProject) {
-				configToPageListMap.put(parent.getSelectedConfiguration().getId(), pages);	
+				configToPageListMap.put(parent.getSelectedConfigurationClone().getId(), pages);	
 			} else if ( element instanceof IFile) {
-				configToPageListMap.put(resParent.getCurrentResourceConfig().getId(), pages);
+				configToPageListMap.put(resParent.getCurrentResourceConfigClone().getId(), pages);
 			}
 		}
 		return pages;
 	}
 
-	public IPreferenceStore getPreferenceStore() {
+	public BuildToolSettingsPreferenceStore getPreferenceStore() {
 		return settingsStore;
-	}
-
-	/* (non-Javadoc)
-	 * Safe accessor method
-	 * 
-	 * @return Returns the Map of configurations to preference stores.
-	 */
-	protected Map getSettingsStoreMap() {
-		if (settingsStoreMap == null) {
-			settingsStoreMap = new HashMap();
-		}
-		return settingsStoreMap;
 	}
 
 	/**
@@ -736,7 +886,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * the user-modified macros that are not applied yet
 	 * If the "Build Macros" tab is not available, returns the default BuildMacroProvider
 	 */
-	protected BuildMacroProvider obtainMacroProvider(){
+	public BuildMacroProvider obtainMacroProvider(){
 		ICOptionContainer container = getContainer();
 		ManagedBuildOptionBlock optionBlock = null;
 		if(container instanceof BuildPropertyPage){

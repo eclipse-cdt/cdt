@@ -470,5 +470,11 @@ public interface IConfiguration extends IBuildObject {
 	 * @return IConfigurationBuildMacroSupplier
 	 */
 	public IConfigurationBuildMacroSupplier getBuildMacroSupplier();
+	
+	/**
+	 * answers true if the configuration is temporary, otherwise - false
+	 * @return boolean
+	 */
+	public boolean isTemporary();
 
 }

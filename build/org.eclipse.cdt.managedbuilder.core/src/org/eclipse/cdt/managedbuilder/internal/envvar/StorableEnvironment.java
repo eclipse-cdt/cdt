@@ -90,10 +90,13 @@ public class StorableEnvironment {
 		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 
-		StorableEnvVar var = new StorableEnvVar(name, value, op, delimiter);
-		addVariable(var);
-		fIsDirty = true;
-		fIsChanged = true;
+		IBuildEnvironmentVariable var = checkVariable(name,value,op,delimiter);
+		if(var == null){
+			var = new StorableEnvVar(name, value, op, delimiter);
+			addVariable(var);
+			fIsDirty = true;
+			fIsChanged = true;
+		}
 		return var;
 	}
 
@@ -107,6 +110,23 @@ public class StorableEnvironment {
 	
 	public IBuildEnvironmentVariable createVariable(String name, String value, String delimiter){
 		return createVariable(name,value,IBuildEnvironmentVariable.ENVVAR_REPLACE,delimiter);	
+	}
+	
+	public IBuildEnvironmentVariable checkVariable(String name, String value, int op, String delimiter){
+		IBuildEnvironmentVariable var = getVariable(name);
+		if(var != null 
+				&& checkStrings(var.getValue(),value)
+				&& var.getOperation() == op
+				&& checkStrings(var.getDelimiter(),delimiter))
+			return var;
+		return null;
+	}
+	
+	private boolean checkStrings(String str1, String str2){
+		if(str1 != null &&
+				str1.equals(str2))
+			return true;
+		return str1 == str2;
 	}
 	
 	/**
@@ -160,6 +180,35 @@ public class StorableEnvironment {
 			name = name.toUpperCase();
 		
 		return (IBuildEnvironmentVariable)getMap().get(name);
+	}
+	
+	public void setVariales(IBuildEnvironmentVariable vars[]){
+		if(vars == null || vars.length == 0)
+			deleteAll();
+		else{
+			if (getMap().size() != 0) {
+				Iterator iter = getMap().values().iterator();
+				while(iter.hasNext()){
+					IBuildEnvironmentVariable v = (IBuildEnvironmentVariable)iter.next();
+					int i;
+					for(i = 0 ; i < vars.length; i++){
+						if(v.getName().equals(vars[i].getName()))
+							break;
+					}
+					if(i == vars.length)
+						deleteVariable(v.getName());
+				}
+			}
+			createVriables(vars);
+		}
+	}
+	
+	public void createVriables(IBuildEnvironmentVariable vars[]){
+		for(int i = 0; i < vars.length; i++)
+			createVariable(vars[i].getName(),
+					vars[i].getValue(),
+					vars[i].getOperation(),
+					vars[i].getDelimiter());
 	}
 	
 	public IBuildEnvironmentVariable[] getVariables(){

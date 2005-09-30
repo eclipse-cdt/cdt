@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -21,39 +22,43 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
-import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import java.lang.AssertionError;
 
 public class BuildOptionSettingsPage extends BuildSettingsPage {
 	private Map fieldsMap = new HashMap();
-	private IOptionCategory category;
+	private IOptionCategory clonedCategory;
 	private boolean isItResourceConfigPage;
 	private Map fieldEditorsToParentMap = new HashMap();
+	private AbstractBuildPropertyPage buildPropPage;
 
-	public BuildOptionSettingsPage(IConfiguration configuration, IOptionCategory category) {
+	public BuildOptionSettingsPage(AbstractBuildPropertyPage page,
+			IConfiguration clonedConfig, IOptionCategory clonedCategory) {
 		// Cache the configuration and option category this page is created for
-		super(configuration);
-		this.category = category;
+		super(clonedConfig);
+		this.clonedCategory = clonedCategory;
 		isItResourceConfigPage = false;
+		buildPropPage = page;
 	}
 	
-	public BuildOptionSettingsPage(IResourceConfiguration resConfig, IOptionCategory category) {
+	public BuildOptionSettingsPage(AbstractBuildPropertyPage page,
+			IResourceConfiguration clonedResConfig, IOptionCategory clonedCategory) {
 		// Cache the configuration and option category this page is created for
-		super(resConfig);
-		this.category = category;
+		super(clonedResConfig);
+		this.clonedCategory = clonedCategory;
 		isItResourceConfigPage = true;
+		buildPropPage = page;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#computeSize()
@@ -61,18 +66,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	public Point computeSize() {
 		return super.computeSize();
 	}
-	/* (non-Javadoc)
-	 * Private access function which returns the correct configuration
-	 * argument for valueHandler call-backs.
-	 */	
-	private IBuildObject getConfigurationHandle() {
-		if ( isItResourceConfigPage ) {
-			return resConfig;
-		} else {
-			return configuration;
-		}		
-	}	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
@@ -83,9 +77,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		// for each
 		Object[][] options;
 		if ( isItResourceConfigPage ) {
-			options = category.getOptions(resConfig);
+			options = clonedCategory.getOptions(clonedResConfig);
 		} else {
-			options = category.getOptions(configuration);
+			options = clonedCategory.getOptions(clonedConfig);
 		}
 		
 		for (int index = 0; index < options.length; ++index) {
@@ -93,6 +87,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 			IHoldsOptions holder = (IHoldsOptions)options[index][0];
 			if (holder == null) break;	//  The array may not be full
 			IOption opt = (IOption)options[index][1];
+			String prefName = getToolSettingsPreferenceStore().getOptionPrefName(opt); 
 
 			
 			// check to see if the option has an applicability calculator
@@ -101,9 +96,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 			// is the option visible?
 			IBuildObject config;
 			if ( isItResourceConfigPage ) {
-				config = resConfig;
+				config = clonedResConfig;
 			} else {
-				config = configuration;
+				config = clonedConfig;
 			}
 			if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(config, holder, opt)) {
 		
@@ -122,13 +117,13 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						case IOption.BROWSE_DIR:
 							Composite fieldEditorParent2 = getFieldEditorParent();
 							DirectoryFieldEditor dirFieldEditor = new DirectoryFieldEditor(
-									opt.getId(), opt.getName(),	fieldEditorParent2);
+									prefName, opt.getName(),	fieldEditorParent2);
 
 							setFieldEditorEnablement(holder,
 									opt, applicabilityCalculator, dirFieldEditor, fieldEditorParent2);
 
 							addField(dirFieldEditor);
-							fieldsMap.put(opt.getId(), dirFieldEditor);
+							fieldsMap.put(prefName, dirFieldEditor);
 							fieldEditorsToParentMap.put(dirFieldEditor,	fieldEditorParent2);
 
 							break;
@@ -136,26 +131,26 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						case IOption.BROWSE_FILE:
 							Composite fieldEditorParent3 = getFieldEditorParent();
 							FileFieldEditor fileFieldEditor = new FileFieldEditor(
-									opt.getId(), opt.getName(),	fieldEditorParent3);
+									prefName, opt.getName(),	fieldEditorParent3);
 
 							setFieldEditorEnablement(holder,
 									opt, applicabilityCalculator, fileFieldEditor, fieldEditorParent3);
 
 							addField(fileFieldEditor);
-							fieldsMap.put(opt.getId(), fileFieldEditor);
+							fieldsMap.put(prefName, fileFieldEditor);
 							fieldEditorsToParentMap.put(fileFieldEditor, fieldEditorParent3);
 							break;
 
 						case IOption.BROWSE_NONE:
 							Composite fieldEditorParent4 = getFieldEditorParent();
 							StringFieldEditor stringField = new StringFieldEditor(
-									opt.getId(), opt.getName(),	fieldEditorParent4);
+									prefName, opt.getName(),	fieldEditorParent4);
 
 							setFieldEditorEnablement(holder,
 									opt, applicabilityCalculator, stringField, fieldEditorParent4);
 
 							addField(stringField);
-							fieldsMap.put(opt.getId(), stringField);
+							fieldsMap.put(prefName, stringField);
 							fieldEditorsToParentMap.put(stringField, fieldEditorParent4);
 							break;
 
@@ -168,13 +163,13 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 					case IOption.BOOLEAN:
 						Composite fieldEditorParent5 = getFieldEditorParent();
 						BooleanFieldEditor booleanField = new BooleanFieldEditor(
-								opt.getId(), opt.getName(), fieldEditorParent5);
+								prefName, opt.getName(), fieldEditorParent5);
 
 						setFieldEditorEnablement(holder, 
 								opt, applicabilityCalculator, booleanField, fieldEditorParent5);
 
 						addField(booleanField);
-						fieldsMap.put(opt.getId(), booleanField);
+						fieldsMap.put(prefName, booleanField);
 						fieldEditorsToParentMap.put(booleanField, fieldEditorParent5);
 						break;
 					case IOption.ENUMERATED:
@@ -195,7 +190,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						String[] enumNames = opt.getApplicableValues();
 						Vector enumValidList = new Vector();
 						for (int i = 0; i < enumNames.length; ++i) {
-							if (opt.getValueHandler().isEnumValueAppropriate(getConfigurationHandle(), 
+							if (opt.getValueHandler().isEnumValueAppropriate(config, 
 									opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
 								enumValidList.add(enumNames[i]);
 							}
@@ -205,13 +200,13 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 
 						Composite fieldEditorParent6 = getFieldEditorParent();
 						BuildOptionComboFieldEditor comboField = new BuildOptionComboFieldEditor(
-								opt.getId(), opt.getName(), enumValidNames, sel, fieldEditorParent6);
+								prefName, opt.getName(), enumValidNames, sel, fieldEditorParent6);
 
 						setFieldEditorEnablement(holder, 
 								opt, applicabilityCalculator, comboField, fieldEditorParent6);
 
 						addField(comboField);
-						fieldsMap.put(opt.getId(), comboField);
+						fieldsMap.put(prefName, comboField);
 						fieldEditorsToParentMap.put(comboField,	fieldEditorParent6);
 						break;
 					case IOption.INCLUDE_PATH:
@@ -222,13 +217,13 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 
 						Composite fieldEditorParent7 = getFieldEditorParent();
 						FileListControlFieldEditor listField = new FileListControlFieldEditor(
-								opt.getId(), opt.getName(), fieldEditorParent7,	opt.getBrowseType());
+								prefName, opt.getName(), fieldEditorParent7,	opt.getBrowseType());
 
 						setFieldEditorEnablement(holder, 
 								opt, applicabilityCalculator, listField, fieldEditorParent7);
 
 						addField(listField);
-						fieldsMap.put(opt.getId(), listField);
+						fieldsMap.put(prefName, listField);
 						fieldEditorsToParentMap.put(listField, fieldEditorParent7);
 						break;
 					default:
@@ -249,7 +244,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	 */
 	public boolean isForCategory(IOptionCategory category) {
 		if (category != null) {
-			return category.equals(this.category);
+			return category.equals(this.clonedCategory);
 		}
 		return false;
 	}
@@ -262,87 +257,103 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		boolean ok = super.performOk();
 		// Write the preference store values back to the build model
 		
-		Object[][] options;
+		Object[][] clonedOptions;
+		IResourceConfiguration realRcCfg = null;
+		IConfiguration realCfg = null;
+		IBuildObject handler = null;
+		
 		if (isItResourceConfigPage){
-			options = category.getOptions(resConfig);
+			realRcCfg = buildPropPage.getRealRcConfig(clonedResConfig);
+			if(realRcCfg == null)
+				return false;
+			handler = realRcCfg;
+			clonedOptions = clonedCategory.getOptions(clonedResConfig);
 		} else {
-			options = category.getOptions(configuration);
+			realCfg = buildPropPage.getRealConfig(clonedConfig);
+			if(realCfg == null)
+				return false;
+			handler = realCfg;
+			clonedOptions = clonedCategory.getOptions(clonedConfig);
 		}
 		
-		for (int i = 0; i < options.length; i++) {
-			IHoldsOptions holder = (IHoldsOptions)options[i][0];
-			if (holder == null) break;	//  The array may not be full
-			IOption option = (IOption)options[i][1];
+		for (int i = 0; i < clonedOptions.length; i++) {
+			IHoldsOptions clonedHolder = (IHoldsOptions)clonedOptions[i][0];
+			if (clonedHolder == null) break;	//  The array may not be full
+			IOption clonedOption = (IOption)clonedOptions[i][1];
+			
+			IHoldsOptions realHolder = buildPropPage.getRealHoldsOptions(clonedHolder);
+			if(realHolder == null) continue;
+			IOption realOption = buildPropPage.getRealOption(clonedOption, clonedHolder);
+			if(realOption == null) continue;
 
 			try {
 				// Transfer value from preference store to options
 				IOption setOption = null;
-				switch (option.getValueType()) {
+				switch (clonedOption.getValueType()) {
 					case IOption.BOOLEAN :
-						boolean boolVal = getToolSettingsPreferenceStore().getBoolean(option.getId());
+						boolean boolVal = clonedOption.getBooleanValue();
 						if(isItResourceConfigPage) {
-							setOption = ManagedBuildManager.setOption(resConfig, holder, option, boolVal);
+							setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, boolVal);
 						} else {
-							setOption = ManagedBuildManager.setOption(configuration, holder, option, boolVal);
+							setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, boolVal);
 						}
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), boolVal);
-							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-							fe.setPreferenceName(setOption.getId());
-						}
+//						if (setOption != option) {
+//							getToolSettingsPreferenceStore().setValue(setOption.getId(), boolVal);
+//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//							fe.setPreferenceName(setOption.getId());
+//						}
 						break;
 					case IOption.ENUMERATED :
-						String enumVal = getToolSettingsPreferenceStore().getString(option.getId());
-						String enumId = option.getEnumeratedId(enumVal);
+						String enumVal = clonedOption.getStringValue();
+						String enumId = clonedOption.getEnumeratedId(enumVal);
 						if(isItResourceConfigPage) {
-							setOption = ManagedBuildManager.setOption(resConfig, holder, option, 
+							setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, 
 									(enumId != null && enumId.length() > 0) ? enumId : enumVal);
 						} else {
-							setOption = ManagedBuildManager.setOption(configuration, holder, option, 
+							setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, 
 									(enumId != null && enumId.length() > 0) ? enumId : enumVal);
 						}
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), enumVal);
-							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-							fe.setPreferenceName(setOption.getId());
-						}
+//						if (setOption != option) {
+//							getToolSettingsPreferenceStore().setValue(setOption.getId(), enumVal);
+//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//							fe.setPreferenceName(setOption.getId());
+//						}
 						break;
 					case IOption.STRING :
-						String strVal = getToolSettingsPreferenceStore().getString(option.getId());
+						String strVal = clonedOption.getStringValue();
 						if(isItResourceConfigPage){
-							setOption = ManagedBuildManager.setOption(resConfig, holder, option, strVal);
+							setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, strVal);
 						} else {
-							setOption = ManagedBuildManager.setOption(configuration, holder, option, strVal);	
+							setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, strVal);	
 						}
 						
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), strVal);
-							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-							fe.setPreferenceName(setOption.getId());
-						}
+//						if (setOption != option) {
+//							getToolSettingsPreferenceStore().setValue(setOption.getId(), strVal);
+//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//							fe.setPreferenceName(setOption.getId());
+//						}
 						break;
 					case IOption.STRING_LIST :
 					case IOption.INCLUDE_PATH :
 					case IOption.PREPROCESSOR_SYMBOLS :
 					case IOption.LIBRARIES :
 					case IOption.OBJECTS :
-						String listStr = getToolSettingsPreferenceStore().getString(option.getId());
-						String[] listVal = BuildToolsSettingsStore.parseString(listStr);
+						String[] listVal = (String[])((List)clonedOption.getValue()).toArray(new String[0]);
 						if( isItResourceConfigPage){
-							setOption = ManagedBuildManager.setOption(resConfig, holder, option, listVal);
+							setOption = ManagedBuildManager.setOption(realRcCfg, realHolder, realOption, listVal);
 						}else {
-							setOption = ManagedBuildManager.setOption(configuration, holder, option, listVal);	
+							setOption = ManagedBuildManager.setOption(realCfg, realHolder, realOption, listVal);	
 						}
 						
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), listStr);
-							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
-							fe.setPreferenceName(setOption.getId());
-						}
+//						if (setOption != option) {
+//							getToolSettingsPreferenceStore().setValue(setOption.getId(), listStr);
+//							FieldEditor fe = (FieldEditor)fieldsMap.get(option.getId());
+//							fe.setPreferenceName(setOption.getId());
+//						}
 						break;
 					default :
 						break;
@@ -351,10 +362,10 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 				// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
 				// press have been applied.
 				if (setOption == null)
-					setOption = option;
+					setOption = realOption;
 				
 				if (setOption.getValueHandler().handleValue(
-						getConfigurationHandle(), 
+						handler, 
 						setOption.getOptionHolder(), 
 						setOption,
 						setOption.getValueHandlerExtraArgument(), 
@@ -364,7 +375,10 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 				} else {
 					// Event handling Failed. 
 				} 
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			} catch (ClassCastException e) {
+			}
+			
 
 		}
 		return ok;
@@ -374,6 +388,38 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	 * Update field editors in this page when the page is loaded.
 	 */
 	public void updateFields() {
+		Object[][] options;
+		if (isItResourceConfigPage) {
+			options = clonedCategory.getOptions(clonedResConfig);
+		} else {
+			options = clonedCategory.getOptions(clonedConfig);
+		}
+
+		// some option has changed on this page... update enabled/disabled state for all options
+
+		for (int index = 0; index < options.length; ++index) {
+			// Get the option
+			IHoldsOptions holder = (IHoldsOptions) options[index][0];
+			if (holder == null)
+				break; //  The array may not be full
+			IOption opt = (IOption) options[index][1];
+			String prefName = getToolSettingsPreferenceStore().getOptionPrefName(opt); 
+
+
+			// is the option on this page?
+			if (fieldsMap.containsKey(prefName)) {
+				// check to see if the option has an applicability calculator
+				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
+
+				if (applicabilityCalculator != null) {
+					FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
+					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
+					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
+				}
+			}
+
+		}
+		
 		Collection fieldsList = fieldsMap.values();
 		Iterator iter = fieldsList.iterator();
 		while (iter.hasNext()) {
@@ -389,7 +435,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	 * saves all field editors
 	 */
 	public void storeSettings() {
-		super.performOk();
+//		super.performOk();
 	}
 	
 	private void setFieldEditorEnablement(IHoldsOptions holder, IOption option,
@@ -400,9 +446,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		// if the option is not enabled then disable it
 		IBuildObject config;
 		if ( isItResourceConfigPage ) {
-			config = resConfig;
+			config = clonedResConfig;
 		} else {
-			config = configuration;
+			config = clonedConfig;
 		}
 		if (!optionApplicability.isOptionEnabled(config, holder, option )) {
 			fieldEditor.setEnabled(false, parent);
@@ -417,15 +463,92 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	public void propertyChange(PropertyChangeEvent event) {
 		// allow superclass to handle as well
 		super.propertyChange(event);
+		
+		Object source = event.getSource();
+		IOption changedOption = null;
+		IHoldsOptions changedHolder = null;
+		IOption newOption = null;
+		String id = null;
 
-		// some option has changed on this page... update enabled/disabled state for all options
+		if(source instanceof FieldEditor){
+			FieldEditor fe = (FieldEditor)source;
+			
+			id = fe.getPreferenceName();
+			
+			Object option[] = this.getToolSettingsPreferenceStore().getOption(id);
+			
+			if(option != null){
+				changedOption = (IOption)option[1];
+				changedHolder = (IHoldsOptions)option[0];
+				try {
+					switch(changedOption.getValueType()){
+					case IOption.STRING:
+						if(fe instanceof StringFieldEditor){
+							String val = ((StringFieldEditor)fe).getStringValue();
+							if (isItResourceConfigPage) {
+								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
+							} else {
+								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
+							}
+						}
+						break;
+					case IOption.BOOLEAN:
+						if(fe instanceof BooleanFieldEditor){
+							boolean val = ((BooleanFieldEditor)fe).getBooleanValue();
+							if (isItResourceConfigPage) {
+								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
+							} else {
+								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
+							}
+						}
+						break;
+					case IOption.ENUMERATED:
+						if(fe instanceof BuildOptionComboFieldEditor){
+							String name = ((BuildOptionComboFieldEditor)fe).getSelection();
+							String enumId = changedOption.getEnumeratedId(name);
+							if(isItResourceConfigPage) {
+								newOption = clonedResConfig.setOption(changedHolder, changedOption, 
+										(enumId != null && enumId.length() > 0) ? enumId : name);
+							} else {
+								newOption = clonedConfig.setOption(changedHolder, changedOption, 
+										(enumId != null && enumId.length() > 0) ? enumId : name);
+							}
+	
+						}
+						break;
+					case IOption.INCLUDE_PATH:
+					case IOption.STRING_LIST:
+					case IOption.PREPROCESSOR_SYMBOLS:
+					case IOption.LIBRARIES:
+					case IOption.OBJECTS:
+						if(fe instanceof FileListControlFieldEditor){
+							String val[] =((FileListControlFieldEditor)fe).getStringListValue();
+							if (isItResourceConfigPage) {
+								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
+							} else {
+								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
+							}
+						}
+						break;
+					default:
+						break;
+	
+					}
+				} catch (BuildException e) {
+				}
+				
+			}
+		}
+		
 
 		Object[][] options;
 		if (isItResourceConfigPage) {
-			options = category.getOptions(resConfig);
+			options = clonedCategory.getOptions(clonedResConfig);
 		} else {
-			options = category.getOptions(configuration);
+			options = clonedCategory.getOptions(clonedConfig);
 		}
+
+		// some option has changed on this page... update enabled/disabled state for all options
 
 		for (int index = 0; index < options.length; ++index) {
 			// Get the option
@@ -433,20 +556,30 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 			if (holder == null)
 				break; //  The array may not be full
 			IOption opt = (IOption) options[index][1];
+			String prefName = getToolSettingsPreferenceStore().getOptionPrefName(opt); 
+
 
 			// is the option on this page?
-			if (fieldsMap.containsKey(opt.getId())) {
+			if (fieldsMap.containsKey(prefName)) {
 				// check to see if the option has an applicability calculator
 				IOptionApplicability applicabilityCalculator = opt.getApplicabilityCalculator();
 
 				if (applicabilityCalculator != null) {
-					FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(opt.getId());
+					FieldEditor fieldEditor = (FieldEditor) fieldsMap.get(prefName);
 					Composite parent = (Composite) fieldEditorsToParentMap.get(fieldEditor);
 					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, parent);
 				}
 			}
 
 		}
+		
+		Iterator iter = fieldsMap.values().iterator();
+		while (iter.hasNext()) {
+			FieldEditor editor = (FieldEditor) iter.next();
+			if(id == null || !id.equals(editor.getPreferenceName()))
+				editor.load();
+		}
+
 	}
 
 }

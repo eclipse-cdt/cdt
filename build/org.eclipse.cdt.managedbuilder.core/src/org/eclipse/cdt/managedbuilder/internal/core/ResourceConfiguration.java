@@ -164,26 +164,21 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			Iterator iter = cloneConfig.getToolList().listIterator();
 			while (iter.hasNext()) {
 				Tool toolChild = (Tool) iter.next();
-				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId;
-				String tmpId;
 				String subName;
-				String version;
 				
 				if (toolChild.getSuperClass() != null) {
-					tmpId = toolChild.getSuperClass().getId();
+					subId = ManagedBuildManager.calculateChildId(
+								toolChild.getSuperClass().getId(),
+								null);
 					subName = toolChild.getSuperClass().getName();
 				} else {
-					tmpId = toolChild.getId();
+					subId = ManagedBuildManager.calculateChildId(
+								toolChild.getId(),
+								null);
 					subName = toolChild.getName();
 				}				
-				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
-				if ( version != null) {   // If the 'tmpId' contains version information
-					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					subId = tmpId + "." + nnn;		//$NON-NLS-1$
-				}
-				
+
 				//  The superclass for the cloned tool is not the same as the one from the tool being cloned.
 				//  The superclasses reside in different configurations. 
 				ITool toolSuperClass = null;
@@ -646,6 +641,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (isExcluded == null || excluded != isExcluded.booleanValue()) {
 			isExcluded = new Boolean(excluded);
 			setDirty(true);
+			parent.setRebuildState(true);
 		}
 	}
 
@@ -926,4 +922,14 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		// Do nothing
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
+	 */
+	public void updateManagedBuildRevision(String revision){
+		super.updateManagedBuildRevision(revision);
+		
+		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
+			((Tool)iter.next()).updateManagedBuildRevision(revision);
+		}
+	}
 }

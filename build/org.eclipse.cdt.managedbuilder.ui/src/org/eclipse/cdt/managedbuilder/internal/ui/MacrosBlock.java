@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvVarOperationProcessor;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
-import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
@@ -36,6 +36,7 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier;
+import org.eclipse.cdt.managedbuilder.ui.properties.AbstractBuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
@@ -328,6 +329,10 @@ public class MacrosBlock extends AbstractCOptionPage {
 		 */
 		public IBuildMacroSupplier[] getSuppliers(int contextType, Object contextData){
 			IBuildMacroSupplier suppliers[] = super.getSuppliers(contextType,contextData);
+			
+			if(contextType == fContextType && contextData == fContextData && storeDirectly())
+				return suppliers;
+
 			if(suppliers == null || suppliers.length == 0)
 				return suppliers;
 			if(!(suppliers[0] instanceof UserDefinedMacroSupplier))
@@ -362,7 +367,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 			if(contextType != fContextType || contextData != fContextData)
 				return null;
 			
-			return (IBuildMacro)getUserMacros().get(name);
+			return getUserMacro(name);
 		}
 		
 		/* (non-Javadoc)
@@ -372,8 +377,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 			if(contextType != fContextType || contextData != fContextData)
 				return null;
 			
-			Collection macros = getUserMacros().values(); 
-			return (IBuildMacro[])macros.toArray(new IBuildMacro[macros.size()]);
+			return getUserMacros(); 
 		}
 	}
 
@@ -557,10 +561,7 @@ public class MacrosBlock extends AbstractCOptionPage {
 		fIsEditable = editable;
 	}
 	
-	/*
-	 * returns the map containing the user-defined macros
-	 */
-	private Map getUserMacros(){
+	private Map getUserMacrosMap(){
 		Map map = new HashMap();
 		if(fUserSupplier != null) {
 			if(!fDeleteAll){
@@ -587,6 +588,18 @@ public class MacrosBlock extends AbstractCOptionPage {
 		}
 		return map;
 	}
+
+	/*
+	 * returns the map containing the user-defined macros
+	 */
+	private IBuildMacro[] getUserMacros(){
+		if(storeDirectly() && fUserSupplier != null)
+			return fUserSupplier.getMacros(fContextType,fContextData);
+
+		Collection macros = getUserMacrosMap().values();
+		return (IBuildMacro[])macros.toArray(new IBuildMacro[macros.size()]);
+
+	}
 	
 	/*
 	 * returns the HashSet holding the names of the user-deleted macros
@@ -611,17 +624,20 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * the macros created are stored in the fAddedUserMacros Map, and are not actually added to the user supplier
 	 * the applyUserMacros() should be called to store those macros to the user supplier
 	 */
-	private void addUserMacro(String name, int type, String value){
+/*	private void addUserMacro(String name, int type, String value){
 		if(!canCreate(name))
 			return;
-		fDeleteAll = false;
-		BuildMacro newMacro = new BuildMacro(name,type,value);
-		getDeletedUserMacroNames().remove(name);
-		getAddedUserMacros().put(name,newMacro);
-		
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.createMacro(newMacro, fContextType, fContextData);
+		} else {
+			fDeleteAll = false;
+			BuildMacro newMacro = new BuildMacro(name,type,value);
+			getDeletedUserMacroNames().remove(name);
+			getAddedUserMacros().put(name,newMacro);
+		}
 		fModified = true;
 	}
-
+*/
 	/*
 	 * creates a user macro
 	 * the macros created are stored in the fAddedUserMacros Map, and are not actually added to the user supplier
@@ -631,9 +647,14 @@ public class MacrosBlock extends AbstractCOptionPage {
 		String name = newMacro.getName();
 		if(!canCreate(name))
 			return;
-		fDeleteAll = false;
-		getDeletedUserMacroNames().remove(name);
-		getAddedUserMacros().put(name,newMacro);
+		
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.createMacro(newMacro, fContextType, fContextData);
+		} else {
+			fDeleteAll = false;
+			getDeletedUserMacroNames().remove(name);
+			getAddedUserMacros().put(name,newMacro);
+		}
 		
 		fModified = true;
 	}
@@ -643,27 +664,34 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * the macros created are stored in the fAddedUserMacros Map, and are not actually added to the user supplier
 	 * the applyUserMacros() should be called to store those macros to the user supplier
 	 */
-	private void addUserMacro(String name, int type, String value[]){
+/*	private void addUserMacro(String name, int type, String value[]){
 		if(!canCreate(name))
 			return;
-		fDeleteAll = false;
-		BuildMacro newMacro = new BuildMacro(name,type,value);
-		getDeletedUserMacroNames().remove(name);
-		getAddedUserMacros().put(name,newMacro);
-		
+			
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.createMacro(newMacro, fContextType, fContextData);
+		} else {
+			fDeleteAll = false;
+			BuildMacro newMacro = new BuildMacro(name,type,value);
+			getDeletedUserMacroNames().remove(name);
+			getAddedUserMacros().put(name,newMacro);
+		}
 		fModified = true;
 	}
-
+*/
 	/*
 	 * deletes a user macro
 	 * the macros deleted are stored in the fDeletedUserMacroNames HashSet, and are not actually deleted from the user supplier
 	 * the applyUserMacros() should be called to delete those macros from the user supplier
 	 */
 	private void deleteUserMacro(String name){
-		fDeleteAll = false;
-		getAddedUserMacros().remove(name);
-		getDeletedUserMacroNames().add(name);
-		
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.deleteMacro(name, fContextType, fContextData);
+		} else {
+			fDeleteAll = false;
+			getAddedUserMacros().remove(name);
+			getDeletedUserMacroNames().add(name);
+		}
 		fModified = true;
 	}
 	
@@ -672,10 +700,13 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * the applyUserMacros() should be called to delete those macros from the user supplier
 	 */
 	private void deleteAllUserMacros(){
-		fDeleteAll = true;
-		getDeletedUserMacroNames().clear();
-		getAddedUserMacros().clear();
-		
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.deleteAll(fContextType, fContextData);
+		} else {
+			fDeleteAll = true;
+			getDeletedUserMacroNames().clear();
+			getAddedUserMacros().clear();
+		}
 		fModified = true;
 	}
 	
@@ -697,7 +728,10 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 * returns a user macro of a given name
 	 */
 	private IBuildMacro getUserMacro(String name){
-		Map macros = getUserMacros();
+		if(storeDirectly() && fUserSupplier != null)
+			return fUserSupplier.getMacro(name,fContextType,fContextData);
+
+		Map macros = getUserMacrosMap();
 		if(macros == null)
 			return null;
 
@@ -710,23 +744,35 @@ public class MacrosBlock extends AbstractCOptionPage {
 	 */
 	private void applyUserMacros(){
 		if(fUserSupplier != null){
-			if(fDeleteAll){
-				fUserSupplier.deleteAll(fContextType,fContextData);
-			}
-			else{
-				Iterator iter = getDeletedUserMacroNames().iterator();
-				while(iter.hasNext()){
-					fUserSupplier.deleteMacro((String)iter.next(),fContextType,fContextData);
+			if(storeDirectly()){
+				if(getContainer() instanceof AbstractBuildPropertyPage
+						&& fContextType == IBuildMacroProvider.CONTEXT_CONFIGURATION
+						&& fContextData instanceof IConfiguration){
+					AbstractBuildPropertyPage page = (AbstractBuildPropertyPage)getContainer();
+					IConfiguration realCfg = page.getRealConfig((IConfiguration)fContextData);
+					IBuildMacro macros[] = getUserMacros();
+					UserDefinedMacroSupplier supplier = BuildMacroProvider.fUserDefinedMacroSupplier;
+					supplier.setMacros(macros, IBuildMacroProvider.CONTEXT_CONFIGURATION, realCfg);
 				}
-				
-				iter = getAddedUserMacros().values().iterator();
-				while(iter.hasNext()){
-					IBuildMacro macro = (IBuildMacro)iter.next();
-					fUserSupplier.createMacro(macro,fContextType,fContextData);
+			} else {
+				if(fDeleteAll){
+					fUserSupplier.deleteAll(fContextType,fContextData);
 				}
-				
-				getDeletedUserMacroNames().clear();
-				getAddedUserMacros().clear();
+				else{
+					Iterator iter = getDeletedUserMacroNames().iterator();
+					while(iter.hasNext()){
+						fUserSupplier.deleteMacro((String)iter.next(),fContextType,fContextData);
+					}
+					
+					iter = getAddedUserMacros().values().iterator();
+					while(iter.hasNext()){
+						IBuildMacro macro = (IBuildMacro)iter.next();
+						fUserSupplier.createMacro(macro,fContextType,fContextData);
+					}
+					
+					getDeletedUserMacroNames().clear();
+					getAddedUserMacros().clear();
+				}
 			}
 		}
 	}
@@ -906,12 +952,11 @@ public class MacrosBlock extends AbstractCOptionPage {
 		if(fEditableTable == null || fContextType == 0)
 			return;
 		
-		Collection values = getUserMacros().values();
-		ArrayList list = new ArrayList(values.size());
-		for(Iterator iter = values.iterator(); iter.hasNext();){
-			Object next = iter.next();
-			if(next != null)
-				list.add(next);
+		IBuildMacro macros[] = getUserMacros();
+		ArrayList list = new ArrayList(macros.length);
+		for(int i = 0; i < macros.length; i++){
+			if(macros[i] != null)
+				list.add(macros[i]);
 		}
 		fEditableTable.setInput(list.toArray(new IBuildMacro[list.size()]));
 	}
@@ -1238,4 +1283,12 @@ public class MacrosBlock extends AbstractCOptionPage {
 		}
 		return null;
 	}
+	
+	protected boolean storeDirectly(){
+		if(fContextType == IBuildMacroProvider.CONTEXT_CONFIGURATION 
+				&& fContextData instanceof IConfiguration)
+			return ((IConfiguration)fContextData).isTemporary();
+		return false;
+	}
+
 }

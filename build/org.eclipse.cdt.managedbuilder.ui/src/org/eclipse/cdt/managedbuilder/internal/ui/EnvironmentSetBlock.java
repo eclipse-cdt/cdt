@@ -150,10 +150,10 @@ public class EnvironmentSetBlock extends AbstractCOptionPage {
 
 			if(fParentContainer instanceof BuildPropertyPage){
 				BuildPropertyPage page = (BuildPropertyPage)fParentContainer;
-				if(page.getSelectedConfiguration() != null)
-					fFolderTabs[1].setContext(page.getSelectedConfiguration().getManagedProject());
+				if(page.getSelectedConfigurationClone() != null)
+					fFolderTabs[1].setContext(page.getSelectedConfigurationClone().getManagedProject());
 
-				fFolderTabs[0].setContext(page.getSelectedConfiguration());
+				fFolderTabs[0].setContext(page.getSelectedConfigurationClone());
 				fFolderTabs[0].setParentContextInfo(fFolderTabs[1].getContextInfo());
 			}
 			else {

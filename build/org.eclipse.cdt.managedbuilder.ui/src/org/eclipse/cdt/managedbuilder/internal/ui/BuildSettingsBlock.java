@@ -76,19 +76,38 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	 * Bookeeping variables
 	 */
 	private BuildPropertyPage parent;
-	// The name of the build artifact
-	private String artifactExt;
-	private String artifactName;
-	// The make command associated with the target
-	private String makeCommand;
-	// State of the check box on exit
-	private boolean useDefaultMake;
 	// Has the page been changed?
 	private boolean dirty = false;
 
 	private ModifyListener widgetModified = new ModifyListener() {
 	    public void modifyText(ModifyEvent e) {
-	        setDirty(true);
+	    	IConfiguration config = parent.getSelectedConfigurationClone();
+	        if(e.widget == buildArtifactName){
+	        	String val = buildArtifactName.getText().trim();
+	        	if(!val.equals(config.getArtifactName())){
+	        		config.setArtifactName(val);
+	    			setValues();
+	    			setDirty(true);
+	        	}
+	        } else if(e.widget == buildArtifactExt){
+	        	String val = buildArtifactExt.getText().trim();
+	        	if(!val.equals(config.getArtifactExtension())){
+	        		config.setArtifactExtension(val);
+	    			setValues();
+	    			setDirty(true);
+	        	}
+	        } else if(e.widget == makeCommandEntry) {
+	        	String fullCommand = makeCommandEntry.getText().trim();
+	        	String buildCommand = parseMakeCommand(fullCommand);
+	        	String buildArgs = parseMakeArgs(fullCommand);
+	        	if(!buildCommand.equals(config.getBuildCommand()) 
+	        			|| !buildArgs.equals(config.getBuildArguments())){
+		        	parent.getSelectedConfigurationClone().setBuildCommand(buildCommand);
+		        	parent.getSelectedConfigurationClone().setBuildArguments(buildArgs);
+					setValues();
+					setDirty(true);
+		        }
+	        }
 	    }
 	};
 	
@@ -205,7 +224,6 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		makeCommandDefault.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
 				handleUseDefaultPressed();
-				setDirty(true);
 			}
 		});
 		makeCommandDefault.addDisposeListener(new DisposeListener() {
@@ -243,7 +261,14 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 		buildMacrosExpand.setForeground(buildMacrosExpandGroup.getForeground());
 		buildMacrosExpand.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
-				setDirty(true);
+				BuildMacroProvider provider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+				IConfiguration config = BuildSettingsBlock.this.parent.getSelectedConfigurationClone();
+				if(buildMacrosExpand.getSelection() != provider.areMacrosExpandedInBuildfile(config)){
+					provider.expandMacrosInBuildfile(config,
+							buildMacrosExpand.getSelection());
+					setValues();
+					setDirty(true);
+				}
 			}
 		});
 		buildMacrosExpand.addDisposeListener(new DisposeListener() {
@@ -255,36 +280,39 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	
 	protected void initializeValues() {
 		setValues();
+		setDirty(false);
 	}
 
 	public void updateValues() {
 		setValues();	
-		useDefaultMake = !parent.getSelectedConfiguration().hasOverriddenBuildCommand();
-		makeCommandDefault.setSelection(useDefaultMake);
+		makeCommandDefault.setSelection(!parent.getSelectedConfigurationClone().hasOverriddenBuildCommand());
 		makeCommandEntry.setEditable(!makeCommandDefault.getSelection());
 	}
 
 	protected void setValues() {
-		artifactName = parent.getSelectedConfiguration().getArtifactName();
-		buildArtifactName.setText(artifactName);
-		artifactExt = parent.getSelectedConfiguration().getArtifactExtension();
-		buildArtifactExt.setText(artifactExt);
-		makeCommand = parent.getSelectedConfiguration().getBuildCommand();
-		String makeArgs = parent.getSelectedConfiguration().getBuildArguments();
+		IConfiguration config = parent.getSelectedConfigurationClone();
+		if(!config.getArtifactName().equals(buildArtifactName.getText()))
+			buildArtifactName.setText(config.getArtifactName());
+		
+		if(!config.getArtifactExtension().equals(buildArtifactExt.getText()))
+			buildArtifactExt.setText(config.getArtifactExtension());
+		String makeCommand = config.getBuildCommand();
+		String makeArgs = config.getBuildArguments();
 		if (makeArgs != null) {
 			makeCommand += " " + makeArgs; //$NON-NLS-1$
 		}
-		makeCommandEntry.setText(makeCommand);
+		if(!makeCommand.equals(makeCommandEntry.getText()))
+			makeCommandEntry.setText(makeCommand);
 		
 		BuildMacroProvider provider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
-		if(!provider.canKeepMacrosInBuildfile(this.parent.getSelectedConfiguration()))
+		if(!provider.canKeepMacrosInBuildfile(config))
 			buildMacrosExpandGroup.setVisible(false);
 		else {
 			buildMacrosExpandGroup.setVisible(true);
-			buildMacrosExpand.setSelection(provider.areMacrosExpandedInBuildfile(parent.getSelectedConfiguration()));
+			buildMacrosExpand.setSelection(provider.areMacrosExpandedInBuildfile(config));
 		}
 
-		setDirty(false);
+//		setDirty(false);
 	}
 
 	public void removeValues(String id) {
@@ -297,36 +325,24 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	 */
 	public void performDefaults() {
 		
-		// Display a "Confirm" dialog box, since:
-		//   1.  The defaults are immediately applied
-		//   2.  The action cannot be undone
-		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
-		boolean shouldDefault = MessageDialog.openConfirm(shell,
-					ManagedBuilderUIMessages.getResourceString("BuildSettingsBlock.defaults.title"), //$NON-NLS-1$
-					ManagedBuilderUIMessages.getResourceString("BuildSettingsBlock.defaults.message")); //$NON-NLS-1$
-		if (!shouldDefault) return;
-		
-		IConfiguration config = parent.getSelectedConfiguration();
-		config.setArtifactName(config.getManagedProject().getDefaultArtifactName());
-		config.setArtifactExtension(null);
-		IBuilder builder = config.getToolChain().getBuilder();
-		if (!builder.isExtensionElement()) {
-			config.getToolChain().removeLocalBuilder();
+		IConfiguration cloneConfig = parent.getSelectedConfigurationClone();
+		cloneConfig.setArtifactName(cloneConfig.getManagedProject().getDefaultArtifactName());
+		cloneConfig.setArtifactExtension(null);
+		IBuilder cloneBuilder = cloneConfig.getToolChain().getBuilder();
+		if (!cloneBuilder.isExtensionElement()) {
+			cloneConfig.getToolChain().removeLocalBuilder();
 		}
-		
-		// Save the information that was reset
-		ManagedBuildManager.setDefaultConfiguration(parent.getProject(), parent.getSelectedConfiguration());
-		ManagedBuildManager.saveBuildInfo(parent.getProject(), false);
+
 		
 		//set the expand macros state to false
 		BuildMacroProvider provider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
-		provider.expandMacrosInBuildfile(config,false);
+		provider.expandMacrosInBuildfile(cloneConfig,false);
 		
 		setValues();
 		makeCommandDefault.setSelection(true);
 		makeCommandEntry.setEditable(false);	
 		
-		setDirty(false);
+		setDirty(true);
 	}
 	
 	/*
@@ -334,74 +350,33 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		useDefaultMake = makeCommandDefault.getSelection();
-		makeCommand = makeCommandEntry.getText().trim();
-		artifactName = buildArtifactName.getText().trim();
-		artifactExt = buildArtifactExt.getText().trim();
-		
 		IConfiguration selectedConfiguration = parent.getSelectedConfiguration();
-		IBuilder builder = selectedConfiguration.getToolChain().getBuilder();
-		boolean setBuilderValues = false;
-		
+		IConfiguration cloneConfig = parent.getSelectedConfigurationClone();
+
+		String buildCommand = cloneConfig.getBuildCommand();
+		String buildArgs = cloneConfig.getBuildArguments();
+		String artifactName = cloneConfig.getArtifactName();
+		String artifactExt = cloneConfig.getArtifactExtension();
+
 		// Set the build output name
 		if (!selectedConfiguration.getArtifactName().equals(artifactName)) {
-			setBuilderValues = true;
+			selectedConfiguration.setArtifactName(artifactName);
 		}
 		// Set the build output extension
 		if (!selectedConfiguration.getArtifactExtension().equals(artifactExt)) {
-			setBuilderValues = true;
+			selectedConfiguration.setArtifactExtension(artifactExt);
 		}
 		// Set the new make command
-		String makeCommandOnly = null;
-		String makeArguments = null;
-		if (useDefaultMake) {
-			if (!builder.isExtensionElement()) {
-				setBuilderValues = true;
-			}
-		} else {
-			// Parse for command and arguments
-			String rawCommand = makeCommand;
-			makeCommandOnly = parseMakeCommand(rawCommand);
-			if (!selectedConfiguration.getBuildCommand().equals(makeCommandOnly)) {
-				setBuilderValues = true;
-			}
-			makeArguments = parseMakeArgs(rawCommand);
-			if (!selectedConfiguration.getBuildArguments().equals(makeArguments)) {
-				setBuilderValues = true;
-			}
-		}
-
-		if (setBuilderValues) {
-			//  If the configuration does not already have a "local" builder, we
-			//  need to create it.
-			if (builder.isExtensionElement()) {
-				IToolChain tc = selectedConfiguration.getToolChain();
-				int nnn = ManagedBuildManager.getRandomNumber();
-				String subId;
-				String tmpId;
-				String version;
-				
-				tmpId = builder.getId();
-				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
-				if ( version != null) {   // If the 'tmpId' contains version information
-					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					subId = tmpId + "." + nnn;		//$NON-NLS-1$
-				}
-				String name = builder.getName() + "." + selectedConfiguration.getName(); 	//$NON-NLS-1$
-				tc.createBuilder(builder, subId, name, false);
-			}
-			
-			//  Set the builder values
-			selectedConfiguration.setArtifactName(artifactName);
-			selectedConfiguration.setArtifactExtension(artifactExt);
-			selectedConfiguration.setBuildCommand(makeCommandOnly);
-			selectedConfiguration.setBuildArguments(makeArguments);
-		}
+		if(!selectedConfiguration.getBuildCommand().equals(buildCommand))
+			selectedConfiguration.setBuildCommand(buildCommand);
 		
+		if(!selectedConfiguration.getBuildArguments().equals(buildArgs))
+			selectedConfiguration.setBuildArguments(buildArgs);
+
 		BuildMacroProvider provider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
-		if(provider.canKeepMacrosInBuildfile(this.parent.getSelectedConfiguration()))
-			provider.expandMacrosInBuildfile(selectedConfiguration,buildMacrosExpand.getSelection());
+		provider.expandMacrosInBuildfile(
+				selectedConfiguration,
+				provider.areMacrosExpandedInBuildfile(cloneConfig));
 		
 		setDirty(false);
 	}
@@ -534,9 +509,7 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	 */
 	public void setVisible(boolean visible) {
 		if (visible) {
-			useDefaultMake = !parent.getSelectedConfiguration().hasOverriddenBuildCommand();
-			makeCommandDefault.setSelection(useDefaultMake);
-			makeCommandEntry.setEditable(!makeCommandDefault.getSelection());
+			setValues();
 		}
 		super.setVisible(visible);
 	}
@@ -547,16 +520,16 @@ public class BuildSettingsBlock extends AbstractCOptionPage {
 	protected void handleUseDefaultPressed() {
 		// If the state of the button is unchecked, then we want to enable the edit widget
 		boolean checked = makeCommandDefault.getSelection();
+		IConfiguration config = parent.getSelectedConfigurationClone(); 
 		if (checked == true) {
-		    //  TODO: This should NOT change the configuration immediately -
-		    //        it should set an intermediate variable and wait for OK/Apply
-			parent.getSelectedConfiguration().setBuildCommand(null);
-			parent.getSelectedConfiguration().setBuildArguments(null);
+			config.setBuildCommand(null);
+			config.setBuildArguments(null);
 			makeCommandEntry.setEditable(false);
 		} else {
 			makeCommandEntry.setEditable(true);
 		}
 		setValues();
+		setDirty(true);
 	}
 
 	/**

@@ -119,4 +119,12 @@ public class BuildObject implements IBuildObject {
 	public void setManagedBuildRevision(String managedBuildRevision) {
 		this.managedBuildRevision = managedBuildRevision;
 	}
+	
+	/*
+	 * updates revision for this build object and all its children
+	 */
+	public void updateManagedBuildRevision(String revision){
+		setManagedBuildRevision(revision);
+		setVersion(getVersionFromId());
+	}
 }

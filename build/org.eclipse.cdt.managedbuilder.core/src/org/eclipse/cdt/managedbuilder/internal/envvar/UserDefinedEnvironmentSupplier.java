@@ -17,6 +17,8 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ProjectScope;
@@ -47,56 +49,35 @@ public class UserDefinedEnvironmentSupplier extends
 			EnvVarOperationProcessor.normalizeName("PWD")	  //$NON-NLS-1$
 		};
 
-	private StorableEnvironment fConfigurationVariables;
-	private StorableEnvironment fProjectVariables;
 	private StorableEnvironment fWorkspaceVariables;
 	
-	private IConfiguration fCurrentCfg = null;
-	private IManagedProject fCurrentProj = null;
-
 	protected StorableEnvironment getEnvironment(Object context){
+		return getEnvironment(context,true);
+	}
+	
+	protected StorableEnvironment getEnvironment(Object context, boolean forceLoad){
 		if(context == null)
 			return null;
 		
 		StorableEnvironment env = null;
 		if(context instanceof IConfiguration){
-			IConfiguration newCfg = (IConfiguration)context;
-			if(fCurrentCfg == newCfg && fConfigurationVariables != null){
-				env = fConfigurationVariables;
-			}
-			else{
-				env = loadEnvironment(newCfg);
-				if(env != null){
-					if(fConfigurationVariables != null)
-						try{
-							storeEnvironment(fConfigurationVariables,fCurrentCfg,false);
-						} catch(CoreException e){
-						}
-					fConfigurationVariables = env;
-					fCurrentCfg = newCfg;
-				}
+			IConfiguration cfg = (IConfiguration)context;
+			env = ((ToolChain)cfg.getToolChain()).getUserDefinedEnvironment();
+			if(env == null && forceLoad){
+				env = loadEnvironment(cfg);
+				((ToolChain)cfg.getToolChain()).setUserDefinedEnvironment(env);
 			}
 		}
-		else if(context instanceof IManagedProject){
-			IManagedProject newProj = (IManagedProject)context;
-			if(fCurrentProj == newProj && fProjectVariables != null){
-				env = fProjectVariables;
-			}
-			else{
-				env = loadEnvironment(newProj);
-				if(env != null){
-					if(fProjectVariables != null)
-						try{
-							storeEnvironment(fProjectVariables,fCurrentProj,false);
-						} catch(CoreException e){
-						}
-						fProjectVariables = env; 
-						fCurrentProj = newProj;
-				}
+		else if(context instanceof ManagedProject){
+			ManagedProject proj = (ManagedProject)context;
+			env = proj.getUserDefinedEnvironmet();
+			if(env == null && forceLoad){
+				env = loadEnvironment(proj);
+				proj.setUserDefinedEnvironmet(env);
 			}
 		}
 		else if(context instanceof IWorkspace){
-			if(fWorkspaceVariables == null)
+			if(fWorkspaceVariables == null && forceLoad)
 				fWorkspaceVariables = loadEnvironment(context);
 			env = fWorkspaceVariables;
 		}
@@ -189,7 +170,7 @@ public class UserDefinedEnvironmentSupplier extends
 			return;
 		
 		try{
-			String ids[] = prefNode.childrenNames();
+			String ids[] = prefNode.keys();
 			boolean found = false;
 			for( int i = 0; i < ids.length; i++){
 				if(managedProject.getConfiguration(ids[i]) == null){
@@ -206,29 +187,22 @@ public class UserDefinedEnvironmentSupplier extends
 	}
 	
 	public void serialize(boolean force){
-		if(fConfigurationVariables != null && fCurrentCfg != null ){
-			try{
-				storeEnvironment(fConfigurationVariables,fCurrentCfg,force);
-			} catch(CoreException e){
-				
-			}
-		}
-
-		if(fProjectVariables != null && fCurrentProj != null ){
-			try{
-				storeEnvironment(fProjectVariables,fCurrentProj,force);
-			} catch(CoreException e){
-				
-			}
-		}
-		
 		if(fWorkspaceVariables != null){
 			try{
 				storeEnvironment(fWorkspaceVariables,ResourcesPlugin.getWorkspace(),force);
 			} catch(CoreException e){
 				
 			}
-
+		}
+	}
+	
+	public void storeEnvironment(Object context, boolean force){
+		StorableEnvironment env = getEnvironment(context, false);
+		if(env != null){
+			try {
+				storeEnvironment(env, context, force);
+			} catch (CoreException e) {
+			}
 		}
 	}
 
@@ -261,7 +235,8 @@ public class UserDefinedEnvironmentSupplier extends
 		if(env == null)
 			return null;
 		IBuildEnvironmentVariable var =  env.createVariable(name,value,op,delimiter);
-		setRebuildStateForContext(context);
+		if(env.isChanged())
+			setRebuildStateForContext(context);
 		return var;
 	}
 
@@ -282,6 +257,16 @@ public class UserDefinedEnvironmentSupplier extends
 
 		if(env.deleteAll())
 		setRebuildStateForContext(context);
+	}
+	
+	public void setVariables(IBuildEnvironmentVariable vars[], Object context){
+		StorableEnvironment env = getEnvironment(context);
+		if(env == null)
+			return;
+		
+		env.setVariales(vars);
+		if(env.isChanged())
+			setRebuildStateForContext(context);
 	}
 	
 	protected void setRebuildStateForContext(Object context){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 BitMethods Inc and others.
+ * Copyright (c) 2004, 2005 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
@@ -132,6 +136,10 @@ public class FileListControl {
 	// The type of browse support that is required
 	private int browseType;
 	private IPath path;
+
+	private java.util.List listeners = new ArrayList();
+	private String oldValue[];
+	
 	private static final String ADD_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.add"); //$NON-NLS-1$
 	private static final String DEL_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.delete"); //$NON-NLS-1$
 	private static final String EDIT_STR = ManagedBuilderUIMessages.getResourceString("FileListControl.edit"); //$NON-NLS-1$
@@ -153,6 +161,7 @@ public class FileListControl {
 			.get(ManagedBuilderUIImages.IMG_FILELIST_MOVEUP);
 	private final Image IMG_MOVEDOWN = ManagedBuilderUIImages
 			.get(ManagedBuilderUIImages.IMG_FILELIST_MOVEDOWN);
+	
 	/**
 	 * Constructor
 	 * 
@@ -277,7 +286,44 @@ public class FileListControl {
 		for (int i = 0; i < listVal.length; i++) {
 			list.add(listVal[i]);
 		}
+		checkNotificationNeeded();
 	}
+	
+	public void addChangeListener(IFileListChangeListener listener){
+		listeners.add(listener);
+	}
+	
+	public void removeChangeListener(IFileListChangeListener listener){
+		listeners.remove(listener);
+	}
+
+	public void checkNotificationNeeded(){
+		String items[] = getItems();
+		if(oldValue != null){
+			if(oldValue.length == items.length){
+				int i;
+				for(i = 0; i < oldValue.length; i++){
+					if(!oldValue[i].equals(items[i]))
+						break;
+				}
+				if(i == oldValue.length)
+					return;
+			}
+			String old[] = oldValue;
+			System.arraycopy(items,0,oldValue = new String[items.length],0,items.length);
+			notifyListeners(old,oldValue);
+		} else{
+			System.arraycopy(items,0,oldValue = new String[items.length],0,items.length);
+		}
+	}
+	
+	public void notifyListeners(String oldVal[], String newVal[]){
+		Iterator iter = listeners.iterator();
+		while(iter.hasNext()){
+			((IFileListChangeListener)iter.next()).fileListChanged(this,oldVal,newVal);
+		}
+	}
+	
 	/**
 	 * Set selection
 	 * 
@@ -299,8 +345,10 @@ public class FileListControl {
 	 * removes all items from list control
 	 */
 	public void removeAll() {
-		if (list != null)
+		if (list != null){
 			list.removeAll();
+			checkNotificationNeeded();
+		}
 	}
 	/**
 	 * get list items
@@ -361,6 +409,7 @@ public class FileListControl {
 				list.add(input, 0);
 				list.setSelection(0);
 			}
+			checkNotificationNeeded();
 		}
 
 		selectionChanged();
@@ -375,10 +424,14 @@ public class FileListControl {
 			String title = ManagedBuilderUIMessages.getResourceString("FileListControl.deletedialog.title"); //$NON-NLS-1$
 			boolean delDir = MessageDialog.openQuestion(list.getShell(), title,
 					quest);
-			if (delDir && index != -1)
+			if (delDir && index != -1){
 				list.remove(index);
-		} else if (index != -1)
+				checkNotificationNeeded();
+			}
+		} else if (index != -1){
 			list.remove(index);
+			checkNotificationNeeded();
+		}
 		selectionChanged();
 	}
 	/**
@@ -391,6 +444,7 @@ public class FileListControl {
 		list.setItem(index - 1, curSelList);
 		list.setItem(index, preList);
 		list.setSelection(index - 1);
+		checkNotificationNeeded();
 		selectionChanged();
 	}
 	/**
@@ -403,6 +457,7 @@ public class FileListControl {
 		list.setItem(index + 1, curSelList);
 		list.setItem(index, nextList);
 		list.setSelection(index + 1);
+		checkNotificationNeeded();
 		selectionChanged();
 	}
 	/**
@@ -421,6 +476,7 @@ public class FileListControl {
 					newItem = dialog.getValue();
 					if (newItem != null && !newItem.equals(selItem)) {
 						list.setItem(index, newItem);
+						checkNotificationNeeded();
 						selectionChanged();
 					}
 				}
@@ -510,5 +566,15 @@ public class FileListControl {
 		}
 
 		return input;
+	}
+	
+	public Label getLabelControl(){
+		return title;
+	}
+	
+	public void setEnabled(boolean enabled){
+		title.setEnabled(enabled);
+		toolBar.setEnabled(enabled);
+		list.setEnabled(enabled);
 	}
 }

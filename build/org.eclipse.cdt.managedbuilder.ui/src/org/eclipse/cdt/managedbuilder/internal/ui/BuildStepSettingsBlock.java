@@ -62,17 +62,43 @@ public class BuildStepSettingsBlock extends AbstractCOptionPage {
 	 * Bookeeping variables
 	 */
 	private BuildPropertyPage parent;
-	private String preBuildCommand;
-	private String preBuildAnnounce;
-	private String postBuildCommand;
-	private String postBuildAnnounce;
 	
 	// Has the page been changed?
 	private boolean dirty = false;
 
 	private ModifyListener widgetModified = new ModifyListener() {
 	    public void modifyText(ModifyEvent e) {
-	        setDirty(true);
+	    	IConfiguration config = parent.getSelectedConfigurationClone();
+	    	if(e.widget == preBuildCmd){
+	    		String val = preBuildCmd.getText().trim();
+	    		if(!val.equals(config.getPrebuildStep())){
+	    			config.setPrebuildStep(val);
+	    			setValues();
+	    			setDirty(true);
+	    		}
+	    	} else if(e.widget == preBuildAnnc){
+	    		String val = preBuildAnnc.getText().trim();
+	    		if(!val.equals(config.getPreannouncebuildStep())){
+	    			config.setPreannouncebuildStep(val);
+	    			setValues();
+	    			setDirty(true);
+	    		}
+	    	} else if(e.widget == postBuildCmd){
+	    		String val = postBuildCmd.getText().trim();
+	    		if(!val.equals(config.getPostbuildStep())){
+	    			config.setPostbuildStep(val);
+	    			setValues();
+	    			setDirty(true);
+	    		}
+	    	} else if(e.widget == postBuildAnnc){
+	    		String val = postBuildAnnc.getText().trim();
+	    		if(!val.equals(config.getPostannouncebuildStep())){
+	    			config.setPostannouncebuildStep(val);
+	    			setValues();
+	    			setDirty(true);
+	    		}
+	    	}
+	        
 	    }
 	};
 	
@@ -219,6 +245,7 @@ public class BuildStepSettingsBlock extends AbstractCOptionPage {
 		
 	protected void initializeValues() {
 		setValues();
+		setDirty(false);
 	}
 
 	public void updateValues() {
@@ -227,15 +254,18 @@ public class BuildStepSettingsBlock extends AbstractCOptionPage {
 
 	protected void setValues() {
 		// Fetch values from the current configuration and set in the UI
-		preBuildCommand = parent.getSelectedConfiguration().getPrebuildStep();
-		preBuildCmd.setText(preBuildCommand);
-		preBuildAnnounce = parent.getSelectedConfiguration().getPreannouncebuildStep();
-		preBuildAnnc.setText(preBuildAnnounce);
-		postBuildCommand = parent.getSelectedConfiguration().getPostbuildStep();
-		postBuildCmd.setText(postBuildCommand);
-		postBuildAnnounce = parent.getSelectedConfiguration().getPostannouncebuildStep();
-		postBuildAnnc.setText(postBuildAnnounce);					
-		setDirty(false);	//Indicate that the UI state is consistent with internal state
+		IConfiguration config = parent.getSelectedConfigurationClone();
+		if(!config.getPrebuildStep().equals(preBuildCmd.getText()))
+			preBuildCmd.setText(config.getPrebuildStep());
+		
+		if(!config.getPreannouncebuildStep().equals(preBuildAnnc.getText()))
+			preBuildAnnc.setText(config.getPreannouncebuildStep());
+		
+		if(!config.getPostbuildStep().equals(postBuildCmd.getText()))
+			postBuildCmd.setText(config.getPostbuildStep());
+		
+		if(!config.getPostannouncebuildStep().equals(postBuildAnnc.getText()))
+			postBuildAnnc.setText(config.getPostannouncebuildStep());					
 	}
 
 	public void removeValues(String id) {
@@ -247,32 +277,16 @@ public class BuildStepSettingsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
-		IConfiguration config = parent.getSelectedConfiguration();
-		boolean mustSetValue = false;
-		
-		// Display a "Confirm" dialog box, since:
-		//   1.  The defaults are immediately applied
-		//   2.  The action cannot be undone
-		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
-		boolean shouldDefault = MessageDialog.openConfirm(shell,
-					ManagedBuilderUIMessages.getResourceString("BuildStepsSettingsBlock.defaults.title"), //$NON-NLS-1$
-					ManagedBuilderUIMessages.getResourceString("BuildStepsSettingsBlock.defaults.message")); //$NON-NLS-1$
-		if (!shouldDefault) return;
+		IConfiguration cloneConfig = parent.getSelectedConfigurationClone();
 
-		// Set the build step entries to null; this will force the next fetch of the entries to get the
-		// values from the parent of this configuration, which should be the values from the .xml manifest
-		// file 
-		config.setPrebuildStep(null);
-		config.setPreannouncebuildStep(null);
-		config.setPostbuildStep(null);
-		config.setPostannouncebuildStep(null);
+		cloneConfig.setPrebuildStep(null);
+		cloneConfig.setPreannouncebuildStep(null);
+		cloneConfig.setPostbuildStep(null);
+		cloneConfig.setPostannouncebuildStep(null);
 
-		// Save the information that was reset
-		ManagedBuildManager.setDefaultConfiguration(parent.getProject(), parent.getSelectedConfiguration());
-		ManagedBuildManager.saveBuildInfo(parent.getProject(), false);
-		
 		// Fetch and set the default values to be displayed in the UI
 		setValues();
+		setDirty(true);
 			
 	}
 	
@@ -282,36 +296,26 @@ public class BuildStepSettingsBlock extends AbstractCOptionPage {
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		
-		// Fetch the build step values from the UI and store
-		preBuildCommand = preBuildCmd.getText().trim();
-		preBuildAnnounce = preBuildAnnc.getText().trim();
-		postBuildCommand = postBuildCmd.getText().trim();
-		postBuildAnnounce = postBuildAnnc.getText().trim();
-		
 		IConfiguration selectedConfiguration = parent.getSelectedConfiguration();
-		boolean mustSetValue = false;
+		IConfiguration cloneConfig = parent.getSelectedConfigurationClone();
 		
-		if (!selectedConfiguration.getPrebuildStep().equals(preBuildCommand)) {
-			mustSetValue = true;
+		if (!selectedConfiguration.getPrebuildStep().equals(
+				cloneConfig.getPrebuildStep())) {
+			selectedConfiguration.setPrebuildStep(cloneConfig.getPrebuildStep());
 		}		
-		else if (!selectedConfiguration.getPreannouncebuildStep().equals(preBuildAnnounce)) {
-			mustSetValue = true;
+		if (!selectedConfiguration.getPreannouncebuildStep().equals(
+				cloneConfig.getPreannouncebuildStep())) {
+			selectedConfiguration.setPreannouncebuildStep(cloneConfig.getPreannouncebuildStep());
 		}
-		else if (!selectedConfiguration.getPostbuildStep().equals(postBuildCommand)) {
-			mustSetValue = true;
+		if (!selectedConfiguration.getPostbuildStep().equals(
+				cloneConfig.getPostbuildStep())) {
+			selectedConfiguration.setPostbuildStep(cloneConfig.getPostbuildStep());
 		}		
-		else if (!selectedConfiguration.getPostannouncebuildStep().equals(postBuildAnnounce)) {
-			mustSetValue = true;
+		if (!selectedConfiguration.getPostannouncebuildStep().equals(
+				cloneConfig.getPostannouncebuildStep())) {
+			selectedConfiguration.setPostannouncebuildStep(cloneConfig.getPostannouncebuildStep());
 		}
 
-		if (mustSetValue) {			
-			// Set all the build step values in the current configuration
-			selectedConfiguration.setPrebuildStep(preBuildCommand);
-			selectedConfiguration.setPreannouncebuildStep(preBuildAnnounce);
-			selectedConfiguration.setPostbuildStep(postBuildCommand);
-			selectedConfiguration.setPostannouncebuildStep(postBuildAnnounce);
-		}
-		
 		setDirty(false);	//Indicate that the UI state is consistent with internal state
 	}
 
@@ -333,5 +337,11 @@ public class BuildStepSettingsBlock extends AbstractCOptionPage {
 	 */
 	public boolean isDirty() {
 	    return dirty;
+	}
+	
+	public void setVisible(boolean visible){
+		if(visible)
+			setValues();
+		super.setVisible(visible);
 	}
 }

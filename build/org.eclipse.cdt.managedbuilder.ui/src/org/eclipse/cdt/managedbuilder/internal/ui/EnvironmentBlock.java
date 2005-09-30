@@ -42,6 +42,7 @@ import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus;
+import org.eclipse.cdt.managedbuilder.ui.properties.AbstractBuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
@@ -253,6 +254,9 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		 */
 		public IEnvironmentVariableSupplier[] getSuppliers(Object context){
 			IEnvironmentVariableSupplier suppliers[] = super.getSuppliers(context);
+			
+			if(context == fContext && storeDirectly())
+				return suppliers;
 
 			if(suppliers == null || suppliers.length == 0)
 				return suppliers;
@@ -288,7 +292,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			if(context != fContext)
 				return null;
 			
-			return (IBuildEnvironmentVariable)getUserVariables().get(name);
+			return getUserVariable(name);
 		}
 		
 		/* (non-Javadoc)
@@ -298,8 +302,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 			if(context != fContext)
 				return null;
 			
-			Collection vars = getUserVariables().values(); 
-			return (IBuildEnvironmentVariable[])vars.toArray(new IBuildEnvironmentVariable[vars.size()]);
+			return getUserVariables();
 		}
 	}
 
@@ -457,7 +460,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	/*
 	 * returns the map containing the user-defined variables
 	 */
-	private Map getUserVariables(){
+	private Map getUserVariablesMap(){
 		Map map = new HashMap();
 		if(fUserSupplier != null) {
 			if(!fDeleteAll){
@@ -489,6 +492,14 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 		return map;
 	}
 	
+	private IBuildEnvironmentVariable[] getUserVariables(){
+		if(storeDirectly() && fUserSupplier != null)
+			return fUserSupplier.getVariables(fContext);
+
+		Collection vars = getUserVariablesMap().values();
+		return (IBuildEnvironmentVariable[])vars.toArray(new IBuildEnvironmentVariable[vars.size()]);
+	}
+	
 	/*
 	 * returns the HashSet holding the names of the user-deleted variables
 	 */
@@ -515,14 +526,24 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	private void addUserVariable(String name, String value, int op, String delimiter){
 		if(!canCreate(name))
 			return;
-		fDeleteAll = false;
-		BuildEnvVar newVar = new BuildEnvVar(name,value,op,delimiter);
-		if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
-			name = name.toUpperCase();
-		getDeletedUserVariableNames().remove(name);
-		getAddedUserVariables().put(name,newVar);
 		
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.createVariable(name,value, op, delimiter, fContext);
+		} else {
+			fDeleteAll = false;
+			BuildEnvVar newVar = new BuildEnvVar(name,value,op,delimiter);
+			if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
+				name = name.toUpperCase();
+			getDeletedUserVariableNames().remove(name);
+			getAddedUserVariables().put(name,newVar);
+		}
 		fModified = true;
+	}
+	
+	protected boolean storeDirectly(){
+		if(fContext instanceof IConfiguration)
+			return ((IConfiguration)fContext).isTemporary();
+		return false;
 	}
 	
 	/*
@@ -531,12 +552,15 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 * the applyUserVariables() should be called to delete those variabes from the user supplier
 	 */
 	private void deleteUserVariable(String name){
-		fDeleteAll = false;
-		if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
-			name = name.toUpperCase();
-		getAddedUserVariables().remove(name);
-		getDeletedUserVariableNames().add(name);
-		
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.deleteVariable(name, fContext);
+		} else {
+			fDeleteAll = false;
+			if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
+				name = name.toUpperCase();
+			getAddedUserVariables().remove(name);
+			getDeletedUserVariableNames().add(name);
+		}
 		fModified = true;
 	}
 	
@@ -545,10 +569,13 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 * the applyUserVariables() should be called to delete those variabes from the user supplier
 	 */
 	private void deleteAllUserVariables(){
-		fDeleteAll = true;
-		getDeletedUserVariableNames().clear();
-		getAddedUserVariables().clear();
-		
+		if(storeDirectly() && fUserSupplier != null){
+			fUserSupplier.deleteAll(fContext);
+		} else {
+			fDeleteAll = true;
+			getDeletedUserVariableNames().clear();
+			getAddedUserVariables().clear();
+		}
 		fModified = true;
 	}
 	
@@ -570,13 +597,13 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 * returns a user variable of a given name
 	 */
 	private IBuildEnvironmentVariable getUserVariable(String name){
-		Map vars = getUserVariables();
-		if(vars == null)
-			return null;
-
 		if(!ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive())
 			name = name.toUpperCase();
-		return (IBuildEnvironmentVariable)vars.get(name);
+
+		if(fUserSupplier != null && storeDirectly())
+			return fUserSupplier.getVariable(name, fContext);
+
+		return (IBuildEnvironmentVariable)getUserVariablesMap().get(name);
 	}
 
 	/*
@@ -585,23 +612,34 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 */
 	private void applyUserVariables(){
 		if(fUserSupplier != null){
-			if(fDeleteAll){
-				fUserSupplier.deleteAll(fContext);
-			}
-			else{
-				Iterator iter = getDeletedUserVariableNames().iterator();
-				while(iter.hasNext()){
-					fUserSupplier.deleteVariable((String)iter.next(),fContext);
+			if(storeDirectly()){
+				if(getContainer() instanceof AbstractBuildPropertyPage
+						&& fContext instanceof IConfiguration){
+					AbstractBuildPropertyPage page = (AbstractBuildPropertyPage)getContainer();
+					IConfiguration realCfg = page.getRealConfig((IConfiguration)fContext);
+					IBuildEnvironmentVariable vars[] = getUserVariables();
+					UserDefinedEnvironmentSupplier supplier = EnvironmentVariableProvider.fUserSupplier;
+					supplier.setVariables(vars,realCfg);
 				}
-				
-				iter = getAddedUserVariables().values().iterator();
-				while(iter.hasNext()){
-					IBuildEnvironmentVariable var = (IBuildEnvironmentVariable)iter.next();
-					fUserSupplier.createVariable(var.getName(),var.getValue(),var.getOperation(),var.getDelimiter(),fContext);
+			} else {
+				if(fDeleteAll){
+					fUserSupplier.deleteAll(fContext);
 				}
-				
-				getDeletedUserVariableNames().clear();
-				getAddedUserVariables().clear();
+				else{
+					Iterator iter = getDeletedUserVariableNames().iterator();
+					while(iter.hasNext()){
+						fUserSupplier.deleteVariable((String)iter.next(),fContext);
+					}
+					
+					iter = getAddedUserVariables().values().iterator();
+					while(iter.hasNext()){
+						IBuildEnvironmentVariable var = (IBuildEnvironmentVariable)iter.next();
+						fUserSupplier.createVariable(var.getName(),var.getValue(),var.getOperation(),var.getDelimiter(),fContext);
+					}
+					
+					getDeletedUserVariableNames().clear();
+					getAddedUserVariables().clear();
+				}
 			}
 		}
 	}
@@ -611,6 +649,7 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 	 */
 	private void storeUserVariables(){
 		applyUserVariables();
+		
 		if(fUserSupplier != null)
 			fUserSupplier.serialize(false);
 	}
@@ -813,12 +852,11 @@ public class EnvironmentBlock extends AbstractCOptionPage {
 //		handleSelectionChanged(fEditableList);
 	
 		if(fUserSupplier != null) {
-			Collection vars = getUserVariables().values();
-			Iterator iter = vars.iterator();
+			IBuildEnvironmentVariable variables[] = getUserVariables();
 
-			List list = new ArrayList(vars.size());
-			while(iter.hasNext()){
-				IBuildEnvironmentVariable userVar = (IBuildEnvironmentVariable)iter.next();
+			List list = new ArrayList(variables.length);
+			for( int i = 0; i < variables.length; i++ ){
+				IBuildEnvironmentVariable userVar = variables[i];
 				if(userVar != null){
 					IBuildEnvironmentVariable sysVar = getSystemVariable(userVar.getName(),true);
 					IBuildEnvironmentVariable var =	EnvVarOperationProcessor.performOperation(sysVar,userVar);

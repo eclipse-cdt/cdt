@@ -153,10 +153,10 @@ import org.eclipse.swt.widgets.Group;
 
 			if(fParentContainer instanceof BuildPropertyPage){
 				BuildPropertyPage page = (BuildPropertyPage)fParentContainer;
-				if(page.getSelectedConfiguration() != null)
-					fFolderTabs[1].setContext(IBuildMacroProvider.CONTEXT_PROJECT,page.getSelectedConfiguration().getManagedProject());
+				if(page.getSelectedConfigurationClone() != null)
+					fFolderTabs[1].setContext(IBuildMacroProvider.CONTEXT_PROJECT,page.getSelectedConfigurationClone().getManagedProject());
 
-				fFolderTabs[0].setContext(IBuildMacroProvider.CONTEXT_CONFIGURATION,page.getSelectedConfiguration());
+				fFolderTabs[0].setContext(IBuildMacroProvider.CONTEXT_CONFIGURATION,page.getSelectedConfigurationClone());
 				fFolderTabs[0].setParentContextInfo(fFolderTabs[1].getContextInfo());
 			}
 /*			else {

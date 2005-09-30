@@ -102,11 +102,92 @@ public class StorableMacros {
 		if(name == null || "".equals(name = name.trim()) || MacroResolver.isStringListMacro(type)) //$NON-NLS-1$
 			return null;
 
-		StorableBuildMacro macro = new StorableBuildMacro(name, type, value);
-		addMacro(macro);
-		fIsDirty = true;
-		fIsChanged = true;
+		IBuildMacro macro = checkMacro(name, type, value);
+		if(macro == null){
+			macro = new StorableBuildMacro(name, type, value);
+			addMacro(macro);
+			fIsDirty = true;
+			fIsChanged = true;
+		}
 		return macro;
+	}
+	
+	public IBuildMacro checkMacro(String name, int type, String value){
+		IBuildMacro macro = getMacro(name);
+		if(macro != null){
+			if(macro.getName().equals(name)
+					&& macro.getMacroValueType() == type){
+				try {
+					String val = macro.getStringValue();
+					if((val != null
+								&& val.equals(value))
+							|| val == value){
+						return macro;
+					}
+				} catch (BuildMacroException e) {
+				}
+			}
+		}
+		return null;
+	}
+	
+	public IBuildMacro checkMacro(String name, int type, String value[]){
+		IBuildMacro macro = getMacro(name);
+		if(macro != null){
+			if(macro.getName().equals(name)
+					&& macro.getMacroValueType() == type){
+				try {
+					String val[] = macro.getStringListValue();
+					if(val != null){
+						if(value != null && value.length == val.length){
+							int i;
+							for(i = 0; i < val.length; i++){
+								if(!value[i].equals(val[i]))
+									break;
+							}
+							if(i == value.length)
+								return macro;
+						}
+					} else if (value == val){
+						return macro;
+					}
+				} catch (BuildMacroException e) {
+				}
+			}
+		}
+		return null;
+	}
+	
+	/*
+	 * sets the storable macros to hold the geven number of macros
+	 * all macros that are present in the store but not included in the given array
+	 * will be removed 
+	 */
+	public void setMacros(IBuildMacro macros[]){
+		if(macros == null || macros.length == 0)
+			deleteAll();
+		else{
+			if (getMap().size() != 0) {
+				Iterator iter = getMap().values().iterator();
+				while(iter.hasNext()){
+					IBuildMacro m = (IBuildMacro)iter.next();
+					int i;
+					for(i = 0 ; i < macros.length; i++){
+						if(m.getName().equals(macros[i].getName()))
+							break;
+					}
+					if(i == macros.length)
+						deleteMacro(m.getName());
+				}
+			}
+			createMacros(macros);
+		}
+	}
+	
+	public void createMacros(IBuildMacro macros[]){
+		for(int i = 0; i < macros.length; i++){
+			createMacro(macros[i]);
+		}
 	}
 
 	public IBuildMacro createMacro(IBuildMacro copy){
@@ -116,19 +197,28 @@ public class StorableMacros {
 
 		int type = copy.getMacroValueType();
 		
-		StorableBuildMacro macro = null;
+		IBuildMacro macro = null;
 		try{
 			if(MacroResolver.isStringListMacro(type)){
 				String value[] = copy.getStringListValue();
-				macro = new StorableBuildMacro(name, type, value);
+				macro = checkMacro(name, type, value);
+				if(macro == null){
+					macro = new StorableBuildMacro(name, type, value);
+					addMacro(macro);
+					fIsDirty = true;
+					fIsChanged = true;
+				}
 			}
 			else {
 				String value = copy.getStringValue();
-				macro = new StorableBuildMacro(name, type, value);
+				macro = checkMacro(name, type, value);
+				if(macro == null){
+					macro = new StorableBuildMacro(name, type, value);
+					addMacro(macro);
+					fIsDirty = true;
+					fIsChanged = true;
+				}
 			}
-			addMacro(macro);
-			fIsDirty = true;
-			fIsChanged = true;
 
 		}catch(BuildMacroException e){
 		}
@@ -139,10 +229,13 @@ public class StorableMacros {
 		if(name == null || "".equals(name = name.trim()) || !MacroResolver.isStringListMacro(type)) //$NON-NLS-1$
 			return null;
 
-		StorableBuildMacro macro = new StorableBuildMacro(name, type, value);
-		addMacro(macro);
-		fIsDirty = true;
-		fIsChanged = true;
+		IBuildMacro macro = checkMacro(name, type, value);
+		if(macro == null){
+			macro = new StorableBuildMacro(name, type, value);
+			addMacro(macro);
+			fIsDirty = true;
+			fIsChanged = true;
+		}
 		return macro;
 	}
 
@@ -215,7 +308,7 @@ public class StorableMacros {
 		return (IBuildMacro[])macros.toArray(new IBuildMacro[macros.size()]);
 	}
 	
-	IBuildMacro deleteMacro(String name){
+	public IBuildMacro deleteMacro(String name){
 		if(name == null || "".equals(name = name.trim())) //$NON-NLS-1$
 			return null;
 

@@ -142,6 +142,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 		// Switch the rebuild off since this is an existing project
 		rebuildNeeded = false;
+		
+		version = managedBuildRevision;
 	}
 
 	/* (non-Javadoc)
@@ -1022,6 +1024,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			this.version = version;
 			//setDirty(true);  - It is primarily up to the ManagedProject to maintain the dirty state
 		}
+		updateRevision(version);
 	}
 
 	/**
@@ -1266,7 +1269,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 							rescfgs[i]);
 			}
 		}
-//		*/
+*/
 		return entries;
 	}
 
@@ -1279,7 +1282,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	private List readToolsOptions(int entryType, List entries, boolean builtIns, IBuildObject obj) {
 		ITool[] t = null;
-		Path resPath = Path.EMPTY;
+		IPath resPath = Path.EMPTY;
 
 		// check that entryType is correct
 		if (entryType != IPathEntry.CDT_INCLUDE_FILE &&
@@ -1293,7 +1296,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		
 		// calculate parameters depending of object type
 		if (obj instanceof IResourceConfiguration) {
-			resPath = new Path(((IResourceConfiguration)obj).getResourcePath());
+			resPath = new Path(((IResourceConfiguration)obj).getResourcePath()).removeFirstSegments(1);
 			t = ((IResourceConfiguration)obj).getToolsToInvoke();
 		} else if (obj instanceof IConfiguration) {
 			t  = ((IConfiguration)obj).getFilteredTools();
@@ -1339,7 +1342,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param resPath
 	 * @param ocd       
 	 */
-	protected List addIncludes(List entries, String[] values, Path resPath, OptionContextData ocd) {
+	protected List addIncludes(List entries, String[] values, IPath resPath, OptionContextData ocd) {
 		if (values != null) {
 			for (int k=0; k<values.length; k++) {
 				if (ocd != null) {
@@ -1359,7 +1362,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param resPath
 	 * @param ocd
 	 */
-	protected List addLibraries(List entries, String[] values, Path resPath, OptionContextData ocd) {
+	protected List addLibraries(List entries, String[] values, IPath resPath, OptionContextData ocd) {
 		if (values != null) {
 			for (int k=0; k<values.length; k++) {
 				if (ocd != null) {
@@ -1378,7 +1381,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param values
 	 * @param resPath
 	 */
-	protected List addSymbols(List entries, String[] values, Path resPath) {
+	protected List addSymbols(List entries, String[] values, IPath resPath) {
 		if (values == null) return entries;
 		for (int i=0; i<values.length; i++) {
 			if (values[i].length() == 0) continue;
@@ -1401,6 +1404,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			if (add) { entries.add(CoreModel.newMacroEntry(resPath, key, value)); }
 		}
 		return entries;
+	}
+	
+	public void updateRevision(String revision){
+		if(managedProject != null)
+			((ManagedProject)managedProject).updateManagedBuildRevision(revision);
 	}
 
 }

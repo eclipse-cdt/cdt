@@ -1,3 +1,7 @@
+2005-09-30 Mikhail Khodjaiants
+	Bug 110392: Internal error while launching gdb debugger.
+	* CMainAttachTab.java
+
 2005-09-08 Mikhail Khodjaiants
 	Bug 109106: The "Debugger" tab of the launch configuration dialog is too wide.
 	* CDebuggerTab.java

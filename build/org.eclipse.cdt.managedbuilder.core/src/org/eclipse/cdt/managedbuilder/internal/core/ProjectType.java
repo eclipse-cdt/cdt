@@ -239,8 +239,10 @@ public class ProjectType extends BuildObject implements IProjectType {
 	 * @param Tool
 	 */
 	public void addConfiguration(Configuration configuration) {
-		getConfigurationList().add(configuration);
-		getConfigurationMap().put(configuration.getId(), configuration);
+		if(!configuration.isTemporary()){
+			getConfigurationList().add(configuration);
+			getConfigurationMap().put(configuration.getId(), configuration);
+		}
 	}
 	
 	/* (non-Javadoc)

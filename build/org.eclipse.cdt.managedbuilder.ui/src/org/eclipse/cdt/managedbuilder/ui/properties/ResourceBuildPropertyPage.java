@@ -21,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
@@ -57,11 +58,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 
-public class ResourceBuildPropertyPage extends PropertyPage implements
+public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage implements
 		IWorkbenchPropertyPage, IPreferencePageContainer, ICOptionContainer {
 	/*
 	 * String constants
@@ -89,7 +89,8 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	private static final String MSG_CONFIG_NOTSELECTED = PREFIX + ".config.notselected"; //$NON-NLS-1$
 	private static final String MSG_RC_NON_BUILD = PREFIX + ".rc.non.build"; //$NON-NLS-1$
 	private static final String MSG_RC_GENERATED = PREFIX + ".rc.generated"; //$NON-NLS-1$
-
+	
+	private static final boolean DEFAULT_EXCLUDE_VALUE = false;
 	/*
 	 * Dialog widgets
 	 */
@@ -102,16 +103,16 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	/*
 	 * Bookeeping variables
 	 */
-	private boolean isExcluded = false;
 	private boolean noContentOnPage = false;
-
 	
 	private IConfiguration[] configurations;
 	private IConfiguration selectedConfiguration;
-	private IResourceConfiguration currentResourceConfig;
+	private IConfiguration clonedConfiguration;
+	private IResourceConfiguration clonedResourceConfig;
 	private Point lastShellSize;
 	protected ManagedBuildOptionBlock fOptionBlock;
 	protected boolean displayedConfig = false;
+	
 	/**
 	 * Default constructor
 	 */
@@ -223,10 +224,10 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		Group tabGroup = ControlFactory.createGroup(composite, ManagedBuilderUIMessages.getResourceString(RESOURCE_SETTINGS_LABEL), 1);
 		gd = new GridData(GridData.FILL_BOTH);
 		tabGroup.setLayoutData(gd);
-		fOptionBlock.createContents(tabGroup, getElement());
-
 		//	Update the contents of the configuration widget
 		populateConfigurations();
+		fOptionBlock.createContents(tabGroup, getElement());
+
 		WorkbenchHelp.setHelp(composite,ManagedBuilderHelpContextIds.MAN_PROJ_BUILD_PROP);
 	}
 	
@@ -325,17 +326,18 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 			    // Set the new selected configuration
 				selectedConfiguration = newConfig;
 				ManagedBuildManager.setSelectedConfiguration(getProject(), selectedConfiguration);
+				clonedConfiguration = getClonedConfig(selectedConfiguration);
 				//	Set the current Resource Configuration
-				setCurrentResourceConfig(findCurrentResourceConfig());
+				clonedResourceConfig = getCurrentResourceConfig(clonedConfiguration,true);
 				
-				isExcluded = getCurrentResourceConfig().isExcluded();
 				fOptionBlock.updateValues();
-				excludedCheckBox.setSelection(isExcluded);
+				excludedCheckBox.setSelection(isExcluded());
 			}
 		}
 		return;
 	}
 	
+
 	/*
 	 * This method updates the property page message
 	 */
@@ -438,7 +440,7 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	
 	protected void performDefaults() {
 		fOptionBlock.performDefaults();
-		excludedCheckBox.setSelection(getCurrentResourceConfig().isExcluded());
+		excludedCheckBox.setSelection(getCurrentResourceConfigClone().isExcluded());
 		super.performDefaults();
 	}
 	
@@ -458,7 +460,13 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
+					if(containsDefaults()){
+						removeCurrentResourceConfig();
+						return;
+					}
+					
 					fOptionBlock.performApply(monitor);
+					getCurrentResourceConfig(true).setExclude(getCurrentResourceConfigClone().isExcluded());
 				}
 			};
 			IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
@@ -475,10 +483,11 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	
 			// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
-			if ( getCurrentResourceConfig().isExcluded() != isExcluded() ) {
-				getCurrentResourceConfig().setExclude(isExcluded());
-				selectedConfiguration.setRebuildState(true);
-			}
+		
+		if(getCurrentResourceConfigClone().isDirty()){
+			selectedConfiguration.setRebuildState(true);
+			getCurrentResourceConfigClone().setDirty(false);
+		}
 
 		ManagedBuildManager.saveBuildInfo(getProject(), false);
 		
@@ -486,8 +495,25 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 		if (bi != null & bi instanceof ManagedBuildInfo) {
 			((ManagedBuildInfo)bi).initializePathEntries();
 		}
+		
+		EnvironmentVariableProvider.fUserSupplier.checkInexistentConfigurations(clonedConfiguration.getManagedProject());
+
 		return true;
 	}
+	
+	public boolean containsDefaults(){
+		if(getCurrentResourceConfigClone().isExcluded() != DEFAULT_EXCLUDE_VALUE)
+			return false;
+		return fOptionBlock.containsDefaults();
+	}
+	
+    public boolean performCancel() {
+
+    	EnvironmentVariableProvider.fUserSupplier.checkInexistentConfigurations(clonedConfiguration.getManagedProject());
+
+        return true;
+    }
+
 
 	private void populateConfigurations() {
 		
@@ -518,54 +544,31 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	/**
 	 * @return Returns the currentResourceConfig.
 	 */
-	public IResourceConfiguration getCurrentResourceConfig() {
-		return currentResourceConfig;
+	public IResourceConfiguration getCurrentResourceConfigClone() {
+		return clonedResourceConfig;
+	}
+	
+	public IResourceConfiguration getCurrentResourceConfig(boolean create) {
+		return getCurrentResourceConfig(selectedConfiguration,create);
 	}
 
-	/**
-	 * @param currentResourceConfig
-	 *            The currentResourceConfig to set.
-	 */
-	public void setCurrentResourceConfig(
-			IResourceConfiguration currentResourceConfig) {
-		if (currentResourceConfig != null)
-			this.currentResourceConfig = currentResourceConfig;
-		else {
-			IFile file = (IFile) getElement();
-					
-			// create a new resource configuration for this resource.
-			this.currentResourceConfig = selectedConfiguration.createResourceConfiguration(file);
+
+	private IResourceConfiguration getCurrentResourceConfig(IConfiguration cfg, boolean create){
+		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(((IFile)getElement()).getFullPath().toString());
+		if(rcCfg == null && create)
+			rcCfg = cfg.createResourceConfiguration((IFile)getElement());
+		return rcCfg;
+	}
+	
+	public boolean removeCurrentResourceConfig(){
+		IResourceConfiguration rcCfg = getCurrentResourceConfig(false);
+		if(rcCfg != null){
+			selectedConfiguration.removeResourceConfiguration(rcCfg);
+			return true;
 		}
+		return false;
 	}
- 
-	// Check whether a resource configuration already exists for the current
-	// resource in selectedConfiguration.
-	// if so, return the resource configuration, otherwise return null.
 
-	public IResourceConfiguration findCurrentResourceConfig() {
-
-		IResourceConfiguration resConfigElement = null;
-
-		//	Check if the selected configuration has any resourceConfigurations.
-		if (selectedConfiguration.getResourceConfigurations().length == 0)
-			return null;
-
-		IResourceConfiguration[] resourceConfigurations = selectedConfiguration
-				.getResourceConfigurations();
-		IFile file = (IFile) getElement();
-
-		// Check whether a resource configuration is already exists for the
-		// selected file.
-		for (int i = 0; i < resourceConfigurations.length; i++) {
-			resConfigElement = resourceConfigurations[i];
-			if (file.getFullPath().toString().equals(
-					resConfigElement.getResourcePath())) {
-				return resConfigElement;
-			}
-		}
-
-		return null;
-	}
 	/**
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateButtons()
 	 */
@@ -610,10 +613,11 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	/* (non-Javadoc)
 	 * Return the IPreferenceStore of the Tool Settings block
 	 */
-	public IPreferenceStore getToolSettingsPreferenceStore()
+	public BuildToolSettingsPreferenceStore getToolSettingsPreferenceStore()
 	{
 		return fOptionBlock.getToolSettingsPreferenceStore();
 	}
+
 	public Preferences getPreferences()
 	{
 		return null;
@@ -624,13 +628,15 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 	/**
 	 * @return Returns the isExcluded.
 	 */
-	public boolean isExcluded() {
-		return isExcluded;
+	public boolean isExcluded(){
+		return getCurrentResourceConfigClone().isExcluded();
 	}
+
 	/**
 	 * @param isExcluded The isExcluded to set.
 	 */
 	public void setExcluded(boolean isExcluded) {
-		this.isExcluded = isExcluded;
+		getCurrentResourceConfigClone().setExclude(isExcluded);
+		fOptionBlock.updateValues();
 	}
 }

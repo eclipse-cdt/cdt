@@ -23,21 +23,23 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.envvar.UserDefinedEnvironmentSupplier;
+import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.internal.macros.UserDefinedMacroSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -76,6 +78,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private boolean isDirty = false;
 	private boolean rebuildNeeded = false;
 	private boolean resolved = true;
+	private boolean isTemporary = false;
 
 	
 	/*
@@ -222,11 +225,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @param id A unique ID for the new configuration.
 	 * @param cloneChildren If <code>true</code>, the configuration's tools are cloned 
 	 */
-	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneChildren) {
+	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneChildren, boolean temporary) {
 		setId(id);
 		setName(cloneConfig.getName());
+		this.description = cloneConfig.getDescription();
 		this.managedProject = managedProject;
 		isExtensionConfig = false;
+		this.isTemporary = temporary;
 
 		// set managedBuildRevision
 		setManagedBuildRevision(cloneConfig.getManagedBuildRevision());
@@ -264,39 +269,48 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		// Clone the configuration's children
 		// Tool Chain
-		int nnn = ManagedBuildManager.getRandomNumber();
 		String subId;
-		String tmpId;
 		String subName;
 		if (cloneConfig.parent != null) {
-			tmpId = cloneConfig.parent.getToolChain().getId();
+			subId = ManagedBuildManager.calculateChildId(
+						cloneConfig.parent.getToolChain().getId(),
+						null);
 			subName = cloneConfig.parent.getToolChain().getName();
 			
 		} else {
-			tmpId = cloneConfig.getToolChain().getId();	
+			subId = ManagedBuildManager.calculateChildId(
+						cloneConfig.getToolChain().getId(),
+						null);
 			subName = cloneConfig.getToolChain().getName();
 		}
 		
-		String version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
-		if ( version != null) {			// If the 'tmpId' contains version information
-			subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			subId = tmpId + "." + nnn;		//$NON-NLS-1$
-		}
-
 		if (cloneChildren) {
 		    toolChain = new ToolChain(this, subId, subName, (ToolChain)cloneConfig.getToolChain());
+		    
+			//copy expand build macros setting
+			BuildMacroProvider macroProvider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
+			macroProvider.expandMacrosInBuildfile(this,
+						macroProvider.areMacrosExpandedInBuildfile(cloneConfig));
+
+			//copy user-defined build macros
+			UserDefinedMacroSupplier userMacros = BuildMacroProvider.fUserDefinedMacroSupplier;
+			userMacros.setMacros(
+					userMacros.getMacros(BuildMacroProvider.CONTEXT_CONFIGURATION,cloneConfig),
+					BuildMacroProvider.CONTEXT_CONFIGURATION,
+					this);
+			
+			//copy user-defined environment
+			UserDefinedEnvironmentSupplier userEnv = EnvironmentVariableProvider.fUserSupplier;
+			userEnv.setVariables(
+					userEnv.getVariables(cloneConfig), this);
+
 		} else {
 			// Add a tool-chain element that specifies as its superClass the 
 			// tool-chain that is the child of the configuration.
 			ToolChain superChain = (ToolChain)cloneConfig.getToolChain();
-			tmpId = superChain.getId();
-			version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
-			if ( version != null) {		// If the 'tmpId' contains version information
-				subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				subId = tmpId + "." + nnn;		//$NON-NLS-1$
-			}
+			subId = ManagedBuildManager.calculateChildId(
+						superChain.getId(),
+						null);
 			IToolChain newChain = createToolChain(superChain, subId, superChain.getName(), false);
 			
 			// For each option/option category child of the tool-chain that is
@@ -312,15 +326,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 			ITool[] tools = superChain.getTools();
 			for (int i=0; i<tools.length; i++) {
 			    Tool toolChild = (Tool)tools[i];
-				nnn = ManagedBuildManager.getRandomNumber();
-				tmpId = toolChild.getId();
-				version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
-				if ( version != null) {   // If the 'tmpId' contains version information
-					subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
-				} else {
-					subId = tmpId + "." + nnn;		//$NON-NLS-1$
-				}
-				newChain.createTool(toolChild, subId, toolChild.getName(), false);
+			    subId = ManagedBuildManager.calculateChildId(toolChild.getId(),null);
+			    newChain.createTool(toolChild, subId, toolChild.getName(), false);
 			}
 		}
 
@@ -330,7 +337,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			Iterator iter = resElements.listIterator();
 			while (iter.hasNext()) {
 				ResourceConfiguration resConfig = (ResourceConfiguration) iter.next();
-				subId = getId() + "." + resConfig.getResourcePath(); //$NON-NLS-1$
+				subId = getId() + "." + ManagedBuildManager.getRandomNumber(); //$NON-NLS-1$
 				ResourceConfiguration newResConfig = new ResourceConfiguration(this, resConfig, subId);
 				addResourceConfiguration(newResConfig);
 			}
@@ -409,7 +416,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		// description
 		if (element.hasAttribute(IConfiguration.DESCRIPTION))
-			setDescription(element.getAttribute(IConfiguration.DESCRIPTION));
+			this.description = element.getAttribute(IConfiguration.DESCRIPTION);
 		
 		if (element.hasAttribute(IConfiguration.PARENT)) {
 			// See if the parent belongs to the same project
@@ -849,11 +856,15 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void addResourceConfiguration(ResourceConfiguration resConfig) {
 		getResourceConfigurationList().add(resConfig);
 		getResourceConfigurationMap().put(resConfig.getResourcePath(), resConfig);
+		isDirty = true;
+		rebuildNeeded = true;
 	}
 
 	public void removeResourceConfiguration(IResourceConfiguration resConfig) {
 		getResourceConfigurationList().remove(resConfig);
 		getResourceConfigurationMap().remove(resConfig.getResourcePath());
+		isDirty = true;
+		rebuildNeeded = true;
 	}
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
@@ -1154,13 +1165,20 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void setBuildArguments(String makeArgs) {
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
-		if (builder.isExtensionElement()) {
-			int nnn = ManagedBuildManager.getRandomNumber();
-			String subId = builder.getId() + "." + nnn;		//$NON-NLS-1$
-			String builderName = builder.getName() + "." + getName(); 	//$NON-NLS-1$
-			builder = toolChain.createBuilder(builder, subId, builderName, false);
+		if(makeArgs == null){ //resetting the build arguments
+			if(!builder.isExtensionElement()){
+				builder.setArguments(makeArgs);
+				rebuildNeeded = true;
+			}
+		}else if(!makeArgs.equals(builder.getArguments())){
+			if (builder.isExtensionElement()) {
+				String subId = ManagedBuildManager.calculateChildId(builder.getId(), null);
+				String builderName = builder.getName() + "." + getName(); 	//$NON-NLS-1$
+				builder = toolChain.createBuilder(builder, subId, builderName, false);
+			}
+			builder.setArguments(makeArgs);
+			rebuildNeeded = true;
 		}
-		builder.setArguments(makeArgs);
 	}
 
 	/* (non-Javadoc)
@@ -1169,13 +1187,20 @@ public class Configuration extends BuildObject implements IConfiguration {
 	public void setBuildCommand(String command) {
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
-		if (builder.isExtensionElement()) {
-			int nnn = ManagedBuildManager.getRandomNumber();
-			String subId = builder.getId() + "." + nnn;		//$NON-NLS-1$
-			String builderName = builder.getName() + "." + getName(); 	//$NON-NLS-1$
-			builder = toolChain.createBuilder(builder, subId, builderName, false);
+		if(command == null){ //resetting the build command
+			if(!builder.isExtensionElement()){
+				builder.setCommand(command);
+				rebuildNeeded = true;
+			}
+		} else if(!command.equals(builder.getCommand())){
+			if (builder.isExtensionElement()) {
+				String subId = ManagedBuildManager.calculateChildId(builder.getId(), null);
+				String builderName = builder.getName() + "." + getName(); 	//$NON-NLS-1$
+				builder = toolChain.createBuilder(builder, subId, builderName, false);
+			}
+			builder.setCommand(command);
+			rebuildNeeded = true;
 		}
-		builder.setCommand(command);
 	}
  
     /* (non-Javadoc) 
@@ -1298,7 +1323,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public void setRebuildState(boolean rebuild) {
 		rebuildNeeded = rebuild;
-		if(rebuild)
+		if(rebuild && !isTemporary())
 			((EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider()).checkBuildPathVariables(this);
 	}
 
@@ -1372,6 +1397,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 		for (int j = 0; j < opts.length; j++) {
 			toolChain.removeOption(opts[j]);
 		}
+		
+		rebuildNeeded = true;
 	}
 
 	/*
@@ -1381,7 +1408,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	{	
 		String path = file.getFullPath().toString();
 		String resourceName = file.getName();
-		String id = getId() + "." + path; //$NON-NLS-1$
+		String id = getId() + "." + ManagedBuildManager.getRandomNumber(); //$NON-NLS-1$
 		ResourceConfiguration resConfig = new ResourceConfiguration( (IConfiguration) this, id, resourceName, path);
 		
 		//	Get file extension.
@@ -1419,10 +1446,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public PluginVersionIdentifier getVersion() {
 		if ( version == null) {
-			if ( projectType != null) {
-				projectType.getVersion();
-			} else if ( managedProject != null) {
-				return managedProject.getVersion();
+			if ( toolChain != null) {
+				return toolChain.getVersion();
 			}
 		}
 		return version;
@@ -1441,5 +1466,24 @@ public class Configuration extends BuildObject implements IConfiguration {
 			return toolChain.getBuildMacroSupplier();
 		return null;
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isTemporary()
+	 */
+	public boolean isTemporary(){
+		return isTemporary;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
+	 */
+	public void updateManagedBuildRevision(String revision){
+		super.updateManagedBuildRevision(revision);
+		toolChain.updateManagedBuildRevision(revision);
+		
+		for(Iterator iter = getResourceConfigurationList().iterator(); iter.hasNext();){
+			((ResourceConfiguration)iter.next()).updateManagedBuildRevision(revision);
+		}
 	}
 }

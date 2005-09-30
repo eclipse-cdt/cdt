@@ -306,6 +306,7 @@ public class UpdateManagedProjectManager {
 								}
 							),null));
 			}
+			
 		} catch (CoreException e) {
 			fIsInfoReadOnly = true;
 			throw e; 

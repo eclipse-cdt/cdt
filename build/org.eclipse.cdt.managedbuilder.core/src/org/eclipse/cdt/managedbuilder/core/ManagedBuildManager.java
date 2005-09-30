@@ -1529,7 +1529,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				//  Create the internal representation of the project's MBS information
 				buildInfo = new ManagedBuildInfo(project, (Element)node, fileVersion);
 				if (fileVersion != null) {
-					buildInfo.setVersion(fileVersion);
+	//				buildInfo.setVersion(fileVersion);
 					PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
 					PluginVersionIdentifier version21 = new PluginVersionIdentifier("2.1");		//$NON-NLS-1$
 					//  CDT 2.1 is the first version using the new MBS model
@@ -2902,6 +2902,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 		}
 		return false;
+	}
+
+	/*
+	 * if the suffix is null, then the random number will be appended to the superId
+	 */
+	static public String calculateChildId(String superId, String suffix){
+		if(suffix == null)
+			suffix = new Integer(getRandomNumber()).toString();
+
+		String version = getVersionFromIdAndVersion(superId);
+        if(version != null)
+            return ManagedBuildManager.getIdFromIdAndVersion(superId) + "." + suffix + "_" + version;             //$NON-NLS-1$ //$NON-NLS-2$
+        return superId + "." + suffix;                     //$NON-NLS-1$
 	}
 
 	/**

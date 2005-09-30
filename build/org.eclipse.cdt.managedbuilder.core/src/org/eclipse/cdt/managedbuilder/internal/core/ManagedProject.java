@@ -17,17 +17,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.envvar.StorableEnvironment;
 import org.eclipse.cdt.managedbuilder.internal.macros.StorableMacros;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,7 +56,8 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	private boolean resolved = true;
 	//holds the user-defined macros
 	private StorableMacros userDefinedMacros;
-
+	//holds user-defined environment
+	private StorableEnvironment userDefinedEnvironment;
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -188,6 +191,10 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 			element.appendChild(macrosElement);
 			userDefinedMacros.serialize(doc,macrosElement);
 		}
+		
+		if(userDefinedEnvironment != null){
+			EnvironmentVariableProvider.fUserSupplier.storeEnvironment(this,true);
+		}
 
 		// I am clean now
 		isDirty = false;
@@ -225,7 +232,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#createConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id) {
-		Configuration config = new Configuration(this, (Configuration)parent, id, false);
+		Configuration config = new Configuration(this, (Configuration)parent, id, false, false);
 		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
 	}
@@ -234,7 +241,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#createConfigurationClone(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public IConfiguration createConfigurationClone(IConfiguration parent, String id) {
-		Configuration config = new Configuration(this, (Configuration)parent, id, true);
+		Configuration config = new Configuration(this, (Configuration)parent, id, true, false);
 		// Inform all options in the configuration and all its resource configurations
 		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
@@ -266,6 +273,11 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 */
 	public void removeConfiguration(String id) {
 		final String removeId = id;
+		
+		//handle the case of temporary configuration
+		if(getConfigurationMap().get(id) == null)
+			return;
+
 		IWorkspaceRunnable remover = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// Remove the specified configuration from the list and map
@@ -324,8 +336,10 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * @param Tool
 	 */
 	public void addConfiguration(Configuration configuration) {
-		getConfigurationList().add(configuration);
-		getConfigurationMap().put(configuration.getId(), configuration);
+		if(!configuration.isTemporary()){
+			getConfigurationList().add(configuration);
+			getConfigurationMap().put(configuration.getId(), configuration);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -408,6 +422,10 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		if(userDefinedMacros != null && userDefinedMacros.isDirty())
 			return true;
 
+		//check whether the project - specific environment is dirty
+		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
+			return true;
+		
 		
 		// Otherwise see if any configurations need saving
 		Iterator iter = getConfigurationList().listIterator();
@@ -476,4 +494,22 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		return userDefinedMacros;
 	}
 
+	public StorableEnvironment getUserDefinedEnvironmet(){
+		return userDefinedEnvironment;
+	}
+
+	public void setUserDefinedEnvironmet(StorableEnvironment env){
+		userDefinedEnvironment = env;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
+	 */
+	public void updateManagedBuildRevision(String revision){
+		super.updateManagedBuildRevision(revision);
+		for(Iterator iter = getConfigurationList().iterator(); iter.hasNext();){
+			Configuration cfg = (Configuration)iter.next();
+			cfg.updateManagedBuildRevision(revision);
+		}
+	}
 }

@@ -97,7 +97,7 @@ class UpdateManagedProject20 {
 				}
 			}
 			// Upgrade the version
-			((ManagedBuildInfo)info).setVersion("2.1.0");
+			((ManagedBuildInfo)info).setVersion("2.1.0"); //$NON-NLS-1$
 			info.setValid(true);
 		}catch (CoreException e){
 			throw e;

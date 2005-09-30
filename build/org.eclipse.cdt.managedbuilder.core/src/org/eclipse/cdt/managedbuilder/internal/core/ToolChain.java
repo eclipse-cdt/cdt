@@ -31,6 +31,8 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.envvar.StorableEnvironment;
 import org.eclipse.cdt.managedbuilder.internal.macros.StorableMacros;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
@@ -83,8 +85,10 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	private boolean isExtensionToolChain = false;
 	private boolean isDirty = false;
 	private boolean resolved = resolvedDefault;
-		//holds the user-defined macros
+	//holds the user-defined macros
 	private StorableMacros userDefinedMacros;
+	//holds user-defined macros
+	private StorableEnvironment userDefinedEnvironment;
 
 	private IConfigurationElement previousMbsVersionConversionElement = null;
 	private IConfigurationElement currentMbsVersionConversionElement = null;
@@ -299,24 +303,19 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		super.copyChildren(toolChain);
 		//  Clone the children
 		if (toolChain.builder != null) {
-			int nnn = ManagedBuildManager.getRandomNumber();
 			String subId;
-			String tmpId;
-			String version;
 			String subName;
 			
 			if (toolChain.builder.getSuperClass() != null) {
-				tmpId = toolChain.builder.getSuperClass().getId();		//$NON-NLS-1$
+				subId = ManagedBuildManager.calculateChildId(
+							toolChain.builder.getSuperClass().getId(),
+							null);
 				subName = toolChain.builder.getSuperClass().getName();
 			} else {
-				tmpId = toolChain.builder.getId();		//$NON-NLS-1$
+				subId = ManagedBuildManager.calculateChildId(
+						toolChain.builder.getId(),
+						null);
 				subName = toolChain.builder.getName();
-			}
-			version = ManagedBuildManager.getVersionFromIdAndVersion(tmpId);
-			if ( version != null) {		// If the 'tmpId' contains version information
-				subId = ManagedBuildManager.getIdFromIdAndVersion(tmpId) + "." + nnn + "_" + version;		//$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				subId = tmpId + "." + nnn;		//$NON-NLS-1$
 			}
 
 			builder = new Builder(this, subId, subName, toolChain.builder);
@@ -677,7 +676,10 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 				Element macrosElement = doc.createElement(StorableMacros.MACROS_ELEMENT_NAME);
 				element.appendChild(macrosElement);
 				userDefinedMacros.serialize(doc,macrosElement);
-			}	
+			}
+			
+			if(userDefinedEnvironment != null)
+				EnvironmentVariableProvider.fUserSupplier.storeEnvironment(getParent(),true);
 		
 			// I am clean now
 			isDirty = false;
@@ -1213,7 +1215,13 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		//check whether the tool-chain - specific macros are dirty
 		if(userDefinedMacros != null && userDefinedMacros.isDirty())
 			return true;
-			
+		
+		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
+			return true;
+
+		if(builder != null && builder.isDirty())
+			return true;
+
 		// Otherwise see if any tools need saving
 		Iterator iter = getToolList().listIterator();
 		while (iter.hasNext()) {
@@ -1435,6 +1443,19 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		return userDefinedMacros;
 	}
 	
+	public StorableEnvironment getUserDefinedEnvironment(){
+		if(isExtensionToolChain)
+			return null;
+		
+		return userDefinedEnvironment;
+	}
+	
+	public void setUserDefinedEnvironment(StorableEnvironment env){
+		if(!isExtensionToolChain)
+			userDefinedEnvironment = env;
+	}
+	
+	
 	/**
 	 * Returns the plugin.xml element of the configurationMacroSupplier extension or <code>null</code> if none. 
 	 *  
@@ -1477,7 +1498,6 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 
 	public void checkForMigrationSupport() {
 
-		String tmpId = null;
 		boolean isExists = false;
 	
 		if (getSuperClass() == null) {
@@ -1655,4 +1675,19 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	public IConfigurationElement getCurrentMbsVersionConversionElement() {
 		return currentMbsVersionConversionElement;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
+	 */
+	public void updateManagedBuildRevision(String revision){
+		super.updateManagedBuildRevision(revision);
+		
+		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
+			((Tool)iter.next()).updateManagedBuildRevision(revision);
+		}
+		
+		if(builder != null)
+			builder.updateManagedBuildRevision(revision);
+	}
+
 }

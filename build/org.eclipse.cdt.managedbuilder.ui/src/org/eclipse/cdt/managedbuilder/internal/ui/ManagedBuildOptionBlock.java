@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPreferencePage;
 import org.eclipse.cdt.managedbuilder.ui.properties.BuildPropertyPage;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolSettingsPreferenceStore;
 import org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage;
 import org.eclipse.cdt.ui.dialogs.BinaryParserBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
@@ -76,7 +77,7 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 			addTab(toolsSettingsBlock = new ToolsSettingsBlock((BuildPropertyPage) fParent, element));
 			addTab(buildSettingsBlock = new BuildSettingsBlock((BuildPropertyPage) fParent));
 			addTab(buildStepSettingsBlock = new BuildStepSettingsBlock((BuildPropertyPage) fParent));
-			addTab(errParserBlock = new ErrorParserBlock());
+			addTab(errParserBlock = new ErrorParserBlock((BuildPropertyPage) fParent));
 			addTab(binaryParserBlock = new BinaryParserBlock());
 			addTab(environmentBlock = new EnvironmentSetBlock((BuildPropertyPage) fParent));
 			addTab(macrosBlock = new MacrosSetBlock((BuildPropertyPage) fParent));
@@ -331,11 +332,11 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		return null;
 	}
 	
-	public IPreferenceStore getToolSettingsPreferenceStore()
+	public BuildToolSettingsPreferenceStore getToolSettingsPreferenceStore()
 	{
 		return toolsSettingsBlock.getPreferenceStore();
 	}
-
+	
 	public void update() {
 		super.update();
 		ICOptionPage tab = getCurrentPage();
@@ -419,4 +420,19 @@ public class ManagedBuildOptionBlock extends TabFolderOptionBlock {
 		return false;
 	}
 	
+	public boolean containsDefaults(){
+		Iterator iter = getOptionPages().iterator();
+		while (iter.hasNext()) {
+			ICOptionPage tab = (ICOptionPage)iter.next();
+			if(tab instanceof ToolsSettingsBlock){
+				if(!((ToolsSettingsBlock)tab).containsDefaults())
+					return false;
+			} else if(tab instanceof ResourceCustomBuildStepBlock) {
+				if(!((ResourceCustomBuildStepBlock)tab).containsDefaults())
+					return false;
+			} else
+				return false;
+		}
+		return true;
+	}
 }

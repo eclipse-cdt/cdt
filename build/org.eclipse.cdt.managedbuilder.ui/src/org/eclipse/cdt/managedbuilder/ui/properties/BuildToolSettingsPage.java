@@ -22,17 +22,14 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
-import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
-import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
-import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor;
 import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
@@ -40,8 +37,8 @@ import org.eclipse.cdt.managedbuilder.internal.macros.MbsMacroSupplier;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Point;
 
 public class BuildToolSettingsPage extends BuildSettingsPage {
@@ -57,79 +54,41 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	// field editor that displays all the build options for a particular tool
 	private MultiLineTextFieldEditor allOptionFieldEditor;
-	// all build options preference store id
-	private String allOptionsId = ""; //$NON-NLS-1$
+	//tool command command
+	private StringFieldEditor commandStringField;
 	// A list of safe options to put unrecognized values in
 	private Vector defaultOptionNames;
 	// Map that holds all string options and its values
 	private HashMap stringOptionsMap;
-	// Tool the settings belong to
-	private ITool tool;
+
+	private ITool clonedTool;
 	// Map that holds all user object options and its values
 	private HashMap userObjsMap;
 	
 	private boolean isItResourceConfigPage;
 
-	//the build macro provider to be used for macro resolution
-	private BuildMacroProvider fProvider;
+	private AbstractBuildPropertyPage buildPropPage;
 	
-	//macro substitutor used in the macro resolution in UI
-	//resolves all macros except for the option-specific macros 
-	//and the explicit file macros
-	public class UIMacroSubstitutor extends DefaultMacroSubstitutor {
-		private BuildMacroProvider fProvider;
-		
-		public UIMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter, BuildMacroProvider provider){
-			super(contextType,contextData,inexistentMacroValue,listDelimiter);
-			fProvider = provider;
-		}
-
-		public UIMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
-			super(contextInfo,inexistentMacroValue,listDelimiter);
-		}
-		
-		protected IMacroContextInfo getMacroContextInfo(int contextType, Object contextData){
-			if(fProvider != null)
-				return fProvider.getMacroContextInfo(contextType,contextData);
-			return super.getMacroContextInfo();
-		}
-
-		
-		protected ResolvedMacro resolveMacro(IBuildMacro macro) throws BuildMacroException{
-			if(macro instanceof MbsMacroSupplier.FileContextMacro){
-				MbsMacroSupplier.FileContextMacro fileMacro = (MbsMacroSupplier.FileContextMacro)macro;
-				if(fileMacro.isExplicit()){
-					String name = macro.getName();
-					return new ResolvedMacro(name,MacroResolver.createMacroReference(name));
-				}
-			} else if (macro instanceof MbsMacroSupplier.OptionMacro) {
-				String name = macro.getName();
-				return new ResolvedMacro(name,MacroResolver.createMacroReference(name));
-			}
-			return super.resolveMacro(macro);
-		}
-
-	}
-
-	public BuildToolSettingsPage(IConfiguration configuration, ITool tool, BuildMacroProvider provider) {
+	public BuildToolSettingsPage(AbstractBuildPropertyPage page,
+			IConfiguration clonedCfg, ITool clonedTool) {
 		// Cache the configuration and tool this page is for
-		super(configuration);
-		this.tool = tool;
-		allOptionsId = tool.getId() + ".allOptions"; //$NON-NLS-1$
+		super(clonedCfg);
+		this.clonedTool = clonedTool;
+		buildPropPage = page;
 		stringOptionsMap = new HashMap();
 		userObjsMap = new HashMap();
 		isItResourceConfigPage = false;
-		fProvider = provider;
 	}
-	public BuildToolSettingsPage(IResourceConfiguration resConfig, ITool tool, BuildMacroProvider provider) {
+	
+	public BuildToolSettingsPage(AbstractBuildPropertyPage page,
+			IResourceConfiguration clonedRcCfg, ITool clonedTool) {
 		// Cache the configuration and tool this page is for
-		super(resConfig);
-		this.tool = tool;
-		allOptionsId = tool.getId() + ".allOptions"; //$NON-NLS-1$
+		super(clonedRcCfg);
+		this.clonedTool = clonedTool;
+		buildPropPage = page;
 		stringOptionsMap = new HashMap();
 		userObjsMap = new HashMap();
 		isItResourceConfigPage = true;
-		fProvider = provider;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#computeSize()
@@ -137,18 +96,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	public Point computeSize() {
 		return super.computeSize();
 	}
-	/* (non-Javadoc)
-	 * Private access function which returns the correct configuration
-	 * argument for valueHandler call-backs.
-	 */	
-	private IBuildObject getConfigurationHandle() {
-		if ( isItResourceConfigPage ) {
-			return resConfig;
-		} else {
-			return configuration;
-		}		
-	}	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -158,16 +106,15 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		// Load up the preference store
 		super.createFieldEditors();
 		// Add a string editor to edit the tool command
-		StringFieldEditor stringField = new StringFieldEditor(tool.getId(),
+		commandStringField = new StringFieldEditor(clonedTool.getId(),
 				ManagedBuilderUIMessages.getResourceString(COMMAND),
 				getFieldEditorParent());
-		stringField.setEmptyStringAllowed(false);
-		addField(stringField);
+		commandStringField.setEmptyStringAllowed(false);
+		addField(commandStringField);
 		// Add a field editor that displays over all build options
-		allOptionFieldEditor = new MultiLineTextFieldEditor(allOptionsId,
+		allOptionFieldEditor = new MultiLineTextFieldEditor(BuildToolSettingsPreferenceStore.ALL_OPTIONS_ID,
 				ALL_OPTIONS, getFieldEditorParent());
 		allOptionFieldEditor.getTextControl().setEditable(false);
-		getToolSettingsPreferenceStore().setValue(allOptionsId, ""); //$NON-NLS-1$
 		addField(allOptionFieldEditor);
 	}
 
@@ -256,112 +203,6 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	}
 
 	/**
-	 * Returns all the build options string
-	 * 
-	 * @return String 
-	 * @throws BuildException
-	 */
-	private String getToolFlags() throws BuildException {
-		StringBuffer buf = new StringBuffer();
-		ArrayList flags = new ArrayList();
-		// get the options for this tool
-		IOption[] options = tool.getOptions();
-		String listStr = ""; //$NON-NLS-1$
-		String[] listVal = null;
-		IBuildObject parent = configuration != null ? (IBuildObject)configuration.getToolChain() : (IBuildObject)resConfig;
-		IBuildObject config = configuration != null ? (IBuildObject)configuration : (IBuildObject)resConfig;
-		IMacroSubstitutor macroSubstitutor = new UIMacroSubstitutor(0,null,EMPTY_STRING,WHITESPACE,fProvider); 
-		for (int k = 0; k < options.length; k++) {
-			IOption option = options[k];
-			buf.setLength( 0 );
-
-			// check to see if the option has an applicability calculator
-			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
-			if (applicabilityCalculator == null || applicabilityCalculator.isOptionUsedInCommandLine(config, tool, option)) {
-			
-			try{
-			switch (option.getValueType()) {
-				case IOption.BOOLEAN :
-					String boolCmd;
-					if (getToolSettingsPreferenceStore().getBoolean(option.getId())) {
-						boolCmd = option.getCommand();
-					} else {
-						// Note: getCommandFalse is new with CDT 2.0
-						boolCmd = option.getCommandFalse();
-					}
-					if (boolCmd != null && boolCmd.length() > 0) {
-						buf.append(boolCmd);
-					}
-					break;
-				case IOption.ENUMERATED :
-					String enumCommand = getToolSettingsPreferenceStore().getString(
-							option.getId());
-					if (enumCommand.indexOf(DEFAULT_SEPERATOR) != -1)
-						enumCommand = option.getSelectedEnum();
-					String enumeration = option.getEnumCommand(enumCommand);
-					if (enumeration.length() > 0) {
-						buf.append(enumeration);
-					}
-					break;
-				case IOption.STRING :
-					String strCmd = option.getCommand();
-					String val = getToolSettingsPreferenceStore().getString(option.getId());
-					// add this string option value to the list
-					stringOptionsMap.put(option, val);
-						macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(null,null,option,parent));
-						if (val.length() > 0 && (val = MacroResolver.resolveToString(val,macroSubstitutor)).length() > 0) {
-					    buf.append(evaluateCommand( strCmd, val ));
-					}
-					break;
-				case IOption.STRING_LIST :
-				case IOption.INCLUDE_PATH :
-				case IOption.PREPROCESSOR_SYMBOLS :
-				case IOption.LIBRARIES :
-				case IOption.OBJECTS :
-					String cmd = option.getCommand();
-					listStr = getToolSettingsPreferenceStore().getString(option.getId());
-					if (cmd == null)
-						userObjsMap.put(option, listStr);
-						macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(null,null,option,parent));
-						listVal = MacroResolver.resolveStringListValues(BuildToolsSettingsStore.parseString(listStr),macroSubstitutor,true);
-					for (int j = 0; j < listVal.length; j++) {
-						String temp = listVal[j];
-							if(temp.length() > 0)
-						buf.append( evaluateCommand( cmd, temp ) + ITool.WHITE_SPACE);
-					}
-					break;
-				default :
-					break;
-	
-			}
-			if( buf.toString().trim().length() > 0 ) flags.add( buf.toString().trim() );
-			} catch (BuildMacroException e) {
-				
-			}
-			
-			}
-		}
-		
-		String outputName = "temp";		//$NON-NLS-1$
-		if (tool.getDefaultInputExtension() != null) { 
-		    outputName += tool.getDefaultInputExtension();
-		}
-		String[] f = new String[ flags.size() ];
-		String cmd = tool.getToolCommand();
-		try{
-			macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,new FileContextData(null,null,null,parent));
-			String resolved = MacroResolver.resolveToString(cmd,macroSubstitutor);
-			if ((resolved = resolved.trim()).length() > 0)
-				cmd = resolved;
-		} catch (BuildMacroException e) {
-		}
-		IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
-        IManagedCommandLineInfo info = gen.generateCommandLineInfo( tool, cmd, (String[])flags.toArray( f ), 
-                tool.getOutputFlag(), tool.getOutputPrefix(), outputName, new String[0], tool.getCommandLinePattern() );
-		return info.getFlags();
-	}
-
-	/**
 	 * Answers <code>true</code> if the receiver manages settings for the
 	 * argument
 	 * 
@@ -370,7 +211,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	 */
 	public boolean isForTool(ITool tool) {
 		if (tool != null) {
-			return tool.equals(this.tool);
+			return tool.equals(this.clonedTool);
 		}
 		return false;
 	}
@@ -381,7 +222,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	 */
 	public void parseAllOptions() {
 		// Get the all build options string from all options field
-		String alloptions = getToolSettingsPreferenceStore().getString(allOptionsId);
+		String alloptions = getToolSettingsPreferenceStore().getString(BuildToolSettingsPreferenceStore.ALL_OPTIONS_ID);
 		// list that holds the options for the option type other than
 		// boolean,string and enumerated
 		List optionsList = new ArrayList();
@@ -394,7 +235,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			String optionValue = (String)optIter.next();
 			boolean optionValueExist = false;
 			// get the options for this tool
-			IOption[] options = tool.getOptions();
+			IOption[] options = clonedTool.getOptions();
 			for (int k = 0; k < options.length; ++k) {
 				IOption opt = options[k];
 				String name = opt.getId();
@@ -422,14 +263,12 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 								String boolCommand;
 								boolCommand = opt.getCommand();
 								if (boolCommand != null && boolCommand.equals(optionValue)) {
-									getToolSettingsPreferenceStore()
-											.setValue(opt.getId(), true);
+											setOption(opt, true);
 									optionValueExist = true;
 								}
 								boolCommand = opt.getCommandFalse();
 								if (boolCommand != null && boolCommand.equals(optionValue)) {
-									getToolSettingsPreferenceStore()
-											.setValue(opt.getId(), false);
+											setOption(opt, false);
 									optionValueExist = true;
 								}
 								break;
@@ -444,8 +283,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 									}
 								}
 								if (!enumeration.equals("")) //$NON-NLS-1$
-									getToolSettingsPreferenceStore()
-											.setValue(opt.getId(), enumeration);
+											setOption(opt, enumeration);
 								break;
 							case IOption.STRING_LIST :
 							case IOption.INCLUDE_PATH :
@@ -486,7 +324,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 						if (alloptions.indexOf(vals[t]) != -1)
 							buf.append(vals[t] + ITool.WHITE_SPACE);
 					}
-					getToolSettingsPreferenceStore().setValue(((IOption) key).getId(),
+					setOption(((IOption) key),
 							buf.toString().trim());
 				}
 			}
@@ -499,20 +337,19 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 				Object key = iterator.next();
 				String val = (String) userObjsMap.get(key);
 				ArrayList list = new ArrayList();
-				String[] vals = BuildToolsSettingsStore.parseString(val);
+				String[] vals = parseString(val);
 				for (int t = 0; t < vals.length; t++) {
 					if (alloptions.indexOf(vals[t]) != -1)
 						list.add(vals[t]);
 				}
 				String listArr[] = new String[list.size()];
 				list.toArray(listArr);
-				String liststr = BuildToolsSettingsStore.createList(listArr);
-				getToolSettingsPreferenceStore().setValue(((IOption) key).getId(), liststr);
+				setOption(((IOption) key), listArr);
 			}
 		}
 		// Now update the preference store with parsed options
 		// Get the options for this tool
-		IOption[] options = tool.getOptions();
+		IOption[] options = clonedTool.getOptions();
 		for (int k = 0; k < options.length; ++k) {
 			IOption opt = options[k];
 			String name = opt.getId();
@@ -525,22 +362,21 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 						if (opt.getCommand() != null 
 								&& opt.getCommand().length() > 0  
 								&& !optsList.contains(opt.getCommand()))
-							getToolSettingsPreferenceStore().setValue(opt.getId(), false);
+							setOption(opt, false);
 						if (opt.getCommandFalse() != null 
 								&& opt.getCommandFalse().length() > 0  
 								&& !optsList.contains(opt.getCommandFalse()))
-							getToolSettingsPreferenceStore().setValue(opt.getId(), true);
+							setOption(opt, true);
 						break;
 					case IOption.STRING :
 						// TODO create a lst of valid default string options for the tool
 						if (getDefaultOptionNames().contains(opt.getName())) {
-							String newOptions = getToolSettingsPreferenceStore().getString(
-									opt.getId());
+							String newOptions = opt.getStringValue();
 							if (addnOptions.length() > 0) {
 								newOptions = newOptions + ITool.WHITE_SPACE
 										+ addnOptions.toString().trim();
 							}
-							getToolSettingsPreferenceStore().setValue(opt.getId(), newOptions);
+							setOption(opt, newOptions);
 						}
 						break;
 					case IOption.STRING_LIST :
@@ -559,13 +395,50 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 						String[] strlist = new String[newList.size()];
 						newList.toArray(strlist);
 						newList.clear();
-						getToolSettingsPreferenceStore().setValue(opt.getId(),
-								BuildToolsSettingsStore.createList(strlist));
+						setOption(opt, strlist);
 						break;
 					default :
 						break;
 				}
 			} catch (BuildException e) {}
+		}
+	}
+
+	public static String[] parseString(String stringList) {
+		if (stringList == null || stringList.length() == 0) {
+			return new String[0];
+		} else {
+			return stringList.split(DEFAULT_SEPERATOR);
+		}
+	}
+
+	protected void setOption(IOption option, boolean value){
+		try{
+			if(isItResourceConfigPage)
+				clonedResConfig.setOption(clonedTool,option,value);
+			else
+				clonedConfig.setOption(clonedTool,option,value);
+		} catch (BuildException e){
+		}
+	}
+	
+	protected void setOption(IOption option, String value){
+		try{
+			if(isItResourceConfigPage)
+				clonedResConfig.setOption(clonedTool,option,value);
+			else
+				clonedConfig.setOption(clonedTool,option,value);
+		} catch (BuildException e){
+		}
+	}
+
+	protected void setOption(IOption option, String value[]){
+		try{
+			if(isItResourceConfigPage)
+				clonedResConfig.setOption(clonedTool,option,value);
+			else
+				clonedConfig.setOption(clonedTool,option,value);
+		} catch (BuildException e){
 		}
 	}
 
@@ -580,63 +453,85 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		//parseAllOptions();
 
 		// Write the preference store values back to the build model
-		IOptionCategory category = (IOptionCategory)tool;
-		Object[][] options;
-		if ( isItResourceConfigPage ) {
-			options = category.getOptions(resConfig);
+		IOptionCategory clonedCategory = (IOptionCategory)clonedTool;
+		ITool tool = buildPropPage.getRealTool(clonedTool);
+		if(tool == null)
+			return false;
+		Object[][] clonedOptions;
+		IResourceConfiguration realRcCfg = null;
+		IConfiguration realCfg = null;
+		IBuildObject handler = null;
+
+		if (isItResourceConfigPage){
+			realRcCfg = buildPropPage.getRealRcConfig(clonedResConfig);
+			if(realRcCfg == null)
+				return false;
+			handler = realRcCfg;
+			clonedOptions = clonedCategory.getOptions(clonedResConfig);
 		} else {
-			options = category.getOptions(configuration);
+			realCfg = buildPropPage.getRealConfig(clonedConfig);
+			if(realCfg == null)
+				return false;
+			handler = realCfg;
+			clonedOptions = clonedCategory.getOptions(clonedConfig);
 		}
-		if ( options == null)
+
+		if ( clonedOptions == null)
 			return true;
 		
-		for (int i = 0; i < options.length; i++) {
-			ITool tool = (ITool)options[i][0];
-			if (tool == null) break;	//  The array may not be full
-			IOption option = (IOption)options[i][1];
+		for (int i = 0; i < clonedOptions.length; i++) {
+			ITool clonedTool = (ITool)clonedOptions[i][0];
+			if (clonedTool == null) break;	//  The array may not be full
+			IOption clonedOption = (IOption)clonedOptions[i][1];
+			
+			ITool realTool = buildPropPage.getRealTool(clonedTool);
+			if(realTool == null) continue;
+			IOption realOption = buildPropPage.getRealOption(clonedOption, clonedTool);
+			if(realOption == null) continue;
+
 			
 			try {
 				// Transfer value from preference store to options
 				IOption setOption = null;
-				switch (option.getValueType()) {
+				switch (clonedOption.getValueType()) {
 					case IOption.BOOLEAN :
-						boolean boolVal = getToolSettingsPreferenceStore().getBoolean(option.getId());
-						setOption = ManagedBuildManager.setOption(configuration, tool, option, boolVal);
+						boolean boolVal = clonedOption.getBooleanValue();;
+						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, boolVal);
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), boolVal);
-						}
+	//					if (setOption != option) {
+	//						getToolSettingsPreferenceStore().setValue(setOption.getId(), boolVal);
+	//					}
 						break;
 					case IOption.ENUMERATED :
-						String enumVal = getToolSettingsPreferenceStore().getString(option.getId());
-						String enumId = option.getEnumeratedId(enumVal);
-						setOption = ManagedBuildManager.setOption(configuration, tool, option, 
+						String enumVal = clonedOption.getStringValue();
+						String enumId = clonedOption.getEnumeratedId(enumVal);
+						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, 
 							(enumId != null && enumId.length() > 0) ? enumId : enumVal);
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), enumVal);
-						}
+//						if (setOption != option) {
+//							getToolSettingsPreferenceStore().setValue(setOption.getId(), enumVal);
+//						}
 						break;
 					case IOption.STRING :
-						String strVal = getToolSettingsPreferenceStore().getString(option.getId());
-						setOption = ManagedBuildManager.setOption(configuration, tool, option, strVal);
+						String strVal = clonedOption.getStringValue();
+						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, strVal);
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), strVal);
-						}
+//						if (setOption != option) {
+//							getToolSettingsPreferenceStore().setValue(setOption.getId(), strVal);
+//						}
 						break;
 					case IOption.STRING_LIST :
 					case IOption.INCLUDE_PATH :
 					case IOption.PREPROCESSOR_SYMBOLS :
 					case IOption.LIBRARIES :
 					case IOption.OBJECTS :
-						String listStr = getToolSettingsPreferenceStore().getString(option.getId());
-						String[] listVal = BuildToolsSettingsStore.parseString(listStr);
-						setOption = ManagedBuildManager.setOption(configuration, tool, option, listVal);
+//						String listStr = getToolSettingsPreferenceStore().getString(option.getId());
+						String[] listVal = (String[])((List)clonedOption.getValue()).toArray(new String[0]);
+						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, listVal);
 						// Reset the preference store since the Id may have changed
-						if (setOption != option) {
-							getToolSettingsPreferenceStore().setValue(setOption.getId(), listStr);
-						}
+//						if (setOption != option) {
+//							getToolSettingsPreferenceStore().setValue(setOption.getId(), listStr);
+//						}
 						break;
 					default :
 						break;
@@ -645,10 +540,10 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 				// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
 				// press have been applied.
 				if (setOption == null)
-					setOption = option;
+					setOption = realOption;
 				
 				if (setOption.getValueHandler().handleValue(
-						getConfigurationHandle(), 
+						handler, 
 						setOption.getOptionHolder(), 
 						setOption,
 						setOption.getValueHandlerExtraArgument(), 
@@ -658,18 +553,20 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 				} else {
 					// Event handling Failed. 
 				} 
-			} catch (BuildException e) {}
+			} catch (BuildException e) {
+			} catch (ClassCastException e) {
+			}
 		}
 		
 		// Save the tool command if it has changed
 		// Get the actual value out of the field editor
-		String command = getToolSettingsPreferenceStore().getString(tool.getId());
+		String command = clonedTool.getToolCommand();
 		if (command.length() > 0 &&
 			(!command.equals(tool.getToolCommand()))) {
 			if ( isItResourceConfigPage ) {
-				ManagedBuildManager.setToolCommand(resConfig, tool, command);
+				ManagedBuildManager.setToolCommand(realRcCfg, tool, command);
 			} else {
-				ManagedBuildManager.setToolCommand(configuration, tool, command);
+				ManagedBuildManager.setToolCommand(realCfg, tool, command);
 			}
 		}
 		
@@ -680,20 +577,28 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	 * saves all field editors
 	 */
 	public void storeSettings() {
-		super.performOk();
+//		super.performOk();
 	}
 	
 	/**
 	 * Update the field editor that displays all the build options
 	 */
 	public void updateAllOptionField() {
-		try {
-			String flags = getToolFlags();
-			if (flags != null) {
-				getToolSettingsPreferenceStore().setValue(allOptionsId, flags);
-				allOptionFieldEditor.load();
-			}
-		} catch (BuildException e) {
+		allOptionFieldEditor.load();
+	}
+	
+	public void setValues(){
+		commandStringField.load();
+		updateAllOptionField();
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		// allow superclass to handle as well
+		super.propertyChange(event);
+		
+		if(event.getSource() == commandStringField){
+			clonedTool.setToolCommand(commandStringField.getStringValue());
+			updateAllOptionField();
 		}
 	}
 }

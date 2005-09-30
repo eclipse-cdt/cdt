@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui;
 
-import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IInputType;
-import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
-import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage;
+import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -26,18 +29,20 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 
 public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
@@ -88,7 +93,7 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 		private static final String rcbsToolInputTypeName = new String("Resource Custom Build Step Input Type");	//$NON-NLS-1$
 		private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
 		private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
-
+		private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
 		/*
 		 * Dialog widgets
 		 */
@@ -102,16 +107,54 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 		 * Bookeeping variables
 		 */
 		private ResourceBuildPropertyPage resParent;
-		private String resBuildInputs;
-		private String resBuildOutputs;
-		private String resBuildAnnouncement;
-		private String resBuildCommand;
 		// Has the page been changed?
 		private boolean dirty = false;
 
 		private ModifyListener widgetModified = new ModifyListener() {
 		    public void modifyText(ModifyEvent e) {
-		        setDirty(true);
+		    	if(e.widget == buildInputs){
+		    		String val = buildInputs.getText().trim();
+		    		IResourceConfiguration rcCfg = resParent.getCurrentResourceConfigClone();
+		    		ITool rcbs = getRcbsTool(rcCfg,!"".equals(val));	//$NON-NLS-1$
+		    		if(rcbs != null){
+		    			IAdditionalInput input = rcbs.getInputTypes()[0].getAdditionalInputs()[0];
+		    			if(!createList(input.getPaths()).equals(val)){
+		    				input.setPaths(val);
+		    				setValues();
+		    		        setDirty(true);
+		    			}
+		    		}
+		    	} else if(e.widget == buildOutputs){
+		    		String val = buildOutputs.getText().trim();
+		    		IResourceConfiguration rcCfg = resParent.getCurrentResourceConfigClone();
+		    		ITool rcbs = getRcbsTool(rcCfg,!"".equals(val));	//$NON-NLS-1$
+		    		if(rcbs != null){
+		    			IOutputType output = rcbs.getOutputTypes()[0];
+		    			if(!createList(output.getOutputNames()).equals(val)){
+		    				output.setOutputNames(val);
+		    				setValues();
+		    		        setDirty(true);
+		    			}
+		    		}
+		    	} else if(e.widget == buildCommand){
+		    		String val = buildCommand.getText().trim();
+		    		IResourceConfiguration rcCfg = resParent.getCurrentResourceConfigClone();
+		    		ITool rcbs = getRcbsTool(rcCfg,!"".equals(val));	//$NON-NLS-1$
+		    		if(rcbs != null && !rcbs.getToolCommand().equals(val)){
+		    			rcbs.setToolCommand(val);
+	    				setValues();
+	    		        setDirty(true);
+		    		}
+		    	} else if(e.widget == buildDescription){
+		    		String val = buildDescription.getText().trim();
+		    		IResourceConfiguration rcCfg = resParent.getCurrentResourceConfigClone();
+		    		ITool rcbs = getRcbsTool(rcCfg,!"".equals(val));	//$NON-NLS-1$
+		    		if(rcbs != null && !rcbs.getAnnouncement().equals(val)){
+		    			rcbs.setAnnouncement(val);
+	    				setValues();
+	    		        setDirty(true);
+		    		}
+		    	}
 		    }
 		};
 		
@@ -177,6 +220,14 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 			gd1.horizontalSpan = 1;
 			gd1.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 			rcbsApplicabilitySelector.setLayoutData(gd1);
+			rcbsApplicabilitySelector.addSelectionListener(
+					new SelectionAdapter(){
+						public void widgetSelected(SelectionEvent e) {
+							resParent.getCurrentResourceConfigClone().setRcbsApplicability(
+									selectionToApplicability(rcbsApplicabilitySelector.getSelectionIndex()));
+							setDirty(true);
+						}
+					});
 		}
 
 		/* (non-Javadoc)
@@ -297,6 +348,7 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 
 		protected void initializeValues() {
 			setValues();
+			setDirty(false);
 		}
 
 		public void updateValues() {
@@ -304,11 +356,8 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 		}
 
 		protected void setValues() {
-			IResourceConfiguration resConfig;
-			String[] buildInputsPaths;
-			String[] buildOutputsPaths;
-			boolean foundRcbsTool = false;
-			int idx;
+			IResourceConfiguration resConfig = resParent.getCurrentResourceConfigClone();
+
 			/*
 			 * Examine the tools defined for the resource configuration.
 			 * There should be at most one tool defined for a custom build step which was not an
@@ -317,44 +366,25 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 			 * If the rcbs tool has not been defined yet, clear the field values.
 			 * Finally, set the rcbsApplicability selector from the current value in the resource configuration.
 			 */
-			resConfig = resParent.getCurrentResourceConfig();
-			ITool [] tools = resConfig.getTools();
-			for (int i = 0; i < tools.length; i++) {
-				ITool tool = tools[i];
-				if (tool.getCustomBuildStep() && !tool.isExtensionElement()) {
-					buildInputsPaths = tool.getInputTypes()[0].getAdditionalInputs()[0].getPaths();
-					resBuildInputs = "";	//$NON-NLS-1$
-					for ( int j = 0; j < buildInputsPaths.length; j++ ){
-						resBuildInputs += buildInputsPaths[j] + ";";	//$NON-NLS-1$
-					}
-					int len = resBuildInputs.length();
-					resBuildInputs = resBuildInputs.substring(0,len-1);
-					buildInputs.setText(resBuildInputs);
+			ITool tool = getRcbsTool(resConfig,false);
+			
+			if(tool != null){
+				String tmp = createList(tool.getInputTypes()[0].getAdditionalInputs()[0].getPaths());
+				if(!tmp.equals(buildInputs.getText()))
+					buildInputs.setText(tmp);
 
-					buildOutputsPaths = tool.getOutputTypes()[0].getOutputNames();
-					resBuildOutputs = "";	//$NON-NLS-1$
-					for ( int j = 0; j < buildOutputsPaths.length; j++ ){
-						resBuildOutputs += buildOutputsPaths[j] + ";";	//$NON-NLS-1$
-					}
-					len = resBuildOutputs.length();
-					resBuildOutputs = resBuildOutputs.substring(0,len-1);
-					buildOutputs.setText(resBuildOutputs);
-
-					resBuildCommand = tool.getToolCommand();
-					buildCommand.setText(resBuildCommand);
-
-					resBuildAnnouncement = tool.getAnnouncement();
-					buildDescription.setText(resBuildAnnouncement);
-
-					foundRcbsTool = true;
-					break;
-				}
-			}
-
-			/*
-			 * If an rcbs tool has not been created yet, just blank the fields.
-			 */
-			if(!foundRcbsTool) {
+				tmp = createList(tool.getOutputTypes()[0].getOutputNames());
+				if(!tmp.equals(buildOutputs.getText()))
+					buildOutputs.setText(tmp);
+				
+				tmp = tool.getToolCommand();
+				if(!tmp.equals(buildCommand.getText()))
+					buildCommand.setText(tmp);
+				
+				tmp = tool.getAnnouncement();
+				if(!tmp.equals(buildDescription.getText()))
+				buildDescription.setText(tmp);
+			} else {
 				buildInputs.setText("");	//$NON-NLS-1$
 				buildOutputs.setText("");	//$NON-NLS-1$
 				buildCommand.setText("");	//$NON-NLS-1$
@@ -364,31 +394,38 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 			/*
 			 * Set the state of the rcbs applicability selector.
 			 */
-			switch(resConfig.getRcbsApplicability()){
-			case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE:
-				idx = rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_OVERRIDE));
-				break;
-			case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER:
-				idx = rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_AFTER));
-				break;
-			case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE:
-				idx = rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_BEFORE));
-				break;
-			case IResourceConfiguration.KIND_DISABLE_RCBS_TOOL:
-				idx = rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_DISABLE));
-				break;
-			default:
-				/*
-				 * If we get an unexpected value, use the normal default of override.
-				 */
-				idx = rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_OVERRIDE));
-				break;
-			}
-			rcbsApplicabilitySelector.select(idx);
+			rcbsApplicabilitySelector.select(applicabilityToSelection(resConfig.getRcbsApplicability()));
 
-			setDirty(false);
+//			setDirty(false);
 		}
 
+		private int selectionToApplicability(int index){
+			String sel = rcbsApplicabilitySelector.getItem(index);
+			if(ManagedBuilderUIMessages.getResourceString(RCBS_OVERRIDE).equals(sel)){
+				return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
+			} else if(ManagedBuilderUIMessages.getResourceString(RCBS_AFTER).equals(sel)){
+				return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER;
+			} else if(ManagedBuilderUIMessages.getResourceString(RCBS_BEFORE).equals(sel)){
+				return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE;
+			}
+			return IResourceConfiguration.KIND_DISABLE_RCBS_TOOL;
+		}
+		
+		private int applicabilityToSelection(int val){
+			switch(val){
+			case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER:
+				return rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_AFTER));
+			case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE:
+				return rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_BEFORE));
+			case IResourceConfiguration.KIND_DISABLE_RCBS_TOOL:
+				return rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_DISABLE));
+			case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE:
+			default:
+				return rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_OVERRIDE));
+			}
+			
+		}
+		
 		public void removeValues(String id) {
 			// Nothing to do...
 		}
@@ -398,46 +435,13 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 		 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 		 */
 		public void performDefaults() {
-			IResourceConfiguration resConfig;
+			IResourceConfiguration cloneResConfig;
 
-			// Display a "Confirm" dialog box, since:
-			//   1.  The defaults are immediately applied
-			//   2.  The action cannot be undone
-			Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
-			boolean shouldDefault = MessageDialog.openConfirm(shell,
-						ManagedBuilderUIMessages.getResourceString(CONFIRM_DEFAULT_TITLE),
-						ManagedBuilderUIMessages.getResourceString(CONFIRM_DEFAULT_MESSAGE));
-			if (!shouldDefault) return;
-
-			/*
-			 * Examine the tools defined for the resource configuration.
-			 * There should be at most one tool defined for a custom build step which was not an
-			 * extension element (not defined by a tool integrator in a manifest).
-			 * If the rcbs tool has been defined, remove the tool from the resource configuration.
-			 * If the rcbs tool was not disabled before now, indicate that a rebuild will be needed.
-			 * Set the rcbsApplicability in the resource configuration to "disabled" by default.
-			 * Update the field values.
-			 */
-			resConfig = resParent.getCurrentResourceConfig();
-			ITool [] tools = resConfig.getTools();
-			for (int i = 0; i < tools.length; i++) {
-				ITool tool = tools[i];
-				if (tool.getCustomBuildStep() && !tool.isExtensionElement()) {
-					resConfig.removeTool(tool);
-					break;
-				}
-			}
-
-			/*
-			 * If the rcbs tool was not disabled, it will be after restoring defaults.
-			 * This transition implies a rebuild is needed.
-			 */
-			if(resConfig.getRcbsApplicability() != IResourceConfiguration.KIND_DISABLE_RCBS_TOOL){
-				resConfig.getParent().setRebuildState(true);
-			}
-			resConfig.setRcbsApplicability(IResourceConfiguration.KIND_DISABLE_RCBS_TOOL);
+			cloneResConfig = resParent.getCurrentResourceConfigClone();
+			removeRcbsTools(cloneResConfig);
+	
 			setValues();
-			setDirty(false);
+			setDirty(true);
 			}
 		
 		/*
@@ -445,11 +449,10 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 		 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(IProgressMonitor)
 		 */
 		public void performApply(IProgressMonitor monitor) throws CoreException {
-			IResourceConfiguration resConfig;
-			boolean foundRcbsTool = false;
+			IResourceConfiguration cloneResConfig;
+			IResourceConfiguration rcConfig;
 			boolean rebuildNeeded = false;
 			boolean rcbsStillDisabledSoNoRebuild = false;
-			int idx;
 			
 			/*
 			 * Gather the users input.
@@ -464,77 +467,116 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 			 * selection.
 			 */
 			
-			resBuildInputs = buildInputs.getText().trim();
-			resBuildOutputs = buildOutputs.getText().trim();
-			resBuildCommand = buildCommand.getText().trim();
-			resBuildAnnouncement = buildDescription.getText().trim();
+			cloneResConfig = resParent.getCurrentResourceConfigClone();
+			ITool cloneTool = getRcbsTool(cloneResConfig, false);
+			
+			rcConfig = resParent.getCurrentResourceConfig(false);
+			if(cloneTool == null){
+				if(rcConfig != null)
+					rebuildNeeded = removeRcbsTools(rcConfig);
+			} else {
+				if(rcConfig == null)
+					rcConfig = resParent.getCurrentResourceConfig(true);
+				
+				
+				ITool realTool = getRcbsTool(rcConfig,true); 
+				
+				realTool.getInputTypes()[0].getAdditionalInputs()[0].setPaths(
+						createList(
+								cloneTool.getInputTypes()[0].getAdditionalInputs()[0].getPaths()));
+				realTool.getOutputTypes()[0].setOutputNames(
+						createList(
+								cloneTool.getOutputTypes()[0].getOutputNames()));
+				realTool.setToolCommand(
+						cloneTool.getToolCommand());
+				realTool.setAnnouncement(
+						cloneTool.getAnnouncement());
+				if (realTool.isDirty()) {
+					rebuildNeeded = true;
+				}
 
-			resConfig = resParent.getCurrentResourceConfig();
-			ITool [] tools = resConfig.getTools();
+				/*
+				 * Get the state of the rcbs applicability selector and set the rcbsApplicability attribute in the
+				 * resource configuration.
+				 */
+				rcConfig.setRcbsApplicability(
+						cloneResConfig.getRcbsApplicability());
+				
+				if(rcConfig.getRcbsApplicability() == IResourceConfiguration.KIND_DISABLE_RCBS_TOOL)
+					rcbsStillDisabledSoNoRebuild = true;
+				
+				if (rcConfig.isDirty()) {
+					rebuildNeeded = true;
+				}
+	
+				if (rebuildNeeded && !rcbsStillDisabledSoNoRebuild) {
+					rcConfig.getParent().setRebuildState(true);
+				}
+				
+				setDirty(false);
+			}
+		}
+		
+		private String createList(String[] items) {
+			if(items == null)
+				return new String();
+			
+			StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
+		
+			for (int i = 0; i < items.length; i++) {
+				path.append(items[i]);
+				if (i < (items.length - 1)) {
+					path.append(PATH_SEPERATOR);
+				}
+			}
+			return path.toString();
+		}
+		
+		private boolean removeRcbsTools(IResourceConfiguration rcConfig){
+			ITool tools[] = getRcbsTools(rcConfig);
+			if(tools != null){
+				for(int i = 0; i < tools.length; i++)
+					rcConfig.removeTool(tools[i]);
+				
+				boolean rebuildNeeded = 
+					rcConfig.getRcbsApplicability() != IResourceConfiguration.KIND_DISABLE_RCBS_TOOL;
+
+				rcConfig.setRcbsApplicability(IResourceConfiguration.KIND_DISABLE_RCBS_TOOL);
+
+				return rebuildNeeded;
+			}
+			return false;
+		}
+
+		private ITool getRcbsTool(IResourceConfiguration rcConfig, boolean create){
+			ITool rcbsTools[] = getRcbsTools(rcConfig);
+			ITool rcbsTool = null; 
+			if(rcbsTools != null)
+				rcbsTool = rcbsTools[0];
+			else if (create) {
+				rcbsTool = rcConfig.createTool(null,rcbsToolId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolName,false);	//$NON-NLS-1$
+				rcbsTool.setCustomBuildStep(true);
+				IInputType rcbsToolInputType = rcbsTool.createInputType(null,rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolInputTypeName,false);	//$NON-NLS-1$
+				IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(new String());
+				rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
+				rcbsTool.createOutputType(null,rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolOutputTypeName,false);	//$NON-NLS-1$
+			}
+			return rcbsTool;
+		}
+		
+		private ITool[] getRcbsTools(IResourceConfiguration rcConfig){
+			List list = new ArrayList();
+			ITool tools[] = rcConfig.getTools();
 			for (int i = 0; i < tools.length; i++) {
 				ITool tool = tools[i];
 				if (tool.getCustomBuildStep() && !tool.isExtensionElement()) {
-					tool.getInputTypes()[0].getAdditionalInputs()[0].setPaths(resBuildInputs);
-					tool.getOutputTypes()[0].setOutputNames(resBuildOutputs);
-					tool.setToolCommand(resBuildCommand);
-					tool.setAnnouncement(resBuildAnnouncement);
-					if (tool.isDirty()) {
-						rebuildNeeded = true;
-					}
-					foundRcbsTool = true;
-					break;
+					list.add(tool);
 				}
 			}
-			if(!foundRcbsTool) {
-				ITool rcbsTool;
-				IInputType rcbsToolInputType;
-				IAdditionalInput rcbsToolInputTypeAdditionalInput;
-				IOutputType rcbsToolOutputType;
-
-				rcbsTool = resConfig.createTool(null,rcbsToolId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolName,false);	//$NON-NLS-1$
-				rcbsToolInputType = rcbsTool.createInputType(null,rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolInputTypeName,false);	//$NON-NLS-1$
-				rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(resBuildInputs);
-				rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
-				rcbsToolOutputType = rcbsTool.createOutputType(null,rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolOutputTypeName,false);	//$NON-NLS-1$
-				rcbsToolOutputType.setOutputNames(resBuildOutputs);
-				rcbsTool.setCustomBuildStep(true);
-				rcbsTool.setToolCommand(resBuildCommand);
-				rcbsTool.setAnnouncement(resBuildAnnouncement);
-				rebuildNeeded = true;
-			}
-
-			/*
-			 * Get the state of the rcbs applicability selector and set the rcbsApplicability attribute in the
-			 * resource configuration.
-			 */
-			idx = rcbsApplicabilitySelector.getSelectionIndex();
-			if(idx ==  rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_AFTER))) {
-				resConfig.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER);
-			} else
-			if(idx ==  rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_BEFORE))) {
-				resConfig.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE);
-			} else
-			if (idx == rcbsApplicabilitySelector.indexOf(ManagedBuilderUIMessages.getResourceString(RCBS_DISABLE))) {
-				/*
-				 * If the rcbs tool was disabled and will remain disabled, no rebuild is required.
-				 */
-				if(resConfig.getRcbsApplicability() == IResourceConfiguration.KIND_DISABLE_RCBS_TOOL){
-					rcbsStillDisabledSoNoRebuild = true;
-				}
-				resConfig.setRcbsApplicability(IResourceConfiguration.KIND_DISABLE_RCBS_TOOL);
-			} else {
-				resConfig.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
-			}
-			if (resConfig.isDirty()) {
-				rebuildNeeded = true;
-			}
-
-			if (rebuildNeeded && !rcbsStillDisabledSoNoRebuild) {
-				resConfig.getParent().setRebuildState(true);
-			}
-			
-			setDirty(false);
-			}
+			if(list.size() != 0)
+				return (ITool[])list.toArray(new ITool[list.size()]);
+			return null;
+		}
 
 		public IPreferenceStore getPreferenceStore() {
 			return null;
@@ -552,6 +594,25 @@ public class ResourceCustomBuildStepBlock extends AbstractCOptionPage {
 		 */
 		public boolean isDirty() {
 		    return dirty;
+		}
+		
+		public void setVisible(boolean visible){
+			if(visible)
+				setValues();
+			super.setVisible(visible);
+		}
+		
+		public boolean containsDefaults(){
+			return containsDefaults(resParent.getCurrentResourceConfigClone());
+		}
+		
+		protected boolean containsDefaults(IResourceConfiguration rcCfg){
+			ITool tools[] = getRcbsTools(rcCfg);
+			
+			if(tools == null)
+				return true;
+			
+			return false;
 		}
 
 }

@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuildOptionBlock;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
@@ -55,10 +56,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropertyPage, 
+public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWorkbenchPropertyPage, 
 					IPreferencePageContainer, ICOptionContainer {
 	/*
 	 * String constants
@@ -96,6 +96,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	private IProjectType[] projectTypes;
 	private IProjectType selectedProjectType;
 	private IConfiguration[] configurations;
+	private IConfiguration clonedConfiguration;
 	private IConfiguration selectedConfiguration;
 	private Point lastShellSize;
 	protected ManagedBuildOptionBlock fOptionBlock;
@@ -251,9 +252,20 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		if (!applyOptionBlock()) return false;
 		if (!applyDefaultConfiguration()) return false;
 		if (!writeBuildInfo()) return false;
+		clonedConfiguration.setDirty(false);
 		
+		//check for the inexistent configurations environment data stored in project preferences
+		EnvironmentVariableProvider.fUserSupplier.checkInexistentConfigurations(clonedConfiguration.getManagedProject());
+
 		return true;
 	}
+	
+    public boolean performCancel() {
+
+    	EnvironmentVariableProvider.fUserSupplier.checkInexistentConfigurations(clonedConfiguration.getManagedProject());
+
+        return true;
+    }
 
 	/**
 	 * Apply any changes that have been made in the managed build option block
@@ -400,6 +412,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		return selectedConfiguration;
 	}
 	
+	public IConfiguration getSelectedConfigurationClone(){
+		return clonedConfiguration;
+	}
+	
 	/* (non-Javadoc)
 	 * @return
 	 */
@@ -423,7 +439,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	/* (non-Javadoc)
 	 * Return the IPreferenceStore of the Tool Settings block
 	 */
-	public IPreferenceStore getToolSettingsPreferenceStore()
+	public BuildToolSettingsPreferenceStore getToolSettingsPreferenceStore()
 	{
 		return fOptionBlock.getToolSettingsPreferenceStore();
 	}
@@ -521,8 +537,9 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			        }
 			    }
 			    // Set the new selected configuration
-				selectedConfiguration = newConfig;
+			    selectedConfiguration = newConfig;
 				ManagedBuildManager.setSelectedConfiguration(getProject(), selectedConfiguration);
+				clonedConfiguration = getClonedConfig(selectedConfiguration);
 				// TODO: Set the appropriate error parsers...
 				// TODO: Binary parsers too?
 				fOptionBlock.updateValues();
@@ -536,8 +553,8 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		if(selectedProjectType != null && !selectedProjectType.isSupported()){
 			setMessage(ManagedBuilderUIMessages.getResourceString(MSG_UNSUPPORTED_PROJ),IMessageProvider.WARNING);
 		}
-		else if(selectedConfiguration != null){
-			if(selectedConfiguration.isSupported()){
+		else if(clonedConfiguration != null){
+			if(clonedConfiguration.isSupported()){
 				setMessage(null,IMessageProvider.NONE);
 			}
 			else{

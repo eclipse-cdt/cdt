@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 BitMethods Inc and others.
+ * Copyright (c) 2004, 2005 BitMethods Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,14 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -22,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 
 /**
@@ -96,8 +104,22 @@ public class FileListControlFieldEditor extends FieldEditor {
 				topLayout,
 				getLabelText(),
 				getType());
-		
+		list.addChangeListener(new IFileListChangeListener(){
+
+			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
+				handleFileListChange(fileList,oldValue,newValue);
+			}
+			
+		});
 		topLayout.setLayout(layout);
+	}
+	
+	private void handleFileListChange(FileListControl fileList, String oldValue[], String newValue[]){
+		values = fileList.getItems();
+		fireValueChanged(
+				FileListControlFieldEditor.this.getPreferenceName(),
+				createList(oldValue),
+				createList(newValue));
 	}
 
 	/**
@@ -128,8 +150,8 @@ public class FileListControlFieldEditor extends FieldEditor {
 				list.setList(array);
 				list.setSelection(0);
 				// Set the resource the editor works for
-				if (store instanceof BuildToolsSettingsStore) {
-					IConfiguration config = ((BuildToolsSettingsStore)store).getOwner();
+				if (store instanceof BuildToolSettingsPreferenceStore) {
+					IConfiguration config = ((BuildToolSettingsPreferenceStore)store).getSelectedConfig();
 					if (config != null) {
 						IResource project = config.getOwner();
 						if (project != null) {
@@ -163,6 +185,10 @@ public class FileListControlFieldEditor extends FieldEditor {
 		String s = createList(list.getItems());
 		if (s != null)
 			getPreferenceStore().setValue(getPreferenceName(), s);
+	}
+	
+	public String[] getStringListValue(){
+		return list.getItems();
 	}
 
 	/**
@@ -221,5 +247,13 @@ public class FileListControlFieldEditor extends FieldEditor {
 	protected void adjustForNumColumns(int numColumns) {
 
 	}
+	
+    public Label getLabelControl(Composite parent) {
+    	return list.getLabelControl();
+    }
+    
+    public void setEnabled(boolean enabled, Composite parent) {
+    	list.setEnabled(enabled);
+    }
 
 }

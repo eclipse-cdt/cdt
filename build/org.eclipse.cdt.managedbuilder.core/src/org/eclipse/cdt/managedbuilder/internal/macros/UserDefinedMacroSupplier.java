@@ -152,7 +152,7 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return null;
 		
 		IBuildMacro macro = macros.createMacro(macroName,type,value);
-		if(macro != null)
+		if(macros.isChanged())
 			setRebuildStateForContext(contextType, contextData);
 		
 		return macro;
@@ -171,7 +171,7 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return null;
 		
 		IBuildMacro macro = macros.createMacro(macroName,type,value);
-		if(macro != null)
+		if(macros.isChanged())
 			setRebuildStateForContext(contextType, contextData);
 		
 		return macro;
@@ -189,7 +189,7 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return null;
 		
 		IBuildMacro macro = macros.createMacro(copy);
-		if(macro != null)
+		if(macros.isChanged())
 			setRebuildStateForContext(contextType, contextData);
 		
 		return macro;
@@ -212,6 +212,16 @@ public class UserDefinedMacroSupplier implements IBuildMacroSupplier {
 			return;
 
 		if(macros.deleteAll())
+			setRebuildStateForContext(contextType, contextData);
+	}
+	
+	public void setMacros(IBuildMacro m[], int contextType, Object contextData){
+		StorableMacros macros = getStorableMacros(contextType, contextData);
+		if(macros == null)
+			return;
+
+		macros.setMacros(m);
+		if(macros.isChanged())
 			setRebuildStateForContext(contextType, contextData);
 	}
 

@@ -508,6 +508,8 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 	}
 	
     public boolean performCancel() {
+		//	If there is no content on the page, then there is nothing to do
+		if (noContentOnPage) return true;
 
     	EnvironmentVariableProvider.fUserSupplier.checkInexistentConfigurations(clonedConfiguration.getManagedProject());
 

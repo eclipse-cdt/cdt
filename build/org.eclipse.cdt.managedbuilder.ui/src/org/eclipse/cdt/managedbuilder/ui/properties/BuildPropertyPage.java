@@ -101,6 +101,7 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 	private Point lastShellSize;
 	protected ManagedBuildOptionBlock fOptionBlock;
 	protected boolean displayedConfig = false;
+	private boolean noContentOnPage = false;
 		
 	/**
 	 * Default constructor
@@ -148,11 +149,7 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info.getVersion() == null) {
 			// Display a message page instead of the properties control
-			final Label invalidInfo = new Label(parent, SWT.LEFT);
-			invalidInfo.setFont(parent.getFont());
-			invalidInfo.setText(ManagedBuilderUIMessages.getResourceString("BuildPropertyPage.error.version_low"));	//$NON-NLS-1$
-			invalidInfo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, GridData.VERTICAL_ALIGN_CENTER, true, true));
-			noDefaultAndApplyButton();
+			noContent(parent,ManagedBuilderUIMessages.getResourceString("BuildPropertyPage.error.version_low"));	//$NON-NLS-1$
 			return;
 		}
 		projectTypes = ManagedBuildManager.getDefinedProjectTypes();
@@ -233,10 +230,15 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 	}
 
 	private void contentForClosedProject(Composite parent) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(ManagedBuilderUIMessages.getResourceString(MSG_CLOSEDPROJECT));
-		label.setFont(parent.getFont());
+		noContent(parent, ManagedBuilderUIMessages.getResourceString(MSG_CLOSEDPROJECT));
+	}
+	
+	protected void noContent(Composite composite, String message) {
+		Label label = new Label(composite, SWT.LEFT);
+		label.setText(message);
+		label.setFont(composite.getFont());
 
+		noContentOnPage = true;
 		noDefaultAndApplyButton();
 	}
 
@@ -247,7 +249,7 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 	public boolean performOk() {
 
 		//  If the user did not visit this page, then there is nothing to do.
-		if (!displayedConfig) return true;
+		if (!displayedConfig || noContentOnPage) return true;
 
 		if (!applyOptionBlock()) return false;
 		if (!applyDefaultConfiguration()) return false;
@@ -261,6 +263,8 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 	}
 	
     public boolean performCancel() {
+    	if(noContentOnPage)
+    		return true;
 
     	EnvironmentVariableProvider.fUserSupplier.checkInexistentConfigurations(clonedConfiguration.getManagedProject());
 
@@ -318,6 +322,9 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
+		if(noContentOnPage)
+			return;
+
 		fOptionBlock.performDefaults();
 		super.performDefaults();
 	}

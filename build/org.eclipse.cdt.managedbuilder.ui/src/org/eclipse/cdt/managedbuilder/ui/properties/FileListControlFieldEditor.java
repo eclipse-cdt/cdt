@@ -14,14 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
-import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -45,7 +38,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
 
 	//values
-	private String[] values = null;
+//	private String[] values = null;
 
 	/**
 	 * Creates a file list control field editor.
@@ -81,7 +74,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		int type) {
 		this(name, labelText, parent, type);
 		browseType = type;
-		this.values = parseString(value);
+//		this.values = parseString(value);
 	}
 
 	/**
@@ -115,9 +108,9 @@ public class FileListControlFieldEditor extends FieldEditor {
 	}
 	
 	private void handleFileListChange(FileListControl fileList, String oldValue[], String newValue[]){
-		values = fileList.getItems();
+//		values = fileList.getItems();
 		fireValueChanged(
-				FileListControlFieldEditor.this.getPreferenceName(),
+				VALUE,
 				createList(oldValue),
 				createList(newValue));
 	}

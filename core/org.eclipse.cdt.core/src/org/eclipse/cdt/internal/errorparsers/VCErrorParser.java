@@ -64,8 +64,9 @@ public class VCErrorParser implements IErrorParser {
 							if (file == null) {
 								desc = "*" + desc; //$NON-NLS-1$
 							}
+							String compareDesc = desc.toLowerCase();
 							int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
-							if (desc.startsWith("warning") || desc.startsWith("remark")) { //$NON-NLS-1$ //$NON-NLS-2$
+							if (compareDesc.startsWith("warning") || compareDesc.startsWith("remark")) { //$NON-NLS-1$ //$NON-NLS-2$
 								severity = IMarkerGenerator.SEVERITY_WARNING;
 							}
 							eoParser.generateMarker(file, num, desc, severity, null);

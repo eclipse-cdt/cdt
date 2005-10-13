@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -93,6 +94,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Created on Nov 5, 2004
@@ -1295,9 +1297,24 @@ public class CVisitor {
             }
 		    return ArrayUtil.trim( IBinding.class, result );
 		}
-		if( blockItem != null)
-		    return externalBinding( (IASTTranslationUnit) blockItem, name );
-		
+		if( blockItem != null) {
+			// We're at the end of our rope, check the PDOM if we can
+			IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
+			IPDOM pdom = tu.getPDOM();
+			binding = null;
+			if (pdom != null) {
+				try {
+					binding = pdom.resolveBinding(name);
+				} catch (CoreException e) {
+					// didn't work, null out the binding
+					binding = null;
+				}
+			}
+			if (binding == null)
+				return externalBinding( (IASTTranslationUnit) blockItem, name );
+			else
+				return binding;
+		}
 		return null;
 	}
 	

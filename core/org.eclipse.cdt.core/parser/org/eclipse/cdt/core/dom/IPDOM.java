@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * @author Doug Schaefer
  * 
@@ -19,4 +23,8 @@ package org.eclipse.cdt.core.dom;
  */
 public interface IPDOM {
 
+	public IBinding resolveBinding(IASTName name) throws CoreException;
+	
+	public IASTName[] getDeclarations(IBinding binding) throws CoreException;
+	
 }

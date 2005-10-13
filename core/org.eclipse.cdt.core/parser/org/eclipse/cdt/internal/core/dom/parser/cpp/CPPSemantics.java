@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -124,6 +125,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil.ArrayWrapper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -744,10 +746,22 @@ public class CPPSemantics {
 		    } 
 		}
 		if( binding == null ){
-		    if( name instanceof ICPPASTQualifiedName && data.forDefinition() )
-		        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND, data.name() );
-		    else
-		        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name() );
+			// Let's try the pdom
+			IPDOM pdom = name.getTranslationUnit().getPDOM();
+			if (pdom != null) {
+				try {
+					binding = pdom.resolveBinding(name);
+				} catch (CoreException e) {
+					binding = null;
+				}
+			}
+			// If we're still null...
+			if (binding == null) {
+			    if( name instanceof ICPPASTQualifiedName && data.forDefinition() )
+			        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND, data.name() );
+			    else
+			        binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name() );
+			}
 		}
         return binding;
     }

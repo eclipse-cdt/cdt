@@ -124,7 +124,7 @@ public class CASTTranslationUnit extends CASTNode implements
 			try {
 				names = pdom.getDeclarations(binding);
 			} catch (CoreException e) {
-				names = null;
+				names = new IASTName[0];
 			}
 		}
 		return names;

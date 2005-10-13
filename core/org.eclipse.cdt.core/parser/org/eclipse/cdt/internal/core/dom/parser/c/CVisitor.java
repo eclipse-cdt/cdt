@@ -916,7 +916,8 @@ public class CVisitor {
 				
 			binding = scope.getBinding( name, false );
 			if( binding != null ){
-				((CStructure)binding).addDefinition( compositeTypeSpec );
+				if (binding instanceof CStructure)
+					((CStructure)binding).addDefinition( compositeTypeSpec );
 				return binding;
 			}
 		} catch (DOMException e2) {

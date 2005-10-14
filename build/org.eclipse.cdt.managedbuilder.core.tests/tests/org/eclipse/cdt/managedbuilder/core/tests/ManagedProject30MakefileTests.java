@@ -79,6 +79,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest1"));
 		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest2"));
 		suite.addTest(new ManagedProject30MakefileTests("TestATO"));
+		suite.addTest(new ManagedProject30MakefileTests("testMacroSupportInBuildDefinitions"));
 		return suite;
 	}
 
@@ -584,4 +585,16 @@ public class ManagedProject30MakefileTests extends TestCase {
 		IProject[] projects = createProjects("TestATO", null, null, true);
 		buildProjects(projects, makefiles);
 	}
+	
+	public void testMacroSupportInBuildDefinitions() {
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		IProject[] projects = createProjects("testMacroSupportInBuildDefinitions", null, null, true);
+		buildProjects(projects, makefiles);
+	}
+	
+	
 }

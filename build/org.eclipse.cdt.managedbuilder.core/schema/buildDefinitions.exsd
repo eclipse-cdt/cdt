@@ -121,7 +121,7 @@
          <attribute name="configurationNameProvider" type="string">
             <annotation>
                <documentation>
-                  Contains the name of a class that implements an interface with a method for returning a default name for a configuration.  The configuration names in a user's project must be unique.  A projectType can contain configuration children with the same name.  In this case, a configurationNameProvider must be specified to make the names unique before they are displayed to the user in the New Project and New Configuration dialog boxes.
+                  Contains the name of a class that implements an interface with a method for returning a default name for a configuration.  The configuration names in a user&apos;s project must be unique.  A projectType can contain configuration children with the same name.  In this case, a configurationNameProvider must be specified to make the names unique before they are displayed to the user in the New Project and New Configuration dialog boxes.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider"/>
@@ -570,14 +570,14 @@
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  The command that invokes the tool. For example, gcc for the Gnu C compiler, or g++ for the Gnu C++ compiler.
+                  The command that invokes the tool. For example, gcc for the Gnu C compiler, or g++ for the Gnu C++ compiler.  This attribute supports MBS file context macros.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="commandLinePattern" type="string">
             <annotation>
                <documentation>
-                  Specifies the command &quot;pattern&quot; that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables COMMAND, FLAGS, OUTPUT_FLAG, OUTPUT_PREFIX, OUTPUT and INPUTS.  The default command line pattern is ${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}, except when customBuildStep is true, where the default is $(COMMAND). White space and other characters are significant and are copied to the generated command.
+                  Specifies the command &quot;pattern&quot; that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables COMMAND, FLAGS, OUTPUT_FLAG, OUTPUT_PREFIX, OUTPUT and INPUTS.  The default command line pattern is ${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}, except when customBuildStep is true, where the default is $(COMMAND). White space and other characters are significant and are copied to the generated command.  This attribute supports MBS file context macros.
                </documentation>
             </annotation>
          </attribute>
@@ -899,7 +899,7 @@
          <attribute name="outputPrefix" type="string">
             <annotation>
                <documentation>
-                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.  The default is to use the Tool “outputPrefix” attribute if primaryOutput is True, otherwise the default is an empty string.
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.  The default is to use the Tool “outputPrefix” attribute if primaryOutput is True, otherwise the default is an empty string.  This attribute supports the use of MBS configuration macros.
                </documentation>
             </annotation>
          </attribute>
@@ -1141,7 +1141,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="valueHandler" type="string">
             <annotation>
                <documentation>
-                  The id of a class that implements the IManagedOptionValueHandler interface.  This interface is used to dynamically manage the value of an option. 
+                  The id of a class that implements the IManagedOptionValueHandler interface.  This interface is used to dynamically manage the value of an option.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler"/>

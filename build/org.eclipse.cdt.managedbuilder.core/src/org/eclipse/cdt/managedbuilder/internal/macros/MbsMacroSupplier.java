@@ -383,6 +383,57 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			if(targetTool != null){
 				IOutputType pot = targetTool.getPrimaryOutputType();
 				String prefix = pot.getOutputPrefix();
+				
+
+				// Resolve any macros in the outputPrefix
+				// Note that we cannot use file macros because if we do a clean
+				// we need to know the actual
+				// name of the file to clean, and cannot use any builder
+				// variables such as $@. Hence
+				// we use the next best thing, i.e. configuration context.
+
+				// figure out the configuration we're using
+				IBuildObject toolParent = targetTool.getParent();
+				IConfiguration config = null;
+				// if the parent is a config then we're done
+				if (toolParent instanceof IConfiguration)
+					config = (IConfiguration) toolParent;
+				else if (toolParent instanceof IToolChain) {
+					// must be a toolchain
+					config = (IConfiguration) ((IToolChain) toolParent)
+							.getParent();
+				}
+
+				else if (toolParent instanceof IResourceConfiguration) {
+					config = (IConfiguration) ((IResourceConfiguration) toolParent)
+							.getParent();
+				}
+
+				else {
+					// bad
+					throw new AssertionError(
+							"tool parent must be one of configuration, toolchain, or resource configuration");
+				}
+
+				if (config != null) {
+
+					try {
+						prefix = ManagedBuildManager
+								.getBuildMacroProvider()
+								.resolveValueToMakefileFormat(
+										prefix,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_CONFIGURATION,
+										config);
+					}
+
+					catch (BuildMacroException e) {
+					}
+
+				}
+
+				
 				if(prefix != null && !EMPTY_STRING.equals(prefix))
 					name = prefix + name;
 			}
@@ -393,6 +444,55 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			if(targetTool != null){
 				IOutputType pot = targetTool.getPrimaryOutputType();
 				String prefix = pot.getOutputPrefix();
+				
+				// Resolve any macros in the outputPrefix
+				// Note that we cannot use file macros because if we do a clean
+				// we need to know the actual
+				// name of the file to clean, and cannot use any builder
+				// variables such as $@. Hence
+				// we use the next best thing, i.e. configuration context.
+
+				// figure out the configuration we're using
+				IBuildObject toolParent = targetTool.getParent();
+				IConfiguration config = null;
+				// if the parent is a config then we're done
+				if (toolParent instanceof IConfiguration)
+					config = (IConfiguration) toolParent;
+				else if (toolParent instanceof IToolChain) {
+					// must be a toolchain
+					config = (IConfiguration) ((IToolChain) toolParent)
+							.getParent();
+				}
+
+				else if (toolParent instanceof IResourceConfiguration) {
+					config = (IConfiguration) ((IResourceConfiguration) toolParent)
+							.getParent();
+				}
+
+				else {
+					// bad
+					throw new AssertionError(
+							"tool parent must be one of configuration, toolchain, or resource configuration");
+				}
+
+				if (config != null) {
+
+					try {
+						prefix = ManagedBuildManager
+								.getBuildMacroProvider()
+								.resolveValueToMakefileFormat(
+										prefix,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_CONFIGURATION,
+										config);
+					}
+
+					catch (BuildMacroException e) {
+					}
+
+				}
+				
 				if(prefix == null)
 					prefix = EMPTY_STRING;
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,prefix);

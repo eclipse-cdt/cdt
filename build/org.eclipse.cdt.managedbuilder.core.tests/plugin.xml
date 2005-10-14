@@ -4143,6 +4143,77 @@
 			  </toolChain>
          </configuration>
 	</projectType>
+     <projectType
+           id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportProjectType"
+           isAbstract="false"
+           isTest="true"
+           name="Build Definitions Macro Support Project Type">
+        <configuration
+              artifactExtension="tar"
+              id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportConfiguration"
+              name="Default">
+           <toolChain
+                 id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportToolchain"
+                 isAbstract="false"
+                 name="Build Definition Macro Support Toolchain"
+                 targetTool="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBarTool">
+              <builder
+                    arguments="-k"
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator"
+                    command="make"
+                    id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBuilder"
+                    isAbstract="false"
+                    name="GNU Make"
+                    superClass="cdt.managedbuild.target.gnu.builder"/>
+              <tool
+                    command="cp"
+                    commandLinePattern="${command} ${inputs} ${output}"
+                    id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportFooTool"
+                    isAbstract="false"
+                    name="Foo Tool"
+                    natureFilter="both">
+                 <inputType
+                       id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportFooInputType"
+                       multipleOfType="false"
+                       name="Foo Files"
+                       primaryInput="true"
+                       sources="foo"/>
+                 <outputType
+                       buildVariable="BAR_FILES"
+                       id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBarOutputType"
+                       multipleOfType="false"
+                       name="Bar Files"
+                       outputPrefix="this_is_a_test_prefix_with_a_macro_for_the_project_name_between_here_${ProjName}_and_here"
+                       outputs="bar"
+                       primaryInputType="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportFooInputType"
+                       primaryOutput="true"/>
+              </tool>
+              <tool
+                    command="tar"
+                    commandLinePattern="${command} cvf ${OutputFileRelPath} ${inputs}"
+                    id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBarTool"
+                    isAbstract="false"
+                    name="Bar Tool"
+                    natureFilter="both">
+                 <inputType
+                       buildVariable="BAR_FILES"
+                       id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBarInputType"
+                       multipleOfType="true"
+                       name="Bar Files"
+                       primaryInput="true"
+                       sources="bar"/>
+                 <outputType
+                       id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportTarOutputType"
+                       multipleOfType="false"
+                       name="Tar File"
+                       outputPrefix=" "
+                       outputs="tar"
+                       primaryInputType="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportBarInputType"
+                       primaryOutput="true"/>
+              </tool>
+           </toolChain>
+        </configuration>
+     </projectType>
 
    </extension>
 

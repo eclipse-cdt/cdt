@@ -1542,6 +1542,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
 			IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo( tool, command, 
 					flags, outflag, outputPrefix, primaryOutputs, cmdInputs, tool.getCommandLinePattern() );
+            
 			// The command to build
 			String buildCmd = null;
 			if( cmdLInfo == null ) {
@@ -1555,6 +1556,26 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				buildCmd = command + WHITESPACE + toolFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + primaryOutputs + WHITESPACE + IN_MACRO;
 			}
 			else buildCmd = cmdLInfo.getCommandLine();
+            
+            // resolve any remaining macros in the command after it has been
+            // generated
+            try {
+                String resolvedCommand = ManagedBuildManager
+                        .getBuildMacroProvider().resolveValueToMakefileFormat(
+                                buildCmd,
+                                EMPTY_STRING,
+                                WHITESPACE,
+                                IBuildMacroProvider.CONTEXT_FILE,
+                                new FileContextData(null, null, null, info
+                                        .getDefaultConfiguration()
+                                        .getToolChain()));
+                if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
+                    buildCmd = resolvedCommand;
+
+            } catch (BuildMacroException e) {
+            }
+
+            
 			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 			buffer.append(TAB + AT + buildCmd);
 	
@@ -2265,6 +2286,28 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						OUT_MACRO + otherPrimaryOutputs, (String[])inputs.toArray(new String[inputs.size()]), tool.getCommandLinePattern() );
 		
 				String buildCmd = cmdLInfo.getCommandLine();
+                
+                // resolve any remaining macros in the command after it has been
+                // generated
+                try {
+                    String resolvedCommand = ManagedBuildManager
+                            .getBuildMacroProvider()
+                            .resolveValueToMakefileFormat(
+                                    buildCmd,
+                                    EMPTY_STRING,
+                                    WHITESPACE,
+                                    IBuildMacroProvider.CONTEXT_FILE,
+                                    new FileContextData(sourceLocation,
+                                            outputLocation, null, info
+                                                    .getDefaultConfiguration()
+                                                    .getToolChain()));
+                    if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
+                        buildCmd = resolvedCommand;
+
+                } catch (BuildMacroException e) {
+                }
+
+                
 				buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 				buffer.append(TAB + AT + buildCmd);
 			} else {
@@ -2542,6 +2585,56 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());
 				//if (primaryOutput && ignorePrimary) continue;
 				String outputPrefix = type.getOutputPrefix();
+                
+                // Resolve any macros in the outputPrefix
+                // Note that we cannot use file macros because if we do a clean
+                // we need to know the actual name of the file to clean, and
+                // cannot use any builder variables such as $@. Hence we use the
+                // next best thing, i.e. configuration context.
+
+                // figure out the configuration we're using
+                IBuildObject toolParent = tool.getParent();
+                IConfiguration config = null;
+                // if the parent is a config then we're done
+                if (toolParent instanceof IConfiguration)
+                    config = (IConfiguration) toolParent;
+                else if (toolParent instanceof IToolChain) {
+                    // must be a toolchain
+                    config = (IConfiguration) ((IToolChain) toolParent)
+                            .getParent();
+                }
+
+                else if (toolParent instanceof IResourceConfiguration) {
+                    config = (IConfiguration) ((IResourceConfiguration) toolParent)
+                            .getParent();
+                }
+
+                else {
+                    // bad
+                    throw new AssertionError(
+                            "tool parent must be one of configuration, toolchain, or resource configuration");
+                }
+
+                if (config != null) {
+
+                    try {
+                        outputPrefix = ManagedBuildManager
+                                .getBuildMacroProvider()
+                                .resolveValueToMakefileFormat(
+                                        outputPrefix,
+                                        "", //$NON-NLS-1$
+                                        " ", //$NON-NLS-1$
+                                        IBuildMacroProvider.CONTEXT_CONFIGURATION,
+                                        config);
+                    }
+
+                    catch (BuildMacroException e) {
+                    }
+
+                }
+
+                
+                
 				boolean multOfType = type.getMultipleOfType();
 				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
 				IManagedOutputNameProvider nameProvider = type.getNameProvider();

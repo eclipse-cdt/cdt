@@ -26,13 +26,17 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @since 2.0
  */
 public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerator {
 
+	private static final String EMPTY_STRING = new String();
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	public final String WHITESPACE = " ";	//$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource)
@@ -149,6 +153,21 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			cmdLInfo = cmdLGen.generateCommandLineInfo( tool, cmd, flags, outflag, outputPrefix,
 					outputFile, inputs, tool.getCommandLinePattern() );
 			buildCmd = cmdLInfo.getCommandLine();
+			
+			// resolve any remaining macros in the command after it has been generated
+			try{
+				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(buildCmd,
+						EMPTY_STRING,
+						WHITESPACE,
+						IBuildMacroProvider.CONTEXT_FILE,
+						new FileContextData(resource.getLocation(), null, null, info.getDefaultConfiguration().getToolChain()));
+				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
+					buildCmd = resolvedCommand;
+					
+			} catch (BuildMacroException e){
+			}
+			
+			
 		} else {
 			String cmd = info.getToolForSource(inputExtension);
 			//try to resolve the build macros in the tool command

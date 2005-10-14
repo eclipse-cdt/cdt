@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -434,6 +436,31 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				Vector typeEnumeratedOutputs = new Vector();
 				IOutputType type = outTypes[i];
 				String outputPrefix = type.getOutputPrefix();
+				
+				// Resolve any macros in the outputPrefix
+				// Note that we cannot use file macros because if we do a clean
+                // we need to know the actual name of the file to clean, and
+                // cannot use any builder variables such as $@. Hence we use the
+                // next best thing, i.e. configuration context.
+
+				if (config != null) {
+
+					try {
+						outputPrefix = ManagedBuildManager
+								.getBuildMacroProvider()
+								.resolveValueToMakefileFormat(
+										outputPrefix,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_CONFIGURATION,
+										config);
+					}
+
+					catch (BuildMacroException e) {
+					}
+				}
+				
+				
 				String variable = type.getBuildVariable();
 				boolean multOfType = type.getMultipleOfType();
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());

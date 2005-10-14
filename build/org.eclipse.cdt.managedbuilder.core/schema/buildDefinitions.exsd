@@ -899,14 +899,14 @@
          <attribute name="outputPrefix" type="string">
             <annotation>
                <documentation>
-                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.  The default is to use the Tool “outputPrefix” attribute if primaryOutput is True, otherwise the default is an empty string.  This attribute supports the use of MBS configuration macros.
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be libtarget.a, so &apos;lib&apos; would be the prefix.  The default is to use the Tool “outputPrefix” attribute if primaryOutput is True, otherwise the default is an empty string.  This attribute supports MBS configuration context macros.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="outputNames" type="string">
             <annotation>
                <documentation>
-                  A semi-colon delimited list of the complete set of output file names generated for this outputType. If specified, the namePattern is ignored.
+                  A semi-colon delimited list of the complete set of output file names generated for this outputType. If specified, the namePattern is ignored.  This attribute supports MBS file context macros.
                </documentation>
             </annotation>
          </attribute>

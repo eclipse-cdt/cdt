@@ -2358,9 +2358,28 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
 				// Get the dependency rule out of the generator
 				String depCmd = depGen.getDependencyCommand(resource, info);
-				buffer.append(depCmd);
+
+                // Resolve any macros in the dep command after it has been generated.
+                // Note:  do not trim the result because it will strip out necessary tab characters.
+                try {
+                     depCmd = ManagedBuildManager
+                            .getBuildMacroProvider()
+                            .resolveValueToMakefileFormat(
+                                    depCmd,
+                                    EMPTY_STRING,
+                                    WHITESPACE,
+                                    IBuildMacroProvider.CONTEXT_FILE,
+                                    new FileContextData(sourceLocation,
+                                            outputLocation, null, info
+                                                    .getDefaultConfiguration()
+                                                    .getToolChain()));
+                    
+                } catch (BuildMacroException e) {
+                }
+                
+                buffer.append(depCmd);
 			}
-			
+ 			
 			// Echo finished message
 			buffer.append(NEWLINE);
 			buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_FINISH_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);

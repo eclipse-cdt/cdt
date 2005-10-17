@@ -16,12 +16,15 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
+import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -36,6 +39,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -98,7 +102,12 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 						}
 						
 						if (project instanceof ICProject) {
-							tu = CDOM.getInstance().getASTService().getTranslationUnit(input.getStorage(), ((ICProject)project).getProject());
+							IProject p = ((ICProject)project).getProject();
+							IPDOM pdom = PDOM.getPDOM(p);
+							tu = CDOM.getInstance().getASTService().getTranslationUnit(
+									input.getStorage(),
+									p,
+									pdom.getCodeReaderFactory());
 							lang = DOMSearchUtil.getLanguage(input.getStorage().getFullPath(), ((ICProject)project).getProject());
 							projectName = ((ICProject)project).getElementName();
 						}
@@ -107,15 +116,15 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 						return;
 					}
 				} else {
-					IFile resourceFile = null;
-					resourceFile = fEditor.getInputFile();
+					// an awful lot of cass goingo on here...
+					IWorkingCopy workingCopy = (IWorkingCopy)fEditor.getInputCElement();
+					IFile resourceFile = (IFile)workingCopy.getResource();
 					project = new CProject(null, resourceFile.getProject());
-					
+					IPDOM pdom = PDOM.getPDOM(resourceFile.getProject());
 					try {
 						tu = CDOM.getInstance().getASTService().getTranslationUnit(
 								resourceFile,
-								CDOM.getInstance().getCodeReaderFactory(
-										CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+								pdom.getCodeReaderFactory(workingCopy));
 					} catch (IASTServiceProvider.UnsupportedDialectException e) {
 						operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
 						return;

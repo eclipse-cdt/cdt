@@ -75,7 +75,7 @@ public class ParserUtil
 			{
 				// this is the file for sure
 				// check the working copy
-				if( workingCopies.hasNext() )
+				if( workingCopies != null && workingCopies.hasNext() )
 				{
 					char[] buffer = findWorkingCopy( resultingResource, workingCopies );
 					if( buffer != null )

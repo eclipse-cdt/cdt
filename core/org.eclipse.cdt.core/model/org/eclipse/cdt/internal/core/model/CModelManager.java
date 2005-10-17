@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -63,8 +64,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
+import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 
 public class CModelManager implements IResourceChangeListener, ICDescriptorListener, IContentTypeChangeListener {
 
@@ -1112,10 +1113,16 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		return this.fDeltaProcessor.indexManager;
 	}
 	
-
 	public void deleting(IProject project) {
-		//	discard all indexing jobs for this project
+		// discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
+		// delete the PDOM for this project
+		try {
+			PDOM.deletePDOM(project);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		// stop the binary runner for this project
 		removeBinaryRunner(project);
 	}
 

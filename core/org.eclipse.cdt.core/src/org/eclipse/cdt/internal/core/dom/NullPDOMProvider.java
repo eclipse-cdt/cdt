@@ -31,4 +31,7 @@ public class NullPDOMProvider implements IPDOMProvider {
 		return null;
 	}
 	
+	public void deletePDOM(IProject project) {
+	}
+	
 }

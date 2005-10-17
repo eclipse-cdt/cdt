@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -26,5 +27,11 @@ public interface IPDOM {
 	public IBinding resolveBinding(IASTName name) throws CoreException;
 	
 	public IASTName[] getDeclarations(IBinding binding) throws CoreException;
+	
+	public void delete() throws CoreException;
+	
+	public ICodeReaderFactory getCodeReaderFactory();
+	
+	public ICodeReaderFactory getCodeReaderFactory(IWorkingCopy root);
 	
 }

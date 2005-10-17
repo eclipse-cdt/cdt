@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
@@ -36,11 +37,18 @@ public interface IPDOMProvider {
 	public IPDOM getPDOM(IProject project);
 
 	/**
+	 * Delete the PDOM for the given project.
+	 * 
+	 * @param project
+	 */
+	public void deletePDOM(IProject project) throws CoreException;
+	
+	/**
 	 * Return the element changed listener that will handled change
 	 * events that require the PDOM be updated.
 	 * 
 	 * @return the element changed listener
 	 */
 	public IElementChangedListener getElementChangedListener();
-	
+
 }

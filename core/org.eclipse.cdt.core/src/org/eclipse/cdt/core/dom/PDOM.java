@@ -66,6 +66,10 @@ public class PDOM {
 		return getPDOMProvider().getPDOM(project);
 	}
 
+	public static void deletePDOM(IProject project) throws CoreException {
+		getPDOMProvider().getPDOM(project).delete();
+	}
+	
 	/**
 	 * Startup the PDOM. This mainly sets us up to handle model
 	 * change events.

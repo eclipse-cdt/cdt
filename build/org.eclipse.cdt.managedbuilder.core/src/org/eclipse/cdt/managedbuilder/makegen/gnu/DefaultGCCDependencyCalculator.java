@@ -198,6 +198,25 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			else {
 				buildCmd = cmdLInfo.getCommandLine();
 			}
+            
+            // resolve any remaining macros in the command after it has been
+            // generated
+            try {
+                String resolvedCommand = ManagedBuildManager
+                        .getBuildMacroProvider().resolveValueToMakefileFormat(
+                                buildCmd,
+                                EMPTY_STRING,
+                                WHITESPACE,
+                                IBuildMacroProvider.CONTEXT_FILE,
+                                new FileContextData(resource.getLocation(),
+                                        null, null, info
+                                                .getDefaultConfiguration()
+                                                .getToolChain()));
+                if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
+                    buildCmd = resolvedCommand;
+
+            } catch (BuildMacroException e) {
+            }
 		}
 
 		buffer.append(IManagedBuilderMakefileGenerator.TAB + 

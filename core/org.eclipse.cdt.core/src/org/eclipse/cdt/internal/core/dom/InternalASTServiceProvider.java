@@ -116,10 +116,10 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		IScanner scanner = null;
 		ISourceCodeParser parser = null;
 
-		if( configuration == null )
+		if( configuration == null || configuration.getParserDialect() == null)
 		{
 		    ParserLanguage l = getLanguage(filename, project);
-		    IScannerExtensionConfiguration scannerExtensionConfiguration = null;
+		    IScannerExtensionConfiguration scannerExtensionConfiguration;
 		    if( l == ParserLanguage.CPP )
 		       scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
 		    else

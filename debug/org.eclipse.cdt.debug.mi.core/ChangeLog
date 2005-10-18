@@ -1,3 +1,8 @@
+2005-10-18 Mikhail Khodjaiants
+	Bug 111568: Fix for corrupt stack messages not working.
+	Applied patch from Timesys.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java
+
 2005-09-01 Mikhail Khodjaiants
 	Bug 108636: mi level selection option should be moved to the gdb page.
 	* src/org/eclipse/cdt/debug/mi/core/GDBCDIDebugger.java

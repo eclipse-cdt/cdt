@@ -1,4 +1,8 @@
 2005-10-18 Mikhail Khodjaiants
+	Bug 106632: Invalid detail value for arrays with dimension greater than 100.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+
+2005-10-18 Mikhail Khodjaiants
 	Bug 111568: Fix for corrupt stack messages not working.
 	Applied patch from Timesys.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java

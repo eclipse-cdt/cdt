@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.CDOM;
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -74,19 +77,25 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
             if (fileScope && workingCopy != null) { // do a full parse
 
                 IFile file = (IFile)workingCopy.getResource();
-                if (file != null)
-                    completionNode = CDOM.getInstance().getCompletionNode(
-                            file,
-                            offset,
-                            CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
-                else if (editor.getEditorInput() instanceof ExternalEditorInput) {
+                if (file != null) {
+                	IProject project = file.getProject();
+                	IPDOM pdom = PDOM.getPDOM(project);
+                	ICodeReaderFactory readerFactory;
+                	if (pdom != null)
+                		readerFactory = pdom.getCodeReaderFactory(workingCopy);
+                	else
+                		readerFactory = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE); 
+                    completionNode = CDOM.getInstance().getCompletionNode(file, offset, readerFactory);
+                } else if (editor.getEditorInput() instanceof ExternalEditorInput) {
                     IStorage storage = ((ExternalEditorInput)(editor.getEditorInput())).getStorage();
                     IProject project = workingCopy.getCProject().getProject();
-                    completionNode = CDOM.getInstance().getCompletionNode(
-                            storage,
-                            project,
-                            offset,
-                            CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
+                	IPDOM pdom = PDOM.getPDOM(project);
+                	ICodeReaderFactory readerFactory;
+                	if (pdom != null)
+                		readerFactory = pdom.getCodeReaderFactory(workingCopy);
+                	else
+                		readerFactory = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE); 
+                    completionNode = CDOM.getInstance().getCompletionNode(storage, project, offset, readerFactory);
                 }
                 
                 if (completionNode != null)

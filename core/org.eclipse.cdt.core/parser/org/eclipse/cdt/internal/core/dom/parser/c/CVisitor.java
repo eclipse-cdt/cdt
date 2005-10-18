@@ -1906,10 +1906,13 @@ public class CVisitor {
 	        }
         }
         
-        IPDOM pdom = name.getTranslationUnit().getPDOM();
-        if (pdom != null)
-        	result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
-
+        IASTTranslationUnit tu = name.getTranslationUnit();
+        if (tu != null) {
+	        IPDOM pdom = tu.getPDOM(); 
+	        if (pdom != null)
+	        	result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
+        }
+        
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
     

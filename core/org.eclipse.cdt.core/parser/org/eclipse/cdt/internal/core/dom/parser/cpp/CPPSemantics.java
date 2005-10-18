@@ -1878,7 +1878,7 @@ public class CPPSemantics {
             return ( pointOfDecl < ((ASTNode)node).getOffset() );
 	        
 	    }
-	    return false;
+	    return true; // TODO - I changed this to true 
 	}
 	
 	static private IBinding resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) throws DOMException {
@@ -3272,9 +3272,12 @@ public class CPPSemantics {
             }
         }
         
-        IPDOM pdom = name.getTranslationUnit().getPDOM();
-        if (pdom != null)
-        	result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
+        IASTTranslationUnit tu = name.getTranslationUnit();
+        if (tu != null) {
+        	IPDOM pdom = tu.getPDOM(); 
+        	if (pdom != null)
+        		result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
+        }
 
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }

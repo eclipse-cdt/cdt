@@ -169,6 +169,7 @@ public class Thread extends CObject implements ICDIThread {
 				} catch (MIException e) {
 					// First try fails, retry. gdb patches up the corrupt frame
 					// so retry should give us a frame count that is safe.
+					depth = factory.createMIStackInfoDepth();
 					mi.postCommand(depth);
 					info = depth.getMIStackInfoDepthInfo();
 					if (info == null) {

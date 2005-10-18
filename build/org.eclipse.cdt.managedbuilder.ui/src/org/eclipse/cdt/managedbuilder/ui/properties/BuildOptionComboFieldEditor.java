@@ -127,4 +127,16 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		// There is just the label from the parent and the combo
 		return 2;
 	}
+
+    /**
+     * Set whether or not the controls in the field editor
+     * are enabled.
+     * @param enabled The enabled state.
+     * @param parent The parent of the controls in the group.
+     *  Used to create the controls if required.
+     */
+    public void setEnabled(boolean enabled, Composite parent) {
+        getLabelControl(parent).setEnabled(enabled);
+        optionSelector.setEnabled(enabled);
+    }
 }

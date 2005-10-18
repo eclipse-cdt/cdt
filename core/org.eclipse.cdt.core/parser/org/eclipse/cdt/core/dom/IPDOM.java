@@ -24,9 +24,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IPDOM {
 
-	public IBinding resolveBinding(IASTName name) throws CoreException;
+	public IBinding resolveBinding(IASTName name);
 	
-	public IASTName[] getDeclarations(IBinding binding) throws CoreException;
+	public IBinding[] resolvePrefix(IASTName name);
+	
+	public IASTName[] getDeclarations(IBinding binding);
 	
 	public void delete() throws CoreException;
 	

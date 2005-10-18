@@ -55,7 +55,7 @@ public class CPPASTName extends CPPASTNode implements IASTName {
     }
 
     public IBinding[] resolvePrefix() {
-        return CPPSemantics.prefixLookup(this);
+    	return CPPSemantics.prefixLookup(this);
     }
 
     public void setBinding(IBinding binding) {

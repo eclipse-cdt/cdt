@@ -61,7 +61,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
@@ -179,13 +178,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
             return resolver.getDeclarations( (IMacroBinding)b );
         }
         IASTName[] names = CPPVisitor.getDeclarations( this, b );
-        if (names.length == 0 && pdom != null) {
-        	try {
-        		names = pdom.getDeclarations(b);
-        	} catch (CoreException e) {
-        		names = new IASTName[0];
-        	}
-        }
+        if (names.length == 0 && pdom != null)
+       		names = pdom.getDeclarations(b);
         return names;
     }
 

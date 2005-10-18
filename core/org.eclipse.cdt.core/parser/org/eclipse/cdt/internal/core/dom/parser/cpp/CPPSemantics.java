@@ -125,7 +125,6 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil.ArrayWrapper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author aniefer
@@ -748,13 +747,9 @@ public class CPPSemantics {
 		if( binding == null ){
 			// Let's try the pdom
 			IPDOM pdom = name.getTranslationUnit().getPDOM();
-			if (pdom != null) {
-				try {
-					binding = pdom.resolveBinding(name);
-				} catch (CoreException e) {
-					binding = null;
-				}
-			}
+			if (pdom != null)
+				binding = pdom.resolveBinding(name);
+
 			// If we're still null...
 			if (binding == null) {
 			    if( name instanceof ICPPASTQualifiedName && data.forDefinition() )
@@ -3236,6 +3231,7 @@ public class CPPSemantics {
 		
 	    return (IBinding[]) set.keyArray( IBinding.class );
 	}
+	
     public static IBinding [] prefixLookup( IASTName name ){
         LookupData data = createLookupData( name, true );
         data.prefixLookup = true;
@@ -3275,6 +3271,11 @@ public class CPPSemantics {
                 }
             }
         }
+        
+        IPDOM pdom = name.getTranslationUnit().getPDOM();
+        if (pdom != null)
+        	result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
+
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
 

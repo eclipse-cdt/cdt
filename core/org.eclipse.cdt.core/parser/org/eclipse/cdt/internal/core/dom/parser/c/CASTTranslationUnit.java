@@ -45,7 +45,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
@@ -120,13 +119,8 @@ public class CASTTranslationUnit extends CASTNode implements
             return resolver.getDeclarations( (IMacroBinding)binding );
         }
 		IASTName[] names = CVisitor.getDeclarations(this, binding);
-		if (names.length == 0 && pdom != null) {
-			try {
-				names = pdom.getDeclarations(binding);
-			} catch (CoreException e) {
-				names = new IASTName[0];
-			}
-		}
+		if (names.length == 0 && pdom != null) 
+			names = pdom.getDeclarations(binding);
 		return names;
 	}
     

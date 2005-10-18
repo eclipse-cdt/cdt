@@ -94,7 +94,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Created on Nov 5, 2004
@@ -1303,14 +1302,9 @@ public class CVisitor {
 			IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
 			IPDOM pdom = tu.getPDOM();
 			binding = null;
-			if (pdom != null) {
-				try {
-					binding = pdom.resolveBinding(name);
-				} catch (CoreException e) {
-					// didn't work, null out the binding
-					binding = null;
-				}
-			}
+			if (pdom != null)
+				binding = pdom.resolveBinding(name);
+
 			if (binding == null)
 				return externalBinding( (IASTTranslationUnit) blockItem, name );
 			else
@@ -1911,6 +1905,11 @@ public class CVisitor {
 	        } catch ( DOMException e ) {
 	        }
         }
+        
+        IPDOM pdom = name.getTranslationUnit().getPDOM();
+        if (pdom != null)
+        	result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
+
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
     

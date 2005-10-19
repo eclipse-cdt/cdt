@@ -1,3 +1,7 @@
+2005-10-19 Mikhail Khodjaiants
+	Bug 113114: Expanding Modules View throws SWTError: No more handles.
+	* ModulesView.java
+
 2005-09-06 Mikhail Khodjaiants
 	Cleanup: replaced "new Boolean" by the static Boolean objects (Java 1.4).
 	* QuestionStatusHandler.java

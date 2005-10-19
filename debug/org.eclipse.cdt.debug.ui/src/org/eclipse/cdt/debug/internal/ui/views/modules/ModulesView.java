@@ -11,6 +11,8 @@
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
@@ -123,7 +125,7 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 					if ( de != null ) {
 						ImageDescriptor descriptor = de.getImageDescriptor( element );
 						if ( descriptor != null ) {
-							image = descriptor.createImage();
+							image = ModulesView.this.getImage( descriptor );
 						}
 					}
 				}
@@ -327,6 +329,8 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	private HashMap fSelectionStates = new HashMap( 10 );
 
 	private AbstractViewerState fLastState = null;
+	
+	private HashMap fImageCache = new HashMap( 10 );
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
@@ -989,10 +993,29 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		if ( viewer != null ) {
 			getDetailDocument().removeDocumentListener( getDetailDocumentListener() );
 		}
+		disposeImageCache();
 		super.dispose();
 	}
 
 	private AbstractViewerState getViewerState() {
 		return new ModulesViewerState( getModulesViewer() );
+	}
+	
+	protected Image getImage( ImageDescriptor desc ) {
+		Image image = (Image)fImageCache.get( desc );
+		if ( image == null ) {
+			image = desc.createImage();
+			fImageCache.put( desc, image );
+		}
+		return image;
+	}
+
+	private void disposeImageCache() {
+		Iterator it = fImageCache.values().iterator();
+		while( it.hasNext() ) {
+			Map.Entry entry = (Map.Entry)it.next();
+			((Image)entry.getValue()).dispose();
+		}
+		fImageCache.clear();
 	}
 }

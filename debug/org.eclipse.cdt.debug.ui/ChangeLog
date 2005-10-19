@@ -1,3 +1,7 @@
+2005-10-19 Mikhail Khodjaiants
+	Bug 113114: Expanding Modules View throws SWTError: No more handles.
+	* ModulesView.java
+
 2005-08-24 Mikhail Khodjaiants
 	Bug 107208: toggle breakpoint with external sources doesn't work.
 	* ToggleBreakpointAdapter.java

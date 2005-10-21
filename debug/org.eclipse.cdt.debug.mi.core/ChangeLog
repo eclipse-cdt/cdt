@@ -1,3 +1,8 @@
+2005-10-21 Mikhail Khodjaiants
+	Bug 113364: Wrong values displaying an array of structures.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/VariableDescriptor.java
+
 2005-10-18 Mikhail Khodjaiants
 	Bug 106632: Invalid detail value for arrays with dimension greater than 100.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java

@@ -126,12 +126,12 @@ public class VariableManager extends Manager {
 		Target target = (Target)v.getTarget();
 		ICDIStackFrame vstack = v.getStackFrame();
 		ICDIThread vthread = v.getThread();
-		String name = v.getName();
+		String name = v.getFullName();
 		int position = v.getPosition();
 		int depth = v.getStackDepth();
 		Variable[] vars = getVariables(target);
 		for (int i = 0; i < vars.length; i++) {
-			if (vars[i].getName().equals(name)
+			if (vars[i].getFullName().equals(name)
 				&& vars[i].getCastingArrayStart() == v.getCastingArrayStart()
 				&& vars[i].getCastingArrayEnd() == v.getCastingArrayEnd()
 				&& VariableDescriptor.equalsCasting(vars[i], v)) {

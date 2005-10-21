@@ -76,7 +76,7 @@ public class CPPFunctionType implements ICPPFunctionType {
 	                return false;
 	            } else {
 					 for( int i = 0; i < parameters.length; i++ ){
-		                if( ! parameters[i].isSameType( fps[i] ) )
+		                if (parameters[i] == null || ! parameters[i].isSameType( fps[i] ) )
 		                    return false;
 		            }
 	            }

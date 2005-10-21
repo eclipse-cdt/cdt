@@ -615,6 +615,8 @@ public class CPPVisitor {
         } catch ( DOMException e ) {
             return false;
         }
+        if (clsTypeSpec == null)
+        	return false;
         IASTName clsName = clsTypeSpec.getName();
         if( clsName instanceof ICPPASTQualifiedName ){
 	        IASTName [] names = ((ICPPASTQualifiedName)clsName).getNames(); 

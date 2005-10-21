@@ -53,7 +53,9 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
         
         if( obj instanceof IArrayType ){
             try {
-                return ((IArrayType) obj).getType().isSameType( type );
+            	IType objType = ((IArrayType)obj).getType();
+            	if (objType != null)
+            		return objType.isSameType( type );
             } catch ( DOMException e ) {
                 return false;
             }

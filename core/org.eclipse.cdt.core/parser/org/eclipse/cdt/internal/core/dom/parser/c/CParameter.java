@@ -118,11 +118,14 @@ public class CParameter implements IParameter {
 	            return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
 	        }
 	        
-	        IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) parent.getParent().getParent();
-			parent = fdtor.getParent();
-			if( parent instanceof IASTFunctionDefinition ) {
-				return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
-			}
+	        IASTNode fdtorNode =  parent.getParent().getParent();
+	        if (fdtorNode instanceof IASTFunctionDeclarator) {
+		        IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator)fdtorNode;
+				parent = fdtor.getParent();
+				if( parent instanceof IASTFunctionDefinition ) {
+					return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+				}
+	        }
 	    }
 		//TODO: if not definition, find definition
 		return null;

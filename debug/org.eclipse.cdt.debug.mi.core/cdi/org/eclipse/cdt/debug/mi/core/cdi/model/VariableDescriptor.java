@@ -323,7 +323,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	public boolean equals(ICDIVariableDescriptor varDesc) {
 		if (varDesc instanceof VariableDescriptor) {
 			VariableDescriptor desc = (VariableDescriptor) varDesc;
-			if (desc.getName().equals(getName())
+			if (desc.getFullName().equals(getFullName())
 				&& desc.getCastingArrayStart() == getCastingArrayStart()
 				&& desc.getCastingArrayEnd() == getCastingArrayEnd()
 				&& equalsCasting(desc, this)) {

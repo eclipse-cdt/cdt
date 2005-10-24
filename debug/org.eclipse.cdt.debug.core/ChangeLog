@@ -1,3 +1,8 @@
+2005-10-24 Mikhail Khodjaiants
+	Fix for bugs 112008 and 111828.
+	Applied modified patch from Matthias Spycher (matthias@coware.com).
+	* CBreakpointManager.java
+
 2005-09-30 Mikhail Khodjaiants
 	Partial fix for bug 109950: Major crash and stack overflow if two projects reference each other.
 	* CDebugTarget.java

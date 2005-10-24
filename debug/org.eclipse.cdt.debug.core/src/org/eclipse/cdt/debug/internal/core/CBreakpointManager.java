@@ -7,9 +7,12 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Matthias Spycher (matthias@coware.com) - patch for bug #112008 
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.core; 
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +73,7 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 public class CBreakpointManager implements IBreakpointsListener, IBreakpointManagerListener, ICDIEventListener, IAdaptable {
 
@@ -189,8 +193,21 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					String sourceHandle = file;
 					if ( !isEmpty( file ) ) {
 						Object sourceElement = getSourceElement( file );
-						sourceHandle = ( sourceElement instanceof IFile ) ? ((IFile)sourceElement).getLocation().toOSString() : ((IStorage)sourceElement).getFullPath().toOSString();
-						return sourceHandle.equals( ((ICLineBreakpoint)breakpoint).getSourceHandle() ) && location.getLineNumber() == ((ICLineBreakpoint)breakpoint).getLineNumber(); 
+						if ( sourceElement instanceof IFile ) {
+							sourceHandle = ((IFile)sourceElement).getLocation().toOSString();
+						}
+						else if ( sourceElement instanceof IStorage ) {
+							sourceHandle = ((IStorage)sourceElement).getFullPath().toOSString();
+						}
+						String bpSourceHandle = ((ICLineBreakpoint)breakpoint).getSourceHandle();
+						if ( sourceElement instanceof LocalFileStorage ) { // see bug #112008
+							try {
+								bpSourceHandle = new File( bpSourceHandle ).getCanonicalPath();
+							}
+							catch( IOException e ) {
+							}
+						}
+						return sourceHandle.equals( bpSourceHandle ) && location.getLineNumber() == ((ICLineBreakpoint)breakpoint).getLineNumber(); 
 					}
 				}
 				if ( breakpoint instanceof ICWatchpoint && cdiBreakpoint instanceof ICDIWatchpoint ) {
@@ -658,9 +675,13 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				Object sourceElement = getSourceElement( file );
 				String sourceHandle = file;
 				IResource resource = getProject();
-				if ( sourceElement instanceof IFile || sourceElement instanceof IStorage ) {
-					sourceHandle = ( sourceElement instanceof IFile ) ? ((IFile)sourceElement).getLocation().toOSString() : ((IStorage)sourceElement).getFullPath().toOSString();
-					resource = ( sourceElement instanceof IFile ) ? (IResource)sourceElement : ResourcesPlugin.getWorkspace().getRoot();
+				if ( sourceElement instanceof IFile ) {
+					sourceHandle = ((IFile)sourceElement).getLocation().toOSString();
+					resource = (IResource)sourceElement;
+				}
+				else if ( sourceElement instanceof IStorage ) {
+					sourceHandle = ((IStorage)sourceElement).getFullPath().toOSString();
+					resource = ResourcesPlugin.getWorkspace().getRoot();
 				}
 				breakpoint = createLineBreakpoint( sourceHandle, resource, cdiBreakpoint );
 //				else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {

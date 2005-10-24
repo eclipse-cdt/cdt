@@ -1,3 +1,13 @@
+2005-10-24 Mikhail Khodjaiants
+	Fix for bugs 112008 and 111828.
+	Applied modified patch from Matthias Spycher (matthias@coware.com).
+	* CBreakpointManager.java
+
+2005-09-30 Mikhail Khodjaiants
+	Partial fix for bug 109950: Major crash and stack overflow if two projects reference each other.
+	* CDebugTarget.java
+	* CSourceLookupDirector.java
+
 2005-09-16 Mikhail Khodjaiants
 	Bug 109785: "mi_cmd_var_create: unable to create variable object" when stepping out of stack frame.
 	* CStackFrame.java

@@ -1,3 +1,9 @@
+2005-11-02 Mikhail Khodjaiants
+	Bug 113364: Wrong values displaying an array of structures.
+	Previous fix didn't work for classes with access specifiers.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/VariableDescriptor.java
+
 2005-10-21 Mikhail Khodjaiants
 	Bug 113364: Wrong values displaying an array of structures.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java

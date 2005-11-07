@@ -1,3 +1,7 @@
+2005-11-07 Mikhail Khodjaiants
+	Bug 115385: Pointer to a structure is not updated correctly
+	* CVariable.java
+
 2005-10-24 Mikhail Khodjaiants
 	Fix for bugs 112008 and 111828.
 	Applied modified patch from Matthias Spycher (matthias@coware.com).

@@ -533,6 +533,11 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 */
 	public boolean equals( Object obj ) {
 		if ( obj instanceof CVariable ) {
+			// A disposed copy can be stored in the viewer. 
+			// false should be returned to force the viewer to 
+			// replace it by a new variable. See bug #115385
+			if ( isDisposed() != ((CVariable)obj).isDisposed() )
+				return false;
 			IInternalVariable iv = getOriginal();
 			return ( iv != null ) ? iv.equals( ((CVariable)obj).getOriginal() ) : false;
 		}

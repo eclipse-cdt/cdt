@@ -104,10 +104,15 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 						if (project instanceof ICProject) {
 							IProject p = ((ICProject)project).getProject();
 							IPDOM pdom = PDOM.getPDOM(p);
-							tu = CDOM.getInstance().getASTService().getTranslationUnit(
-									input.getStorage(),
-									p,
-									pdom.getCodeReaderFactory());
+							if (pdom != null)
+								tu = CDOM.getInstance().getASTService().getTranslationUnit(
+										input.getStorage(),
+										p,
+										pdom.getCodeReaderFactory());
+							else
+								tu = CDOM.getInstance().getASTService().getTranslationUnit(
+										input.getStorage(),
+										p);
 							lang = DOMSearchUtil.getLanguage(input.getStorage().getFullPath(), ((ICProject)project).getProject());
 							projectName = ((ICProject)project).getElementName();
 						}
@@ -116,15 +121,19 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 						return;
 					}
 				} else {
-					// an awful lot of cass goingo on here...
+					// an awful lot of casts goingo on here...
 					IWorkingCopy workingCopy = (IWorkingCopy)fEditor.getInputCElement();
 					IFile resourceFile = (IFile)workingCopy.getResource();
 					project = new CProject(null, resourceFile.getProject());
 					IPDOM pdom = PDOM.getPDOM(resourceFile.getProject());
 					try {
-						tu = CDOM.getInstance().getASTService().getTranslationUnit(
+						if (pdom != null)
+							tu = CDOM.getInstance().getASTService().getTranslationUnit(
 								resourceFile,
 								pdom.getCodeReaderFactory(workingCopy));
+						else
+							tu = CDOM.getInstance().getASTService().getTranslationUnit(
+									resourceFile);
 					} catch (IASTServiceProvider.UnsupportedDialectException e) {
 						operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
 						return;

@@ -189,7 +189,8 @@ public class DOMSearchUtil {
     public static IASTName[] getSelectedNamesFrom(IASTTranslationUnit tu, int offset, int length, ParserLanguage lang) {
         IASTNode node = null;
         try{
-            node = tu.selectNodeForLocation(tu.getFilePath(), offset, length);
+        	if (tu != null)
+        		node = tu.selectNodeForLocation(tu.getFilePath(), offset, length);
         } 
         catch (ParseError er){}
         catch ( VirtualMachineError vmErr){

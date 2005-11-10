@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -62,9 +61,6 @@ abstract public class CPPScope implements ICPPScope{
 			//name belongs to a different scope, don't add it here
 			return;
 		}
-		if( name instanceof ICPPASTTemplateId )
-			name = ((ICPPASTTemplateId)name).getTemplateName();
-		
 		char [] c = name.toCharArray();
 		Object o = bindings.get( c );
 		if( o != null ){

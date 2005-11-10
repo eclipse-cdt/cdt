@@ -1899,4 +1899,29 @@ public class AST2TemplateTests extends AST2BaseTest {
         ICPPMethod f = (ICPPMethod) col.getName(8).resolveBinding();
         assertSame( f, col.getName(10).resolveBinding() );
     }
+    
+    public void testBug105852() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("template< class T1, int q > class C {};      \n"); //$NON-NLS-1$
+    	buffer.append("template< class T1, class T2> class A {};    \n"); //$NON-NLS-1$
+    	buffer.append("template< class T1, class T2, int q1, int q2>\n"); //$NON-NLS-1$
+    	buffer.append("class A< C<T1, q1>, C<T2, q2> > {};          \n"); //$NON-NLS-1$
+    	buffer.append("class N {};                                  \n"); //$NON-NLS-1$
+    	buffer.append("typedef A<C<N,1>, C<N,1> > myType;            \n"); //$NON-NLS-1$
+    	buffer.append("void m(){                                    \n"); //$NON-NLS-1$
+    	buffer.append("   myType t;                                 \n"); //$NON-NLS-1$
+    	buffer.append("}                                            \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+    	ITypedef myType = (ITypedef) col.getName(31).resolveBinding();
+    	ICPPClassType A = (ICPPClassType) myType.getType();
+    	
+    	ICPPSpecialization Aspec = (ICPPSpecialization) col.getName(10).resolveBinding();
+    	
+    	assertTrue( A instanceof ICPPTemplateInstance );
+    	assertSame( ((ICPPTemplateInstance)A).getTemplateDefinition(), Aspec);
+    }
 }

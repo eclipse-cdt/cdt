@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.cdt"
-   name="%pluginName"
-   version="3.0.0"
-   provider-name="%providerName">
-  <requires>
-      <import plugin="org.eclipse.ui.intro"/>
-      <import plugin="org.eclipse.ui.cheatsheets"/>
-   </requires>
-
+<plugin>
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
@@ -39,7 +30,5 @@
       </cheatsheet>
     
    </extension-->
-   <runtime>
-   </runtime>
-
+   
 </plugin>

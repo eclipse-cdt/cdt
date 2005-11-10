@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.doc.isv"
    name="C/C++ Plugin Developer Guide"
-   version="3.0.0">
+   version="3.1.0">
    <requires>
       <import plugin="org.eclipse.help"/>
    </requires>

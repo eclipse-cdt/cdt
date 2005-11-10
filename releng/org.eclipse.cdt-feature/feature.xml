@@ -45,62 +45,71 @@
          id="org.eclipse.cdt.core"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.ui"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.debug.core"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.debug.mi.core"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.debug.ui"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.launch"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.debug.mi.ui"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.doc.user"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.aix"
          os="aix"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -108,7 +117,7 @@
          os="linux"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -116,7 +125,7 @@
          os="qnx"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -124,7 +133,7 @@
          os="solaris"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -132,39 +141,43 @@
          os="win32"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
          id="org.eclipse.cdt.make.core"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.make.ui"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.managedbuilder.core"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.managedbuilder.ui"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.core.macosx"
          os="macosx"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -173,7 +186,7 @@
          arch="ia64"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -182,7 +195,7 @@
          arch="ppc"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -191,7 +204,7 @@
          arch="x86_64"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
@@ -200,19 +213,21 @@
          arch="x86"
          download-size="0"
          install-size="0"
-         version="3.0.0"
+         version="0.0.0"
          fragment="true"/>
 
    <plugin
          id="org.eclipse.cdt.managedbuilder.gnu.ui"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.cdt.refactoring"
          download-size="0"
          install-size="0"
-         version="3.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

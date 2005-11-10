@@ -3,10 +3,10 @@
 <fragment
    id="org.eclipse.cdt.core.linux"
    name="%fragmentName.linux"
-   version="3.0.0"
+   version="3.1.0"
    provider-name="%providerName"
    plugin-id="org.eclipse.cdt.core"
-   plugin-version="3.0.0">
+   plugin-version="3.1.0">
 
    <runtime>
       <library name="cdt_linux.jar"/>

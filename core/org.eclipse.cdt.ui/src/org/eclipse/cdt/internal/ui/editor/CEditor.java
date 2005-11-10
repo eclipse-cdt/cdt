@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.JoinLinesAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
 import org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeHierarchyAction;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
@@ -665,7 +666,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		Action action= new GotoMatchingBracketAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);				
 		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
-
+		
+		action = new JoinLinesAction(CEditorMessages.getResourceBundle(), "JoinLines.", this); //$NON-NLS-1$
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.JOIN_LINES);
+		setAction("Join Lines", action); //$NON-NLS-1$
+		
 		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Comment.", this, ITextOperationTarget.PREFIX); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.COMMENT);
 		setAction("Comment", action); //$NON-NLS-1$

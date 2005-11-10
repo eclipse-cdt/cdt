@@ -49,8 +49,14 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * @since 3.0
 	 */
 	public static final String REMOVE_BLOCK_COMMENT= "org.eclipse.cdt.ui.edit.text.c.remove.block.comment"; //$NON-NLS-1$
-
-
+	
+	/**
+	 * Action definition ID of the source -> join lines action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.join.lines"</code>).
+	 * @since 3.0.2
+	 */
+	public static final String JOIN_LINES= "org.eclipse.cdt.ui.edit.text.c.join.lines"; //$NON-NLS-1$
+	
 	/**
 	 * Action definition ID of the source -> format action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.format"</code>).
@@ -69,27 +75,30 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 */
 	public static final String OPEN_DECL= "org.eclipse.cdt.ui.edit.opendecl"; //$NON-NLS-1$
     
-    /**
-     * Action definition ID of the open definition action
-     * (value <code>"org.eclipse.cdt.ui.edit.opendef"</code>).
-     */
-    public static final String OPEN_DEF= "org.eclipse.cdt.ui.edit.opendef"; //$NON-NLS-1$
+	/**
+	 * Action definition ID of the open definition action
+	 * (value <code>"org.eclipse.cdt.ui.edit.opendef"</code>).
+	 */
+	public static final String OPEN_DEF= "org.eclipse.cdt.ui.edit.opendef"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the show in C/C++ Projects View action
 	 * (value <code>"org.eclipse.cdt.ui.edit.opencview"</code>).
 	 */
 	public static final String OPEN_CVIEW= "org.eclipse.cdt.ui.edit.opencview"; //$NON-NLS-1$
+	
 	/**
 	 * Action definition ID of the refactor -> rename element action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.rename.element"</code>).
 	 */
 	public static final String RENAME_ELEMENT= "org.eclipse.cdt.ui.edit.text.rename.element"; //$NON-NLS-1$
+	
 	/**
 	 * Action definition ID of the refactor -> undo action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.undo.action"</code>).
 	 */
 	public static final String UNDO_ACTION= "org.eclipse.cdt.ui.edit.text.undo.action"; //$NON-NLS-1$
+	
 	/**
 	 * Action definition ID of the refactor -> redo action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.redo.action"</code>).
@@ -101,6 +110,7 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.search.findrefs"</code>).
 	 */
 	public static final String FIND_REFS= "org.eclipse.cdt.ui.search.findrefs"; //$NON-NLS-1$	
+	
 	/**
 	 * Action definition ID of the find declarations in workspace action
 	 * (value <code>"org.eclipse.cdt.ui.search.finddecl"</code>).
@@ -119,23 +129,23 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 */
 	public static final String OPEN_EDITOR= "org.eclipse.cdt.ui.edit.text.c.open.editor"; //$NON-NLS-1$
 
-    /**
-     * Action definition ID of the open quick outline.
-     * (value <code>"org.eclipse.cdt.ui.edit.open.outline"</code>).
-     */
-    public static final String OPEN_OUTLINE= "org.eclipse.cdt.ui.edit.open.outline"; //$NON-NLS-1$
+	/**
+	 * Action definition ID of the open quick outline.
+	 * (value <code>"org.eclipse.cdt.ui.edit.open.outline"</code>).
+	 */
+	public static final String OPEN_OUTLINE= "org.eclipse.cdt.ui.edit.open.outline"; //$NON-NLS-1$
 
-    /**
-     * Action definition ID for go to next c member.
-     * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.next.memeber"</code>)
-     */
-    public static final String GOTO_NEXT_MEMBER = "org.eclipse.cdt.ui.edit.text.c.goto.next.member"; //$NON-NLS-1$
+	/**
+	 * Action definition ID for go to next c member.
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.next.memeber"</code>)
+	 */
+	public static final String GOTO_NEXT_MEMBER = "org.eclipse.cdt.ui.edit.text.c.goto.next.member"; //$NON-NLS-1$
 
-    /**
-     * Action definition ID for go to previous c member.
-     * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.prev.memeber"</code>)
-     */
-    public static final String GOTO_PREVIOUS_MEMBER = "org.eclipse.cdt.ui.edit.text.c.goto.prev.member"; //$NON-NLS-1$
+	/**
+	 * Action definition ID for go to previous c member.
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.prev.memeber"</code>)
+	 */
+	public static final String GOTO_PREVIOUS_MEMBER = "org.eclipse.cdt.ui.edit.text.c.goto.prev.member"; //$NON-NLS-1$
 
 	/**
 	 * Action definition ID of the edit -> go to matching bracket action

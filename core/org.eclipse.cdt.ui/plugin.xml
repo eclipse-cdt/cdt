@@ -948,6 +948,11 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+           commandId="org.eclipse.cdt.ui.edit.text.c.join.lines"
+           contextId="org.eclipse.cdt.ui.cEditorScope"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           sequence="M1+M2+J"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -985,6 +990,12 @@
             description="%ActionDefinition.removeBlockComment.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.remove.block.comment">
+      </command>
+      <command
+            name="%ActionDefinition.joinLines.name"
+            description="%ActionDefinition.joinLines.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.join.lines">
       </command>
       <command
             name="%ActionDefinition.opendef.name"

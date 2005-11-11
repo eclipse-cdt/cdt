@@ -309,12 +309,12 @@ public class BuildPropertyPage extends AbstractBuildPropertyPage implements IWor
 	 */
 	protected boolean writeBuildInfo() {
 		// Write out the build model info
-		ManagedBuildManager.saveBuildInfo(getProject(), false);
+		boolean saveBuildStatus = ManagedBuildManager.saveBuildInfo(getProject(), false);
 		IManagedBuildInfo bi = ManagedBuildManager.getBuildInfo(getProject());
 		if (bi != null & bi instanceof ManagedBuildInfo) {
 			((ManagedBuildInfo)bi).initializePathEntries();
 		}
-		return true;
+		return saveBuildStatus;
 	}
 	
 	/*

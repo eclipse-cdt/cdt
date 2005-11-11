@@ -75,6 +75,8 @@ import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManag
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -125,6 +127,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String MANIFEST_ERROR_OPTION_CATEGORY = "ManagedBuildManager.error.manifest.option.category";	//$NON-NLS-1$
 	private static final String MANIFEST_ERROR_OPTION_FILTER = "ManagedBuildManager.error.manifest.option.filter";	//$NON-NLS-1$
 	private static final String MANIFEST_ERROR_OPTION_VALUEHANDLER = "ManagedBuildManager.error.manifest.option.valuehandler";	//$NON-NLS-1$
+	private static final String MANIFEST_ERROR_READ_ONLY = "ManagedBuildManager.error.read_only";	//$NON-NLS-1$
+	private static final String MANIFEST_ERROR_WRITE_FAILED = "ManagedBuildManager.error.write_failed";	//$NON-NLS-1$
+	
 	// Error ID's for OptionValidError()
 	public static final int ERROR_CATEGORY = 0;
 	public static final int ERROR_FILTER = 1;
@@ -1032,8 +1037,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param project
 	 * @param force 
 	 */
-	public static void saveBuildInfo(IProject project, boolean force) {
+	public static boolean saveBuildInfo(IProject project, boolean force) {
 		// Create document
+		Exception err = null;
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
@@ -1071,6 +1077,34 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
 
 				if (projectFile.exists()) {
+					if (projectFile.isReadOnly()) {						
+						// If we are not running headless, and there is a UI Window around, grab it
+						// and the associated shell
+						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						if (window == null) {
+							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+							window = windows[0];
+						}
+						Shell shell = null; 
+						if (window != null) {							
+							shell = window.getShell();
+						}						
+	                    // Inform Eclipse that we are intending to modify this file
+						// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
+						// reset a read-only file protection to write etc.
+						// If there is no shell, i.e. shell is null, then there will be no user UI interaction
+						IStatus status = projectFile.getWorkspace().validateEdit(new IFile[]{projectFile}, shell);
+						// If the file is still read-only, then we should not attempt the write, since it will
+						// just fail - just throw an exception, to be caught below, and inform the user
+						// For other non-successful status, we take our chances, attempt the write, and pass
+						// along any exception thrown
+						if (!status.isOK()) {
+						    if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
+						    	stream.close();
+		    	                throw new IOException(ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_READ_ONLY, projectFile.getFullPath().toString())); //$NON-NLS-1$						
+						    }
+						}
+					}
 					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
 				} else {
 					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
@@ -1080,27 +1114,53 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				stream.close();
 			}
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			err = e;
 		} catch (FactoryConfigurationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (TransformerFactoryConfigurationError e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			err = e.getException();
+		} catch (TransformerConfigurationException e) {
+			err = e;
+		} catch (TransformerFactoryConfigurationError e) {
+			err = e.getException();
 		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			err = e;
 		} catch (IOException e) {
 			// The save failed
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// Save to IFile failed
-			e.printStackTrace();
+			err = e;
+    	} catch (CoreException e) {
+	    	// Save to IFile failed
+		    err = e;
+	    }
+
+		if (err != null) {			
+			// Put out an error message indicating that the attempted write to the .cdtbuild project file failed					
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (window == null) {
+				IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+				window = windows[0];
+			}
+
+			final Shell shell = window.getShell();
+			if (shell != null) {
+				final String exceptionMsg = err.getMessage(); 
+				shell.getDisplay().syncExec( new Runnable() {
+					public void run() {
+						MessageDialog.openError(shell, 
+								ManagedMakeMessages.getResourceString("ManagedBuildManager.error.write_failed_title"),	//$NON-NLS-1$
+								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED,		//$NON-NLS-1$
+										exceptionMsg));
+					}
+			    } );
+			}
 		}
+		// If we return an honest status when the operation fails, there are instances when the UI behavior
+		// is not very good
+		// Specifically, if "OK" is clicked by the user from the property page UI, and the return status 
+		// from this routine is false, the property page UI will not be closed (note: this is Eclispe code) and
+		// the OK button will simply be grayed out
+		// At this point, the only way out is to click "Cancel" to get the UI to go away; note however that any
+		// property page changes will be sticky, in the UI, which is nonintuitive and confusing
+		// Therefore, just always return success, i.e. true, from this routine
+		return true;
 	}
 
 	/**

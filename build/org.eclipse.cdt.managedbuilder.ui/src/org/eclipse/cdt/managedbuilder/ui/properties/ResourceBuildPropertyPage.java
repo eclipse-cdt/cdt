@@ -452,6 +452,8 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 	 */
 	public boolean performOk() {
 		
+		boolean retStatus = true;
+		
 		//	If there is no content on the page, then there is nothing to do
 		if (noContentOnPage) return true;
 
@@ -484,12 +486,12 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 			// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
 		
-		if(getCurrentResourceConfigClone().isDirty()){
+		if (getCurrentResourceConfigClone().isDirty()) {
 			selectedConfiguration.setRebuildState(true);
 			getCurrentResourceConfigClone().setDirty(false);
 		}
 
-		ManagedBuildManager.saveBuildInfo(getProject(), false);
+		retStatus = ManagedBuildManager.saveBuildInfo(getProject(), false);
 		
 		IManagedBuildInfo bi = ManagedBuildManager.getBuildInfo(getProject());
 		if (bi != null & bi instanceof ManagedBuildInfo) {
@@ -498,7 +500,7 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 		
 		EnvironmentVariableProvider.fUserSupplier.checkInexistentConfigurations(clonedConfiguration.getManagedProject());
 
-		return true;
+		return retStatus;
 	}
 	
 	public boolean containsDefaults(){

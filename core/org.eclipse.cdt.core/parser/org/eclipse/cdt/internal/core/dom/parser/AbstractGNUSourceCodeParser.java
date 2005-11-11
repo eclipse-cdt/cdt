@@ -1132,6 +1132,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     public static class FoundDeclaratorException extends Exception
     {
+    	private static final long serialVersionUID = 0;
+    	
         public final IASTDeclarator declarator;
         public final IToken currToken;
         public IASTDeclSpecifier declSpec;

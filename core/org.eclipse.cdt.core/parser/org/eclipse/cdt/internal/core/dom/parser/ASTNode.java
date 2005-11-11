@@ -10,21 +10,43 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IScope2;
 
 /**
  * @author jcamelon
  */
 public abstract class ASTNode implements IASTNode {
 
-    private int length;
-
-    private int offset;
-
     private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
 
+    private IASTNode parent;
+    private ASTNodeProperty property;
+
+    private int length;
+    private int offset;
+
+    public IASTNode getParent() {
+    	return parent;
+    }
+    
+    public void setParent(IASTNode node) {
+    	this.parent = node;
+    }
+    
+    public ASTNodeProperty getPropertyInParent() {
+    	return property;
+    }
+    
+    public void setPropertyInParent(ASTNodeProperty property) {
+    	this.property = property;
+    }
+    
     public int getOffset() {
         return offset;
     }
@@ -56,11 +78,6 @@ public abstract class ASTNode implements IASTNode {
     private IASTNodeLocation[] locations = null;
     private IASTFileLocation fileLocation = null;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getNodeLocations()
-     */
     public IASTNodeLocation[] getNodeLocations() {
         if (locations != null)
             return locations;
@@ -70,11 +87,6 @@ public abstract class ASTNode implements IASTNode {
         return locations;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getRawSignature()
-     */
     public String getRawSignature() {
         return getTranslationUnit().getUnpreprocessedSignature(
                 getNodeLocations());
@@ -90,4 +102,17 @@ public abstract class ASTNode implements IASTNode {
         fileLocation = getTranslationUnit().flattenLocationsToFile( getNodeLocations() );
         return fileLocation;
     }
+    
+    public IScope2 getScope(IASTNode child, ASTNodeProperty childProperty) {
+    	return parent != null ? parent.getScope(this, property) : null;
+    }
+
+    public IASTTranslationUnit getTranslationUnit() {
+       	return parent != null ? parent.getTranslationUnit() : null;
+    }
+
+    public boolean accept(ASTVisitor visitor) {
+    	return true;
+    }
+    
 }

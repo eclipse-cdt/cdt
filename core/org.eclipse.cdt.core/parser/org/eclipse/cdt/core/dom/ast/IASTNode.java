@@ -17,14 +17,15 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTNode {
+	
 	public static final IASTNode [] EMPTY_NODE_ARRAY = new IASTNode[0];
+	
 	/**
 	 * Get the translation unit (master) node that is the ancestor of all nodes
 	 * in this AST.
 	 * 
 	 * @return <code>IASTTranslationUnit</code>
 	 */
-
 	public IASTTranslationUnit getTranslationUnit();
 
 	/**
@@ -44,14 +45,12 @@ public interface IASTNode {
 	 */
 	public IASTNodeLocation[] getNodeLocations();
 	
-    
     /**
      * Get the location of the node as a file.
      * 
      * @return <code>IASTFileLocation</code>
      */
     public IASTFileLocation getFileLocation();
-    
     
 	/**
 	 * Lightweight check for understanding what file we are in.  
@@ -109,4 +108,14 @@ public interface IASTNode {
      */
     public String getRawSignature();
 
+    /**
+     * Internal interface.
+     * 
+     * Get the scope for this node. Different children may get different nodes.
+     * 
+     * @param childProperty
+     * @return
+     */
+    public IScope2 getScope(IASTNode child, ASTNodeProperty childProperty);
+    
 }

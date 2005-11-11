@@ -76,6 +76,10 @@ public class CASTTranslationUnit extends CASTNode implements
 
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
+    public IASTTranslationUnit getTranslationUnit() {
+    	return this;
+    }
+    
 	public void addDeclaration(IASTDeclaration d) {
 		if (d != null) {
 			declsPos++;

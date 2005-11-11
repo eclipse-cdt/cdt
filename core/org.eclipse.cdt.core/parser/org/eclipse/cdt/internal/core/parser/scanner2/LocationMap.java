@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
@@ -108,7 +106,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTEndif extends ScannerASTNode implements
+    public static class ASTEndif extends ASTNode implements
             IASTPreprocessorEndifStatement {
 
     }
@@ -116,7 +114,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTElif extends ScannerASTNode implements
+    public static class ASTElif extends ASTNode implements
             IASTPreprocessorElifStatement {
 
         private final boolean taken;
@@ -142,7 +140,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTElse extends ScannerASTNode implements
+    public static class ASTElse extends ASTNode implements
             IASTPreprocessorElseStatement {
         private final boolean taken;
 
@@ -167,7 +165,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTIfndef extends ScannerASTNode implements
+    public static class ASTIfndef extends ASTNode implements
             IASTPreprocessorIfndefStatement {
 
         private final boolean taken;
@@ -193,7 +191,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTIfdef extends ScannerASTNode implements
+    public static class ASTIfdef extends ASTNode implements
             IASTPreprocessorIfdefStatement {
 
         private final boolean taken;
@@ -219,7 +217,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTIf extends ScannerASTNode implements
+    public static class ASTIf extends ASTNode implements
             IASTPreprocessorIfStatement {
 
         private final boolean taken;
@@ -245,7 +243,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTError extends ScannerASTNode implements
+    public static class ASTError extends ASTNode implements
             IASTPreprocessorErrorStatement {
 
     }
@@ -253,7 +251,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTPragma extends ScannerASTNode implements
+    public static class ASTPragma extends ASTNode implements
             IASTPreprocessorPragmaStatement {
 
     }
@@ -261,7 +259,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTUndef extends ScannerASTNode implements
+    public static class ASTUndef extends ASTNode implements
             IASTPreprocessorUndefStatement {
 
         public ASTUndef( IASTName n )
@@ -439,7 +437,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTInclusionStatement extends ScannerASTNode implements
+    public static class ASTInclusionStatement extends ASTNode implements
             IASTPreprocessorIncludeStatement {
 
         private final char[] path;
@@ -474,7 +472,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTFunctionMacro extends ScannerASTNode implements
+    public static class ASTFunctionMacro extends ASTNode implements
             IASTPreprocessorFunctionStyleMacroDefinition {
 
         private IASTName name;
@@ -596,9 +594,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             if( expansionName == null )
             {
                 expansionName = new ASTMacroName( name );
-                ((ScannerASTNode)expansionName).setParent( rootNode );
-                ((ScannerASTNode)expansionName).setPropertyInParent( IASTPreprocessorUndefStatement.MACRO_NAME );
-                ((ScannerASTNode)expansionName).setOffsetAndLength( context_directive_start, name.length );
+                expansionName.setParent( rootNode );
+                expansionName.setPropertyInParent( IASTPreprocessorUndefStatement.MACRO_NAME );
+                ((ASTNode)expansionName).setOffsetAndLength( context_directive_start, name.length );
             }
             return expansionName;
         }
@@ -618,72 +616,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     }
 
-    public static class ScannerASTNode extends ASTNode {
-        private IASTNode parent;
-
-        private ASTNodeProperty property;
-
-        public IASTNode getParent() {
-            return parent;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.cdt.core.dom.ast.IASTNode#getPropertyInParent()
-         */
-        public ASTNodeProperty getPropertyInParent() {
-            return property;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.cdt.core.dom.ast.IASTNode#setParent(org.eclipse.cdt.core.dom.ast.IASTNode)
-         */
-        public void setParent(IASTNode parent) {
-            this.parent = parent;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.cdt.core.dom.ast.IASTNode#setPropertyInParent(org.eclipse.cdt.core.dom.ast.IASTNodeProperty)
-         */
-        public void setPropertyInParent(ASTNodeProperty property) {
-            this.property = property;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.cdt.core.dom.ast.IASTNode#getTranslationUnit()
-         */
-        public IASTTranslationUnit getTranslationUnit() {
-            if (this instanceof IASTTranslationUnit)
-                return (IASTTranslationUnit) this;
-            IASTNode node = getParent();
-            while (!(node instanceof IASTTranslationUnit) && node != null) {
-                node = node.getParent();
-            }
-            return (IASTTranslationUnit) node;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.cdt.core.dom.ast.IASTNode#accept(org.eclipse.cdt.core.dom.ast.IASTVisitor.BaseVisitorAction)
-         */
-        public boolean accept(ASTVisitor visitor) {
-            return true;
-        }
-
-    }
-
     /**
      * @author jcamelon
      */
-    public class ASTMacroName extends ScannerASTNode implements IASTName {
+    public class ASTMacroName extends ASTNode implements IASTName {
         private final char[] name;
         private IMacroBinding binding = null;
        
@@ -776,7 +712,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /**
      * @author jcamelon
      */
-    public static class ASTObjectMacro extends ScannerASTNode implements
+    public static class ASTObjectMacro extends ASTNode implements
             IASTPreprocessorObjectStyleMacroDefinition {
 
         private IASTName name;
@@ -867,7 +803,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     }
 
-    public static class ASTFunctionMacroParameter extends ScannerASTNode
+    public static class ASTFunctionMacroParameter extends ASTNode
             implements IASTFunctionStyleMacroParameter {
         private String value;
 
@@ -1287,9 +1223,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             if( expansionName == null )
             {
                 expansionName = new ASTMacroName( definition.getName() );
-                ((ScannerASTNode)expansionName).setParent( rootNode );
-                ((ScannerASTNode)expansionName).setPropertyInParent( IASTTranslationUnit.EXPANSION_NAME );
-                ((ScannerASTNode)expansionName).setOffsetAndLength( context_directive_start, context_directive_end - context_directive_start + 1);
+                expansionName.setParent( rootNode );
+                expansionName.setPropertyInParent( IASTTranslationUnit.EXPANSION_NAME );
+                ((ASTNode)expansionName).setOffsetAndLength( context_directive_start, context_directive_end - context_directive_start + 1);
             }
             return expansionName;
         }
@@ -1396,14 +1332,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTName name = new ASTMacroName(d.name);
         name.setPropertyInParent(IASTPreprocessorMacroDefinition.MACRO_NAME);
         name.setParent(r);
-        ((ScannerASTNode) name).setOffsetAndLength(d.nameOffset, d.name.length);
+        ((ASTNode) name).setOffsetAndLength(d.nameOffset, d.name.length);
         r.setName(name);
         r.setExpansion(new String(d.expansion));
-        ((ScannerASTNode) r).setOffsetAndLength(d.context_directive_start,
+        ((ASTNode) r).setOffsetAndLength(d.context_directive_start,
                 d.context_directive_end - d.context_directive_start);
         d.astNode = r;
-		((ScannerASTNode) r).setParent(rootNode);
-		((ScannerASTNode) r).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		r.setParent(rootNode);
+		r.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
 
         return r;
     }
@@ -1433,15 +1369,15 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     private IASTPreprocessorIncludeStatement createASTInclusion(_Inclusion inc) {
         IASTPreprocessorIncludeStatement result = new ASTInclusionStatement(
                 inc.reader.filename);
-        ((ScannerASTNode) result).setOffsetAndLength(
+        ((ASTNode) result).setOffsetAndLength(
                 inc.context_directive_start, inc.context_directive_end
                         - inc.context_directive_start);
         ((ASTInclusionStatement) result).startOffset = inc.context_directive_end;
         ((ASTInclusionStatement) result).endOffset = inc.context_ends;
 		((ASTInclusionStatement) result).setParent(rootNode);
 		((ASTInclusionStatement) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1500,8 +1436,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorEndifStatement result = new ASTEndif();
         ((ASTNode) result).setOffsetAndLength(endif.context_directive_start,
                 endif.context_directive_end - endif.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1513,8 +1449,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorElifStatement result = new ASTElif(elif.taken);
         ((ASTNode) result).setOffsetAndLength(elif.context_directive_start,
                 elif.context_directive_end - elif.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1526,8 +1462,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorElseStatement result = new ASTElse(e.taken);
         ((ASTNode) result).setOffsetAndLength(e.context_directive_start,
                 e.context_directive_end - e.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1539,8 +1475,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorIfndefStatement result = new ASTIfndef(ifndef.taken);
         ((ASTNode) result).setOffsetAndLength(ifndef.context_directive_start,
                 ifndef.context_directive_end - ifndef.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1552,8 +1488,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorIfdefStatement result = new ASTIfdef(ifdef.taken);
         ((ASTNode) result).setOffsetAndLength(ifdef.context_directive_start,
                 ifdef.context_directive_end - ifdef.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1565,8 +1501,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorIfStatement result = new ASTIf(i.taken);
         ((ASTNode) result).setOffsetAndLength(i.context_directive_start,
                 i.context_directive_end - i.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1578,8 +1514,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorErrorStatement result = new ASTError();
         ((ASTNode) result).setOffsetAndLength(error.context_directive_start,
                 error.context_directive_end - error.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1591,8 +1527,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorPragmaStatement result = new ASTPragma();
         ((ASTNode) result).setOffsetAndLength(pragma.context_directive_start,
                 pragma.context_directive_end - pragma.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 
@@ -1604,8 +1540,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         IASTPreprocessorUndefStatement result = new ASTUndef(undef.getName());
         ((ASTNode) result).setOffsetAndLength(undef.context_directive_start,
                 undef.context_directive_end - undef.context_directive_start);
-		((ScannerASTNode) result).setParent(rootNode);
-		((ScannerASTNode) result).setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
+		result.setParent(rootNode);
+		result.setPropertyInParent(IASTTranslationUnit.PREPROCESSOR_STATEMENT);
         return result;
     }
 

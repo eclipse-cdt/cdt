@@ -89,6 +89,10 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
+    public IASTTranslationUnit getTranslationUnit() {
+    	return this;
+    }
+    
     public void addDeclaration(IASTDeclaration d) {
         decls = (IASTDeclaration [])ArrayUtil.append( IASTDeclaration.class, decls, d );
     }

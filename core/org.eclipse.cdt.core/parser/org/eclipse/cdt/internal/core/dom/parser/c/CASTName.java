@@ -35,21 +35,25 @@ public class CASTName extends CASTNode implements IASTName {
         this.name = name;
     }
 
-    /**
-     * 
-     */
     public CASTName() {
         name = EMPTY_CHAR_ARRAY;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
-     */
+    private static boolean inited = false;
+    private static boolean useScope2 = false;
+    
     public IBinding resolveBinding() {
-        if (binding == null)
-            CVisitor.createBinding(this);
+        if (binding == null) {
+        	if (!inited) {
+        		useScope2 = System.getProperty("doug.useScope2") != null ? true : false;
+        		inited = true;
+        	}
+        	
+        	if (useScope2)
+        		binding = getScope(this, getPropertyInParent()).getBinding(this);
+        	else
+        		CVisitor.createBinding(this);
+        }
 
         return binding;
     }

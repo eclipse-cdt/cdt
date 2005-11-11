@@ -16,4 +16,6 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IScope2 {
 
+	public IBinding getBinding(IASTName name);
+	
 }

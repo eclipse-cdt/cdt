@@ -122,6 +122,11 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 		return null;
 	}
 
+	public ITool getToolBySuperClassId(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public IToolChain getSuperClass() {
 		// TODO Auto-generated method stub
 		return null;

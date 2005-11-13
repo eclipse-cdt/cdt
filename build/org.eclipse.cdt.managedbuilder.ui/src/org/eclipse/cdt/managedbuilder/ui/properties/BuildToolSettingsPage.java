@@ -192,15 +192,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	/**
 	 * Look for ${VALUE} in the command string
 	 */
-	private String evaluateCommand( String command, String values ) {
-	    if( command == null ) return values.trim();
-	    if( command.indexOf( "${" ) >= 0 ) {	//$NON-NLS-1$ 
-	    	return command.replaceAll( "\\$\\{[vV][aA][lL][uU][eE]\\}", values.trim() ).trim(); //$NON-NLS-1$
-	    }
-	    else {
-	    	return (new String(command + values)).trim();
-	    }
-	}
+	//private String evaluateCommand( String command, String values ) {
+	//	return (((Tool)clonedTool).evaluateCommand(command, values));
+	//}
 
 	/**
 	 * Answers <code>true</code> if the receiver manages settings for the

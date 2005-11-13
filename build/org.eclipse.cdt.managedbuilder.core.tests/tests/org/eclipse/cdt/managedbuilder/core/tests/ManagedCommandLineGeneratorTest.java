@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -25,6 +26,9 @@ import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 public class ManagedCommandLineGeneratorTest extends TestCase {
 
@@ -67,6 +71,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
         //  TODO:  The parameters set to NULL in these tests are not currently allowed to be null
         //suite.addTest( new ManagedCommandLineGeneratorTest( "testGenerateCommandLineInfoParameters" ) );
         suite.addTest( new ManagedCommandLineGeneratorTest( "testCustomGenerator" ) );
+        suite.addTest( new ManagedCommandLineGeneratorTest( "testDollarValue" ) );
         return suite;
     }
     
@@ -151,6 +156,62 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
     	IManagedBuilderMakefileGenerator makeGen = ManagedBuildManager.getBuildfileGenerator(config);
     	String name = makeGen.getMakefileName();
     	assertEquals("TestBuildFile.mak", name);
+    }
+    
+    public final void testDollarValue() {
+		try{
+			IProject project = ManagedBuildTestHelper.createProject("CDV", null, (IPath)null, "cdt.test.dollarValue.ProjectType");
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+			IConfiguration config = info.getDefaultConfiguration();
+			//  Set values for the options
+			ITool tool = config.getToolBySuperClassId("cdt.test.dollarValue.Tool");
+			IOption option1 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option1");
+			IOption option2 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option2");
+			IOption option3 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option3");
+			IOption option4 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option4");
+			IOption option5 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option5");
+			IOption option6 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option6");
+
+			String command;
+
+			option1 = config.setOption(tool, option1, "OPT1VALUE");
+			option2 = config.setOption(tool, option2, "");
+			option3 = config.setOption(tool, option3, "X");
+			option4 = config.setOption(tool, option4, "opt4");
+			command = tool.getToolCommandFlagsString(null, null);
+	    	assertEquals("-opt1 OPT1VALUE X ${opt4}", command);
+						
+	    	option1 = config.setOption(tool, option1, "");
+	    	option2 = config.setOption(tool, option2, "Opt2");
+	    	option3 = config.setOption(tool, option3, "All work and no play...");
+	    	option4 = config.setOption(tool, option4, "123456789");
+	    	option5 = config.setOption(tool, option5, "DollarValue");
+			command = tool.getToolCommandFlagsString(null, null);
+	    	assertEquals("-opt2Opt2suffix All work and no play... ${123456789} DollarValueDollarValue", command);
+			
+	    	option1 = config.setOption(tool, option1, "0");
+	    	option2 = config.setOption(tool, option2, "LongValue");
+	    	option3 = config.setOption(tool, option3, "");
+	    	option4 = config.setOption(tool, option4, "");
+	    	option5 = config.setOption(tool, option5, "$");
+	    	option6 = config.setOption(tool, option6, "%%");
+			command = tool.getToolCommandFlagsString(null, null);
+	    	assertEquals("-opt1 0 -opt2LongValuesuffix $$ x%%yy%%z", command);
+			
+	    	option1 = config.setOption(tool, option1, "1");
+	    	option2 = config.setOption(tool, option2, "2");
+	    	option3 = config.setOption(tool, option3, "3");
+	    	option4 = config.setOption(tool, option4, "4");
+	    	option5 = config.setOption(tool, option5, "");
+	    	option6 = config.setOption(tool, option6, "");
+			command = tool.getToolCommandFlagsString(null, null);
+	    	assertEquals("-opt1 1 -opt22suffix 3 ${4}", command);
+			
+			ManagedBuildTestHelper.removeProject("CDV");
+		}
+		catch(Exception e){
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
     }
 
 }

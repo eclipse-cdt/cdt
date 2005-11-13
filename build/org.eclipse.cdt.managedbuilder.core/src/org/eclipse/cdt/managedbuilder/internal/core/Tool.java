@@ -2385,14 +2385,67 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		}		
 	}
 	
-	private String evaluateCommand( String command, String values ) {
+	/**
+	 * Look for ${VALUE} in the command string
+	 */
+	public String evaluateCommand( String command, String values ) {
+		final int DOLLAR_VALUE_LENGTH = 8;
+		
 	    if( command == null ) return values.trim();
-	    if( command.indexOf( "${" ) >= 0 ) { //$NON-NLS-1$
-	    	return command.replaceAll("\\$\\{[vV][aA][lL][uU][eE]\\}", values.trim() ).trim(); //$NON-NLS-1$
+	    
+	    String ret = command;	
+	    boolean found = false;
+	    int start = 0;
+	    int index;
+	    int len;
+	    while ((index = ret.indexOf( "${", start )) >= 0 &&	 //$NON-NLS-1$
+	    	   (len = ret.length()) >= index + DOLLAR_VALUE_LENGTH) {
+	    	start = index;
+	    	index = index+2;
+	    	int ch = ret.charAt(index);
+	    	if ( ch == 'v' ||  ch == 'V' ) {
+	    		index++;
+	    		ch = ret.charAt(index);
+		    	if ( ch == 'a' ||  ch == 'A' ) {
+		    		index++;
+		    		ch = ret.charAt(index);
+			    	if ( ch == 'l' ||  ch == 'L' ) {
+			    		index++;
+			    		ch = ret.charAt(index);
+				    	if ( ch == 'u' ||  ch == 'U' ) {
+				    		index++;
+				    		ch = ret.charAt(index);
+					    	if ( ch == 'e' ||  ch == 'E' ) {
+					    		index++;
+					    		ch = ret.charAt(index);
+						    	if ( ch == '}' ) {
+						    		String temp = "";	//$NON-NLS-1$
+						    		index++;
+						    		found = true;
+						    		if (start > 0) {
+						    			temp = ret.substring(0, start);
+						    		}
+						    		temp = temp.concat(values.trim());
+						    		if (len > index) {
+						    			start = temp.length(); 
+						    			ret = temp.concat(ret.substring(index));
+						    			index = start;
+						    		}
+						    		else {
+						    			ret = temp;
+						    			break;
+						    		}
+						    	}
+					    	}
+				    	}
+			    	}
+		    	}
+	    	}
+	    	start = index;
 	    }
-	    else {
-	    	return (new String(command + values)).trim();
-	    }
+	    if (found)
+	    	return ret.trim();
+    	return (new String(command + values)).trim();
 	}
 
 	/* (non-Javadoc)

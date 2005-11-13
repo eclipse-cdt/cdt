@@ -4792,6 +4792,79 @@
                name="Linker Options"
                owner="cdt.test.assignToOption.exeLinker"/>
     </tool>
+
+    <!-- Project type for testing option command ${VALUE} -->
+
+    <projectType
+            id="cdt.test.dollarValue.ProjectType"
+            isAbstract="false"
+            isTest="true"
+            name="Dollar Value Type">
+         <configuration
+               id="cdt.test.dollarValue.one"
+               name="One">
+            <toolChain
+                  id="cdt.test.dollarValue.Toolchain"
+                  isAbstract="false"
+                  name="Tools">
+                <tool
+		            command="xxx"
+		            id="cdt.test.dollarValue.Tool"
+		            isAbstract="false"
+		            name="Tool"
+		            natureFilter="both"
+		            outputFlag="-o">
+		         <optionCategory
+		               id="cdt.test.dollarValue.optionCategory1"
+		               name="Test Options"
+		               owner="cdt.test.dollarValue.Tool"/>
+		         <option
+		               category="cdt.test.dollarValue.optionCategory1"
+		               command="-opt1 ${value}"
+		               id="cdt.test.dollarValue.option1"
+		               name="Option1"
+		               valueType="string"/>
+		         <option
+		               category="cdt.test.dollarValue.optionCategory1"
+		               command="-opt2${VALUE}suffix"
+		               id="cdt.test.dollarValue.option2"
+		               name="Option2"
+		               valueType="string"/>
+		         <option
+		               category="cdt.test.dollarValue.optionCategory1"
+		               command="${vAlUe}"
+		               id="cdt.test.dollarValue.option3"
+		               name="Option3"
+		               valueType="string"/>
+		         <option
+		               category="cdt.test.dollarValue.optionCategory1"
+		               command="${${VALUe}}"
+		               id="cdt.test.dollarValue.option4"
+		               name="Option4"
+		               valueType="string"/>
+		         <option
+		               category="cdt.test.dollarValue.optionCategory1"
+		               command="${value}${Value}"
+		               id="cdt.test.dollarValue.option5"
+		               name="Option5"
+		               valueType="string"/>
+		         <option
+		               category="cdt.test.dollarValue.optionCategory1"
+		               command="x${Value}yy${valuE}z"
+		               id="cdt.test.dollarValue.option6"
+		               name="Option5"
+		               valueType="string"/>
+                </tool>
+				<builder
+				    id="cdt.test.dollarValue.builder"
+		            name="Builder"		              
+		            command="make"
+                    arguments="-k"
+                    buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">                      
+				</builder> 				  				  
+            </toolChain>
+         </configuration>
+    </projectType>
       
    </extension>
 </plugin>

@@ -162,6 +162,20 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	public ITool getTool(String id);
 
 	/**
+	 * Returns the <code>ITool</code> in the tool-chain with the specified 
+	 * ID, or a tool with a superclass with this id. 
+	 * 
+	 * <p>If the tool-chain does not have a tool with that ID, the method 
+	 * returns <code>null</code>. It is the responsibility of the caller to 
+	 * verify the return value.  
+	 * 
+	 * @param id unique identifier of the tool to search for
+	 * @return <code>ITool</code>
+	 * @since 3.0.2
+	 */
+	public ITool getToolBySuperClassId(String id);
+
+	/**
 	 * Returns the <code>IToolChain</code> that is the superclass of this
 	 * tool-chain, or <code>null</code> if the attribute was not specified.
 	 * 

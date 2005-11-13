@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
@@ -819,6 +820,28 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	public ITool getTool(String id) {
 		Tool tool = (Tool)getToolMap().get(id);
 		return (ITool)tool;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getToolBySuperClassId(java.lang.String)
+	 */
+	public ITool getToolBySuperClassId(String id) {
+		if (id == null) return null;
+		
+		//  Look for a tool with this ID, or a tool with a superclass with this id
+		ITool[] tools = getTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool targetTool = tools[i];
+			ITool tool = targetTool;
+			do {
+				if (id.equals(tool.getId())) {
+					return targetTool;
+				}		
+				tool = tool.getSuperClass();
+			} while (tool != null);
+		}
+		
+		return null;
 	}
 	
 	/* (non-Javadoc)

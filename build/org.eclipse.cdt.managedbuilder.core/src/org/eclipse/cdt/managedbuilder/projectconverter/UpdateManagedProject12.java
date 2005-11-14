@@ -756,9 +756,11 @@ class UpdateManagedProject12 {
 		} finally {
 			// If the tree is locked spawn a job to this.
 			IWorkspace workspace = project.getWorkspace();
-			boolean treeLock = workspace.isTreeLocked();
+//			boolean treeLock = workspace.isTreeLocked();
 			ISchedulingRule rule = workspace.getRuleFactory().createRule(project);
-			if (treeLock) {
+			//since the java synchronized mechanism is now used for the build info loadding,
+			//initiate the job in all cases
+//			if (treeLock) {
 				WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
 					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 						ManagedBuildManager.saveBuildInfo(project, false);
@@ -767,9 +769,9 @@ class UpdateManagedProject12 {
 				};
 				job.setRule(rule);
 				job.schedule();
-			} else {
-				ManagedBuildManager.saveBuildInfo(project, false);
-			}
+//			} else {
+//				ManagedBuildManager.saveBuildInfo(project, false);
+//			}
 			monitor.done();
 		}
 	}

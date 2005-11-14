@@ -78,11 +78,13 @@ class UpdateManagedProject21 {
 		// Eclipse content types.
 		// If the tree is locked spawn a job to this.
 		IWorkspace workspace = project.getWorkspace();
-		boolean treeLock = workspace.isTreeLocked();
+//		boolean treeLock = workspace.isTreeLocked();
 		ISchedulingRule rule1 = workspace.getRuleFactory().createRule(project);
 		ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(project);
 		ISchedulingRule rule = MultiRule.combine(rule1, rule2);
-		if (treeLock) {
+		//since the java synchronized mechanism is now used for the build info loadding,
+		//initiate the job in all cases
+//		if (treeLock) {
 			WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
 				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 					checkForCPPWithC(monitor, project);
@@ -92,10 +94,10 @@ class UpdateManagedProject21 {
 			};
 			job.setRule(rule);
 			job.schedule();
-		} else {
-			checkForCPPWithC(monitor, project);
-			ManagedBuildManager.saveBuildInfo(project, true);
-		}
+//		} else {
+//			checkForCPPWithC(monitor, project);
+//			ManagedBuildManager.saveBuildInfo(project, true);
+//		}
 		monitor.done();
 	}
 

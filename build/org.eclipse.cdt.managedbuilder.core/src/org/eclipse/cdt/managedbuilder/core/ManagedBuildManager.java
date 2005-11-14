@@ -2181,22 +2181,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resource
 	 * @return
 	 */
-	private static ManagedBuildInfo findBuildInfoSynchronized(IProject project/*, boolean create*/) {
+	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project/*, boolean create*/) {
 		ManagedBuildInfo buildInfo = null;
-		final ISchedulingRule rule = project; 
-		IJobManager jobManager = Platform.getJobManager();
 
 		// Check if there is any build info associated with this project for this session
-		try{
-			try {
-				jobManager.beginRule(rule, null);
-			} catch (IllegalArgumentException e) {
-				//  An IllegalArgumentException means that this thread job currently has a scheduling
-				//  rule active, and it doesn't match the rule that we are requesting.  
-				//  So, we ignore the exception and assume the outer scheduling rule
-				//  is protecting us from concurrent access
-			}
-			
 			try {
 				buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
 				// Make sure that if a project has build info, that the info is not corrupted
@@ -2242,10 +2230,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					} );
 				}
 			}
-		}
-		finally{
-			jobManager.endRule(rule);
-		}
 
 		if (buildInfo != null && !buildInfo.isContainerInited()) {
 			//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can

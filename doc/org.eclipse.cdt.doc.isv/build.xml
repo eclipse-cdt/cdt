@@ -3,7 +3,7 @@
 
 	<target name="init">
 		<property name="plugin" value="org.eclipse.cdt.doc.isv"/>
-		<property name="version.suffix" value="_3.0.0"/>
+		<property name="version.suffix" value="_3.1.0"/>
 		<property name="full.name" value="${plugin}${version.suffix}"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="plugin.destination" value="${basedir}"/>

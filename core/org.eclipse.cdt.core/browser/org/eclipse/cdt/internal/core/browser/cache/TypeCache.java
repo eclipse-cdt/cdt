@@ -693,12 +693,13 @@ public class TypeCache implements ITypeCache {
 				// grab all the remaining deltas
 				TypeCacheDelta[] jobDeltas = (TypeCacheDelta[]) fDeltas.toArray(new TypeCacheDelta[fDeltas.size()]);
 	
-				// create a new job
-				deltaJob = new TypeCacherJob(this, jobDeltas, enableIndexing);
 				// assign deltas to job
 				if (jobDeltas != null) {
+					// create a new job
+					deltaJob = new TypeCacherJob(this, jobDeltas, enableIndexing);
 					for (int i = 0; i < jobDeltas.length; ++i) {
 						jobDeltas[i].assignToJob(deltaJob);
+						fDeltas.remove(jobDeltas[i]);
 					}
 				}
 			} else {

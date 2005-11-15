@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<fragment
-   id="org.eclipse.cdt.core.linux.x86_64"
-   name="CDT Core x86_64 Fragment"
-   version="3.1.0"
-   provider-name="Eclipse.org"
-   plugin-id="org.eclipse.cdt.core"
-   plugin-version="3.1.0">
+<fragment>
 
 </fragment>

@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Make Core Tests Plug-in
+Bundle-SymbolicName: org.eclipse.cdt.make.core.tests
+Bundle-Version: 3.1.0
+Bundle-ClassPath: makecoretests.jar
+Bundle-Activator: org.eclipse.cdt.make.core.tests.MakeTestsPlugin
+Bundle-Localization: plugin
+Export-Package: org.eclipse.cdt.make.builder.tests,
+ org.eclipse.cdt.make.core.tests
+Require-Bundle: org.eclipse.core.runtime,
+ org.junit,
+ org.eclipse.cdt.make.core,
+ org.eclipse.cdt.core,
+ org.eclipse.core.resources
+Eclipse-AutoStart: true

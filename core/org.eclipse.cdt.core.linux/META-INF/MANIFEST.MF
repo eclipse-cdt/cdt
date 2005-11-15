@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %fragmentName.linux
+Bundle-SymbolicName: org.eclipse.cdt.core.linux; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: cdt_linux.jar
+Bundle-Vendor: %providerName
+Fragment-Host: org.eclipse.cdt.core;bundle-version="[3.1.0,4.0.0)"
+Bundle-Localization: plugin

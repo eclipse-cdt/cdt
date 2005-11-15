@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.gnu.ui; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: gnuui.jar
+Bundle-Activator: org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.cdt.managedbuilder.gnu.cygwin,
+ org.eclipse.cdt.managedbuilder.gnu.ui
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.cdt.managedbuilder.core,
+ org.eclipse.cdt.core
+Eclipse-AutoStart: true

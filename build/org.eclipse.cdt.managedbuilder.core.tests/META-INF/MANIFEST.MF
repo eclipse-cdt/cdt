@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.core.tests; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: mbscoretests.jar
+Bundle-Activator: org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: plugin
+Export-Package: org.eclipse.cdt.managedbuilder.core.tests,
+ org.eclipse.cdt.managedbuilder.testplugin,
+ org.eclipse.cdt.managedbuilder.tests.suite,
+ org.eclipse.cdt.standardbuilder.core.tests
+Require-Bundle: org.eclipse.core.runtime,
+ org.junit,
+ org.eclipse.cdt.managedbuilder.core,
+ org.eclipse.cdt.core,
+ org.eclipse.cdt.make.core,
+ org.eclipse.core.resources,
+ org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.compare
+Eclipse-AutoStart: true

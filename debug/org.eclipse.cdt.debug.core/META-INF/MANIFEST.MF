@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.cdt.debug.core; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: cdtdebugcore.jar
+Bundle-Activator: org.eclipse.cdt.debug.core.CDebugCorePlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.cdt.debug.core,
+ org.eclipse.cdt.debug.core.cdi,
+ org.eclipse.cdt.debug.core.cdi.event,
+ org.eclipse.cdt.debug.core.cdi.model,
+ org.eclipse.cdt.debug.core.cdi.model.type,
+ org.eclipse.cdt.debug.core.model,
+ org.eclipse.cdt.debug.core.sourcelookup,
+ org.eclipse.cdt.debug.internal.core,
+ org.eclipse.cdt.debug.internal.core.breakpoints,
+ org.eclipse.cdt.debug.internal.core.model,
+ org.eclipse.cdt.debug.internal.core.sourcelookup
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.debug.core,
+ org.eclipse.cdt.core,
+ org.eclipse.core.runtime
+Eclipse-AutoStart: true

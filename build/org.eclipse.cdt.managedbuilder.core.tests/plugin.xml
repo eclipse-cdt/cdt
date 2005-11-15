@@ -1,29 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.cdt.managedbuilder.core.tests"
-   name="Tests"
-   version="3.1.0"
-   provider-name="Eclipse.org"
-   class="org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin">
-   <runtime>
-      <library name="mbscoretests.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.junit"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.cdt.make.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.compare"/>
-   </requires>
-
+<plugin>
+    
 <!-- Managed Make Builder Tool Specifications - CDT 2.0 format -->
 
    <extension

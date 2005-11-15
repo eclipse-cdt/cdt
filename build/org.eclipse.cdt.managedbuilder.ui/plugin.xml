@@ -1,29 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.cdt.managedbuilder.ui"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin">
+<plugin>
 
-   <runtime>
-      <library name="mgdbuildui.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.cdt.ui"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.variables"/>
-   </requires>
-
-   <extension-point id="newWizardPages" name="Custom MBS New Wizard Pages" schema="schema/newWizardPages.exsd"/>
+     <extension-point id="newWizardPages" name="Custom MBS New Wizard Pages" schema="schema/newWizardPages.exsd"/>
 
    <extension
          point="org.eclipse.ui.newWizards">

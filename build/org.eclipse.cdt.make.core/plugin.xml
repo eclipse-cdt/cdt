@@ -1,26 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.cdt.make.core"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.cdt.make.core.MakeCorePlugin">
+<plugin>
 
-   <runtime>
-      <library name="cdtmakecore.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.cdt.core"/>
-   </requires>
-
-
-   <extension-point id="MakeTargetBuilder" name="%extensionTargetBuilder.name" schema="schema/MakeTargetBuilder.exsd"/>
+     <extension-point id="MakeTargetBuilder" name="%extensionTargetBuilder.name" schema="schema/MakeTargetBuilder.exsd"/>
    <extension-point id="ScannerConfigurationDiscoveryProfile" name="%extensionScannerConfigurationDiscoveryProfile.name" schema="schema/ScannerConfigurationDiscoveryProfile.exsd"/>
 
    <extension

@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.cdt.debug.mi.core"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName"
-   class="org.eclipse.cdt.debug.mi.core.MIPlugin">
+<plugin>
 
-   <runtime>
-      <library name="cdtmicore.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.cdt.debug.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.core.runtime"/>
-   </requires>
-
-
-   <extension
+     <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
             platform="*"

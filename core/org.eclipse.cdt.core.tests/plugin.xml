@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.cdt.core.tests"
-   name="org.eclipse.cdt.core.tests"
-   version="3.1.0"
-   class="org.eclipse.cdt.core.testplugin.CTestPlugin">
+<plugin>
 
-   <runtime>
-      <library name="cdtcoretests.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.junit"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.ui"/>
-   </requires>
-
-   <extension
+     <extension
          id="runTests"
          point="org.eclipse.core.runtime.applications">
       <application>

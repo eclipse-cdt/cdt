@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.cdt.debug.mi.ui; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: cdtmiui.jar
+Bundle-Activator: org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.cdt.debug.mi.internal.ui,
+ org.eclipse.cdt.debug.mi.internal.ui.actions,
+ org.eclipse.cdt.debug.mi.internal.ui.dialogfields,
+ org.eclipse.cdt.debug.mi.internal.ui.preferences,
+ org.eclipse.cdt.debug.mi.internal.ui.propertypages,
+ org.eclipse.cdt.debug.mi.ui
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.ui,
+ org.eclipse.cdt.debug.mi.core,
+ org.eclipse.cdt.debug.ui,
+ org.eclipse.cdt.debug.core,
+ org.eclipse.cdt.ui,
+ org.eclipse.debug.core,
+ org.eclipse.debug.ui,
+ org.eclipse.core.runtime
+Eclipse-AutoStart: true

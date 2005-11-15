@@ -81,7 +81,6 @@ Export-Package: .,
  org.eclipse.cdt.utils.xcoff,
  org.eclipse.cdt.utils.xcoff.parser
 Require-Bundle: org.eclipse.core.resources,
- org.eclipse.team.core,
  org.eclipse.core.runtime,
  org.eclipse.text,
  org.eclipse.core.variables

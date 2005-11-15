@@ -24,6 +24,5 @@ Require-Bundle: org.eclipse.cdt.core,
  org.eclipse.core.runtime,
  org.eclipse.cdt.make.core,
  org.eclipse.ui,
- org.eclipse.team.core,
  org.eclipse.core.variables
 Eclipse-AutoStart: true

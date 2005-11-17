@@ -80,7 +80,7 @@ public class MultiVersionSupportTests extends TestCase {
 		suite.addTest(new MultiVersionSupportTests("testVersionsSupportedAttribute"));	//$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT20")); //$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT21")); //$NON-NLS-1$
-
+		suite.addTest(new MultiVersionSupportTests("testProjectConversion")); //$NON-NLS-1$
 		//$JUnit-END$
 		return suite;
 	}
@@ -394,8 +394,8 @@ public class MultiVersionSupportTests extends TestCase {
 	}
 	
 	public void testToolChainConversion_CDT20() throws Exception {
-		// Pass CDT version as '2.0', and 'true' to update Project
-		doTestProjectUpdate("2.0", true);	//$NON-NLS-1$
+		// Pass projDirName as 'test20', and 'true' to update Project
+		doTestProjectUpdate("test20", true);	//$NON-NLS-1$
 		
 		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
 		
@@ -419,8 +419,8 @@ public class MultiVersionSupportTests extends TestCase {
 	}
 	
 	public void testToolChainConversion_CDT21() throws Exception {
-		// Pass CDT version as '2.1', and 'true' to update Project
-		doTestProjectUpdate("2.1", true);	//$NON-NLS-1$
+		// Pass projDirName as 'test21', and 'true' to update Project
+		doTestProjectUpdate("test21", true);	//$NON-NLS-1$
 		
 		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
 		
@@ -443,20 +443,46 @@ public class MultiVersionSupportTests extends TestCase {
 		}
 	}
 	
+	public void testProjectConversion() throws Exception {
+		// Pass the 'projDirName' as 'testProjectConversion', and 'true' to update Project
+		doTestProjectUpdate("testProjectConversion", true);	//$NON-NLS-1$
+		
+		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
+		
+		File inputFile = new File(tmpDir + "/testProjectConverterOutput.txt");	//$NON-NLS-1$
+		try {
+			assertTrue(inputFile.exists());
+			
+			String expectedContent = "The converter for the projectType testProject_1.0.0 is invoked";	//$NON-NLS-1$
+			
+			BufferedReader data = new BufferedReader(new FileReader(inputFile));
+			String actualContent;
+			
+			if ((actualContent = data.readLine()) != null) {
+				assertEquals(actualContent,expectedContent);
+			}			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();			
+		}
+	}
 	
-	
-	private IProject getCDT_TestProject(String cdtVersion) {
+	private IProject getCDT_TestProject(String projDirName) {
 
 		IProject project = null;
 		File file = null;
 		
-		if (cdtVersion.equalsIgnoreCase("2.0")) {	//$NON-NLS-1$
+		if (projDirName.equalsIgnoreCase("test20")) {	//$NON-NLS-1$
 			file = CTestPlugin.getFileInPlugin(new Path(
 					"resources/toolChainConversionProjects/test20"));	//$NON-NLS-1$
-		} else if (cdtVersion.equals("2.1")) {	//$NON-NLS-1$
+		} else if (projDirName.equals("test21")) {	//$NON-NLS-1$
 			file = CTestPlugin.getFileInPlugin(new Path(
 			"resources/toolChainConversionProjects/test21"));	//$NON-NLS-1$
-		}
+		} else if (projDirName.equals("testProjectConversion")) {	//$NON-NLS-1$
+			file = CTestPlugin.getFileInPlugin(new Path(
+			"resources/toolChainConversionProjects/testProjectConversion"));	//$NON-NLS-1$
+		} 
 
 		if (file == null) {
 			fail("Test project directory " + file.getName()	//$NON-NLS-1$
@@ -508,7 +534,7 @@ public class MultiVersionSupportTests extends TestCase {
 		return project;
 	}
 	
-	private void doTestProjectUpdate(String cdtVersion, boolean updateProject) {
+	private void doTestProjectUpdate(String projDirName, boolean updateProject) {
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
 			public String queryOverwrite(String file) {
 				return ALL;
@@ -520,7 +546,7 @@ public class MultiVersionSupportTests extends TestCase {
 		
 		UpdateManagedProjectManager.setUpdateProjectQuery(updateProject ? queryALL : queryNOALL);
 
-		final IProject project = getCDT_TestProject(cdtVersion);
+		final IProject project = getCDT_TestProject(projDirName);
 		if (project == null)
 			return;
 

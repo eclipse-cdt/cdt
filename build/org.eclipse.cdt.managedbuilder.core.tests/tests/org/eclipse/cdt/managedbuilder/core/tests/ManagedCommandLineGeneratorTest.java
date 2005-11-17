@@ -164,7 +164,9 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 			IConfiguration config = info.getDefaultConfiguration();
 			//  Set values for the options
-			ITool tool = config.getToolBySuperClassId("cdt.test.dollarValue.Tool");
+			ITool[] tools = config.getToolsBySuperClassId("cdt.test.dollarValue.Tool");
+			assertEquals(tools.length, 1);
+			ITool tool = tools[0];
 			IOption option1 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option1");
 			IOption option2 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option2");
 			IOption option3 = tool.getOptionBySuperClassId("cdt.test.dollarValue.option3");

@@ -4410,6 +4410,91 @@
             	</toolChain>
 			</configuration>
       </projectType>
+
+<!-- tool chain definitions for test project type for verifying the project conversion -->
+
+ 	<projectType      
+            isAbstract="false"     
+            isTest="true"
+            name="TestProject Conversion - Version 1.0"
+            convertToId="testProject_2.0.0"
+            id="testProject_1.0.0">
+         <configuration
+               name="Test Configuration"
+               id="testProject.config_1.0.0"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+               <toolChain
+		          id="testProject.toolChain_1.0.0"
+		          name="Test ToolChain Ver 1.0"
+		          archList="all">
+		          <targetPlatform
+		              id="testProject.target_1.0.0"
+		              name="Test Target"		             
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              archList="all">		              
+		          </targetPlatform>
+				  <builder
+				      id="testProject.builder_1.0.0"
+		              name="Test Builder Version 1.0"		              
+		              command="make"
+		              arguments="-k"
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				  </builder> 
+                  <tool
+                      id="testProject.tool1_1.0.0"
+                      name="Test Tool 1 - - Version 1.0"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                  </tool>
+                  <tool
+                      id="testProject.tool2_1.0.0"
+                      name="Test Tool 2 - Version 1.0"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
+                  </tool>
+               </toolChain>
+         </configuration>
+      </projectType>          
+      
+      <projectType      
+            isAbstract="false"     
+            isTest="true"
+            name="TestProject Conversion - Version 2.0"
+            id="testProject_2.0.0">
+         <configuration
+               name="Test Configuration"
+               id="testProject.config_2.0.0"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+               <toolChain
+		          id="testProject.toolChain_2.0.0"
+		          name="Test ToolChain Ver 2.0"
+		          archList="all">
+		          <targetPlatform
+		              id="testProject.target_2.0.0"
+		              name="Test Target"		             
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              archList="all">		              
+		          </targetPlatform>
+				  <builder
+				      id="testProject.builder_2.0.0"
+		              name="Test Builder Version 2.0"		              
+		              command="make"
+		              arguments="-k"
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+				  </builder> 
+                  <tool
+                      id="testProject.tool1_2.0.0"
+                      name="Test Tool 1 - - Version 2.0"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+                  </tool>
+                  <tool
+                      id="testProject.tool2_2.0.0"
+                      name="Test Tool 2 - Version 2.0"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
+                  </tool>
+               </toolChain>
+         </configuration>
+      </projectType>          
       
    </extension>
    
@@ -4423,6 +4508,16 @@
             toId="test.toolchain_1.2.0"            
             mbsVersion="3.0.0">
       </converter>
+      <!-- converter for the projectType testProject_1.0.0 -->
+      <converter
+            id="testProject.converter"
+            name="Test Project Converter"
+            class="org.eclipse.cdt.managedbuilder.core.tests.TestProjectConverter"
+            fromId="testProject_1.0.0"
+            toId="testProject_2.0.0"            
+            mbsVersion="3.0.0">
+      </converter>
+
    </extension>  
 
    <extension

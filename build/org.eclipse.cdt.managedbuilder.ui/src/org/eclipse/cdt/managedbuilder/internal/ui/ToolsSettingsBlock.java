@@ -752,7 +752,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		IToolChain tc = cfg.getToolChain();
 		saveHoldsOptions(tc);
 		
-		ITool tools[] = tc.getTools();
+		ITool tools[] = cfg.getFilteredTools();
 		for(int i = 0; i < tools.length; i++){
 			saveHoldsOptions(tools[i]);
 		}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 
 import java.util.ArrayList;
@@ -348,11 +349,19 @@ public class NewConfigurationDialog extends StatusDialog {
 			defaultConfigs = cfgs;
 		else {
 			ArrayList list = new ArrayList();
-			for (int i = 0; i < cfgs.length; i++){
-				if(cfgs[i].isSupported())
+			for (int i = 0; i < cfgs.length; i++) {
+				if (cfgs[i].isSupported()) {
+					IToolChain tc = cfgs[i].getToolChain();
+
+					// Determine if the tool-chain has 'convertToId' attribute.
+					// If so, do not add this configuration to the list.
+					if (!tc.getConvertToId().equals(""))
+						continue;
 					list.add(cfgs[i]);
+				}
 			}
-			defaultConfigs = (IConfiguration[])list.toArray(new IConfiguration[list.size()]);
+			defaultConfigs = (IConfiguration[]) list
+					.toArray(new IConfiguration[list.size()]);
 		}
 	
 		if(defaultConfigs.length != 0){

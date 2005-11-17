@@ -110,6 +110,13 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 		
 		// Initialize from the XML attributes
 		if (loadFromProject(element)) {
+			
+			// check for migration support.
+			boolean isSupportAvailable = projectType.checkForMigrationSupport();
+			if (isSupportAvailable == false) {
+				setValid(false);
+			}
+			
 			// Load children
 			NodeList configElements = element.getChildNodes();
 			for (int i = 0; i < configElements.getLength(); ++i) {

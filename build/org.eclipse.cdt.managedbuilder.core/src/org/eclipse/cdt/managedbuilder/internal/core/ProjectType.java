@@ -26,12 +26,16 @@ import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier
 import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 
 public class ProjectType extends BuildObject implements IProjectType {
 	
 	private static final String EMPTY_STRING = new String();
-	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
+	//private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
 	
 	//  Superclass
 	private IProjectType superClass;
@@ -43,6 +47,7 @@ public class ProjectType extends BuildObject implements IProjectType {
 	private Boolean isAbstract;
 	private Boolean isTest;
 	private String unusedChildren;
+	private String convertToId;
 
 	private IConfigurationElement configurationNameProviderElement = null;
 	private IConfigurationNameProvider configurationNameProvider = null;
@@ -54,6 +59,8 @@ public class ProjectType extends BuildObject implements IProjectType {
 
 	//  Miscellaneous
 	private boolean resolved = true;
+	private IConfigurationElement previousMbsVersionConversionElement;
+	private IConfigurationElement currentMbsVersionConversionElement;
 	
 	/*
 	 *  C O N S T R U C T O R S
@@ -181,6 +188,8 @@ public class ProjectType extends BuildObject implements IProjectType {
 			buildMacroSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
 
+		// Get the 'convertToId' attribute if it is available
+		convertToId = element.getAttribute(CONVERT_TO_ID);
 	}
 
 	/*
@@ -521,5 +530,118 @@ public class ProjectType extends BuildObject implements IProjectType {
 			} catch (CoreException e) {}
 		}
 		return null;
+	}
+	
+	
+	public String getConvertToId() {
+		if (convertToId == null) {
+			// If I have a superClass, ask it
+			if (getSuperClass() != null) {
+				return getSuperClass().getConvertToId();
+			} else {
+				return EMPTY_STRING;
+			}
+		}
+		return convertToId;
+	}
+
+	
+	public void setConvertToId(String convertToId) {
+		if (convertToId == null && this.convertToId == null) return;
+		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
+			this.convertToId = convertToId;			
+		}
+		return;
+	}
+	
+	/*
+	 * This function checks for migration support for the projectType while
+	 * loading the project. If migration support is needed, looks for the available
+	 * converters and adds them to the list.
+	 */
+
+	public boolean checkForMigrationSupport() {
+	
+		String convertToId = getConvertToId();
+		if ((convertToId == null) || (convertToId.equals(""))) { //$NON-NLS-1$
+				// It means there is no 'convertToId' attribute available and
+				// the project type is still actively
+				// supported by the tool integrator. So do nothing, just return
+				return true;
+		} else {
+				// In case the 'convertToId' attribute is available,
+				// it means that Tool integrator currently does not support this
+				// project type.
+				// Look for the converters available for this project type.
+
+				return getConverter(convertToId);
+		}
+
+	}
+
+	private boolean getConverter(String convertToId) {
+
+		String fromId = null;
+		String toId = null;
+
+		// Get the Converter Extension Point
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.cdt.managedbuilder.core", //$NON-NLS-1$
+						"projectConverter"); //$NON-NLS-1$
+		if (extensionPoint != null) {
+			// Get the extensions
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				// Get the configuration elements of each extension
+				IConfigurationElement[] configElements = extensions[i]
+						.getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+
+					IConfigurationElement element = configElements[j];
+
+					if (element.getName().equals("converter")) { //$NON-NLS-1$
+
+						fromId = element.getAttribute("fromId"); //$NON-NLS-1$
+						toId = element.getAttribute("toId"); //$NON-NLS-1$
+						// Check whether the current converter can be used for
+						// the selected project type
+
+						if (fromId.equals(getId())
+								&& toId.equals(convertToId)) {
+							// If it matches
+							String mbsVersion = element
+									.getAttribute("mbsVersion"); //$NON-NLS-1$
+							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
+									.getBuildInfoVersion();
+
+							// set the converter element based on the MbsVersion
+							if (currentMbsVersion
+									.isGreaterThan(new PluginVersionIdentifier(
+											mbsVersion))) {
+								previousMbsVersionConversionElement = element;
+							} else {
+								currentMbsVersionConversionElement = element;
+							}
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		// If control comes here, it means 'Tool Integrator' specified
+		// 'convertToId' attribute in toolchain definition file, but
+		// has not provided any converter. So, make the project is invalid
+		
+		return false;
+	}
+
+
+	public IConfigurationElement getPreviousMbsVersionConversionElement() {
+		return previousMbsVersionConversionElement;
+	}
+
+	public IConfigurationElement getCurrentMbsVersionConversionElement() {
+		return currentMbsVersionConversionElement;
 	}
 }

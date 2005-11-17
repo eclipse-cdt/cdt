@@ -661,10 +661,10 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolBySuperClassId(java.lang.String) 
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolsBySuperClassId(java.lang.String) 
 	 */
-	public ITool getToolBySuperClassId(String id) {
-		return toolChain.getToolBySuperClassId(id);
+	public ITool[] getToolsBySuperClassId(String id) {
+		return toolChain.getToolsBySuperClassId(id);
 	}
 
 	/* (non-Javadoc)

@@ -224,17 +224,17 @@ public interface IConfiguration extends IBuildObject {
 
 	/**
 	 * Returns the <code>ITool</code> in this configuration's tool-chain with 
-	 * the specified ID, or a tool with a superclass with this id. 
+	 * the specified ID, or the tool(s) with a superclass with this id. 
 	 * 
 	 * <p>If the tool-chain does not have a tool with that ID, the method 
-	 * returns <code>null</code>. It is the responsibility of the caller to 
+	 * returns an empty array. It is the responsibility of the caller to 
 	 * verify the return value.  
 	 * 
 	 * @param id unique identifier of the tool to search for
-	 * @return <code>ITool</code>
+	 * @return <code>ITool[]</code>
 	 * @since 3.0.2
 	 */
-	public ITool getToolBySuperClassId(String id);
+	public ITool[] getToolsBySuperClassId(String id);
 	
 	/**
 	 * Returns the <code>IToolChain</code> child of this configuration.

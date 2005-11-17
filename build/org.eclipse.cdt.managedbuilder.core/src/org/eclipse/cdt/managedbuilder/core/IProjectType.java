@@ -47,6 +47,7 @@ public interface IProjectType extends IBuildObject {
 	public static final String IS_ABSTRACT = "isAbstract";					//$NON-NLS-1$
 	public static final String UNUSED_CHILDREN = "unusedChildren";			//$NON-NLS-1$
 	public static final String IS_TEST = "isTest";							//$NON-NLS-1$
+	public static final String CONVERT_TO_ID = "convertToId";			//$NON-NLS-1$
 	public static final String CONFIGURATION_NAME_PROVIDER = "configurationNameProvider";  //$NON-NLS-1$
 	public static final String PROJECT_ENVIRONMENT_SUPPLIER = "projectEnvironmentSupplier";			//$NON-NLS-1$
 	public static final String PROJECT_MACRO_SUPPLIER = "projectMacroSupplier";			//$NON-NLS-1$
@@ -164,4 +165,26 @@ public interface IProjectType extends IBuildObject {
 	 * @return IProjectBuildMacroSupplier
 	 */
 	public IProjectBuildMacroSupplier getBuildMacroSupplier();
+	
+	/**
+	 * Returns the 'convertToId' of this project type.
+	 * 
+	 * @return String
+	 */
+
+	public String getConvertToId();
+	
+	/**
+	 * Sets the 'convertToId' attribute of the project type. 
+	 * 
+	 * @param convertToId
+	 */
+	public void setConvertToId(String convertToId);
+	
+	/**
+	 *  check for migration support.
+	 *  @return boolean
+	 */
+	
+	public boolean checkForMigrationSupport();
 }

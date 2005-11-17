@@ -141,7 +141,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static Map depCalculatorsMap;
 	private static boolean projectTypesLoaded = false;
 	// Project types defined in the manifest files
-	private static Map projectTypeMap;
+	public static SortedMap projectTypeMap;
 	private static List projectTypes;
 	// Configurations defined in the manifest files
 	private static Map extensionConfigurationMap;
@@ -279,9 +279,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * 
 	 * @return Map
 	 */
-	protected static Map getExtensionProjectTypeMap() {
+	public static SortedMap getExtensionProjectTypeMap() {
 		if (projectTypeMap == null) {
-			projectTypeMap = new HashMap();
+			projectTypeMap = new TreeMap();
 		}
 		return projectTypeMap;
 	}
@@ -2668,88 +2668,121 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		// Get the managed project from buildInfo
 		IManagedProject managedProject = buildInfo.getManagedProject();
+		
+		IProjectType projectType = managedProject.getProjectType();
+		if (forCurrentMbsVersion) {
+			element = ((ProjectType) projectType)
+					.getCurrentMbsVersionConversionElement();
+		} else {
+			element = ((ProjectType) projectType)
+					.getPreviousMbsVersionConversionElement();
+		}
 
-		// walk through the hierarchy of the project and 
-		// call the converters if available for each configuration
-		IConfiguration[] configs = managedProject.getConfigurations();
-		for (int i = 0; i < configs.length; i++) {
-			IConfiguration configuration = configs[i];
-			IToolChain toolChain = configuration.getToolChain();
+		if (element != null) {
+			// If there is a converter element for projectType, invoke it.
+			// projectType converter should take care of invoking converters of
+			// it's children
+			 
+			if (invokeConverter(managedProject, element) == null) {
+				buildInfo.getManagedProject().setValid(false);
+				return false;
+			}			
+		} else {
+			// other wise, walk through the hierarchy of the project and
+			// call the converters if available for each configuration
+			IConfiguration[] configs = managedProject.getConfigurations();
+			for (int i = 0; i < configs.length; i++) {
+				IConfiguration configuration = configs[i];
+				IToolChain toolChain = configuration.getToolChain();
 
-			if (forCurrentMbsVersion) {
-				element = ((ToolChain)toolChain).getCurrentMbsVersionConversionElement();
-			} else {
-				element = ((ToolChain)toolChain).getPreviousMbsVersionConversionElement();
-			}
-			
-			if (element != null) {
-				// If there is a converter element for toolChain, invoke it
-				// toolChain converter should take care of invoking converters of it's children
-				if ( invokeConverter(toolChain, element) == null ) { 
-					buildInfo.getManagedProject().setValid(false);
-					return false;
+				if (forCurrentMbsVersion) {
+					element = ((ToolChain) toolChain)
+							.getCurrentMbsVersionConversionElement();
+				} else {
+					element = ((ToolChain) toolChain)
+							.getPreviousMbsVersionConversionElement();
 				}
-			} else {
-				// If there are no converters for toolChain, walk through it's children
-				ITool[] tools = toolChain.getTools();
-				for (int j = 0; j < tools.length; j++) {
-					ITool tool = tools[j];
-					if (forCurrentMbsVersion) {
-						element = ((Tool)tool).getCurrentMbsVersionConversionElement();
-					} else {
-						element = ((Tool)tool).getPreviousMbsVersionConversionElement();
+
+				if (element != null) {
+					// If there is a converter element for toolChain, invoke it
+					// toolChain converter should take care of invoking
+					// converters of it's children
+					if (invokeConverter(toolChain, element) == null) {
+						buildInfo.getManagedProject().setValid(false);
+						return false;
 					}
-					if (element != null) {
-						if ( invokeConverter(tool, element) == null ) {
-							buildInfo.getManagedProject().setValid(false);
-							return false;
-						}
-					}
-				}
-				IBuilder builder = toolChain.getBuilder();
-				if (builder != null) {
-					if (forCurrentMbsVersion) {
-						element = ((Builder)builder).getCurrentMbsVersionConversionElement();
-					} else {
-						element = ((Builder)builder).getPreviousMbsVersionConversionElement();
-					}
-	
-					if (element != null) {
-						if ( invokeConverter(builder, element) == null ) {
-							buildInfo.getManagedProject().setValid(false);
-							return false;
-						}
-					}
-				}
-			}
-			
-			// walk through each resource configuration and look if there are any converters
-			// available. If so, invoke them.
-			IResourceConfiguration [] resourceConfigs = configuration.getResourceConfigurations();
-			if ( ( resourceConfigs != null) && ( resourceConfigs.length > 0)) {
-				for (int j = 0; j < resourceConfigs.length; j++) {
-					IResourceConfiguration resConfig = resourceConfigs[j];
-					ITool [] resTools = resConfig.getTools();
-					for (int k = 0; k < resTools.length; k++) {
-						ITool resTool = resTools[k];
+				} else {
+					// If there are no converters for toolChain, walk through
+					// it's children
+					ITool[] tools = toolChain.getTools();
+					for (int j = 0; j < tools.length; j++) {
+						ITool tool = tools[j];
 						if (forCurrentMbsVersion) {
-							element = ((Tool)resTool).getCurrentMbsVersionConversionElement();
+							element = ((Tool) tool)
+									.getCurrentMbsVersionConversionElement();
 						} else {
-							element = ((Tool)resTool).getPreviousMbsVersionConversionElement();
+							element = ((Tool) tool)
+									.getPreviousMbsVersionConversionElement();
 						}
 						if (element != null) {
-							if ( invokeConverter(resTool, element) == null ) {
+							if (invokeConverter(tool, element) == null) {
+								buildInfo.getManagedProject().setValid(false);
+								return false;
+							}
+						}
+					}
+					IBuilder builder = toolChain.getBuilder();
+					if (builder != null) {
+						if (forCurrentMbsVersion) {
+							element = ((Builder) builder)
+									.getCurrentMbsVersionConversionElement();
+						} else {
+							element = ((Builder) builder)
+									.getPreviousMbsVersionConversionElement();
+						}
+
+						if (element != null) {
+							if (invokeConverter(builder, element) == null) {
 								buildInfo.getManagedProject().setValid(false);
 								return false;
 							}
 						}
 					}
 				}
-			}   // end of if			
-		}		
-		
+
+				// walk through each resource configuration and look if there
+				// are any converters
+				// available. If so, invoke them.
+				IResourceConfiguration[] resourceConfigs = configuration
+						.getResourceConfigurations();
+				if ((resourceConfigs != null) && (resourceConfigs.length > 0)) {
+					for (int j = 0; j < resourceConfigs.length; j++) {
+						IResourceConfiguration resConfig = resourceConfigs[j];
+						ITool[] resTools = resConfig.getTools();
+						for (int k = 0; k < resTools.length; k++) {
+							ITool resTool = resTools[k];
+							if (forCurrentMbsVersion) {
+								element = ((Tool) resTool)
+										.getCurrentMbsVersionConversionElement();
+							} else {
+								element = ((Tool) resTool)
+										.getPreviousMbsVersionConversionElement();
+							}
+							if (element != null) {
+								if (invokeConverter(resTool, element) == null) {
+									buildInfo.getManagedProject().setValid(
+											false);
+									return false;
+								}
+							}
+						}
+					}
+				} // end of if			
+			}
+		}
 		// If control comes here, it means either there is no converter element
 		// or converters are invoked successfully
+		
 		return true;
 	}
 

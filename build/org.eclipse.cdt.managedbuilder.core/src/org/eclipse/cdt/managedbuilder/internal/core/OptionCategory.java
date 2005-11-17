@@ -234,7 +234,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		if (configuration != null) {
 			IHoldsOptions optionHolder = getOptionHolder();
 			if (optionHolder instanceof ITool) {
-				optionHolders = configuration.getTools();
+				optionHolders = configuration.getFilteredTools();
 			} else if (optionHolder instanceof IToolChain) {
 				// Get the toolchain of this configuration, which is
 				// the holder equivalent for this option

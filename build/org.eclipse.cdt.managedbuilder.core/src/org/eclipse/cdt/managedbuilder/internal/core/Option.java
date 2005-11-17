@@ -22,16 +22,17 @@ import java.util.Set;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
-import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
+import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -341,7 +342,13 @@ public class Option extends BuildObject implements IOption {
 		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR); 
 		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
 			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+		} else {
+			IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
+			if(enablements.length > 0)
+				applicabilityCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
+				
 		}
+
 		// valueHandler
 		// Store the configuration element IFF there is a value handler defined 
 		String valueHandler = element.getAttribute(VALUE_HANDLER); 
@@ -879,11 +886,12 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculatorElement()
 	 */
 	public IConfigurationElement getApplicabilityCalculatorElement() {
-		if (applicabilityCalculatorElement == null) {
+/*		if (applicabilityCalculatorElement == null) {
 			if (superClass != null) {
 				return ((Option)superClass).getApplicabilityCalculatorElement();
 			}
 		}
+*/
 		return applicabilityCalculatorElement;
 	}
 
@@ -893,22 +901,20 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculator()
 	 */
 	public IOptionApplicability getApplicabilityCalculator() {
-		if (applicabilityCalculator != null) {
-			return applicabilityCalculator;
+		if (applicabilityCalculator == null) {
+			if (applicabilityCalculatorElement != null) {
+				try {
+					if (applicabilityCalculatorElement.getAttribute(APPLICABILITY_CALCULATOR) != null)
+						applicabilityCalculator = (IOptionApplicability) applicabilityCalculatorElement
+							.createExecutableExtension(APPLICABILITY_CALCULATOR);
+				} catch (CoreException e) {
+				}
+			}
+			else if(superClass != null)
+				applicabilityCalculator = superClass.getApplicabilityCalculator();
 		}
 
-		IConfigurationElement element = getApplicabilityCalculatorElement();
-		if (element != null) {
-			try {
-				if (element.getAttribute(APPLICABILITY_CALCULATOR) != null) {
-					applicabilityCalculator = (IOptionApplicability) element
-							.createExecutableExtension(APPLICABILITY_CALCULATOR);
-					return applicabilityCalculator;
-				}
-			} catch (CoreException e) {
-			}
-		}
-		return null;
+		return applicabilityCalculator;
 	}
 	
 	/* (non-Javadoc)

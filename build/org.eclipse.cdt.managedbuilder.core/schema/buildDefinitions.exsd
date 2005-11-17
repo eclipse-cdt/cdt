@@ -984,10 +984,13 @@ Options can also be associated with a toolchain. However in such a case the opti
          </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="enumeratedOptionValue" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="listOptionValue" minOccurs="0" maxOccurs="unbounded"/>
-         </choice>
+         <sequence>
+            <choice>
+               <element ref="listOptionValue" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="enumeratedOptionValue" minOccurs="0" maxOccurs="unbounded"/>
+            </choice>
+            <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -1600,6 +1603,187 @@ If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelim
             </annotation>
          </attribute>
       </complexType>
+   </element>
+
+   <element name="enablement">
+      <annotation>
+         <documentation>
+            Contains boolean expression that specifies option applicability
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="checkOption"/>
+            <element ref="checkString"/>
+            <element ref="false"/>
+         </choice>
+         <attribute name="type" type="string" use="default" value="ALL">
+            <annotation>
+               <documentation>
+                  Represents the applicability type for this enablement.
+Can contain the following values:
+UI_VISIBILITY – the given enablement expression specifies whether the option is to be visible in UI,
+UI_ENABLEMENT – the given enablement expression specifies the enable state of the controls that represent the option in UI,
+CMD_USAGE – the given enablement expression specifies whether the option is to be used in command line
+ALL – this value means the combination of all the above values.
+
+Several types could be specified simultaneously using the &quot;|&quot; as a delimiter, e.g.:
+type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
+
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="and">
+      <annotation>
+         <documentation>
+            Represents boolean &quot;and&quot; operation
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="checkOption"/>
+            <element ref="checkString"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="or">
+      <annotation>
+         <documentation>
+            Represents boolean &quot;or&quot; operation
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="checkOption"/>
+            <element ref="checkString"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="not">
+      <annotation>
+         <documentation>
+            Represents boolean &quot;not&quot; operation
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="checkOption"/>
+            <element ref="checkString"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="checkOption">
+      <annotation>
+         <documentation>
+            Performs an option value check. The option value can be checked either agains some pre-defined value or against the value of another option
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="optionId" type="string">
+            <annotation>
+               <documentation>
+                  The option id. The default is the id of the option that holds this expression. When searching for the option to be checked, MBS will examine all the options the holder contains along with all superclasses of each option to find the option with the specified id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="holderId" type="string">
+            <annotation>
+               <documentation>
+                  The option holder id that holds the option. The default is the id of the holder that holds the container of this expression. When searching for the needed holder, MBS will examine all the holders the current configuration contains along with all superclasses of each holder in order to find the holder with the specified id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the expected value. If the current option value matches the value specified in this attribute, the checkOption element is treated as true, otherwise – as false.
+The expected value could be specified either as a string that may contain build macros or as a regular expression. During the comparison, the build macros are resolved and the option value is checked to match the resulting string or regular expression. The way the expected value is specified and treated depends on the value of the isRegex attribute
+
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isRegex" type="string" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Specifies whether the string specified in the &quot;value&quot; attribute should be treated as a regular eexpression. The default is false
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="otherOptionId" type="string">
+            <annotation>
+               <documentation>
+                  The id of the option which is to be compared with the option specified with the “optionId” attribute. The default is the id of the option that holds this expression. If the “value” attribute is specified, both the “otherOptionId” and the “otherHolderId” attributes are ignored. When searching for the option to be checked, MBS will examine all the options the holder contains along with all superclasses of each option to find the option with the specified id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="otherHolderId" type="string">
+            <annotation>
+               <documentation>
+                  The option holder id that holds the option specified with the “otherOptionId” attribute. The default is the id of the holder that holds the container of this expression. If the “value” attribute is specified, both the “otherOptionId” and the “otherHolderId” attributes are ingnored. When searching for the needed holder, MBS will examine all the holders the current configuration contains along with all superclasses of each holder in order to find the holder with the specified id.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="checkString">
+      <annotation>
+         <documentation>
+            Performs a string check.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="string" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Represents the string to be checked. The string will typically  contain the build macros. 
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specifies the expected value. If the current string specified in the “string” attribute matches the value specified in this attribute, the checkString element is treated as true, otherwise – as false.
+The expected value could be specified either as a string that might contain the build macros or as a regular expression.
+The way the value is specified and treated depends on the value of the isRegex attribute.
+
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isRegex" type="string" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Specifies whether the string specified in the &quot;value&quot; attribute should be treated as a regular eexpression. The default is false
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="false" type="string">
+      <annotation>
+         <documentation>
+            Represents the &quot;false&quot; value. This element can be used as a direct child of the &quot;enablement&quot; element to represent that the given option applicability is disabled. E.g. to specify that the option is never displayed in UI or never used in the command line.
+         </documentation>
+      </annotation>
    </element>
 
    <annotation>

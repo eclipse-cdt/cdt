@@ -394,9 +394,15 @@ public class CProjectPlatformPage extends WizardPage {
 		for (int i = 0; i < cfgs.length; i++) {
 			// First, filter on supported state
 			if (cfgs[i].isSupported()) {				
+				
+				IToolChain tc = cfgs[i].getToolChain();
+				// Determine if the tool-chain has 'convertToId' attribute, If so
+				// do not add this configuration to the list.
+				if (!tc.getConvertToId().equals(""))
+					continue;
+				
 				// Now, apply the OS and ARCH filters to determine if the configuration should be shown
 				// Determine if the configuration's tool-chain supports this OS & Architecture.
-				IToolChain tc = cfgs[i].getToolChain();
 				List osList = Arrays.asList(tc.getOSList());
 				if (osList.contains("all") || osList.contains(os)) {	//$NON-NLS-1$
 					List archList = Arrays.asList(tc.getArchList());
@@ -439,6 +445,13 @@ public class CProjectPlatformPage extends WizardPage {
 		for (int index = 0; index < allProjectTypes.length; ++index) {
 			IProjectType type = allProjectTypes[index];
 			if (!type.isAbstract() && !type.isTestProjectType()) {
+				
+				// As we do not want to display the unsupported project types
+				// that has 'convertToId' attribute, check if project type has
+				// 'convertToId' attribute. If so, then do not add it to the list.
+				if (!type.getConvertToId().equals(""))
+					continue;
+				
 				// If the check box is selected show all the targets
 				if (showAllProjTypes != null && showAllProjTypes.getSelection() == true) {
 					projectTypes.add(type);

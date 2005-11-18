@@ -859,14 +859,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * 
 	 * @param forward <code>true</code> if search direction is forward, <code>false</code> if backward
 	 */
-	public void gotoAnnotation(boolean forward) {
+	public Annotation gotoAnnotation(boolean forward) {
+		Annotation annotation = null;
 		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
 		Position position= new Position(0, 0);
 		if (false /* delayed - see bug 18316 */) {
 			getNextAnnotation(selection.getOffset(), selection.getLength(), forward, position);
 			selectAndReveal(position.getOffset(), position.getLength());
 		} else /* no delay - see bug 18316 */ {
-			Annotation annotation= getNextAnnotation(selection.getOffset(), selection.getLength(), forward, position);
+			annotation= getNextAnnotation(selection.getOffset(), selection.getLength(), forward, position);
 			setStatusLineErrorMessage(null);
 			setStatusLineMessage(null);
 			if (annotation != null) {
@@ -875,6 +876,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				setStatusLineMessage(annotation.getText());
 			}
 		}
+		return annotation;
 	}
 
 	/**
@@ -951,7 +953,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 *         otherwise
 	 * @since 3.0
 	 */
-	private boolean isNavigationTarget(Annotation annotation) {
+	protected boolean isNavigationTarget(Annotation annotation) {
 		Preferences preferences= EditorsUI.getPluginPreferences();
 		AnnotationPreference preference= getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
 //		See bug 41689

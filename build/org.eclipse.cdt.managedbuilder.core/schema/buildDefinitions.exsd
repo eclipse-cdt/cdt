@@ -1144,7 +1144,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="tip" type="string">
             <annotation>
                <documentation>
-                  Specifies a &quot;tip&quot; that can be displayed in hover help or on the property page. Not implemented in 2.0.
+                  Specifies a &quot;tip&quot; that can be displayed in hover help or on the property page.
                </documentation>
             </annotation>
          </attribute>

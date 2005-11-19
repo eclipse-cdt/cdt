@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * ARM Ltd. - basic tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -100,137 +101,98 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 			} else {
 				config = clonedConfig;
 			}
+
 			if (applicabilityCalculator == null || applicabilityCalculator.isOptionVisible(config, holder, opt)) {
 		
-			try {
-				// Figure out which type the option is and add a proper field
-				// editor for it
-				switch (opt.getValueType()) {
-					case IOption.STRING:
-						// fix for PR 63973
-						// Check browse type.
-						// If browsing is set, use a field editor that has a
-						// browse button of
-						// the appropriate type.
-						// Otherwise, use a regular text field.
-						switch (opt.getBrowseType()) {
-						case IOption.BROWSE_DIR:
-							Composite fieldEditorParent2 = getFieldEditorParent();
-							DirectoryFieldEditor dirFieldEditor = new DirectoryFieldEditor(
-									prefName, opt.getName(),	fieldEditorParent2);
+				try {
+					// Figure out which type the option is and add a proper field
+					// editor for it
+					Composite fieldEditorParent = getFieldEditorParent();
+					FieldEditor fieldEditor;
 
-							setFieldEditorEnablement(holder,
-									opt, applicabilityCalculator, dirFieldEditor, fieldEditorParent2);
-
-							addField(dirFieldEditor);
-							fieldsMap.put(prefName, dirFieldEditor);
-							fieldEditorsToParentMap.put(dirFieldEditor,	fieldEditorParent2);
-
-							break;
-
-						case IOption.BROWSE_FILE:
-							Composite fieldEditorParent3 = getFieldEditorParent();
-							FileFieldEditor fileFieldEditor = new FileFieldEditor(
-									prefName, opt.getName(),	fieldEditorParent3);
-
-							setFieldEditorEnablement(holder,
-									opt, applicabilityCalculator, fileFieldEditor, fieldEditorParent3);
-
-							addField(fileFieldEditor);
-							fieldsMap.put(prefName, fileFieldEditor);
-							fieldEditorsToParentMap.put(fileFieldEditor, fieldEditorParent3);
-							break;
-
-						case IOption.BROWSE_NONE:
-							Composite fieldEditorParent4 = getFieldEditorParent();
-							StringFieldEditor stringField = new StringFieldEditor(
-									prefName, opt.getName(),	fieldEditorParent4);
-
-							setFieldEditorEnablement(holder,
-									opt, applicabilityCalculator, stringField, fieldEditorParent4);
-
-							addField(stringField);
-							fieldsMap.put(prefName, stringField);
-							fieldEditorsToParentMap.put(stringField, fieldEditorParent4);
-							break;
-
-						default:
-							// should not be possible
-							throw (new AssertionError());
-						}
-						// end fix for 63973
-						break;
-					case IOption.BOOLEAN:
-						Composite fieldEditorParent5 = getFieldEditorParent();
-						BooleanFieldEditor booleanField = new BooleanFieldEditor(
-								prefName, opt.getName(), fieldEditorParent5);
-
-						setFieldEditorEnablement(holder, 
-								opt, applicabilityCalculator, booleanField, fieldEditorParent5);
-
-						addField(booleanField);
-						fieldsMap.put(prefName, booleanField);
-						fieldEditorsToParentMap.put(booleanField, fieldEditorParent5);
-						break;
-					case IOption.ENUMERATED:
-						String selId;
-						String sel;
-						try {
-							selId = opt.getSelectedEnum();
-							sel = opt.getEnumName(selId);
-						} catch (BuildException e) {
-							// If we get this exception, then the option type is
-							// wrong
-							break;
-						}
-						// Get all applicable values for this enumerated Option, But display
-						// only the enumerated values that are valid (static set of enumerated values defined
-						// in the plugin.xml file) in the UI Combobox. This refrains the user from selecting an
-						// invalid value and avoids issuing an error message.
-						String[] enumNames = opt.getApplicableValues();
-						Vector enumValidList = new Vector();
-						for (int i = 0; i < enumNames.length; ++i) {
-							if (opt.getValueHandler().isEnumValueAppropriate(config, 
-									opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
-								enumValidList.add(enumNames[i]);
+					switch (opt.getValueType()) {
+						case IOption.STRING: {
+							StringFieldEditor stringField;
+							
+							// If browsing is set, use a field editor that has a
+							// browse button of the appropriate type.
+							switch (opt.getBrowseType()) {
+								case IOption.BROWSE_DIR: {
+									stringField = new DirectoryFieldEditor(prefName, opt.getName(), fieldEditorParent);
+								} break;
+		
+								case IOption.BROWSE_FILE: {
+									stringField = new FileFieldEditor(prefName, opt.getName(), fieldEditorParent);
+								} break;
+		
+								case IOption.BROWSE_NONE: {
+									stringField = new StringFieldEditor(prefName, opt.getName(), fieldEditorParent);
+								} break;
+		
+								default: {
+									throw new BuildException(null);
+								}
 							}
-						}
-						String[] enumValidNames = new String[enumValidList.size()];
-						enumValidList.copyInto(enumValidNames);
 
-						Composite fieldEditorParent6 = getFieldEditorParent();
-						BuildOptionComboFieldEditor comboField = new BuildOptionComboFieldEditor(
-								prefName, opt.getName(), enumValidNames, sel, fieldEditorParent6);
+							stringField.getTextControl(fieldEditorParent).setToolTipText(opt.getToolTip());
+							stringField.getLabelControl(fieldEditorParent).setToolTipText(opt.getToolTip());
+	
+							fieldEditor = stringField;
+						} break;
+						
+						case IOption.BOOLEAN: {
+							class TooltipBooleanFieldEditor extends BooleanFieldEditor {
+								public TooltipBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent) {
+									super(name, labelText, parent);
+									getChangeControl(parent).setToolTipText(tooltip);
+								}
+							}
+							
+							fieldEditor = new TooltipBooleanFieldEditor(prefName, opt.getName(), opt.getToolTip(), fieldEditorParent);
+						} break;
+						
+						case IOption.ENUMERATED: {
+							String selId = opt.getSelectedEnum();
+							String sel = opt.getEnumName(selId);
 
-						setFieldEditorEnablement(holder, 
-								opt, applicabilityCalculator, comboField, fieldEditorParent6);
-
-						addField(comboField);
-						fieldsMap.put(prefName, comboField);
-						fieldEditorsToParentMap.put(comboField,	fieldEditorParent6);
-						break;
-					case IOption.INCLUDE_PATH:
-					case IOption.STRING_LIST:
-					case IOption.PREPROCESSOR_SYMBOLS:
-					case IOption.LIBRARIES:
-					case IOption.OBJECTS:
-
-						Composite fieldEditorParent7 = getFieldEditorParent();
-						FileListControlFieldEditor listField = new FileListControlFieldEditor(
-								prefName, opt.getName(), fieldEditorParent7,	opt.getBrowseType());
-
-						setFieldEditorEnablement(holder, 
-								opt, applicabilityCalculator, listField, fieldEditorParent7);
-
-						addField(listField);
-						fieldsMap.put(prefName, listField);
-						fieldEditorsToParentMap.put(listField, fieldEditorParent7);
-						break;
-					default:
-						break;
+							// Get all applicable values for this enumerated Option, But display
+							// only the enumerated values that are valid (static set of enumerated values defined
+							// in the plugin.xml file) in the UI Combobox. This refrains the user from selecting an
+							// invalid value and avoids issuing an error message.
+							String[] enumNames = opt.getApplicableValues();
+							Vector enumValidList = new Vector();
+							for (int i = 0; i < enumNames.length; ++i) {
+								if (opt.getValueHandler().isEnumValueAppropriate(config, 
+										opt.getOptionHolder(), opt, opt.getValueHandlerExtraArgument(), enumNames[i])) {
+									enumValidList.add(enumNames[i]);
+								}
+							}
+							String[] enumValidNames = new String[enumValidList.size()];
+							enumValidList.copyInto(enumValidNames);
+	
+							fieldEditor = new BuildOptionComboFieldEditor(prefName, opt.getName(), opt.getToolTip(), enumValidNames, sel, fieldEditorParent);
+						} break;
+						
+						case IOption.INCLUDE_PATH:
+						case IOption.STRING_LIST:
+						case IOption.PREPROCESSOR_SYMBOLS:
+						case IOption.LIBRARIES:
+						case IOption.OBJECTS: {
+							fieldEditor = new FileListControlFieldEditor(prefName, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getBrowseType());
+						} break;
+						
+						default:
+							throw new BuildException(null);
 					}
-			} catch (BuildException e) {
-			}
+
+					setFieldEditorEnablement(holder, opt, applicabilityCalculator, fieldEditor, fieldEditorParent);
+
+					addField(fieldEditor);
+					fieldsMap.put(prefName, fieldEditor);
+					fieldEditorsToParentMap.put(fieldEditor, fieldEditorParent);
+
+				} catch (BuildException e) {
+				}
 			}
 		}
 	}

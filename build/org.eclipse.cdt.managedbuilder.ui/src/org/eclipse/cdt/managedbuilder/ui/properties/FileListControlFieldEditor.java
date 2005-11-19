@@ -7,6 +7,7 @@
  *
  * Contributors:
  * BitMethods Inc - Initial API and implementation
+ * ARM Ltd. - basic tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -56,6 +57,56 @@ public class FileListControlFieldEditor extends FieldEditor {
 		browseType = type;
 		// Set the browse strategy for the list editor
 		list.setType(type);
+	}
+
+	/**
+	 * Creates a file list control field editor.
+	 * @param name the name of the preference this field editor works on
+	 * @param labelText the label text of the field editor
+	 * @param tooltip the tooltip text of the field editor
+	 * @param parent the parent of the field editor's control
+	 * @param type the browseType of the file list control
+	 */
+	public FileListControlFieldEditor(
+		String name,
+		String labelText,
+		String tooltip,
+		Composite parent,
+		int type) {
+		this(name, labelText, parent, type);
+		// can't use setToolTip(tooltip) as label not created yet 
+		getLabelControl(parent).setToolTipText(tooltip);
+	}
+
+	/**
+	 * Sets the field editor's tool tip text to the argument, which
+	 * may be null indicating that no tool tip text should be shown.
+	 *
+	 * @param string the new tool tip text (or null)
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the field editor has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the field editor</li>
+	 * </ul>
+	 */
+	public void setToolTip(String tooltip) {
+		// Currently just the label has the tooltip
+		getLabelControl().setToolTipText(tooltip);
+	}
+	
+	/**
+	 * Returns the field editor's tool tip text, or null if it has
+	 * not been set.
+	 *
+	 * @return the field editor's tool tip text
+	 *
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the field editor has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the field editor</li>
+	 * </ul>
+	 */
+	public String getToolTipText() {
+		return getLabelControl().getToolTipText();
 	}
 
 	/**

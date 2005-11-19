@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     ARM Ltd. - basic tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -292,6 +293,13 @@ public class OptionReference implements IOption {
 	 */
 	public String getCommandFalse() {
 		return option.getCommandFalse();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getToolTip()
+	 */
+	public String getToolTip() {
+		return option.getToolTip();
 	}
 	
 	/* (non-Javadoc)
@@ -748,6 +756,12 @@ public class OptionReference implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#setCommandFalse(String)
 	 */
 	public void setCommandFalse(String cmd) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setToolTip(String)
+	 */
+	public void setToolTip(String tooltip) {
 	}
 
 	public PluginVersionIdentifier getVersion() {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     ARM Ltd. - basic tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -45,6 +46,7 @@ public interface IOption extends IBuildObject {
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
+	public static final String TOOL_TIP = "tip"; //$NON-NLS-1$
 	public static final String DEFAULT_VALUE = "defaultValue"; //$NON-NLS-1$
 	public static final String ENUM_VALUE = "enumeratedOptionValue"; //$NON-NLS-1$
 	public static final String IS_DEFAULT = "isDefault"; //$NON-NLS-1$
@@ -201,6 +203,21 @@ public interface IOption extends IBuildObject {
 	 * @param String
 	 */
 	public void setCommandFalse(String commandFalse);
+
+	/**
+	 * Answers a <code>String</code> containing the tooltip
+	 * associated with the option
+	 * @return String
+	 */
+	public String getToolTip();
+	
+	/**
+	 * Sets a <code>String</code> containing the tooltip
+	 * associated with the option
+	 * 
+	 * @param String
+	 */
+	public void setToolTip(String tooltip);
 
 	/**
 	 * Answers the user-defined preprocessor symbols. 

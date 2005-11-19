@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     ARM Ltd. - basic tooltip support
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -59,6 +60,7 @@ public class Option extends BuildObject implements IOption {
 	private String categoryId;
 	private String command;
 	private String commandFalse;
+	private String tip;
 	private List enumList;
 	private Map enumCommands;
 	private Map enumNames;
@@ -181,6 +183,9 @@ public class Option extends BuildObject implements IOption {
 		if (option.commandFalse != null) {
 			commandFalse = new String(option.commandFalse);
 		}
+		if (option.tip != null) {
+			tip = new String(option.tip);
+		}
 		if (option.categoryId != null) {
 			categoryId = new String(option.categoryId);
 		}
@@ -294,6 +299,9 @@ public class Option extends BuildObject implements IOption {
 		// Get the command defined for a Boolean option when the value is False
 		commandFalse = element.getAttribute(COMMAND_FALSE);
 		
+		// Get the tooltip for the option
+		tip = element.getAttribute(TOOL_TIP);
+		
 		// Options hold different types of values
 		String valueTypeStr = element.getAttribute(VALUE_TYPE);
 		if (valueTypeStr != null) {
@@ -405,6 +413,11 @@ public class Option extends BuildObject implements IOption {
 		// Get the command defined for a Boolean option when the value is False
 		if (element.hasAttribute(COMMAND_FALSE)) {
 			commandFalse = element.getAttribute(COMMAND_FALSE);
+		}
+		
+		// Get the tooltip for the option
+		if (element.hasAttribute(TOOL_TIP)) {
+			tip = element.getAttribute(TOOL_TIP);
 		}
 		
 		// Options hold different types of values
@@ -621,6 +634,10 @@ public class Option extends BuildObject implements IOption {
 		
 		if (commandFalse != null) {
 			element.setAttribute(COMMAND_FALSE, commandFalse);
+		}
+		
+		if (tip != null) {
+			element.setAttribute(TOOL_TIP, tip);
 		}
 		
 		/*
@@ -978,6 +995,19 @@ public class Option extends BuildObject implements IOption {
 		return commandFalse;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getToolTip()
+	 */
+	public String getToolTip() {
+		if (tip == null) {
+			if (superClass != null) {
+				return superClass.getToolTip();
+			} else {
+				return EMPTY_STRING;
+			}
+		}
+		return tip;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getDefinedSymbols()
 	 */
@@ -1340,6 +1370,17 @@ public class Option extends BuildObject implements IOption {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setToolTip(String)
+	 */
+	public void setToolTip(String tooltip) {
+		if (tooltip == null && tip == null) return;
+		if (tooltip == null || tip == null || !tooltip.equals(tip)) {
+			tip = tooltip;
+			isDirty = true;		
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setResourceFilter(int)
 	 */
 	public void setResourceFilter(int filter) {
@@ -1521,6 +1562,7 @@ public class Option extends BuildObject implements IOption {
 			categoryId == null &&
 			command == null &&
 			commandFalse == null &&
+			tip == null &&
 			enumList == null &&
 			enumCommands == null &&
 			enumNames == null &&

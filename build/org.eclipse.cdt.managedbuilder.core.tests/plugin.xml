@@ -1708,6 +1708,7 @@
                category="gnu.c.link.category30.general"
                command="-nostartfiles"
                id="gnu.c.link.option30.nostart"
+               tip="This space intentionally left blank"
                valueType="boolean">
          </option>
          <option
@@ -1751,6 +1752,7 @@
                name="MBS30Opt.Posix.Libs"
                category="gnu.c.link.category30.libs"
                command="-l"
+               tip="Enter additional libraries for the link"
                id="gnu.c.link.option30.libs"
                browseType="file"
                valueType="libs">
@@ -1761,6 +1763,7 @@
                command="-L"
                id="gnu.c.link.option30.paths"
                browseType="directory"
+               tip="Enter additional directories to use in searching for libraries"
                valueType="stringList">
          </option>
          <optionCategory
@@ -1786,7 +1789,8 @@
                category="gnu.c.link.category30.other"
                browseType="file"
                valueType="userObjs"
-               id="gnu.c.link.option30.userobjs">
+               id="gnu.c.link.option30.userobjs"
+               tip="Enter additional object files for the link">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.testgnu30.c.linker"

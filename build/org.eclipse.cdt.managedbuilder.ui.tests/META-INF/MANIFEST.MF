@@ -10,7 +10,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.cdt.managedbuilder.ui,
- org.eclipse.cdt.ui,
  org.junit,
  org.eclipse.cdt.managedbuilder.core,
  org.eclipse.cdt.core

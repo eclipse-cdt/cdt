@@ -5,7 +5,6 @@
 		<antcall target="convertSchemaToHtml" />
 		<!--antcall target="examplesDocCopy" /-->
 		<antcall target="generateJavadoc" />
-		<antcall target="createDocZip" />
 	</target>
 	
 	<target name="convertSchemaToHtml" if="eclipse.running">

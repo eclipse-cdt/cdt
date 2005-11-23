@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.ui;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -856,26 +857,30 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			label.append( frame.getLevel() );
 			label.append( ' ' );
 			String function = frame.getFunction();
-			if ( function != null ) {
+			if ( isEmpty( function ) ) {
+				label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.21" ) ); //$NON-NLS-1$
+			}
+			else {
 				function = function.trim();
-				if ( function.length() > 0 ) {
-					label.append( function );
-					label.append( "() " ); //$NON-NLS-1$
-					if ( frame.getFile() != null ) {
-						IPath path = new Path( frame.getFile() );
-						if ( !path.isEmpty() ) {
-							label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.20" ) ); //$NON-NLS-1$
-							label.append( ' ' );
-							label.append( (qualified ? path.toOSString() : path.lastSegment()) );
-							label.append( ':' );
-							if ( frame.getFrameLineNumber() != 0 )
-								label.append( frame.getFrameLineNumber() );
-						}
+				label.append( function );
+				label.append( "() " ); //$NON-NLS-1$
+				if ( frame.getFile() != null ) {
+					IPath path = new Path( frame.getFile() );
+					if ( !path.isEmpty() ) {
+						label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.20" ) ); //$NON-NLS-1$
+						label.append( ' ' );
+						label.append( (qualified ? path.toOSString() : path.lastSegment()) );
+						label.append( ':' );
+						if ( frame.getFrameLineNumber() != 0 )
+							label.append( frame.getFrameLineNumber() );
 					}
 				}
 			}
-			if ( isEmpty( function ) )
-				label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.21" ) ); //$NON-NLS-1$
+			IAddress address = frame.getAddress();
+			if ( address != null ) {
+				label.append( ' ' );
+				label.append( address.toHexAddressString() );
+			}
 			return label.toString();
 		}
 		return (f.getAdapter( IDummyStackFrame.class ) != null) ? getDummyStackFrameLabel( f ) : f.getName();

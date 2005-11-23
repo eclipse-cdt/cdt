@@ -29,54 +29,39 @@ import org.eclipse.core.runtime.IPath;
 
 public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
 
+    public static String ID = CCorePlugin.PLUGIN_ID + ".nullindexer"; //$NON-NLS-1$
+
     public int getIndexerFeatures() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	public void addRequest(IProject project, IResourceDelta delta, int kind) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void removeRequest(IProject project, IResourceDelta delta, int kind) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void indexJobFinishedNotification(IIndexJob job) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void shutdown() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void notifyIdle(long idlingTime) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void notifyIndexerChange(IProject project) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public boolean isIndexEnabled(IProject project) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public IIndexStorage getIndexStorage() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public IIndex getIndex(IPath path, boolean reuseExistingFile,
-			boolean createIfMissing) {
-		// TODO Auto-generated method stub
+	public IIndex getIndex(IPath path, boolean reuseExistingFile, boolean createIfMissing) {
 		return null;
 	}
 
@@ -85,33 +70,22 @@ public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
 	}
 
 	public void index(IFile document, IIndexerOutput output) throws IOException {
-		// TODO Auto-generated method stub
-
 	}
 
 	public boolean shouldIndex(IFile file) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public void notifyListeners(IndexDelta indexDelta) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void addResource(IProject project, IResource resource) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void removeResource(IProject project, IResource resource) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void addResourceByPath(IProject project, IPath path, int resourceType) {
-		// TODO Auto-generated method stub
-		
 	}
 
     public ReadWriteMonitor getMonitorFor(IIndex index) {
@@ -119,12 +93,9 @@ public class NullIndexer extends AbstractCExtension implements ICDTIndexer {
     }
 
     public void saveIndex(IIndex index) throws IOException {
-        // TODO Auto-generated method stub
     }
 
     public void setIndexerProject(IProject project) {
-        // TODO Auto-generated method stub
-        
     }
 
 }

@@ -1,3 +1,7 @@
+2005-11-23 Mikhail Khodjaiants
+	Bug 117754: Stack frame can't display address.
+	* CDebugModelPresentation.java
+
 2005-10-19 Mikhail Khodjaiants
 	Bug 113114: Expanding Modules View throws SWTError: No more handles.
 	* ModulesView.java

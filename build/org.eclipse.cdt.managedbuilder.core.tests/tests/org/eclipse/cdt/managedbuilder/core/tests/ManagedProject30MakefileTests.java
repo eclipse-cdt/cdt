@@ -80,6 +80,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("CDTFortranTest2"));
 		suite.addTest(new ManagedProject30MakefileTests("TestATO"));
 		suite.addTest(new ManagedProject30MakefileTests("testMacroSupportInBuildDefinitions"));
+		suite.addTest(new ManagedProject30MakefileTests("testSpaces"));
 		return suite;
 	}
 
@@ -429,6 +430,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		buildProjects(projects, makefiles);
 	}
 	
+	
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration: create pre-build and post-build steps and verify that 
 	 * the proper commands are generated in the makefile which is created by the managedbuild system
@@ -596,5 +598,18 @@ public class ManagedProject30MakefileTests extends TestCase {
 		buildProjects(projects, makefiles);
 	}
 	
-	
+	/**
+	 * (non-Javadoc)
+	 * tests managed build system with a project which has resources with spaces in their paths
+	 */
+	public void testSpaces()
+	{
+		IPath[] makefiles = {
+				 Path.fromOSString("makefile"), 
+				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("subdir.mk")};
+		IProject[] projects = createProjects("test with spaces", null, null, true);
+		buildProjects(projects, makefiles);
+	}
 }

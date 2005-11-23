@@ -118,8 +118,32 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 			}
 
 			if (config != null) {
-
+				
+				boolean explicitRuleRequired = false;
+				
+				// if any input files have spaces in the name, then we must
+				// not use builder variables
+				for(int k = 0; k < primaryInputNames.length; k++)
+				{
+					if(primaryInputNames[k].toString().indexOf(" ") != -1) //$NON-NLS-1$
+						explicitRuleRequired = true;
+				}
+				
 				try {
+					
+					if(explicitRuleRequired)
+					{
+						outputPrefix = ManagedBuildManager
+						.getBuildMacroProvider()
+						.resolveValue(
+								outputPrefix,
+								"", //$NON-NLS-1$
+								" ", //$NON-NLS-1$
+								IBuildMacroProvider.CONTEXT_CONFIGURATION,
+								config);
+					}
+					
+					else {
 					outputPrefix = ManagedBuildManager
 							.getBuildMacroProvider()
 							.resolveValueToMakefileFormat(
@@ -128,6 +152,7 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_CONFIGURATION,
 									config);
+					}
 				}
 
 				catch (BuildMacroException e) {

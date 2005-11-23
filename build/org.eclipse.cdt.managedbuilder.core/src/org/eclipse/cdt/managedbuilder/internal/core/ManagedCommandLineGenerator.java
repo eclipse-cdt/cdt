@@ -27,6 +27,7 @@ public class ManagedCommandLineGenerator implements
 	public final String OUT_MACRO = "$@";	//$NON-NLS-1$
 	public final String SEPARATOR = "/";	//$NON-NLS-1$
 	public final String SINGLE_QUOTE = "'";	//$NON-NLS-1$
+	public final String DOUBLE_QUOTE = "\""; //$NON-NLS-1$
 	public final String TAB = "\t";	//$NON-NLS-1$
 	public final String WHITESPACE = " ";	//$NON-NLS-1$
 	public final String WILDCARD = "%";	//$NON-NLS-1$
@@ -89,8 +90,38 @@ public class ManagedCommandLineGenerator implements
 					else if( varName.compareToIgnoreCase( FLAGS_PRM_NAME ) == 0 ) sb.append( stringArrayToString( flags ) );
 					else if( varName.compareToIgnoreCase( OUTPUT_FLAG_PRM_NAME ) == 0 ) sb.append( outputFlag.trim() );
 					else if( varName.compareToIgnoreCase( OUTPUT_PREFIX_PRM_NAME ) == 0 ) sb.append( outputPrefix.trim() );
-					else if( varName.compareToIgnoreCase( OUTPUT_PRM_NAME ) == 0 ) sb.append( outputName.trim() );
-					else if( varName.compareToIgnoreCase( INPUTS_PRM_NAME ) == 0 ) sb.append( stringArrayToString( inputResources ) );
+					else if( varName.compareToIgnoreCase( OUTPUT_PRM_NAME ) == 0 )
+						{
+							StringBuffer tempBuffer = new StringBuffer("");
+						
+							if(!outputName.equals("")) //$NON-NLS-1$
+							{
+//								 if the output name isn't a variable then quote it
+								if(outputName.indexOf("$(") != 0) //$NON-NLS-1$
+									tempBuffer.append( SINGLE_QUOTE + outputName + SINGLE_QUOTE);
+								else
+									tempBuffer.append(outputName);
+							}
+							
+							sb.append(tempBuffer.toString().trim());
+						}
+					else if( varName.compareToIgnoreCase( INPUTS_PRM_NAME ) == 0 ){
+						StringBuffer tempBuffer = new StringBuffer("");  //$NON-NLS-1$
+						for(int k = 0; k < inputResources.length; k++)
+						{
+							if(!inputResources[k].equals("")) //$NON-NLS-1$
+							{
+								// if the input resource isn't a variable then quote it
+								if(inputResources[k].indexOf("$(") != 0) //$NON-NLS-1$
+									tempBuffer.append(SINGLE_QUOTE + inputResources[k] + SINGLE_QUOTE + WHITESPACE); //$NON-NLS-1$ //$NON-NLS-2$
+								else
+									tempBuffer.append(inputResources[k] + WHITESPACE);
+							}
+						}
+						
+						sb.append(tempBuffer.toString().trim());
+						
+					}
 					else sb.append( VAR_FIRST_CHAR + VAR_SECOND_CHAR + varName + VAR_FINAL_CHAR );
 				} catch( Exception ex ) {
 					// 	do nothing for a while

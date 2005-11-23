@@ -192,18 +192,50 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							inputs = (List)option.getValue();
 						}
 						for (int j=0; j<inputs.size(); j++) {
-							String inputName = (String)inputs.get(j); 
-							try{
-								//try to resolve the build macros in the output names
-								String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
-										inputName,
-										"", //$NON-NLS-1$
-										" ", //$NON-NLS-1$
-										IBuildMacroProvider.CONTEXT_OPTION,
-										new OptionContextData(option, config.getToolChain()));
-								if((resolved = resolved.trim()).length() > 0)
+							String inputName = (String)inputs.get(j);
+							
+				
+							try {
+								// try to resolve the build macros in the output
+								// names
+
+								String resolved = null;
+
+								// does the input name contain spaces?
+								// TODO: support other special characters
+								if (inputName.indexOf(" ") != -1) //$NON-NLS-1$
+								{
+									// resolve to string
+									resolved = ManagedBuildManager
+											.getBuildMacroProvider()
+											.resolveValue(
+													inputName,
+													"", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_OPTION,
+													new OptionContextData(
+															option,
+															config
+																	.getToolChain()));
+								} else {
+
+									// resolve to makefile variable format
+									resolved = ManagedBuildManager
+											.getBuildMacroProvider()
+											.resolveValueToMakefileFormat(
+													inputName,
+													"", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_OPTION,
+													new OptionContextData(
+															option,
+															config
+																	.getToolChain()));
+								}
+
+								if ((resolved = resolved.trim()).length() > 0)
 									inputName = resolved;
-							} catch (BuildMacroException e){
+							} catch (BuildMacroException e) {
 							}
 	
 							if (primaryInput) {
@@ -938,10 +970,10 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				OptDotExt = DOT + tool.getOutputExtension(srcExtensionName); 
 			           
 		// create rule of the form
-		// OBJS = $(macroName1: $(ROOT)/%.input1=%.output1) ... $(macroNameN: $(ROOT)/%.inputN=%.outputN)
+		// OBJS = $(macroName1: ../%.input1=%.output1) ... $(macroNameN: ../%.inputN=%.outputN)
 		StringBuffer objectsBuffer = new StringBuffer();
 		objectsBuffer.append(IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + 					//$NON-NLS-1$
-			IManagedBuilderMakefileGenerator.COLON + "$(ROOT)" + 												//$NON-NLS-1$
+			IManagedBuilderMakefileGenerator.COLON + IManagedBuilderMakefileGenerator.ROOT + 												//$NON-NLS-1$
 			IManagedBuilderMakefileGenerator.SEPARATOR + IManagedBuilderMakefileGenerator.WILDCARD +			
 				DOT + srcExtensionName + "=" + wildcard + OptDotExt + ")" );	//$NON-NLS-1$ //$NON-NLS-2$
         return objectsBuffer.toString();

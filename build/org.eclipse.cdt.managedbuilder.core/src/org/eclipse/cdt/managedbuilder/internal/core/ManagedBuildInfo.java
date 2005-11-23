@@ -720,11 +720,36 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				String cmd = tool.getToolCommand();
 				//try to resolve the build macros in the tool command
 				try{
-					String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
-							"", //$NON-NLS-1$
-							" ", //$NON-NLS-1$
-							IBuildMacroProvider.CONTEXT_FILE,
-							new FileContextData(inputLocation,outputLocation,null,getDefaultConfiguration().getToolChain()));
+					String resolvedCommand = null;
+					
+					if ((inputLocation != null && inputLocation.toString().indexOf(" ") != -1) || //$NON-NLS-1$
+							(outputLocation != null && outputLocation.toString().indexOf(" ") != -1) ) //$NON-NLS-1$
+					{
+						resolvedCommand = ManagedBuildManager
+								.getBuildMacroProvider().resolveValue(
+										cmd,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_FILE,
+										new FileContextData(inputLocation,
+												outputLocation, null,
+												getDefaultConfiguration()
+														.getToolChain()));
+					}
+
+					else {
+						resolvedCommand = ManagedBuildManager
+								.getBuildMacroProvider()
+								.resolveValueToMakefileFormat(
+										cmd,
+										"", //$NON-NLS-1$
+										" ", //$NON-NLS-1$
+										IBuildMacroProvider.CONTEXT_FILE,
+										new FileContextData(inputLocation,
+												outputLocation, null,
+												getDefaultConfiguration()
+														.getToolChain()));
+					}
 					if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 						cmd = resolvedCommand;
 						

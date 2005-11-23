@@ -86,11 +86,11 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		
 		// Calculate the dependency rule
 		// <path>/$(@:%.<out_ext>=%.d)
-		String depRule = "$(@:%." + //$NON-NLS-1$
+		String depRule = "'$(@:%." + //$NON-NLS-1$
 			outputExtension + 
 			"=%." + //$NON-NLS-1$
 			IManagedBuilderMakefileGenerator.DEP_EXT + 
-			")"; //$NON-NLS-1$
+			")'"; //$NON-NLS-1$
 		
 		// Add the rule that will actually create the right format for the dep 
 		buffer.append(IManagedBuilderMakefileGenerator.TAB + 
@@ -122,12 +122,38 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			ITool tool = tools[0];
 			String cmd = tool.getToolCommand();
 			//try to resolve the build macros in the tool command
-			try{
-				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
-						"", //$NON-NLS-1$
-						" ", //$NON-NLS-1$
-						IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(resource.getLocation(),null,null,info.getDefaultConfiguration().getToolChain()));
+			try {
+				String resolvedCommand = null;
+
+				// does the resource have spaces in its name?
+				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {
+					// use fully qualified strings
+					resolvedCommand = ManagedBuildManager
+							.getBuildMacroProvider()
+							.resolveValueToMakefileFormat(
+									cmd,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(resource.getLocation(),
+											null, null, info
+													.getDefaultConfiguration()
+													.getToolChain()));
+				} else {
+					// use builder variables
+					resolvedCommand = ManagedBuildManager
+							.getBuildMacroProvider()
+							.resolveValueToMakefileFormat(
+									cmd,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(resource.getLocation(),
+											null, null, info
+													.getDefaultConfiguration()
+													.getToolChain()));
+				}
+				
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					cmd = resolvedCommand;
 					
@@ -155,12 +181,37 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			buildCmd = cmdLInfo.getCommandLine();
 			
 			// resolve any remaining macros in the command after it has been generated
-			try{
-				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(buildCmd,
-						EMPTY_STRING,
-						WHITESPACE,
-						IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(resource.getLocation(), null, null, info.getDefaultConfiguration().getToolChain()));
+			try {
+				String resolvedCommand = null;
+
+				// does the resource have spaces in its name?
+				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {
+					// use fully qualified strings
+					resolvedCommand = ManagedBuildManager
+							.getBuildMacroProvider()
+							.resolveValueToMakefileFormat(
+									buildCmd,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(resource.getLocation(),
+											null, null, info
+													.getDefaultConfiguration()
+													.getToolChain()));
+				} else {
+					// use builder variables
+					resolvedCommand = ManagedBuildManager
+							.getBuildMacroProvider()
+							.resolveValueToMakefileFormat(
+									buildCmd,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(resource.getLocation(),
+											null, null, info
+													.getDefaultConfiguration()
+													.getToolChain()));
+				}
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					buildCmd = resolvedCommand;
 					
@@ -201,17 +252,37 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
             
             // resolve any remaining macros in the command after it has been
             // generated
-            try {
-                String resolvedCommand = ManagedBuildManager
-                        .getBuildMacroProvider().resolveValueToMakefileFormat(
-                                buildCmd,
-                                EMPTY_STRING,
-                                WHITESPACE,
-                                IBuildMacroProvider.CONTEXT_FILE,
-                                new FileContextData(resource.getLocation(),
-                                        null, null, info
-                                                .getDefaultConfiguration()
-                                                .getToolChain()));
+			try {
+				String resolvedCommand = null;
+
+				// does the resource have spaces in its name?
+				if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {
+					// use fully qualified strings
+					resolvedCommand = ManagedBuildManager
+							.getBuildMacroProvider()
+							.resolveValueToMakefileFormat(
+									buildCmd,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(resource.getLocation(),
+											null, null, info
+													.getDefaultConfiguration()
+													.getToolChain()));
+				} else {
+					// use builder variables
+					resolvedCommand = ManagedBuildManager
+							.getBuildMacroProvider()
+							.resolveValueToMakefileFormat(
+									buildCmd,
+									"", //$NON-NLS-1$
+									" ", //$NON-NLS-1$
+									IBuildMacroProvider.CONTEXT_FILE,
+									new FileContextData(resource.getLocation(),
+											null, null, info
+													.getDefaultConfiguration()
+													.getToolChain()));
+				}
                 if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
                     buildCmd = resolvedCommand;
 
@@ -223,8 +294,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				buildCmd +
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				">>" +  //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
-				depRule);
+				IManagedBuilderMakefileGenerator.WHITESPACE + depRule );
 
 		return buffer.toString();
 	}

@@ -52,7 +52,7 @@ public interface IManagedBuilderMakefileGenerator {
 	public final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	public final String OBJECTS_MAKFILE = "objects.mk"; //$NON-NLS-1$
 	public final String OUT_MACRO = "$@";	//$NON-NLS-1$
-	public final String ROOT = "$(ROOT)";	//$NON-NLS-1$
+	public final String ROOT = "..";	//$NON-NLS-1$
 	public final String SEPARATOR = "/";	//$NON-NLS-1$
 	public final String SINGLE_QUOTE = "'";	//$NON-NLS-1$
 	public final String SRCSFILE_NAME = "sources.mk"; //$NON-NLS-1$	

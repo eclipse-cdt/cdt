@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.tests.suite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.managedbuilder.ui.tests.TestCProjectPlatformPage;
 import org.eclipse.cdt.managedbuilder.ui.tests.TestCustomPageManager;
 
 
@@ -31,6 +32,7 @@ public class AllManagedBuildUITests {
 		//$JUnit-BEGIN$
 // TODO uncoment this		
 		suite.addTest(TestCustomPageManager.suite());
+		suite.addTestSuite(TestCProjectPlatformPage.class);
 		
 		//$JUnit-END$
 		return suite;

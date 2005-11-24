@@ -259,4 +259,15 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	public IConfiguration[] getSelectedConfigurations() {
 		return projectConfigurationPage.getSelectedConfigurations();
 	}
+	
+	/**
+	 * Sets the selected project type.
+	 * <p>The addPages() method must have been invoked, before this method can 
+     * be used.</p>
+     * @param type a IProjectType instance, or <tt>null</tt> to select the
+     * the first available project type
+	 */
+	public void setSelectedProjectType(IProjectType type) {
+		projectConfigurationPage.setSelectedProjectType(type);
+	}
 }

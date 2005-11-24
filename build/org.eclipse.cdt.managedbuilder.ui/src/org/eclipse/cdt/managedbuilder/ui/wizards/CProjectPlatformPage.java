@@ -23,9 +23,12 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -75,6 +78,7 @@ public class CProjectPlatformPage extends WizardPage {
 	protected NewManagedProjectWizard parentWizard;
 	protected Combo platformSelection;
 	private ArrayList selectedConfigurations;
+    private   IProjectType defaultProjectType;
 	protected IProjectType selectedProjectType;
 	protected Button showAllProjTypes;
 	protected Button showAllConfigs;
@@ -161,8 +165,10 @@ public class CProjectPlatformPage extends WizardPage {
 
 		// Select the first project type in the list
 		populateTypes();
-		platformSelection.select(0);
-		handleTypeSelection();
+        IProjectType type = (defaultProjectType != null) 
+                          ? defaultProjectType 
+                          : (IProjectType) projectTypes.get(0);
+        setProjectType(type);
 		
 		// Do the nasty
 		setErrorMessage(null);
@@ -262,6 +268,41 @@ public class CProjectPlatformPage extends WizardPage {
 	 */
 	public IProjectType getSelectedProjectType() {
 		return selectedProjectType;
+	}
+    
+	/**
+	 * Sets the selected project type.
+	 * <p>If createControl(...) has been called, the selection will be set 
+     * immediately. Otherwise the selection will be set during the 
+     * createControl(...) invocation.
+     * </p>
+	 * @param type a IProjectType instance, or <tt>null</tt> to select the
+     * the first available project type 
+	 * @see #createControl(Composite)
+	 */
+	public void setSelectedProjectType(IProjectType type) {
+		if (projectTypeNames != null && platformSelection != null) {
+			// set project type now
+			setProjectType(type);
+		} else {
+			// set project during createControl(Control)
+			defaultProjectType = type;
+		}
+	}
+
+	private void setProjectType(IProjectType type) {
+		String name = (type != null) ? type.getName() : projectTypeNames[0]; 
+		boolean found = false;
+		for (int i = 0; !found && i < projectTypeNames.length; i++) {
+			if (name.equals(projectTypeNames[i])) {
+				platformSelection.select(i);
+				handleTypeSelection();
+				found = true;
+			}
+		}
+		if (!found) {
+			log("Could not find project-type with name: " + name); //$NON-NLS-1$
+		}
 	}
 
 	private void handleConfigurationSelectionChange() {
@@ -491,4 +532,10 @@ public class CProjectPlatformPage extends WizardPage {
 			return false;
 		}
 	}
+	
+    private void log(String msg) {
+            String id = ManagedBuilderUIPlugin.getUniqueIdentifier();
+            IStatus status = new Status(IStatus.WARNING, id, 0, msg, null);
+            ManagedBuilderUIPlugin.log(status);
+    }
 }

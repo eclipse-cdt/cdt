@@ -15,6 +15,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -38,6 +39,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.osgi.framework.Bundle;
 
 /**
@@ -66,6 +68,11 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 
 	private static final String fOptionMacros[] = new String[]{
 		"IncludeDefaults",	//$NON-NLS-1$
+		"ParentVersion",	//$NON-NLS-1$
+	};
+	
+	private static final String fToolMacros[] = new String[]{
+		"ToolVersion",	//$NON-NLS-1$
 	};
 
 	private static final String fConfigurationMacros[] = new String[]{
@@ -77,6 +84,8 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		"BuildArtifactFilePrefix",	//$NON-NLS-1$
 		"TargetOsList",	//$NON-NLS-1$
 		"TargetArchList",	//$NON-NLS-1$
+		"ToolChainVersion",	//$NON-NLS-1$
+		"BuilderVersion",	//$NON-NLS-1$
 	};
 
 	private static final String fProjectMacros[] = new String[]{
@@ -271,6 +280,9 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		case IBuildMacroProvider.CONTEXT_OPTION:
 			names = fOptionMacros; 
 			break;
+		case IBuildMacroProvider.CONTEXT_TOOL:
+			names = fToolMacros; 
+			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
 			names = fConfigurationMacros; 
 			break;
@@ -311,14 +323,21 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		case IBuildMacroProvider.CONTEXT_FILE:
 			if(contextData instanceof IFileContextData){
 				for(int i = 0; i < fFileMacros.length; i++){
-					if(macroName.equals(fFileMacros[i]))
+					if(macroName.equals(fFileMacros[i])){
 						macro = new FileContextMacro(macroName,(IFileContextData)contextData);
+						break;
+					}
 				}
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
 			if(contextData instanceof IOptionContextData){
 				macro = getMacro(macroName, (IOptionContextData)contextData);
+			}
+			break;
+		case IBuildMacroProvider.CONTEXT_TOOL:
+			if(contextData instanceof ITool){
+				macro = getMacro(macroName, (ITool)contextData);
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
@@ -354,6 +373,18 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			if(!canHandle(optionContext))
 				optionContext = null;
 			macro = new OptionMacro(macroName,optionContext);
+		} else if("ParentVersion".equals(macroName)){
+			IHoldsOptions holder = OptionContextData.getHolder(optionContext);
+			if(holder != null && holder.getVersion() != null)
+				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,holder.getVersion().toString());
+		}
+		return macro;
+	}
+	
+	public IBuildMacro getMacro(String macroName, ITool tool){
+		IBuildMacro macro = null;
+		if("ToolVersion".equals(macroName) && tool.getVersion() != null){	//$NON-NLS-1$
+			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,tool.getVersion().toString());
 		}
 		return macro;
 	}
@@ -512,6 +543,15 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 				archList = new String[0];
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT_LIST,archList);
 			
+		}
+		else if("ToolChainVersion".equals(macroName)){	//$NON-NLS-1$
+			if(cfg.getToolChain().getVersion() != null)
+				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getToolChain().getVersion().toString());
+		}
+		else if("BuilderVersion".equals(macroName)){	//$NON-NLS-1$
+			PluginVersionIdentifier version = cfg.getToolChain().getBuilder().getVersion(); 
+			if(version != null)
+				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version.toString());
 		}
 		return macro;
 	}
@@ -897,83 +937,30 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		if (parent instanceof ITool) {
 			tool = (ITool)parent;
 		}
-		IBuildObject bo = (optionContext instanceof OptionData) ?
+		IBuildObject bObj = (optionContext instanceof OptionData) ?
 				((OptionData)optionContext).getOptionContainer() : optionContext.getParent();
-		IBuildObject parentObject = null;
-		if(bo instanceof ITool)
-			bo = ((ITool)bo).getParent();
-		else if(bo instanceof IConfiguration)
-			bo = ((IConfiguration)bo).getToolChain();
-		
-		if(tool != null && bo instanceof IResourceConfiguration){
-			
-			IToolChain toolChain = null;
-			IConfiguration cfg = null;
-			
-			IResourceConfiguration rc = (IResourceConfiguration)bo;
-			cfg = rc.getParent();
-			toolChain = cfg.getToolChain();
-			parentObject = toolChain;
-			if(rc.getTool(tool.getId()) != null){
-				//get the configuration tool
-				tool = tool.getSuperClass();
-				IOption opts[] = tool.getOptions();
-				IOption superClass = option;
-				do{
-					for(int i = 0; i < opts.length; i++){
-						if(superClass.equals(opts[i]) || superClass.equals(opts[i].getSuperClass())){
-							parentOption = opts[i];
-							break;
-						}
-					}
-					if(parentOption != null)
-						break;
-				}while((superClass = superClass.getSuperClass()) != null);
-			} else if(toolChain.getTool(tool.getId()) != null){
-				parentOption = option.getSuperClass();
-			} else {	
-				ITool tools[] = toolChain.getTools();
-				ITool superClasses[] = new ITool[tools.length];
-				int i = 0;
-				for(i = 0; i < tools.length; i++){
-					superClasses[i] = tools[i];
-				}
-				for(i = 0; i < tools.length; i++){
-					if(tool.equals(superClasses[i]))
-						break;
-					superClasses[i] = tools[i].getSuperClass();
-				}
-				if(i < tools.length){
-					tool = tools[i];
-					IOption opts[] = tool.getOptions();
-					IOption superClassOpts[] = new IOption[opts.length];
-					for(i = 0; i < opts.length; i++){
-						superClassOpts[i] = opts[i];
-					}
-					for(i = 0; i < opts.length; i++){
-						if(superClassOpts[i] != null){
-							if(option.equals(superClassOpts[i]))
-								break;
-							superClassOpts[i] = superClassOpts[i].getSuperClass();
-						}
-					}
-					if(i < opts.length)
-						parentOption = opts[i];
-				}
-			}
+
+		IResourceConfiguration rcCfg = null;
+		ITool holderTool = null;
+		if(bObj instanceof ITool){
+			holderTool = (ITool)bObj;
+			IBuildObject p = holderTool.getParent();
+			if(p instanceof IResourceConfiguration)
+				rcCfg = (IResourceConfiguration)p;
+		} else if(bObj instanceof IResourceConfiguration)
+			rcCfg = (IResourceConfiguration)bObj;
+
+		IBuildObject parentObject = rcCfg == null ? bObj : rcCfg.getParent();
+
+		if(rcCfg != null && rcCfg.getTool(tool.getId()) != null){
+			tool = tool.getSuperClass();
+			parentOption = tool.getOptionBySuperClassId(option.getSuperClass().getId());
 		} else {
 			parentOption = option.getSuperClass();
-			if(parentOption != null){
-				IBuildObject parentParent = parentOption.getParent();
-				if (parentParent instanceof ITool)
-					parentObject = ((ITool)parentParent).getParent();
-				else if (parentParent instanceof IToolChain)
-					parentObject = parentParent;
-			}
 		}
 		
 		if(parentOption != null)
-			return new OptionData(parentOption,bo,parentObject);
+			return new OptionData(parentOption,bObj,parentObject);
 
 		return null;
 	}

@@ -434,7 +434,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 												"", //$NON-NLS-1$
 												" ", //$NON-NLS-1$
 												IBuildMacroProvider.CONTEXT_OPTION,
-												new OptionContextData(option, getDefaultConfiguration().getToolChain()));
+												new OptionContextData(option, tool));
 										if(resolved != null && resolved.length > 0){
 											for(int k = 0; k < resolved.length; k++){
 												String string = resolved[k];
@@ -724,7 +724,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 							"", //$NON-NLS-1$
 							" ", //$NON-NLS-1$
 							IBuildMacroProvider.CONTEXT_FILE,
-							new FileContextData(inputLocation,outputLocation,null,getDefaultConfiguration().getToolChain()));
+							new FileContextData(inputLocation,outputLocation,null,tool));
 					if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 						cmd = resolvedCommand;
 						
@@ -765,7 +765,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 												"", //$NON-NLS-1$
 												" ", //$NON-NLS-1$
 												IBuildMacroProvider.CONTEXT_OPTION,
-												new OptionContextData(option, getDefaultConfiguration().getToolChain()));
+												new OptionContextData(option, tool));
 										if(resolved != null && resolved.length > 0)
 											objs.addAll(Arrays.asList(resolved));
 									} catch (BuildMacroException e) {
@@ -1317,12 +1317,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 					if (entryType == IPathEntry.CDT_INCLUDE_FILE && 
 							op[j].getValueType() == IOption.INCLUDE_PATH) 
 					{
-						OptionContextData ocd = new OptionContextData(op[j], obj);				
+						OptionContextData ocd = new OptionContextData(op[j], t[i]);				
 						addIncludes(entries, builtIns ? op[j].getBuiltIns() : op[j].getIncludePaths(), resPath, ocd);
 					} else if (entryType == IPathEntry.CDT_LIBRARY && 
 							op[j].getValueType() == IOption.LIBRARIES) 
 					{
-						OptionContextData ocd = new OptionContextData(op[j], obj);				
+						OptionContextData ocd = new OptionContextData(op[j], t[i]);				
 						addLibraries(entries, builtIns ? op[j].getBuiltIns() : op[j].getLibraries(), resPath, ocd);
 					} else if (entryType == IPathEntry.CDT_MACRO && 
 							op[j].getValueType() == IOption.PREPROCESSOR_SYMBOLS) 

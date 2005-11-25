@@ -27,7 +27,12 @@ public interface IOptionContextData {
 	public IOption getOption();
 	
 	/**
-	 * Returns IBuildObject that could be either an IToolChain or an IResourceConfiguration reference
+	 * Returns IBuildObject that represents the option holder. 
+	 * For the backward compatibility MBS will also support the cases 
+	 * when this method returns either an IToolChain or IResourceConfiguration. 
+	 * In this case MBS will try to obtain the option holder automatically, 
+	 * but it might fail in case the tool-chain/resource configuration contains 
+	 * more than one tools with the same super-class
 	 * 
 	 * @return IBuildObject
 	 */

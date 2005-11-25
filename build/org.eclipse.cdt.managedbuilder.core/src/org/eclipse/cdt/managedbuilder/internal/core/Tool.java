@@ -2107,7 +2107,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 					String strCmd = option.getCommand();
 					String val = option.getStringValue();
 					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+						new FileContextData(inputFileLocation, outputFileLocation, option, this));
 					if (val.length() > 0
 						&& (val = MacroResolver.resolveToString(val, macroSubstitutor)).length() > 0) {
 						sb.append( evaluateCommand( strCmd, val ) );
@@ -2117,7 +2117,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				case IOption.STRING_LIST :
 					String listCmd = option.getCommand();
 					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+						new FileContextData(inputFileLocation, outputFileLocation, option, this));
 					String[] list = MacroResolver.resolveStringListValues(option.getStringListValue(), macroSubstitutor, true);
 					if(list != null){
 						for (int j = 0; j < list.length; j++) {
@@ -2131,7 +2131,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				case IOption.INCLUDE_PATH :
 					String incCmd = option.getCommand();
 					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+						new FileContextData(inputFileLocation, outputFileLocation, option, this));
 					String[] paths = MacroResolver.resolveStringListValues(option.getIncludePaths(), macroSubstitutor, true);
 					if(paths != null){
 						for (int j = 0; j < paths.length; j++) {
@@ -2145,7 +2145,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 				case IOption.PREPROCESSOR_SYMBOLS :
 					String defCmd = option.getCommand();
 					macroSubstitutor.setMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(inputFileLocation, outputFileLocation, option, getParent()));
+						new FileContextData(inputFileLocation, outputFileLocation, option, this));
 					String[] symbols = MacroResolver.resolveStringListValues(option.getDefinedSymbols(), macroSubstitutor, true);
 					if(symbols != null){
 						for (int j = 0; j < symbols.length; j++) {

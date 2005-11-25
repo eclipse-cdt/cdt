@@ -1532,7 +1532,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						EMPTY_STRING,
 						WHITESPACE,
 						IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(null,null,null,info.getDefaultConfiguration().getToolChain()));
+						new FileContextData(null,null,null,tool));
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					command = resolvedCommand;
 					
@@ -1566,9 +1566,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
                                 EMPTY_STRING,
                                 WHITESPACE,
                                 IBuildMacroProvider.CONTEXT_FILE,
-                                new FileContextData(null, null, null, info
-                                        .getDefaultConfiguration()
-                                        .getToolChain()));
+                                new FileContextData(null, null, null, tool));
                 if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
                     buildCmd = resolvedCommand;
 
@@ -2127,7 +2125,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		// are referenced
 		boolean fileExplicitMacrosReferenced = MacroResolver.getReferencedExplitFileMacros(tool).length > 0 ||
 			MacroResolver.getReferencedExplitFileMacros(tool.getToolCommand(),IBuildMacroProvider.CONTEXT_FILE, 
-					new FileContextData(sourceLocation, outputLocation, null, config.getToolChain())).length > 0;
+					new FileContextData(sourceLocation, outputLocation, null, tool)).length > 0;
 		//get and resolve command
 		String cmd = tool.getToolCommand();
 		try{
@@ -2135,7 +2133,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					EMPTY_STRING,
 					WHITESPACE,
 					IBuildMacroProvider.CONTEXT_FILE,
-					new FileContextData(sourceLocation, outputLocation, null, info.getDefaultConfiguration().getToolChain()));
+					new FileContextData(sourceLocation, outputLocation, null, tool));
 			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 				cmd = resolvedCommand;
 				
@@ -2298,9 +2296,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
                                     WHITESPACE,
                                     IBuildMacroProvider.CONTEXT_FILE,
                                     new FileContextData(sourceLocation,
-                                            outputLocation, null, info
-                                                    .getDefaultConfiguration()
-                                                    .getToolChain()));
+                                            outputLocation, null, tool));
                     if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
                         buildCmd = resolvedCommand;
 
@@ -2358,9 +2354,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
                                     WHITESPACE,
                                     IBuildMacroProvider.CONTEXT_FILE,
                                     new FileContextData(sourceLocation,
-                                            outputLocation, null, info
-                                                    .getDefaultConfiguration()
-                                                    .getToolChain()));
+                                            outputLocation, null, tool));
                     if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
                         buildCmd = resolvedCommand;
 
@@ -2392,9 +2386,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
                                     WHITESPACE,
                                     IBuildMacroProvider.CONTEXT_FILE,
                                     new FileContextData(sourceLocation,
-                                            outputLocation, null, info
-                                                    .getDefaultConfiguration()
-                                                    .getToolChain()));
+                                            outputLocation, null, tool));
                     
                 } catch (BuildMacroException e) {
                 }

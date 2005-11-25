@@ -200,7 +200,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										"", //$NON-NLS-1$
 										" ", //$NON-NLS-1$
 										IBuildMacroProvider.CONTEXT_OPTION,
-										new OptionContextData(option, config.getToolChain()));
+										new OptionContextData(option, tool));
 								if((resolved = resolved.trim()).length() > 0)
 									inputName = resolved;
 							} catch (BuildMacroException e){
@@ -507,7 +507,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										"", //$NON-NLS-1$
 										" ", //$NON-NLS-1$
 										IBuildMacroProvider.CONTEXT_OPTION,
-										new OptionContextData(option, config.getToolChain()));
+										new OptionContextData(option, tool));
 								if((resolved = resolved.trim()).length() > 0)
 									outputs.set(j, resolved);
 							} catch (BuildMacroException e){
@@ -592,7 +592,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										"", //$NON-NLS-1$
 										" ", //$NON-NLS-1$
 										IBuildMacroProvider.CONTEXT_OPTION,
-										new OptionContextData(option, config.getToolChain()));
+										new OptionContextData(option, tool));
 								if((resolved = resolved.trim()).length() > 0)
 									outputNames[j] = resolved;
 							} catch (BuildMacroException e){

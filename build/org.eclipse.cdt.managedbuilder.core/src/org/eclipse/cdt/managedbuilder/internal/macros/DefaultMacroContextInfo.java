@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.macros;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -55,6 +56,13 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 			break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
 			if(data instanceof IOptionContextData){
+				return new IBuildMacroSupplier[]{
+						BuildMacroProvider.fMbsMacroSupplier
+				};
+			}
+			break;
+		case IBuildMacroProvider.CONTEXT_TOOL:
+			if(data instanceof ITool){
 				return new IBuildMacroSupplier[]{
 						BuildMacroProvider.fMbsMacroSupplier
 				};
@@ -150,22 +158,30 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 		case IBuildMacroProvider.CONTEXT_OPTION:
 			if(fData instanceof IOptionContextData){
 				IOptionContextData optionContext = (IOptionContextData)fData;
-				IBuildObject buildObj = optionContext.getParent();
+				IHoldsOptions ho = OptionContextData.getHolder(optionContext);
+				if(ho instanceof ITool)
+					return new DefaultMacroContextInfo(
+							IBuildMacroProvider.CONTEXT_TOOL,
+							ho);
+				else if(ho instanceof IToolChain)
+					return new DefaultMacroContextInfo(
+							IBuildMacroProvider.CONTEXT_CONFIGURATION,
+							((IToolChain)ho).getParent());
+			}
+			break;
+		case IBuildMacroProvider.CONTEXT_TOOL:
+			if(fData instanceof ITool){
+				IBuildObject parent = ((ITool)fData).getParent();
 				IConfiguration cfg = null;
-				if(buildObj instanceof ITool)
-					buildObj = ((ITool)buildObj).getParent();
-				if(buildObj instanceof IToolChain)
-					cfg = ((IToolChain)buildObj).getParent();
-				else if(buildObj instanceof IResourceConfiguration)
-					cfg = ((IResourceConfiguration)buildObj).getParent();
-				else if(buildObj instanceof IConfiguration)
-					cfg = (IConfiguration)buildObj;
+				if(parent instanceof IToolChain)
+					cfg = ((IToolChain)parent).getParent();
+				else if(parent instanceof IResourceConfiguration)
+					cfg = ((IResourceConfiguration)parent).getParent();
 					
-				if(cfg != null){
+				if(cfg != null)
 					return new DefaultMacroContextInfo(
 							IBuildMacroProvider.CONTEXT_CONFIGURATION,
 							cfg);
-				}
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
@@ -209,5 +225,4 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 		}
 		return null;
 	}
-
 }

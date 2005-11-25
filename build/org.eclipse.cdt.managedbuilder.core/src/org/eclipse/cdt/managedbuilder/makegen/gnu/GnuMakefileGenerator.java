@@ -1112,7 +1112,20 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 
 		// Get the clean command from the build model
 		buffer.append("RM := "); //$NON-NLS-1$
-		buffer.append(info.getCleanCommand() + NEWLINE);
+		
+		// support macros in the clean command
+		String cleanCommand = info.getCleanCommand();
+		
+		try {
+			cleanCommand = ManagedBuildManager.getBuildMacroProvider()
+					.resolveValueToMakefileFormat(info.getCleanCommand(),
+							EMPTY_STRING, WHITESPACE,
+							IBuildMacroProvider.CONTEXT_CONFIGURATION, config);
+		} catch (BuildMacroException e) {
+		}
+		
+		buffer.append(cleanCommand + NEWLINE);
+		
 		buffer.append(NEWLINE);
 		
 		// Now add the source providers

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
@@ -31,9 +32,17 @@ import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 /**
  * @see ITranslationUnit
@@ -41,7 +50,8 @@ import org.eclipse.core.runtime.content.IContentType;
 public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	IPath location = null;
-	String fContentTypeID;
+	String contentTypeId;
+	ILanguage language;
 
 	/**
 	 * If set, this is the problem requestor which will be used to notify problems
@@ -594,8 +604,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	public boolean isHeaderUnit() {
 		return (
-				CCorePlugin.CONTENT_TYPE_CHEADER.equals(fContentTypeID)
-				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(fContentTypeID)
+				CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)
 				);
 	}
 
@@ -604,9 +614,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	public boolean isSourceUnit() {
 		return (
-				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(fContentTypeID)
-				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(fContentTypeID)
-				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(fContentTypeID)
+				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentTypeId)
 				);
 	}
 
@@ -615,8 +625,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	public boolean isCLanguage() {
 		return (
-				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(fContentTypeID)
-				|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(fContentTypeID)
+				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)
 				);
 	}
 
@@ -625,8 +635,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	public boolean isCXXLanguage() {
 		return (
-				CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(fContentTypeID)
-				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(fContentTypeID)
+				CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)
 				);
 	}
 
@@ -634,7 +644,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isASMLanguage()
 	 */
 	public boolean isASMLanguage() {
-		return CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(fContentTypeID);
+		return CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentTypeId);
 	}
 	
 	
@@ -647,24 +657,43 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return res.exists();
 		return super.exists();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getASTTranslationUnit()
-	 */
-	public IASTTranslationUnit getASTTranslationUnit() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+	public ILanguage getLanguage() throws CoreException {
+		if (language == null) {
+			// Look for the language extension registered against the
+			// content type string
+			IContentTypeManager manager = Platform.getContentTypeManager(); 
+			IContentType contentType = manager.getContentType(contentTypeId);
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
+			IExtension[] extensions = point.getExtensions();
+			for (int i = 0; i < extensions.length; ++i) {
+				IConfigurationElement[] languages = extensions[i].getConfigurationElements();
+				for (int j = 0; j < languages.length; ++j) {
+					IConfigurationElement language = languages[j];
+					IConfigurationElement[] contentTypes = language.getChildren("contentType"); //$NON-NLS-1$
+					for (int k = 0; k < contentTypes.length; ++k) {
+						IContentType langContType = manager.getContentType(contentTypes[k].getAttribute("id")); //$NON-NLS-1$
+						if (contentType.equals(langContType)) {
+							this.language = (ILanguage)language.createExecutableExtension("class"); //$NON-NLS-1$
+							return this.language;
+						}
+					}
+				}
+			}
+		}
+		
+		return language;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getContentTypeId()
 	 */
 	public String getContentTypeId() {
-		return fContentTypeID;
+		return contentTypeId;
 	}
 
 	protected void setContentTypeID(String id) {
-		fContentTypeID = id;
+		contentTypeId = id;
 	}
 
 	/* (non-Javadoc)

@@ -190,17 +190,17 @@ public interface IASTTranslationUnit extends IASTNode {
     public ParserLanguage getParserLanguage();
     
     /**
-     * Return the PDOM associated with this translation unit.
+     * Return the Index associated with this translation unit.
      * 
-     * @return the PDOM for this translation unit
+     * @return the Index for this translation unit
      */
-    public IPDOM getPDOM();
+    public IPDOM getIndex();
     
     /**
-     * Set the PDOM to be used for this translation unit.
+     * Set the Index to be used for this translation unit.
      * 
-     * @param pdom
+     * @param index
      */
-    public void setPDOM(IPDOM pdom);
+    public void setIndex(IPDOM index);
     
 }

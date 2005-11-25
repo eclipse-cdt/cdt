@@ -746,7 +746,7 @@ public class CPPSemantics {
 		}
 		if( binding == null ){
 			// Let's try the pdom
-			IPDOM pdom = name.getTranslationUnit().getPDOM();
+			IPDOM pdom = name.getTranslationUnit().getIndex();
 			if (pdom != null)
 				binding = pdom.resolveBinding(name);
 
@@ -3274,7 +3274,7 @@ public class CPPSemantics {
         
         IASTTranslationUnit tu = name.getTranslationUnit();
         if (tu != null) {
-        	IPDOM pdom = tu.getPDOM(); 
+        	IPDOM pdom = tu.getIndex(); 
         	if (pdom != null)
         		result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
         }

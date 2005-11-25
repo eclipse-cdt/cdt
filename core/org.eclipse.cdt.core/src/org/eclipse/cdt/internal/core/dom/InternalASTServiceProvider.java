@@ -171,7 +171,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		// Parse
 		IASTTranslationUnit tu = parser.parse();
 		// Set the PDOM if we can find one
-		tu.setPDOM(PDOM.getPDOM(project));
+		tu.setIndex(PDOM.getPDOM(project));
 		return tu;
     }
 
@@ -229,7 +229,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		parser.parse();
 		ASTCompletionNode node = parser.getCompletionNode();
 		if (node != null) {
-			node.getTranslationUnit().setPDOM(PDOM.getPDOM(project));
+			node.getTranslationUnit().setIndex(PDOM.getPDOM(project));
 			node.count = scanner.getCount();
 		}
 		return node;

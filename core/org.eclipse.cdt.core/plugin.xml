@@ -44,6 +44,7 @@
    <extension-point id="CodeFormatter" name="%CodeFormatter.name" schema="schema/CodeFormatter.exsd"/>
    <extension-point id="CIndexer" name="C/C++ Indexer" schema="schema/CIndexer.exsd"/>
    <extension-point id="PDOMProvider" name="%PDOMProviderName" schema="schema/PDOMProvider.exsd"/>
+   <extension-point id="language" name="%language.name" schema="schema/language.exsd"/>
 <!-- =================================================================================== -->
 <!-- Define the list of the Binary Parser provided by the CDT                            -->
 <!-- =================================================================================== -->
@@ -574,6 +575,21 @@
       <CBuildConsole
             class="org.eclipse.cdt.internal.core.SystemBuildConsole"
             id="org.eclipse.cdt.core.systemConsole"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.language">
+      <language
+            class="org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage"
+            id="gcc"
+            name="GNU C">
+         <contentType id="org.eclipse.cdt.core.cSource"/>
+      </language>
+      <language
+            class="org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage"
+            id="g++"
+            name="GNU C++">
+         <contentType id="org.eclipse.cdt.core.cxxSource"/>
+      </language>
    </extension>
 
 <!-- =================================================================================== -->

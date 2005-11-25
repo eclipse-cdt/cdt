@@ -573,11 +573,11 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return ParserLanguage.CPP;
     }
     
-    public IPDOM getPDOM() {
+    public IPDOM getIndex() {
     	return pdom;
     }
     
-    public void setPDOM(IPDOM pdom) {
+    public void setIndex(IPDOM pdom) {
     	this.pdom = pdom;
     }
     

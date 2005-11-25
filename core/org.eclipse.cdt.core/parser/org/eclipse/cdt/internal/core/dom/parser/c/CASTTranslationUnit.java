@@ -521,11 +521,11 @@ public class CASTTranslationUnit extends CASTNode implements
         return ParserLanguage.C;
     }
 
-    public IPDOM getPDOM() {
+    public IPDOM getIndex() {
     	return pdom;
     }
     
-    public void setPDOM(IPDOM pdom) {
+    public void setIndex(IPDOM pdom) {
     	this.pdom = pdom;
     }
     

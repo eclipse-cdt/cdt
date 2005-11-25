@@ -15,6 +15,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -51,6 +52,10 @@ public class PartialWorkingCopyCodeReaderFactory
 		return checkWorkingCopyThenCache(path);
     }
 
+    public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
+		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
+    }
+    
 	/**
 	 * @param path
 	 * @return

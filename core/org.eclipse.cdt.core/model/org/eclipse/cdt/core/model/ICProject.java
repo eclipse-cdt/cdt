@@ -13,6 +13,8 @@ package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -249,4 +251,5 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 	 */
 	Object[] getNonCResources() throws CModelException;
 
+	IPDOM getIndex();
 }

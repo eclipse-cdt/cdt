@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.internal.core.dom.parser.EmptyCodeReaderCache;
@@ -42,6 +43,10 @@ public class FileCodeReaderFactory implements ICodeReaderFactory {
 		return cache.get(path);
 	}
 
+    public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
+		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */

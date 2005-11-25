@@ -1300,7 +1300,7 @@ public class CVisitor {
 		if( blockItem != null) {
 			// We're at the end of our rope, check the PDOM if we can
 			IASTTranslationUnit tu = (IASTTranslationUnit)blockItem;
-			IPDOM pdom = tu.getPDOM();
+			IPDOM pdom = tu.getIndex();
 			binding = null;
 			if (pdom != null)
 				binding = pdom.resolveBinding(name);
@@ -1908,7 +1908,7 @@ public class CVisitor {
         
         IASTTranslationUnit tu = name.getTranslationUnit();
         if (tu != null) {
-	        IPDOM pdom = tu.getPDOM(); 
+	        IPDOM pdom = tu.getIndex(); 
 	        if (pdom != null)
 	        	result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
         }

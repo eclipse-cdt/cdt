@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.CodeReaderCache;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
@@ -75,6 +76,10 @@ public class SavedCodeReaderFactory implements ICodeReaderFactory {
      */
     public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return cache.get(path);
+    }
+
+    public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
+		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
     }
 
     /* (non-Javadoc)

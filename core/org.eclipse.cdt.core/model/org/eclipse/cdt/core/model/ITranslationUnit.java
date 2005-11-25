@@ -12,8 +12,10 @@ package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Represents an entire C translation unit (<code>.c</code> source file).
@@ -363,13 +365,15 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	/**
 	 * parse()
 	 * returns a map of all new elements and their element info
+	 * @deprecated this is currently only used by the core tests. It should
+	 * be removed from the interface.
 	 */
 	Map parse();
 
 	/**
-	 * Returns the root object of a DOM Abstract syntax tree.
+	 * Return the language for this translation unit.
 	 * 
-	 * @return 
+	 * @return
 	 */
-	IASTTranslationUnit getASTTranslationUnit();
+	ILanguage getLanguage() throws CoreException;
 }

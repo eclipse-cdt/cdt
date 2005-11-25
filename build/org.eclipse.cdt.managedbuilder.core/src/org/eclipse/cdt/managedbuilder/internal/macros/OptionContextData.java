@@ -11,7 +11,12 @@
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 
 /**
@@ -41,4 +46,46 @@ public class OptionContextData implements IOptionContextData {
 		return fParent;
 	}
 
+	public static IHoldsOptions getHolder(IOptionContextData data){
+		IOption option = data.getOption();
+		if(option == null)
+			return null;
+		
+		IBuildObject buildObj = data.getParent();
+		IToolChain tCh = null;
+		IHoldsOptions ho = null;
+		IResourceConfiguration rcCfg = null;
+		if(buildObj instanceof ITool)
+			ho = (ITool)buildObj;
+		if(buildObj instanceof IToolChain)
+			tCh = (IToolChain)buildObj;
+		else if(buildObj instanceof IResourceConfiguration)
+			rcCfg = (IResourceConfiguration)buildObj;
+		else if(buildObj instanceof IConfiguration)
+			tCh = ((IConfiguration)buildObj).getToolChain();
+
+		if(ho == null){
+			ho = option.getOptionHolder();
+			ITool tools[] = null;
+			if(tCh != null){
+				for(IToolChain cur = tCh; cur != null; cur = cur.getSuperClass()){
+					if(cur == ho)
+						return tCh;
+				}
+				tools = tCh.getTools();
+			} else if(rcCfg != null){
+				tools = rcCfg.getTools();
+			}
+			
+			if(tools != null){
+				for(int i = 0; i < tools.length; i++){
+					for(ITool cur = tools[i]; cur != null; cur = cur.getSuperClass()){
+						if(cur == ho)
+							return tools[i];
+					}
+				}
+			}
+		}
+		return ho;
+	}
 }

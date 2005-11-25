@@ -1547,7 +1547,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						EMPTY_STRING,
 						WHITESPACE,
 						IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(null,null,null,info.getDefaultConfiguration().getToolChain()));
+						new FileContextData(null,null,null,tool));
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					command = resolvedCommand;
 					
@@ -1581,9 +1581,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
                                 EMPTY_STRING,
                                 WHITESPACE,
                                 IBuildMacroProvider.CONTEXT_FILE,
-                                new FileContextData(null, null, null, info
-                                        .getDefaultConfiguration()
-                                        .getToolChain()));
+                                new FileContextData(null, null, null, tool));
                 if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
                     buildCmd = resolvedCommand;
 
@@ -2149,7 +2147,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				|| MacroResolver.getReferencedExplitFileMacros(tool
 						.getToolCommand(), IBuildMacroProvider.CONTEXT_FILE,
 						new FileContextData(sourceLocation, outputLocation,
-								null, config.getToolChain())).length > 0;
+								null, tool)).length > 0;
 		//get and resolve command
 		String cmd = tool.getToolCommand();
 		
@@ -2163,9 +2161,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 								WHITESPACE,
 								IBuildMacroProvider.CONTEXT_FILE,
 								new FileContextData(sourceLocation,
-										outputLocation, null, info
-												.getDefaultConfiguration()
-												.getToolChain()));
+										outputLocation, null, tool));
 			} else {
 				// if we need an explicit rule then don't use any builder
 				// variables, resolve everything
@@ -2177,9 +2173,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 								WHITESPACE,
 								IBuildMacroProvider.CONTEXT_FILE,
 								new FileContextData(sourceLocation,
-										outputLocation, null, info
-												.getDefaultConfiguration()
-												.getToolChain()));
+										outputLocation, null, tool));
 			}
 
 			if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
@@ -2346,9 +2340,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 										WHITESPACE,
 										IBuildMacroProvider.CONTEXT_FILE,
 										new FileContextData(sourceLocation,
-												outputLocation, null, info
-														.getDefaultConfiguration()
-														.getToolChain()));
+												outputLocation, null, tool));
 					} else {
 						// if we need an explicit rule then don't use any builder
 						// variables, resolve everything
@@ -2360,9 +2352,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 										WHITESPACE,
 										IBuildMacroProvider.CONTEXT_FILE,
 										new FileContextData(sourceLocation,
-												outputLocation, null, info
-														.getDefaultConfiguration()
-														.getToolChain()));
+												outputLocation, null, tool));
 					}
 
 					if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
@@ -2423,9 +2413,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 										WHITESPACE,
 										IBuildMacroProvider.CONTEXT_FILE,
 										new FileContextData(sourceLocation,
-												outputLocation, null, info
-														.getDefaultConfiguration()
-														.getToolChain()));
+												outputLocation, null, tool));
 					} else {
 						// if we need an explicit rule then don't use any builder
 						// variables, resolve everything
@@ -2437,9 +2425,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 										WHITESPACE,
 										IBuildMacroProvider.CONTEXT_FILE,
 										new FileContextData(sourceLocation,
-												outputLocation, null, info
-														.getDefaultConfiguration()
-														.getToolChain()));
+												outputLocation, null, tool));
 					}
 
 					if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
@@ -2474,8 +2460,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 										IBuildMacroProvider.CONTEXT_FILE,
 										new FileContextData(sourceLocation,
 												outputLocation, null,
-												info.getDefaultConfiguration()
-														.getToolChain()));
+												tool));
 					}
 
 					else {
@@ -2487,8 +2472,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 										IBuildMacroProvider.CONTEXT_FILE,
 										new FileContextData(sourceLocation,
 												outputLocation, null,
-												info.getDefaultConfiguration()
-														.getToolChain()));
+												tool));
 					}
 
 				} catch (BuildMacroException e) {

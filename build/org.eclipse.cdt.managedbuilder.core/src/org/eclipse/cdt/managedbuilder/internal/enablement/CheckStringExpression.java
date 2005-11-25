@@ -69,14 +69,14 @@ public class CheckStringExpression implements IBooleanExpression {
 					" ",	//$NON-NLS-1$
 					delimiter,
 					IBuildMacroProvider.CONTEXT_OPTION,
-					new OptionContextData(option,configuration)
+					new OptionContextData(option,holder)
 					);
 			
 			String resolvedValue =  provider.resolveValue(fValue,
 					" ",	//$NON-NLS-1$
 					delimiter,
 					IBuildMacroProvider.CONTEXT_OPTION,
-					new OptionContextData(option,configuration)
+					new OptionContextData(option,holder)
 					);
 			
 			if(fIsRegex){

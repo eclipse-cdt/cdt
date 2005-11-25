@@ -136,9 +136,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_FILE,
 									new FileContextData(resource.getLocation(),
-											null, null, info
-													.getDefaultConfiguration()
-													.getToolChain()));
+											null, null, tool));
 				} else {
 					// use builder variables
 					resolvedCommand = ManagedBuildManager
@@ -149,9 +147,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_FILE,
 									new FileContextData(resource.getLocation(),
-											null, null, info
-													.getDefaultConfiguration()
-													.getToolChain()));
+											null, null, tool));
 				}
 				
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
@@ -195,9 +191,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_FILE,
 									new FileContextData(resource.getLocation(),
-											null, null, info
-													.getDefaultConfiguration()
-													.getToolChain()));
+											null, null, tool));
 				} else {
 					// use builder variables
 					resolvedCommand = ManagedBuildManager
@@ -208,9 +202,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_FILE,
 									new FileContextData(resource.getLocation(),
-											null, null, info
-													.getDefaultConfiguration()
-													.getToolChain()));
+											null, null, tool));
 				}
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					buildCmd = resolvedCommand;
@@ -220,14 +212,24 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			
 			
 		} else {
-			String cmd = info.getToolForSource(inputExtension);
+			ITool tool = null;
+			tools = config.getFilteredTools();
+			for (int index = 0; index < tools.length; index++) {
+				ITool tmp = tools[index];
+				if (tmp.buildsFileType(inputExtension)) {
+					tool = tmp;
+					break;
+				}
+			}
+			String cmd = tool != null ? tool.getToolCommand() : null;
+
 			//try to resolve the build macros in the tool command
 			try{
 				String resolvedCommand = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(cmd,
 						"", //$NON-NLS-1$
 						" ", //$NON-NLS-1$
 						IBuildMacroProvider.CONTEXT_FILE,
-						new FileContextData(resource.getLocation(),null,null,info.getDefaultConfiguration().getToolChain()));
+						new FileContextData(resource.getLocation(),null,null,tool));
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					cmd = resolvedCommand;
 					
@@ -266,9 +268,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_FILE,
 									new FileContextData(resource.getLocation(),
-											null, null, info
-													.getDefaultConfiguration()
-													.getToolChain()));
+											null, null, tool));
 				} else {
 					// use builder variables
 					resolvedCommand = ManagedBuildManager
@@ -279,9 +279,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 									" ", //$NON-NLS-1$
 									IBuildMacroProvider.CONTEXT_FILE,
 									new FileContextData(resource.getLocation(),
-											null, null, info
-													.getDefaultConfiguration()
-													.getToolChain()));
+											null, null, tool));
 				}
                 if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
                     buildCmd = resolvedCommand;

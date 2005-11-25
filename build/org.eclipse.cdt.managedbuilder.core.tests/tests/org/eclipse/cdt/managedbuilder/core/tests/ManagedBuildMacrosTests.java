@@ -206,7 +206,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		assertNotNull(opt);
 
 		// standard check of suppliers # and attempt to add macro (should fail) 
-		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,tc));
+		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
 		assertNotNull(ms);
 		assertEquals(ms.length, 1);
 		assertFalse(addMacro(TEST, IBuildMacro.VALUE_TEXT, TST[IBuildMacroProvider.CONTEXT_OPTION], IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t)));
@@ -214,7 +214,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		// modify value and check that macros is resolved 
 		try {
 			opt = cfgs[0].setOption(t, opt, "222 " + INC_DEF);  //$NON-NLS-1$
-			String a = mp.resolveValue(opt.getStringValue(), UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,tc));
+			String a = mp.resolveValue(opt.getStringValue(), UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
 			assertEquals(a, "222 111");  //$NON-NLS-1$
 		} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
 		  catch (BuildException e) { fail(e.getLocalizedMessage()); }
@@ -225,7 +225,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		IOption ropt = rc.getTools()[0].getOptionById(OPT_IDS);
 		try {
 			ropt = rc.setOption(rc.getTools()[0], ropt, "333 " + INC_DEF);  //$NON-NLS-1$
-			String a = mp.resolveValue(ropt.getStringValue(), UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,tc));
+			String a = mp.resolveValue(ropt.getStringValue(), UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
 			assertEquals(a, "333 111");  //$NON-NLS-1$
 		} catch (Exception e) { fail(e.getLocalizedMessage());	}
 	}
@@ -236,7 +236,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		IToolChain tc = cfgs[0].getToolChain();
 		ITool       t = cfgs[0].getTools()[0];
 		IOption   opt = t.getOptionById(OPT_IDL);
-		OptionContextData ocd = new OptionContextData(opt,tc);
+		OptionContextData ocd = new OptionContextData(opt,t);
 		assertNotNull(opt);
 		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_OPTION, ocd);
 		assertNotNull(ms);
@@ -259,7 +259,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			ArrayList ar = new ArrayList(1);
 			for (int i=0; i<set1.length; i++) {
 				try {
-					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,tc));
+					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
 					if (aus == null) continue;
 					for (int j=0; j<aus.length; j++) ar.add(aus[j]);
 				} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); } 
@@ -326,14 +326,14 @@ public class ManagedBuildMacrosTests extends TestCase {
 			values0wAbs[8] = dev1 + values0wAbs[8];
 			values0wAbs[9] = dev1 + values0wAbs[9];
 			
-			fd = new FileContextData(new Path(values0wAbs[3]), new Path(values0wAbs[8]),opt,cfgs[0].getToolChain());
+			fd = new FileContextData(new Path(values0wAbs[3]), new Path(values0wAbs[8]),opt,t);
 			for (int i=0; i<names.length; i++) 
 			try {	
 				assertEquals(values0wAbs[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
 			} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
 			
 			// check that relative path are reported OK
-			fd = new FileContextData(p.append(EIN), p.append(AUS),opt,cfgs[0].getToolChain());
+			fd = new FileContextData(p.append(EIN), p.append(AUS),opt,t);
 			for (int i=0; i<names.length; i++) 
 			try {
 				assertEquals(values0wRel[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
@@ -368,7 +368,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			
 		} else {
 			// check relative path only
-			fd = new FileContextData(p.append(EIN), p.append(AUS),opt,cfgs[0].getToolChain());
+			fd = new FileContextData(p.append(EIN), p.append(AUS),opt,t);
 			for (int i=0; i<names.length; i++) 
 			try {	
 				assertEquals(values0u[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
@@ -384,8 +384,8 @@ public class ManagedBuildMacrosTests extends TestCase {
 				TST[IBuildMacroProvider.CONTEXT_FILE], IBuildMacroProvider.CONTEXT_FILE, fd));
 
 		// For config #3, macros should contain lines specified in plugin.xml
-		opt = cfgs[3].getTools()[0].getOptions()[0];		
-		fd = new FileContextData(p.append(EIN), p.append(AUS),opt,cfgs[1].getToolChain());
+		opt = cfgs[1].getTools()[0].getOptions()[0];		
+		fd = new FileContextData(p.append(EIN), p.append(AUS),opt,cfgs[1].getTools()[0]);
 		for (int i=0; i<names.length; i++) 
 		try {
 			assertEquals(values1[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());

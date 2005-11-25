@@ -22,6 +22,7 @@ public interface IBuildMacroProvider{
 	public final static int CONTEXT_WORKSPACE = 5;
 	public final static int CONTEXT_INSTALLATIONS = 6;
 	public final static int CONTEXT_ECLIPSEENV = 7;
+	public final static int CONTEXT_TOOL = 8;
 
 	/**
 	 * 

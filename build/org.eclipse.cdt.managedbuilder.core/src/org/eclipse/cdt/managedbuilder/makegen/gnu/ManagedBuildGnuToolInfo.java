@@ -215,8 +215,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 													IBuildMacroProvider.CONTEXT_OPTION,
 													new OptionContextData(
 															option,
-															config
-																	.getToolChain()));
+															tool));
 								} else {
 
 									// resolve to makefile variable format
@@ -229,8 +228,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 													IBuildMacroProvider.CONTEXT_OPTION,
 													new OptionContextData(
 															option,
-															config
-																	.getToolChain()));
+															tool));
 								}
 
 								if ((resolved = resolved.trim()).length() > 0)
@@ -539,7 +537,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										"", //$NON-NLS-1$
 										" ", //$NON-NLS-1$
 										IBuildMacroProvider.CONTEXT_OPTION,
-										new OptionContextData(option, config.getToolChain()));
+										new OptionContextData(option, tool));
 								if((resolved = resolved.trim()).length() > 0)
 									outputs.set(j, resolved);
 							} catch (BuildMacroException e){
@@ -624,7 +622,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 										"", //$NON-NLS-1$
 										" ", //$NON-NLS-1$
 										IBuildMacroProvider.CONTEXT_OPTION,
-										new OptionContextData(option, config.getToolChain()));
+										new OptionContextData(option, tool));
 								if((resolved = resolved.trim()).length() > 0)
 									outputNames[j] = resolved;
 							} catch (BuildMacroException e){

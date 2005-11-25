@@ -74,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -228,7 +229,7 @@ public class CPPTemplates {
 		
 		//a reference: class or function template?
 		IBinding template = null;
-		if( parent instanceof ICPPASTNamedTypeSpecifier || segment == 0 ){
+		if( parent instanceof ICPPASTNamedTypeSpecifier || parent instanceof ICPPASTBaseSpecifier || segment == 0 ){
 			//class template
 			IASTName templateName = id.getTemplateName();
 			template = templateName.resolveBinding();

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -172,6 +173,8 @@ public class CPPDeferredClassInstance extends CPPInstance implements ICPPClassTy
 			ICPPClassTemplate typeClass = (ICPPClassTemplate) ((CPPDeferredClassInstance)type).getSpecializedBinding();
 			return (typeClass == classTemplate );
 		} else if( type instanceof ICPPClassTemplate && classTemplate == type ){
+			return true;
+		} else if( type instanceof ICPPTemplateInstance && ((ICPPTemplateInstance)type).getTemplateDefinition() == classTemplate ){
 			return true;
 		}
 		return false;

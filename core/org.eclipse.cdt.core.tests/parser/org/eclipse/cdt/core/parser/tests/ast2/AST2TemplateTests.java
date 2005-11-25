@@ -1924,4 +1924,22 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertTrue( A instanceof ICPPTemplateInstance );
     	assertSame( ((ICPPTemplateInstance)A).getTemplateDefinition(), Aspec);
     }
+    
+    public void testBug105769() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("template< class T > class A : public T {};      \n"); //$NON-NLS-1$
+    	buffer.append("class C { public: int c; };                     \n"); //$NON-NLS-1$
+    	buffer.append("class B : public A<C> { };                      \n"); //$NON-NLS-1$
+    	buffer.append("void main(){                                    \n"); //$NON-NLS-1$
+    	buffer.append("   B k;                                         \n"); //$NON-NLS-1$
+    	buffer.append("   k.c;                                         \n"); //$NON-NLS-1$
+    	buffer.append("}                                               \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true );
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(  col );
+        
+        ICPPVariable c = (ICPPVariable) col.getName(13).resolveBinding();
+        assertSame( c, col.getName(4).resolveBinding() );
+    }
 }

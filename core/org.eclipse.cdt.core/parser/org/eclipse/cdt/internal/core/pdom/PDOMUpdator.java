@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -183,7 +182,7 @@ public class PDOMUpdator extends Job {
 				}
 			}, 0);
 		} catch (CoreException e) {
-			PDOMCorePlugin.log(e);
+			CCorePlugin.log(e);
 		}
 	}
 

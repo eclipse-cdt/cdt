@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfigurat
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
@@ -86,4 +88,14 @@ public class GPPLanguage implements ILanguage {
 		return null;
 	}
 
+	public PDOMBinding getPDOMBinding(IBinding binding) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public PDOMBinding createPDOMBinding(int bindingType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

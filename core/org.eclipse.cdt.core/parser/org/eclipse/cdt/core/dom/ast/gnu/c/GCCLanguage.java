@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
@@ -87,4 +89,15 @@ public class GCCLanguage implements ILanguage {
 	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) {
 		return null;
 	}
+	
+	public PDOMBinding getPDOMBinding(IBinding binding) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public PDOMBinding createPDOMBinding(int bindingType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

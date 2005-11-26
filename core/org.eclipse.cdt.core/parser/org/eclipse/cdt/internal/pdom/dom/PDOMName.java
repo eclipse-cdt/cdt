@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.pdom.dom;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -23,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope2;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -77,7 +77,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 			db.putInt(record + NODE_LENGTH_OFFSET, fileloc.getNodeLength());
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "Failed to allocate name", e));
+					CCorePlugin.PLUGIN_ID, 0, "Failed to allocate name", e));
 		}
 	}
 	
@@ -107,8 +107,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 			int bindingRecord = pdom.getDB().getInt(record + BINDING_REC_OFFET);
 			return new PDOMBinding(pdom, bindingRecord);
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "Failed to allocate name", e)));
+			CCorePlugin.log(e);
 			return null;
 		}
 	}
@@ -134,8 +133,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 			
 			return new PDOMBinding(pdom, bindingRec).getNameCharArray();
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "Failed to allocate name", e)));
+			CCorePlugin.log(e);
 			return null;
 		}
 	}
@@ -201,8 +199,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		try {
 			return new PDOMFile(pdom, pdom.getDB().getInt(record + FILE_REC_OFFSET)).getFileName();
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "PDOM Exception", e)));
+			CCorePlugin.log(e);
 			return null;
 		}
 	}
@@ -219,8 +216,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		try {
 			return pdom.getDB().getInt(record + NODE_LENGTH_OFFSET);
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "PDOM Exception", e)));
+			CCorePlugin.log(e);
 			return 0;
 		}
 	}
@@ -229,8 +225,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		try {
 			return pdom.getDB().getInt(record + NODE_OFFSET_OFFSET);
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "PDOM Exception", e)));
+			CCorePlugin.log(e);
 			return 0;
 		}
 	}

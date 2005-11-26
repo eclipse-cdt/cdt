@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMProvider;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -34,7 +34,7 @@ public class PDOMManager implements IPDOMProvider, IElementChangedListener, IJob
 	private PDOMUpdator currJob;
 	
 	private static final QualifiedName pdomProperty
-		= new QualifiedName(PDOMCorePlugin.ID, "pdom"); //$NON-NLS-1$
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
 
 	public static PDOMManager getInstance() {
 		if (instance == null)
@@ -53,7 +53,7 @@ public class PDOMManager implements IPDOMProvider, IElementChangedListener, IJob
 			
 			return pdom;
 		} catch (CoreException e) {
-			PDOMCorePlugin.log(e);
+			CCorePlugin.log(e);
 			return null;
 		}
 	}

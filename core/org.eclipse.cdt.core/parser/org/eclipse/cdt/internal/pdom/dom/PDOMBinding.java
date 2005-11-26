@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.pdom.dom;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -22,7 +23,6 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -123,7 +123,7 @@ public class PDOMBinding implements IBinding {
 			}
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "Failed to allocate binding", e));
+					CCorePlugin.PLUGIN_ID, 0, "Failed to allocate binding", e));
 		}
 	}
 
@@ -156,8 +156,7 @@ public class PDOMBinding implements IBinding {
 			int stringRecord = db.getInt(record + STRING_REC_OFFSET);
 			return db.getString(stringRecord);
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "PDOMString", e)));
+			CCorePlugin.log(e);
 			return "";
 		}
 	}
@@ -168,8 +167,7 @@ public class PDOMBinding implements IBinding {
 			int stringRecord = db.getInt(record + STRING_REC_OFFSET);
 			return db.getChars(stringRecord);
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "PDOMString", e)));
+			CCorePlugin.log(e);
 			return new char[0];
 		}
 	}

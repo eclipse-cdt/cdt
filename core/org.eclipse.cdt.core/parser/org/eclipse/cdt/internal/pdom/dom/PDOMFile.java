@@ -12,12 +12,12 @@ package org.eclipse.cdt.internal.pdom.dom;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.StringComparator;
 import org.eclipse.cdt.internal.core.pdom.db.StringVisitor;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -116,7 +116,7 @@ public class PDOMFile {
 			pdom.getDB().free(record);
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "Failed to free string", e));
+					CCorePlugin.PLUGIN_ID, 0, "Failed to free string", e));
 		}
 	}
 	

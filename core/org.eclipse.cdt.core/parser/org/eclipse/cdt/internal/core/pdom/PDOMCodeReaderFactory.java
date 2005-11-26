@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.pdom.dom.PDOMFile;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -70,8 +70,8 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 			if (PDOMFile.find(pdom, path) != null)
 				return null;
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "PDOM Exception", e)));
+			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
+					CCorePlugin.PLUGIN_ID, 0, "PDOM Exception", e)));
 		}
 		
 		return ParserUtil.createReader(path, null);

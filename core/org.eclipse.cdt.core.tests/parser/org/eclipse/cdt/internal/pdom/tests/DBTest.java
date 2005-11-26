@@ -5,17 +5,17 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.StringComparator;
 import org.eclipse.cdt.internal.core.pdom.db.StringVisitor;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.runtime.IPath;
 
 public class DBTest extends TestCase {
 
 	protected IPath getTestDir() {
-		IPath path = PDOMCorePlugin.getDefault().getStateLocation().append("tests/");
+		IPath path = CTestPlugin.getDefault().getStateLocation().append("tests/");
 		File file = path.toFile();
 		if (!file.exists())
 			file.mkdir();

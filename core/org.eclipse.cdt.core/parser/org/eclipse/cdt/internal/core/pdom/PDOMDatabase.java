@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -31,7 +32,6 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.pdom.dom.PDOMName;
-import org.eclipse.cdt.pdom.core.PDOMCorePlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -62,7 +62,7 @@ public class PDOMDatabase implements IPDOM {
 	private BTree bindingIndex;
 
 	private static final QualifiedName dbNameProperty
-		= new QualifiedName(PDOMCorePlugin.ID, "dbName"); //$NON-NLS-1$
+		= new QualifiedName(CCorePlugin.PLUGIN_ID, "dbName"); //$NON-NLS-1$
 
 	public PDOMDatabase(IProject project, PDOMManager manager) throws CoreException {
 		String dbName = project.getPersistentProperty(dbNameProperty);
@@ -72,13 +72,13 @@ public class PDOMDatabase implements IPDOM {
 			project.setPersistentProperty(dbNameProperty, dbName);
 		}
 		
-		dbPath = PDOMCorePlugin.getDefault().getStateLocation().append(dbName);
+		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
 		
 		try {
 			db = new Database(dbPath.toOSString(), VERSION);
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "Failed to create database", e));
+					CCorePlugin.PLUGIN_ID, 0, "Failed to create database", e));
 		}
 	}
 
@@ -162,10 +162,9 @@ public class PDOMDatabase implements IPDOM {
 				} 
 			}
 		} catch (CoreException e) {
-			PDOMCorePlugin.log(e);
+			CCorePlugin.log(e);
 		} catch (DOMException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "DOMException", e)));
+			CCorePlugin.log(e);
 		}
 	}
 	
@@ -194,8 +193,7 @@ public class PDOMDatabase implements IPDOM {
 				return new IASTName[] { name }; 
 			}
 		} catch (IOException e) {
-			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-					PDOMCorePlugin.ID, 0, "getDeclarations", e)));
+			CCorePlugin.log(e);
 		}
 		return new IASTName[0];
 	}
@@ -204,7 +202,7 @@ public class PDOMDatabase implements IPDOM {
 		try {
 			return new PDOMBinding(this, name, null);
 		} catch (CoreException e) {
-			PDOMCorePlugin.log(e);
+			CCorePlugin.log(e);
 			return null;
 		}
 	}

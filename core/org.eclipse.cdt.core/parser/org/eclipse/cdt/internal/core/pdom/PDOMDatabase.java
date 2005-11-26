@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -23,11 +24,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
@@ -104,68 +102,32 @@ public class PDOMDatabase implements IPDOM {
 		return bindingIndex;
 	}
 	
-	public void addSymbols(IASTTranslationUnit ast) {
-		ParserLanguage language = ast.getParserLanguage();
-		ASTVisitor visitor;
-		if (language == ParserLanguage.C)
-			visitor = new CASTVisitor() {
-				{
-					shouldVisitNames = true;
-					shouldVisitDeclarations = true;
-				}
-
-				public int visit(IASTName name) {
-					if (name.toCharArray().length > 0)
-						addSymbol(name);
-					return PROCESS_CONTINUE;
-				};
-			};
-		else if (language == ParserLanguage.CPP)
-			visitor = new CPPASTVisitor() {
-				{
-					shouldVisitNames = true;
-					shouldVisitDeclarations = true;
-				}
-
-				public int visit(IASTName name) {
-					if (name.toCharArray().length > 0)
-						addSymbol(name);
-					return PROCESS_CONTINUE;
-				};
-			};
-		else
+	public void addSymbols(ITranslationUnit tu) throws CoreException {
+		final ILanguage language = tu.getLanguage();
+		if (language == null)
 			return;
+		
+		IASTTranslationUnit ast = language.getTranslationUnit(tu,
+				ILanguage.AST_USE_INDEX |
+				ILanguage.AST_SKIP_INDEXED_HEADERS);
 
-		ast.accept(visitor);
-	}
-	
-	public void addSymbol(IASTName name) {
-		try {
-			IBinding binding = name.resolveBinding();
-			if (binding == null)
-				return;
-			
-			IScope scope = binding.getScope();
-			if (scope == null)
-				return;
-			
-			IASTName scopeName = scope.getScopeName();
-			
-			if (scopeName == null) {
-				PDOMBinding pdomBinding = new PDOMBinding(this, name, binding);
-				new PDOMName(this, name, pdomBinding);
-			} else {
-				IBinding scopeBinding = scopeName.resolveBinding();
-				if (scopeBinding instanceof IType) {
-					PDOMBinding pdomBinding = new PDOMBinding(this, name, binding);
-					new PDOMName(this, name, pdomBinding);
-				} 
-			}
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
-		}
+		ast.accept(new ASTVisitor() {
+				{
+					shouldVisitNames = true;
+					shouldVisitDeclarations = true;
+				}
+
+				public int visit(IASTName name) {
+					try {
+						if (name.toCharArray().length > 0)
+							language.getPDOMBinding(PDOMDatabase.this, name);
+						return PROCESS_CONTINUE;
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+						return PROCESS_ABORT;
+					}
+				};
+			});;
 	}
 	
 	public void removeSymbols(ITranslationUnit ast) {

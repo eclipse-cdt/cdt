@@ -187,20 +187,12 @@ public class PDOMUpdator extends Job {
 	}
 
 	private void processAddedTU(ITranslationUnit tu) throws CoreException {
-		ILanguage language = tu.getLanguage();
-		if (language == null)
-			return;
-		
-		IASTTranslationUnit ast = language.getTranslationUnit(tu,
-				ILanguage.AST_USE_INDEX |
-				ILanguage.AST_SKIP_INDEXED_HEADERS);
-		
-		IPDOM pdom = ast.getIndex();
+		IPDOM pdom = tu.getCProject().getIndex();
 		if (pdom == null || !(pdom instanceof PDOMDatabase))
 			return;
 		
 		PDOMDatabase mypdom = (PDOMDatabase)pdom;
-		mypdom.addSymbols(ast);
+		mypdom.addSymbols(tu);
 	}
 
 	private void processRemovedTU(ITranslationUnit tu) {
@@ -219,20 +211,8 @@ public class PDOMUpdator extends Job {
 			return;
 		PDOMDatabase mypdom = (PDOMDatabase)pdom;
 		
-		ILanguage language = tu.getLanguage();
-		if (language == null)
-			return;
-		
-		IASTTranslationUnit ast = language.getTranslationUnit(tu,
-				ILanguage.AST_SKIP_ALL_HEADERS |
-				ILanguage.AST_USE_INDEX);
-		
-		if (pdom != ast.getIndex())
-			// weird
-			return;
-		
 		mypdom.removeSymbols(tu);
-		mypdom.addSymbols(ast);
+		mypdom.addSymbols(tu);
 	}
 
 }

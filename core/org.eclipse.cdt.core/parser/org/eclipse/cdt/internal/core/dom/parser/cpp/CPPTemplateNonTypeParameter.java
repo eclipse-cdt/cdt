@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -41,7 +43,12 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter#getDefault()
 	 */
 	public IASTExpression getDefault() {
-		// TODO Auto-generated method stub
+		IASTName name = getPrimaryDeclaration();
+		IASTDeclarator dtor = (IASTDeclarator) name.getParent();
+		IASTInitializer initializer = dtor.getInitializer();
+		if( initializer instanceof IASTInitializerExpression )
+			return ((IASTInitializerExpression) initializer).getExpression();
+
 		return null;
 	}
 

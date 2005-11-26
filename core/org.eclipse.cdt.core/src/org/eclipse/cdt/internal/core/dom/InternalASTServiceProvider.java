@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IParserConfiguration;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -169,10 +168,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    }
 		}
 		// Parse
-		IASTTranslationUnit tu = parser.parse();
-		// Set the PDOM if we can find one
-		tu.setIndex(PDOM.getPDOM(project));
-		return tu;
+		return parser.parse();
     }
 
 	public ASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
@@ -229,7 +225,6 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		parser.parse();
 		ASTCompletionNode node = parser.getCompletionNode();
 		if (node != null) {
-			node.getTranslationUnit().setIndex(PDOM.getPDOM(project));
 			node.count = scanner.getCount();
 		}
 		return node;

@@ -1145,33 +1145,47 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	
 	/**
 	 */
-	private String processPath(String path, int context, Object obj) {
+	private List processPath(List list, String path, int context, Object obj) {
 		final String EMPTY = "";   //$NON-NLS-1$
-		final String QUOTE = "\""; //$NON-NLS-1$
-		
-		if (path == null) { return EMPTY; }
-		String s = path;
-		if (context != 0) {
-			try {
-				s = ManagedBuildManager.getBuildMacroProvider().resolveValue(s, EMPTY, " ", context, obj); //$NON-NLS-1$
-			} catch (BuildMacroException e) {
+		if (path != null) { 
+			if (context != 0) {
+				try {
+					String  paths[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValue(path, EMPTY, " ", context, obj); //$NON-NLS-1$
+					if (paths != null) {
+						for(int i = 0; i < paths.length; i++){
+							list.add(checkPath(paths[i]));
+						}
+					}
+				} catch (BuildMacroException e) {
+				}
+			} else {
+				list.add(checkPath(path));
 			}
 		}
-		if (s == null) { s = path; }
+		return list;
+	}
+	
+	private String checkPath(String p){
+		final String QUOTE = "\""; //$NON-NLS-1$
+		final String EMPTY = "";   //$NON-NLS-1$
 
-		if (s.length()> 1 && s.startsWith(QUOTE) && s.endsWith(QUOTE)) {
-			s = s.substring(1, s.length()-1);
+		if(p == null)
+			return EMPTY;
+
+		if (p.length()> 1 && p.startsWith(QUOTE) && p.endsWith(QUOTE)) {
+			p = p.substring(1, p.length()-1);
 		}
 		
-		if ( ".".equals(s) ) { //$NON-NLS-1$
+		if ( ".".equals(p) ) { //$NON-NLS-1$
 			String cwd = getCWD();
-			if (cwd.length()>0) { s = cwd; }
+			if (cwd.length()>0) { p = cwd; }
 		}
-		if (!(new Path(s)).isAbsolute()) {
+		if (!(new Path(p)).isAbsolute()) {
 			String cwd = getCWD();
-			if (cwd.length()>0) { s = cwd + "/" + s; } //$NON-NLS-1$
+			if (cwd.length()>0) { p = cwd + "/" + p; } //$NON-NLS-1$
 		}
-		return s;
+		return p;
+		
 	}
 
 	/**
@@ -1181,7 +1195,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public IPathEntry[] getManagedBuildValues() {
 		List entries = new ArrayList();
 		int i=0;
-		IPathEntry[] a = getManagedBuildValues(IPathEntry.CDT_INCLUDE_FILE);
+		IPathEntry[] a = getManagedBuildValues(IPathEntry.CDT_INCLUDE);
 		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
 		a = getManagedBuildValues(IPathEntry.CDT_LIBRARY);
 		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
@@ -1197,7 +1211,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public IPathEntry[] getManagedBuildBuiltIns() {
 		List entries = new ArrayList();
 		int i=0;
-		IPathEntry[] a = getManagedBuildBuiltIns(IPathEntry.CDT_INCLUDE_FILE);
+		IPathEntry[] a = getManagedBuildBuiltIns(IPathEntry.CDT_INCLUDE);
 		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
 		a = getManagedBuildBuiltIns(IPathEntry.CDT_LIBRARY);
 		if (a != null) { for (i=0; i<a.length; i++) entries.add(a[i]); } 
@@ -1216,9 +1230,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		List entries = getOptionValues(entryType, false);
 	
 		// for includes, get env variables values; useless for other entry types  
-		if (entryType == IPathEntry.CDT_INCLUDE_FILE) {
+		if (entryType == IPathEntry.CDT_INCLUDE) {
 			IEnvironmentVariableProvider env = ManagedBuildManager.getEnvironmentVariableProvider();
-			entries = addIncludes(entries, env.getBuildPaths(getDefaultConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE), Path.EMPTY, null);
+			entries = addIncludes(entries, env.getBuildPaths(getDefaultConfiguration(), IEnvVarBuildPath.BUILDPATH_INCLUDE), Path.EMPTY, 0, null);
 		}	
 		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
 	}
@@ -1285,7 +1299,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		IPath resPath = Path.EMPTY;
 
 		// check that entryType is correct
-		if (entryType != IPathEntry.CDT_INCLUDE_FILE &&
+		if (entryType != IPathEntry.CDT_INCLUDE &&
 //TODO: we need to implement the proper CDT_LIBRARY handling
 //calculating the CDT_LIBRARY entries from the managed build 
 //options is disabled for now, we need to define a new option type
@@ -1314,20 +1328,21 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				   !applicabilityCalculator.isOptionUsedInCommandLine(obj, t[i], op[j])) continue;
 				
 				try {
-					if (entryType == IPathEntry.CDT_INCLUDE_FILE && 
+					if (entryType == IPathEntry.CDT_INCLUDE && 
 							op[j].getValueType() == IOption.INCLUDE_PATH) 
 					{
 						OptionContextData ocd = new OptionContextData(op[j], t[i]);				
-						addIncludes(entries, builtIns ? op[j].getBuiltIns() : op[j].getIncludePaths(), resPath, ocd);
+						addIncludes(entries, builtIns ? op[j].getBuiltIns() : op[j].getIncludePaths(), resPath, IBuildMacroProvider.CONTEXT_OPTION, ocd);
 					} else if (entryType == IPathEntry.CDT_LIBRARY && 
 							op[j].getValueType() == IOption.LIBRARIES) 
 					{
 						OptionContextData ocd = new OptionContextData(op[j], t[i]);				
-						addLibraries(entries, builtIns ? op[j].getBuiltIns() : op[j].getLibraries(), resPath, ocd);
+						addLibraries(entries, builtIns ? op[j].getBuiltIns() : op[j].getLibraries(), resPath, IBuildMacroProvider.CONTEXT_OPTION, ocd);
 					} else if (entryType == IPathEntry.CDT_MACRO && 
 							op[j].getValueType() == IOption.PREPROCESSOR_SYMBOLS) 
 					{
-						addSymbols(entries, builtIns ? op[j].getBuiltIns() : op[j].getDefinedSymbols(), resPath);
+						OptionContextData ocd = new OptionContextData(op[j], t[i]);
+						addSymbols(entries, builtIns ? op[j].getBuiltIns() : op[j].getDefinedSymbols(), resPath, IBuildMacroProvider.CONTEXT_OPTION, ocd);
 					} else { continue; }
 				} catch (BuildException e) {}
 			}
@@ -1342,14 +1357,29 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param resPath
 	 * @param ocd       
 	 */
-	protected List addIncludes(List entries, String[] values, IPath resPath, OptionContextData ocd) {
-		if (values != null) {
+	protected List addIncludes(List entries, String[] values, IPath resPath, int context ,Object obj) {
+		return addPaths(entries, values, resPath, context, obj, IPathEntry.CDT_INCLUDE);
+	}
+	
+	protected List addPaths(List entries, String[] values, IPath resPath, int context ,Object obj, int type){
+		if (values != null && values.length > 0) {
+			List list = new ArrayList();
 			for (int k=0; k<values.length; k++) {
-				if (ocd != null) {
-				   values[k] = processPath(values[k], IBuildMacroProvider.CONTEXT_OPTION, ocd);
+				processPath(list, values[k], context, obj);
+			}
+			
+			Iterator iter = list.iterator();
+			while(iter.hasNext()){
+				IPathEntry entry = null;
+				switch(type){
+				case IPathEntry.CDT_INCLUDE:
+					entry = CoreModel.newIncludeEntry(resPath, Path.EMPTY, new Path((String)iter.next()), true);
+					break;
+				case IPathEntry.CDT_LIBRARY:
+					entry = CoreModel.newLibraryEntry(resPath, Path.EMPTY, new Path((String)iter.next()), null, null, null, true);
+					break;
 				}
-				IPathEntry entry = CoreModel.newIncludeEntry(resPath, Path.EMPTY, new Path(processPath(values[k], 0, null)), true);
-				if (!entries.contains(entry)) {	entries.add(entry);	}
+				if (entry != null && !entries.contains(entry)) {	entries.add(entry);	}
 			}
 		}
 		return entries;
@@ -1362,17 +1392,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param resPath
 	 * @param ocd
 	 */
-	protected List addLibraries(List entries, String[] values, IPath resPath, OptionContextData ocd) {
-		if (values != null) {
-			for (int k=0; k<values.length; k++) {
-				if (ocd != null) {
-					values[k] = processPath(values[k], IBuildMacroProvider.CONTEXT_OPTION, ocd);
-				}
-				IPathEntry entry = CoreModel.newLibraryEntry(resPath, Path.EMPTY, new Path(processPath(values[k], 0, null)), null, null, null, true);
-				if (!entries.contains(entry)) {	entries.add(entry); }
-			}
-		}
-		return entries;
+	protected List addLibraries(List entries, String[] values, IPath resPath, int context, Object obj) {
+		return addPaths(entries, values, resPath, context, obj, IPathEntry.CDT_LIBRARY);
 	}
 	
 	/**
@@ -1381,11 +1402,26 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param values
 	 * @param resPath
 	 */
-	protected List addSymbols(List entries, String[] values, IPath resPath) {
+	protected List addSymbols(List entries, String[] values, IPath resPath, int context, Object obj) {
 		if (values == null) return entries;
 		for (int i=0; i<values.length; i++) {
-			if (values[i].length() == 0) continue;
-			String[] tokens = values[i].split("="); //$NON-NLS-1$
+			try {
+				String res[] = ManagedBuildManager.getBuildMacroProvider().resolveStringListValue(values[i],
+						"", " ", context, obj); //$NON-NLS-1$ //$NON-NLS-2$
+				if(res != null){
+					for(int k = 0; k < res.length; k++)
+						createMacroEntry(entries, res[k], resPath);
+				}
+			} catch (BuildMacroException e) {
+			} 
+		}
+		return entries;
+	}
+	
+	private List createMacroEntry(List entries, String val, IPath resPath){
+		if (val != null && val.length() != 0){ 
+				
+			String[] tokens = val.split("="); //$NON-NLS-1$
 			String key = tokens[0].trim();
 			String value = (tokens.length > 1) ? tokens[1].trim() : new String();
 			// Make sure the current entries do not contain a duplicate

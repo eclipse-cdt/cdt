@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import java.io.IOException;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
@@ -37,7 +37,7 @@ public class BTree {
 		this.rootPointer = rootPointer;
 	}
 	
-	protected int getRoot() throws IOException {
+	protected int getRoot() throws CoreException {
 		return db.getInt(rootPointer);
 	}
 	
@@ -65,7 +65,7 @@ public class BTree {
 	 * @param offset of the record
 	 * @return 
 	 */
-	public int insert(int record, IBTreeComparator comparator) throws IOException {
+	public int insert(int record, IBTreeComparator comparator) throws CoreException {
 		int root = getRoot();
 		
 		// is this our first time in
@@ -77,7 +77,7 @@ public class BTree {
 		return insert(null, 0, 0, root, record, comparator);
 	}
 	
-	private int insert(Chunk pChunk, int parent, int iParent, int node, int record, IBTreeComparator comparator) throws IOException {
+	private int insert(Chunk pChunk, int parent, int iParent, int node, int record, IBTreeComparator comparator) throws CoreException {
 		Chunk chunk = db.getChunk(node);
 		
 		// if this node is full (last record isn't null), split it
@@ -164,7 +164,7 @@ public class BTree {
 		}
 	}
 
-	private void firstInsert(int record) throws IOException {
+	private void firstInsert(int record) throws CoreException {
 		// create the node and save it as root
 		int root = allocateNode();
 		db.putInt(rootPointer, root);
@@ -172,7 +172,7 @@ public class BTree {
 		putRecord(db.getChunk(root), root, 0, record); 
 	}
 	
-	private int allocateNode() throws IOException {
+	private int allocateNode() throws CoreException {
 		return db.malloc((2 * NUM_RECORDS - 1) * Database.INT_SIZE);
 	}
 	
@@ -191,11 +191,11 @@ public class BTree {
 	 * 
 	 * @param visitor
 	 */
-	public void visit(IBTreeVisitor visitor) throws IOException {
+	public void visit(IBTreeVisitor visitor) throws CoreException {
 		visit(db.getInt(rootPointer), visitor, false);
 	}
 	
-	private boolean visit(int node, IBTreeVisitor visitor, boolean found) throws IOException {
+	private boolean visit(int node, IBTreeVisitor visitor, boolean found) throws CoreException {
 		// if found is false, we are still in search mode
 		// once found is true visit everything
 		// return false when ready to quit
@@ -244,83 +244,6 @@ public class BTree {
 		}
 		
 		return visit(getChild(chunk, node, i), visitor, found);
-	}
-
-	public int getHeight() throws IOException {
-		int root = getRoot();
-		
-		if (root == 0)
-			return 0;
-		
-		return getHeight(root);
-	}
-	
-	private int getHeight(int node) throws IOException {
-		int height = 0;
-		Chunk chunk = db.getChunk(node);
-		
-		for (int i = 0; i < NUM_CHILDREN; ++i) {
-			int child = getChild(chunk, node, i);
-			if (child == 0)
-				break;
-			int n = getHeight(child);
-			if (n == -1)
-				return -1;
-			if (height != 0 && height != n)
-				return -1;
-			height = n;
-		}
-		
-		return height + 1;
-	}
-	
-	public int getRecordCount() throws IOException {
-		int root = getRoot();
-		
-		if (root == 0)
-			return 0;
-		
-		return getRecordCount(root);
-	}
-	
-	private int getRecordCount(int node) throws IOException {
-		Chunk chunk = db.getChunk(node);
-		
-		int count;
-		for (count = 0; count < NUM_RECORDS; ++count)
-			if (getRecord(chunk, node, count) == 0)
-				break;
-		
-		for (int i = 0; i < NUM_CHILDREN; ++i) {
-			int child = getChild(chunk, node, i);
-			if (child != 0)
-				count += getRecordCount(child);
-		}
-		
-		return count;
-	}
-	
-	public int getNodeCount() throws IOException {
-		int root = getRoot();
-		
-		if (root == 0)
-			return 0;
-		
-		return getNodeCount(root);
-	}
-	
-	private int getNodeCount(int node) throws IOException {
-		Chunk chunk = db.getChunk(node);
-		
-		int count = 1;
-		
-		for (int i = 0; i < NUM_CHILDREN; ++i) {
-			int child = getChild(chunk, node, i);
-			if (child != 0)
-				count += getNodeCount(child);
-		}
-		
-		return count;
 	}
 
 }

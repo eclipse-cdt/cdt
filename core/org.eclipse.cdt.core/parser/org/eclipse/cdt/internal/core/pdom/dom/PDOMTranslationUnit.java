@@ -8,7 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.dom;
+package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;

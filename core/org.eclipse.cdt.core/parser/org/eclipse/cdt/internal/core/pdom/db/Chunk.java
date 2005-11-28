@@ -15,6 +15,8 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * @author Doug Schaefer
  *
@@ -29,9 +31,13 @@ public class Chunk {
 	private Chunk prevChunk;
 	private Chunk nextChunk;
 	
-	Chunk(RandomAccessFile file, int offset) throws IOException {
-		index = offset / Database.CHUNK_SIZE;
-		buffer = file.getChannel().map(MapMode.READ_WRITE, offset, Database.CHUNK_SIZE);
+	Chunk(RandomAccessFile file, int offset) throws CoreException {
+		try {
+			index = offset / Database.CHUNK_SIZE;
+			buffer = file.getChannel().map(MapMode.READ_WRITE, offset, Database.CHUNK_SIZE);
+		} catch (IOException e) {
+			throw new CoreException(new DBStatus(e));
+		}
 	}
 	
 	public void putInt(int offset, int value) {

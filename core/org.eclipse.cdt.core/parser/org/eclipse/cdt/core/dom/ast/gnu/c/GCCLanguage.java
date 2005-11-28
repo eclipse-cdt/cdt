@@ -15,12 +15,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -40,13 +37,10 @@ import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -94,7 +88,7 @@ public class GCCLanguage implements ILanguage {
 
 		if ((style & AST_USE_INDEX) != 0) 
 			ast.setIndex(tu.getCProject().getIndex());
-		
+
 		return ast;
 	}
 	
@@ -103,38 +97,15 @@ public class GCCLanguage implements ILanguage {
 	}
 	
 	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException {
-		try {
-			IBinding binding = name.resolveBinding();
-			if (binding == null)
-				return null;
-			
-			IScope scope = binding.getScope();
-			if (scope == null)
-				return null;
-	
-			PDOMBinding pdomBinding = null;
-			IASTName scopeName = scope.getScopeName();
-			
-			if (scopeName == null) {
-				pdomBinding = new PDOMBinding(pdom, name, binding);
-				new PDOMName(pdom, name, pdomBinding);
-			} else {
-				IBinding scopeBinding = scopeName.resolveBinding();
-				if (scopeBinding instanceof IType) {
-					pdomBinding = new PDOMBinding(pdom, name, binding);
-					new PDOMName(pdom, name, pdomBinding);
-				} 
-			}
+		IBinding binding = name.resolveBinding();
+		if (binding == null)
 			return null;
-		} catch (DOMException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					CCorePlugin.PLUGIN_ID, 0, "DOM Exception", e));
-		}
+		
+		return null;
 	}
 	
-	public PDOMBinding createPDOMBinding(PDOMDatabase pdom, int bindingType) {
-		// TODO Auto-generated method stub
-		return null;
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, PDOMBinding binding) throws CoreException {
+		return binding;
 	}
 	
 }

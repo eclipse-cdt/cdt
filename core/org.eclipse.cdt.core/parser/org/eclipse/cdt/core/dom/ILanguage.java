@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -92,14 +92,14 @@ public interface ILanguage {
 	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException;
 
 	/**
-	 * Return a new PDOM Binding that has the given language specific type.
-	 * The type id is extracted from the PDOM Database.
-	 * 
+	 * Creates a language specific binding given the generic binding extracted
+	 * from the PDOM database.
+	 *  
 	 * @param pdom
-	 * @param bindingType
+	 * @param binding
 	 * 
 	 * @return
 	 */
-	public PDOMBinding createPDOMBinding(PDOMDatabase pdom, int bindingType);
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, PDOMBinding binding) throws CoreException;
 
 }

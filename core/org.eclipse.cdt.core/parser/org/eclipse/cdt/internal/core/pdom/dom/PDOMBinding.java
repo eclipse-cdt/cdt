@@ -8,7 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.dom;
+package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.io.IOException;
 
@@ -55,9 +55,10 @@ public class PDOMBinding implements IBinding {
 			this.db = db;
 		}
 		
-		public int compare(int record1, int record2) throws IOException {
+		public int compare(int record1, int record2) throws CoreException {
 			int string1 = db.getInt(record1 + STRING_REC_OFFSET);
 			int string2 = db.getInt(record2 + STRING_REC_OFFSET);
+			// Need to deal with language and type
 			
 			return PDOMUtils.stringCompare(db, string1, string2);
 		}
@@ -69,13 +70,14 @@ public class PDOMBinding implements IBinding {
 		private Database db;
 		private char[] key;
 		
-		public Visitor(Database db, char[] key) {
+		public Visitor(Database db, char[] key, int language, int type) {
 			this.db = db;
 			this.key = key;
 		}
 		
-		public int compare(int record1) throws IOException {
+		public int compare(int record1) throws CoreException {
 			int string1 = db.getInt(record1 + STRING_REC_OFFSET);
+			// Need to deal with language and type
 			
 			return PDOMUtils.stringCompare(db, string1, key);
 		}
@@ -86,44 +88,42 @@ public class PDOMBinding implements IBinding {
 		
 		private int record;
 		
-		public FindVisitor(Database db, char[] stringKey) {
-			super(db, stringKey);
+		public FindVisitor(Database db, char[] stringKey, int language, int type) {
+			super(db, stringKey, language, type);
 		}
 		
-		public boolean visit(int record) throws IOException {
+		public boolean visit(int record) throws CoreException {
 			this.record = record;
 			return false;
 		}
 		
-		public int findIn(BTree btree) throws IOException {
+		public int findIn(BTree btree) throws CoreException {
 			btree.visit(this);
 			return record;
 		}
 
 	}
 	
-	public PDOMBinding(PDOMDatabase pdom, IASTName name, IBinding binding) throws CoreException {
-		try {
-			this.pdom = pdom;
+	public PDOMBinding(PDOMDatabase pdom, IASTName name, int language, int type) throws CoreException {
+		this.pdom = pdom;
 
-			char[] namechars = name.toCharArray();
+		char[] namechars = name.toCharArray();
 			
-			BTree index = pdom.getBindingIndex();
-			record = new FindVisitor(pdom.getDB(), namechars).findIn(index);
+		BTree index = pdom.getBindingIndex();
+		record = new FindVisitor(pdom.getDB(), namechars, language, type).findIn(index);
 			
-			if (record == 0) {
-				Database db = pdom.getDB();
-				record = db.malloc(getRecordSize());
+		if (record == 0) {
+			Database db = pdom.getDB();
+			record = db.malloc(getRecordSize());
+			
+			db.putChar(record + LANGUAGE_OFFSET, (char)language);
+			db.putChar(record + TYPE_OFFSET, (char)type);
 
-				int stringRecord = db.malloc((namechars.length + 1) * Database.CHAR_SIZE);
-				db.putChars(stringRecord, namechars);
+			int stringRecord = db.malloc((namechars.length + 1) * Database.CHAR_SIZE);
+			db.putChars(stringRecord, namechars);
 				
-				db.putInt(record + STRING_REC_OFFSET, stringRecord);
-				pdom.getBindingIndex().insert(record, new Comparator(db));
-			}
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					CCorePlugin.PLUGIN_ID, 0, "Failed to allocate binding", e));
+			db.putInt(record + STRING_REC_OFFSET, stringRecord);
+			pdom.getBindingIndex().insert(record, new Comparator(db));
 		}
 	}
 
@@ -136,7 +136,15 @@ public class PDOMBinding implements IBinding {
 		return record;
 	}
 
-	public void addDeclaration(PDOMName name) throws IOException {
+	public int getLanguage() throws CoreException {
+		return pdom.getDB().getChar(record + LANGUAGE_OFFSET);
+	}
+	
+	public int getBindingType() throws CoreException {
+		return pdom.getDB().getChar(record + TYPE_OFFSET);
+	}
+	
+	public void addDeclaration(PDOMName name) throws CoreException {
 		PDOMName firstDeclaration = getFirstDeclaration();
 		if (firstDeclaration != null) {
 			firstDeclaration.setPrevInBinding(name);
@@ -145,9 +153,14 @@ public class PDOMBinding implements IBinding {
 		pdom.getDB().putInt(record + FIRST_DECL_OFFSET, name.getRecord());
 	}
 	
-	public PDOMName getFirstDeclaration() throws IOException {
-		int firstDeclRec = pdom.getDB().getInt(record + FIRST_DECL_OFFSET);
-		return firstDeclRec != 0 ? new PDOMName(pdom, firstDeclRec) : null;
+	public PDOMName getFirstDeclaration() throws CoreException {
+		try {
+			int firstDeclRec = pdom.getDB().getInt(record + FIRST_DECL_OFFSET);
+			return firstDeclRec != 0 ? new PDOMName(pdom, firstDeclRec) : null;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					CCorePlugin.PLUGIN_ID, 0, "PDOM", e));
+		}
 	}
 	
 	public String getName() {
@@ -155,10 +168,10 @@ public class PDOMBinding implements IBinding {
 			Database db = pdom.getDB();
 			int stringRecord = db.getInt(record + STRING_REC_OFFSET);
 			return db.getString(stringRecord);
-		} catch (IOException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return "";
 		}
+		return "";
 	}
 
 	public char[] getNameCharArray() {
@@ -166,10 +179,10 @@ public class PDOMBinding implements IBinding {
 			Database db = pdom.getDB();
 			int stringRecord = db.getInt(record + STRING_REC_OFFSET);
 			return db.getChars(stringRecord);
-		} catch (IOException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
-			return new char[0];
 		}
+		return new char[0];
 	}
 
 	public IScope getScope() throws DOMException {
@@ -177,9 +190,9 @@ public class PDOMBinding implements IBinding {
 		return null;
 	}
 
-	public static PDOMBinding find(PDOMDatabase pdom, char[] name) throws IOException {
+	public static PDOMBinding find(PDOMDatabase pdom, char[] name, int language, int type) throws CoreException {
 		BTree index = pdom.getBindingIndex();
-		int bindingRecord = new FindVisitor(pdom.getDB(), name).findIn(index);
+		int bindingRecord = new FindVisitor(pdom.getDB(), name, language, type).findIn(index);
 		if (bindingRecord != 0)
 			return new PDOMBinding(pdom, bindingRecord);
 		else

@@ -15,12 +15,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -34,19 +31,18 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPVariable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -100,40 +96,28 @@ public class GPPLanguage implements ILanguage {
 			int offset) {
 		return null;
 	}
-
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException {
-		try {
-			IBinding binding = name.resolveBinding();
-			if (binding == null)
-				return null;
-			
-			IScope scope = binding.getScope();
-			if (scope == null)
-				return null;
 	
-			PDOMBinding pdomBinding = null;
-			IASTName scopeName = scope.getScopeName();
-			
-			if (scopeName == null) {
-				pdomBinding = new PDOMBinding(pdom, name, binding);
-				new PDOMName(pdom, name, pdomBinding);
-			} else {
-				IBinding scopeBinding = scopeName.resolveBinding();
-				if (scopeBinding instanceof IType) {
-					pdomBinding = new PDOMBinding(pdom, name, binding);
-					new PDOMName(pdom, name, pdomBinding);
-				} 
-			}
+	// Binding types
+	public static final int CPPVARIABLE = 1;
+	
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException {
+		IBinding binding = name.resolveBinding();
+		if (binding == null)
 			return null;
-		} catch (DOMException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					CCorePlugin.PLUGIN_ID, 0, "DOM Exception", e));
-		}
+
+		if (binding instanceof CPPVariable)
+			return new PDOMCPPVariable(pdom, name, (CPPVariable)binding);
+		
+		return null;
 	}
 	
-	public PDOMBinding createPDOMBinding(PDOMDatabase pdom, int bindingType) {
-		// TODO Auto-generated method stub
-		return null;
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, PDOMBinding binding) throws CoreException {
+		switch (binding.getBindingType()) {
+		case CPPVARIABLE:
+			return new PDOMCPPVariable(pdom, binding.getRecord());
+		}
+		
+		return binding;
 	}
 	
 }

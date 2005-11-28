@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import java.io.IOException;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
@@ -26,7 +26,7 @@ public class StringComparator implements IBTreeComparator {
 		this.offset = offset;
 	}
 	
-	public int compare(int record1, int record2) throws IOException {
+	public int compare(int record1, int record2) throws CoreException {
 		Chunk chunk1 = db.getChunk(record1);
 		Chunk chunk2 = db.getChunk(record2);
 		

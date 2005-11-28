@@ -13,15 +13,10 @@ package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.internal.core.dom.NullPDOMProvider;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
@@ -31,36 +26,6 @@ import org.osgi.service.prefs.BackingStoreException;
  *
  */
 public class PDOM {
-
-    private static IPDOMProvider pdomProvider;
-    
-    private static synchronized void initPDOMProvider() {
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(IPDOMProvider.ID);
-		IExtension[] extensions = extensionPoint.getExtensions();
-		if (extensions.length > 0) {
-			// For now just take the first one
-			IConfigurationElement[] elements= extensions[0].getConfigurationElements();
-			if (elements.length > 0) {
-				// For now just take the first provider
-				try {
-					pdomProvider = (IPDOMProvider)elements[0].createExecutableExtension("class"); //$NON-NLS-1$
-					return;
-				} catch (CoreException e) {
-				}
-			}
-		}
-		
-		// Couldn't find one
-		pdomProvider = new NullPDOMProvider();
-    }
-    
-    private static IPDOMProvider getPDOMProvider() {
-    	if (pdomProvider == null) {
-    		initPDOMProvider();
-   		}
-
-    	return pdomProvider;
-    }
 
     private static final String PDOM_NODE = CCorePlugin.PLUGIN_ID + ".pdom"; //$NON-NLS-1$ 
     private static final String ENABLED_KEY = "enabled"; //$NON-NLS-1$
@@ -108,7 +73,7 @@ public class PDOM {
 
 	public static void deletePDOM(IProject project) throws CoreException {
 		if (isEnabled(project))
-			getPDOMProvider().getPDOM(project).delete();
+			PDOMManager.getInstance().getPDOM(project).delete();
 	}
 	
 	/**
@@ -116,7 +81,7 @@ public class PDOM {
 	 * change events.
 	 */
 	public static void startup() {
-		IElementChangedListener listener = getPDOMProvider().getElementChangedListener();
+		IElementChangedListener listener = PDOMManager.getInstance();
 		if (listener != null) {
 			CoreModel.getDefault().addElementChangedListener(listener);
 		}

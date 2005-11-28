@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.internal.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -69,7 +69,7 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 			}
 			if (PDOMFile.find(pdom, path) != null)
 				return null;
-		} catch (IOException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
 					CCorePlugin.PLUGIN_ID, 0, "PDOM Exception", e)));
 		}

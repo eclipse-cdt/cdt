@@ -8,14 +8,26 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.dom;
+
+package org.eclipse.cdt.internal.core.pdom.db;
+
+import java.io.IOException;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class PDOMNotImplementedError extends Error {
+public class DBStatus extends Status {
 
-	public static final long serialVersionUID = 0;
+	/**
+	 * @param exception
+	 */
+	public DBStatus(IOException exception) {
+		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "IOException", exception);
+	}
 
 }

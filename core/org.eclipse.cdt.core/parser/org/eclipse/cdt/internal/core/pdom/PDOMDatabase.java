@@ -10,32 +10,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
 
 
 /**
@@ -46,12 +38,9 @@ import org.eclipse.core.runtime.Status;
 public class PDOMDatabase implements IPDOM {
 
 	private final IPath dbPath;
-	private final Database db;
+	private Database db;
 	
 	private static final int VERSION = 0;
-	
-	public static final int STRING_INDEX = Database.DATA_AREA + 0 * Database.INT_SIZE;
-	private BTree stringIndex;
 	
 	public static final int FILE_INDEX = Database.DATA_AREA + 1 * Database.INT_SIZE;
 	private BTree fileIndex;
@@ -71,34 +60,25 @@ public class PDOMDatabase implements IPDOM {
 		}
 		
 		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
-		
-		try {
-			db = new Database(dbPath.toOSString(), VERSION);
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					CCorePlugin.PLUGIN_ID, 0, "Failed to create database", e));
-		}
+		db = new Database(dbPath.toOSString(), VERSION);
 	}
 
-	public Database getDB() {
+	public Database getDB() throws CoreException {
+		if (db == null)
+			db = new Database(dbPath.toOSString(), VERSION);
+
 		return db;
 	}
 
-	public BTree getStringIndex() {
-		if (stringIndex == null)
-			stringIndex = new BTree(db, STRING_INDEX);
-		return stringIndex;
-	}
-	
-	public BTree getFileIndex() {
+	public BTree getFileIndex() throws CoreException {
 		if (fileIndex == null)
-			fileIndex = new BTree(db, FILE_INDEX);
+			fileIndex = new BTree(getDB(), FILE_INDEX);
 		return fileIndex;
 	}
 	
-	public BTree getBindingIndex() {
+	public BTree getBindingIndex() throws CoreException {
 		if (bindingIndex == null)
-			bindingIndex = new BTree(db, BINDING_INDEX);
+			bindingIndex = new BTree(getDB(), BINDING_INDEX);
 		return bindingIndex;
 	}
 	
@@ -119,8 +99,11 @@ public class PDOMDatabase implements IPDOM {
 
 				public int visit(IASTName name) {
 					try {
-						if (name.toCharArray().length > 0)
-							language.getPDOMBinding(PDOMDatabase.this, name);
+						if (name.toCharArray().length > 0) {
+							PDOMBinding binding = language.getPDOMBinding(PDOMDatabase.this, name);
+							if (binding != null)
+								new PDOMName(PDOMDatabase.this, name, binding);
+						}
 						return PROCESS_CONTINUE;
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
@@ -135,7 +118,11 @@ public class PDOMDatabase implements IPDOM {
 	}
 	
 	public void delete() throws CoreException {
-		// TODO Auto-generated method stub
+		db = null;
+		bindingIndex = null;
+		fileIndex = null;
+		System.gc();
+		dbPath.toFile().delete();
 	}
 
 	public ICodeReaderFactory getCodeReaderFactory() {
@@ -154,45 +141,18 @@ public class PDOMDatabase implements IPDOM {
 					return new IASTName[0];
 				return new IASTName[] { name }; 
 			}
-		} catch (IOException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return new IASTName[0];
 	}
 
 	public IBinding resolveBinding(IASTName name) {
-		try {
-			return new PDOMBinding(this, name, null);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return null;
-		}
+		return null;
 	}
 
 	public IBinding[] resolvePrefix(IASTName name) {
-//		try {
-			final String prefix = new String(name.toCharArray());
-			final ArrayList bindings = new ArrayList();
-			
-//			getStringIndex().visit(new PDOMString.Visitor(db, prefix) {
-//				public boolean visit(int record) throws IOException {
-//					String value = new String(new PDOMString(PDOMDatabase.this, record).getString());
-//					if (value.startsWith(prefix)) {
-//						PDOMBinding pdomBinding = PDOMBinding.find(PDOMDatabase.this, record);
-//						if (pdomBinding != null)
-//							bindings.add(pdomBinding);
-//						return true;
-//					} else
-//						return false;
-//				}
-//			});
-			
-			return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
-//		} catch (IOException e) {
-//			PDOMCorePlugin.log(new CoreException(new Status(IStatus.ERROR,
-//					PDOMCorePlugin.ID, 0, "resolvePrefix", e)));
-//			return null;
-//		}
+		return new IBinding[0];
 	}
 	
 }

@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMProvider;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.resources.IProject;
@@ -28,7 +27,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
  * 
  * @author Doug Schaefer
  */
-public class PDOMManager implements IPDOMProvider, IElementChangedListener, IJobChangeListener {
+public class PDOMManager implements IElementChangedListener, IJobChangeListener {
 
 	private static PDOMManager instance;
 	private PDOMUpdator currJob;

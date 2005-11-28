@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.pdom.db;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * @author Doug Schaefer
  *
@@ -37,33 +39,41 @@ public class Database {
 	public static final int NEXT_OFFSET = INT_SIZE * 2;
 	public static final int DATA_AREA = CHUNK_SIZE / MIN_SIZE * INT_SIZE + INT_SIZE;
 	
-	public Database(String filename, int version) throws IOException {
-		file = new RandomAccessFile(filename, "rw"); //$NON-NLS-1$
-		
-		// Allocate chunk table, make sure we have at least one
-		long nChunks = file.length() / CHUNK_SIZE;
-		if (nChunks == 0) {
-			create();
-			++nChunks;
-		}
-		
-		toc = new Chunk[(int)nChunks];
-		
-		// Load in the magic chunk zero
-		toc[0] = new Chunk(file, 0);
-		int oldversion = toc[0].getInt(0);
-		if (oldversion != version) {
-			// Conversion?
-			toc[0].putInt(0, version);
+	public Database(String filename, int version) throws CoreException {
+		try {
+			file = new RandomAccessFile(filename, "rw"); //$NON-NLS-1$
+			
+			// Allocate chunk table, make sure we have at least one
+			long nChunks = file.length() / CHUNK_SIZE;
+			if (nChunks == 0) {
+				create();
+				++nChunks;
+			}
+			
+			toc = new Chunk[(int)nChunks];
+			
+			// Load in the magic chunk zero
+			toc[0] = new Chunk(file, 0);
+			int oldversion = toc[0].getInt(0);
+			if (oldversion != version) {
+				// Conversion?
+				toc[0].putInt(0, version);
+			}
+		} catch (IOException e) {
+			throw new CoreException(new DBStatus(e));
 		}
 	}
 
 	/**
 	 * Create the database, including chunk zero and the b-trees.
 	 */
-	private void create() throws IOException {
-		file.seek(0);
-		file.write(new byte[CHUNK_SIZE]); // the header chunk
+	private void create() throws CoreException {
+		try {
+			file.seek(0);
+			file.write(new byte[CHUNK_SIZE]); // the header chunk
+		} catch (IOException e) {
+			throw new CoreException(new DBStatus(e));
+		}
 	}
 	
 	/**
@@ -72,7 +82,7 @@ public class Database {
 	 * @param offset
 	 * @return
 	 */
-	public Chunk getChunk(int offset) throws IOException {
+	public Chunk getChunk(int offset) throws CoreException {
 		int index = offset / CHUNK_SIZE;
 		Chunk chunk = toc[index];
 		if (chunk == null) {
@@ -107,7 +117,7 @@ public class Database {
 	 * @param size
 	 * @return
 	 */ 
-	public int malloc(int size) throws IOException {
+	public int malloc(int size) throws CoreException {
 		// Which block size
 		int freeblock = 0;
 		int blocksize;
@@ -146,16 +156,20 @@ public class Database {
 		return freeblock + INT_SIZE;
 	}
 	
-	private int createChunk() throws IOException {
-		int offset = (int)file.length();
-		file.seek(offset);
-		file.write(new byte[CHUNK_SIZE]);
-		Chunk[] oldtoc = toc;
-		int i = oldtoc.length;
-		toc = new Chunk[i + 1];
-		System.arraycopy(oldtoc, 0, toc, 0, i);
-		toc[i] = new Chunk(file, offset);
-		return i;
+	private int createChunk() throws CoreException {
+		try {
+			int offset = (int)file.length();
+			file.seek(offset);
+			file.write(new byte[CHUNK_SIZE]);
+			Chunk[] oldtoc = toc;
+			int i = oldtoc.length;
+			toc = new Chunk[i + 1];
+			System.arraycopy(oldtoc, 0, toc, 0, i);
+			toc[i] = new Chunk(file, offset);
+			return i;
+		} catch (IOException e) {
+			throw new CoreException(new DBStatus(e));
+		}
 	}
 	
 	private int getFirstBlock(int blocksize) {
@@ -166,7 +180,7 @@ public class Database {
 		toc[0].putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
 	}
 	
-	private void removeBlock(Chunk chunk, int blocksize, int block) throws IOException {
+	private void removeBlock(Chunk chunk, int blocksize, int block) throws CoreException {
 		int prevblock = chunk.getInt(block + PREV_OFFSET);
 		int nextblock = chunk.getInt(block + NEXT_OFFSET);
 		if (prevblock != 0)
@@ -178,7 +192,7 @@ public class Database {
 			putInt(nextblock + PREV_OFFSET, prevblock);
 	}
 	
-	private void addBlock(Chunk chunk, int blocksize, int block) throws IOException {
+	private void addBlock(Chunk chunk, int blocksize, int block) throws CoreException {
 		// Mark our size
 		chunk.putInt(block, blocksize);
 
@@ -196,7 +210,7 @@ public class Database {
 	 * 
 	 * @param offset
 	 */
-	public void free(int offset) throws IOException {
+	public void free(int offset) throws CoreException {
 		// TODO - look for opportunities to merge blocks
 		int block = offset - INT_SIZE;
 		Chunk chunk = getChunk(block);
@@ -204,32 +218,42 @@ public class Database {
 		addBlock(chunk, blocksize, block);
 	}
 
-	public void putInt(int offset, int value) throws IOException {
+	public void putInt(int offset, int value) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		chunk.putInt(offset, value);
 	}
 	
-	public int getInt(int offset) throws IOException {
+	public int getInt(int offset) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		return chunk.getInt(offset);
 	}
 
-	public void putChars(int offset, char[] value) throws IOException {
+	public void putChar(int offset, char value) throws CoreException {
+		Chunk chunk = getChunk(offset);
+		chunk.putChar(offset, value);
+	}
+
+	public char getChar(int offset) throws CoreException {
+		Chunk chunk = getChunk(offset);
+		return chunk.getChar(offset);
+	}
+	
+	public void putChars(int offset, char[] value) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		chunk.putChars(offset, value);
 	}
 	
-	public char[] getChars(int offset) throws IOException {
+	public char[] getChars(int offset) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		return chunk.getChars(offset);
 	}
 	
-	public void putString(int offset, String value) throws IOException {
+	public void putString(int offset, String value) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		chunk.putString(offset, value);
 	}
 	
-	public String getString(int offset) throws IOException {
+	public String getString(int offset) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		return chunk.getString(offset);
 	}

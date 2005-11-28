@@ -1,7 +1,6 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -10,6 +9,7 @@ import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.StringComparator;
 import org.eclipse.cdt.internal.core.pdom.db.StringVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 public class DBTest extends TestCase {
@@ -79,12 +79,12 @@ public class DBTest extends TestCase {
 			super(db, Database.INT_SIZE, key);
 		}
 		
-		public boolean visit(int record) throws IOException {
+		public boolean visit(int record) throws CoreException {
 			this.record = record;
 			return false;
 		}
 		
-		public int findIn(BTree btree) throws IOException {
+		public int findIn(BTree btree) throws CoreException {
 			btree.visit(this);
 			return record;
 		}

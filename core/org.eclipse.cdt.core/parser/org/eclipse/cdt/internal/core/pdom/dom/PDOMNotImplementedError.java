@@ -8,30 +8,14 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom;
-
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMProvider;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.core.resources.IProject;
+package org.eclipse.cdt.internal.core.pdom.dom;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class NullPDOMProvider implements IPDOMProvider {
+public class PDOMNotImplementedError extends Error {
 
-	public IPDOM getPDOM(IProject project) {
-		// by default return null.
-		return null;
-	}
-	
-	public IElementChangedListener getElementChangedListener() {
-		// here too
-		return null;
-	}
-	
-	public void deletePDOM(IProject project) {
-	}
-	
+	public static final long serialVersionUID = 0;
+
 }

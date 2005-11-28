@@ -8,19 +8,14 @@
  * Contributors:
  * QNX - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.pdom.dom;
+package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.io.IOException;
-
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.StringComparator;
 import org.eclipse.cdt.internal.core.pdom.db.StringVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * Represents a file containing names.
@@ -58,19 +53,19 @@ public class PDOMFile {
 			super(db, key);
 		}
 		
-		public boolean visit(int record) throws IOException {
+		public boolean visit(int record) throws CoreException {
 			this.record = record;
 			return false;
 		}
 		
-		public int findIn(BTree btree) throws IOException {
+		public int findIn(BTree btree) throws CoreException {
 			btree.visit(this);
 			return record;
 		}
 		
 	}
 	
-	public static PDOMFile insert(PDOMDatabase pdom, String filename) throws IOException {
+	public static PDOMFile insert(PDOMDatabase pdom, String filename) throws CoreException {
 		BTree index = pdom.getFileIndex();
 		PDOMFile pdomFile = find(pdom, filename);
 		if (pdomFile == null) {
@@ -84,7 +79,7 @@ public class PDOMFile {
 		return pdomFile;
 	}
 
-	public static PDOMFile find(PDOMDatabase pdom, String filename) throws IOException {
+	public static PDOMFile find(PDOMDatabase pdom, String filename) throws CoreException {
 		BTree index = pdom.getFileIndex();
 		int record = new FindVisitor(pdom.getDB(), filename).findIn(index);
 		return (record != 0) ? new PDOMFile(pdom, record) : null;
@@ -99,25 +94,20 @@ public class PDOMFile {
 		return record;
 	}
 	
-	public String getFileName() throws IOException {
+	public String getFileName() throws CoreException {
 		return pdom.getDB().getString(record + FILE_NAME_OFFSET);
 	}
 	
-	public int getFirstName() throws IOException {
+	public int getFirstName() throws CoreException {
 		return pdom.getDB().getInt(record + FIRST_NAME_OFFSET);
 	}
 
-	public void setFirstName(int firstName) throws IOException {
+	public void setFirstName(int firstName) throws CoreException {
 		pdom.getDB().putInt(record + FIRST_NAME_OFFSET, firstName);
 	}
 	
 	public void free() throws CoreException {
-		try {
-			pdom.getDB().free(record);
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					CCorePlugin.PLUGIN_ID, 0, "Failed to free string", e));
-		}
+		pdom.getDB().free(record);
 	}
 	
 }

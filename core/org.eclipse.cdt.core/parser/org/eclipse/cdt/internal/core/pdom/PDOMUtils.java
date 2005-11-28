@@ -3,10 +3,9 @@
  */
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.internal.core.pdom.db.Chunk;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author dschaefer
@@ -14,7 +13,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
  */
 public class PDOMUtils {
 
-	public static int stringCompare(Database db, int record1, int record2) throws IOException {
+	public static int stringCompare(Database db, int record1, int record2) throws CoreException {
 		Chunk chunk1 = db.getChunk(record1);
 		Chunk chunk2 = db.getChunk(record2);
 		
@@ -43,7 +42,7 @@ public class PDOMUtils {
 			return 1;
 	}
 	
-	public static int stringCompare(Database db, int record1, char[] record2) throws IOException {
+	public static int stringCompare(Database db, int record1, char[] record2) throws CoreException {
 		Chunk chunk1 = db.getChunk(record1);
 		
 		int i1 = record1;

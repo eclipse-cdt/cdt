@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
-import java.io.IOException;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
@@ -26,6 +26,6 @@ public interface IBTreeComparator {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract int compare(int record1, int record2) throws IOException;
+	public abstract int compare(int record1, int record2) throws CoreException;
 	
 }

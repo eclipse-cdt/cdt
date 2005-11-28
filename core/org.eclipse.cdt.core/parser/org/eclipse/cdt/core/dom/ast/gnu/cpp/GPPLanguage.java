@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -31,7 +32,10 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
@@ -40,6 +44,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfigur
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPFunction;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPVariable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -100,16 +105,24 @@ public class GPPLanguage implements ILanguage {
 	
 	// Binding types
 	public static final int CPPVARIABLE = 1;
+	public static final int CPPFUNCTION = 2;
 	
 	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException {
 		IBinding binding = name.resolveBinding();
 		if (binding == null)
 			return null;
-
-		if (binding instanceof CPPField)
+	
+		if (binding instanceof CPPField) {
 			return null;
-		if (binding instanceof CPPVariable)
-			return new PDOMCPPVariable(pdom, name, (CPPVariable)binding);
+		} else if (binding instanceof CPPVariable) {
+			IScope scope = binding.getScope();
+			if (!(scope instanceof CPPBlockScope))
+				return new PDOMCPPVariable(pdom, name, (CPPVariable)binding);
+		} else if (binding instanceof CPPMethod) {
+			return null;
+		} else if (binding instanceof CPPFunction) {
+			return new PDOMCPPFunction(pdom, name, (CPPFunction)binding);
+		}
 		
 		return null;
 	}
@@ -118,6 +131,8 @@ public class GPPLanguage implements ILanguage {
 		switch (binding.getBindingType()) {
 		case CPPVARIABLE:
 			return new PDOMCPPVariable(pdom, binding.getRecord());
+		case CPPFUNCTION:
+			return new PDOMCPPFunction(pdom, binding.getRecord());
 		}
 		
 		return binding;

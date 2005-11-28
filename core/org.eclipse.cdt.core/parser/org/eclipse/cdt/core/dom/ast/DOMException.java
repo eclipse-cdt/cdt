@@ -14,7 +14,10 @@
  */
 package org.eclipse.cdt.core.dom.ast;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * This is the general purpose exception that is thrown for resolving semantic
@@ -22,7 +25,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
  * 
  * @author aniefer
  */
-public class DOMException extends Exception {
+public class DOMException extends CoreException {
+	
+	private static final long serialVersionUID = 0;
+	
 	IProblemBinding problemBinding;
 
 	/**
@@ -31,7 +37,8 @@ public class DOMException extends Exception {
 	 * 
 	 */
 	public DOMException(IProblemBinding problem) {
-		super(CPPSemantics.EMPTY_NAME);
+		super(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
+				0, "DOMException", new Exception()));
 		problemBinding = problem;
 	}
 

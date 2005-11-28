@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
@@ -105,6 +106,8 @@ public class GPPLanguage implements ILanguage {
 		if (binding == null)
 			return null;
 
+		if (binding instanceof CPPField)
+			return null;
 		if (binding instanceof CPPVariable)
 			return new PDOMCPPVariable(pdom, name, (CPPVariable)binding);
 		

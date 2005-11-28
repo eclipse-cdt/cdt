@@ -79,7 +79,7 @@ public class SavedCodeReaderFactory implements ICodeReaderFactory {
     }
 
     public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
-		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
+		return new CodeReader(tu.getResource().getLocation().toOSString(), tu.getContents());
     }
 
     /* (non-Javadoc)

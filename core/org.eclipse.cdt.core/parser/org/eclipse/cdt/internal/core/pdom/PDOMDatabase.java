@@ -27,7 +27,9 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 
 
 /**
@@ -118,11 +120,9 @@ public class PDOMDatabase implements IPDOM {
 	}
 	
 	public void delete() throws CoreException {
-		db = null;
+		getDB().clear();
 		bindingIndex = null;
 		fileIndex = null;
-		System.gc();
-		dbPath.toFile().delete();
 	}
 
 	public ICodeReaderFactory getCodeReaderFactory() {

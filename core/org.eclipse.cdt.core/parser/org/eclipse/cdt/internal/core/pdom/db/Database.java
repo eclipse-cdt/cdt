@@ -51,22 +51,12 @@ public class Database {
 			}
 			
 			toc = new Chunk[(int)nChunks];
-			
-			// Load in the magic chunk zero
-			toc[0] = new Chunk(file, 0);
-			int oldversion = toc[0].getInt(0);
-			if (oldversion != version) {
-				// Conversion?
-				toc[0].putInt(0, version);
-			}
+			init(version);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
-
-	/**
-	 * Create the database, including chunk zero and the b-trees.
-	 */
+	
 	private void create() throws CoreException {
 		try {
 			file.seek(0);
@@ -74,6 +64,27 @@ public class Database {
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
+	}
+
+	private void init(int version) throws CoreException {
+		// Load in the magic chunk zero
+		toc[0] = new Chunk(file, 0);
+		int oldversion = toc[0].getInt(0);
+		if (oldversion != version) {
+			// Conversion?
+			toc[0].putInt(0, version);
+		}
+	}
+
+	/**
+	 * Empty the contents of the Database, make it ready to start again
+	 * @throws CoreException
+	 */
+	public void clear() throws CoreException {
+		int version = toc[0].getInt(0);
+		create();
+		toc = new Chunk[1];
+		init(version);
 	}
 	
 	/**
@@ -158,15 +169,15 @@ public class Database {
 	
 	private int createChunk() throws CoreException {
 		try {
-			int offset = (int)file.length();
+			Chunk[] oldtoc = toc;
+			int n = oldtoc.length;
+			int offset = n * CHUNK_SIZE;
 			file.seek(offset);
 			file.write(new byte[CHUNK_SIZE]);
-			Chunk[] oldtoc = toc;
-			int i = oldtoc.length;
-			toc = new Chunk[i + 1];
-			System.arraycopy(oldtoc, 0, toc, 0, i);
-			toc[i] = new Chunk(file, offset);
-			return i;
+			toc = new Chunk[n + 1];
+			System.arraycopy(oldtoc, 0, toc, 0, n);
+			toc[n] = new Chunk(file, offset);
+			return n;
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}

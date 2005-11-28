@@ -143,31 +143,35 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				fStackFrames = new ArrayList();
 			}
 			else if ( refreshChildren ) {
+				// If the last frame is dummy remove it
 				if ( fStackFrames.size() > 0 ) {
 					Object frame = fStackFrames.get( fStackFrames.size() - 1 );
 					if ( frame instanceof IDummyStackFrame ) {
 						fStackFrames.remove( frame );
 					}
 				}
+				// Retrieve stack frames from the backend
 				int depth = getStackDepth();
-				ICDIStackFrame[] frames = (depth != 0) ? getCDIStackFrames( 0, (depth > getMaxStackDepth()) ? getMaxStackDepth() : depth ) : new ICDIStackFrame[0];
+				ICDIStackFrame[] frames = ( depth != 0 ) ? getCDIStackFrames( 0, ( depth >= getMaxStackDepth() ) ? getMaxStackDepth() - 1 : depth ) : new ICDIStackFrame[0];
 				if ( fStackFrames.isEmpty() ) {
 					if ( frames.length > 0 ) {
-						addStackFrames( frames, 0, frames.length );
+						addStackFrames( frames, 0, frames.length, false );
 					}
 				}
 				else if ( depth < getLastStackDepth() ) {
+					// stepping out of the last frame
 					disposeStackFrames( 0, getLastStackDepth() - depth );
 					if ( frames.length > 0 ) {
 						updateStackFrames( frames, 0, fStackFrames, fStackFrames.size() );
 						if ( fStackFrames.size() < frames.length ) {
-							addStackFrames( frames, fStackFrames.size(), frames.length - fStackFrames.size() );
+							addStackFrames( frames, fStackFrames.size(), frames.length - fStackFrames.size(), true );
 						}
 					}
 				}
 				else if ( depth > getLastStackDepth() ) {
+					// stepping into a new frame
 					disposeStackFrames( frames.length - depth + getLastStackDepth(), depth - getLastStackDepth() );
-					addStackFrames( frames, 0, depth - getLastStackDepth() );
+					addStackFrames( frames, 0, depth - getLastStackDepth(), false );
 					updateStackFrames( frames, depth - getLastStackDepth(), fStackFrames, frames.length - depth + getLastStackDepth() );
 				}
 				else { // depth == getLastStackDepth()
@@ -178,7 +182,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 						ICDIStackFrame oldTopFrame = (fStackFrames.size() > 0) ? ((CStackFrame)fStackFrames.get( 0 )).getLastCDIStackFrame() : null;
 						if ( !CStackFrame.equalFrame( newTopFrame, oldTopFrame ) ) {
 							disposeStackFrames( 0, fStackFrames.size() );
-							addStackFrames( frames, 0, frames.length );
+							addStackFrames( frames, 0, frames.length, false );
 						}
 						else // we are in the same frame
 						{
@@ -245,10 +249,13 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		}
 	}
 
-	protected void addStackFrames( ICDIStackFrame[] newFrames, int startIndex, int length ) {
+	protected void addStackFrames( ICDIStackFrame[] newFrames, int startIndex, int length, boolean append ) {
 		if ( newFrames.length >= startIndex + length ) {
 			for( int i = 0; i < length; ++i ) {
-				fStackFrames.add( i, new CStackFrame( this, newFrames[startIndex + i] ) );
+				if ( append )
+					fStackFrames.add( new CStackFrame( this, newFrames[startIndex + i] ) );
+				else
+					fStackFrames.add( i, new CStackFrame( this, newFrames[startIndex + i] ) );
 			}
 		}
 	}

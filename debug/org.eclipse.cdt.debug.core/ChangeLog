@@ -1,3 +1,7 @@
+2005-11-28 Mikhail Khodjaiants
+	Bug 118272: Invalid stack trace when stepping out of function.
+	* CThread.java
+
 2005-11-07 Mikhail Khodjaiants
 	Bug 115385: Pointer to a structure is not updated correctly
 	* CVariable.java

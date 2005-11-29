@@ -19,9 +19,12 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
+import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteMemory;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
@@ -270,6 +273,26 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		}
 		// If the assign was succesfull fire a MIChangedEvent() via refresh.
 		refresh();
+
+		Target target = (Target)getTarget();
+
+		// If register manager is on autoupdate, update all registers
+		RegisterManager regMgr = ((Session)target.getSession()).getRegisterManager();
+		if (regMgr.isAutoUpdate()) {
+			regMgr.update(target);
+		}
+		
+		// If expression manager is on autoupdate, update all expressions
+		ExpressionManager expMgr = ((Session)target.getSession()).getExpressionManager();
+		if (expMgr.isAutoUpdate()) {
+			expMgr.update(target);
+		}
+		
+		// If variable manager is on autoupdate, update all variables.
+		VariableManager varMgr = ((Session)target.getSession()).getVariableManager();
+		if (varMgr.isAutoUpdate()) {
+			varMgr.update(target);
+		}
 	}
 
 	/* (non-Javadoc)

@@ -1,4 +1,8 @@
 2005-11-29 Mikhail Khodjaiants
+	Partial fix for bug 118114: Cannot view typedef'ed array in debugger.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/VariableDescriptor.java
+	
+2005-11-29 Mikhail Khodjaiants
 	Bug 100298: [Memory View] Changing variable's value from variables view or memory view doesn't sync to each other.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/MemoryBlock.java

@@ -121,10 +121,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("*("); //$NON-NLS-1$
 			buffer.append('(').append(fn).append(')');
-			if (castingIndex != 0) {
-				buffer.append('+').append(castingIndex);
-			}
-			buffer.append(')');
+			buffer.append('+').append(castingIndex).append(')');
 			buffer.append('@').append(castingLength);
 			fn = buffer.toString();
 		} else if (castingTypes != null && castingTypes.length > 0) {

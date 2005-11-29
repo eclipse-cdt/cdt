@@ -36,6 +36,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
+import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
@@ -360,16 +361,22 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			regMgr.update(target);
 		}
 		
-		// If expression was on autoupdate, update all the other expression
+		// If expression manager is on autoupdate, update all expressions
 		ExpressionManager expMgr = ((Session)target.getSession()).getExpressionManager();
 		if (expMgr.isAutoUpdate()) {
 			expMgr.update(target);
 		}
 		
-		// If variable was on autoupdate, update all the variables.
+		// If variable manager is on autoupdate, update all variables
 		VariableManager varMgr = ((Session)target.getSession()).getVariableManager();
 		if (varMgr.isAutoUpdate()) {
 			varMgr.update(target);
+		}
+
+		// If memory manager is on autoupdate, update all memory blocks
+		MemoryManager memMgr = ((Session)target.getSession()).getMemoryManager();
+		if (memMgr.isAutoUpdate()) {
+			memMgr.update(target);
 		}
 	}
 

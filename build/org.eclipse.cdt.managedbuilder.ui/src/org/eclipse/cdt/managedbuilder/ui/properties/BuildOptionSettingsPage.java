@@ -326,7 +326,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 				if (setOption == null)
 					setOption = realOption;
 				
-				if (setOption.getValueHandler().handleValue(
+/*				if (setOption.getValueHandler().handleValue(
 						handler, 
 						setOption.getOptionHolder(), 
 						setOption,
@@ -336,7 +336,8 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 					// May need to do something here say log a message.
 				} else {
 					// Event handling Failed. 
-				} 
+				}
+*/ 
 			} catch (BuildException e) {
 			} catch (ClassCastException e) {
 			}
@@ -448,9 +449,11 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						if(fe instanceof StringFieldEditor){
 							String val = ((StringFieldEditor)fe).getStringValue();
 							if (isItResourceConfigPage) {
-								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
+								newOption = ManagedBuildManager.setOption(clonedResConfig,changedHolder,changedOption,val);
+//								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
 							} else {
-								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
+								newOption = ManagedBuildManager.setOption(clonedConfig,changedHolder,changedOption,val);
+//								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
 							}
 						}
 						break;
@@ -458,9 +461,11 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						if(fe instanceof BooleanFieldEditor){
 							boolean val = ((BooleanFieldEditor)fe).getBooleanValue();
 							if (isItResourceConfigPage) {
-								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
+								newOption = ManagedBuildManager.setOption(clonedResConfig,changedHolder,changedOption,val);
+//								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
 							} else {
-								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
+								newOption = ManagedBuildManager.setOption(clonedConfig,changedHolder,changedOption,val);
+//								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
 							}
 						}
 						break;
@@ -469,11 +474,17 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 							String name = ((BuildOptionComboFieldEditor)fe).getSelection();
 							String enumId = changedOption.getEnumeratedId(name);
 							if(isItResourceConfigPage) {
-								newOption = clonedResConfig.setOption(changedHolder, changedOption, 
+								newOption = ManagedBuildManager.setOption(clonedResConfig,changedHolder,changedOption,
 										(enumId != null && enumId.length() > 0) ? enumId : name);
+
+//								newOption = clonedResConfig.setOption(changedHolder, changedOption, 
+//										(enumId != null && enumId.length() > 0) ? enumId : name);
 							} else {
-								newOption = clonedConfig.setOption(changedHolder, changedOption, 
+								newOption = ManagedBuildManager.setOption(clonedConfig,changedHolder,changedOption,
 										(enumId != null && enumId.length() > 0) ? enumId : name);
+
+//								newOption = clonedConfig.setOption(changedHolder, changedOption, 
+//										(enumId != null && enumId.length() > 0) ? enumId : name);
 							}
 	
 						}
@@ -486,9 +497,11 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 						if(fe instanceof FileListControlFieldEditor){
 							String val[] =((FileListControlFieldEditor)fe).getStringListValue();
 							if (isItResourceConfigPage) {
-								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
+								newOption = ManagedBuildManager.setOption(clonedResConfig,changedHolder,changedOption,val);
+//								newOption = clonedResConfig.setOption(changedHolder,changedOption,val);
 							} else {
-								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
+								newOption = ManagedBuildManager.setOption(clonedConfig,changedHolder,changedOption,val);
+//								newOption = clonedConfig.setOption(changedHolder,changedOption,val);
 							}
 						}
 						break;

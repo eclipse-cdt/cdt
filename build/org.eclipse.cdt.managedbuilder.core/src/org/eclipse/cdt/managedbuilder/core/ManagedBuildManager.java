@@ -773,8 +773,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			//an option can be null in the case of calling this method from the environment
 			//build path change listener
-			if (option != null && !(option.getValueType() == IOption.INCLUDE_PATH 
-				|| option.getValueType() == IOption.PREPROCESSOR_SYMBOLS)) {
+			if (config.isTemporary() ||
+					(option != null && option.getValueType() != IOption.INCLUDE_PATH 
+							&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS)) {
 				return;
 			}
 		} catch (BuildException e) {return;}
@@ -793,11 +794,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 	public static void initializePathEntries(IConfiguration config, IOption option){
 		try{
-			if(option != null
+			if(config.isTemporary() ||
+					(option != null
 					&& option.getValueType() != IOption.INCLUDE_PATH
 					&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
 					&& option.getValueType() != IOption.LIBRARIES
-					)
+					))
 				return;
 		} catch (BuildException e){
 			return;
@@ -820,8 +822,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static void notifyListeners(IResourceConfiguration resConfig, IOption option) {
 		// Continue if change is something that effect the scanreser
 		try {
-			if (!(option.getValueType() == IOption.INCLUDE_PATH 
-				|| option.getValueType() == IOption.PREPROCESSOR_SYMBOLS)) {
+			if (resConfig.getParent().isTemporary() ||
+					(option != null && option.getValueType() != IOption.INCLUDE_PATH 
+				&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS)) {
 				return;
 			}
 		} catch (BuildException e) {return;}
@@ -846,7 +849,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void setNewProjectVersion(IProject newProject) {
 		// Get the build info for the argument
-		ManagedBuildInfo info = findBuildInfo(newProject);
+		ManagedBuildInfo info = findBuildInfo(newProject, true);
 		info.setVersion(buildInfoVersion.toString());		
 	}
 
@@ -869,8 +872,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			// Request a value change and set dirty if real change results
 			retOpt = config.setOption(holder, option, value);
-			initializePathEntries(config,option);
-			notifyListeners(config, option);
+			if (retOpt.getValueHandler().handleValue(
+					config, 
+					holder, 
+					retOpt,
+					retOpt.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+			initializePathEntries(config,retOpt);
+			notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -896,8 +910,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			// Request a value change and set dirty if real change results
 			retOpt = resConfig.setOption(holder, option, value);
-			initializePathEntries(resConfig,option);
-			notifyListeners(resConfig, option);
+			if (retOpt.getValueHandler().handleValue(
+					resConfig, 
+					holder, 
+					retOpt,
+					retOpt.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+			initializePathEntries(resConfig,retOpt);
+			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -921,8 +946,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = config.setOption(holder, option, value);
-			initializePathEntries(config,option);
-			notifyListeners(config, option);
+			if (retOpt.getValueHandler().handleValue(
+					config, 
+					holder, 
+					retOpt,
+					retOpt.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+			initializePathEntries(config,retOpt);
+			notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -947,8 +983,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
-			initializePathEntries(resConfig,option);
-			notifyListeners(resConfig, option);
+			if (retOpt.getValueHandler().handleValue(
+					resConfig, 
+					holder, 
+					retOpt,
+					retOpt.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+			initializePathEntries(resConfig,retOpt);
+			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -972,8 +1019,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = config.setOption(holder, option, value);
-			initializePathEntries(config,option);
-			notifyListeners(config, option);				
+			if (retOpt.getValueHandler().handleValue(
+					config, 
+					holder, 
+					retOpt,
+					retOpt.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+			initializePathEntries(config,retOpt);
+			notifyListeners(config, retOpt);				
 		} catch (BuildException e) {
 			return null;
 		}
@@ -998,8 +1056,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		IOption retOpt;
 		try {
 			retOpt = resConfig.setOption(holder, option, value);
-			initializePathEntries(resConfig,option);
-			notifyListeners(resConfig, option);				
+			if (retOpt.getValueHandler().handleValue(
+					resConfig, 
+					holder, 
+					retOpt,
+					retOpt.getValueHandlerExtraArgument(), 
+					IManagedOptionValueHandler.EVENT_APPLY)) {
+				// TODO : Event is handled successfully and returned true.
+				// May need to do something here say log a message.
+			} else {
+				// Event handling Failed. 
+			} 
+			initializePathEntries(resConfig,retOpt);
+			notifyListeners(resConfig, retOpt);				
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1167,9 +1236,20 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resource
 	 */
 	public static void removeBuildInfo(IResource resource) {
-		try {
-			resource.setSessionProperty(buildInfoProperty, null);
-		} catch (CoreException e) {
+		IManagedBuildInfo info = findBuildInfo(resource, false);
+		if(info != null){
+			IConfiguration[] configs = info.getManagedProject().getConfigurations();
+			//  Send an event to each configuration and if they exist, its resource configurations
+			for (int i=0; i < configs.length; ++i) {
+				ManagedBuildManager.performValueHandlerEvent(configs[i], IManagedOptionValueHandler.EVENT_CLOSE);
+			}
+
+			info.setValid(false);
+			
+			try {
+				resource.setSessionProperty(buildInfoProperty, null);
+			} catch (CoreException e) {
+			}
 		}
 	}
 
@@ -1183,11 +1263,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static void resetConfiguration(IProject project, IConfiguration configuration) {
 		// reset the configuration
 		((Configuration)configuration).reset();
+
+		performValueHandlerEvent(configuration, 
+				IManagedOptionValueHandler.EVENT_SETDEFAULT, false);
+
 	}
 
 	public static void resetResourceConfiguration(IProject project, IResourceConfiguration resConfig) {
 		// reset the configuration
 		((ResourceConfiguration) resConfig).reset();
+		
+		performValueHandlerEvent(resConfig, 
+				IManagedOptionValueHandler.EVENT_SETDEFAULT);
+
 	}
 	/**
 	 * Adds a ProjectType that is is specified in the manifest to the 
@@ -1450,7 +1538,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 		// Get the build info associated with this project for this session
 		try {
-			buildInfo = findBuildInfo(resource.getProject());
+			buildInfo = findBuildInfo(resource.getProject(), true);
 			initBuildInfoContainer(buildInfo);
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, 
@@ -1641,13 +1729,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						}
 				}
 				
-				//  Finish up
-				project.setSessionProperty(buildInfoProperty, buildInfo);
 				IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
 				//  Send an event to each configuration and if they exist, its resource configurations
 				for (int i=0; i < configs.length; ++i) {
 					ManagedBuildManager.performValueHandlerEvent(configs[i], IManagedOptionValueHandler.EVENT_OPEN);
 				}
+				//  Finish up
+				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -2083,18 +2171,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resource
 	 * @return
 	 */
-	private static ManagedBuildInfo findBuildInfo(IResource resource/*, boolean create*/) {
+	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean forceLoad) {
 
 		if (resource == null) return null;
 
-		// Make sure the extension information is loaded first
-		try {
-			loadExtensions();
-		} catch (BuildException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
 		ManagedBuildInfo buildInfo = null;
 
 		// Check if there is any build info associated with this project for this session
@@ -2109,7 +2189,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		
 		if (buildInfo == null && resource instanceof IProject)
-			buildInfo = findBuildInfoSynchronized((IProject)resource);
+			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
 /*		
 		// Nothing in session store, so see if we can load it from cdtbuild
 		if (buildInfo == null && resource instanceof IProject) {
@@ -2181,25 +2261,32 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param resource
 	 * @return
 	 */
-	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project/*, boolean create*/) {
+	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
 		ManagedBuildInfo buildInfo = null;
 
 		// Check if there is any build info associated with this project for this session
-			try {
-				buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
-				// Make sure that if a project has build info, that the info is not corrupted
-				if (buildInfo != null) {
-					buildInfo.updateOwner(project);
-				}
-			} catch (CoreException e) {
-	//			return null;
+		try {
+			buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
+			// Make sure that if a project has build info, that the info is not corrupted
+			if (buildInfo != null) {
+				buildInfo.updateOwner(project);
 			}
+		} catch (CoreException e) {
+	//		return null;
+		}
+		
+		if(buildInfo == null && forceLoad){
+			// Make sure the extension information is loaded first
+			try {
+				loadExtensions();
+			} catch (BuildException e) {
+				e.printStackTrace();
+				return null;
+			}
+
 			
 			// Check weather getBuildInfo is called from converter
-			if (buildInfo == null) {
-				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
-				if (buildInfo != null) return buildInfo;
-			}
+			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
 			
 			// Nothing in session store, so see if we can load it from cdtbuild
 			if (buildInfo == null) {
@@ -2220,7 +2307,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 					final Shell shell = window.getShell();
 					final String exceptionMsg = e.getMessage(); 
-					shell.getDisplay().syncExec( new Runnable() {
+					//using syncExec could cause a dead-lock
+					//that is why asyncExec is used
+					shell.getDisplay().asyncExec( new Runnable() {
 						public void run() {
 							MessageDialog.openError(shell, 
 									ManagedMakeMessages.getResourceString("ManagedBuildManager.error.open_failed_title"),	//$NON-NLS-1$
@@ -2229,17 +2318,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						}
 					} );
 				}
-			}
 
-		if (buildInfo != null && !buildInfo.isContainerInited()) {
-			//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
-			//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
-			//         
-			try {
-				// Check if the project needs its container initialized
-				initBuildInfoContainer(buildInfo);
-			} catch (CoreException e) {
-				// We can live without a path entry container if the build information is valid
+				if (buildInfo != null && !buildInfo.isContainerInited()) {
+					//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
+					//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
+					//         
+					try {
+						// Check if the project needs its container initialized
+						initBuildInfoContainer(buildInfo);
+					} catch (CoreException e) {
+						// We can live without a path entry container if the build information is valid
+					}
+				}
 			}
 		}
 
@@ -2249,13 +2339,33 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	/**
 	 * Finds, but does not create, the managed build information for the 
 	 * argument.
+	 * Loads the build info in case it is not currently loadded
+	 * Calling this method is the same as calling getBuildInfo(IResource resource, boolean forceLoad)
+	 * with the "forceLoad" argument set to true
+	 * 
 	 * 
 	 * @see ManagedBuildManager#initBuildInfo(IResource)
 	 * @param resource The resource to search for managed build information on.
 	 * @return IManagedBuildInfo The build information object for the resource.
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource) {
-		return findBuildInfo(resource.getProject());
+		return getBuildInfo(resource, true);
+	}
+
+	/**
+	 * Finds, but does not create, the managed build information for the 
+	 * argument.
+	 * If the build info is not currently loadded and "forceLoad" argument is set to true,
+	 * loads the build info from the .cdtbuild file
+	 * In case "forceLoad" is false, does not load the build info and returns null in case it is not loadded
+	 * 
+	 * @see ManagedBuildManager#initBuildInfo(IResource)
+	 * @param resource The resource to search for managed build information on.
+	 * @param forceLoad specifies whether the build info should be loadded in case it is not loadded currently.
+	 * @return IManagedBuildInfo The build information object for the resource.
+	 */
+	public static IManagedBuildInfo getBuildInfo(IResource resource, boolean forceLoad) {
+		return findBuildInfo(resource.getProject(), forceLoad);
 	}
 
 	/**
@@ -2581,7 +2691,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				// Call the handler
 				if (options[i].getValueHandler().handleValue(
 						config, 
-						options[i].getOptionHolder(), 
+						toolChain, 
 						options[i], 
 						options[i].getValueHandlerExtraArgument(), 
 						event)) {
@@ -2603,7 +2713,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					// Call the handler
 					if (toolOptions[j].getValueHandler().handleValue(
 							config, 
-							toolOptions[j].getOptionHolder(), 
+							tools[i], 
 							toolOptions[j], 
 							toolOptions[j].getValueHandlerExtraArgument(), 
 							event)) {
@@ -2647,7 +2757,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					// Call the handler
 					if (toolOptions[j].getValueHandler().handleValue(
 							config, 
-							toolOptions[j].getOptionHolder(), 
+							tools[i], 
 							toolOptions[j], 
 							toolOptions[j].getValueHandlerExtraArgument(), 
 							event)) {

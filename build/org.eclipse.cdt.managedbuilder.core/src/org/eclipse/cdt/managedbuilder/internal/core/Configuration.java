@@ -868,6 +868,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	public void removeResourceConfiguration(IResourceConfiguration resConfig) {
+		ManagedBuildManager.performValueHandlerEvent(resConfig, 
+ 					IManagedOptionValueHandler.EVENT_CLOSE);
 		getResourceConfigurationList().remove(resConfig);
 		getResourceConfigurationMap().remove(resConfig.getResourcePath());
 		isDirty = true;
@@ -1391,7 +1393,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Send out the event to notify the options that they are about to be removed.
 		// Do not do this for the child resource configurations as they are handled when
 		// the configuration itself is destroyed.
-		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE, false);
+//		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE, false);
 		// Remove the configurations		
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];

@@ -730,7 +730,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		// We just need to remove all Options
 		ITool[] tools = getTools();
 		// Send out the event to notify the options that they are about to be removed
-		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE);
+//		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE);
 		// Remove the configurations		
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];

@@ -454,19 +454,19 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		Object[][] clonedOptions;
 		IResourceConfiguration realRcCfg = null;
 		IConfiguration realCfg = null;
-		IBuildObject handler = null;
+//		IBuildObject handler = null;
 
 		if (isItResourceConfigPage){
 			realRcCfg = buildPropPage.getRealRcConfig(clonedResConfig);
 			if(realRcCfg == null)
 				return false;
-			handler = realRcCfg;
+//			handler = realRcCfg;
 			clonedOptions = clonedCategory.getOptions(clonedResConfig);
 		} else {
 			realCfg = buildPropPage.getRealConfig(clonedConfig);
 			if(realCfg == null)
 				return false;
-			handler = realCfg;
+//			handler = realCfg;
 			clonedOptions = clonedCategory.getOptions(clonedConfig);
 		}
 
@@ -535,7 +535,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 				// press have been applied.
 				if (setOption == null)
 					setOption = realOption;
-				
+/*				
 				if (setOption.getValueHandler().handleValue(
 						handler, 
 						setOption.getOptionHolder(), 
@@ -546,7 +546,8 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					// May need to do something here say log a message.
 				} else {
 					// Event handling Failed. 
-				} 
+				}
+*/ 
 			} catch (BuildException e) {
 			} catch (ClassCastException e) {
 			}

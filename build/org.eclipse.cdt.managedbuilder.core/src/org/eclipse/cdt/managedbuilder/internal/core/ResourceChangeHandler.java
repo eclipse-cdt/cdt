@@ -17,6 +17,7 @@ import java.util.HashSet;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -73,6 +74,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 				switch (delta.getKind()) {
 				case IResourceDelta.REMOVED :
 					if ((delta.getFlags() & IResourceDelta.MOVED_TO) == 0 && rcType == IResource.PROJECT) {
+						sendClose((IProject)dResource);
 						break;
 					}
 				case IResourceDelta.CHANGED :
@@ -278,6 +280,16 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		}
 	}
 	
+	public void sendClose(IProject project){
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project,false);
+		if(info != null){
+			IConfiguration cfgs[] = info.getManagedProject().getConfigurations();
+			
+			for(int i = 0; i < cfgs.length; i++)
+				ManagedBuildManager.performValueHandlerEvent(cfgs[i], IManagedOptionValueHandler.EVENT_CLOSE, true);		
+		}
+	}
+	
 	/*
 	 *  I R e s o u r c e C h a n g e L i s t e n e r 
 	 */
@@ -291,8 +303,13 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getSource() instanceof IWorkspace) {
-
+			
 			switch (event.getType()) {
+				case IResourceChangeEvent.PRE_CLOSE:
+					IResource proj = event.getResource();
+					if(proj instanceof IProject)
+						sendClose((IProject)proj);
+					break;
 				case IResourceChangeEvent.POST_CHANGE :
 				case IResourceChangeEvent.POST_BUILD :
 				case IResourceChangeEvent.PRE_DELETE :

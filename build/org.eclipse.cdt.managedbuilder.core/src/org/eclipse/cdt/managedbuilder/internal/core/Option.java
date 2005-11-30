@@ -1404,9 +1404,9 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(boolean)
 	 */
 	public void setValue(boolean value) throws BuildException {
-		if (!isExtensionElement() && getValueType() == BOOLEAN)
+		if (/*!isExtensionElement() && */getValueType() == BOOLEAN){
 			this.value = new Boolean(value);
-		else {
+		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		setDirty(true);
@@ -1418,7 +1418,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public void setValue(String value) throws BuildException {
 		// Note that we can still set the human-readable value here 
-		if (!isExtensionElement() && (getValueType() == STRING || getValueType() == ENUMERATED)) {
+		if (/*!isExtensionElement() && */(getValueType() == STRING || getValueType() == ENUMERATED)) {
 			this.value = value;
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1431,14 +1431,17 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(String [])
 	 */
 	public void setValue(String [] value) throws BuildException {
-		if (!isExtensionElement() && 
+		if (/*!isExtensionElement() && */ 
 			  (getValueType() == STRING_LIST
 			|| getValueType() == INCLUDE_PATH
 			|| getValueType() == PREPROCESSOR_SYMBOLS
 			|| getValueType() == LIBRARIES
 			|| getValueType() == OBJECTS)) {
-			// Just replace what the option reference is holding onto 
-			this.value = new ArrayList(Arrays.asList(value));
+			// Just replace what the option reference is holding onto
+			if(value == null)
+				this.value = null;
+			else
+				this.value = new ArrayList(Arrays.asList(value));
 		}
 		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$

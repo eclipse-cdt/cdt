@@ -311,6 +311,8 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 			 			}
 			 			((IProject)proj).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 					 	
+			 			ManagedBuildManager.performValueHandlerEvent(config, 
+			 					IManagedOptionValueHandler.EVENT_CLOSE);
 					 	getConfigurationList().remove(config);
 						getConfigurationMap().remove(removeId);
 

@@ -201,7 +201,7 @@ public class ProjectType extends BuildObject implements IProjectType {
 	 */
 	public IConfiguration createConfiguration(IConfiguration parent, String id, String name) {
 		Configuration config = new Configuration(this, parent, id, name);
-		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
+//		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
 		return (IConfiguration)config;
 	}
 

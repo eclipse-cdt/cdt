@@ -21,7 +21,6 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
-import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
@@ -500,7 +499,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * Call an MBS CallBack function to inform that default settings have been applied.
 	 * This has to be sent to all the Options associated with this configuration.
 	 */
-	private void performSetDefaultsEventCallBack() {
+/*	private void performSetDefaultsEventCallBack() {
 		
 		if ( element instanceof IProject) {
 			// Do not send the event to the child resource configurations, as performDefaults
@@ -514,7 +513,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 					IManagedOptionValueHandler.EVENT_SETDEFAULT);
 		}
 	}
-	
+*/	
 	/*
 	 *  (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
@@ -585,7 +584,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			else
 				ManagedBuildManager.resetConfiguration(parent.getProject(), parent.getSelectedConfiguration());
 
-			performSetDefaultsEventCallBack();
+//			performSetDefaultsEventCallBack();
 			
 			defaultNeeded = false;
 		}
@@ -634,7 +633,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	private void saveOption(IOption clonedOption, IHoldsOptions cloneHolder){
 		IConfiguration realCfg = null;
 		IResourceConfiguration realRcCfg = null;
-		IBuildObject handler = null;
+//		IBuildObject handler = null;
 		IOption realOption;
 		IHoldsOptions realHolder;
 		
@@ -643,12 +642,12 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			realHolder = resParent.getRealHoldsOptions(cloneHolder);
 			realRcCfg = (IResourceConfiguration)((ITool)realHolder).getParent();
 			realCfg = realRcCfg.getParent();
-			handler = realRcCfg;
+//			handler = realRcCfg;
 		} else {
 			realOption = parent.getRealOption(clonedOption,cloneHolder);
 			realHolder = parent.getRealHoldsOptions(cloneHolder);
 			realCfg = parent.getConfigurationFromHoldsOptions(realHolder);
-			handler = realCfg;
+//			handler = realCfg;
 		}		
 		
 		try {
@@ -729,7 +728,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			if (setOption == null)
 				setOption = realOption;
 			
-			if (setOption.getValueHandler().handleValue(
+/*			if (setOption.getValueHandler().handleValue(
 					handler, 
 					setOption.getOptionHolder(), 
 					setOption,
@@ -739,7 +738,8 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 				// May need to do something here say log a message.
 			} else {
 				// Event handling Failed. 
-			} 
+			}
+*/ 
 		} catch (BuildException e) {
 		} catch (ClassCastException e) {
 		}

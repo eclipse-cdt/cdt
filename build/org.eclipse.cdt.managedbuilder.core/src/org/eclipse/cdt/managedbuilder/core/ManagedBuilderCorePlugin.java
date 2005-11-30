@@ -16,6 +16,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceChangeHandler;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -138,7 +139,11 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			ResourcesPlugin.getWorkspace().addSaveParticipant(ManagedBuilderCorePlugin.this, listener);
 
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				listener, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE /*| IResourceChangeEvent.POST_BUILD*/);
+				listener, 
+				IResourceChangeEvent.POST_CHANGE 
+				| IResourceChangeEvent.PRE_DELETE
+				| IResourceChangeEvent.PRE_CLOSE
+				/*| IResourceChangeEvent.POST_BUILD*/);
 
 		if (lastState != null) {
 			lastState.processResourceChangeEvents(listener);
@@ -153,6 +158,10 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		//      ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 		//      elements
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+		IProject projects[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for(int i = 0; i < projects.length; i++){
+			listener.sendClose(projects[i]);
+		}
 		listener = null;
 		super.stop(context);
 	}

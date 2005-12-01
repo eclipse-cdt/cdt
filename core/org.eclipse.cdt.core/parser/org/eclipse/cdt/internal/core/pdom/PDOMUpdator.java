@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -102,8 +103,12 @@ public class PDOMUpdator extends Job {
 					ITranslationUnit tu = (ITranslationUnit)i.next();
 					processRemovedTU(tu);
 				}
-			
-			System.out.println("Updator Time: " + (System.currentTimeMillis() - start));
+
+			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/pdomtimings"); //$NON-NLS-1$
+			if (showTimings!= null)
+				if (showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
+					System.out.println("Updator Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+					
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

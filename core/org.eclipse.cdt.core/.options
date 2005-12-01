@@ -32,3 +32,6 @@ org.eclipse.cdt.core/debug/typeresolver=false
 
 # Reports file type resolver activity
 org.eclipse.cdt.core/debug/typeresolver=false
+
+# Reports timings for PDOM
+org.eclipse.cdt.core/debug/pdomtimings=false

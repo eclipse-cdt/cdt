@@ -37,8 +37,8 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction {
 	 * @param type
 	 * @throws CoreException
 	 */
-	public PDOMCPPFunction(PDOMDatabase pdom, IASTName name, CPPFunction binding) throws CoreException {
-		super(pdom, name, GPPLanguage.GPP_ID, GPPLanguage.CPPFUNCTION);
+	public PDOMCPPFunction(PDOMDatabase pdom, int languageId, IASTName name, CPPFunction binding) throws CoreException {
+		super(pdom, name, languageId, GPPLanguage.CPPFUNCTION);
 	}
 
 	/**

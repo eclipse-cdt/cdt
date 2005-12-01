@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.LanguageManager;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -27,10 +32,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-
 
 /**
  * The PDOM Database.
@@ -43,11 +45,15 @@ public class PDOMDatabase implements IPDOM {
 	private Database db;
 	
 	private static final int VERSION = 0;
-	
-	public static final int FILE_INDEX = Database.DATA_AREA + 1 * Database.INT_SIZE;
-	private BTree fileIndex;
 
-	public static final int BINDING_INDEX = Database.DATA_AREA + 2 * Database.INT_SIZE;
+	public static final int LANGUAGES = Database.DATA_AREA;
+	public static final int FILE_INDEX = Database.DATA_AREA + 4;
+	public static final int BINDING_INDEX = Database.DATA_AREA + 8;
+	
+	private Map languageCache;
+	private ILanguage[] languages;
+	
+	private BTree fileIndex;
 	private BTree bindingIndex;
 
 	private static final QualifiedName dbNameProperty
@@ -89,6 +95,7 @@ public class PDOMDatabase implements IPDOM {
 		if (language == null)
 			return;
 		
+		final int languageId = getLanguageId(language);
 		IASTTranslationUnit ast = language.getTranslationUnit(tu,
 				ILanguage.AST_USE_INDEX |
 				ILanguage.AST_SKIP_INDEXED_HEADERS);
@@ -102,7 +109,7 @@ public class PDOMDatabase implements IPDOM {
 				public int visit(IASTName name) {
 					try {
 						if (name.toCharArray().length > 0) {
-							PDOMBinding binding = language.getPDOMBinding(PDOMDatabase.this, name);
+							PDOMBinding binding = language.getPDOMBinding(PDOMDatabase.this, languageId, name);
 							if (binding != null)
 								new PDOMName(PDOMDatabase.this, name, binding);
 						}
@@ -155,4 +162,49 @@ public class PDOMDatabase implements IPDOM {
 		return new IBinding[0];
 	}
 	
+	private void initLanguageMap() throws CoreException {
+		// load in the languages
+		languageCache = new HashMap();
+		int record = db.getInt(LANGUAGES);
+		PDOMLanguage lang = null;
+		if (record != 0)
+			lang = new PDOMLanguage(this, record);
+		while (lang != null) {
+			languageCache.put(lang.getName(), lang);
+			lang = lang.getNext();
+		}
+		
+		// map language ids to ILanguage impls.
+		languages = new ILanguage[languageCache.size() + 1]; // + 1 for the empty zero
+		Iterator i = languageCache.values().iterator();
+		while (i.hasNext()) {
+			lang = (PDOMLanguage)i.next();
+			languages[lang.getId()] = LanguageManager.getInstance().getLanguage(lang.getName());
+		}
+	}
+	
+	public int getLanguageId(ILanguage language) throws CoreException {
+		if (languageCache == null)
+			initLanguageMap();
+		PDOMLanguage pdomLang = (PDOMLanguage)languageCache.get(language.getId());
+		if (pdomLang == null) {
+			// add it in
+			int next = db.getInt(LANGUAGES);
+			int id = next == 0 ? 1 : new PDOMLanguage(this, next).getId() + 1;
+			pdomLang = new PDOMLanguage(this, language.getId(), id, next);
+			db.putInt(LANGUAGES, pdomLang.getRecord());
+			ILanguage[] oldlangs = languages;
+			languages = new ILanguage[id + 1];
+			System.arraycopy(oldlangs, 0, languages, 0, id);
+			languages[id] = language;
+			return id;
+		} else
+			return pdomLang.getId();
+	}
+
+	public ILanguage getLanguage(int id) throws CoreException {
+		if (languages == null)
+			initLanguageMap();
+		return languages[id];
+	}
 }

@@ -48,21 +48,13 @@ public interface ILanguage {
 	public static final int AST_SKIP_INDEXED_HEADERS = 4;
 
 	/**
-	 * Return the language id for this language. This is used in the PDOM database
-	 * to differentiate languages from eachother.
+	 * Return the language id for this language in the given PDOM.
+	 * This is to differentiate languages from eachother.
 	 * 
-	 * @return
+	 * @return language id
 	 */
-	public int getId();
+	public String getId();
 
-	// Language ID registry. This is here mainly to avoid languages trampling
-	// over eachother. It is not critical that language ids be put here, but it
-	// is critical that two languages in a given installion do not have the same
-	// id.
-	public static final int GCC_ID = 1; // gnu C
-	public static final int GPP_ID = 2; // gnu C++
-	public static final int GNAT_ID = 3; // gnu Ada
-	
 	/**
 	 * Create the AST for the given translation unit with the given style.
 	 * 
@@ -89,7 +81,7 @@ public interface ILanguage {
 	 * @param binding
 	 * @return
 	 */
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException;
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, int languageId, IASTName name) throws CoreException;
 
 	/**
 	 * Creates a language specific binding given the generic binding extracted

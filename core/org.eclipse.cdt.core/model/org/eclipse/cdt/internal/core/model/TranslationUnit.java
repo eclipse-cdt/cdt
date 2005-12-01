@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILanguage;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.LanguageManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -33,14 +33,9 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
@@ -664,22 +659,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			// content type string
 			IContentTypeManager manager = Platform.getContentTypeManager(); 
 			IContentType contentType = manager.getContentType(contentTypeId);
-			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
-			IExtension[] extensions = point.getExtensions();
-			for (int i = 0; i < extensions.length; ++i) {
-				IConfigurationElement[] languages = extensions[i].getConfigurationElements();
-				for (int j = 0; j < languages.length; ++j) {
-					IConfigurationElement language = languages[j];
-					IConfigurationElement[] contentTypes = language.getChildren("contentType"); //$NON-NLS-1$
-					for (int k = 0; k < contentTypes.length; ++k) {
-						IContentType langContType = manager.getContentType(contentTypes[k].getAttribute("id")); //$NON-NLS-1$
-						if (contentType.equals(langContType)) {
-							this.language = (ILanguage)language.createExecutableExtension("class"); //$NON-NLS-1$
-							return this.language;
-						}
-					}
-				}
-			}
+			language = LanguageManager.getInstance().getLanguage(contentType);
 		}
 		
 		return language;

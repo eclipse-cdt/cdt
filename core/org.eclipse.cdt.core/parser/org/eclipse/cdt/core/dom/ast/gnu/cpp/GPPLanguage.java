@@ -57,9 +57,9 @@ import org.eclipse.core.runtime.CoreException;
 public class GPPLanguage implements ILanguage {
 
 	protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = new GPPScannerExtensionConfiguration();
-
-	public int getId() {
-		return GPP_ID;
+	
+	public String getId() {
+		return CCorePlugin.PLUGIN_ID + ".g++"; //$NON-NLS-1$
 	}
 	
 	public IASTTranslationUnit getTranslationUnit(ITranslationUnit tu, int style) {
@@ -107,7 +107,7 @@ public class GPPLanguage implements ILanguage {
 	public static final int CPPVARIABLE = 1;
 	public static final int CPPFUNCTION = 2;
 	
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException {
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, int languageId, IASTName name) throws CoreException {
 		IBinding binding = name.resolveBinding();
 		if (binding == null)
 			return null;
@@ -117,11 +117,11 @@ public class GPPLanguage implements ILanguage {
 		} else if (binding instanceof CPPVariable) {
 			IScope scope = binding.getScope();
 			if (!(scope instanceof CPPBlockScope))
-				return new PDOMCPPVariable(pdom, name, (CPPVariable)binding);
+				return new PDOMCPPVariable(pdom, languageId, name, (CPPVariable)binding);
 		} else if (binding instanceof CPPMethod) {
 			return null;
 		} else if (binding instanceof CPPFunction) {
-			return new PDOMCPPFunction(pdom, name, (CPPFunction)binding);
+			return new PDOMCPPFunction(pdom, languageId, name, (CPPFunction)binding);
 		}
 		
 		return null;

@@ -34,9 +34,9 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 	 * @param binding
 	 * @throws CoreException
 	 */
-	public PDOMCPPVariable(PDOMDatabase pdom, IASTName name, CPPVariable binding)
+	public PDOMCPPVariable(PDOMDatabase pdom, int languageId, IASTName name, CPPVariable binding)
 			throws CoreException {
-		super(pdom, name, GPPLanguage.GPP_ID, GPPLanguage.CPPVARIABLE);
+		super(pdom, name, languageId, GPPLanguage.CPPVARIABLE);
 	}
 
 	/**

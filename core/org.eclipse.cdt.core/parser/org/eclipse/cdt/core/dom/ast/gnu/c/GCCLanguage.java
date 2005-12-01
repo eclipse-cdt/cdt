@@ -50,8 +50,9 @@ public class GCCLanguage implements ILanguage {
 
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
 
-	public int getId() {
-		return GCC_ID;
+	public String getId() {
+		// Must match the id in the extension
+		return CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$
 	}
 	
 	public IASTTranslationUnit getTranslationUnit(ITranslationUnit tu, int style) {
@@ -96,7 +97,7 @@ public class GCCLanguage implements ILanguage {
 		return null;
 	}
 	
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, IASTName name) throws CoreException {
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, int languageId, IASTName name) throws CoreException {
 		IBinding binding = name.resolveBinding();
 		if (binding == null)
 			return null;

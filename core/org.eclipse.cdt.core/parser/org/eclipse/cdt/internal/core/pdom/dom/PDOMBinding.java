@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -136,8 +137,8 @@ public class PDOMBinding implements IBinding {
 		return record;
 	}
 
-	public int getLanguage() throws CoreException {
-		return pdom.getDB().getChar(record + LANGUAGE_OFFSET);
+	public ILanguage getLanguage() throws CoreException {
+		return pdom.getLanguage(pdom.getDB().getChar(record + LANGUAGE_OFFSET));
 	}
 	
 	public int getBindingType() throws CoreException {

@@ -3,9 +3,6 @@
 	<name>org.eclipse.cdt.make.ui</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.cdt.make.core</project>
-		<project>org.eclipse.cdt.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

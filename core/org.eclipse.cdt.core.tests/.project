@@ -3,10 +3,6 @@
 	<name>org.eclipse.cdt.core.tests</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.cdt.make.core</project>
-		<project>org.eclipse.cdt.managedbuilder.core</project>
-		<project>org.eclipse.cdt.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

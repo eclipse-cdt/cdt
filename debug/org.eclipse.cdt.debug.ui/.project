@@ -3,9 +3,6 @@
 	<name>org.eclipse.cdt.debug.ui</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.cdt.debug.core</project>
-		<project>org.eclipse.cdt.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -3,7 +3,6 @@
 	<name>org.eclipse.cdt.core.win32</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

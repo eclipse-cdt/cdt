@@ -3,15 +3,6 @@
 	<name>org.eclipse.cdt.launch</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.cdt.core.aix</project>
-		<project>org.eclipse.cdt.core.linux</project>
-		<project>org.eclipse.cdt.core.qnx</project>
-		<project>org.eclipse.cdt.core.solaris</project>
-		<project>org.eclipse.cdt.core.win32</project>
-		<project>org.eclipse.cdt.debug.core</project>
-		<project>org.eclipse.cdt.debug.ui</project>
-		<project>org.eclipse.cdt.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

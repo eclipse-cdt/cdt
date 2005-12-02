@@ -3,13 +3,6 @@
 	<name>org.eclipse.cdt.managedbuilder.ui</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.cdt.managedbuilder.core</project>
-		<project>org.eclipse.cdt.ui</project>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

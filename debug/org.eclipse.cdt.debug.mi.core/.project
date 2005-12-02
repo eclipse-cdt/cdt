@@ -3,8 +3,6 @@
 	<name>org.eclipse.cdt.debug.mi.core</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
-		<project>org.eclipse.cdt.debug.core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

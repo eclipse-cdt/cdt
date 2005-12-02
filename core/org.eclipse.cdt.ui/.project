@@ -3,7 +3,6 @@
 	<name>org.eclipse.cdt.ui</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.cdt.core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

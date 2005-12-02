@@ -820,22 +820,29 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             boolean proper=false;
             IToken startCastExpression=null;
             // If this isn't a type name, then we shouldn't be here
+            boolean needBack = false;
             try {
                 try {
                     typeId = typeId(false);
-                    switch (LT(1)) {
-                    case IToken.tRPAREN:
-                        consume();
-                        proper=true;
-                        startCastExpression=mark();
-                        castExpression = castExpression();
-                        break;
-                    case IToken.tEOC:
-                        break;
-                    default:
-                        throw backtrack;
-                    }
+                    if (typeId != null) {
+                    	switch (LT(1)) {
+                    	case IToken.tRPAREN:
+                    		consume();
+                    		proper=true;
+                    		startCastExpression=mark();
+                    		castExpression = castExpression();
+                    		break;
+                    	case IToken.tEOC:
+                    		break;
+                    	default:
+                    		needBack = true;
+//                    		throw backtrack;
+                    	}
+                    } else {needBack = true;}
                 } catch (BacktrackException bte) {
+                	needBack = true;
+                }
+                if (needBack) {
             	    try {
         	           	// try a compoundStatementExpression
     	        		backup(startCastExpression);
@@ -849,7 +856,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
   	                } catch (BacktrackException bte2) {}
                 	
                     backup(mark);
-                    throwBacktrack(bte);
+                    return unaryExpression();
+//                    throwBacktrack(bte);
                 }
 
                 return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
@@ -892,18 +900,25 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTTypeId typeId = null;
             int lastOffset = 0;
             if (LT(1) == IToken.tLPAREN) {
+            	boolean needBack = false;
                 try {
                     consume(IToken.tLPAREN);
                     typeId = typeId(false);
-                    switch (LT(1)) {
-                    case IToken.tRPAREN:
-                    case IToken.tEOC:
-                        lastOffset = consume().getEndOffset();
-                        break;
-                    default:
-                        throw backtrack;
-                    }
+                    if (typeId != null) {
+                    	switch (LT(1)) {
+                    	case IToken.tRPAREN:
+                    	case IToken.tEOC:
+                    		lastOffset = consume().getEndOffset();
+                    		break;
+                    	default:
+                    		needBack = true;
+                    	//	throw backtrack;
+                    	}
+                    } else {needBack = true; }
                 } catch (BacktrackException bt) {
+                	needBack = true;
+                }
+                if (needBack) {
                     backup(mark);
                     typeId = null;
                     unaryExpression = unaryExpression();
@@ -977,11 +992,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             try {
                 int offset = consume(IToken.tLPAREN).getOffset();
                 IASTTypeId t = typeId(false);
-                consume(IToken.tRPAREN).getEndOffset();
-                IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
-                firstExpression = buildTypeIdInitializerExpression(t, i,
-                        offset, calculateEndOffset(i));
-                break;
+                if (t != null) {
+                	consume(IToken.tRPAREN).getEndOffset();
+                	IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
+                	firstExpression = buildTypeIdInitializerExpression(t, i,
+                			offset, calculateEndOffset(i));
+                    break;                	
+                } else {backup(m); }
             } catch (BacktrackException bt) {
                 backup(m);
             }
@@ -1273,19 +1290,23 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             {
                 declSpecifier = declSpecifierSeq(false, true);
             } catch (FoundDeclaratorException  e) {
-                throwBacktrack( e.currToken );
+            	return null;
+//                backup(mark);
+//                throwBacktrack( e.currToken );
             }
             declarator = declarator();
         } catch (BacktrackException bt) {
-            backup(mark);
-            throwBacktrack(bt);
+        	return null;
+//            backup(mark);
+//            throwBacktrack(bt);
         }
         if (declarator == null || declarator.getName().toCharArray().length > 0) //$NON-NLS-1$
         {
-            backup(mark);
-            throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
-                    declarator)
-                    - startingOffset);
+        	return null;
+//            backup(mark);
+//            throwBacktrack(startingOffset, figureEndOffset(declSpecifier,
+//                    declarator)
+//                    - startingOffset);
         }
 
         IASTTypeId result = createTypeId();
@@ -2261,6 +2282,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				lastOffset = Integer.MAX_VALUE;
 				break;
 			default:
+				System.out.println("++++ 2 : " + currToken.getImage());
 				throw backtrack;
 			}
 

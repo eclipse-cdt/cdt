@@ -213,11 +213,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws BacktrackException
      *             If LT(1) != type
      */
+ //   static int cnt = 0;
     protected IToken consume(int type) throws EndOfFileException,
             BacktrackException {
         if (LT(1) == type)
             return consume();
         IToken la = LA(1);
+ //       System.out.println("from Consume !" + cnt++);
         throwBacktrack(la.getOffset(), la.getLength());
         return null;
     }
@@ -944,16 +946,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IToken m = mark();
         int lastOffset = 0;
         if (LT(1) == IToken.tLPAREN) {
+        	boolean needBack = false;
             try {
                 consume(IToken.tLPAREN);
                 d = typeId(false);
-                lastOffset = consume(IToken.tRPAREN).getEndOffset();
+                if (d == null)
+                	needBack = true;
+                else
+                	lastOffset = consume(IToken.tRPAREN).getEndOffset();
             } catch (BacktrackException bt) {
-                backup(m);
-                d = null;
-                unaryExpression = unaryExpression();
-                lastOffset = calculateEndOffset(unaryExpression);
+            	needBack = true;
             }
+            if (needBack) {
+            	backup(m);
+            	d = null;
+            	unaryExpression = unaryExpression();
+            	lastOffset = calculateEndOffset(unaryExpression);
+            }
+            
         } else {
             unaryExpression = unaryExpression();
             lastOffset = calculateEndOffset(unaryExpression);
@@ -979,17 +989,25 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             if (LT(2) == IToken.tLBRACE) {
                 unaryExpression = compoundStatementExpression();
                 lastOffset = calculateEndOffset(unaryExpression);
-            } else
+            } else {
+            	boolean needBack = false; 
                 try {
                     consume(IToken.tLPAREN);
                     d = typeId(false);
-                    lastOffset = consume(IToken.tRPAREN).getEndOffset();
+                    if (d == null)
+                    	needBack = true;
+                    else
+                    	lastOffset = consume(IToken.tRPAREN).getEndOffset();
                 } catch (BacktrackException bt) {
+                	needBack = true;
+                }
+                if (needBack) {
                     backup(m);
                     d = null;
                     unaryExpression = unaryExpression();
                     lastOffset = calculateEndOffset(unaryExpression);
                 }
+            }
         } else {
             unaryExpression = unaryExpression();
             lastOffset = calculateEndOffset(unaryExpression);
@@ -2050,20 +2068,22 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             if (typeIdWithParentheses)
                 consume(IToken.tLPAREN);
             typeId = typeId(false);
-            if (typeIdWithParentheses) {
-                switch (LT(1)) {
-                case IToken.tRPAREN:
-                case IToken.tEOC:
-                    consume();
-                    break;
-                default:
-                    throw backtrack;
-                }
-
+            if (typeId != null)
+            {	
+            	if (typeIdWithParentheses) {
+            		switch (LT(1)) {
+            		case IToken.tRPAREN:
+            		case IToken.tEOC:
+            			consume();
+            			break;
+            		default:
+            			typeId = null;
+            		}
+            	}
+            	if (typeId != null) typeIdLA = LA(1);
             }
-            typeIdLA = LA(1);
-        } catch (BacktrackException bte) {
-            typeId = null;
+        } catch (BacktrackException e) {
+			typeId = null;        	
         }
         backup(mark);
         try {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -25,8 +23,6 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -145,6 +141,12 @@ public class PDOMBinding implements IBinding {
 		return pdom.getDB().getChar(record + TYPE_OFFSET);
 	}
 	
+	public boolean hasDeclarations() throws CoreException {
+		Database db = pdom.getDB();
+		return db.getInt(record + FIRST_DECL_OFFSET) != 0
+			|| db.getInt(record + FIRST_DEF_OFFSET) != 0;
+	}
+	
 	public void addDeclaration(PDOMName name) throws CoreException {
 		PDOMName firstDeclaration = getFirstDeclaration();
 		if (firstDeclaration != null) {
@@ -155,13 +157,13 @@ public class PDOMBinding implements IBinding {
 	}
 	
 	public PDOMName getFirstDeclaration() throws CoreException {
-		try {
-			int firstDeclRec = pdom.getDB().getInt(record + FIRST_DECL_OFFSET);
-			return firstDeclRec != 0 ? new PDOMName(pdom, firstDeclRec) : null;
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					CCorePlugin.PLUGIN_ID, 0, "PDOM", e));
-		}
+		int firstDeclRec = pdom.getDB().getInt(record + FIRST_DECL_OFFSET);
+		return firstDeclRec != 0 ? new PDOMName(pdom, firstDeclRec) : null;
+	}
+	
+	public void setFirstDeclaration(PDOMName name) throws CoreException {
+		int namerec = name != null ? name.getRecord() : 0;
+		pdom.getDB().putInt(record + FIRST_DECL_OFFSET, namerec);
 	}
 	
 	public String getName() {

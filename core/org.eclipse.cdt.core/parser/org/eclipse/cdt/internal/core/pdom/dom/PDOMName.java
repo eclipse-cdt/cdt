@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import java.io.IOException;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -38,7 +36,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	private static final int FILE_REC_OFFSET = 0 * Database.INT_SIZE;
 	private static final int FILE_PREV_OFFSET = 1 * Database.INT_SIZE;
 	private static final int FILE_NEXT_OFFSET = 2 * Database.INT_SIZE;
-	private static final int BINDING_REC_OFFET = 3 * Database.INT_SIZE;
+	private static final int BINDING_REC_OFFSET = 3 * Database.INT_SIZE;
 	private static final int BINDING_PREV_OFFSET = 4 * Database.INT_SIZE;
 	private static final int BINDING_NEXT_OFFSET = 5 * Database.INT_SIZE;
 	private static final int NODE_OFFSET_OFFSET = 6 * Database.INT_SIZE;
@@ -53,7 +51,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 			
 		// Hook us up to the binding
 		if (binding != null) {
-			db.putInt(record + BINDING_REC_OFFET, binding.getRecord());
+			db.putInt(record + BINDING_REC_OFFSET, binding.getRecord());
 			if (name.isDeclaration())
 				binding.addDeclaration(this);
 		}
@@ -63,18 +61,18 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		String filename = fileloc.getFileName();
 		PDOMFile pdomFile = PDOMFile.insert(pdom, filename);
 		db.putInt(record + FILE_REC_OFFSET, pdomFile.getRecord());
-		int firstName = pdomFile.getFirstName();
-		if (firstName != 0) {
-			db.putInt(record + FILE_NEXT_OFFSET, firstName);
-			db.putInt(firstName + FILE_PREV_OFFSET, record);
+		PDOMName firstName = pdomFile.getFirstName();
+		if (firstName != null) {
+			db.putInt(record + FILE_NEXT_OFFSET, firstName.getRecord());
+			firstName.setPrevInFile(this);
 		}
-		pdomFile.setFirstName(record);
-			
+		pdomFile.setFirstName(this);
+
 		db.putInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
 		db.putInt(record + NODE_LENGTH_OFFSET, fileloc.getNodeLength());
 	}
 	
-	public PDOMName(PDOMDatabase pdom, int nameRecord) throws IOException {
+	public PDOMName(PDOMDatabase pdom, int nameRecord) {
 		this.pdom = pdom;
 		this.record = nameRecord;
 	}
@@ -82,22 +80,75 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	public int getRecord() {
 		return record;
 	}
+
+	private int getRecField(int offset) throws CoreException {
+		return pdom.getDB().getInt(record + offset);
+	}
+	
+	private void setRecField(int offset, int fieldrec) throws CoreException {
+		pdom.getDB().putInt(record + offset, fieldrec);
+	}
+	
+	public PDOMBinding getPDOMBinding() throws CoreException {
+		int bindingrec = getRecField(BINDING_REC_OFFSET);
+		return bindingrec != 0 ? new PDOMBinding(pdom, bindingrec) : null;
+	}
 	
 	public void setBinding(PDOMBinding binding) throws CoreException {
-		pdom.getDB().putInt(record + BINDING_REC_OFFET, binding.getRecord());
+		int bindingrec = binding != null ? binding.getRecord() : 0;
+		setRecField(BINDING_REC_OFFSET, bindingrec);
 	}
 
-	public void setPrevInBinding(PDOMName prevName) throws CoreException {
-		pdom.getDB().putInt(record + BINDING_PREV_OFFSET, prevName.getRecord());
+	private PDOMName getNameField(int offset) throws CoreException {
+		int namerec = getRecField(offset);
+		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
 	}
 	
-	public void setNextInBinding(PDOMName nextName) throws CoreException {
-		pdom.getDB().putInt(record + BINDING_NEXT_OFFSET, nextName.getRecord());
+	private void setNameField(int offset, PDOMName name) throws CoreException {
+		int namerec = name != null ? name.getRecord() : 0;
+		setRecField(offset, namerec);
+	}
+	
+	public PDOMName getPrevInBinding() throws CoreException {
+		return getNameField(BINDING_PREV_OFFSET);
+	}
+	
+	public void setPrevInBinding(PDOMName name) throws CoreException {
+		setNameField(BINDING_PREV_OFFSET, name);
+	}
+
+	public PDOMName getNextInBinding() throws CoreException {
+		return getNameField(BINDING_NEXT_OFFSET);
+	}
+	
+	public void setNextInBinding(PDOMName name) throws CoreException {
+		setNameField(BINDING_NEXT_OFFSET, name);
+	}
+	
+	public PDOMFile getFile() throws CoreException {
+		int filerec = pdom.getDB().getInt(record + FILE_REC_OFFSET);
+		return filerec != 0 ? new PDOMFile(pdom, filerec) : null;
+	}
+	
+	public PDOMName getNextInFile() throws CoreException {
+		return getNameField(FILE_NEXT_OFFSET);
+	}
+	
+	public void setNextInFile(PDOMName name) throws CoreException {
+		setNameField(FILE_NEXT_OFFSET, name);
+	}
+	
+	public PDOMName getPrevInFile() throws CoreException {
+		return getNameField(FILE_PREV_OFFSET);
+	}
+
+	public void setPrevInFile(PDOMName name) throws CoreException {
+		setNameField(FILE_PREV_OFFSET, name);
 	}
 	
 	public IBinding resolveBinding() {
 		try {
-			int bindingRecord = pdom.getDB().getInt(record + BINDING_REC_OFFET);
+			int bindingRecord = pdom.getDB().getInt(record + BINDING_REC_OFFSET);
 			return new PDOMBinding(pdom, bindingRecord);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -120,7 +171,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	public char[] toCharArray() {
 		try {
 			Database db = pdom.getDB();
-			int bindingRec = db.getInt(record + BINDING_REC_OFFET);
+			int bindingRec = db.getInt(record + BINDING_REC_OFFSET);
 			if (bindingRec == 0)
 				return null;
 			
@@ -190,7 +241,8 @@ public class PDOMName implements IASTName, IASTFileLocation {
 
 	public String getFileName() {
 		try {
-			return new PDOMFile(pdom, pdom.getDB().getInt(record + FILE_REC_OFFSET)).getFileName();
+			PDOMFile file = getFile();
+			return file != null ? file.getFileName() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
@@ -226,6 +278,22 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	public IScope2 getScope(IASTNode child, ASTNodeProperty childProperty) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void delete() throws CoreException {
+		// Delete from the binding chain
+		PDOMName prevName = getPrevInBinding();
+		PDOMName nextName = getNextInBinding();
+		if (prevName != null)
+			prevName.setNextInBinding(nextName);
+		else
+			getPDOMBinding().setFirstDeclaration(nextName);
+		
+		if (nextName != null)
+			nextName.setPrevInBinding(prevName);
+		
+		// Delete our record
+		pdom.getDB().free(record);
 	}
 	
 }

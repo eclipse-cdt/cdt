@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfigurat
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPFunction;
@@ -77,7 +78,12 @@ public class GPPLanguage implements ILanguage {
 		
 		// TODO - use different factories if we are working copy, or style
 		// is skip headers.
-		ICodeReaderFactory fileCreator = SavedCodeReaderFactory.getInstance();
+		ICodeReaderFactory fileCreator;
+		if ((style & ILanguage.AST_SKIP_INDEXED_HEADERS) != 0)
+			fileCreator = new PDOMCodeReaderFactory((PDOMDatabase)tu.getCProject().getIndex());
+		else
+			fileCreator = SavedCodeReaderFactory.getInstance();
+		
 		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(tu);
         if( reader == null )
             return null;

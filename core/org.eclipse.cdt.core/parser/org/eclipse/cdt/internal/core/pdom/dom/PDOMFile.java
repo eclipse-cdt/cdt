@@ -98,16 +98,26 @@ public class PDOMFile {
 		return pdom.getDB().getString(record + FILE_NAME_OFFSET);
 	}
 	
-	public int getFirstName() throws CoreException {
-		return pdom.getDB().getInt(record + FIRST_NAME_OFFSET);
+	public PDOMName getFirstName() throws CoreException {
+		int namerec = pdom.getDB().getInt(record + FIRST_NAME_OFFSET);
+		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
 	}
 
-	public void setFirstName(int firstName) throws CoreException {
-		pdom.getDB().putInt(record + FIRST_NAME_OFFSET, firstName);
+	public void setFirstName(PDOMName firstName) throws CoreException {
+		int namerec = firstName != null ? firstName.getRecord() : 0;
+		pdom.getDB().putInt(record + FIRST_NAME_OFFSET, namerec);
 	}
 	
-	public void free() throws CoreException {
-		pdom.getDB().free(record);
+	public void clear() throws CoreException {
+		// Delete all the names in this file
+		PDOMName name = getFirstName();
+		while (name != null) {
+			PDOMName nextName = name.getNextInFile();
+			name.delete();
+			name = nextName;
+		}
+		
+		setFirstName(null);
 	}
 	
 }

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -198,7 +197,7 @@ public class PDOMUpdator extends Job {
 		mypdom.addSymbols(tu);
 	}
 
-	private void processRemovedTU(ITranslationUnit tu) {
+	private void processRemovedTU(ITranslationUnit tu) throws CoreException {
 		IProject project = tu.getCProject().getProject();
 		IPDOM pdom = PDOM.getPDOM(project);
 		if (pdom == null || !(pdom instanceof PDOMDatabase))
@@ -206,6 +205,8 @@ public class PDOMUpdator extends Job {
 
 		PDOMDatabase mypdom = (PDOMDatabase)pdom;
 		mypdom.removeSymbols(tu);
+		// TODO delete the file itself from the database
+		// the removeSymbols only removes the names in the file
 	}
 
 	private void processChangedTU(ITranslationUnit tu) throws CoreException {

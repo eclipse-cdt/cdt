@@ -105,6 +105,11 @@ public class Chunk {
 		this.prevChunk = prevChunk;
 	}
 	
+	void clear(int offset, int length) {
+		buffer.position(offset % Database.CHUNK_SIZE);
+		buffer.put(new byte[length]);
+	}
+	
 	void free() {
 		// nextChunk should be null
 		db.toc[index] = null;

@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,7 +30,9 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -69,6 +73,32 @@ public class PDOMDatabase implements IPDOM {
 		
 		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
 		db = new Database(dbPath.toOSString(), VERSION);
+	}
+
+	public static interface IListener {
+		public void handleChange(PDOMDatabase pdom);
+	}
+	
+	private List listeners;
+	
+	public void addListener(IListener listener) {
+		if (listeners == null)
+			listeners = new LinkedList();
+		listeners.add(listener);
+	}
+	
+	public void removeListener(IListener listener) {
+		if (listeners == null)
+			return;
+		listeners.remove(listener);
+	}
+	
+	private void fireChange() {
+		if (listeners == null)
+			return;
+		Iterator i = listeners.iterator();
+		while (i.hasNext())
+			((IListener)i.next()).handleChange(this);
 	}
 
 	public Database getDB() throws CoreException {
@@ -120,16 +150,24 @@ public class PDOMDatabase implements IPDOM {
 					}
 				};
 			});;
+		
+		fireChange();
 	}
 	
-	public void removeSymbols(ITranslationUnit ast) {
-		
+	public void removeSymbols(ITranslationUnit tu) throws CoreException {
+		String filename = ((IFile)tu.getResource()).getLocation().toOSString();
+		PDOMFile file = PDOMFile.find(this, filename);
+		if (file == null)
+			return;
+		file.clear();
 	}
 	
 	public void delete() throws CoreException {
 		getDB().clear();
 		bindingIndex = null;
 		fileIndex = null;
+		languageCache = null;
+		languages = null;
 	}
 
 	public ICodeReaderFactory getCodeReaderFactory() {

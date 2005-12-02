@@ -13,7 +13,10 @@ package org.eclipse.cdt.internal.core.pdom.db;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -223,9 +226,13 @@ public class Database {
 	 */
 	public void free(int offset) throws CoreException {
 		// TODO - look for opportunities to merge blocks
-		int block = offset - INT_SIZE;
+		int block = offset - 4;
 		Chunk chunk = getChunk(block);
 		int blocksize = - chunk.getInt(block);
+		if (blocksize < 0)
+			// already freed
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Already Freed", new Exception()));
+		chunk.clear(offset, blocksize - 4);
 		addBlock(chunk, blocksize, block);
 	}
 

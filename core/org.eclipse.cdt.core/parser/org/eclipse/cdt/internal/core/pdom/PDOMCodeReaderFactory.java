@@ -56,7 +56,7 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 	}
 
 	public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
-		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
+		return new CodeReader(tu.getResource().getLocation().toOSString(), tu.getContents());
 	}
 	
 	public CodeReader createCodeReaderForInclusion(String path) {
@@ -67,7 +67,9 @@ public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 			} catch (IOException e) {
 				// ignore and use the path we were passed in
 			}
-			if (PDOMFile.find(pdom, path) != null)
+			PDOMFile file = PDOMFile.find(pdom, path); 
+			if (file != null && file.getFirstName() != null)
+				// Already got things from here
 				return null;
 		} catch (CoreException e) {
 			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR,

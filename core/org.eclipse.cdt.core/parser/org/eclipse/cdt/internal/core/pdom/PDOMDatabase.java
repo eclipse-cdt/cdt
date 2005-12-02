@@ -130,6 +130,9 @@ public class PDOMDatabase implements IPDOM {
 				ILanguage.AST_USE_INDEX |
 				ILanguage.AST_SKIP_INDEXED_HEADERS);
 
+		if (ast == null)
+			return;
+		
 		ast.accept(new ASTVisitor() {
 				{
 					shouldVisitNames = true;

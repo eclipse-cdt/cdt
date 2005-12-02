@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.StringComparator;
-import org.eclipse.cdt.internal.core.pdom.db.StringVisitor;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -31,17 +31,29 @@ public class PDOMFile {
 	private static final int FIRST_NAME_OFFSET = 0;
 	private static final int FILE_NAME_OFFSET = Database.INT_SIZE;
 	
-	public static class Comparator extends StringComparator {
+	public static class Comparator implements IBTreeComparator {
+		private Database db;
 		
 		public Comparator(Database db) {
-			super(db, FILE_NAME_OFFSET);
+			this.db = db;
+		}
+		
+		public int compare(int record1, int record2) throws CoreException {
+			return db.stringCompare(record1 + FILE_NAME_OFFSET, record2 + FILE_NAME_OFFSET);
 		}
 	}
 	
-	public abstract static class Visitor extends StringVisitor {
+	public abstract static class Visitor implements IBTreeVisitor {
+		private Database db;
+		private String key;
 		
 		public Visitor(Database db, String key) {
-			super(db, FILE_NAME_OFFSET, key);
+			this.db = db;
+			this.key = key;
+		}
+		
+		public int compare(int record) throws CoreException {
+			return db.stringCompare(record + FILE_NAME_OFFSET, key);
 		}
 	}
 

@@ -279,4 +279,93 @@ public class Database {
 	public int getNumChunks() {
 		return toc.length;
 	}
+
+	public int stringCompare(int record1, int record2) throws CoreException {
+		Chunk chunk1 = getChunk(record1);
+		Chunk chunk2 = getChunk(record2);
+
+		int i1 = record1 + 2;
+		int i2 = record2 + 2;
+		int n1 = i1 + chunk1.getChar(record1) * 2;
+		int n2 = i2 + chunk2.getChar(record2) * 2;
+		
+		while (i1 < n1 && i2 < n2) {
+			char c1 = chunk1.getChar(i1);
+			char c2 = chunk2.getChar(i2);
+			
+			if (c1 < c2)
+				return -1;
+			if (c1 > c2)
+				return 1;
+			
+			i1 += 2;
+			i2 += 2;
+		}
+
+		if (i1 == n1 && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1 != n1)
+			return 1;
+		else
+			return 0;
+	}
+	
+	public int stringCompare(int record1, char[] record2) throws CoreException {
+		Chunk chunk1 = getChunk(record1);
+		
+		int i1 = record1 + 2;
+		int i2 = 0;
+		int n1 = i1 + chunk1.getChar(record1) * 2;
+		int n2 = record2.length;
+		
+		while (i1 < n1 && i2 < n2) {
+			char c1 = chunk1.getChar(i1);
+			char c2 = record2[i2];
+			
+			if (c1 < c2)
+				return -1;
+			if (c1 > c2)
+				return 1;
+			
+			i1 += 2;
+			++i2;
+		}
+
+		if (i1 == n1 && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1 != n1)
+			return 1;
+		else
+			return 0;
+	}
+	
+	public int stringCompare(int record1, String record2) throws CoreException {
+		Chunk chunk1 = getChunk(record1);
+		
+		int i1 = record1 + 2;
+		int i2 = 0;
+		int n1 = i1 + chunk1.getChar(record1) * 2;
+		int n2 = record2.length();
+		
+		while (i1 < n1 && i2 < n2) {
+			char c1 = chunk1.getChar(i1);
+			char c2 = record2.charAt(i2);
+			
+			if (c1 < c2)
+				return -1;
+			if (c1 > c2)
+				return 1;
+			
+			i1 += 2;
+			++i2;
+		}
+
+		if (i1 == n1 && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1 != n1)
+			return 1;
+		else
+			return 0;
+	}
+
 }

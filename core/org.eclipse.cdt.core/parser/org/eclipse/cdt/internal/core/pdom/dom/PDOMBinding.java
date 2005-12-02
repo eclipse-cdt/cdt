@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.core.pdom.PDOMUtils;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -57,7 +56,7 @@ public class PDOMBinding implements IBinding {
 			int string2 = db.getInt(record2 + STRING_REC_OFFSET);
 			// Need to deal with language and type
 			
-			return PDOMUtils.stringCompare(db, string1, string2);
+			return db.stringCompare(string1, string2);
 		}
 		
 	}
@@ -76,7 +75,7 @@ public class PDOMBinding implements IBinding {
 			int string1 = db.getInt(record1 + STRING_REC_OFFSET);
 			// Need to deal with language and type
 			
-			return PDOMUtils.stringCompare(db, string1, key);
+			return db.stringCompare(string1, key);
 		}
 
 	}
@@ -153,7 +152,7 @@ public class PDOMBinding implements IBinding {
 			firstDeclaration.setPrevInBinding(name);
 			name.setNextInBinding(firstDeclaration);
 		}
-		pdom.getDB().putInt(record + FIRST_DECL_OFFSET, name.getRecord());
+		setFirstDeclaration(name);
 	}
 	
 	public PDOMName getFirstDeclaration() throws CoreException {

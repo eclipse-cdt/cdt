@@ -59,6 +59,6 @@ public class PDOMLanguage {
 	}
 	
 	public boolean equals(String id) throws CoreException {
-		return PDOMUtils.stringCompare(pdom.getDB(), record + NAME, id) == 0;
+		return pdom.getDB().stringCompare(record + NAME, id) == 0;
 	}
 }

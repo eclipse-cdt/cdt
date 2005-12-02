@@ -7,8 +7,8 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.StringComparator;
-import org.eclipse.cdt.internal.core.pdom.db.StringVisitor;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -71,12 +71,18 @@ public class DBTest extends TestCase {
 		assertEquals(mem2, mem1);
 	}
 	
-	private static class FindVisitor extends StringVisitor {
-		
+	private static class FindVisitor implements IBTreeVisitor {
+		private Database db;
+		private String key;
 		private int record;
 		
 		public FindVisitor(Database db, String key) {
-			super(db, Database.INT_SIZE, key);
+			this.db = db;
+			this.key = key;
+		}
+
+		public int compare(int record) throws CoreException {
+			return db.stringCompare(record + 4, key);
 		}
 		
 		public boolean visit(int record) throws CoreException {
@@ -95,7 +101,7 @@ public class DBTest extends TestCase {
 		// Tests inserting and retrieving strings
 		File f = getTestDir().append("testStrings.dat").toFile();
 		f.delete();
-		Database db = new Database(f.getCanonicalPath(), 0);
+		final Database db = new Database(f.getCanonicalPath(), 0);
 
 		String[] names = {
 				"ARLENE",
@@ -129,7 +135,11 @@ public class DBTest extends TestCase {
 			int record = db.malloc((name.length() + 1) * Database.CHAR_SIZE + Database.INT_SIZE);
 			db.putInt(record, i);
 			db.putString(record + Database.INT_SIZE, name);
-			btree.insert(record, new StringComparator(db, Database.INT_SIZE));
+			btree.insert(record, new IBTreeComparator() {
+				public int compare(int record1, int record2) throws CoreException {
+					return db.stringCompare(record1 + 4, record2 + 4);
+				}
+			});
 		}
 		
 		for (int i = 0; i < names.length; ++i) {

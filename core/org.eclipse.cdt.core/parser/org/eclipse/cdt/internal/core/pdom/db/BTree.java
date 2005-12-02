@@ -243,6 +243,9 @@ public class BTree {
 			}
 		}
 		
+		if (!found)
+			return visit(getChild(chunk, node, i), visitor, false);
+		
 		return true;
 	}
 

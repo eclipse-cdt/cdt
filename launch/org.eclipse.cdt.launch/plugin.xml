@@ -107,7 +107,10 @@
              <with variable="selection">
                <count value="1"/>
                <iterate>
-                 <test property="org.eclipse.cdt.launch.isExecutable"/>
+                 <or>
+                 	<test property="org.eclipse.cdt.launch.isExecutable"/>
+                 	<instanceof value="org.eclipse.cdt.internal.core.model.CProject"/>
+                 </or>
                </iterate>
              </with>
            </enablement>
@@ -162,6 +165,11 @@
          <factory 
             class="" 
             adaptableType="org.eclipse.core.resources.IResource">
+            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+         </factory>         
+         <factory 
+            class="" 
+            adaptableType="org.eclipse.cdt.internal.core.model.CProject">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>         
     </extension>

@@ -143,7 +143,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				fStackFrames = new ArrayList();
 			}
 			else if ( refreshChildren ) {
-				// If the last frame is dummy remove it
+				// Remove dummy frame
 				if ( fStackFrames.size() > 0 ) {
 					Object frame = fStackFrames.get( fStackFrames.size() - 1 );
 					if ( frame instanceof IDummyStackFrame ) {
@@ -153,39 +153,40 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				// Retrieve stack frames from the backend
 				int depth = getStackDepth();
 				ICDIStackFrame[] frames = ( depth != 0 ) ? getCDIStackFrames( 0, ( depth >= getMaxStackDepth() ) ? getMaxStackDepth() - 1 : depth ) : new ICDIStackFrame[0];
+				
 				if ( fStackFrames.isEmpty() ) {
 					if ( frames.length > 0 ) {
 						addStackFrames( frames, 0, frames.length, false );
 					}
 				}
-				else if ( depth < getLastStackDepth() ) {
-					// stepping out of the last frame
-					disposeStackFrames( 0, getLastStackDepth() - depth );
-					if ( frames.length > 0 ) {
-						updateStackFrames( frames, 0, fStackFrames, fStackFrames.size() );
-						if ( fStackFrames.size() < frames.length ) {
-							addStackFrames( frames, fStackFrames.size(), frames.length - fStackFrames.size(), true );
+				else {
+					int diff = depth - getLastStackDepth();
+					int offset = ( diff > 0 ) ? frames.length - diff : 0;
+					int length = ( diff > 0 ) ? diff : -diff;
+					if ( !compareStackFrames( frames, fStackFrames, offset, length ) ) {
+						// replace all frames
+						disposeStackFrames( 0, fStackFrames.size() );
+						addStackFrames( frames, 0, frames.length, false );						
+					}
+					if ( diff < 0 ) {
+						// stepping out of the last frame
+						disposeStackFrames( 0, getLastStackDepth() - depth );
+						if ( frames.length > 0 ) {
+							updateStackFrames( frames, 0, fStackFrames, fStackFrames.size() );
+							if ( fStackFrames.size() < frames.length ) {
+								addStackFrames( frames, fStackFrames.size(), frames.length - fStackFrames.size(), true );
+							}
 						}
 					}
-				}
-				else if ( depth > getLastStackDepth() ) {
-					// stepping into a new frame
-					disposeStackFrames( frames.length - depth + getLastStackDepth(), depth - getLastStackDepth() );
-					addStackFrames( frames, 0, depth - getLastStackDepth(), false );
-					updateStackFrames( frames, depth - getLastStackDepth(), fStackFrames, frames.length - depth + getLastStackDepth() );
-				}
-				else { // depth == getLastStackDepth()
-					if ( depth != 0 ) {
-						// same number of frames - if top frames are in different
-						// function, replace all frames
-						ICDIStackFrame newTopFrame = (frames.length > 0) ? frames[0] : null;
-						ICDIStackFrame oldTopFrame = (fStackFrames.size() > 0) ? ((CStackFrame)fStackFrames.get( 0 )).getLastCDIStackFrame() : null;
-						if ( !CStackFrame.equalFrame( newTopFrame, oldTopFrame ) ) {
-							disposeStackFrames( 0, fStackFrames.size() );
-							addStackFrames( frames, 0, frames.length, false );
-						}
-						else // we are in the same frame
-						{
+					else if ( diff > 0 ) {
+						// stepping into a new frame
+						disposeStackFrames( frames.length - depth + getLastStackDepth(), depth - getLastStackDepth() );
+						addStackFrames( frames, 0, depth - getLastStackDepth(), false );
+						updateStackFrames( frames, depth - getLastStackDepth(), fStackFrames, frames.length - depth + getLastStackDepth() );
+					}
+					else { // diff == 0
+						if ( depth != 0 ) {
+							// we are in the same frame
 							updateStackFrames( frames, 0, fStackFrames, frames.length );
 						}
 					}
@@ -198,6 +199,27 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			}
 		}
 		return fStackFrames;
+	}
+	
+	/**
+	 * Compares the lists of the old and new frames.
+	 * 
+	 * @param newFrames the array of the new frames
+	 * @param oldFrames the list of the old frames
+	 * @param offset the offset in the new frames array
+	 * @param length the number of frames to compare
+	 * 
+	 * @return <code>true</code> if all frames are same
+	 */
+	private boolean compareStackFrames( ICDIStackFrame[] newFrames, List oldFrames, int offset, int length ) {
+		int index = offset;
+		Iterator it = oldFrames.iterator();
+		while( it.hasNext() && index < newFrames.length ) {
+			CStackFrame frame = (CStackFrame)it.next();
+			if ( !frame.getCDIStackFrame().equals( newFrames[index++] ) )
+				return false;
+		}
+		return true;
 	}
 
 	/**

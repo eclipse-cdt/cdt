@@ -39,6 +39,14 @@ public class Chunk {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
+
+	public void putByte(int offset, byte value) {
+		buffer.put(offset % Database.CHUNK_SIZE, value);
+	}
+	
+	public byte getByte(int offset) {
+		return buffer.get(offset % Database.CHUNK_SIZE);
+	}
 	
 	public void putInt(int offset, int value) {
 		buffer.putInt(offset % Database.CHUNK_SIZE, value);

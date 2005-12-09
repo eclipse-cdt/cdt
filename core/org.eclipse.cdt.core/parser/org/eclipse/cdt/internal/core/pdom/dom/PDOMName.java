@@ -33,27 +33,53 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	private final PDOMDatabase pdom;
 	private final int record;
 	
-	private static final int FILE_REC_OFFSET = 0 * Database.INT_SIZE;
-	private static final int FILE_PREV_OFFSET = 1 * Database.INT_SIZE;
-	private static final int FILE_NEXT_OFFSET = 2 * Database.INT_SIZE;
-	private static final int BINDING_REC_OFFSET = 3 * Database.INT_SIZE;
-	private static final int BINDING_PREV_OFFSET = 4 * Database.INT_SIZE;
-	private static final int BINDING_NEXT_OFFSET = 5 * Database.INT_SIZE;
-	private static final int NODE_OFFSET_OFFSET = 6 * Database.INT_SIZE;
-	private static final int NODE_LENGTH_OFFSET = 7 * Database.INT_SIZE;
+	private static final int FILE_REC_OFFSET     = 0;
+	private static final int FILE_PREV_OFFSET 	 = 4;
+	private static final int FILE_NEXT_OFFSET	 = 8;
+	private static final int BINDING_REC_OFFSET  = 12;
+	private static final int BINDING_PREV_OFFSET = 16;
+	private static final int BINDING_NEXT_OFFSET = 20;
+	private static final int NODE_OFFSET_OFFSET  = 24;
+	private static final int NODE_LENGTH_OFFSET  = 28;
+	private static final int FLAGS 				 = 32;
+
+	private static final int RECORD_SIZE = 33;
+
+	private static final int IS_DECLARATION = 1;
+	private static final int IS_DEFINITION = 2;
+	private static final int IS_REFERENCE = 3;
 	
-	private static final int RECORD_SIZE = 8 * Database.INT_SIZE;
 
 	public PDOMName(PDOMDatabase pdom, IASTName name, PDOMBinding binding) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
-			
+
+		// What kind of name are we
+		byte flags = 0;
+		if (name.isDefinition())
+			flags = IS_DEFINITION;
+		else if (name.isDeclaration())
+			flags = IS_DECLARATION;
+		else 
+			flags = IS_REFERENCE;
+		db.putByte(record + FLAGS, flags);
+
 		// Hook us up to the binding
 		if (binding != null) {
-			db.putInt(record + BINDING_REC_OFFSET, binding.getRecord());
-			if (name.isDeclaration())
+			switch (flags) {
+			case IS_DEFINITION:
+				binding.addDefinition(this);
+				break;
+			case IS_DECLARATION:
 				binding.addDeclaration(this);
+				break;
+			case IS_REFERENCE:
+				binding.addReference(this);
+				break;
+			}
+
+			db.putInt(record + BINDING_REC_OFFSET, binding.getRecord());
 		}
 		
 		// Hook us up the the liked name list from file
@@ -182,16 +208,38 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		}
 	}
 
+	private byte getFlags() throws CoreException {
+		return pdom.getDB().getByte(record + FLAGS);
+	}
+	
 	public boolean isDeclaration() {
-		throw new PDOMNotImplementedError();
+		try {
+			byte flags = getFlags();
+			return flags == IS_DECLARATION || flags == IS_DEFINITION;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
 	}
 
 	public boolean isReference() {
-		throw new PDOMNotImplementedError();
+		try {
+			byte flags = getFlags();
+			return flags == IS_REFERENCE;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
 	}
 
 	public boolean isDefinition() {
-		throw new PDOMNotImplementedError();
+		try {
+			byte flags = getFlags();
+			return flags == IS_DEFINITION;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
 	}
 
 	public IASTTranslationUnit getTranslationUnit() {

@@ -236,6 +236,16 @@ public class Database {
 		addBlock(chunk, blocksize, block);
 	}
 
+	public void putByte(int offset, byte value) throws CoreException {
+		Chunk chunk = getChunk(offset);
+		chunk.putByte(offset, value);
+	}
+	
+	public byte getByte(int offset) throws CoreException {
+		Chunk chunk = getChunk(offset);
+		return chunk.getByte(offset);
+	}
+	
 	public void putInt(int offset, int value) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		chunk.putInt(offset, value);

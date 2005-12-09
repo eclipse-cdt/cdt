@@ -147,22 +147,60 @@ public class PDOMBinding implements IBinding {
 	}
 	
 	public void addDeclaration(PDOMName name) throws CoreException {
-		PDOMName firstDeclaration = getFirstDeclaration();
-		if (firstDeclaration != null) {
-			firstDeclaration.setPrevInBinding(name);
-			name.setNextInBinding(firstDeclaration);
+		PDOMName first = getFirstDeclaration();
+		if (first != null) {
+			first.setPrevInBinding(name);
+			name.setNextInBinding(first);
 		}
 		setFirstDeclaration(name);
 	}
 	
+	public void addDefinition(PDOMName name) throws CoreException {
+		PDOMName first = getFirstDefinition();
+		if (first != null) {
+			first.setPrevInBinding(name);
+			name.setNextInBinding(first);
+		}
+		setFirstDefinition(name);
+	}
+	
+	public void addReference(PDOMName name) throws CoreException {
+		PDOMName first = getFirstReference();
+		if (first != null) {
+			first.setPrevInBinding(name);
+			name.setNextInBinding(first);
+		}
+		setFirstReference(name);
+	}
+	
 	public PDOMName getFirstDeclaration() throws CoreException {
-		int firstDeclRec = pdom.getDB().getInt(record + FIRST_DECL_OFFSET);
-		return firstDeclRec != 0 ? new PDOMName(pdom, firstDeclRec) : null;
+		int namerec = pdom.getDB().getInt(record + FIRST_DECL_OFFSET);
+		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
 	}
 	
 	public void setFirstDeclaration(PDOMName name) throws CoreException {
 		int namerec = name != null ? name.getRecord() : 0;
 		pdom.getDB().putInt(record + FIRST_DECL_OFFSET, namerec);
+	}
+	
+	public PDOMName getFirstDefinition() throws CoreException {
+		int namerec = pdom.getDB().getInt(record + FIRST_DEF_OFFSET);
+		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+	}
+	
+	public void setFirstDefinition(PDOMName name) throws CoreException {
+		int namerec = name != null ? name.getRecord() : 0;
+		pdom.getDB().putInt(record + FIRST_DEF_OFFSET, namerec);
+	}
+	
+	public PDOMName getFirstReference() throws CoreException {
+		int namerec = pdom.getDB().getInt(record + FIRST_REF_OFFSET);
+		return namerec != 0 ? new PDOMName(pdom, namerec) : null;
+	}
+	
+	public void setFirstReference(PDOMName name) throws CoreException {
+		int namerec = name != null ? name.getRecord() : 0;
+		pdom.getDB().putInt(record + FIRST_REF_OFFSET, namerec);
 	}
 	
 	public String getName() {

@@ -717,27 +717,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Is there a change?
 		IOption retOpt = option;
 		if (option.getBooleanValue() != value) {
-			if (option.isExtensionElement()) {
-				//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
-				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
-				//  elements that are automatically generated from V2.0 model optionReferences.  If these
-				//  end up in the project file, then the project could have a problem when the integration
-				//  provider switches to providing the new model.
-				IOption newSuperClass = option;
-				if (((Option)option).wasOptRef()) {
-					newSuperClass = option.getSuperClass();
-				}
-				//  Create an Option element for the managed build project file (.CDTBUILD)
-				String subId;
-				int nnn = ManagedBuildManager.getRandomNumber();
-				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = holder.createOption(newSuperClass, subId, null, false); 
-				retOpt.setValueType(option.getValueType());
-				retOpt.setValue(value);
-				setDirty(true);
-			} else {
-				option.setValue(value);
-			}
+			retOpt = holder.getOptionToSet(option, false);
+			retOpt.setValue(value);
 			rebuildNeeded = true;
 		}
 		return retOpt;
@@ -751,27 +732,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 		String oldValue;
 		oldValue = option.getStringValue(); 
 		if (oldValue != null && !oldValue.equals(value)) {
-			if (option.isExtensionElement()) {
-				//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
-				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
-				//  elements that are automatically generated from V2.0 model optionReferences.  If these
-				//  end up in the project file, then the project could have a problem when the integration
-				//  provider switches to providing the new model.
-				IOption newSuperClass = option;
-				if (((Option)option).wasOptRef()) {
-					newSuperClass = option.getSuperClass();
-				}
-				//  Create an Option element for the managed build project file (.CDTBUILD)
-				String subId;
-				int nnn = ManagedBuildManager.getRandomNumber();
-				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = holder.createOption(newSuperClass, subId, null, false); 
-				retOpt.setValueType(option.getValueType());
-				retOpt.setValue(value);
-				setDirty(true);
-			} else {
-				option.setValue(value);
-			}
+			retOpt = holder.getOptionToSet(option, false);
+			retOpt.setValue(value);
 			rebuildNeeded = true;
 		}
 		return retOpt;
@@ -805,27 +767,8 @@ public class Configuration extends BuildObject implements IConfiguration {
 				break;
 		}
 		if(!Arrays.equals(value, oldValue)) {
-			if (option.isExtensionElement()) {
-				//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
-				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
-				//  elements that are automatically generated from V2.0 model optionReferences.  If these
-				//  end up in the project file, then the project could have a problem when the integration
-				//  provider switches to providing the new model.
-				IOption newSuperClass = option;
-				if (((Option)option).wasOptRef()) {
-					newSuperClass = option.getSuperClass();
-				}
-				//  Create an Option element for the managed build project file (.CDTBUILD)
-				String subId;
-				int nnn = ManagedBuildManager.getRandomNumber();
-				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = holder.createOption(newSuperClass, subId, null, false); 
-				retOpt.setValueType(option.getValueType());
-				retOpt.setValue(value);
-				setDirty(true);
-			} else {
-				option.setValue(value);
-			}
+			retOpt = holder.getOptionToSet(option, false);
+			retOpt.setValue(value);
 			rebuildNeeded = true;
 		} 
 		return retOpt;

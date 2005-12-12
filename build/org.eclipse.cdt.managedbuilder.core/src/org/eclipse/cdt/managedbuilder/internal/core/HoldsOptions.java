@@ -24,7 +24,6 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -190,7 +189,8 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 	public IOption createOption(IOption superClass, String Id, String name, boolean isExtensionElement) {
 		Option option = new Option(this, superClass, Id, name, isExtensionElement);
 		addOption(option);
-		setDirty(true);
+		if(!isExtensionElement)
+			setDirty(true);
 		return option;
 	}
 	
@@ -474,7 +474,8 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 			Iterator iter = optionElements.listIterator();
 			while (iter.hasNext()) {
 				Option option = (Option) iter.next();
-				option.setDirty(false);
+				if(!option.isExtensionElement())
+					option.setDirty(false);
 			}
 		}
 	}
@@ -506,5 +507,57 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 				}
 			}
 		}		
+	}
+	
+	public IOption getOptionToSet(IOption option, boolean adjustExtension) throws BuildException{
+		IOption setOption = null;
+		if(option.getOptionHolder() != this)
+			option = getOptionBySuperClassId(option.getId());
+		
+		if(adjustExtension){
+			for(; option != null && !option.isExtensionElement(); option=option.getSuperClass()){}
+			
+			if(option != null){
+				IHoldsOptions holder = option.getOptionHolder();
+				if(holder == this)
+					setOption = option;
+				else {
+					IOption newSuperClass = option;
+					if (((Option)option).wasOptRef()) {
+						newSuperClass = option.getSuperClass();
+					}
+					//  Create a new extension Option element
+					String subId;
+					subId = newSuperClass.getId() + ".adjusted." + new Integer(ManagedBuildManager.getRandomNumber()); //$NON-NLS-1$ //$NON-NLS-2$
+					setOption = createOption(newSuperClass, subId, null, true);
+					((Option)setOption).setAdjusted(true);
+					setOption.setValueType(option.getValueType());
+				}
+			}
+		} else {
+			if(option.getOptionHolder() == this && !option.isExtensionElement()){
+				setOption = option;
+			} else {
+				IOption newSuperClass = option;
+				for(;
+					newSuperClass != null && !newSuperClass.isExtensionElement();
+						newSuperClass = newSuperClass.getSuperClass()){}
+				
+				if (((Option)newSuperClass).wasOptRef()) {
+					newSuperClass = newSuperClass.getSuperClass();
+				}
+				
+				if(((Option)newSuperClass).isAdjustedExtension()){
+					newSuperClass = newSuperClass.getSuperClass();
+				}
+				//  Create an Option element for the managed build project file (.CDTBUILD)
+				String subId;
+				int nnn = ManagedBuildManager.getRandomNumber();
+				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
+				setOption = createOption(newSuperClass, subId, null, false);
+				setOption.setValueType(option.getValueType());
+			}
+		}
+		return setOption;
 	}
 }

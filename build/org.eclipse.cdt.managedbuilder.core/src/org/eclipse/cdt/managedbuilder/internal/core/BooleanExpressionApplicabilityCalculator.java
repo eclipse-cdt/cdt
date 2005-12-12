@@ -58,4 +58,14 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		}
 		return true;
 	}
+	
+	public boolean performAdjustment(IBuildObject configuration,
+			IHoldsOptions holder, IOption option){
+		boolean adjusted = false;
+		for(int i = 0; i < fExpressions.length; i++){
+			if(fExpressions[i].performAdjustment(configuration, holder, option))
+				adjusted = true;
+		}
+		return adjusted;
+	}
 }

@@ -46,6 +46,8 @@ public abstract class CompositeExpression implements IBooleanExpression {
 				return new CheckStringExpression(element);
 		else if(FalseExpression.NAME.equals(name))
 			return new FalseExpression(element);
+		else if(CheckHolderExpression.NAME.equals(name))
+			return new CheckHolderExpression(element);
 		return null;
 	}
 	

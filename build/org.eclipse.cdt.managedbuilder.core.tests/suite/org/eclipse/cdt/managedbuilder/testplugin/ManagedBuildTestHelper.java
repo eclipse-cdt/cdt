@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.testplugin;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -18,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipFile;
 
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -28,7 +30,7 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -38,11 +40,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -79,7 +81,7 @@ public class ManagedBuildTestHelper {
 				workspace.setDescription(workspaceDesc);
 				IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 				//description.setLocation(root.getLocation());
-				project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+				project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
 			}
 		} else {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -102,6 +104,33 @@ public class ManagedBuildTestHelper {
 		return project;	
 	}
 	
+	static public IProject createProject(
+			final String name, 
+			final String projectTypeId) {
+		try {
+			return 	createProject(name, 
+					null, 
+					ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID, 
+					projectTypeId);
+		} catch (CoreException e) {
+			TestCase.fail(e.getLocalizedMessage());
+		}
+		return null;
+	}
+	
+	static public IFile createFile(IProject project, String name){
+		IFile file = project.getFile(name);
+		if( file.exists() ){
+			try {
+//				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
+				file.create( new ByteArrayInputStream( new byte[0] ), false, null );
+			} catch (CoreException e) {
+				TestCase.fail(e.getLocalizedMessage());
+			}
+		}
+		return file;
+	}
+
 	/**
 	 * Remove the <code>IProject</code> with the name specified in the argument from the 
 	 * receiver's workspace.

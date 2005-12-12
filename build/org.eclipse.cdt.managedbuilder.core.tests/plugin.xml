@@ -4942,6 +4942,974 @@
             </toolChain>
          </configuration>
     </projectType>
+    
+    <!-- enablement testing -->
+    
+      <projectType
+                  id="cdt.managedbuild.target.enablement.exe"
+                  isAbstract="false"
+                  isTest="false"
+                  name="enablement.exe"
+                  projectEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                  projectMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro">
+         <configuration
+               name="One"
+               id="cdt.managedbuild.config.enablement.exe.debug"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+               <toolChain
+                     archList="all"
+                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     id="cdt.managedbuild.toolchain.enablement.exe.debug"
+                     isToolChainSupported="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
+                     name="Dbg ToolChain"
+                     osList="solaris,linux,hpux,aix,qnx"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.enablement.platform.exe.debug"
+		              name="Dbg Platform"
+		              binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.PE"
+		              osList="solaris,linux,hpux,aix,qnx"
+		              archList="all">
+	              </targetPlatform>
+				  <builder
+				      id="cdt.managedbuild.target.enablement.builder.exe.debug"
+		              name="Dbg Builder"
+		              command="make"
+		              arguments="-k"
+		              variableFormat="@="
+		              isVariableCaseSensitive="false"
+		              reservedMacroNames="PATH"		              
+		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
+		     	  </builder>               
+                  <tool
+                      id="enablement.this.child_1.2.3"
+                      superClass="enablement.this">
+			  	      <option
+        		          id="enablement.macro.test.string"
+        		          defaultValue="000"
+                		  superClass="gnu.c.compiler.option30.optimization.flags"
+                		  value="111"
+        		          valueType="string">
+					  </option>
+					  <option
+		                  valueType="stringList"
+        		          name="ass"
+        		          superClass="gnu.cpp.compiler.option30.preprocessor.undef"
+                		  id="enablement.macro.test.list">
+			               <listOptionValue value="x"/>
+            			   <listOptionValue value="y"/>
+			               <listOptionValue value="z"/>
+            		  </option>
+	                  <envVarBuildPath
+        	                  pathType="buildpathInclude"
+                	          variableList="CFGI,CFG0,PRJI">
+	                  </envVarBuildPath>
+        	          <envVarBuildPath
+                	          pathType="buildpathLibrary"
+                        	  variableList="CFGL,PRJL">
+	                  </envVarBuildPath>
+				  </tool>
+				  <tool
+                      id="enablement.other.child"
+                      superClass="enablement.other">                         
+                  </tool>
+                  <tool
+                      id="enablement.this.child.2_1.2.3"
+                      superClass="enablement.this"/>
+			  </toolChain>
+         </configuration>
+      </projectType>
       
+      <tool
+		  name="compiler.gnu.c"
+		  id="enablement.this"
+		  isAbstract="true"
+		  sources="c"
+		  command="gcc"
+		  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
+		  headerExtensions="h"
+		  natureFilter="cnature"
+		  outputs="o"
+		  outputFlag="-o">
+		  <optionCategory
+		      owner="enablement.this"
+			  name="Preproc"
+			  id="testgnu.enablement.c.compiler.category.preprocessor">
+		  </optionCategory>
+		  <option
+			  defaultValue="false"
+			  name="1a"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="test1"
+			  commandFalse="cmdF"
+			  id="enablement.command.c1"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="c1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="2"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="c2"
+			  commandFalse="cmdF"
+			  id="enablement.command.c2"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="test">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="3"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.commandFalse.c1"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="c1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="4"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="c2"
+			  id="enablement.commandFalse.c2"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="test">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="5"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.command.c1.commandFalse.cF1"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="c1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="6"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.command.cmd.commandFalse.cmdF"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="test">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="test">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="7"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.command.c1.commandFalse.cmdF"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="c1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="8"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.command.cmd.commandFalse.cF1"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="test">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="9"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.ui.en"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="UI_ENABLEMENT">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="10"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.ui.vis"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="UI_VISIBILITY">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="11"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.cmd.us"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+			  <enablement type="CMD_USAGE">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="12"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.cmdUs.or.uiVis"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="CMD_USAGE|UI_VISIBILITY">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="13"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.uiEn.or.uiVis"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="UI_ENABLEMENT|UI_VISIBILITY">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="14"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.all"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="ALL">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="15"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.all.ac.vh"
+			  valueType="boolean"
+			  applicabilityCalculator="org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests"
+			  valueHandlerExtraArgument="org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="ALL">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+ 		  </option>
+<!-- marker -->
+		  <option
+			  defaultValue="false"
+			  name="16"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.all.cF1.ac.vh"
+			  valueType="boolean"
+			  applicabilityCalculator="org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests"
+			  valueHandlerExtraArgument="org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="ALL">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="17"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.all.cF.cmdF"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+			  <enablement type="ALL">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="18"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.all.cF.cF1"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="ALL">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="19"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="this.boolean"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption/>
+			  </enablement>
+ 		  </option>
+		  <option
+			  defaultValue="false"
+			  name="20"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.boolean.True"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.boolean" value="true"/>
+			  </enablement>
+			  </option>
+		  <option
+			  defaultValue="false"
+			  name="21"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.boolean.False"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.boolean" value="false"/>
+			  </enablement>
+			  </option>
+		  <option
+			  defaultValue="false"
+			  name="22"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.string.Q.empty"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.string" value=""/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="23"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.string.Q.test a b c"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.string" value="test a b c"/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="24"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.enum.Q.testgnu.enablement.c.optimization.level.optimize"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.enum" value="testgnu.enablement.c.optimization.level.optimize"/>
+			  </enablement>
+		  </option> 		  
+		  <option
+			  defaultValue="false"
+			  name="25"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.Q.true"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption value="true"/>
+			  </enablement>
+		  </option> 		  
+		  <option
+			  defaultValue="false"
+			  name="26"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.string.Q.start ${ParentVersion} stop"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.string" value="start ${ParentVersion} stop"/>
+			  </enablement>
+		  </option> 		  
+		  <option
+			  defaultValue="false"
+			  name="27"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.string.Q.other.string"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.string" otherOptionId="other.string" otherHolderId="enablement.other"/>
+			  </enablement>
+		  </option> 		  
+		  <option
+			  defaultValue="false"
+			  name="28"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOpt.all.Q.this.boolean.Q.other.boolean"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkOption optionId="this.boolean" otherOptionId="other.boolean" otherHolderId="enablement.other"/>
+			  </enablement>
+		  </option> 
+		  <option
+			  defaultValue="false"
+			  name="29"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkString"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkString string="1.2.3" value="${ParentVersion}"/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="30"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkString.2"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkString value="1.2.3" string="${ParentVersion}"/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="31"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkString.3"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<checkString value="a ${ParentVersion} b" string="a ${ParentVersion} b"/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="32"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkFalse.false"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<false/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="33"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkNot.false"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<not>
+			  		<checkString string="1" value="1"/>
+			  	</not>
+			  </enablement>
+		  </option>		  
+		  <option
+			  defaultValue="false"
+			  name="34"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkOr.true"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<or>
+			  		<checkString string="1" value="2"/>
+			  		<checkString string="1" value="1"/>
+			  	</or>
+			  </enablement>
+		  </option>		
+		  <option
+			  defaultValue="false"
+			  name="35"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkAnd.false"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement type="ALL">
+			  	<and>
+			  		<checkString string="1" value="2"/>
+			  		<checkString string="1" value="1"/>
+			  	</and>
+			  </enablement>
+		  </option>		
+		  <option
+			  defaultValue="false"
+			  name="36"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="cmd"
+			  commandFalse="cmdF"
+			  id="enablement.checkHolder.true.1.false.2"
+			  valueType="boolean">
+			  <!--enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="cF1">
+			  	<checkString string="1" value="1"/>
+			  </enablement-->
+			  <enablement>
+			  		<checkHolder holderId="enablement.this.child_1.2.3"/>
+			  </enablement>
+		  </option>		  
+
+		  <option
+			  defaultValue="false"
+			  name="Posix.Nostdinc"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="-nostdinc"
+			  id="testgnu.enablement.c.compiler.option.preprocessor.nostdinc"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="test">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="UI_ENABLEMENT">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="UI_VISIBILITY">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+			  <enablement type="CMD_USAGE">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Nostdinc"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  commandFalse="-nostdinc"
+			  id="testgnu1.enablement.c.compiler.option.preprocessor.nostdinc"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="test">
+			  	<checkString string="1" value="1"/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.PreprocOnly"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  command="-E"
+			  id="testgnu.enablement.c.compiler.option.preprocessor.preprocess"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="command" value="test">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+			  <enablement type="UI_ENABLEMENT">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+			  <enablement type="UI_VISIBILITY">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+			  <enablement type="CMD_USAGE">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.PreprocOnly"
+			  category="testgnu.enablement.c.compiler.category.preprocessor"
+			  commandFalse="-E"
+			  id="testgnu1.enablement.c.compiler.option.preprocessor.preprocess"
+			  valueType="boolean">
+			  <enablement type="CONTAINER_ATTRIBUTE" attribute="commandFalse" value="test">
+			  	<checkString string="1" value="2"/>
+			  </enablement>
+		  </option>
+		  <optionCategory
+			  owner="enablement.this"
+			  name="Symbols"
+			  id="testgnu.enablement.c.compiler.category.symbols">
+		  </optionCategory>
+		  <option
+			  name="Posix.DefSym"
+			  category="testgnu.enablement.c.compiler.category.symbols"
+			  command="-D"
+			  id="testgnu.enablement.c.compiler.option.preprocessor.def.symbols"
+			  valueType="definedSymbols">
+		  </option>
+		  <option
+			  name="Posix.UndefSym"
+			  category="testgnu.enablement.c.compiler.category.symbols"
+			  command="-U"
+			  id="testgnu.enablement.c.compiler.option.preprocessor.undef.symbol"
+			  valueType="stringList">
+		  </option>
+		  <optionCategory
+			  owner="enablement.this"
+			  name="Dirs"
+			  id="testgnu.enablement.c.compiler.category.dirs">
+		  </optionCategory>
+		  <option
+			  name="Posix.InclPaths"
+			  category="testgnu.enablement.c.compiler.category.dirs"
+			  command="-I"
+			  id="testgnu.enablement.c.compiler.option.include.paths"
+			  valueType="includePath"
+			  browseType="directory">
+		  </option>
+		  <optionCategory
+			  owner="enablement.this"
+			  name="Optimize"
+			  id="testgnu.enablement.c.compiler.category.optimization">
+		  </optionCategory>
+		  <option
+			  name="Posix.OptLevel"
+			  category="testgnu.enablement.c.compiler.category.optimization"
+			  id="this.enum"
+			  valueType="enumerated">
+		  <enumeratedOptionValue
+		  		  name="Posix.Optimize.None"
+				  isDefault="false"
+				  command="-O0"
+				  id="testgnu.enablement.c.optimization.level.none">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Optimize.Optimize"
+				  command="-O1"
+				  id="testgnu.enablement.c.optimization.level.optimize">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Optimize.More"
+				  isDefault="true"
+				  command="-O2"
+				  id="testgnu.enablement.c.optimization.level.more">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Optimize.Most"
+				  command="-O3"
+				  id="testgnu.enablement.c.optimization.level.most">
+		  </enumeratedOptionValue>
+		  </option>
+		  <option
+			  name="Posix.Optimize.Flags"
+			  category="testgnu.enablement.c.compiler.category.optimization"
+			  id="this.string"
+			  valueType="string">
+		  </option>
+		  <optionCategory
+			  owner="enablement.this"
+			  name="Debug"
+			  id="testgnu.enablement.c.compiler.category.debug">
+		  </optionCategory>
+		  <option
+			  name="Posix.DebugLevel"
+			  category="testgnu.enablement.c.compiler.category.debug"
+			  id="testgnu.enablement.c.compiler.option.debugging.level"
+			  valueType="enumerated">
+		  <enumeratedOptionValue
+				  name="Posix.Debug.None"
+				  isDefault="false"
+				  id="testgnu.enablement.c.debugging.level.none">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Debug.Min"
+				  command="-g1"
+				  id="testgnu.enablement.c.debugging.level.minimal">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Debug.Def"
+				  isDefault="true"
+				  command="-g"
+				  id="testgnu.enablement.c.debugging.level.default">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Debug.Max"
+				  isDefault="false"
+				  command="-g3"
+				  id="testgnu.enablement.c.debugging.level.max">
+		  </enumeratedOptionValue>
+		  </option>
+		  <option
+			  name="Posix.Debug.Other"
+			  category="testgnu.enablement.c.compiler.category.debug"
+			  id="testgnu.enablement.c.compiler.option.debugging.other"
+			  valueType="string">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Debug.gprof"
+			  category="testgnu.enablement.c.compiler.category.debug"
+			  command="-pg"
+			  id="testgnu.enablement.c.compiler.option.debugging.gprof"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Debug.prof"
+			  category="testgnu.enablement.c.compiler.category.debug"
+			  command="-p"
+			  id="testgnu.enablement.c.compiler.option.debugging.prof"
+			  valueType="boolean">
+		  </option>
+		  <optionCategory
+			  owner="enablement.this"
+			  name="Warn"
+			  id="testgnu.enablement.c.compiler.category.warnings">
+		  </optionCategory>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Warn.Syntax"
+			  category="testgnu.enablement.c.compiler.category.warnings"
+			  command="-fsyntax-only"
+			  id="testgnu.enablement.c.compiler.option.warnings.syntax"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Warn.Pedandic"
+			  category="testgnu.enablement.c.compiler.category.warnings"
+			  command="-pedantic"
+			  id="testgnu.enablement.c.compiler.option.warnings.pedantic"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Warn.PedErrors"
+			  category="testgnu.enablement.c.compiler.category.warnings"
+			  command="-pedantic-errors"
+			  id="testgnu.enablement.c.compiler.option.warnings.pedantic.error"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Warn.nowarn"
+			  category="testgnu.enablement.c.compiler.category.warnings"
+			  command="-w"
+			  id="testgnu.enablement.c.compiler.option.warnings.nowarn"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="true"
+			  name="Posix.Warn.allwarn"
+			  category="testgnu.enablement.c.compiler.category.warnings"
+			  command="-Wall"
+			  id="testgnu.enablement.c.compiler.option.warnings.allwarn"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Warn.toerrs"
+			  category="testgnu.enablement.c.compiler.category.warnings"
+			  command="-Werror"
+			  id="testgnu.enablement.c.compiler.option.warnings.toerrors"
+			  valueType="boolean">
+		  </option>
+		  <optionCategory
+			  owner="enablement.this"
+			  name="Misc"
+			  id="testgnu.enablement.c.compiler.category.other">
+		  </optionCategory>
+		  <option
+			  defaultValue="-c -fmessage-length=0"
+			  name="OtherFlags"
+			  category="testgnu.enablement.c.compiler.category.other"
+			  id="testgnu.enablement.c.compiler.option.misc.other"
+			  valueType="string">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Verbose"
+			  category="testgnu.enablement.c.compiler.category.other"
+			  command="-v"
+			  id="testgnu.enablement.c.compiler.option.misc.verbose"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="Posix.Ansi"
+			  category="testgnu.enablement.c.compiler.category.other"
+			  command="-ansi"
+			  id="testgnu.enablement.c.compiler.option.misc.ansi"
+			  valueType="boolean">
+		  </option>
+	  </tool>
+	  
+	  <tool
+		  name="compiler.gnu.c"
+		  id="enablement.other"
+		  isAbstract="true"
+		  sources="cpp"
+		  command="gcc"
+		  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
+		  headerExtensions="h"
+		  natureFilter="cnature"
+		  outputs="o"
+		  outputFlag="-o">
+		 <optionCategory
+			  owner="enablement.other"
+			  name="Misc"
+			  id="cat.ather">
+		  </optionCategory>
+		  
+		 <option
+			  defaultValue="false"
+			  name="Posix.Ansi"
+			  category="cat.ather"
+			  command="-ansi"
+			  id="other.boolean"
+			  valueType="boolean"/> 
+		<option
+			  defaultValue="otherVal ${ParentVersion}"
+			  name="OtherFlags"
+			  category="cat.ather"
+			  id="other.string"
+			  valueType="string">
+		  </option>
+		<option
+			  name="Posix.DebugLevel"
+			  category="cat.ather"
+			  id="other.enum"
+			  valueType="enumerated">
+		  <enumeratedOptionValue
+				  name="Posix.Debug.None"
+				  isDefault="false"
+				  id="testgnu.enablement.c.debugging.level.none">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Debug.Min"
+				  command="-g1"
+				  id="other.enum.minimal">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Debug.Def"
+				  isDefault="true"
+				  command="-g"
+				  id="other.enum.default">
+		  </enumeratedOptionValue>
+		  <enumeratedOptionValue
+				  name="Posix.Debug.Max"
+				  isDefault="false"
+				  command="-g3"
+				  id="other.enum.max">
+		  </enumeratedOptionValue>
+		  </option>
+	</tool>
    </extension>
 </plugin>

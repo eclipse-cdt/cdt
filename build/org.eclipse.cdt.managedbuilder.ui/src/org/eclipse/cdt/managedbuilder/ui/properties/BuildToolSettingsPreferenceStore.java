@@ -18,6 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
@@ -120,11 +121,12 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 	}
 
 	private static IOption getExtensionOption(IOption option){
-		do {
-			if(option.isExtensionElement())
-				return option;
-		} while ((option = option.getSuperClass()) != null);
-		return null;
+		for(;option != null && (!option.isExtensionElement() 
+				|| ((Option)option).isAdjustedExtension()
+				|| ((Option)option).wasOptRef());
+			option = option.getSuperClass()){}
+			
+		return option;
 	}
 	
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
@@ -269,7 +271,7 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 			IOption option = (IOption)options[i][1];
 			
 			if(option.getId().equals(name) 
-					|| (!option.isExtensionElement()
+					|| ((!option.isExtensionElement() || ((Option)option).isAdjustedExtension() || ((Option)option).wasOptRef())
 						&& option.getSuperClass() != null
 						&& option.getSuperClass().getId().equals(name)))
 				return options[i];

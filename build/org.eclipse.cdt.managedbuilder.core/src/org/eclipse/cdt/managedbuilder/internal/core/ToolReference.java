@@ -1244,4 +1244,8 @@ public class ToolReference implements IToolReference {
 	public String getManagedBuildRevision() {
 		return null;
 	}
+	
+	public IOption getOptionToSet(IOption option, boolean adjustExtension){
+		return null;
+	}
 }

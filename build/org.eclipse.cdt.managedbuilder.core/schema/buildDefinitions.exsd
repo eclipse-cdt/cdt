@@ -1626,6 +1626,7 @@ If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelim
             <element ref="checkOption"/>
             <element ref="checkString"/>
             <element ref="false"/>
+            <element ref="checkHolder"/>
          </choice>
          <attribute name="type" type="string" use="default" value="ALL">
             <annotation>
@@ -1635,11 +1636,35 @@ Can contain the following values:
 UI_VISIBILITY – the given enablement expression specifies whether the option is to be visible in UI,
 UI_ENABLEMENT – the given enablement expression specifies the enable state of the controls that represent the option in UI,
 CMD_USAGE – the given enablement expression specifies whether the option is to be used in command line
+CONTAINER_ATTRIBUTE - the given enablement expressions specifies thecontainer attribute value
 ALL – this value means the combination of all the above values.
 
 Several types could be specified simultaneously using the &quot;|&quot; as a delimiter, e.g.:
 type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
-
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="attribute">
+            <annotation>
+               <documentation>
+                  This attribute should be used only for the CONTAINER_ATTRIBUTE enablement to specify the name of the attribute for which this enablement applies. Currently the following option attributes are supported:
+&quot;command&quot;
+&quot;commandFalse&quot;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="command">
+                  </enumeration>
+                  <enumeration value="commandFalse">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  This attribute should be used only for the CONTAINER_ATTRIBUTE enablement to specify the value of the attribute specified in the &quot;attribute&quot; for which this enablement applies
                </documentation>
             </annotation>
          </attribute>
@@ -1659,6 +1684,7 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
             <element ref="not"/>
             <element ref="checkOption"/>
             <element ref="checkString"/>
+            <element ref="checkHolder"/>
          </sequence>
       </complexType>
    </element>
@@ -1676,6 +1702,7 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
             <element ref="not"/>
             <element ref="checkOption"/>
             <element ref="checkString"/>
+            <element ref="checkHolder"/>
          </sequence>
       </complexType>
    </element>
@@ -1693,6 +1720,7 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
             <element ref="not"/>
             <element ref="checkOption"/>
             <element ref="checkString"/>
+            <element ref="checkHolder"/>
          </choice>
       </complexType>
    </element>
@@ -1723,7 +1751,6 @@ type=&quot;UI_VISIBILITY|CMD_USAGE&quot;
                <documentation>
                   Specifies the expected value. If the current option value matches the value specified in this attribute, the checkOption element is treated as true, otherwise – as false.
 The expected value could be specified either as a string that may contain build macros or as a regular expression. During the comparison, the build macros are resolved and the option value is checked to match the resulting string or regular expression. The way the expected value is specified and treated depends on the value of the isRegex attribute
-
                </documentation>
             </annotation>
          </attribute>
@@ -1761,7 +1788,7 @@ The expected value could be specified either as a string that may contain build 
          <attribute name="string" type="string" use="required">
             <annotation>
                <documentation>
-                  Represents the string to be checked. The string will typically  contain the build macros. 
+                  Represents the string to be checked. The string will typically  contain the build macros.
                </documentation>
             </annotation>
          </attribute>
@@ -1771,7 +1798,6 @@ The expected value could be specified either as a string that may contain build 
                   Specifies the expected value. If the current string specified in the “string” attribute matches the value specified in this attribute, the checkString element is treated as true, otherwise – as false.
 The expected value could be specified either as a string that might contain the build macros or as a regular expression.
 The way the value is specified and treated depends on the value of the isRegex attribute.
-
                </documentation>
             </annotation>
          </attribute>
@@ -1791,6 +1817,23 @@ The way the value is specified and treated depends on the value of the isRegex a
             Represents the &quot;false&quot; value. This element can be used as a direct child of the &quot;enablement&quot; element to represent that the given option applicability is disabled. E.g. to specify that the option is never displayed in UI or never used in the command line.
          </documentation>
       </annotation>
+   </element>
+
+   <element name="checkHolder">
+      <annotation>
+         <documentation>
+            Performs the holder check. 
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="holderId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Specifies the holder id to be checked. The checkHolder is treated as true if the id specified in this attribute matches with the option&apos;s holder id or the id of some holder&apos;s super-class. Otherwise the checkHolder is treated as false.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
    </element>
 
    <annotation>

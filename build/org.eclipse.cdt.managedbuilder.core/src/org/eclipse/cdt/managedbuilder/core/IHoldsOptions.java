@@ -141,4 +141,19 @@ public interface IHoldsOptions extends IBuildObject {
 	 */
 	public void createOptions(IHoldsOptions superClass);
 	
+	/**
+
+	* This method should be called in order to obtain the option whose value and attributes could be directly changed/adjusted
+	* 
+	* @param id –the option to be modified
+	* @param adjustExtension – if false, modifications are to be made for the non-extension element 
+	* (only for some particular configuration associated with some eclipse project)
+	* This is the most common use of this method.
+	* 
+	* True is allowed only while while handling the LOAD value handler event.
+	* In this case modifications are to be made for the extension element. 
+	* This could be used for adjusting extension options 
+	* Note: changing this option will affect all non-extension configurations using this option!
+	*/
+	IOption getOptionToSet(IOption option, boolean adjustExtension) throws BuildException;
 }

@@ -74,6 +74,7 @@ public class Option extends BuildObject implements IOption {
 	private String valueHandlerExtraArgument;	
 	private IConfigurationElement applicabilityCalculatorElement = null;
 	private IOptionApplicability applicabilityCalculator = null;
+	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator = null;
 	//  Miscellaneous
 	private boolean isExtensionOption = false;
 	private boolean isDirty = false;
@@ -83,6 +84,8 @@ public class Option extends BuildObject implements IOption {
 	                                  * routines will ignore invalid options. */
 	private boolean wasOptRef = false; /** True for options which are created because of an
 	                                     * MBS 2.0 model OptionReference element
+	                                     */
+	private boolean isUdjusted = false;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -250,6 +253,8 @@ public class Option extends BuildObject implements IOption {
 		category = option.category;
 		applicabilityCalculatorElement = option.applicabilityCalculatorElement;
 		applicabilityCalculator = option.applicabilityCalculator;
+		
+		booleanExpressionCalculator = option.booleanExpressionCalculator;
 
 		if (option.valueHandlerElement != null) {
 			valueHandlerElement = option.valueHandlerElement; 
@@ -259,7 +264,8 @@ public class Option extends BuildObject implements IOption {
 			valueHandlerExtraArgument = new String(option.valueHandlerExtraArgument);
 		}		
 		
-        setDirty(true);
+		if(!isExtensionElement())
+			setDirty(true);
 	}
 
 	/*
@@ -346,15 +352,17 @@ public class Option extends BuildObject implements IOption {
 			resourceFilter = new Integer(FILTER_PROJECT);
 		}
 		
+		//get enablements
+		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
+		if(enablements.length > 0)
+			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
+
 		// get the applicability calculator, if any
 		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR); 
 		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
 			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
 		} else {
-			IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
-			if(enablements.length > 0)
-				applicabilityCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
-				
+			applicabilityCalculator = booleanExpressionCalculator;
 		}
 
 		// valueHandler
@@ -1329,7 +1337,8 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public void setDefaultValue(Object v) {
 		defaultValue = v;
-		setDirty(true);
+		if(!isExtensionElement())
+			setDirty(true);
 	}
 	
 	/* (non-Javadoc)
@@ -1343,7 +1352,8 @@ public class Option extends BuildObject implements IOption {
 			} else {
 				categoryId = null;
 			}
-			setDirty(true);
+			if(!isExtensionElement())
+				setDirty(true);
 		}
 	}
 
@@ -1354,7 +1364,8 @@ public class Option extends BuildObject implements IOption {
 		if (cmd == null && command == null) return;
 		if (cmd == null || command == null || !cmd.equals(command)) {
 			command = cmd;
-			isDirty = true;
+			if(!isExtensionElement())
+				isDirty = true;
 		}
 	}
 
@@ -1365,7 +1376,8 @@ public class Option extends BuildObject implements IOption {
 		if (cmd == null && commandFalse == null) return;
 		if (cmd == null || commandFalse == null || !cmd.equals(commandFalse)) {
 			commandFalse = cmd;
-			isDirty = true;		
+			if(!isExtensionElement())
+				isDirty = true;		
 		}
 	}
 	
@@ -1376,7 +1388,8 @@ public class Option extends BuildObject implements IOption {
 		if (tooltip == null && tip == null) return;
 		if (tooltip == null || tip == null || !tooltip.equals(tip)) {
 			tip = tooltip;
-			isDirty = true;		
+			if(!isExtensionElement())
+				isDirty = true;		
 		}
 	}
 	
@@ -1386,7 +1399,8 @@ public class Option extends BuildObject implements IOption {
 	public void setResourceFilter(int filter) {
 		if (resourceFilter == null || !(filter == resourceFilter.intValue())) {
 			resourceFilter = new Integer(filter);
-			isDirty = true;
+			if(!isExtensionElement())
+				isDirty = true;
 		}
 	}
 	
@@ -1396,7 +1410,8 @@ public class Option extends BuildObject implements IOption {
 	public void setBrowseType(int type) {
 		if (browseType == null || !(type == browseType.intValue())) {
 			browseType = new Integer(type);
-			isDirty = true;
+			if(!isExtensionElement())
+				isDirty = true;
 		}
 	}
 
@@ -1409,7 +1424,8 @@ public class Option extends BuildObject implements IOption {
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		setDirty(true);
+		if(!isExtensionElement())
+			setDirty(true);
 	}
 
 
@@ -1423,7 +1439,8 @@ public class Option extends BuildObject implements IOption {
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		setDirty(true);
+		if(!isExtensionElement())
+			setDirty(true);
 	}
 	
 
@@ -1446,7 +1463,8 @@ public class Option extends BuildObject implements IOption {
 		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		setDirty(true);
+		if(!isExtensionElement())
+			setDirty(true);
 	}
 	
 	/* (non-Javadoc)
@@ -1454,7 +1472,8 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public void setValue(Object v) {
 		value = v;
-		setDirty(true);
+		if(!isExtensionElement())
+			setDirty(true);
 	}
 
 	/* (non-Javadoc)
@@ -1464,7 +1483,8 @@ public class Option extends BuildObject implements IOption {
 		// TODO:  Verify that this is a valid type
 		if (valueType == null || valueType.intValue() != type) {
 			valueType = new Integer(type);
-			setDirty(true);
+			if(!isExtensionElement())
+				setDirty(true);
 		}
 	}
 
@@ -1485,7 +1505,8 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public void setValueHandlerElement(IConfigurationElement element) {
 		valueHandlerElement = element;
-		setDirty(true);
+		if(!isExtensionElement())
+			setDirty(true);
 	}
 	
 	/* (non-Javadoc)
@@ -1536,7 +1557,8 @@ public class Option extends BuildObject implements IOption {
  				valueHandlerExtraArgument == null ||
  				!extraArgument.equals(valueHandlerExtraArgument)) {
 			valueHandlerExtraArgument = extraArgument;
- 			isDirty = true;
+			if(!isExtensionElement())
+				isDirty = true;
 		}
 	}
 
@@ -1814,6 +1836,18 @@ public class Option extends BuildObject implements IOption {
 	
 	public void setVersion(PluginVersionIdentifier version) {
 		// Do nothing
+	}
+	
+	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(){
+		return booleanExpressionCalculator;
+	}
+	
+	public boolean isAdjustedExtension(){
+		return isUdjusted;
+	}
+
+	public void setAdjusted(boolean adjusted) {
+		isUdjusted = adjusted;
 	}
 
 }

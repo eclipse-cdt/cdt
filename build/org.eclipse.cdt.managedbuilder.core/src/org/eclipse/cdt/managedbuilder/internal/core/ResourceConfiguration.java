@@ -766,32 +766,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (option.getBooleanValue() != value) {
 		    //  If this resource config does not already override this option, then we need to
 		    //  create a new option
-		    if (getHoldersParent(option) != this) {
-				IOption newSuperClass = option;
-				if (!newSuperClass.isExtensionElement()) {
-					newSuperClass = newSuperClass.getSuperClass();
-				}
-				if (newSuperClass.isExtensionElement()) {
-					//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
-					//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
-					//  elements that are automatically generated from V2.0 model optionReferences.  If these
-					//  end up in the project file, then the project could have a problem when the integration
-					//  provider switches to providing the new model.
-					if (((Option)newSuperClass).wasOptRef()) {
-						newSuperClass = newSuperClass.getSuperClass();
-					}
-				}
-				//  Create an Option element for the managed build project file (.CDTBUILD)
-				String subId;
-				int nnn = ManagedBuildManager.getRandomNumber();
-				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = holder.createOption(newSuperClass, subId, null, false); 
-				retOpt.setValueType(option.getValueType());
-				retOpt.setValue(value);
-				setDirty(true);
-			} else {
-				option.setValue(value);
-			}
+			retOpt = holder.getOptionToSet(option, false);
+			retOpt.setValue(value);
 		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
 		    //       file rebuilt?  "Clean" its output?  Change its modification date?
 			parent.setRebuildState(true);
@@ -806,32 +782,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (oldValue != null && !oldValue.equals(value)) {
 		    //  If this resource config does not already override this option, then we need to
 		    //  create a new option
-		    if (getHoldersParent(option) != this) {
-				IOption newSuperClass = option;
-				if (!newSuperClass.isExtensionElement()) {
-					newSuperClass = newSuperClass.getSuperClass();
-				}
-				if (newSuperClass.isExtensionElement()) {
-					//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
-					//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
-					//  elements that are automatically generated from V2.0 model optionReferences.  If these
-					//  end up in the project file, then the project could have a problem when the integration
-					//  provider switches to providing the new model.
-					if (((Option)newSuperClass).wasOptRef()) {
-						newSuperClass = newSuperClass.getSuperClass();
-					}
-				}
-				//  Create an Option element for the managed build project file (.CDTBUILD)
-				String subId;
-				int nnn = ManagedBuildManager.getRandomNumber();
-				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = holder.createOption(newSuperClass, subId, null, false); 
-				retOpt.setValueType(option.getValueType());
-				retOpt.setValue(value);
-				setDirty(true);
-			} else {
-				option.setValue(value);
-			}
+			retOpt = holder.getOptionToSet(option, false);
+			retOpt.setValue(value);
 		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
 		    //       file rebuilt?  "Clean" its output?  Change its modification date?
 			parent.setRebuildState(true);
@@ -867,34 +819,8 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 				break;
 		}
 		if(!Arrays.equals(value, oldValue)) {
-		    //  If this resource config does not already override this option, then we need to
-		    //  create a new option
-		    if (getHoldersParent(option) != this) {
-				IOption newSuperClass = option;
-				if (!newSuperClass.isExtensionElement()) {
-					newSuperClass = newSuperClass.getSuperClass();
-				}
-				if (newSuperClass.isExtensionElement()) {
-					//  If the extension element was created from an MBS 2.0 model OptionReference element, hook the
-					//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
-					//  elements that are automatically generated from V2.0 model optionReferences.  If these
-					//  end up in the project file, then the project could have a problem when the integration
-					//  provider switches to providing the new model.
-					if (((Option)newSuperClass).wasOptRef()) {
-						newSuperClass = newSuperClass.getSuperClass();
-					}
-				}
-				//  Create an Option element for the managed build project file (.CDTBUILD)
-				String subId;
-				int nnn = ManagedBuildManager.getRandomNumber();
-				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
-				retOpt = holder.createOption(newSuperClass, subId, null, false); 
-				retOpt.setValueType(option.getValueType());
-				retOpt.setValue(value);
-				setDirty(true);
-			} else {
-				option.setValue(value);
-			}
+			retOpt = holder.getOptionToSet(option, false);
+			retOpt.setValue(value);
 		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
 		    //       file rebuilt?  "Clean" its output?  Change its modification date?
 			parent.setRebuildState(true);

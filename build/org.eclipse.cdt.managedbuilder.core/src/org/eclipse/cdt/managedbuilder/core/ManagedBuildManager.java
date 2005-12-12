@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
+import org.eclipse.cdt.managedbuilder.internal.core.BooleanExpressionApplicabilityCalculator;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
@@ -76,21 +77,18 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -2028,7 +2026,61 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				}
 			}
 		}
+		
+		performAdjustments();
 	}
+	
+	private static void performAdjustments(){
+		IProjectType types[] = getDefinedProjectTypes();
+		for(int i = 0; i < types.length; i++){
+			IConfiguration cfgs[] = types[i].getConfigurations();
+			for(int j = 0; j < cfgs.length; j++){
+				adjustConfig(cfgs[j]);
+			}
+		}
+
+		for(int i = 0; i < types.length; i++){
+			IConfiguration cfgs[] = types[i].getConfigurations();
+			for(int j = 0; j < cfgs.length; j++){
+				performValueHandlerEvent(cfgs[j], IManagedOptionValueHandler.EVENT_LOAD);
+			}
+		}
+
+	}
+	
+	private static void adjustConfig(IConfiguration cfg){
+		IToolChain tc = cfg.getToolChain();
+		adjustHolder(cfg, tc);
+		
+		ITool tools[] = cfg.getTools();
+		for(int i = 0; i < tools.length; i++){
+			adjustHolder(cfg, tools[i]);
+		}
+		
+		IResourceConfiguration rcCfgs[] = cfg.getResourceConfigurations();
+		
+		for(int i = 0; i <rcCfgs.length; i++){
+			ITool rcTools[] = rcCfgs[i].getTools();
+			for(int j = 0; j < rcTools.length; j++){
+				adjustHolder(rcCfgs[i], rcTools[j]);
+			}
+		}
+		
+	}
+	
+	private static void adjustHolder(IBuildObject cfg, IHoldsOptions holder){
+		IOption options[] = holder.getOptions();
+		
+		for(int i = 0; i < options.length; i++){
+			Option option = (Option)options[i];
+			BooleanExpressionApplicabilityCalculator calc = 
+				option.getBooleanExpressionCalculator();
+			
+			if(calc != null)
+				calc.performAdjustment(cfg,holder,option);
+		}
+	}
+	
 
 	private static void loadConfigElements(IManagedConfigElement[] elements, String revision) {
 		for (int toolIndex = 0; toolIndex < elements.length; ++toolIndex) {

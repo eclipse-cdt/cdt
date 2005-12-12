@@ -25,6 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject30MakefileTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProjectUpdateTests;
 import org.eclipse.cdt.managedbuilder.core.tests.MultiVersionSupportTests;
+import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
 
 /**
@@ -57,6 +58,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ManagedBuildMacrosTests.suite());
 		suite.addTest(ManagedBuildTCSupportedTest.suite());
 		suite.addTest(MultiVersionSupportTests.suite());
+		suite.addTest(OptionEnablementTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

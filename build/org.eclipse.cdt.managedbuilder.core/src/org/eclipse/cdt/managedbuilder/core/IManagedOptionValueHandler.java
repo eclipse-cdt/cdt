@@ -38,6 +38,10 @@ public interface IManagedOptionValueHandler{
 	                                        *  button (or the OK button). The valueHandler can 
 	                                        *  transfer the value of the option to its own 
 	                                        *  back-end. */
+	public final int EVENT_LOAD = 5;       /** Posted when the managed build extensions (defined in the manifext files)extension option isThe option has been set by pressing the Apply 
+										     *  are loadded.
+										     *  The handler is allowed to adjust the extension elements
+										     */
 	
 /**
  * Handles transfer between values between UI element and 

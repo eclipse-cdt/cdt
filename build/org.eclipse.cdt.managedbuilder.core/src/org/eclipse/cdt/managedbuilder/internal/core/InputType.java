@@ -826,7 +826,29 @@ public class InputType extends BuildObject implements IInputType {
 		//  Use content type if specified and registered with Eclipse
 		IContentType type = getDependencyContentType();
 		if (type != null) {
-			return ((Tool)tool).getContentTypeFileSpecs(type);
+			String[] exts = ((Tool)tool).getContentTypeFileSpecs(type);
+			//  TODO: This is a temporary hack until we decide how to specify the langauge (C vs. C++)
+			//  of a .h file.  If the content type is the CDT-defined C/C++ content type, then
+			//  add "h" to the list if it is not already there.
+			if (type.getId().compareTo("org.eclipse.cdt.core.cxxHeader") == 0) {  // $NON-NLS-1$
+				boolean h_found = false;
+				for (int i=0; i<exts.length; i++) {
+					if (exts[i].compareTo("h") == 0) {  // $NON-NLS-1$
+						h_found = true;
+						break;
+					}
+				}
+				if (!h_found) {
+					String[] cppexts = new String[exts.length+1];
+					int i = 0;
+					for (; i<exts.length; i++) {
+						cppexts[i] = exts[i];
+					}
+					cppexts[i] = "h";  // $NON-NLS-1$
+					return cppexts;
+				}
+			}
+			return exts;
 		}
 		return getDependencyExtensionsAttribute();
 	}

@@ -740,10 +740,25 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 *   M A K E F I L E S   P O P U L A T I O N   M E T H O D S 
 	 ************************************************************************/
 
+	/**
+	 *  This method postprocesses a .d file created by a build.
+	 *  It's main job is to add dummy targets for the header files dependencies.
+	 *  This prevents make from aborting the build if the header file does not exist.
+	 *  
+	 *  A secondary job is to work in tandem with the "echo" command that is used
+	 *  by some tool-chains in order to get the "targets" part of the dependency rule
+	 *  correct. 
+	 *  
+	 *  This method adds a comment to the beginning of the dependency file which it
+	 *  checks for to determine if this dependency file has already been updated.
+	 *  The other "tricky" part is that it is possible for a tool chain to generate
+	 *  fully self-sufficient dependency files that do not need any postprocessing.
+	 *  We need to detect those as well.
+	 */
 	protected void populateDummyTargets(IFile makefile, boolean force) throws CoreException, IOException {
 		if (makefile == null || !makefile.exists()) return;
 		
-		// Found that bad boy, so let's get its contents
+		// Get the contents of the dependency file
 		InputStream contentStream = makefile.getContents(false);
 		Reader in = new InputStreamReader(contentStream);
 		StringBuffer inBuffer = null;
@@ -766,6 +781,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				return;
 		}
 
+		// Try to determine if this file already has dummy targets defined.
+		// If so, we will only add the comment.
+		String[] bufferLines = inBufferString.split("[\\r\\n]");	//$NON-NLS-1$
+		for (int i=0; i<bufferLines.length; i++) {
+			String bufferLine = bufferLines[i];
+			if (bufferLine.endsWith(":")) {
+				StringBuffer outBuffer = addDefaultHeader(); 
+				outBuffer.append(inBuffer);
+				Util.save(outBuffer, makefile);
+				return;
+			}
+		}
+		
 		// Reconstruct the buffer tokens into useful chunks of dependency information 
 		Vector bufferTokens = new Vector(Arrays.asList(inBufferString.split("\\s")));	//$NON-NLS-1$
 		Vector deps = new Vector(bufferTokens.size());
@@ -791,71 +819,77 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		StringBuffer outBuffer = null;
 		
 		// If we are doing an incremental build, only update the files that do not have a comment
-		String firstLine;
+		String firstToken;
 		try {
-			firstLine = (String) deps.get(0);
+			firstToken = (String) deps.get(0);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// This makes no sense so bail
 			return;
 		}
 
 		// Put the generated comments in the output buffer
-		if (!firstLine.startsWith(COMMENT_SYMBOL)) {
+		if (!firstToken.startsWith(COMMENT_SYMBOL)) {
 			outBuffer = addDefaultHeader();
 		} else {
 			outBuffer = new StringBuffer();
 		}
 		
 		// Some echo implementations misbehave and put the -n and newline in the output
-		if (firstLine.startsWith("-n")) { //$NON-NLS-1$
+		if (firstToken.startsWith("-n")) { //$NON-NLS-1$
 			
 			// Now let's parse:
 			// Win32 outputs -n '<path>/<file>.d <path>/'
 			// POSIX outputs -n <path>/<file>.d <path>/
 			// Get the dep file name
-			String secondLine;
+			String secondToken;
 			try {
-				secondLine = (String) deps.get(1);
+				secondToken = (String) deps.get(1);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				secondLine = new String();
+				secondToken = new String();
 			}
-			if (secondLine.startsWith("'")) { //$NON-NLS-1$
+			if (secondToken.startsWith("'")) { //$NON-NLS-1$
 				// This is the Win32 implementation of echo (MinGW without MSYS)
-				outBuffer.append(secondLine.substring(1) + WHITESPACE);
+				outBuffer.append(secondToken.substring(1) + WHITESPACE);
 			} else {
-				outBuffer.append(secondLine + WHITESPACE);
+				outBuffer.append(secondToken + WHITESPACE);
 			}
 			
 			// The relative path to the build goal comes next
-			String thirdLine;
+			String thirdToken;
 			try {
-				thirdLine = (String) deps.get(2);
+				thirdToken = (String) deps.get(2);
 			} catch (ArrayIndexOutOfBoundsException e) {
-				thirdLine = new String();
+				thirdToken = new String();
 			}
-			int lastIndex = thirdLine.lastIndexOf("'"); //$NON-NLS-1$
+			int lastIndex = thirdToken.lastIndexOf("'"); //$NON-NLS-1$
 			if (lastIndex != -1) {
 				if (lastIndex == 0) {
 					outBuffer.append(WHITESPACE);
 				} else {
-					outBuffer.append(thirdLine.substring(0, lastIndex - 1));
+					outBuffer.append(thirdToken.substring(0, lastIndex - 1));
 				}
 			} else {
-				outBuffer.append(thirdLine);
+				outBuffer.append(thirdToken);
 			}
 			
-			// followed by the actual dependencies
-			String fourthLine;
-			try {
-				fourthLine = (String) deps.get(3);
+			// Followed by the target output by the compiler plus ':'
+			// If we see any empty tokens here, assume they are the result of
+			// a line feed output by "echo" and skip them
+			String fourthToken;
+			int nToken = 3;
+			try {				
+				do {
+					fourthToken = (String) deps.get(nToken++);
+				} while (fourthToken.length() == 0);
+				
 			} catch (ArrayIndexOutOfBoundsException e) {
-				fourthLine = new String();
+				fourthToken = new String();
 			}
-			outBuffer.append(fourthLine + WHITESPACE);
+			outBuffer.append(fourthToken + WHITESPACE);
 			
-			// Now do the rest
+			// Followed by the actual dependencies
 			try {
-				Iterator iter = deps.listIterator(4);
+				Iterator iter = deps.listIterator(nToken);
 				while (iter.hasNext()) {
 					String nextElement = (String)iter.next();
 					if (nextElement.endsWith("\\")) { //$NON-NLS-1$

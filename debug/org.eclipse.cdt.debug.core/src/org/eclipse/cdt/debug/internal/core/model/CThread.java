@@ -152,7 +152,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				}
 				// Retrieve stack frames from the backend
 				int depth = getStackDepth();
-				ICDIStackFrame[] frames = ( depth != 0 ) ? getCDIStackFrames( 0, ( depth >= getMaxStackDepth() ) ? getMaxStackDepth() - 1 : depth ) : new ICDIStackFrame[0];
+				if ( depth >= getMaxStackDepth() )
+					depth = getMaxStackDepth() - 1;
+				ICDIStackFrame[] frames = ( depth != 0 ) ? getCDIStackFrames( 0, depth ) : new ICDIStackFrame[0];
 				
 				if ( fStackFrames.isEmpty() ) {
 					if ( frames.length > 0 ) {

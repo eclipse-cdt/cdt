@@ -1753,6 +1753,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * call this method first, it is effectively a startup method
 	 */
 	private static void loadExtensions() throws BuildException {
+		if (projectTypesLoaded)
+			return;
+
 		loadExtensionsSynchronized();
 	}
 	

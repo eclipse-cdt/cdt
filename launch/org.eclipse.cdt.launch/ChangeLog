@@ -1,3 +1,7 @@
+2005-12-20 Mikhail Khodjaiants
+	Bug 121474: NPE in CDebuggerTab.
+	* CDebuggerTab.java
+
 2005-09-08 Mikhail Khodjaiants
 	The "Debugger" tab of the launch configuration dialog is too wide.
 	* CDebuggerTab.java

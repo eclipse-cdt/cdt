@@ -43,12 +43,17 @@ public interface IMILaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_AUTO_SOLIB.
 	 */
-	public static boolean DEBUGGER_AUTO_SOLIB_DEFAULT = true;
+	public static final String DEBUGGER_GDB_INIT_DEFAULT = ".gdbinit"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_AUTO_SOLIB.
+	 */
+	public static final boolean DEBUGGER_AUTO_SOLIB_DEFAULT = true;
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS.
 	 */
-	public static boolean DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT = false;
+	public static final boolean DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT = false;
 
 	/**
 	 * launch configuration attribute key.  The value is a string specifying the protocol to

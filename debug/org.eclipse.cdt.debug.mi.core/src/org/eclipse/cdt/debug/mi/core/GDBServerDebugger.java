@@ -66,7 +66,7 @@ public class GDBServerDebugger implements ICDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid"); //$NON-NLS-1$
 				remote += ":"; //$NON-NLS-1$

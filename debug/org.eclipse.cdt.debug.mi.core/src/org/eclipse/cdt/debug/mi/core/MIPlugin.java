@@ -48,9 +48,6 @@ public class MIPlugin extends Plugin {
 	//The shared instance.
 	private static MIPlugin plugin;
 
-	// GDB init command file
-	private static final String GDBINIT = ".gdbinit"; //$NON-NLS-1$
-
 	// GDB command
 	private static final String GDB = "gdb"; //$NON-NLS-1$
 
@@ -164,9 +161,7 @@ public class MIPlugin extends Plugin {
 			gdb =  GDB;
 		}
 		
-		if (gdbinit == null || gdbinit.length() == 0) {
-			gdbinit = GDBINIT;
-		}
+		String commandFile = (gdbinit != null && gdbinit.length() > 0) ? "--command="+gdbinit : "--nx"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -175,15 +170,15 @@ public class MIPlugin extends Plugin {
 		String[] args;
 		if (pty != null) {
 			if (program == null) {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			}
 		} else {
 			if (program == null) {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "-q", "-nw", "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "-q", "-nw", "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 		}
 
@@ -239,19 +234,17 @@ public class MIPlugin extends Plugin {
 			gdb =  GDB;
 		}
 		
-		if (gdbinit == null || gdbinit.length() == 0) {
-			gdbinit = GDBINIT;
-		}
-
+		String commandFile = (gdbinit != null && gdbinit.length() > 0) ? "--command="+gdbinit : "--nx"; //$NON-NLS-1$ //$NON-NLS-2$
+		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 
 		String[] args;
 		if (program == null) {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion, "-c", core.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "--quiet", "-nw", "-i", miVersion, "-c", core.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion, "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "--quiet", "-nw", "-i", miVersion, "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 
 		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
@@ -290,9 +283,7 @@ public class MIPlugin extends Plugin {
 			gdb =  GDB;
 		}
 
-		if (gdbinit == null || gdbinit.length() == 0) {
-			gdbinit = GDBINIT;
-		}
+		String commandFile = (gdbinit != null && gdbinit.length() > 0) ? "--command="+gdbinit : "--nx"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -300,9 +291,9 @@ public class MIPlugin extends Plugin {
 
 		String[] args;
 		if (program == null) {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "--quiet", "-nw", "-i", miVersion}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), commandFile, "--quiet", "-nw", "-i", miVersion, program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
 		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		

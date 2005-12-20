@@ -1,3 +1,7 @@
+2005-12-20 Mikhail Khodjaiants
+	Bug 120390: Avoiding .gdbinit
+	* GDBDebuggerPage.java
+
 2005-09-06 Mikhail Khodjaiants
 	Cleanup: replaced "new Boolean" by the static Boolean objects (Java 1.4).
 	* GDBSolibBlock.java

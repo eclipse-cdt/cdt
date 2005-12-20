@@ -26,10 +26,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @author User
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Implementing cdebugger extension point
  */
 public class GDBServerCDIDebugger extends GDBCDIDebugger {
 
@@ -44,7 +41,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			String miVersion = getMIVersion(config);
 			File cwd = getProjectPath(config).toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid"); //$NON-NLS-1$
 				remote += ":"; //$NON-NLS-1$

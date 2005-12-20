@@ -76,7 +76,7 @@ public class GDBDebugger implements ICDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
@@ -109,7 +109,7 @@ public class GDBDebugger implements ICDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), pid, null, cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;
@@ -142,7 +142,7 @@ public class GDBDebugger implements ICDebugger {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			String miVersion = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, "mi"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT);
 			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getLocation().toFile(), corefile.toFile(), cwd, gdbinit, null);
 			initializeLibraries(config, session);
 			return session;

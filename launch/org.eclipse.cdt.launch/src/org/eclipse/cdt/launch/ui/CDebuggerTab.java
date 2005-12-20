@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -29,7 +28,6 @@ import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.cdt.launch.internal.ui.PixelConverter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,7 +36,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -92,7 +89,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 		protected void createProtocolCombo(Composite parent, int colspan) {
 			Group comboComp = new Group(parent, SWT.NONE);
-			comboComp.setText("Protocol");
+			comboComp.setText(LaunchMessages.getString("CDebuggerTab.Protocol")); //$NON-NLS-1$
 			GridLayout layout = new GridLayout(2, false);
 			comboComp.setLayout(layout);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -312,28 +309,30 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
 		} catch (CoreException e) {
 		}
-		IPath exePath = new Path(programName);
-		if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-			ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
-			for (int i = 0; i < parserRef.length; i++) {
-				try {
-					IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
-					IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-					if (exe != null) {
-						return exe;
+		if (programName != null) {
+			IPath exePath = new Path(programName);
+			if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+				ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
+				for (int i = 0; i < parserRef.length; i++) {
+					try {
+						IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
+						IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+						if (exe != null) {
+							return exe;
+						}
+					} catch (ClassCastException e) {
+					} catch (IOException e) {
 					}
-				} catch (ClassCastException e) {
-				} catch (IOException e) {
 				}
 			}
-		}
-		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
-		try {
-			IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-			return exe;
-		} catch (ClassCastException e) {
-		} catch (IOException e) {
+			IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
+			try {
+				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
+				return exe;
+			} catch (ClassCastException e) {
+			} catch (IOException e) {
+			}
 		}
 		return null;
 	}

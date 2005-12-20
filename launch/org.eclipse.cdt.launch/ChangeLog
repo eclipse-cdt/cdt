@@ -1,3 +1,7 @@
+2005-12-20 Mikhail Khodjaiants
+	Bug 121474: NPE in CDebuggerTab.
+	* CDebuggerTab.java
+
 2005-09-30 Mikhail Khodjaiants
 	Bug 110392: Internal error while launching gdb debugger.
 	* CMainAttachTab.java

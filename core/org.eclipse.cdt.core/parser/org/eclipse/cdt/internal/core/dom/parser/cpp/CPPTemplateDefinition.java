@@ -43,11 +43,12 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, ICPPInternalTemplate {
+public abstract class CPPTemplateDefinition extends PlatformObject implements ICPPTemplateDefinition, ICPPInternalTemplate {
 	public static final class CPPTemplateProblem extends ProblemBinding implements ICPPTemplateDefinition {
 		public CPPTemplateProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);

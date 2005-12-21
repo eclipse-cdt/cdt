@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -41,16 +42,14 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 		return (ICPPField) getSpecializedBinding();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
-	 */
 	public int getVisibility() throws DOMException {
 		return getField().getVisibility();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
+	public ICPPClassType getClassOwner() throws DOMException {
+		return getField().getClassOwner();
+	}
+	
 	public IType getType() throws DOMException {
 		if( type == null ){
 			type = CPPTemplates.instantiateType( getField().getType(), argumentMap );
@@ -58,37 +57,22 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 		return type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-	 */
 	public boolean isStatic() throws DOMException {
 		return getField().isStatic();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-     */
     public boolean isExtern() throws DOMException {
         return getField().isExtern();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-     */
     public boolean isAuto() throws DOMException {
         return getField().isAuto();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-     */
     public boolean isRegister() throws DOMException {
         return getField().isRegister();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
-     */
     public boolean isMutable() throws DOMException {
         return getField().isMutable();
     }

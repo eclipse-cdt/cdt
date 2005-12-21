@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPPointerType;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * This is the IASTBuiltinSymbolProvider used to implement the "Other" built-in GCC symbols defined:
@@ -2295,7 +2296,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 		return (IBinding[])ArrayUtil.trim(IBinding.class, bindings);
 	}
 	
-	public static class CBuiltinParameter implements IParameter {
+	public static class CBuiltinParameter extends PlatformObject implements IParameter {
 
 		private static final String BLANK_STRING = ""; //$NON-NLS-1$
 		private IType type=null;
@@ -2353,7 +2354,7 @@ public class GCCBuiltinSymbolProvider implements IASTBuiltinSymbolProvider {
 		
 	}
     
-	static public class CPPBuiltinParameter implements ICPPParameter {
+	static public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter {
 
         private static final String BLANK_STRING = ""; //$NON-NLS-1$
         private IType type=null;

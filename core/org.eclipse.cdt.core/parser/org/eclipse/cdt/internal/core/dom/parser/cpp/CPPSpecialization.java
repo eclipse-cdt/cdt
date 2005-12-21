@@ -23,12 +23,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  *
  */
-public abstract class CPPSpecialization implements ICPPSpecialization, ICPPInternalBinding {
+public abstract class CPPSpecialization extends PlatformObject implements ICPPSpecialization, ICPPInternalBinding {
 	private IBinding specialized;
 	private ICPPScope scope;
 	protected ObjectMap argumentMap;

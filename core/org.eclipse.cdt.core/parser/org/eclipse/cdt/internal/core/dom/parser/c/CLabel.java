@@ -21,11 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CLabel implements ILabel {
+public class CLabel extends PlatformObject implements ILabel {
     
     public static class CLabelProblem extends ProblemBinding implements ILabel {
         public CLabelProblem( IASTNode node, int id, char[] arg ) {

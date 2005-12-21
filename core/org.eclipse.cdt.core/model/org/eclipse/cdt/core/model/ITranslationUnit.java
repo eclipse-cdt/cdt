@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.core.runtime.CoreException;

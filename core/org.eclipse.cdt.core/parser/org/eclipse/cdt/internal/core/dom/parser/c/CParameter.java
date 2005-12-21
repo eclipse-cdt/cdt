@@ -27,12 +27,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CParameter implements IParameter {
+public class CParameter extends PlatformObject implements IParameter {
     public static class CParameterProblem extends ProblemBinding implements IParameter {
         public CParameterProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );

@@ -25,11 +25,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPUsingDeclaration implements ICPPUsingDeclaration, ICPPInternalBinding{
+public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDeclaration, ICPPInternalBinding{
     private IASTName name;
     private ICPPDelegate [] delegates;
     

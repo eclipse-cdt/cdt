@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
  * @author Doug Schaefer
  */
-public interface IBinding {
+public interface IBinding extends IAdaptable {
     public static final IBinding[] EMPTY_BINDING_ARRAY = new IBinding[0];
 	/**
 	 * The name of the binding.

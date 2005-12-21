@@ -20,11 +20,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CExternalVariable implements ICExternalBinding, IVariable {
+public class CExternalVariable extends PlatformObject implements ICExternalBinding, IVariable {
     private IASTTranslationUnit tu;
     private IASTName name;
     /**

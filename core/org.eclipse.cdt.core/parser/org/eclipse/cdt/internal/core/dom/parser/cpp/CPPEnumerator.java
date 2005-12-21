@@ -25,11 +25,12 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPEnumerator implements IEnumerator, ICPPInternalBinding {
+public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPInternalBinding {
     public static class CPPEnumeratorDelegate extends CPPDelegate implements IEnumerator {
         public CPPEnumeratorDelegate( IASTName name, IEnumerator binding ) {
             super( name, binding );

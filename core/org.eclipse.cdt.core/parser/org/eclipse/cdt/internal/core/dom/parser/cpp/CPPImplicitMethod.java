@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -64,6 +65,11 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
         } 
         return ICPPASTVisiblityLabel.v_public;
     }
+	
+	public ICPPClassType getClassOwner() throws DOMException {
+		ICPPClassScope scope = (ICPPClassScope)getScope();
+		return scope.getClassType();
+	}
 	
 	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it

@@ -25,11 +25,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding {
+public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContainer, ICPPInternalBinding {
     public static class CPPTypedefDelegate extends CPPDelegate implements ITypedef, ITypeContainer {
         public CPPTypedefDelegate( IASTName name, ITypedef binding ) {
             super( name, binding );

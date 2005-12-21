@@ -24,11 +24,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPNamespaceAlias implements ICPPNamespaceAlias, ICPPInternalBinding {
+public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAlias, ICPPInternalBinding {
 
     private ICPPNamespace namespace;
     private IASTName alias;

@@ -45,6 +45,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         public int getVisibility() throws DOMException {
             return ((ICPPMethod)getBinding()).getVisibility();
         }
+        public ICPPClassType getClassOwner() throws DOMException {
+            return ((ICPPMethod)getBinding()).getClassOwner();
+        }
         public boolean isVirtual() throws DOMException {
             return ((ICPPMethod)getBinding()).isVirtual();
         }
@@ -71,6 +74,9 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
         }
 
         public int getVisibility() throws DOMException {
+            throw new DOMException( this );
+        }
+        public ICPPClassType getClassOwner() throws DOMException {
             throw new DOMException( this );
         }
         public boolean isStatic() throws DOMException {
@@ -166,6 +172,11 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 			return ICPPASTVisiblityLabel.v_private;
 		} 
 		return ICPPASTVisiblityLabel.v_public;
+	}
+	
+	public ICPPClassType getClassOwner() throws DOMException {
+		ICPPClassScope scope = (ICPPClassScope)getScope();
+		return scope.getClassType();
 	}
 
 	public IScope getScope() {

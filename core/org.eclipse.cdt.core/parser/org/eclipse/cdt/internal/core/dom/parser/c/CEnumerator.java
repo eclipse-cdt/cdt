@@ -24,11 +24,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CEnumerator implements IEnumerator {
+public class CEnumerator extends PlatformObject implements IEnumerator {
     public static class CEnumeratorProblem extends ProblemBinding implements IEnumerator {
         public CEnumeratorProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );

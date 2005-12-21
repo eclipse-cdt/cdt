@@ -590,6 +590,14 @@
          <contentType id="org.eclipse.cdt.core.cxxSource"/>
       </language>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.cdt.core.dom.ast.IBinding"
+            class="org.eclipse.cdt.internal.core.pdom.dom.PDOMBindingAdapterFactory">
+         <adapter type="org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding"/>
+      </factory>
+   </extension>
 
 <!-- =================================================================================== -->
 <!-- Dynamic Variables                                                          -->	

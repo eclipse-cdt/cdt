@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -37,27 +38,25 @@ public class CPPMethodTemplateSpecialization extends
 		super(specialized, scope, argumentMap);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
-	 */
 	public boolean isVirtual() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
-	 */
 	public int getVisibility() throws DOMException {
 		IBinding m = getSpecializedBinding();
 		if( m instanceof ICPPMethod )
 			return ((ICPPMethod)m).getVisibility();
 		return 0;
 	}
+	
+	public ICPPClassType getClassOwner() throws DOMException {
+		IBinding m = getSpecializedBinding();
+		if( m instanceof ICPPMethod )
+			return ((ICPPMethod)m).getClassOwner();
+		return null;
+	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
-     */
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')

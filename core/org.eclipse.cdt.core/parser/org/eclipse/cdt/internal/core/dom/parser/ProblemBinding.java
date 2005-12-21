@@ -26,11 +26,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class ProblemBinding implements IProblemBinding, IType, IScope {
+public class ProblemBinding extends PlatformObject implements IProblemBinding, IType, IScope {
     protected final int id;
     protected final char [] arg;
     protected IASTNode node;

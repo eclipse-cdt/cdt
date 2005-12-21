@@ -11,131 +11,70 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class PDOMBinding implements IBinding {
+public abstract class PDOMBinding extends PDOMNode implements IBinding {
 
-	protected final PDOMDatabase pdom;
-	protected int record;
+	private static final int TYPE_OFFSET       = PDOMNode.RECORD_SIZE +  4; // size 4
+	private static final int FIRST_DECL_OFFSET = PDOMNode.RECORD_SIZE +  8; // size 4
+	private static final int FIRST_DEF_OFFSET  = PDOMNode.RECORD_SIZE + 12; // size 4
+	private static final int FIRST_REF_OFFSET  = PDOMNode.RECORD_SIZE + 16; // size 4
 	
-	private static final int STRING_REC_OFFSET =  0; // size 4
-	private static final int FIRST_DECL_OFFSET =  4; // size 4
-	private static final int FIRST_DEF_OFFSET  =  8; // size 4
-	private static final int FIRST_REF_OFFSET  = 12; // size 4
-	private static final int LANGUAGE_OFFSET   = 16; // size 2
-	private static final int TYPE_OFFSET       = 18; // size 2
+	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 20;
 	
-	protected int getRecordSize() {
-		return 20;
-	}
-
-	public static class Comparator implements IBTreeComparator {
-	
-		private Database db;
-	
-		public Comparator(Database db) {
-			this.db = db;
-		}
+	protected PDOMBinding(PDOMDatabase pdom, PDOMNode parent, IASTName name, int type) throws CoreException {
+		super(pdom, parent, name.toCharArray());
+		Database db = pdom.getDB();
 		
-		public int compare(int record1, int record2) throws CoreException {
-			int string1 = db.getInt(record1 + STRING_REC_OFFSET);
-			int string2 = db.getInt(record2 + STRING_REC_OFFSET);
-			// Need to deal with language and type
-			
-			return db.stringCompare(string1, string2);
-		}
-		
+		// Binding type
+		db.putInt(record + TYPE_OFFSET, type);
 	}
 	
-	public abstract static class Visitor implements IBTreeVisitor {
-	
-		private Database db;
-		private char[] key;
-		
-		public Visitor(Database db, char[] key, int language, int type) {
-			this.db = db;
-			this.key = key;
-		}
-		
-		public int compare(int record1) throws CoreException {
-			int string1 = db.getInt(record1 + STRING_REC_OFFSET);
-			// Need to deal with language and type
-			
-			return db.stringCompare(string1, key);
-		}
-
-	}
-
-	public static class FindVisitor extends Visitor {
-		
-		private int record;
-		
-		public FindVisitor(Database db, char[] stringKey, int language, int type) {
-			super(db, stringKey, language, type);
-		}
-		
-		public boolean visit(int record) throws CoreException {
-			this.record = record;
-			return false;
-		}
-		
-		public int findIn(BTree btree) throws CoreException {
-			btree.visit(this);
-			return record;
-		}
-
+	public PDOMBinding(PDOMDatabase pdom, int record) {
+		super(pdom, record);
 	}
 	
-	public PDOMBinding(PDOMDatabase pdom, IASTName name, int language, int type) throws CoreException {
-		this.pdom = pdom;
-
-		char[] namechars = name.toCharArray();
-			
-		BTree index = pdom.getBindingIndex();
-		record = new FindVisitor(pdom.getDB(), namechars, language, type).findIn(index);
-			
-		if (record == 0) {
-			Database db = pdom.getDB();
-			record = db.malloc(getRecordSize());
-			
-			db.putChar(record + LANGUAGE_OFFSET, (char)language);
-			db.putChar(record + TYPE_OFFSET, (char)type);
-
-			int stringRecord = db.malloc((namechars.length + 1) * Database.CHAR_SIZE);
-			db.putChars(stringRecord, namechars);
-				
-			db.putInt(record + STRING_REC_OFFSET, stringRecord);
-			pdom.getBindingIndex().insert(record, new Comparator(db));
-		}
+	public Object getAdapter(Class adapter) {
+		if (adapter == PDOMBinding.class)
+			return this;
+		else
+			return null;
 	}
-
-	public PDOMBinding(PDOMDatabase pdom, int bindingRecord) {
-		this.pdom = pdom;
-		this.record = bindingRecord;
+	
+	public static int getBindingType(PDOMDatabase pdom, int record) throws CoreException {
+		return pdom.getDB().getInt(record + TYPE_OFFSET);
+	}
+	
+	/**
+	 * Is the binding as the record orphaned, i.e., has no declarations
+	 * or references.
+	 * 
+	 * @param pdom
+	 * @param record
+	 * @return
+	 * @throws CoreException
+	 */
+	public static boolean isOrphaned(PDOMDatabase pdom, int record) throws CoreException {
+		Database db = pdom.getDB();
+		return db.getInt(record + FIRST_DECL_OFFSET) == 0
+			&& db.getInt(record + FIRST_DEF_OFFSET) == 0
+			&& db.getInt(record + FIRST_REF_OFFSET) == 0;
 	}
 	
 	public int getRecord() {
 		return record;
 	}
 
-	public ILanguage getLanguage() throws CoreException {
-		return pdom.getLanguage(pdom.getDB().getChar(record + LANGUAGE_OFFSET));
-	}
-	
 	public int getBindingType() throws CoreException {
 		return pdom.getDB().getChar(record + TYPE_OFFSET);
 	}
@@ -205,9 +144,7 @@ public class PDOMBinding implements IBinding {
 	
 	public String getName() {
 		try {
-			Database db = pdom.getDB();
-			int stringRecord = db.getInt(record + STRING_REC_OFFSET);
-			return db.getString(stringRecord);
+			return super.getName();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -216,27 +153,20 @@ public class PDOMBinding implements IBinding {
 
 	public char[] getNameCharArray() {
 		try {
-			Database db = pdom.getDB();
-			int stringRecord = db.getInt(record + STRING_REC_OFFSET);
-			return db.getChars(stringRecord);
+			return super.getNameCharArray();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		return new char[0];
 	}
 
+	public boolean hasName(char[] name) throws CoreException {
+		return pdom.getDB().stringCompare(getNameRecord(), name) == 0;
+	}
+	
 	public IScope getScope() throws DOMException {
 		// TODO implement this
 		return null;
-	}
-
-	public static PDOMBinding find(PDOMDatabase pdom, char[] name, int language, int type) throws CoreException {
-		BTree index = pdom.getBindingIndex();
-		int bindingRecord = new FindVisitor(pdom.getDB(), name, language, type).findIn(index);
-		if (bindingRecord != 0)
-			return new PDOMBinding(pdom, bindingRecord);
-		else
-			return null;
 	}
 
 }

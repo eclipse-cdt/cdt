@@ -234,6 +234,12 @@
             class="org.eclipse.cdt.internal.ui.cview.CView"
             id="org.eclipse.cdt.ui.CView">
       </view>
+      <view
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.internal.ui.indexview.IndexView"
+            icon="icons/view16/types.gif"
+            id="org.eclipse.cdt.ui.IndexView"
+            name="%IndexView.name"/>
       <!--category
             name="%CBrowsing.viewCategoryName"
             id="org.eclipse.cdt.ui.c.browsing">

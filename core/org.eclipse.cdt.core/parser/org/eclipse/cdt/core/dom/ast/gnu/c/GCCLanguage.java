@@ -13,11 +13,11 @@ package org.eclipse.cdt.core.dom.ast.gnu.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -41,12 +41,13 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class GCCLanguage implements ILanguage {
+public class GCCLanguage extends PlatformObject implements ILanguage {
 
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
 
@@ -105,8 +106,8 @@ public class GCCLanguage implements ILanguage {
 		return null;
 	}
 	
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, PDOMBinding binding) throws CoreException {
-		return binding;
+	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, int record) throws CoreException {
+		return null;
 	}
 	
 }

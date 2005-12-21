@@ -18,11 +18,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPCompositeBinding implements IBinding {
+public class CPPCompositeBinding extends PlatformObject implements IBinding {
 
 	IBinding [] bindings = null;
 	

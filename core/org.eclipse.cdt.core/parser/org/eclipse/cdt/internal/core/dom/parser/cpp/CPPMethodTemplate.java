@@ -93,9 +93,6 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
-	 */
 	public int getVisibility() throws DOMException {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl == null ){
@@ -125,18 +122,17 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
 		} 
 		return ICPPASTVisiblityLabel.v_public;
 	}
+	
+	public ICPPClassType getClassOwner() throws DOMException {
+		ICPPClassScope scope = (ICPPClassScope)getScope();
+		return scope.getClassType();
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
-     */
     public boolean isVirtual() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
-     */
     public boolean isInline() throws DOMException {
         IASTDeclaration decl = getPrimaryDeclaration();
         if( decl instanceof ICPPASTTemplateDeclaration && ((ICPPASTTemplateDeclaration)decl).getDeclaration() instanceof IASTFunctionDefinition )
@@ -145,9 +141,6 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements
         return super.isInline();
     }
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
-     */
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')

@@ -31,12 +31,13 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CStructure implements ICompositeType, ICInternalBinding {
+public class CStructure extends PlatformObject implements ICompositeType, ICInternalBinding {
 	private IASTName [] declarations = null;
 	private IASTName definition;
 	

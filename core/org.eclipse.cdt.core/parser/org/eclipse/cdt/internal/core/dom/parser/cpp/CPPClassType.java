@@ -55,11 +55,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPClassType implements ICPPClassType, ICPPInternalClassType {
+public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPInternalClassType {
     public static class CPPClassTypeDelegate extends CPPDelegate implements ICPPClassType, ICPPInternalClassType {
         public CPPClassTypeDelegate( IASTName name, ICPPClassType cls ){
             super( name, cls );

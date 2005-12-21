@@ -29,11 +29,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPParameter implements ICPPParameter, ICPPInternalBinding {
+public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPInternalBinding {
     public static class CPPParameterDelegate extends CPPDelegate implements ICPPParameter {
         public CPPParameterDelegate( IASTName name, IParameter binding ) {
             super( name, binding );

@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class BTree {
 
-	protected Database db;
-	protected int rootPointer;
+	protected final Database db;
+	protected final int rootPointer;
 	
 	protected static final int NUM_RECORDS = 15;
 	protected static final int MEDIAN_RECORD = NUM_RECORDS / 2;

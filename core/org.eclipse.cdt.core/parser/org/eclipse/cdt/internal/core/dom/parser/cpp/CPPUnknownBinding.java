@@ -24,11 +24,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPUnknownBinding implements ICPPInternalUnknown {
+public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnknown {
     private ICPPScope unknownScope = null;
     private IBinding scopeBinding = null;
     private ICPPScope scope = null;

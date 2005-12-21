@@ -21,11 +21,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPTemplateParameter implements ICPPTemplateParameter, ICPPInternalBinding {
+public class CPPTemplateParameter extends PlatformObject implements ICPPTemplateParameter, ICPPInternalBinding {
 	private IASTName [] declarations;
 	
 	public CPPTemplateParameter( IASTName name ){

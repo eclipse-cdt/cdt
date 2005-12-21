@@ -10,27 +10,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.ILanguage;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.LanguageManager;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -50,15 +50,10 @@ public class PDOMDatabase implements IPDOM {
 	
 	private static final int VERSION = 0;
 
-	public static final int LANGUAGES = Database.DATA_AREA;
+	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
-	public static final int BINDING_INDEX = Database.DATA_AREA + 8;
-	
-	private Map languageCache;
-	private ILanguage[] languages;
 	
 	private BTree fileIndex;
-	private BTree bindingIndex;
 
 	private static final QualifiedName dbNameProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "dbName"); //$NON-NLS-1$
@@ -114,25 +109,21 @@ public class PDOMDatabase implements IPDOM {
 		return fileIndex;
 	}
 	
-	public BTree getBindingIndex() throws CoreException {
-		if (bindingIndex == null)
-			bindingIndex = new BTree(getDB(), BINDING_INDEX);
-		return bindingIndex;
-	}
-	
 	public void addSymbols(ITranslationUnit tu) throws CoreException {
 		final ILanguage language = tu.getLanguage();
 		if (language == null)
 			return;
 		
-		final int languageId = getLanguageId(language);
+		final PDOMLinkage linkage = getLinkage(language);
+		if (linkage == null)
+			return;
+
 		IASTTranslationUnit ast = language.getTranslationUnit(tu,
 				ILanguage.AST_USE_INDEX |
 				ILanguage.AST_SKIP_INDEXED_HEADERS);
-
 		if (ast == null)
 			return;
-		
+
 		ast.accept(new ASTVisitor() {
 				{
 					shouldVisitNames = true;
@@ -141,11 +132,7 @@ public class PDOMDatabase implements IPDOM {
 
 				public int visit(IASTName name) {
 					try {
-						if (name.toCharArray().length > 0) {
-							PDOMBinding binding = language.getPDOMBinding(PDOMDatabase.this, languageId, name);
-							if (binding != null)
-								new PDOMName(PDOMDatabase.this, name, binding);
-						}
+						linkage.addName(name);
 						return PROCESS_CONTINUE;
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
@@ -167,10 +154,7 @@ public class PDOMDatabase implements IPDOM {
 	
 	public void delete() throws CoreException {
 		getDB().clear();
-		bindingIndex = null;
 		fileIndex = null;
-		languageCache = null;
-		languages = null;
 	}
 
 	public ICodeReaderFactory getCodeReaderFactory() {
@@ -203,49 +187,42 @@ public class PDOMDatabase implements IPDOM {
 		return new IBinding[0];
 	}
 	
-	private void initLanguageMap() throws CoreException {
-		// load in the languages
-		languageCache = new HashMap();
-		int record = db.getInt(LANGUAGES);
-		PDOMLanguage lang = null;
-		if (record != 0)
-			lang = new PDOMLanguage(this, record);
-		while (lang != null) {
-			languageCache.put(lang.getName(), lang);
-			lang = lang.getNext();
+	public PDOMLinkage getLinkage(ILanguage language) throws CoreException {
+		IPDOMLinkageFactory factory = (IPDOMLinkageFactory)language.getAdapter(IPDOMLinkageFactory.class);
+		String id = language.getId();
+		int linkrec = db.getInt(LINKAGES);
+		while (linkrec != 0) {
+			if (id.equals(PDOMLinkage.getId(this, linkrec))) {
+				return factory.getLinkage(this, linkrec);
+			}
 		}
 		
-		// map language ids to ILanguage impls.
-		languages = new ILanguage[languageCache.size() + 1]; // + 1 for the empty zero
-		Iterator i = languageCache.values().iterator();
-		while (i.hasNext()) {
-			lang = (PDOMLanguage)i.next();
-			languages[lang.getId()] = LanguageManager.getInstance().getLanguage(lang.getName());
-		}
-	}
-	
-	public int getLanguageId(ILanguage language) throws CoreException {
-		if (languageCache == null)
-			initLanguageMap();
-		PDOMLanguage pdomLang = (PDOMLanguage)languageCache.get(language.getId());
-		if (pdomLang == null) {
-			// add it in
-			int next = db.getInt(LANGUAGES);
-			int id = next == 0 ? 1 : new PDOMLanguage(this, next).getId() + 1;
-			pdomLang = new PDOMLanguage(this, language.getId(), id, next);
-			db.putInt(LANGUAGES, pdomLang.getRecord());
-			ILanguage[] oldlangs = languages;
-			languages = new ILanguage[id + 1];
-			System.arraycopy(oldlangs, 0, languages, 0, id);
-			languages[id] = language;
-			return id;
-		} else
-			return pdomLang.getId();
+		return factory.createLinkage(this);
 	}
 
-	public ILanguage getLanguage(int id) throws CoreException {
-		if (languages == null)
-			initLanguageMap();
-		return languages[id];
+	public PDOMLinkage getLinkage(int record) throws CoreException {
+		if (record == 0)
+			return null;
+		
+		String id = PDOMLinkage.getId(this, record);
+		ILanguage language = LanguageManager.getInstance().getLanguage(id);
+		return getLinkage(language);
 	}
+	
+	public PDOMLinkage getFirstLinkage() throws CoreException {
+		return getLinkage(db.getInt(LINKAGES));
+	}
+	
+	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
+		linkage.setNext(db.getInt(LINKAGES));
+		db.putInt(LINKAGES, linkage.getRecord());
+	}
+	
+	public PDOMBinding getBinding(int record) throws CoreException {
+		if (record == 0)
+			return null;
+		else
+			return PDOMLinkage.getLinkage(this, record).getBinding(record);
+	}
+	
 }

@@ -13,8 +13,9 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.core.runtime.PlatformObject;
 
-public class MacroBinding implements IMacroBinding {
+public class MacroBinding extends PlatformObject implements IMacroBinding {
 
     private final char[] name;
     private final IScope scope;

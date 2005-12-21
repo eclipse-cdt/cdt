@@ -38,11 +38,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPFunction implements ICPPFunction, ICPPInternalFunction {
+public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInternalFunction {
     
     public static class CPPFunctionDelegate extends CPPDelegate implements ICPPFunction, ICPPInternalFunction {
         public CPPFunctionDelegate( IASTName name, ICPPFunction binding ) {

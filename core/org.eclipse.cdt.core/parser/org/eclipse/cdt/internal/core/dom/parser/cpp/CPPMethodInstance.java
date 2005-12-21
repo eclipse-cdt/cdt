@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -42,6 +43,10 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 		return ((ICPPMethod)getTemplateDefinition()).getVisibility();
 	}
 
+	public ICPPClassType getClassOwner() throws DOMException {
+		return ((ICPPMethod)getTemplateDefinition()).getClassOwner();
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */

@@ -21,11 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPDelegate implements ICPPDelegate, ICPPInternalBinding {
+public class CPPDelegate extends PlatformObject implements ICPPDelegate, ICPPInternalBinding {
     private IBinding binding = null;
     private int type = 0;
     private IASTName name = null;

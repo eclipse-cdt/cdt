@@ -38,11 +38,12 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
+public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPInternalBinding {
     public static class CPPNamespaceDelegate extends CPPDelegate implements ICPPNamespace {
         public CPPNamespaceDelegate( IASTName name, ICPPNamespace binding ) {
             super( name, binding );

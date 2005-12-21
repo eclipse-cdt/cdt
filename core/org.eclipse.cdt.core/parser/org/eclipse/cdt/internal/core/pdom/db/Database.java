@@ -271,14 +271,26 @@ public class Database {
 		chunk.putChars(offset, value);
 	}
 	
+	public int putChars(char[] value) throws CoreException {
+		int record = malloc((value.length + 1) * 2);
+		putChars(record, value);
+		return record;
+	}
+	
 	public char[] getChars(int offset) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		return chunk.getChars(offset);
 	}
-	
+
 	public void putString(int offset, String value) throws CoreException {
 		Chunk chunk = getChunk(offset);
 		chunk.putString(offset, value);
+	}
+	
+	public int putString(String value) throws CoreException {
+		int record = malloc((value.length() + 1) * 2);
+		putString(record, value);
+		return record;
 	}
 	
 	public String getString(int offset) throws CoreException {

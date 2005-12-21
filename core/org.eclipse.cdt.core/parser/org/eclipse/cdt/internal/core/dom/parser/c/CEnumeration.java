@@ -28,11 +28,12 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CEnumeration implements IEnumeration {
+public class CEnumeration extends PlatformObject implements IEnumeration {
 
     private IASTName [] declarations = null;
     private IASTName definition = null;

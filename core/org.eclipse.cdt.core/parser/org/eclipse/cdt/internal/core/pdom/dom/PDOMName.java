@@ -117,7 +117,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	
 	public PDOMBinding getPDOMBinding() throws CoreException {
 		int bindingrec = getRecField(BINDING_REC_OFFSET);
-		return bindingrec != 0 ? new PDOMBinding(pdom, bindingrec) : null;
+		return pdom.getBinding(bindingrec);
 	}
 	
 	public void setBinding(PDOMBinding binding) throws CoreException {
@@ -175,7 +175,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	public IBinding resolveBinding() {
 		try {
 			int bindingRecord = pdom.getDB().getInt(record + BINDING_REC_OFFSET);
-			return new PDOMBinding(pdom, bindingRecord);
+			return pdom.getBinding(bindingRecord);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
@@ -198,10 +198,8 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		try {
 			Database db = pdom.getDB();
 			int bindingRec = db.getInt(record + BINDING_REC_OFFSET);
-			if (bindingRec == 0)
-				return null;
-			
-			return new PDOMBinding(pdom, bindingRec).getNameCharArray();
+			PDOMBinding binding = pdom.getBinding(bindingRec);
+			return binding != null ? binding.getNameCharArray() : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

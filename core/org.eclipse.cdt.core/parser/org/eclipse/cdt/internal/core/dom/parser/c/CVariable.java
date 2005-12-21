@@ -23,12 +23,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CVariable implements IVariable, ICInternalBinding {
+public class CVariable extends PlatformObject implements IVariable, ICInternalBinding {
     public static class CVariableProblem extends ProblemBinding implements IVariable {
         public CVariableProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );

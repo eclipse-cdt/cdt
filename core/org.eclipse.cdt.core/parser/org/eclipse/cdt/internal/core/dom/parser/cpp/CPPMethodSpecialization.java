@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -36,9 +37,6 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		super(orig, scope, argMap );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
-	 */
 	public boolean isVirtual() throws DOMException {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
 		if( f != null )
@@ -62,9 +60,6 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
-	 */
 	public int getVisibility() throws DOMException {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
 		if( f != null )
@@ -72,9 +67,13 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		return 0;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
-     */
+	public ICPPClassType getClassOwner() throws DOMException {
+		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
+		if( f != null )
+			return f.getClassOwner();
+		return null;
+	}
+	
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')

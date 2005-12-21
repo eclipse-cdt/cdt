@@ -20,13 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * A K&R C parameter.
  *
  * @author dsteffle
  */
-public class CKnRParameter implements IParameter {
+public class CKnRParameter extends PlatformObject implements IParameter {
 	final private IASTDeclaration declaration;
 	final private IASTName name;
 

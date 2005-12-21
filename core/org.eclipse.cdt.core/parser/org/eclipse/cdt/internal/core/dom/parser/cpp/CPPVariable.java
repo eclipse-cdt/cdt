@@ -30,11 +30,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * @author aniefer
  */
-public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
+public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding {
     public static class CPPVariableDelegate extends CPPDelegate implements ICPPVariable {
         public CPPVariableDelegate( IASTName name, ICPPVariable binding ) {
             super( name, binding );

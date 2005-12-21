@@ -32,4 +32,6 @@ public interface ICPPMember extends ICPPBinding{
 
 	public static final int v_public = ICPPASTVisiblityLabel.v_public;
 
+	public ICPPClassType getClassOwner() throws DOMException;
+	
 }

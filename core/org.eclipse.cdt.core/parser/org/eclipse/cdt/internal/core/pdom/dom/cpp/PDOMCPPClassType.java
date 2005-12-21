@@ -13,13 +13,17 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IFunctionType;
-import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -28,13 +32,15 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction {
+public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType {
 
-	public PDOMCPPFunction(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
-		super(pdom, parent, name, PDOMCPPLinkage.CPPFUNCTION);
+	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 0;
+	
+	public PDOMCPPClassType(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
+		super(pdom, parent, name, PDOMCPPLinkage.CPPCLASSTYPE);
 	}
 
-	public PDOMCPPFunction(PDOMDatabase pdom, int bindingRecord) {
+	public PDOMCPPClassType(PDOMDatabase pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
 
@@ -42,43 +48,59 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction {
 		return RECORD_SIZE;
 	}
 	
-	public boolean isInline() throws DOMException {
+	public boolean isSameType(IType type) {
 		throw new PDOMNotImplementedError();
 	}
 
-	public boolean isMutable() throws DOMException {
+	public Object clone() {
 		throw new PDOMNotImplementedError();
 	}
 
-	public IScope getFunctionScope() throws DOMException {
+	public IField findField(String name) throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
-	public IParameter[] getParameters() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
-	public IFunctionType getType() throws DOMException {
+	public ICPPBase[] getBases() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
-	public boolean isAuto() throws DOMException {
+	public ICPPConstructor[] getConstructors() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
-	public boolean isExtern() throws DOMException {
+	public ICPPField[] getDeclaredFields() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
-	public boolean isRegister() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
-	public boolean isStatic() throws DOMException {
+	public IField[] getFields() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public IBinding[] getFriends() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public ICPPMethod[] getMethods() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public ICPPClassType[] getNestedClasses() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public IScope getCompositeScope() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public int getKey() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}
 

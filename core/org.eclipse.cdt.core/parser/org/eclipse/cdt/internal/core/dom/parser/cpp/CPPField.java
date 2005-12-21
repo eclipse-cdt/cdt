@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -39,6 +40,9 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
         public int getVisibility() throws DOMException {
             return ((ICPPField)getBinding()).getVisibility();
         }
+        public ICPPClassType getClassOwner() throws DOMException {
+        	return ((ICPPField)getBinding()).getClassOwner();
+        }
     }
     public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
         /**
@@ -50,6 +54,9 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
         }
 
         public int getVisibility() throws DOMException {
+            throw new DOMException( this );
+        }
+        public ICPPClassType getClassOwner() throws DOMException {
             throw new DOMException( this );
         }
         public boolean isStatic() throws DOMException {
@@ -121,6 +128,11 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
 			}
 		}
 		return ICPPASTVisiblityLabel.v_public;
+	}
+	
+	public ICPPClassType getClassOwner() throws DOMException {
+		ICPPClassScope scope = (ICPPClassScope) getScope();
+		return scope.getClassType();
 	}
 	
 	/* (non-Javadoc)

@@ -32,12 +32,13 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CFunction implements IFunction, ICInternalFunction {
+public class CFunction extends PlatformObject implements IFunction, ICInternalFunction {
 	private IASTStandardFunctionDeclarator [] declarators = null;
 	private IASTFunctionDeclarator definition;
 	

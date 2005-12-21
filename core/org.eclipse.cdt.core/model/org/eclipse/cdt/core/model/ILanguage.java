@@ -9,22 +9,21 @@
  * QNX - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.core.dom;
+package org.eclipse.cdt.core.model;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * @author Doug Schaefer
  *
  */
-public interface ILanguage {
+public interface ILanguage extends IAdaptable {
 
 	//public static final QualifiedName KEY = new QualifiedName(CCorePlugin.PLUGIN_ID, "language"); //$NON-NLS-1$
 	public static final String KEY = "language"; //$NON-NLS-1$
@@ -73,25 +72,5 @@ public interface ILanguage {
 	 * @return
 	 */
 	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset);
-
-	/**
-	 * Return the PDOM Binding for the given name. Create a new one if necessary
-	 * and store it in the PDOM.
-	 *  
-	 * @param binding
-	 * @return
-	 */
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, int languageId, IASTName name) throws CoreException;
-
-	/**
-	 * Creates a language specific binding given the generic binding extracted
-	 * from the PDOM database.
-	 *  
-	 * @param pdom
-	 * @param binding
-	 * 
-	 * @return
-	 */
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, PDOMBinding binding) throws CoreException;
 
 }

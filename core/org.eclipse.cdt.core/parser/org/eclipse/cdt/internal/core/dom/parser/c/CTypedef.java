@@ -19,12 +19,13 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Created on Nov 8, 2004
  * @author aniefer
  */
-public class CTypedef implements ITypedef, ITypeContainer {
+public class CTypedef extends PlatformObject implements ITypedef, ITypeContainer {
 	private final IASTName name; 
 	private IType type = null;
 	

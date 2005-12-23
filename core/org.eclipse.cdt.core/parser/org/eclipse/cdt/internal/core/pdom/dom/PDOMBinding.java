@@ -76,7 +76,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 	}
 
 	public int getBindingType() throws CoreException {
-		return pdom.getDB().getChar(record + TYPE_OFFSET);
+		return pdom.getDB().getInt(record + TYPE_OFFSET);
 	}
 	
 	public boolean hasDeclarations() throws CoreException {

@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCPPField extends PDOMMember implements ICPPField {
 
-	public PDOMCPPField(PDOMDatabase pdom, PDOMNode parent, IASTName name)
+	public PDOMCPPField(PDOMDatabase pdom, PDOMCPPClassType parent, IASTName name)
 			throws CoreException {
 		super(pdom, parent, name, PDOMCPPLinkage.CPPFIELD);
 	}		

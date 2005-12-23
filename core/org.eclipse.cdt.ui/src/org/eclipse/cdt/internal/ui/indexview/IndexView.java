@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOMUpdator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -58,6 +59,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -171,8 +173,16 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 					BTreeIndex visitor = new BTreeIndex(pdom, index);
 					linkage.getIndex().visit(visitor);
 					PDOMBinding binding = pdom.getBinding(visitor.result);
-					if (binding != null)
+					if (binding != null) {
 						viewer.replace(parent, index, binding);
+						if (binding instanceof PDOMMemberOwner) {
+							PDOMMemberOwner owner = (PDOMMemberOwner)binding;
+							viewer.setChildCount(binding, owner.getNumMembers());
+						}
+					}
+				} else if (parent instanceof PDOMMemberOwner) {
+					PDOMMemberOwner owner = (PDOMMemberOwner)parent;
+					viewer.replace(parent, index, owner.getMember(index));
 				}
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
@@ -214,8 +224,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			else if (element instanceof IBinding)
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_OBJ_ELEMENT);
-//			else if (element instanceof ICProject)
-//				return super.getImage(element);
+			else if (element instanceof ICProject)
+				return PlatformUI.getWorkbench().getSharedImages().getImage(
+						IDE.SharedImages.IMG_OBJ_PROJECT);
 			else
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_OBJ_ELEMENT);

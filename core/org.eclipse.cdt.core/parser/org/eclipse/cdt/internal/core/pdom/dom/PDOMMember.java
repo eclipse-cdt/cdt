@@ -28,8 +28,9 @@ public abstract class PDOMMember extends PDOMBinding {
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 12;
 	
-	public PDOMMember(PDOMDatabase pdom, PDOMNode parent, IASTName name, int type) throws CoreException {
+	public PDOMMember(PDOMDatabase pdom, PDOMMemberOwner parent, IASTName name, int type) throws CoreException {
 		super(pdom, parent, name, type);
+		parent.addMember(this);
 	}
 
 	public PDOMMember(PDOMDatabase pdom, int record) {

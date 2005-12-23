@@ -14,6 +14,9 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
@@ -23,14 +26,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.core.pdom.db.BTree;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode.NodeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -89,7 +90,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			if (binding instanceof PDOMBinding)
 				pdomBinding = (PDOMBinding)binding;
 			else if (binding instanceof CPPField)
-				pdomBinding = new PDOMCPPField(pdom, parent, name);
+				pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, name);
 			else if (binding instanceof CPPVariable) {
 				if (!(binding.getScope() instanceof CPPBlockScope))
 					pdomBinding = new PDOMCPPVariable(pdom, parent, name);
@@ -103,7 +104,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		}
 		
 		// Add in the name
-		if (pdomBinding != null)
+		if (pdomBinding != null && name.getFileLocation() != null)
 			new PDOMName(pdom, name, pdomBinding);
 			
 		return pdomBinding;
@@ -127,6 +128,18 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				if (binding instanceof ICPPVariable)
 					pdomBinding = tBinding;
 				break;
+			case CPPFUNCTION:
+				if (binding instanceof ICPPFunction)
+					pdomBinding = tBinding;
+				break;
+			case CPPCLASSTYPE:
+				if (binding instanceof ICPPClassType)
+					pdomBinding = tBinding;
+				break;
+			case CPPFIELD:
+				if (binding instanceof ICPPField)
+					pdomBinding = tBinding;
+				break;
 			}
 			return pdomBinding == null;
 		}
@@ -138,6 +151,11 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			FindBinding visitor = new FindBinding(pdom, binding);
 			getIndex().visit(visitor);
 			return visitor.pdomBinding;
+		} else if (parent instanceof PDOMMemberOwner) {
+			PDOMMemberOwner owner = (PDOMMemberOwner)parent;
+			PDOMMember[] members = owner.findMembers(binding.getNameCharArray());
+			if (members.length > 0)
+				return members[0];
 		}
 		return null;
 	}
@@ -153,6 +171,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPFunction(pdom, record);
 		case CPPCLASSTYPE:
 			return new PDOMCPPClassType(pdom, record);
+		case CPPFIELD:
+			return new PDOMCPPField(pdom, record);
 		}
 		
 		return null;

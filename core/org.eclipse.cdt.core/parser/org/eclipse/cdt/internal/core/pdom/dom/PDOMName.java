@@ -332,8 +332,19 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		PDOMName nextName = getNextInBinding();
 		if (prevName != null)
 			prevName.setNextInBinding(nextName);
-		else
-			getPDOMBinding().setFirstDeclaration(nextName);
+		else {
+			switch (getFlags()) {
+			case IS_DECLARATION:
+				getPDOMBinding().setFirstDeclaration(nextName);
+				break;
+			case IS_DEFINITION:
+				getPDOMBinding().setFirstDefinition(nextName);
+				break;
+			case IS_REFERENCE:
+				getPDOMBinding().setFirstReference(nextName);
+				break;
+			}
+		}
 		
 		if (nextName != null)
 			nextName.setPrevInBinding(prevName);

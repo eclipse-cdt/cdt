@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -75,11 +76,11 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding addName(IASTName name) throws CoreException {
-		if (name == null)
+		if (name == null || name.toCharArray().length == 0)
 			return null;
 		
 		IBinding binding = name.resolveBinding();
-		if (binding == null)
+		if (binding == null || binding instanceof IProblemBinding)
 			// Can't tell what it is
 			return null;
 		
@@ -89,7 +90,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 
 			if (binding instanceof PDOMBinding)
 				pdomBinding = (PDOMBinding)binding;
-			else if (binding instanceof CPPField)
+			else if (binding instanceof CPPField && parent instanceof PDOMCPPClassType)
 				pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, name);
 			else if (binding instanceof CPPVariable) {
 				if (!(binding.getScope() instanceof CPPBlockScope))
@@ -104,7 +105,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		}
 		
 		// Add in the name
-		if (pdomBinding != null && name.getFileLocation() != null)
+		if (pdomBinding != null)
 			new PDOMName(pdom, name, pdomBinding);
 			
 		return pdomBinding;

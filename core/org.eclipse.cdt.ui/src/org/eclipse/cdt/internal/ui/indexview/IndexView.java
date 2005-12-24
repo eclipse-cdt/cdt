@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOMUpdator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -43,6 +44,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
@@ -58,6 +60,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
@@ -137,14 +140,8 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 							for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
 								++nl;
 							viewer.setChildCount(cproject, nl);
-							
-							if (viewer.getExpandedState(cproject))
-								for (int j = 0; j < nl; ++j)
-									updateElement(cproject, j);
-							
 							return;
 						}
-
 					}
 				} else if (parent instanceof ICProject) {
 					ICProject cproject = (ICProject)parent;
@@ -162,11 +159,6 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 					BTreeCounter counter = new BTreeCounter(pdom);
 					linkage.getIndex().visit(counter);
 					viewer.setChildCount(linkage, counter.count);
-
-					if (viewer.getExpandedState(linkage))
-						for (int j = 0; j < counter.count; ++j)
-						updateElement(linkage, j);
-					return;
 				} else if (parent instanceof PDOMLinkage) {
 					PDOMLinkage linkage = (PDOMLinkage)parent;
 					PDOMDatabase pdom = linkage.getPDOM();
@@ -178,11 +170,14 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 						if (binding instanceof PDOMMemberOwner) {
 							PDOMMemberOwner owner = (PDOMMemberOwner)binding;
 							viewer.setChildCount(binding, owner.getNumMembers());
-						}
+						} else
+							viewer.setChildCount(binding, 0);
 					}
 				} else if (parent instanceof PDOMMemberOwner) {
 					PDOMMemberOwner owner = (PDOMMemberOwner)parent;
-					viewer.replace(parent, index, owner.getMember(index));
+					PDOMMember member = owner.getMember(index);
+					viewer.replace(parent, index, member);
+					viewer.setChildCount(member, 0);
 				}
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
@@ -386,6 +381,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			manager.add(openDefinitionAction);
 		//manager.add(new Separator());
 		//drillDownAdapter.addNavigationActions(manager);
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void hookDoubleClickAction() {
@@ -418,7 +414,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			ICProject[] cprojects = model.getCProjects();
 			int n = -1;
 			for (int i = 0; i < cprojects.length; ++i) {
-				ICProject cproject = cprojects[i];
+				final ICProject cproject = cprojects[i];
 				IPDOM pp = PDOM.getPDOM(cproject.getProject()); 
 				if (pp != null) {
 					++n;
@@ -426,7 +422,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 						final int index = n;
 						viewer.getControl().getDisplay().asyncExec(new Runnable() {
 							public void run() {
-								((IndexContentProvider)viewer.getContentProvider()).updateElement(model, index);
+								viewer.replace(model, index, cproject);
+								viewer.getControl().redraw();
+								viewer.getControl().update();
 							};
 						});
 						return;

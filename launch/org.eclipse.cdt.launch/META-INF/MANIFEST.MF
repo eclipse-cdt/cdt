@@ -23,4 +23,4 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.cdt.debug.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.variables
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

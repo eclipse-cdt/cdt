@@ -34,4 +34,4 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.cdt.core,
  org.eclipse.core.runtime,
  org.eclipse.ui.console
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

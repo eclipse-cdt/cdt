@@ -1,3 +1,7 @@
+2005-12-27 Mikhail Khodjaiants
+	Bug 109526: Support Eclipse-LazyStart and deprecate Eclipse-AutoStart.
+	* MANIFEST.MF
+
 2005-12-20 Mikhail Khodjaiants
 	Bug 120390: Avoiding .gdbinit
 	* GDBCDIDebugger.java

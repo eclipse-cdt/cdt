@@ -20,4 +20,4 @@ Require-Bundle: org.eclipse.cdt.debug.core,
  org.eclipse.debug.core,
  org.eclipse.cdt.core,
  org.eclipse.core.runtime
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

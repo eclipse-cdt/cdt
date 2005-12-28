@@ -60,7 +60,7 @@ public class MIUIPlugin extends AbstractUIPlugin {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return PLUGIN_ID; //$NON-NLS-1$
+			return PLUGIN_ID;
 		}
 		return getDefault().getBundle().getSymbolicName();
 	}

@@ -199,7 +199,7 @@ public class RegisterManager extends Manager {
 		Register reg = findRegister(regDesc);
 		if (reg == null) {
 			try {
-				String name = regDesc.getQualifiedName(); //$NON-NLS-1$
+				String name = regDesc.getQualifiedName();
 				Target target = (Target)regDesc.getTarget();
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();

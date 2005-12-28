@@ -775,14 +775,11 @@ public class BreakpointManager extends Manager {
 			// Put the condition now.
 			String exprCond = null;
 			int ignoreCount = 0;
-			String[] threadIds = null;
-			StringBuffer line = new StringBuffer();
 
 			ICDICondition condition = watchpoint.getCondition();
 			if (condition != null) {
 				exprCond = condition.getExpression();
 				ignoreCount = condition.getIgnoreCount();
-				threadIds = condition.getThreadIds();
 			}
 			if (exprCond != null && exprCond.length() > 0) {
 				MIBreakCondition breakCondition = factory.createMIBreakCondition(no, exprCond);				

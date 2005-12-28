@@ -1,4 +1,9 @@
 2005-12-27 Mikhail Khodjaiants
+	Cleanup.
+	* BreakpointManager.java
+	* RegisterManager.java
+
+2005-12-27 Mikhail Khodjaiants
 	Bug 109526: Support Eclipse-LazyStart and deprecate Eclipse-AutoStart.
 	* MANIFEST.MF
 

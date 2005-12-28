@@ -11,9 +11,9 @@
 package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.HashMap;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**

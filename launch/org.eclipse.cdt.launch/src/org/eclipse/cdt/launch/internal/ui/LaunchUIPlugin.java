@@ -124,7 +124,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 	 *            the exception to be logged
 	 */
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.ERROR, e.getMessage(), e));
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements IDebugEventSetLi
 		log(t);
 		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 1, t.getMessage(), null); //$NON-NLS-1$	
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 1, t.getMessage(), null);
 			ErrorDialog.openError(shell, LaunchMessages.getString("LaunchUIPlugin.Error"), message, status); //$NON-NLS-1$
 		}
 	}

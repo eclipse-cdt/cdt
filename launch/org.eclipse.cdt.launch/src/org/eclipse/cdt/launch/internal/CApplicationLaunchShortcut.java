@@ -309,8 +309,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		
 		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider, qualifierLabelProvider);
 		dialog.setElements(binList.toArray());
-		dialog.setTitle(getBinarySelectionDialogTitleString(binList, mode)); //$NON-NLS-1$
-		dialog.setMessage(getBinarySelectionDialogMessageString(binList, mode)); //$NON-NLS-1$
+		dialog.setTitle(getBinarySelectionDialogTitleString(binList, mode));
+		dialog.setMessage(getBinarySelectionDialogMessageString(binList, mode));
 		dialog.setUpperListLabel(LaunchMessages.getString("Launch.common.BinariesColon")); //$NON-NLS-1$
 		dialog.setLowerListLabel(LaunchMessages.getString("Launch.common.QualifierColon")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);

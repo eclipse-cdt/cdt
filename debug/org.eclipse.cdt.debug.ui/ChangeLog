@@ -1,4 +1,8 @@
 2005-12-27 Mikhail Khodjaiants
+	 Cleanup.
+	* RetargetAction.java
+
+2005-12-27 Mikhail Khodjaiants
 	Replaced deprecated org.eclipse.jface.util.ListenerList by 
 	org.eclipse.core.runtime.ListenerList.
 	* CBreakpointPreferenceStore.java

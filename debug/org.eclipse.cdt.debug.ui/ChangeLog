@@ -1,4 +1,9 @@
 2005-12-27 Mikhail Khodjaiants
+	HTMLTextPresenter implements DefaultInformationControl.IInformationPresenterExtension
+	instead of deprecated DefaultInformationControl.IInformationPresenter.
+	* HTMLTextPresenter.java
+
+2005-12-27 Mikhail Khodjaiants
 	 Cleanup.
 	* RetargetAction.java
 

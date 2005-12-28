@@ -169,7 +169,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		log( t );
 		Shell shell = getActiveWorkbenchShell();
 		if ( shell != null ) {
-			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null ); //$NON-NLS-1$	
+			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null );	
 			ErrorDialog.openError( shell, UIMessages.getString( "CDebugUIPlugin.0" ), message, status ); //$NON-NLS-1$
 		}
 	}

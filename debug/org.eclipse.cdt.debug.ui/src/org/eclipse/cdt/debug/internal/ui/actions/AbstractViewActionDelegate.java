@@ -110,7 +110,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 		if ( !ms.isOK() ) {
 			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 			if ( window != null ) {
-				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), ms.getChildren()[0] ); //$NON-NLS-1$
+				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), ms.getChildren()[0] );
 			}
 			else {
 				CDebugUIPlugin.log( ms );

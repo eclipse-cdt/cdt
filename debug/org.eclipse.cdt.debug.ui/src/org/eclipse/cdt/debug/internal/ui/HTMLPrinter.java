@@ -103,7 +103,7 @@ public class HTMLPrinter {
 		if (bgColor == null)
 			bgColor= new RGB(255,255, 225); // RGB value of info bg color on WindowsXP
 			
-		insertPageProlog(buffer, position, bgColor); //$NON-NLS-1$
+		insertPageProlog(buffer, position, bgColor);
 	}
 	
 	public static void addPageProlog(StringBuffer buffer) {

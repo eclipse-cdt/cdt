@@ -28,6 +28,7 @@ import org.eclipse.cdt.debug.internal.core.model.CStackFrame;
 import org.eclipse.cdt.debug.internal.core.model.CThread;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -48,7 +49,7 @@ import org.w3c.dom.NodeList;
 /**
  * Implements the memory retrieval features based on the CDI model.
  */
-public class CMemoryBlockRetrievalExtension implements IMemoryBlockRetrievalExtension {
+public class CMemoryBlockRetrievalExtension extends PlatformObject implements IMemoryBlockRetrievalExtension {
 
 	private static final String MEMORY_BLOCK_EXPRESSION_LIST = "memoryBlockExpressionList"; //$NON-NLS-1$
 	private static final String MEMORY_BLOCK_EXPRESSION = "expression"; //$NON-NLS-1$

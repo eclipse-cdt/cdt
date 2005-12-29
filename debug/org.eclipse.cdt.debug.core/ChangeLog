@@ -1,4 +1,8 @@
 2005-12-29 Mikhail Khodjaiants
+	Temporary fix for bug 122344: Memory monitors are not shown in the Memory view.
+	* CMemoryBlockRetrievalExtension.java
+
+2005-12-29 Mikhail Khodjaiants
 	Bug 122336: Use the asynchronous tree viewer in the Modules view.
 	Grouped the modules-related methods of ICDebugTarget under the 
 	new IModuleRetrieval interface.

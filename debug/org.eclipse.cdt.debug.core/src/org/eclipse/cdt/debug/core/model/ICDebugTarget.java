@@ -24,6 +24,7 @@ public interface ICDebugTarget extends IDebugTarget,
 									   IResumeWithoutSignal,
 									   ICDebugElement,
 									   ISteppingModeTarget,
+									   IModuleRetrieval,
 									   ITargetProperties {
 
 	/**
@@ -63,30 +64,6 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * @return whether this target is a post mortem type
 	 */
 	public boolean isPostMortem();
-
-	/**
-	 * Returns whether there are modules currently loaded in this debug target.
-	 * 
-	 * @return whether there are modules currently loaded in this debug target
-	 * 
-	 * @throws DebugException
-	 */
-	public boolean hasModules() throws DebugException;
-
-	/**
-	 * Returns the array of the currently loaded modules.
-	 *  
-	 * @return the array of the currently loaded modules
-	 * @throws DebugException if this method fails. Reasons include:
-	 */
-	public ICModule[] getModules() throws DebugException;
-
-	/**
-	 * Load symbols for all currently loaded modules.
-	 * 
-	 * @throws DebugException if this method fails. Reasons include:
-	 */
-	public void loadSymbolsForAllModules() throws DebugException;
 
 	/**
 	 * Returns the list of descriptors of the target registers

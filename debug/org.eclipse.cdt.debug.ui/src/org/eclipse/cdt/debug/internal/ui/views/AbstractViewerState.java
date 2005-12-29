@@ -1,20 +1,23 @@
-/*******************************************************************************
+/**********************************************************************
  * Copyright (c) 2004, 2005 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
+ * 
+ * Contributors: 
  * QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views; 
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.TreePath;
+import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
@@ -24,15 +27,14 @@ import org.eclipse.swt.widgets.TreeItem;
 public abstract class AbstractViewerState {
 
 	// paths to expanded elements
-	private List fExpandedElements = null;
-	// paths to selected elements
-	private IPath[] fSelection = null;
+	private List fSavedExpansion = null;
+	private IPath[] fSelection;
 	
 	/**
 	 * Constructs a memento for the given viewer.
 	 */
-	public AbstractViewerState( TreeViewer viewer ) {
-		saveState( viewer );
+	public AbstractViewerState(AsynchronousTreeViewer viewer) {
+		saveState(viewer);
 	}
 
 	/**
@@ -41,42 +43,60 @@ public abstract class AbstractViewerState {
 	 * 
 	 * @param viewer viewer of which to save the state
 	 */
-	public void saveState( TreeViewer viewer ) {
+	public void saveState(AsynchronousTreeViewer viewer) {
 		List expanded = new ArrayList();
-		fExpandedElements = null;
+		fSavedExpansion = null;
 		TreeItem[] items = viewer.getTree().getItems();
 		try {
-			for( int i = 0; i < items.length; i++ ) {
-				collectExandedItems( items[i], expanded );
+			for (int i = 0; i < items.length; i++) {
+				collectExpandedItems(items[i], expanded);
 			}
-			if ( expanded.size() > 0 ) {
-				fExpandedElements = expanded;
+			if (expanded.size() > 0) {
+				fSavedExpansion = expanded;
 			}
-		}
-		catch( DebugException e ) {
-			fExpandedElements = null;
+		} catch (DebugException e) {
+			fSavedExpansion = null;
 		}
 		TreeItem[] selection = viewer.getTree().getSelection();
 		fSelection = new IPath[selection.length];
 		try {
-			for( int i = 0; i < selection.length; i++ ) {
-				fSelection[i] = encodeElement( selection[i] );
-			}
-		}
-		catch( DebugException e ) {
-			fSelection = null;
+		    for (int i = 0; i < selection.length; i++) {
+		        fSelection[i] = encodeElement(selection[i]);
+		        if (fSelection[i] == null) {
+		            fSelection = null;
+		            return;
+		        }
+		    }
+		} catch (DebugException e) {
+		    fSelection = null;
 		}
 	}
 
-	protected void collectExandedItems( TreeItem item, List expanded ) throws DebugException {
-		if ( item.getExpanded() ) {
-			expanded.add( encodeElement( item ) );
-			TreeItem[] items = item.getItems();
-			for( int i = 0; i < items.length; i++ ) {
-				collectExandedItems( items[i], expanded );
-			}
-		}
-	}
+	/**
+	 * Collects paths to expanded children of the given element and returns
+	 * whether any paths were expanded.
+	 *  
+	 * @param item item to collect expanded paths for
+	 * @param expanded list to add to
+	 * @return whether any paths were found expanded
+	 * @throws DebugException
+	 */
+	protected boolean collectExpandedItems(TreeItem item, List expanded) throws DebugException {
+        if (item.getExpanded()) {
+            boolean childExpanded = false;
+            TreeItem[] items = item.getItems();
+            for (int i = 0; i < items.length; i++) {
+                childExpanded = collectExpandedItems(items[i], expanded) || childExpanded;
+            }
+            if (!childExpanded) {
+            	IPath path = encodeElement(item);
+            	expanded.add(path);
+            }
+        } else {
+        	return false;
+        }
+        return true;
+    }
 
 	/**
 	 * Constructs a path representing the given tree item. The segments in the
@@ -87,7 +107,7 @@ public abstract class AbstractViewerState {
 	 * @return path encoding the given item
 	 * @throws DebugException if unable to generate a path
 	 */
-	protected abstract IPath encodeElement( TreeItem item ) throws DebugException;
+	protected abstract IPath encodeElement(TreeItem item) throws DebugException;
 
 	/**
 	 * Restores the state of the given viewer to this memento's
@@ -95,41 +115,56 @@ public abstract class AbstractViewerState {
 	 * 
 	 * @param viewer viewer to which state is restored
 	 */
-	public void restoreState( TreeViewer viewer ) {
-		if ( fExpandedElements != null ) {
-			List expansion = new ArrayList( fExpandedElements.size() );
-			for( int i = 0; i < fExpandedElements.size(); i++ ) {
-				IPath path = (IPath)fExpandedElements.get( i );
-				if ( path != null ) {
-					Object obj;
+	public void restoreState(AsynchronousTreeViewer viewer) {
+	    boolean expansionComplete = true;
+	    if (fSavedExpansion != null && fSavedExpansion.size() > 0) {
+			for (int i = 0; i < fSavedExpansion.size(); i++) {
+				IPath path = (IPath) fSavedExpansion.get(i);
+				if (path != null) {
 					try {
-						obj = decodePath( path, viewer );
-						if ( obj != null ) {
-							expansion.add( obj );
+						TreePath treePath = decodePath(path, viewer);
+						if (treePath != null) {
+							viewer.expand(new TreeSelection(new TreePath[] { treePath }));
+							
+							if (treePath.getSegmentCount()-1 != path.segmentCount()) {
+								expansionComplete = false;
+							}
+						} else {
+							expansionComplete =false;
 						}
-					}
-					catch( DebugException e ) {
+					} catch (DebugException e) {
 					}
 				}
 			}
-			viewer.setExpandedElements( expansion.toArray() );
-		}
-		if ( fSelection != null ) {
-			List selection = new ArrayList( fSelection.length );
-			for( int i = 0; i < fSelection.length; i++ ) {
-				IPath path = fSelection[i];
-				Object obj;
-				try {
-					obj = decodePath( path, viewer );
-					if ( obj != null ) {
-						selection.add( obj );
-					}
-				}
-				catch( DebugException e ) {
-				}
+			if (expansionComplete) {
+				fSavedExpansion = null;
 			}
-			viewer.setSelection( new StructuredSelection( selection ) );
 		}
+	    
+	    boolean selectionComplete = true;
+	    if (fSelection != null && fSelection.length > 0) {
+	        List selection = new ArrayList(fSelection.length);
+	        for (int i = 0; i < fSelection.length; i++) {
+	            IPath path = fSelection[i];
+	            TreePath obj;
+	            try {
+	                obj = decodePath(path, viewer);
+	                if (obj != null && obj.getSegmentCount()-1 == path.segmentCount()) {
+	                    selection.add(obj);
+	                } else {
+	                    selectionComplete = false;               
+	                }
+	            } catch (DebugException e) {
+	            }
+	        }
+            if (selection.size() > 0) {
+            		TreePath[] treePaths = (TreePath[]) selection.toArray(new TreePath[0]);
+                viewer.setSelection(new TreeSelection(treePaths));
+            }
+	        if (selectionComplete) {
+	            fSelection = null;
+	        }
+	    }
 	}
 	
 	/**
@@ -141,5 +176,6 @@ public abstract class AbstractViewerState {
 	 * @return element represented by the path, or <code>null</code> if none
 	 * @throws DebugException if unable to locate a variable
 	 */
-	protected abstract Object decodePath( IPath path, TreeViewer viewer ) throws DebugException;
+	protected abstract TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException;
+
 }

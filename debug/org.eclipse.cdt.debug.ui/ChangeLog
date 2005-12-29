@@ -1,3 +1,15 @@
+2005-12-29 Mikhail Khodjaiants
+	Bug 122336: Use the asynchronous tree viewer in the Modules view.
+	* LoadSymbolsForAllActionDelegate.java
+	* AbstractViewerState.java
+	* ModulesView.java
+	- ModulesViewContentProvider.java
+	* ModulesViewer.java
+	* ModulesViewerState.java
+	* ModulesViewEventHandler.java
+	+ ModulesViewModelProxy.java
+	+ ModuleTreeContentAdapter.java
+
 2005-12-27 Mikhail Khodjaiants
 	HTMLTextPresenter implements DefaultInformationControl.IInformationPresenterExtension
 	instead of deprecated DefaultInformationControl.IInformationPresenter.

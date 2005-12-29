@@ -17,9 +17,11 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -27,7 +29,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Manages the modules loaded on this debug target.
  */
-public class CModuleManager {
+public class CModuleManager extends PlatformObject implements IModuleRetrieval {
 
 	/**
 	 * The debug target associated with this manager.
@@ -47,15 +49,15 @@ public class CModuleManager {
 		fModules = new ArrayList( 5 );
 	}
 
-	public boolean hasModules() {
+	public boolean hasModules() throws DebugException {
 		return !fModules.isEmpty();
 	}
 
-	public ICModule[] getModules() {
+	public ICModule[] getModules() throws DebugException {
 		return (ICModule[])fModules.toArray( new ICModule[fModules.size()] );
 	}
 
-	public void loadSymbolsForAll() throws DebugException {
+	public void loadSymbolsForAllModules() throws DebugException {
 		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, CoreModelMessages.getString( "CModuleManager.0" ), null ); //$NON-NLS-1$
 		Iterator it = fModules.iterator();
 		while( it.hasNext() ) {

@@ -15,27 +15,26 @@ import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
-import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ToggleDetailPaneAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
-import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
-import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.viewers.PresentationContext;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -54,19 +53,13 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -82,132 +75,22 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  
 /**
  * Displays the modules currently loaded by the process being debugged.
  */
-public class ModulesView extends AbstractDebugEventHandlerView implements IDebugExceptionHandler, IPropertyChangeListener, ISelectionListener, INullSelectionListener {
-
-
-	class ModulesViewModelPresentation implements IDebugModelPresentation {
-
-		private CDebugModelPresentation fDelegate;
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
-		 */
-		public void setAttribute( String attribute, Object value ) {
-			getModelPresentation().setAttribute( attribute, value );
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
-		public Image getImage( Object element ) {
-			Image image = getModelPresentation().getImage( element );
-			if ( image == null ) {
-				if ( element instanceof IAdaptable ) {
-					IWorkbenchAdapter de = (IWorkbenchAdapter)((IAdaptable)element).getAdapter( IWorkbenchAdapter.class );
-					if ( de != null ) {
-						ImageDescriptor descriptor = de.getImageDescriptor( element );
-						if ( descriptor != null ) {
-							image = ModulesView.this.getImage( descriptor );
-						}
-					}
-				}
-			}
-			return image;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
-		public String getText( Object element ) {
-			String text = getModelPresentation().getText( element );
-			if ( text == null ) {
-				if ( element instanceof IAdaptable ) {
-					IWorkbenchAdapter de = (IWorkbenchAdapter)((IAdaptable)element).getAdapter( IWorkbenchAdapter.class );
-					if ( de != null ) {
-						text = de.getLabel( element );
-					}
-					else {
-						text = element.toString();
-					}
-				}
-			}
-			if ( element instanceof ICModule ) {
-				ICModule module = (ICModule)element;
-				text += ( module.areSymbolsLoaded() ) ? ModulesMessages.getString( "ModulesView.11" ) : ModulesMessages.getString( "ModulesView.12" ); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return text;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
-		 */
-		public void computeDetail( IValue value, IValueDetailListener listener ) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
-		 */
-		public IEditorInput getEditorInput( Object element ) {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
-		 */
-		public String getEditorId( IEditorInput input, Object element ) {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void addListener( ILabelProviderListener listener ) {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-		 */
-		public boolean isLabelProperty( Object element, String property ) {
-			return false;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
-		public void removeListener( ILabelProviderListener listener ) {
-		}
-
-		private CDebugModelPresentation getModelPresentation() {
-			if ( fDelegate == null ) {
-				fDelegate = CDebugModelPresentation.getDefault();
-			}
-			return fDelegate;
-		}
-	}
+public class ModulesView extends AbstractDebugView implements IDebugContextListener, IDebugExceptionHandler, IPropertyChangeListener, ISelectionListener, INullSelectionListener {
 
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
@@ -297,7 +180,7 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	 * The model presentation used as the label provider for the tree viewer,
 	 * and also as the detail information provider for the detail pane.
 	 */
-	private IDebugModelPresentation fModelPresentation;
+//	private IDebugModelPresentation fModelPresentation;
 
 	/**
 	 * Remembers which viewer (tree viewer or details viewer) had focus, so we
@@ -336,7 +219,9 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer( Composite parent ) {
-		TreeViewer viewer = createTreeViewer( parent );
+		ModulesViewer viewer = (ModulesViewer)createTreeViewer( parent );
+		viewer.setContext( new PresentationContext( this ) );
+
 		createDetailsViewer();
 		getSashForm().setMaximizedControl( viewer.getControl() );
 
@@ -418,58 +303,80 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		if ( selection == null )
 			setViewerInput( new StructuredSelection() );
 		else if ( selection instanceof IStructuredSelection )
-			setViewerInput( (IStructuredSelection)selection );
+			setViewerInput( selection );
 	}
 
-	protected void setViewerInput( IStructuredSelection ssel ) {
-		ICDebugTarget target = null;
-		if ( ssel.size() == 1 ) {
-			Object input = ssel.getFirstElement();
-			if ( input instanceof ICDebugElement ) {
-				target = (ICDebugTarget)((ICDebugElement)input).getDebugTarget();
-			}
+	protected void setViewerInput( Object context ) {
+		IModuleRetrieval mr = null;
+		if ( context instanceof IAdaptable ) {
+			ICDebugTarget target = (ICDebugTarget)((IAdaptable)context).getAdapter( ICDebugTarget.class );
+			if ( target != null )
+				mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
 		}
-
 		Object current = getViewer().getInput();
-		if ( current == null && target == null ) {
+		if ( current == null && mr == null ) {
 			return;
 		}
-		if ( current != null && current.equals( target ) ) {
+		if ( current != null && current.equals( mr ) ) {
 			return;
 		}
-
 		if ( current != null ) {
 			// save state
 			fLastState = getViewerState();
-			fSelectionStates.put( current, fLastState );
-		}		
+			cacheViewerState( current, fLastState );
+		}
 
 		showViewer();
-		getViewer().setInput( target );
+		getViewer().setInput( mr );
+		restoreState();
 
-		// restore state
-		if ( target != null ) {
-			AbstractViewerState state = (AbstractViewerState)fSelectionStates.get( target );
-			if ( state == null ) {
-				// attempt to restore selection/expansion based on last target
-				state = fLastState;
-			}
-			if ( state != null ) {
-				state.restoreState( getModulesViewer() );
-			}
-		}
+//		
+//		ICDebugTarget target = null;
+//		if ( ssel.size() == 1 ) {
+//			Object input = ssel.getFirstElement();
+//			if ( input instanceof ICDebugElement ) {
+//				target = (ICDebugTarget)((ICDebugElement)input).getDebugTarget();
+//			}
+//		}
+//
+//		Object current = getViewer().getInput();
+//		if ( current == null && target == null ) {
+//			return;
+//		}
+//		if ( current != null && current.equals( target ) ) {
+//			return;
+//		}
+//
+//		if ( current != null ) {
+//			// save state
+//			fLastState = getViewerState();
+//			cacheViewerState( current, fLastState );
+//		}		
+//
+//		showViewer();
+//		getViewer().setInput( target );
+//
+//		// restore state
+//		if ( target != null ) {
+//			AbstractViewerState state = (AbstractViewerState)fSelectionStates.get( target );
+//			if ( state == null ) {
+//				// attempt to restore selection/expansion based on last target
+//				state = fLastState;
+//			}
+//			if ( state != null ) {
+//				state.restoreState( getModulesViewer() );
+//			}
+//		}
 	}
 
-	protected TreeViewer createTreeViewer( Composite parent ) {
+	protected Viewer createTreeViewer( Composite parent ) {
 		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 		JFaceResources.getFontRegistry().addListener( this );
 		// create the sash form that will contain the tree viewer & text viewer
 		setSashForm( new SashForm( parent, SWT.NONE ) );
 		// add tree viewer
-		final TreeViewer modulesViewer = new ModulesViewer( getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
-		modulesViewer.setContentProvider( createContentProvider() );
-		modulesViewer.setLabelProvider( createLabelProvider( modulesViewer ) );
-		modulesViewer.setUseHashlookup( true );
+		final ModulesViewer modulesViewer = new ModulesViewer( getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, this );
+		modulesViewer.setUseHashlookup( false );
 		modulesViewer.getControl().addFocusListener( new FocusAdapter() {
 
 			/* (non-Javadoc)
@@ -483,9 +390,9 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		modulesViewer.addPostSelectionChangedListener( getTreeSelectionChangedListener() );
 		getModulesViewSelectionProvider().setUnderlyingSelectionProvider( modulesViewer );
 		getSite().setSelectionProvider( getModulesViewSelectionProvider() );
-		// listen to selection in debug view
-		getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-		setEventHandler( createEventHandler() );
+
+		// listen to debug context
+		DebugContextManager.getDefault().addDebugContextListener(this, getSite().getWorkbenchWindow());
 		return modulesViewer;
 	}
 
@@ -537,24 +444,24 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		fSashForm = sashForm;
 	}
 
-	protected IContentProvider createContentProvider() {
-		ModulesViewContentProvider cp = new ModulesViewContentProvider();
-		cp.setExceptionHandler( this );
-		return cp;
-	}
-
-	protected IBaseLabelProvider createLabelProvider( StructuredViewer viewer ) {
-//		return new DebugViewDecoratingLabelProvider( viewer, new DebugViewInterimLabelProvider( getModelPresentation() ), new DebugViewLabelDecorator( getModelPresentation() ) );
-		return getModelPresentation();
-	}
-
-	protected IDebugModelPresentation getModelPresentation() {
-		if ( fModelPresentation == null ) {
-			fModelPresentation = new ModulesViewModelPresentation();
-		}
-		return fModelPresentation;
-	}
-
+//	protected IContentProvider createContentProvider() {
+//		ModulesViewContentProvider cp = new ModulesViewContentProvider();
+//		cp.setExceptionHandler( this );
+//		return cp;
+//	}
+//
+//	protected IBaseLabelProvider createLabelProvider( StructuredViewer viewer ) {
+////		return new DebugViewDecoratingLabelProvider( viewer, new DebugViewInterimLabelProvider( getModelPresentation() ), new DebugViewLabelDecorator( getModelPresentation() ) );
+//		return getModelPresentation();
+//	}
+//
+//	protected IDebugModelPresentation getModelPresentation() {
+//		if ( fModelPresentation == null ) {
+//			fModelPresentation = new ModulesViewModelPresentation();
+//		}
+//		return fModelPresentation;
+//	}
+//
 	protected ModulesViewSelectionProvider getModulesViewSelectionProvider() {
 		return fSelectionProvider;
 	}
@@ -671,10 +578,6 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		return fDetailDocument;
 	}
 
-	protected AbstractDebugEventHandler createEventHandler() {
-		return new ModulesViewEventHandler( this );
-	}
-
 	protected void updateSelectionDependentActions() {
 	}
 
@@ -686,7 +589,7 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	}
 
 	protected void createDetailContextMenu( Control menuControl ) {
-		MenuManager menuMgr = new MenuManager(); //$NON-NLS-1$
+		MenuManager menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown( true );
 		menuMgr.addMenuListener( new IMenuListener() {
 
@@ -886,11 +789,8 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		IViewPart part = getSite().getPage().findView( IDebugUIConstants.ID_DEBUG_VIEW );
-		if ( part != null ) {
-			ISelection selection = getSite().getPage().getSelection( IDebugUIConstants.ID_DEBUG_VIEW );
-			selectionChanged( part, selection );
-		}
+		ISelection selection = DebugContextManager.getDefault().getActiveContext( getSite().getWorkbenchWindow() );
+		contextActivated( selection, null );
 	}
 
 	private void computeDetail( final Object element ) {
@@ -1017,5 +917,71 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 			((Image)entry.getValue()).dispose();
 		}
 		fImageCache.clear();
+	}
+
+    protected void restoreState() {
+		ModulesViewer viewer = (ModulesViewer)getViewer();
+		if ( viewer != null ) {
+			Object context = viewer.getInput();
+			if ( context != null ) {
+				AbstractViewerState state = getCachedViewerState( context );
+				if ( state == null ) {
+					// attempt to restore selection/expansion based on last
+					// frame
+					state = fLastState;
+				}
+				if ( state != null ) {
+					state.restoreState( viewer );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Caches the given viewer state for the given viewer input.
+	 * 
+	 * @param input viewer input
+	 * @param state viewer state
+	 */
+	protected void cacheViewerState( Object input, AbstractViewerState state ) {
+		// generate a key for the input based on its hashcode, we don't
+		// want to maintain reference real model objects preventing GCs.
+		fSelectionStates.put( generateKey( input ), state );
+	}
+	
+	/**
+	 * Generate a key for an input object.
+	 * 
+	 * @param input
+	 * @return key
+	 */
+	protected Object generateKey( Object input ) {
+		return new Integer( input.hashCode() );
+	}
+	
+	/**
+	 * Returns the cached viewer state for the given viewer input or 
+	 * <code>null</code> if none.
+	 * 
+	 * @param input viewer input
+	 * @return viewer state or <code>null</code>
+	 */
+	protected AbstractViewerState getCachedViewerState( Object input ) {
+		return (AbstractViewerState)fSelectionStates.get( generateKey( input ) );
+	}
+
+	public void contextActivated( ISelection selection, IWorkbenchPart part ) {
+		if ( !isAvailable() || !isVisible() ) {
+			return;
+		}
+		if ( selection instanceof IStructuredSelection ) {
+			setViewerInput( ((IStructuredSelection)selection).getFirstElement() );
+		}
+		showViewer();
+	}
+
+	public void contextChanged( ISelection selection, IWorkbenchPart part ) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.debug.core.model.ICModule;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.TreePath;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
  
 /**
@@ -28,7 +29,7 @@ public class ModulesViewerState extends AbstractViewerState {
 	/** 
 	 * Constructor for ModulesViewerState. 
 	 */
-	public ModulesViewerState( TreeViewer viewer ) {
+	public ModulesViewerState( AsynchronousTreeViewer viewer ) {
 		super( viewer );
 	}
 
@@ -36,61 +37,46 @@ public class ModulesViewerState extends AbstractViewerState {
 	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState#encodeElement(org.eclipse.swt.widgets.TreeItem)
 	 */
 	protected IPath encodeElement( TreeItem item ) throws DebugException {
-		String name = getTreeItemName( item );
-		IPath path = new Path( name );
+		StringBuffer path = new StringBuffer( item.getText() );
 		TreeItem parent = item.getParentItem();
 		while( parent != null ) {
-			name = getTreeItemName( parent );
-			path = new Path( name ).append( path );
+			path.insert( 0, parent.getText() + IPath.SEPARATOR );
 			parent = parent.getParentItem();
 		}
-		return path;
+		return new Path( path.toString() );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState#decodePath(org.eclipse.core.runtime.IPath, org.eclipse.jface.viewers.TreeViewer)
+	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState#decodePath(org.eclipse.core.runtime.IPath, org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer)
 	 */
-	protected Object decodePath( IPath path, TreeViewer viewer ) throws DebugException {
-		ITreeContentProvider contentProvider = (ITreeContentProvider)viewer.getContentProvider();
+	protected TreePath decodePath( IPath path, AsynchronousTreeViewer viewer ) throws DebugException {
 		String[] names = path.segments();
-		Object parent = viewer.getInput();
-		Object element = null;
+		Tree tree = viewer.getTree();
+		TreeItem[] items = tree.getItems();
+		List elements = new ArrayList();
+		elements.add( viewer.getInput() );
+		boolean pathFound = false;
 		for( int i = 0; i < names.length; i++ ) {
-			element = null;
-			Object[] children = contentProvider.getChildren( parent );
-			for( int j = 0; j < children.length; j++ ) {
-				String name = getElementName( children[j] );
-				if ( names[i].equals( name ) ) {
-					element = children[j];
-					break;
-				}
+			String name = names[i];
+			TreeItem item = findItem( name, items );
+			if ( item != null ) {
+				pathFound = true;
+				elements.add( item.getData() );
+				items = item.getItems();
 			}
-			if ( element == null ) {
-				return null;
-			}
-			parent = element;
 		}
-		return element;
+		if ( pathFound ) {
+			return new TreePath( elements.toArray() );
+		}
+		return null;
 	}
 
-	private String getTreeItemName( TreeItem item ) {
-		Object data = item.getData();
-		String name = null;
-		if ( data instanceof ICModule ) {
-			name = ((ICModule)data).getName();
-		}
-		else if ( data instanceof ICElement ) {
-			name = ((ICElement)data).getElementName();
-		}
-		return name;
-	}
-
-	private String getElementName( Object element ) {
-		if ( element instanceof ICModule ) {
-			return ((ICModule)element).getName();
-		}
-		if ( element instanceof ICElement ) {
-			return ((ICElement)element).getElementName();
+	private TreeItem findItem( String name, TreeItem[] items ) {
+		for( int i = 0; i < items.length; i++ ) {
+			TreeItem item = items[i];
+			if ( item.getText().equals( name ) ) {
+				return item;
+			}
 		}
 		return null;
 	}

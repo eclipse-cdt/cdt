@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,60 +11,65 @@
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
 import org.eclipse.cdt.debug.core.model.ICModule;
-import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
+import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
+import org.eclipse.debug.internal.ui.viewers.update.ModelDelta;
  
 /**
- * Updates the Modules view.
+ * Comment for .
  */
-public class ModulesViewEventHandler extends AbstractDebugEventHandler {
+public class ModulesViewEventHandler extends DebugEventHandler {
 
 	/** 
 	 * Constructor for ModulesViewEventHandler. 
 	 */
-	public ModulesViewEventHandler( AbstractDebugView view ) {
-		super( view );
+	public ModulesViewEventHandler( AbstractModelProxy proxy ) {
+		super( proxy );
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#doHandleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handlesEvent(org.eclipse.debug.core.DebugEvent)
 	 */
-	protected void doHandleDebugEvents( DebugEvent[] events ) {
-		for ( int i = 0; i < events.length; i++ ) {
-			DebugEvent event = events[i];
-			switch( event.getKind() ) {
-				case DebugEvent.CREATE:
-				case DebugEvent.TERMINATE:
-					if ( event.getSource() instanceof IDebugTarget || event.getSource() instanceof ICModule )
-						refresh();
-					break;
-				case DebugEvent.CHANGE :
-					if ( event.getSource() instanceof ICModule )
-						refresh( event.getSource() );
-					break;
-			}
+	protected boolean handlesEvent( DebugEvent event ) {
+		if ( event.getKind() == DebugEvent.CREATE || 
+			 event.getKind() == DebugEvent.TERMINATE || 
+			 event.getKind() == DebugEvent.CHANGE )
+			return true;
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleChange(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void handleChange( DebugEvent event ) {
+		if ( event.getSource() instanceof ICModule )
+			fireDelta( new ModelDelta( event.getSource(), IModelDelta.CHANGED | IModelDelta.STATE ) );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleCreate(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void handleCreate( DebugEvent event ) {
+		if ( event.getSource() instanceof IDebugTarget ) {
+			refreshRoot( event );
+		}
+		else if ( event.getSource() instanceof ICModule ) {
+			fireDelta( new ModelDelta( event.getSource(), IModelDelta.ADDED ) );
 		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#refresh()
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleTerminate(org.eclipse.debug.core.DebugEvent)
 	 */
-	public void refresh() {
-		if ( isAvailable() ) {
-			getView().showViewer();
-			getTreeViewer().refresh();
+	protected void handleTerminate( DebugEvent event ) {
+		if ( event.getSource() instanceof IDebugTarget ) {
+			refreshRoot( event );
 		}
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#refresh(java.lang.Object)
-	 */
-	protected void refresh( Object element ) {
-		if ( isAvailable() ) {
-			getView().showViewer();
-			getTreeViewer().refresh( element );
-			getTreeViewer().setSelection( getTreeViewer().getSelection() );
+		else if ( event.getSource() instanceof ICModule ) {
+			fireDelta( new ModelDelta( event.getSource(), IModelDelta.REMOVED ) );
 		}
 	}
 }

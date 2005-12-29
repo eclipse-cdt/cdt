@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -46,20 +47,23 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doAction()
 	 */
 	protected void doAction() throws DebugException {
-		final ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
+		ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
 		if ( target != null ) {
-			DebugPlugin.getDefault().asyncExec( 
-				new Runnable() {
-					
-					public void run() {
-						try {
-							target.loadSymbolsForAllModules();
+			final IModuleRetrieval mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
+			if ( mr != null ) {
+				DebugPlugin.getDefault().asyncExec( 
+					new Runnable() {
+						
+						public void run() {
+							try {
+								mr.loadSymbolsForAllModules();
+							}
+							catch( DebugException e ) {
+								failed( e );
+							}
 						}
-						catch( DebugException e ) {
-							failed( e );
-						}
-					}
-				} );
+					} );
+			}
 		}
 	}
 

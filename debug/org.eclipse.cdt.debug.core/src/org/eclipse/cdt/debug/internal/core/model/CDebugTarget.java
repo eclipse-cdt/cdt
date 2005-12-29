@@ -73,6 +73,7 @@ import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup;
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
 import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
@@ -765,6 +766,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return getMemoryBlockRetrieval();
 		if ( adapter.equals( IMemoryBlockRetrieval.class ) )
 			return getMemoryBlockRetrieval();
+		if ( adapter.equals( IModuleRetrieval.class ) )
+			return getModuleManager();
 		return super.getAdapter( adapter );
 	}
 
@@ -1591,30 +1594,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return CVariableFactory.createGlobalVariable( this, info, vo );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#hasModules()
-	 */
-	public boolean hasModules() throws DebugException {
-		CModuleManager mm = getModuleManager();
-		return ( mm != null ) ? mm.hasModules() : false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getModules()
-	 */
-	public ICModule[] getModules() throws DebugException {
-		CModuleManager mm = getModuleManager();
-		return ( mm != null ) ? mm.getModules() : new ICModule[0];
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#loadSymbolsForAllModules()
-	 */
-	public void loadSymbolsForAllModules() throws DebugException {
-		CModuleManager mm = getModuleManager();
-		mm.loadSymbolsForAll();
-	}
-
 	public void sourceContainersChanged( ISourceLookupDirector director ) {
 		setSourceLookupPath( director.getSourceContainers() );
 	}
@@ -1712,5 +1691,25 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				throw new DebugException( new Status( IStatus.OK, e.getStatus().getPlugin(), e.getStatus().getCode(), e.getStatus().getMessage(), null ) );
 			}
 		}
+	}
+
+	public boolean hasModules() throws DebugException {
+		CModuleManager mm = getModuleManager();
+		if ( mm != null )
+			return mm.hasModules();
+		return false;
+	}
+
+	public ICModule[] getModules() throws DebugException {
+		CModuleManager mm = getModuleManager();
+		if ( mm != null )
+			return mm.getModules();
+		return new ICModule[0];
+	}
+
+	public void loadSymbolsForAllModules() throws DebugException {
+		CModuleManager mm = getModuleManager();
+		if ( mm != null )
+			mm.loadSymbolsForAllModules();
 	}
 }

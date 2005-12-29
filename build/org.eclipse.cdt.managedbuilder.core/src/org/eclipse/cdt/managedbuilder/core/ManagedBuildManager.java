@@ -138,6 +138,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(3, 0, 0);
 	private static Map depCalculatorsMap;
 	private static boolean projectTypesLoaded = false;
+	private static boolean projectTypesLoading = false;
 	// Project types defined in the manifest files
 	public static SortedMap projectTypeMap;
 	private static List projectTypes;
@@ -1763,7 +1764,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		// Do this once
 		if (projectTypesLoaded)
 				return;
-		projectTypesLoaded = true;
+
+		// This routine gets called recursively.  If so, just return
+		if (projectTypesLoading)
+			return;
+		projectTypesLoading = true;
 		
 		// Get the extensions that use the current CDT managed build model
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
@@ -2031,6 +2036,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 		
 		performAdjustments();
+		projectTypesLoading = false;
+		projectTypesLoaded = true;
 	}
 	
 	private static void performAdjustments(){

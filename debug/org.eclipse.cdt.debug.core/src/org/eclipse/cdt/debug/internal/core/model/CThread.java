@@ -821,9 +821,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				// Alain: Put a proper fix later.
 				Object obj = getTopStackFrame();
 				if (obj instanceof ICStackFrame) {
-					return (ICStackFrame)obj;
+					return obj;
 				}
-				//return (ICStackFrame)getTopStackFrame();
 			}
 			catch( DebugException e ) {
 				// do nothing
@@ -836,9 +835,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				// Alain: Put a proper fix later.
 				Object obj = getTopStackFrame();
 				if (obj instanceof ICStackFrame) {
-					return (ICStackFrame)obj;
+					return obj;
 				}
-				//return (ICStackFrame)getTopStackFrame();
 			}
 			catch( DebugException e ) {
 				// do nothing

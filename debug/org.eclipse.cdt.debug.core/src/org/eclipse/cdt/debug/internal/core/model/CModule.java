@@ -192,7 +192,7 @@ public class CModule extends CDebugElement implements ICModule {
 			return getCElement();
 		}
 		if ( IBinary.class.equals( adapter ) && getCElement() instanceof IBinary ) {
-			return (IBinary)getCElement();
+			return getCElement();
 		}
 		return super.getAdapter( adapter );
 	}

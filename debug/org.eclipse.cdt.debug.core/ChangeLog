@@ -1,3 +1,9 @@
+2005-12-30 Mikhail Khodjaiants
+	Cleanup.
+	* CModule.java
+	* CThread.java
+	* CValue.java
+
 2005-12-29 Mikhail Khodjaiants
 	Temporary fix for bug 122344: Memory monitors are not shown in the Memory view.
 	* CMemoryBlockRetrievalExtension.java

@@ -170,7 +170,7 @@ public class CValue extends AbstractCValue {
 			}
 		}
 		catch( CDIException e ) {
-			requestFailed( e.getMessage(), e ); //$NON-NLS-1$
+			requestFailed( e.getMessage(), e );
 		}
 		return Arrays.asList( vars );
 	}

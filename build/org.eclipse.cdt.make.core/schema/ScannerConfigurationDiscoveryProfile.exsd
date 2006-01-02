@@ -48,6 +48,9 @@
                <documentation>
                   The name of the profile will be presented to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

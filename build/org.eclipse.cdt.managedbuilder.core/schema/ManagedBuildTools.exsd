@@ -38,6 +38,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -66,6 +69,9 @@
                <documentation>
                   Human-readable name for the tool to be used in the UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="sources" type="string">
@@ -163,6 +169,9 @@
                <documentation>
                   A descriptive name for the option.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="valueType" use="default" value="string">
@@ -254,6 +263,9 @@ Additional special types exist to flag options of special relevance to the build
                <documentation>
                   Specifies a &quot;tip&quot; that can be displayed in hover help or on the property page. Not implemented in 2.0.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -278,6 +290,9 @@ Additional special types exist to flag options of special relevance to the build
                <documentation>
                   A descriptive name for the enumeration.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isDefault" type="boolean">
@@ -319,6 +334,9 @@ Additional special types exist to flag options of special relevance to the build
                <documentation>
                   A descriptive name for the configuration to be used in the UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -432,6 +450,9 @@ Additional special types exist to flag options of special relevance to the build
                <documentation>
                   A human-readable target name, such as &apos;Executable&apos;. This will be the name the user sees displayed in the UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isAbstract" type="boolean" use="default" value="false">
@@ -560,6 +581,9 @@ Additional special types exist to flag options of special relevance to the build
                <documentation>
                   A human-readable category name, such as &apos;Preprocessor Options&apos;. This will be the name the user sees displayed in the UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="owner" type="string">
@@ -618,6 +642,9 @@ Additional special types exist to flag options of special relevance to the build
                <documentation>
                   A meaningful name for the type of element being provided.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

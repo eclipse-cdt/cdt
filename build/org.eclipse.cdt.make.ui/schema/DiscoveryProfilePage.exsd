@@ -59,6 +59,9 @@
                <documentation>
                   Page name.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="profileId" type="string" use="required">

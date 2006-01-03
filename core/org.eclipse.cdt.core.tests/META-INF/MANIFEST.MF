@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.cdt.core.tests
 Bundle-SymbolicName: org.eclipse.cdt.core.tests; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.1.0.qualifier
 Bundle-ClassPath: cdtcoretests.jar
 Bundle-Activator: org.eclipse.cdt.core.testplugin.CTestPlugin
 Bundle-Localization: plugin

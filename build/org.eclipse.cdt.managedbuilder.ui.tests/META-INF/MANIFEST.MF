@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Managed Build UI Tests Plug-in
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.ui.tests; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.1.0.qualifier
 Bundle-ClassPath: tests.jar
 Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.tests.testplugin.TestsPlugin
 Bundle-Vendor: eclipse.org

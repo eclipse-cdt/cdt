@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.core.tests; singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 3.1.0.qualifier
 Bundle-ClassPath: mbscoretests.jar
 Bundle-Activator: org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin
 Bundle-Vendor: Eclipse.org

@@ -106,7 +106,7 @@
 			<param name="dest" value="${buildDirectory}"/>
 		</antcall>
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip" dest="${buildDirectory}"/>
-		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}">
+		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${forceContextQualifier}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
 			<property name="library-file" value="${buildDirectory}/eclipse/plugins/org.eclipse.test_3.1.0/library.xml"/>
 			<property name="os" value="${baseos}"/>

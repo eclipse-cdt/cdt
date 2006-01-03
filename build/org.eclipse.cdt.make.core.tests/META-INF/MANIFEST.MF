@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Make Core Tests Plug-in
 Bundle-SymbolicName: org.eclipse.cdt.make.core.tests
-Bundle-Version: 3.1.0
+Bundle-Version: 3.1.0.qualifier
 Bundle-ClassPath: makecoretests.jar
 Bundle-Activator: org.eclipse.cdt.make.core.tests.MakeTestsPlugin
 Bundle-Localization: plugin

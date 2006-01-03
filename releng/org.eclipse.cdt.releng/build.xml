@@ -152,7 +152,8 @@
 			<replacefilter token="@buildType@" value="${buildType}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
-		<copy todir="${copyToDir}">
+		<mkdir dir="${copyToDir}/${buildType}.${buildId}"/>
+		<copy todir="${copyToDir}/${buildType}.${buildId}">
 			<fileset dir="${buildDirectory}/${buildType}.${buildId}"/>
 		</copy>
 	</target>

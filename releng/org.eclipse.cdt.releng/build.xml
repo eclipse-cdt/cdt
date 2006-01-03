@@ -15,7 +15,7 @@
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
-		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build_3.2.0/scripts"/>
+		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build/scripts"/>
 		<property name="eclipseDist" value="eclipseDist undefined"/>
 		<property name="collectingFolder" value="eclipse"/>
 		<property name="archivePrefix" value="eclipse"/>

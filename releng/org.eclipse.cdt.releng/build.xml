@@ -5,8 +5,10 @@
 	</target>
 	
 	<target name="build" depends="zips,test"/>
+	<target name="nightly" depends="zips,test,copy"/>
 	<target name="cdtbuild" depends="zips,test,upload"/>
 	<target name="cdtnotest" depends="zips,upload"/>
+	<target name="nightlynotest" depends="zips,copy"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -139,6 +141,22 @@
 		</exec>
 	</target>
 	
+	<target name="copy" depends="init" unless="hasErrors">
+		<property name="copyToDir" value="/var/www/html/builds/${branchVersion}"/>
+		<replace file="${copyToDir}/index.html">
+			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
+			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>
+  <!-- add here -->]]></replacevalue>
+		</replace>
+		<replace file="${copyToDir}/index.html">
+			<replacefilter token="@buildType@" value="${buildType}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
+		<copy todir="${copyToDir}">
+			<fileset dir="${buildDirectory}}/${buildType}.${buildId}"/>
+		</copy>
+	</target>
+
 	<target name="mail" depends="init">
 		<antcall target="mailPass"/>
 		<antcall target="mailFail"/>

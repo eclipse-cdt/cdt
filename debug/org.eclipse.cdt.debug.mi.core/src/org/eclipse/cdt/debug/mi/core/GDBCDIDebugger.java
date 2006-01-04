@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Joanne Woo (jwoo@mvista.com) - bug #118900 
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.mi.core;
@@ -169,6 +170,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			session = MIPlugin.getDefault().createCSession(gdb, miVersion, exe.getPath().toFile(), coreFile.toFile(), cwd, gdbinit, monitor);
 			initializeLibraries(config, session);
+			session.getSharedLibraryManager().update();
 			return session;
 		} catch (Exception e) {
 			// Catch all wrap them up and rethrow

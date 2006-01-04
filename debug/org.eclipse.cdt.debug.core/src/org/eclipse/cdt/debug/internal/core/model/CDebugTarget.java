@@ -342,7 +342,19 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	protected void initializeModuleManager() {
-		getModuleManager().addModules( new ICModule[] { CModule.createExecutable( this, getExecFile().getPath() ) } );
+		ICDISharedLibrary[] slibs = new ICDISharedLibrary[0];
+		try {
+			slibs = getCDITarget().getSharedLibraries();
+		}
+		catch( CDIException e ) {
+			DebugPlugin.log( e );
+		}
+		ICModule[] modules = new ICModule[slibs.length + 1];
+		modules[0] = CModule.createExecutable( this, getExecFile().getPath() );
+		for ( int i = 0; i < slibs.length; ++i ) {
+			modules[i + 1] = CModule.createSharedLibrary( this, slibs[i] );
+		}
+		getModuleManager().addModules( modules );
 	}
 
 	protected void initializeMemoryBlocks() {

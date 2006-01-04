@@ -77,6 +77,20 @@ public class ElementChangedEvent extends EventObject {
 	 * @since 2.0
 	 */
 	public static final int 	POST_RECONCILE = 4;	
+	
+	/**
+	 * Event type constant indicating the following:
+	 *    Source text is changed somewhere in function body
+	 *    No global data affected for any C element
+	 *    but element offsets should be recalculated now.
+	 *    
+	 *    Note: usually, CShifData object is sent with 
+	 *    this event as ICElementDelta
+	 *    
+	 * @see CShiftData
+	 */
+	public static final int     POST_SHIFT = 5;
+	
 	/*
 	 * Event type indicating the nature of this event. 
 	 * It can be a combination either:

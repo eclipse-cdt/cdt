@@ -15,12 +15,18 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
+
 /**
  * This is a helper class for the text editor to be able to determine, given a
  * particular offset in a document, various candidates segments for things like
  * context help, proposals and hovering.
  */
 public class CWordFinder {
+	
+	private static final char CBRACE_L = '{';
+	private static final char CBRACE_R = '}';
+	private static final char  BRACE_R = ')';
+	
 	/**
 	 * This method determines for a given offset into a given document what the
 	 * region is which defines the current word. A word is defined as the set of
@@ -198,5 +204,86 @@ public class CWordFinder {
 		return null;
 	}
 
+	/**
+	 * This method will determine whether current offset is contained 
+	 * in any function's body or it's outside it. 
+	 * 
+	 * @param document
+	 *            The document to be examined
+	 * @param offset
+	 *            The offset into the document
+	 * @return 
+	 *      <code>true</code> if there is no function body around offset 
+	 *      <code>false</code> otherwise 
+	 * 
+	 * @param document
+	 * @param offset
+	 * @return
+	 */
+	public static boolean isGlobal(IDocument document, int offset) {
+		try {
+			int pos = offset;
+			int bracketcount = 0;
+			char c;
+
+			//Find left curled bracket from our position
+			while (pos > 0) {
+				c = document.getChar(pos--);
+
+				if (c == CBRACE_R) {
+					bracketcount++; // take into account nested blocks
+				} else if (c == CBRACE_L) {
+					if (bracketcount-- == 0) {
+						do {
+							c = document.getChar(pos--);
+							if (c == BRACE_R) return false;
+						} while (Character.isSpace(c));
+						// container block seems to be not a function or statement body
+						pos++;             // step back one symbol
+						bracketcount = 0;  // let's search for upper block
+					}
+				}
+			}
+			
+		} catch (BadLocationException x) { /* Ignore */	}
+		// return true in case of unknown result or exception 
+		return true;
+	}
+	
+	/**
+	 * Searches for line feed symbols in string.
+	 * First met '\r' or '\n' is treated as LF symbol
+	 * 
+	 * @param s
+	 * 			string to search in.
+	 * @return  number of LFs met.
+	 */
+	public static int countLFs (String s) {
+		int counter = 0;
+		char lf = 0;
+		char c;
+		for (int i=0; i<s.length(); i++) {
+			c = s.charAt(i);
+			if (lf == 0) {
+				if (c == '\n' || c == '\r') {
+					lf = c;
+					counter++;
+				}
+			} else if (lf == c) counter++;
+		}
+		return counter;
+	}
+
+	/**
+	 * Checks whether the string contains any C-block delimiters ( { } ) 
+	 * 
+	 * @param s 
+	 * 			text to check
+	 * @return  true if curled brace found.
+	 */
+	public static boolean hasCBraces (String s) {
+		if (s.indexOf(CBRACE_L) > -1 || s.indexOf(CBRACE_R) > -1) return true;
+		else return false;
+	}
 }
 

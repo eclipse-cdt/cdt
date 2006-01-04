@@ -1,3 +1,8 @@
+2006-01-04 Mikhail Khodjaiants
+	Bug 118900: Display libraries loaded in post-mortem debug. 
+	Applied with modifications the patch from Joanne Woo (jwoo.mvista.com).
+	* GDBCDIDebugger.java
+
 2005-12-27 Mikhail Khodjaiants
 	Cleanup.
 	* BreakpointManager.java

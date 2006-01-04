@@ -109,19 +109,26 @@ public class CModuleManager implements IModuleRetrieval {
 	}
 
 	public void sharedLibraryLoaded( ICDISharedLibrary cdiLibrary ) {
-		CModule library = CModule.createSharedLibrary( getDebugTarget(), cdiLibrary );
+		CModule library = null;
 		synchronized( fModules ) {
-			fModules.add( library );
+			if ( find( cdiLibrary ) == null ) {
+				library = CModule.createSharedLibrary( getDebugTarget(), cdiLibrary );
+				fModules.add( library );
+			}
 		}
-		library.fireCreationEvent();
+		if ( library != null )
+			library.fireCreationEvent();
 	}
 
 	public void sharedLibraryUnloaded( ICDISharedLibrary cdiLibrary ) {
-		CModule library = find( cdiLibrary );
-		if ( library != null ) {
-			synchronized( fModules ) {
+		CModule library = null;
+		synchronized( fModules ) {
+			find( cdiLibrary );
+			if ( library != null ) {
 				fModules.remove( library );
 			}
+		}
+		if ( library != null ) {
 			library.dispose();
 			library.fireTerminateEvent();
 		}

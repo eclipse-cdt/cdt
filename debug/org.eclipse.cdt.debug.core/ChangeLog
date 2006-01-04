@@ -1,3 +1,8 @@
+2006-01-04 Mikhail Khodjaiants
+	Bug 118900: Display libraries loaded in post-mortem debug. 
+	* CDebugTarget.java
+	* CModuleManager.java
+
 2005-12-30 Mikhail Khodjaiants
 	Cleanup.
 	* CModule.java

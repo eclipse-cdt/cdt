@@ -202,7 +202,9 @@ public class BinaryTests extends TestCase {
         IBinary myBinary;
         ICElement[] elements;
         ExpectedStrings expSyms;
-        String[] myStrings = {"test.c", "_init","main.c", "_start", "test2.c", "_btext"};
+        // Well, this is no where near all the children (I get 22). This used to contain
+        // the source file name entries but these do not appear as children anymore.
+        String[] myStrings = {"_init", "_start", "_btext"};
         
         expSyms=new ExpectedStrings(myStrings);
 

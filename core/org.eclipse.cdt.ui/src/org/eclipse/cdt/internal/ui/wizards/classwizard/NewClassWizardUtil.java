@@ -124,9 +124,6 @@ public class NewClassWizardUtil {
                     ICContainer sourceFolder = getSourceFolder(elem);
                     if (sourceFolder != null)
                         return sourceFolder;
-                    if (resType == IResource.PROJECT) {
-                        return (ICContainer)elem;
-                    }
                 }
             } else {
                 return getSourceFolder(resource.getParent());

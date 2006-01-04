@@ -123,7 +123,7 @@ public class CModuleManager implements IModuleRetrieval {
 	public void sharedLibraryUnloaded( ICDISharedLibrary cdiLibrary ) {
 		CModule library = null;
 		synchronized( fModules ) {
-			find( cdiLibrary );
+			library = find( cdiLibrary );
 			if ( library != null ) {
 				fModules.remove( library );
 			}

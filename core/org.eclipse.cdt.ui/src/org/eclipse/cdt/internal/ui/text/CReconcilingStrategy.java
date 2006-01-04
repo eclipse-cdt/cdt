@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.text;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -28,12 +29,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class CReconcilingStrategy implements IReconcilingStrategy {
 
-
 	private ITextEditor fEditor;	
 	private IWorkingCopyManager fManager;
 	private IProgressMonitor fProgressMonitor;
-
-
+	private String txt = null;
+	
 	public CReconcilingStrategy(CEditor editor) {
 		fEditor= editor;
 		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
@@ -62,10 +62,45 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 
 
 	/**
-	 * @see IReconcilingStrategy#reconcile(dirtyRegion, region)
+	 * @see IReconcilingStrategy#reconcile(dirtyRegion, reion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
-		reconcile();
+		// consistent data needs not further checks !  
+		ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
+		if (tu != null && tu.isWorkingCopy()) {
+			try {
+				if (tu.isConsistent()) return;
+			} catch (CModelException e) {}	
+		}
+		
+		// bug 113518
+		// local data needs not to be re-parsed
+		boolean needReconcile = true;
+		int dOff = dirtyRegion.getOffset();
+		int dLen = dirtyRegion.getLength();		
+		IDocument doc = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		
+		if ((doc != null) && (!CWordFinder.isGlobal(doc, dOff))) {
+			String s = "";
+			if (dirtyRegion.getType().charAt(2) == 'i') { // insert operation
+				s = dirtyRegion.getText();
+				if (!CWordFinder.hasCBraces(s)) {
+					CModelManager.getDefault().fireShift(dOff, dLen, CWordFinder.countLFs(s));
+					needReconcile = false;
+				}					
+			} else { // remove operation
+				// check whether old document copy is relevant
+				if (txt != null && (txt.length() == doc.getLength() + dLen)) {
+					s = txt.substring(dOff, dOff + dLen);
+					if (!CWordFinder.hasCBraces(s)) {
+						CModelManager.getDefault().fireShift(dOff, -dLen, -CWordFinder.countLFs(s));
+						needReconcile = false;						
+					}
+				}
+			}
+		} 
+		if (needReconcile) reconcile();
+		txt = doc.get(); // save doc copy for further use
 	}
 	
 	private void reconcile() {

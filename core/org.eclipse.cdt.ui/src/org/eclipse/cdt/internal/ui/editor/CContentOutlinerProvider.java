@@ -14,12 +14,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CShiftData;
+import org.eclipse.cdt.internal.core.model.SourceManipulation;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -30,6 +34,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 
@@ -118,6 +123,43 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		}
 	}
 
+	/**
+	 * Called after CEditor contents is changed.
+	 * Existing elements can change their offset and length.
+	 * 
+	 * @param offset
+	 * 		position where source was changed
+	 * @param size 
+	 * 		length of ins
+	 * ertion (negaive for deletion) 
+	 */
+	public void contentShift(CShiftData sdata) {
+		try {
+			ICElement[] el = root.getChildren();
+			for (int i=0; i< el.length; i++) {
+				if (!(el[i] instanceof SourceManipulation)) continue;
+
+				SourceManipulation sm = (SourceManipulation) el[i];
+				ISourceRange src = sm.getSourceRange();
+				int endOffset = src.getStartPos() + src.getLength();
+				
+				// code BELOW this element changed - do nothing !
+				if (sdata.fOffset > endOffset) { continue;	}
+				
+				if (sdata.fOffset < src.getStartPos()) {
+					// code ABOVE this element changed - modify offset
+					sm.setIdPos(src.getIdStartPos() + sdata.fSize,src.getIdLength());
+					sm.setPos(src.getStartPos() + sdata.fSize, src.getLength());
+					sm.setLines(src.getStartLine() + sdata.fLines, src.getEndLine() + sdata.fLines);
+				} else {
+					// code INSIDE of this element changed - modify length
+					sm.setPos(src.getStartPos(), src.getLength() + sdata.fSize);
+					sm.setLines(src.getStartLine(), src.getEndLine() + sdata.fLines);
+				}
+			}
+		} catch (CModelException e) {}
+	}
+	
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
@@ -239,6 +281,11 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 		 */
 		public void elementChanged(final ElementChangedEvent e) {
+			if (e.getType() == ElementChangedEvent.POST_SHIFT && e.getDelta() instanceof CShiftData) {
+				contentShift((CShiftData)(e.getDelta()));
+				return;
+			}
+			
 			final ICElementDelta delta = findElement(root, e.getDelta());
 			if (delta != null) {
 				contentUpdated();

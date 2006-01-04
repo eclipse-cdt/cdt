@@ -797,6 +797,11 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		fire(null, eventType);
 	}
 
+	public void fireShift(int offset, int size, int lines) {
+		ICElementDelta delta = new CShiftData(offset, size, lines);
+		fire(delta, ElementChangedEvent.POST_SHIFT); 
+	}
+	
 	/**
 	 * Fire C Model deltas, flushing them after the fact. 
 	 * If the firing mode has been turned off, this has no effect. 
@@ -837,6 +842,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				case ElementChangedEvent.POST_RECONCILE :
 					fireReconcileDelta(listeners, listenerMask, listenerCount);
 					break;
+				case ElementChangedEvent.POST_SHIFT:
+					fireShiftEvent(deltaToNotify, listeners, listenerMask, listenerCount);
+					return;
 			}
 		}
 	}
@@ -880,6 +888,19 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
+	private void fireShiftEvent(ICElementDelta deltaToNotify, IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
+
+		// post change deltas
+		if (VERBOSE) {
+			System.out.println("FIRING POST_SHIFT event [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
+			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
+		}
+		if (deltaToNotify != null) {
+			this.flush();
+			notifyListeners(deltaToNotify, ElementChangedEvent.POST_SHIFT, listeners, listenerMask, listenerCount);
+		}
+	}
+	
 	public void notifyListeners(ICElementDelta deltaToNotify, int eventType,
 		IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 

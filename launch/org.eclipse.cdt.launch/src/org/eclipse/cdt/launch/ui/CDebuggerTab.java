@@ -101,7 +101,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, varBookkeeping);
 			Boolean regBookkeeping = Boolean.valueOf( fRegBookKeeping.getSelection() );
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
-			updateLaunchConfigurationDialog();
+			update();
 		}
 
 		/*
@@ -321,8 +321,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
-	protected void updateLaunchConfigurationDialog() {
-		super.updateLaunchConfigurationDialog();
+	protected void update() {
+		if (!isInitializing()) {
+			super.updateLaunchConfigurationDialog();
+		}
 	}
 
 	protected void createOptionsComposite(Composite parent) {
@@ -336,9 +338,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			fStopInMain.addSelectionListener(new SelectionAdapter() {
 
 				public void widgetSelected(SelectionEvent e) {
-					if (!isInitializing()) {
-						updateLaunchConfigurationDialog();
-					}
+					update();
 				}
 			});
 		}

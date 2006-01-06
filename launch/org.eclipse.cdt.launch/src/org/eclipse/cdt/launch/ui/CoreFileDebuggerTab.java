@@ -79,7 +79,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
-		super.initializeFrom(config);
+		setLaunchConfiguration(config);
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
 			loadDebuggerComboBox(config, id);
@@ -138,7 +138,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 					// select first exact matching debugger for platform or
 					// requested selection
 					String debuggerPlatform = debugConfigs[i].getPlatform();
-					if (defaultSelection == null && debuggerPlatform.equalsIgnoreCase(projectPlatform)) { //$NON-NLS-1$
+					if (defaultSelection == null && debuggerPlatform.equalsIgnoreCase(projectPlatform)) {
 						defaultSelection = debugConfigs[i].getID();
 					}
 				}

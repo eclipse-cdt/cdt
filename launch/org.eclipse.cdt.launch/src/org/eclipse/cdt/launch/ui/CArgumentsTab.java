@@ -117,7 +117,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	 * field. Prompt the user for a variable and enter the result
 	 * in the given field.
 	 */
-	private void handleVariablesButtonSelected(Text textField) {
+	protected void handleVariablesButtonSelected(Text textField) {
 		String variable = getVariable();
 		if (variable != null) {
 			textField.append(variable);

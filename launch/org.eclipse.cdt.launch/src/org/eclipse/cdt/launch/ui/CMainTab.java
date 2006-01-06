@@ -12,7 +12,6 @@ package org.eclipse.cdt.launch.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -24,7 +23,6 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -297,8 +295,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
-
-			CElementImageProvider imageProvider = new CElementImageProvider();
 
 			public String getText(Object element) {
 				if (element instanceof IBinary) {

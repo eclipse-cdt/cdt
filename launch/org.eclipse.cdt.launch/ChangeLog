@@ -1,3 +1,8 @@
+2006-01-06 Mikhail Khodjaiants
+	Cleanup.
+	* CArgumentsTab.java
+	* CMainTab.java
+
 2005-12-27 Mikhail Khodjaiants
 	Cleanup.
 	* LaunchUIPlugin.java

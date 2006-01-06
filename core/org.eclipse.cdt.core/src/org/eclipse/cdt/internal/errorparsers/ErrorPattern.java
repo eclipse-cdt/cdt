@@ -64,7 +64,15 @@ public class ErrorPattern {
 	public ErrorPattern(String pattern, int groupDesc, int severity) {
 		this(pattern, 0, 0, groupDesc, 0, severity);
 	}
-	
+
+	/**
+	 * Pattern for errors that should be skipped.
+	 * 
+	 * @param pattern
+	 */
+	public ErrorPattern(String pattern) {
+		this(pattern, 0, 0, 0, 0, -1);
+	}
 	public Matcher getMatcher(CharSequence input) {
 		return pattern.matcher(input);
 	}
@@ -104,12 +112,16 @@ public class ErrorPattern {
 	}
 	
 	protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
+		int severity = getSeverity(matcher);
+		if (severity == -1)
+			// Skip
+			return true;
+
 		String fileName = getFileName(matcher);
 		int lineNum = getLineNum(matcher);
 		String desc = getDesc(matcher);
 		String varName = getVarName(matcher);
-		int severity = getSeverity(matcher);
-
+		
 		IFile file = null;
 		if (fileName != null) {
 			file = eoParser.findFileName(fileName);

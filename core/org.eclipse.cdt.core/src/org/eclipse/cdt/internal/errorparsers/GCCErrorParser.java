@@ -30,19 +30,12 @@ public class GCCErrorParser extends AbstractErrorParser {
 	};
 	
 	private static final ErrorPattern[] patterns = {
-		new ErrorPattern("\\(Each undeclared identifier is reported only once", 0, 0) {
-			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
-				// Skip this one
-				return true;
-			}
-		},
-		new ErrorPattern("for each function it appears in.\\)", 0, 0) {
-			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
-				// Skip this one
-				return true;
-			}
-		},
-		new ErrorPattern("((.:)?.*):([0-9]*)(:(0-9)*)?: ([Ww]arning: )?(.*)", 1, 3, 7, 0, 0) {
+		// The following are skipped
+		new ErrorPattern("\\(Each undeclared identifier is reported only once"),
+		new ErrorPattern("for each function it appears in.\\)"),
+		new ErrorPattern(": note:"),
+		// The following are not...
+		new ErrorPattern("((.:)?.*):([0-9]*)(:(0-9)*)?: (warning: )?(.*)", 1, 3, 7, 0, 0) {
 			public String getVarName(Matcher matcher) {
 				String desc = getDesc(matcher);
 				Matcher varMatcher = null;

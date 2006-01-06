@@ -55,6 +55,8 @@ public class ErrorParserManager extends OutputStream {
 	private StringBuffer currentLine = new StringBuffer();
 
 	private StringBuffer scratchBuffer = new StringBuffer();
+	
+	private boolean hasErrors = false;
 
 	public ErrorParserManager(ACBuilder builder) {
 		this(builder.getProject(), builder);
@@ -319,6 +321,9 @@ public class ErrorParserManager extends OutputStream {
 	public void generateMarker(IResource file, int lineNumber, String desc, int severity, String varName) {
 		Problem problem = new Problem(file, lineNumber, desc, severity, varName);
 		fErrors.add(problem);
+		
+		if (severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
+			hasErrors = true;
 	}
 
 	/**
@@ -460,5 +465,9 @@ public class ErrorParserManager extends OutputStream {
 	 */
 	public void clearScratchBuffer() {
 		scratchBuffer.setLength(0);
+	}
+	
+	public boolean hasErrors() {
+		return hasErrors;
 	}
 }

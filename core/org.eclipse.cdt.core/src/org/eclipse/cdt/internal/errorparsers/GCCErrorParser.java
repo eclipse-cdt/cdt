@@ -11,16 +11,66 @@
 
 package org.eclipse.cdt.internal.errorparsers;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public class GCCErrorParser implements IErrorParser {
+public class GCCErrorParser extends AbstractErrorParser {
 	
-	public boolean processLine(String line, ErrorParserManager eoParser) {
+	private static final Pattern[] varPatterns = {
+		Pattern.compile("'(.*)' undeclared"),
+		Pattern.compile("'(.*)' defined but not used"),
+		Pattern.compile("conflicting types for '(.*)'"),
+		Pattern.compile("parse error before '(.*)'")
+	};
+	
+	private static final ErrorPattern[] patterns = {
+		new ErrorPattern("\\(Each undeclared identifier is reported only once", 0, 0) {
+			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
+				// Skip this one
+				return true;
+			}
+		},
+		new ErrorPattern("for each function it appears in.\\)", 0, 0) {
+			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
+				// Skip this one
+				return true;
+			}
+		},
+		new ErrorPattern("((.:)?.*):([0-9]*)(:(0-9)*)?: ([Ww]arning: )?(.*)", 1, 3, 7, 0, 0) {
+			public String getVarName(Matcher matcher) {
+				String desc = getDesc(matcher);
+				Matcher varMatcher = null;
+				for (int i = 0; i < varPatterns.length; ++i) {
+					varMatcher = varPatterns[i].matcher(desc);
+					if (varMatcher.find())
+						break;
+					else
+						varMatcher = null;
+				}
+
+				return varMatcher != null ? varMatcher.group(1) : null;
+			}
+			public int getSeverity(Matcher matcher) {
+				String warningGroup = matcher.group(6);
+				if (warningGroup != null)
+					return IMarkerGenerator.SEVERITY_WARNING;
+				else
+					return IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
+			}
+		}
+	};
+
+	public GCCErrorParser() {
+		super(patterns);
+	}
+	
+	public boolean processLine0(String line, ErrorParserManager eoParser) {
 		return processLine(line, eoParser, IMarkerGenerator.SEVERITY_ERROR_RESOURCE);
 	}
 

@@ -79,7 +79,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
-		super.initializeFrom(config);
+		setLaunchConfiguration(config);
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
 			loadDebuggerComboBox(config, id);

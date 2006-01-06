@@ -137,7 +137,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			if (protocol != null && protocol.length() > 0) {
 				attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, protocol);
 			}
-			updateLaunchConfigurationDialog();
+			update();
 		}
 
 		/*
@@ -240,7 +240,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
-		super.initializeFrom(config);
+		setLaunchConfiguration(config);
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
 			loadDebuggerComboBox(config, id);
@@ -357,8 +357,10 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
-	protected void updateLaunchConfigurationDialog() {
-		super.updateLaunchConfigurationDialog();
+	protected void update() {
+		if (!isInitializing()) {
+			super.updateLaunchConfigurationDialog();
+		}
 	}
 
 	protected void createOptionsComposite(Composite parent) {
@@ -372,9 +374,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			fStopInMain.addSelectionListener(new SelectionAdapter() {
 
 				public void widgetSelected(SelectionEvent e) {
-					if (!isInitializing()) {
-						updateLaunchConfigurationDialog();
-					}
+					update();
 				}
 			});
 		}

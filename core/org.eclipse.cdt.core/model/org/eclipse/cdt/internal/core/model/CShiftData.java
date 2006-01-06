@@ -13,16 +13,30 @@ import org.eclipse.core.resources.IResourceDelta;
  */
 public class CShiftData implements ICElementDelta {
 
-	public int fOffset;
-	public int fSize;
-	public int fLines;
+	private final ICElement element;
+	private final int offset;
+	private final int size;
+	private final int lines;
 	
-	public CShiftData(int offset, int size, int lines) {
-		fOffset = offset;
-		fSize  = size;
-		fLines = lines;
+	public CShiftData(ICElement element, int offset, int size, int lines) {
+		this.element = element;
+		this.offset = offset;
+		this.size  = size;
+		this.lines = lines;
 	}
 
+	public int getOffset() {
+		return offset;
+	}
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public int getLines() {
+		return lines;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElementDelta#getAddedChildren()
 	 */
@@ -48,7 +62,7 @@ public class CShiftData implements ICElementDelta {
 	 * @see org.eclipse.cdt.core.model.ICElementDelta#getElement()
 	 */
 	public ICElement getElement() {
-		return null;
+		return element;
 	}
 
 	/* (non-Javadoc)
@@ -94,6 +108,6 @@ public class CShiftData implements ICElementDelta {
 	}
 
 	public String toString() {
-		return ("CShiftData: offset=" + fOffset + ", size=" + fSize + ", lines=" + fLines);
+		return ("CShiftData: offset=" + offset + ", size=" + size + ", lines=" + lines);
 	}
 }

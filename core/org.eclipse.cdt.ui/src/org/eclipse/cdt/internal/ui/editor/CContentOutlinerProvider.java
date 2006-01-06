@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 
@@ -144,17 +143,17 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 				int endOffset = src.getStartPos() + src.getLength();
 				
 				// code BELOW this element changed - do nothing !
-				if (sdata.fOffset > endOffset) { continue;	}
+				if (sdata.getOffset() > endOffset) { continue;	}
 				
-				if (sdata.fOffset < src.getStartPos()) {
+				if (sdata.getOffset() < src.getStartPos()) {
 					// code ABOVE this element changed - modify offset
-					sm.setIdPos(src.getIdStartPos() + sdata.fSize,src.getIdLength());
-					sm.setPos(src.getStartPos() + sdata.fSize, src.getLength());
-					sm.setLines(src.getStartLine() + sdata.fLines, src.getEndLine() + sdata.fLines);
+					sm.setIdPos(src.getIdStartPos() + sdata.getSize(), src.getIdLength());
+					sm.setPos(src.getStartPos() + sdata.getSize(), src.getLength());
+					sm.setLines(src.getStartLine() + sdata.getLines(), src.getEndLine() + sdata.getLines());
 				} else {
 					// code INSIDE of this element changed - modify length
-					sm.setPos(src.getStartPos(), src.getLength() + sdata.fSize);
-					sm.setLines(src.getStartLine(), src.getEndLine() + sdata.fLines);
+					sm.setPos(src.getStartPos(), src.getLength() + sdata.getSize());
+					sm.setLines(src.getStartLine(), src.getEndLine() + sdata.getLines());
 				}
 			}
 		} catch (CModelException e) {}

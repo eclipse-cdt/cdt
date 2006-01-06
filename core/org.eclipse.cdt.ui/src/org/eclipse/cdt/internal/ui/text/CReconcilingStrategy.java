@@ -85,7 +85,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 			if (dirtyRegion.getType().charAt(2) == 'i') { // insert operation
 				s = dirtyRegion.getText();
 				if (!CWordFinder.hasCBraces(s)) {
-					CModelManager.getDefault().fireShift(dOff, dLen, CWordFinder.countLFs(s));
+					CModelManager.getDefault().fireShift(tu, dOff, dLen, CWordFinder.countLFs(s));
 					needReconcile = false;
 				}					
 			} else { // remove operation
@@ -93,7 +93,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 				if (txt != null && (txt.length() == doc.getLength() + dLen)) {
 					s = txt.substring(dOff, dOff + dLen);
 					if (!CWordFinder.hasCBraces(s)) {
-						CModelManager.getDefault().fireShift(dOff, -dLen, -CWordFinder.countLFs(s));
+						CModelManager.getDefault().fireShift(tu, dOff, -dLen, -CWordFinder.countLFs(s));
 						needReconcile = false;						
 					}
 				}

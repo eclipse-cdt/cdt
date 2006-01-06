@@ -797,8 +797,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		fire(null, eventType);
 	}
 
-	public void fireShift(int offset, int size, int lines) {
-		ICElementDelta delta = new CShiftData(offset, size, lines);
+	public void fireShift(ICElement element, int offset, int size, int lines) {
+		ICElementDelta delta = new CShiftData(element, offset, size, lines);
 		fire(delta, ElementChangedEvent.POST_SHIFT); 
 	}
 	

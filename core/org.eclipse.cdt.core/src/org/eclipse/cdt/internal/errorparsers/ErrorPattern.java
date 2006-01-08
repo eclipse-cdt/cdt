@@ -84,7 +84,7 @@ public class ErrorPattern {
 	public int getLineNum(Matcher matcher) {
 		try {
 			return groupLineNum != 0
-				? Integer.valueOf(matcher.group(groupLineNum))
+				? Integer.valueOf(matcher.group(groupLineNum)).intValue()
 				: 0;
 		} catch (NumberFormatException e) {
 			return 0;

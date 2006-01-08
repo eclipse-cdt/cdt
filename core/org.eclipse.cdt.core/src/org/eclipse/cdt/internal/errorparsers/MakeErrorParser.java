@@ -22,7 +22,12 @@ public class MakeErrorParser extends AbstractErrorParser {
 	private static final ErrorPattern[] patterns = {
 		new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) { //$NON-NLS-1
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {
-				int level = Integer.valueOf(matcher.group(1));
+				int level;
+				try {
+					level = Integer.valueOf(matcher.group(1)).intValue();
+				} catch (NumberFormatException e) {
+					level = 0;
+				}
 				String dir = matcher.group(2);
 	    		/* Sometimes make screws up the output, so
 	    		 * "leave" events can't be seen.  Double-check level

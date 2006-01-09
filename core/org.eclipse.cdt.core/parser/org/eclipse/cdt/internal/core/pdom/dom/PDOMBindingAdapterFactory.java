@@ -13,9 +13,11 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -32,16 +34,19 @@ public class PDOMBindingAdapterFactory implements IAdapterFactory {
 		
 		try {
 			IBinding binding = (IBinding)adaptableObject;
-			IScope scope = binding.getScope();
-			IPDOM ipdom = scope.getPhysicalNode().getTranslationUnit().getIndex();
-			if (ipdom == null)
-				return null;
-			PDOMDatabase pdom = (PDOMDatabase)ipdom;
+			ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
+			for (int i = 0; i < projects.length; ++i) {
+				IPDOM ipdom = PDOM.getPDOM(projects[i].getProject());
+				
+				if (ipdom == null || !(ipdom instanceof PDOMDatabase))
+					continue;
+				PDOMDatabase pdom = (PDOMDatabase)ipdom;
 			
-			for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage()) {
-				PDOMBinding pdomBinding = linkage.adaptBinding(binding);
-				if (binding != null)
-					return pdomBinding;
+				for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage()) {
+					PDOMBinding pdomBinding = linkage.adaptBinding(binding);
+					if (binding != null)
+						return pdomBinding;
+				}
 			}
 			return null;
 		} catch (DOMException e) {

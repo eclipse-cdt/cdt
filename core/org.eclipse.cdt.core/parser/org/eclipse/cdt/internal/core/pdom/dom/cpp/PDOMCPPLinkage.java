@@ -67,7 +67,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			IASTName scopeName = scope.getScopeName();
 			if (scopeName != null) {
 				IBinding scopeBinding = scopeName.resolveBinding();
-				PDOMBinding scopePDOMBinding = (PDOMBinding)scopeBinding.getAdapter(PDOMBinding.class);
+				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
 				if (scopePDOMBinding != null)
 					parent = scopePDOMBinding;
 			}
@@ -84,7 +84,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			// Can't tell what it is
 			return null;
 		
-		PDOMBinding pdomBinding = (PDOMBinding)binding.getAdapter(PDOMBinding.class);
+		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding == null) {
 			PDOMNode parent = getParent(binding);
 

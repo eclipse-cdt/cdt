@@ -11,10 +11,10 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -216,6 +216,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			else if (element instanceof ICPPClassType)
 				return CUIPlugin.getImageDescriptorRegistry().get(
 						CElementImageProvider.getClassImageDescriptor());
+			else if (element instanceof ICompositeType)
+				return CUIPlugin.getImageDescriptorRegistry().get(
+						CElementImageProvider.getStructImageDescriptor());
 			else if (element instanceof IBinding)
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_OBJ_ELEMENT);
@@ -407,33 +410,52 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	}
 
 	public void handleChange(PDOMDatabase pdom) {
-		try {
-			final ICModel model = (ICModel)viewer.getInput();
-			if (model == null)
-				return;
-			ICProject[] cprojects = model.getCProjects();
-			int n = -1;
-			for (int i = 0; i < cprojects.length; ++i) {
-				final ICProject cproject = cprojects[i];
-				IPDOM pp = PDOM.getPDOM(cproject.getProject()); 
-				if (pp != null) {
-					++n;
-					if (pp == pdom){
-						final int index = n;
-						viewer.getControl().getDisplay().asyncExec(new Runnable() {
-							public void run() {
-								viewer.replace(model, index, cproject);
-								viewer.getControl().redraw();
-								viewer.getControl().update();
-							};
-						});
-						return;
+		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				ICModel model = CoreModel.getDefault().getCModel();
+				viewer.setInput(model);
+				try {
+					ICProject[] cprojects = model.getCProjects();
+					int n = 0;
+					for (int i = 0; i < cprojects.length; ++i) {
+						PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cprojects[i].getProject()); 
+						if (pdom != null)
+							++n;
 					}
+					viewer.setChildCount(model, n);
+				} catch (CModelException e) {
+					CUIPlugin.getDefault().log(e);
 				}
 			}
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		}
+		});
+
+//		try {
+//			final ICModel model = (ICModel)viewer.getInput();
+//			if (model == null)
+//				return;
+//			ICProject[] cprojects = model.getCProjects();
+//			int n = -1;
+//			for (int i = 0; i < cprojects.length; ++i) {
+//				final ICProject cproject = cprojects[i];
+//				IPDOM pp = PDOM.getPDOM(cproject.getProject()); 
+//				if (pp != null) {
+//					++n;
+//					if (pp == pdom){
+//						final int index = n;
+//						viewer.getControl().getDisplay().asyncExec(new Runnable() {
+//							public void run() {
+//								viewer.replace(model, index, cproject);
+//								viewer.getControl().redraw();
+//								viewer.getControl().update();
+//							};
+//						});
+//						return;
+//					}
+//				}
+//			}
+//		} catch (CoreException e) {
+//			CUIPlugin.getDefault().log(e);
+//		}
 	}
 	
 }

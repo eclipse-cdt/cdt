@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QNX Software Systems and others.
+ * Copyright (c) 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,23 +9,18 @@
  * QNX - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.pdom.dom.cpp;
+package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -37,31 +32,25 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
- *
  */
-public class PDOMCPPLinkage extends PDOMLinkage {
+public class PDOMCLinkage extends PDOMLinkage {
 
-	public PDOMCPPLinkage(PDOMDatabase pdom, int record) {
+	public PDOMCLinkage(PDOMDatabase pdom, int record) {
 		super(pdom, record);
 	}
 
-	public PDOMCPPLinkage(PDOMDatabase pdom)
-			throws CoreException {
-		super(pdom, GPPLanguage.ID, "C++".toCharArray());
+	public PDOMCLinkage(PDOMDatabase pdom) throws CoreException {
+		super(pdom, GCCLanguage.ID, "C".toCharArray());
 	}
 
-	protected int getRecordSize() {
-		return RECORD_SIZE;
-	}
-	
-	// Binding types
-	public static final int CPPVARIABLE = 1;
-	public static final int CPPFUNCTION = 2;
-	public static final int CPPCLASSTYPE = 3;
-	public static final int CPPFIELD = 4;
+	public static final int CVARIABLE = 1;
+	public static final int CFUNCTION = 2;
+	public static final int CSTRUCTURE = 3;
+	public static final int CFIELD = 4;
 
 	public PDOMNode getParent(IBinding binding) throws CoreException {
 		PDOMNode parent = this;
+		
 		IScope scope = binding.getScope();
 		if (scope != null) {
 			IASTName scopeName = scope.getScopeName();
@@ -72,6 +61,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 					parent = scopePDOMBinding;
 			}
 		}
+		
 		return parent;
 	}
 	
@@ -81,31 +71,28 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		
 		IBinding binding = name.resolveBinding();
 		if (binding == null || binding instanceof IProblemBinding)
-			// Can't tell what it is
 			return null;
-		
+
 		PDOMBinding pdomBinding = (PDOMBinding)binding.getAdapter(PDOMBinding.class);
 		if (pdomBinding == null) {
 			PDOMNode parent = getParent(binding);
-
-			if (binding instanceof CPPField && parent instanceof PDOMCPPClassType)
-				pdomBinding = new PDOMCPPField(pdom, (PDOMCPPClassType)parent, name);
-			else if (binding instanceof CPPVariable) {
-				if (!(binding.getScope() instanceof CPPBlockScope))
-					pdomBinding = new PDOMCPPVariable(pdom, parent, name);
-			} else if (binding instanceof CPPMethod) {
-				; // TODO
-			} else if (binding instanceof CPPFunction) {
-				pdomBinding = new PDOMCPPFunction(pdom, parent, name);
-			} else if (binding instanceof CPPClassType) {
-				pdomBinding = new PDOMCPPClassType(pdom, parent, name);
-			}
+			
+			if (binding instanceof IParameter)
+				; // skip parameters
+			else if (binding instanceof IField) { // must be before IVariable
+				if (parent instanceof PDOMMemberOwner)
+					pdomBinding = new PDOMCField(pdom, (PDOMMemberOwner)parent, name);
+			} else if (binding instanceof IVariable)
+				pdomBinding = new PDOMCVariable(pdom, parent, name);
+			else if (binding instanceof IFunction)
+				pdomBinding = new PDOMCFunction(pdom, parent, name);
+			else if (binding instanceof ICompositeType)
+				pdomBinding = new PDOMCStructure(pdom, parent, name);
 		}
 		
-		// Add in the name
 		if (pdomBinding != null)
 			new PDOMName(pdom, name, pdomBinding);
-			
+		
 		return pdomBinding;
 	}
 
@@ -123,20 +110,20 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			if (!tBinding.hasName(name))
 				return false;
 			switch (tBinding.getBindingType()) {
-			case CPPVARIABLE:
-				if (binding instanceof ICPPVariable)
+			case CVARIABLE:
+				if (binding instanceof IVariable)
 					pdomBinding = tBinding;
 				break;
-			case CPPFUNCTION:
-				if (binding instanceof ICPPFunction)
+			case CFUNCTION:
+				if (binding instanceof IFunction)
 					pdomBinding = tBinding;
 				break;
-			case CPPCLASSTYPE:
-				if (binding instanceof ICPPClassType)
+			case CSTRUCTURE:
+				if (binding instanceof ICompositeType)
 					pdomBinding = tBinding;
 				break;
-			case CPPFIELD:
-				if (binding instanceof ICPPField)
+			case CFIELD:
+				if (binding instanceof IField)
 					pdomBinding = tBinding;
 				break;
 			}
@@ -158,22 +145,26 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		}
 		return null;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage#getBinding(int)
+	 */
 	public PDOMBinding getBinding(int record) throws CoreException {
 		if (record == 0)
 			return null;
 		
 		switch (PDOMBinding.getBindingType(pdom, record)) {
-		case CPPVARIABLE:
-			return new PDOMCPPVariable(pdom, record);
-		case CPPFUNCTION:
-			return new PDOMCPPFunction(pdom, record);
-		case CPPCLASSTYPE:
-			return new PDOMCPPClassType(pdom, record);
-		case CPPFIELD:
-			return new PDOMCPPField(pdom, record);
+		case CVARIABLE:
+			return new PDOMCVariable(pdom, record);
+		case CFUNCTION:
+			return new PDOMCFunction(pdom, record);
+		case CSTRUCTURE:
+			return new PDOMCStructure(pdom, record);
+		case CFIELD:
+			return new PDOMCField(pdom, record);
 		}
-		
+
 		return null;
 	}
+
 }

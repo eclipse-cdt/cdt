@@ -14,9 +14,7 @@ package org.eclipse.cdt.core.dom.ast.gnu.c;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -36,11 +34,12 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -50,10 +49,18 @@ import org.eclipse.core.runtime.PlatformObject;
 public class GCCLanguage extends PlatformObject implements ILanguage {
 
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
+	// Must match the id in the extension
+	public static final String ID = CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$ 
 
 	public String getId() {
-		// Must match the id in the extension
-		return CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$
+		return ID; 
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IPDOMLinkageFactory.class)
+			return new PDOMCLinkageFactory();
+		else
+			return super.getAdapter(adapter);
 	}
 	
 	public IASTTranslationUnit getTranslationUnit(ITranslationUnit tu, int style) {
@@ -71,8 +78,13 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 		
 		// TODO - use different factories if we are working copy, or style
 		// is skip headers.
-		ICodeReaderFactory fileCreator = SavedCodeReaderFactory.getInstance();
-		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(tu.getElementName());
+		ICodeReaderFactory fileCreator;
+		if ((style & ILanguage.AST_SKIP_INDEXED_HEADERS) != 0)
+			fileCreator = new PDOMCodeReaderFactory((PDOMDatabase)tu.getCProject().getIndex());
+		else
+			fileCreator = SavedCodeReaderFactory.getInstance();
+
+		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(tu);
         if( reader == null )
             return null;
 
@@ -95,18 +107,6 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 	}
 	
 	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) {
-		return null;
-	}
-	
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, int languageId, IASTName name) throws CoreException {
-		IBinding binding = name.resolveBinding();
-		if (binding == null)
-			return null;
-		
-		return null;
-	}
-	
-	public PDOMBinding getPDOMBinding(PDOMDatabase pdom, int record) throws CoreException {
 		return null;
 	}
 	

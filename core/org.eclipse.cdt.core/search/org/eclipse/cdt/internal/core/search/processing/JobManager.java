@@ -139,7 +139,7 @@ public abstract class JobManager implements Runnable {
 				for (int i = jobStart; i <= jobEnd; i++) {
 					currentJob = awaitingJobs[i];
 					awaitingJobs[i] = null;
-					if (!(jobFamily == null
+					if (!(jobFamily == null || currentJob == null
 						|| currentJob.belongsTo(jobFamily))) { // copy down, compacting
 						awaitingJobs[++loc] = currentJob;
 					} else {

@@ -57,7 +57,8 @@ public class IndexingJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		progressMonitor = monitor;
 		setThread( indexThread );
-		progressMonitor.beginTask( "", 100 ); //$NON-NLS-1$
+		if (progressMonitor != null)
+			progressMonitor.beginTask( "", 100 ); //$NON-NLS-1$
 		return ASYNC_FINISH;
 	}
 	

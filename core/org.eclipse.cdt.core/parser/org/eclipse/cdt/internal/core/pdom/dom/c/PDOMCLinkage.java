@@ -11,7 +11,10 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -49,20 +52,26 @@ public class PDOMCLinkage extends PDOMLinkage {
 	public static final int CFIELD = 4;
 
 	public PDOMNode getParent(IBinding binding) throws CoreException {
-		PDOMNode parent = this;
-		
 		IScope scope = binding.getScope();
-		if (scope != null) {
+		if (scope == null)
+			return null;
+		
+		IASTNode scopeNode = scope.getPhysicalNode();
+		if (scopeNode instanceof IASTCompoundStatement)
+			return null;
+		else if (scopeNode instanceof IASTTranslationUnit)
+			return this;
+		else {
 			IASTName scopeName = scope.getScopeName();
 			if (scopeName != null) {
 				IBinding scopeBinding = scopeName.resolveBinding();
 				PDOMBinding scopePDOMBinding = adaptBinding(scopeBinding);
 				if (scopePDOMBinding != null)
-					parent = scopePDOMBinding;
+					return scopePDOMBinding;
 			}
 		}
-		
-		return parent;
+			
+		return null;
 	}
 	
 	public PDOMBinding addName(IASTName name) throws CoreException {
@@ -76,9 +85,11 @@ public class PDOMCLinkage extends PDOMLinkage {
 		PDOMBinding pdomBinding = adaptBinding(binding);
 		if (pdomBinding == null) {
 			PDOMNode parent = getParent(binding);
+			if (parent == null)
+				return null;
 			
 			if (binding instanceof IParameter)
-				; // skip parameters
+				return null; // skip parameters
 			else if (binding instanceof IField) { // must be before IVariable
 				if (parent instanceof PDOMMemberOwner)
 					pdomBinding = new PDOMCField(pdom, (PDOMMemberOwner)parent, name);

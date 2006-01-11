@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -50,6 +53,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -77,10 +81,10 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	private IndexAction rebuildAction;
 	private IndexAction openDefinitionAction;
 	
-	private static class BTreeCounter implements IBTreeVisitor {
+	private static class Counter implements IBTreeVisitor {
 		int count;
 		PDOMDatabase pdom;
-		public BTreeCounter(PDOMDatabase pdom) {
+		public Counter(PDOMDatabase pdom) {
 			this.pdom = pdom;
 		}
 		public int compare(int record) throws CoreException {
@@ -93,14 +97,13 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 		}
 	}
 
-	private static class BTreeIndex implements IBTreeVisitor {
-		final int index;
-		int count;
-		int result;
-		PDOMDatabase pdom;
-		public BTreeIndex(PDOMDatabase pdom, int index) {
+	private static class Children implements IBTreeVisitor {
+		final PDOMDatabase pdom;
+		final PDOMBinding[] bindings;
+		int index;
+		public Children(PDOMDatabase pdom, PDOMBinding[] bindings) {
 			this.pdom = pdom;
-			this.index = index;
+			this.bindings = bindings;
 		}
 		public int compare(int record) throws CoreException {
 			return 1;
@@ -109,15 +112,12 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			if (record == 0 || PDOMBinding.isOrphaned(pdom, record))
 				return true;
 			
-			if (count++ == index) {
-				result = record;
-				return false;
-			} else
-				return true;
+			bindings[index++] = pdom.getBinding(record);
+			return true;
 		};
 	}
 
-	private class IndexContentProvider implements ILazyTreeContentProvider {
+	private class IndexLazyContentProvider implements ILazyTreeContentProvider {
 
 		public Object getParent(Object element) {
 			return null;
@@ -154,17 +154,12 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 						if (linkage == null)
 							return;
 					}
-					viewer.replace(parent, index, linkage);
-					
-					BTreeCounter counter = new BTreeCounter(pdom);
-					linkage.getIndex().visit(counter);
-					viewer.setChildCount(linkage, counter.count);
-				} else if (parent instanceof PDOMLinkage) {
-					PDOMLinkage linkage = (PDOMLinkage)parent;
-					PDOMDatabase pdom = linkage.getPDOM();
-					BTreeIndex visitor = new BTreeIndex(pdom, index);
-					linkage.getIndex().visit(visitor);
-					PDOMBinding binding = pdom.getBinding(visitor.result);
+					LinkageCache linkageCache = new LinkageCache(pdom, linkage);
+					viewer.replace(parent, index, linkageCache);
+					viewer.setChildCount(linkageCache, linkageCache.getCount());
+				} else if (parent instanceof LinkageCache) {
+					LinkageCache linkageCache = (LinkageCache)parent;
+					PDOMBinding binding = linkageCache.getItem(index);
 					if (binding != null) {
 						viewer.replace(parent, index, binding);
 						if (binding instanceof PDOMMemberOwner) {
@@ -192,6 +187,104 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 
 	}
 	
+	private class IndexContentProvider implements ITreeContentProvider {
+
+		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof ICProject) {
+				try {
+					PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(((ICProject)parentElement).getProject());
+					int n = 0;
+					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+						++n;
+					PDOMLinkage[] linkages = new PDOMLinkage[n];
+					int i = 0;
+					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+						linkages[i++] = linkage;
+					return linkages;
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+			} else if (parentElement instanceof PDOMLinkage) {
+				try {
+					PDOMLinkage linkage = (PDOMLinkage)parentElement;
+					PDOMDatabase pdom = linkage.getPDOM();
+					Counter counter = new Counter(pdom);
+					linkage.getIndex().visit(counter);
+					PDOMBinding[] bindings = new PDOMBinding[counter.count];
+					Children children = new Children(pdom, bindings);
+					linkage.getIndex().visit(children);
+					return bindings;
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				} 
+			} else if (parentElement instanceof PDOMMemberOwner) {
+				try {
+					PDOMMemberOwner owner = (PDOMMemberOwner)parentElement;
+					int n = 0;
+					for (PDOMMember member = owner.getFirstMember(); member != null; member = member.getNextMember())
+						++n;
+					PDOMMember[] members = new PDOMMember[n];
+					int i = 0;
+					for (PDOMMember member = owner.getFirstMember(); member != null; member = member.getNextMember())
+						members[i++] = member;
+					return members;
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+			}
+			return new Object[0];
+		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			if (element instanceof ICProject) {
+				IPDOM ipdom = PDOM.getPDOM(((ICProject)element).getProject());
+				if (ipdom == null || !(ipdom instanceof PDOMDatabase))
+					return false;
+				
+				try {
+					PDOMDatabase pdom = (PDOMDatabase)ipdom;
+					return pdom.getFirstLinkage() != null;
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+			} else if (element instanceof PDOMLinkage) {
+				return true;
+			} else if (element instanceof PDOMMemberOwner) {
+				try {
+					PDOMMemberOwner owner = (PDOMMemberOwner)element;
+					return owner.getFirstMember() != null;
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				}
+			}
+			
+			return false;
+		}
+
+		public Object[] getElements(Object inputElement) {
+			try {
+				if (inputElement instanceof ICModel) {
+			
+					ICModel model = (ICModel)inputElement;
+					return model.getCProjects();
+				}
+			} catch (CModelException e) { }
+			
+			return new Object[0];
+		}
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+		
+	}
+	
 	private class IndexLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			if (element == null) {
@@ -199,6 +292,12 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			} else if (element instanceof PDOMNode) {
 				try {
 					return ((PDOMNode)element).getName();
+				} catch (CoreException e) {
+					return e.getMessage();
+				}
+			} else if (element instanceof LinkageCache) {
+				try {
+					return ((LinkageCache)element).getName();
 				} catch (CoreException e) {
 					return e.getMessage();
 				}
@@ -233,7 +332,8 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	}
 	
 	public void createPartControl(Composite parent) {
-		viewer = new TreeViewer(parent, SWT.VIRTUAL | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+//		viewer = new TreeViewer(parent, SWT.VIRTUAL | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 //		drillDownAdapter = new DrillDownAdapter(viewer);
 		viewer.setContentProvider(new IndexContentProvider());
 		viewer.setLabelProvider(new IndexLabelProvider());
@@ -280,6 +380,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	private abstract static class IndexAction extends Action {
 		public abstract boolean valid();
 	}
+	
 	private void makeActions() {
 		rebuildAction = new IndexAction() {
 			public void run() {
@@ -412,50 +513,23 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	public void handleChange(PDOMDatabase pdom) {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				ICModel model = CoreModel.getDefault().getCModel();
-				viewer.setInput(model);
-				try {
-					ICProject[] cprojects = model.getCProjects();
-					int n = 0;
-					for (int i = 0; i < cprojects.length; ++i) {
-						PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cprojects[i].getProject()); 
-						if (pdom != null)
-							++n;
-					}
-					viewer.setChildCount(model, n);
-				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
-				}
+				viewer.refresh();
+//				ICModel model = CoreModel.getDefault().getCModel();
+//				viewer.setInput(model);
+//				try {
+//					ICProject[] cprojects = model.getCProjects();
+//					int n = 0;
+//					for (int i = 0; i < cprojects.length; ++i) {
+//						PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cprojects[i].getProject()); 
+//						if (pdom != null)
+//							++n;
+//					}
+//					viewer.setChildCount(model, n);
+//				} catch (CModelException e) {
+//					CUIPlugin.getDefault().log(e);
+//				}
 			}
 		});
-
-//		try {
-//			final ICModel model = (ICModel)viewer.getInput();
-//			if (model == null)
-//				return;
-//			ICProject[] cprojects = model.getCProjects();
-//			int n = -1;
-//			for (int i = 0; i < cprojects.length; ++i) {
-//				final ICProject cproject = cprojects[i];
-//				IPDOM pp = PDOM.getPDOM(cproject.getProject()); 
-//				if (pp != null) {
-//					++n;
-//					if (pp == pdom){
-//						final int index = n;
-//						viewer.getControl().getDisplay().asyncExec(new Runnable() {
-//							public void run() {
-//								viewer.replace(model, index, cproject);
-//								viewer.getControl().redraw();
-//								viewer.getControl().update();
-//							};
-//						});
-//						return;
-//					}
-//				}
-//			}
-//		} catch (CoreException e) {
-//			CUIPlugin.getDefault().log(e);
-//		}
 	}
 	
 }

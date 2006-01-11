@@ -192,9 +192,10 @@ public class PDOMDatabase implements IPDOM {
 		String id = language.getId();
 		int linkrec = db.getInt(LINKAGES);
 		while (linkrec != 0) {
-			if (id.equals(PDOMLinkage.getId(this, linkrec))) {
+			if (id.equals(PDOMLinkage.getId(this, linkrec)))
 				return factory.getLinkage(this, linkrec);
-			}
+			else
+				linkrec = PDOMLinkage.getNextLinkageRecord(this, linkrec);
 		}
 		
 		return factory.createLinkage(this);

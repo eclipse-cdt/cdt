@@ -57,6 +57,10 @@ public abstract class PDOMLinkage extends PDOMNode {
 		return db.getString(namerec);
 	}
 
+	public static int getNextLinkageRecord(PDOMDatabase pdom, int record) throws CoreException {
+		return pdom.getDB().getInt(record + NEXT_OFFSET);
+	}
+	
 	public PDOMLinkage getNextLinkage() throws CoreException {
 		return pdom.getLinkage(pdom.getDB().getInt(record + NEXT_OFFSET));
 	}

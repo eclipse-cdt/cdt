@@ -151,6 +151,9 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
+		if (binding == null)
+			return null;
+		
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {
 			FindBinding visitor = new FindBinding(pdom, binding);

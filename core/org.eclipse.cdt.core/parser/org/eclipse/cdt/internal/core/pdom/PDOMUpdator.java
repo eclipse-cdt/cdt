@@ -70,37 +70,56 @@ public class PDOMUpdator extends Job {
 		
 		try {
 			long start = System.currentTimeMillis();
-			
-			if (delta != null)
+
+			String taskName = null;
+			if (delta != null) {
 				processDelta(delta);
-			if (project != null)
+				taskName = "Update PDOM";
+			}
+			if (project != null) {
 				processNewProject(project);
+				taskName = "Rebuild PDOM";
+			}
+			
+			if (taskName == null)
+				return Status.OK_STATUS;
+			
+			monitor.beginTask(taskName, count);
 			
 			if (addedTUs != null)
 				for (Iterator i = addedTUs.iterator(); i.hasNext();) {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
-					monitor.subTask("Files remaining: " + (count--));
 					ITranslationUnit tu = (ITranslationUnit)i.next();
+					monitor.subTask(String.valueOf(count--)
+							+" files remaining - "
+							+ tu.getElementName());
 					processAddedTU(tu);
+					monitor.worked(1);
 				}
 			
 			if (changedTUs != null)
 				for (Iterator i = changedTUs.iterator(); i.hasNext();) {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
-					monitor.subTask("Files remaining: " + (count--));
 					ITranslationUnit tu = (ITranslationUnit)i.next();
+					monitor.subTask(String.valueOf(count--)
+							+" files remaining - "
+							+ tu.getElementName());
 					processChangedTU(tu);
+					monitor.worked(1);
 				}
 			
 			if (removedTUs != null)
 				for (Iterator i = removedTUs.iterator(); i.hasNext();) {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
-					monitor.subTask("Files remaining: " + (count--));
 					ITranslationUnit tu = (ITranslationUnit)i.next();
+					monitor.subTask(String.valueOf(count--)
+							+" files remaining - "
+							+ tu.getElementName());
 					processRemovedTU(tu);
+					monitor.worked(1);
 				}
 
 			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/pdomtimings"); //$NON-NLS-1$

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
@@ -59,6 +60,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPPFUNCTION = 2;
 	public static final int CPPCLASSTYPE = 3;
 	public static final int CPPFIELD = 4;
+	public static final int CPPMETHOD = 5;
 
 	public PDOMNode getParent(IBinding binding) throws CoreException {
 		PDOMNode parent = this;
@@ -93,8 +95,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			else if (binding instanceof CPPVariable) {
 				if (!(binding.getScope() instanceof CPPBlockScope))
 					pdomBinding = new PDOMCPPVariable(pdom, parent, name);
-			} else if (binding instanceof CPPMethod) {
-				; // TODO
+			} else if (binding instanceof CPPMethod && parent instanceof PDOMCPPClassType) {
+				pdomBinding = new PDOMCPPMethod(pdom, (PDOMCPPClassType)parent, name);
 			} else if (binding instanceof CPPFunction) {
 				pdomBinding = new PDOMCPPFunction(pdom, parent, name);
 			} else if (binding instanceof CPPClassType) {
@@ -139,6 +141,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				if (binding instanceof ICPPField)
 					pdomBinding = tBinding;
 				break;
+			case CPPMETHOD:
+				if (binding instanceof ICPPMethod)
+					pdomBinding = tBinding;
+				break;
 			}
 			return pdomBinding == null;
 		}
@@ -172,6 +178,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPClassType(pdom, record);
 		case CPPFIELD:
 			return new PDOMCPPField(pdom, record);
+		case CPPMETHOD:
+			return new PDOMCPPMethod(pdom, record);
 		}
 		
 		return null;

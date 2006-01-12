@@ -105,6 +105,8 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 		"MBSVersion",	//$NON-NLS-1$
 		"HostOsName",	//$NON-NLS-1$
 		"HostArchName",	//$NON-NLS-1$
+		"OsType",	//$NON-NLS-1$
+		"ArchType",	//$NON-NLS-1$
 	};
 	
 	private class OptionData extends OptionContextData {
@@ -637,6 +639,15 @@ public class MbsMacroSupplier implements IBuildMacroSupplier {
 			String arch = System.getProperty("os.arch"); //$NON-NLS-1$
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,arch);
 		}
+		else if("OsType".equals(macroName)){	//$NON-NLS-1$
+			String os = Platform.getOS();
+			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,os);
+		}
+		else if("ArchType".equals(macroName)){	//$NON-NLS-1$
+			String arch = Platform.getOSArch();
+			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,arch);
+		}
+
 		return macro;
 	}
 

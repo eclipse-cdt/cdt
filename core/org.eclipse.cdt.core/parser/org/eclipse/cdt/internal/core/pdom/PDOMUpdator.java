@@ -81,7 +81,7 @@ public class PDOMUpdator extends Job {
 				taskName = "Rebuild PDOM";
 			}
 			
-			if (taskName == null)
+			if (taskName == null || count == 0)
 				return Status.OK_STATUS;
 			
 			monitor.beginTask(taskName, count);

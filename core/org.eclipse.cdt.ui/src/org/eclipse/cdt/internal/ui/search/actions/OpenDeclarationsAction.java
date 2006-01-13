@@ -103,7 +103,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 						
 						if (project instanceof ICProject) {
 							IProject p = ((ICProject)project).getProject();
-							IPDOM pdom = PDOM.getPDOM(p);
+							IPDOM pdom = null; //PDOM.getPDOM(p);
 							if (pdom != null)
 								tu = CDOM.getInstance().getASTService().getTranslationUnit(
 										input.getStorage(),
@@ -125,7 +125,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 					IWorkingCopy workingCopy = (IWorkingCopy)fEditor.getInputCElement();
 					IFile resourceFile = (IFile)workingCopy.getResource();
 					project = new CProject(null, resourceFile.getProject());
-					IPDOM pdom = PDOM.getPDOM(resourceFile.getProject());
+					IPDOM pdom = null; //PDOM.getPDOM(resourceFile.getProject());
 					try {
 						if (pdom != null)
 							tu = CDOM.getInstance().getASTService().getTranslationUnit(

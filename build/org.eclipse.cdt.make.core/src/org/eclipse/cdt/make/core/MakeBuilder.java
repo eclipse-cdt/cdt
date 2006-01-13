@@ -160,13 +160,11 @@ public class MakeBuilder extends ACBuilder {
 				// Print the command for visual interaction.
 				launcher.showCommand(true);
 
-				// Set the environmennt, some scripts may need the CWD var to be set.
+				// Set the environment
 				HashMap envMap = new HashMap();
 				if (info.appendEnvironment()) {
 					envMap.putAll(launcher.getEnvironment());
 				}
-				envMap.put("CWD", workingDirectory.toOSString()); //$NON-NLS-1$
-				envMap.put("PWD", workingDirectory.toOSString()); //$NON-NLS-1$
 				// Add variables from build info
 				envMap.putAll(info.getExpandedEnvironment());
 				Iterator iter = envMap.entrySet().iterator();

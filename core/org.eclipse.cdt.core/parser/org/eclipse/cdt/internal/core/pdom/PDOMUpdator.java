@@ -47,7 +47,6 @@ public class PDOMUpdator extends Job {
 	private List addedTUs;
 	private List changedTUs;
 	private List removedTUs;
-	private int count;
 	
 	public PDOMUpdator(ICElementDelta delta, PDOMUpdator prevJob) {
 		super("PDOM Updator");
@@ -80,6 +79,11 @@ public class PDOMUpdator extends Job {
 				processNewProject(project);
 				taskName = "Rebuild PDOM";
 			}
+
+			int count
+				= (addedTUs != null ? addedTUs.size() : 0)
+				+ (changedTUs != null ? changedTUs.size() : 0)
+				+ (removedTUs != null ? removedTUs.size() : 0);
 			
 			if (taskName == null || count == 0)
 				return Status.OK_STATUS;
@@ -159,19 +163,16 @@ public class PDOMUpdator extends Job {
 				if (addedTUs == null)
 					addedTUs = new LinkedList();
 				addedTUs.add(element);
-				++count;
 				break;
 			case ICElementDelta.CHANGED:
 				if (changedTUs == null)
 					changedTUs = new LinkedList();
 				changedTUs.add(element);
-				++count;
 				break;
 			case ICElementDelta.REMOVED:
 				if (removedTUs == null)
 					removedTUs = new LinkedList();
 				removedTUs.add(element);
-				++count;
 				break;
 			}
 		}
@@ -193,7 +194,6 @@ public class PDOMUpdator extends Job {
 							if (addedTUs == null)
 								addedTUs = new LinkedList();
 							addedTUs.add(CoreModel.getDefault().create((IFile)proxy.requestResource()));
-							++count;
 						}
 						// TODO handle header files
 						return false;

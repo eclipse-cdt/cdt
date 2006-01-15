@@ -163,7 +163,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 				element = ((ICSourceLocator)locator).findSourceElement( fileName );
 			}
 			fSourceElement = element;
-			File file= null;
+			File file = null;
 			if ( element instanceof IFile ) {
 				file = ((IFile)element).getLocation().toFile();
 			}
@@ -180,16 +180,21 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 		}
 		for ( int i = 0; i < result.length; ++i ) {
 			String text = null;
+			boolean failed = false;
 			int lineNumber = mi[i].getLineNumber();
 			if ( reader != null ) {
 				while( reader.getLineNumber() + 1 < lineNumber ) {
 					try {
-						reader.readLine();
+						if ( reader.readLine() == null ) {
+							// break if the end of file is reached (see bug #123745)
+							failed = true;
+							break;
+						}
 					}
 					catch( IOException e ) {
 					}
 				}
-				if ( reader.getLineNumber() + 1 == lineNumber ) {
+				if ( !failed && reader.getLineNumber() + 1 == lineNumber ) {
 					try {
 						text = reader.readLine() + '\n';
 					}

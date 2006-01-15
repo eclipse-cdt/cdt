@@ -1,3 +1,7 @@
+2006-01-15 Mikhail Khodjaiants
+	Bug 123745: Disassembly view can get into endless loop.
+	* DisassemblyBlock.java
+
 2006-01-04 Mikhail Khodjaiants
 	Bug 118900: Display libraries loaded in post-mortem debug. 
 	* CDebugTarget.java

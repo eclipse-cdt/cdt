@@ -1021,8 +1021,9 @@
             contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding
-            viewId="org.eclipse.cdt.debug.ui.SignalsView"
-            contextId="org.eclipse.cdt.debug.ui.debugging">
+            autoOpen="false"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            viewId="org.eclipse.cdt.debug.ui.SignalsView">
       </contextViewBinding>
       <contextViewBinding
             viewId="org.eclipse.debug.ui.RegisterView"

@@ -1304,7 +1304,6 @@
           macroOutputFileRelPathValue="$@"
           macroOutputDirRelPathValue="$(dir $@)">
    	  </builder>               
-
         
       <projectType      
             isAbstract="false"     
@@ -1318,7 +1317,7 @@
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
                <toolChain
                      archList="all"
-                     osList="solaris,linux,hpux,aix,qnx"
+                     osList="linux,hpux,aix,qnx"
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.exe.debug;cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
@@ -1327,7 +1326,7 @@
 		              id="cdt.managedbuild.target.gnu.platform.exe.debug"
 		              name="%PlatformName.Dbg"
 		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris,linux,hpux,aix,qnx"
+		              osList="linux,hpux,aix,qnx"
 		              archList="all">
 	              </targetPlatform>
 				  <builder
@@ -1387,7 +1386,7 @@
 			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
                <toolChain
                      archList="all"
-                     osList="solaris,linux,hpux,aix,qnx"
+                     osList="linux,hpux,aix,qnx"
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.exe.release;cdt.managedbuild.tool.gnu.cpp.linker.exe.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
@@ -1396,7 +1395,7 @@
 		              id="cdt.managedbuild.target.gnu.platform.exe.release"
 		              name="%PlatformName.Rel"		             
 		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="solaris,linux,hpux,aix,qnx"
+		              osList="linux,hpux,aix,qnx"
 		              archList="all">		              
 		          </targetPlatform>
 				  <builder
@@ -1464,7 +1463,7 @@
                id="cdt.managedbuild.config.gnu.so.debug">
                <toolChain
                      archList="all"
-                     osList="solaris,linux,hpux,aix,qnx"
+                     osList="linux,hpux,aix,qnx"
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.so.debug;cdt.managedbuild.tool.gnu.cpp.linker.so.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
@@ -1473,7 +1472,7 @@
 		              id="cdt.managedbuild.target.gnu.platform.so.debug"
 		              name="%PlatformName.Dbg"
 		              binaryParser="org.eclipse.cdt.core.ELF"		            
-		              osList="solaris,linux,hpux,aix,qnx"
+		              osList="linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
 				  <builder
@@ -1558,7 +1557,7 @@
                id="cdt.managedbuild.config.gnu.so.release">
                <toolChain
                      archList="all"
-                     osList="solaris,linux,hpux,aix,qnx"
+                     osList="linux,hpux,aix,qnx"
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.gnu.c.linker.so.release;cdt.managedbuild.tool.gnu.cpp.linker.so.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
@@ -1567,7 +1566,7 @@
 		              id="cdt.managedbuild.target.gnu.platform.so.release"
 		              name="%PlatformName.Rel"
 		              binaryParser="org.eclipse.cdt.core.ELF"		            
-		              osList="solaris,linux,hpux,aix,qnx"
+		              osList="linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
 				  <builder
@@ -1659,7 +1658,7 @@
 			   id="cdt.managedbuild.config.gnu.lib.debug">
                <toolChain
                      archList="all"
-                     osList="solaris,linux,hpux,aix,qnx"
+                     osList="linux,hpux,aix,qnx"
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.gnu.archiver.lib.debug"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
@@ -1668,7 +1667,7 @@
 					  id="cdt.managedbuild.target.gnu.platform.lib.debug"
 				 	  name="%PlatformName.Dbg"
 					  binaryParser="org.eclipse.cdt.core.ELF"		            
-					  osList="solaris,linux,hpux,aix,qnx"
+					  osList="linux,hpux,aix,qnx"
 					  archList="all">
 				  </targetPlatform>
 			  	  <builder
@@ -1725,7 +1724,7 @@
                id="cdt.managedbuild.config.gnu.lib.release">
                <toolChain
                      archList="all"
-                     osList="solaris,linux,hpux,aix,qnx"
+                     osList="linux,hpux,aix,qnx"
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.gnu.archiver.lib.release"
                      scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile"
@@ -1734,7 +1733,7 @@
 		              id="cdt.managedbuild.target.gnu.platform.lib.release"
 		              name="%PlatformName.Rel"
 		              binaryParser="org.eclipse.cdt.core.ELF"		            
-		              osList="solaris,linux,hpux,aix,qnx"
+		              osList="linux,hpux,aix,qnx"
 		              archList="all">
 		          </targetPlatform>
 				  <builder
@@ -2624,7 +2623,7 @@
 					  id="cdt.managedbuild.tool.gnu.assembler.macosx.so.release"
 					  superClass="cdt.managedbuild.tool.gnu.assembler">
 				  </tool>   
-              </toolChain>                  
+              </toolChain>                 
          </configuration>
       </projectType>
       
@@ -2766,6 +2765,205 @@
                </toolChain>                                                                   
          </configuration>      
       </projectType>      
+        
+      <projectType      
+            isAbstract="false"     
+            isTest="false"
+            name="%TargetName.solaris.exe"
+            id="cdt.managedbuild.target.gnu.solaris.exe">
+         <configuration
+               name="%ConfigName.Dbg"
+               id="cdt.managedbuild.config.gnu.solaris.exe.debug"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+               <toolChain
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.exe.debug"
+                     superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.platform.exe.debug"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+				  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                  </tool>
+			  </toolChain>
+         </configuration>
+         <configuration
+               name="%ConfigName.Rel"
+               id="cdt.managedbuild.config.gnu.solaris.exe.release"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+               <toolChain
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.exe.release"
+                     superClass="cdt.managedbuild.toolchain.gnu.exe.release">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.platform.exe.release"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release"                     
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                  </tool>
+               </toolChain>
+         </configuration>
+      </projectType>     
+      
+      <projectType      
+            isAbstract="false"     
+            isTest="false"
+            name="%TargetName.solaris.so"
+            id="cdt.managedbuild.target.gnu.solaris.so">
+         <configuration
+               name="%ConfigName.Dbg"
+               cleanCommand="rm -rf"
+               artifactExtension="so"               
+               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                          
+               id="cdt.managedbuild.config.gnu.solaris.so.debug">
+               <toolChain
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.so.debug"
+                     superClass="cdt.managedbuild.toolchain.gnu.so.debug">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.platform.so.debug"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+				  <tool
+				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.debug"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+				  <tool
+				      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.so.debug"
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+			   </toolChain>
+         </configuration>
+         <configuration
+               name="%ConfigName.Rel"
+               cleanCommand="rm -rf"
+               artifactExtension="so"
+               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+               id="cdt.managedbuild.config.gnu.solaris.so.release">
+               <toolChain
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.so.release"
+                     superClass="cdt.managedbuild.toolchain.gnu.so.release">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.platform.so.release"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+				  <tool				     
+				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.release"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+				  <tool
+				      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.so.release"
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>				
+			   </toolChain>  
+         </configuration>         
+      </projectType>
+          
+      <projectType 
+            isTest="false"
+            name="%TargetName.solaris.lib"
+            isAbstract="false"
+            id="cdt.managedbuild.target.gnu.solaris.lib">                        
+         <configuration
+			   name="%ConfigName.Dbg"
+			   artifactExtension="a"
+			   cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+			   id="cdt.managedbuild.config.gnu.solaris.lib.debug">
+               <toolChain
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.lib.debug"
+                     superClass="cdt.managedbuild.toolchain.gnu.lib.debug">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.platform.lib.debug"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.debug"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.lib.debug"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                  </tool>
+               </toolChain>                 
+         </configuration>
+         <configuration
+               name="%ConfigName.Rel"
+               artifactExtension="a"
+               cleanCommand="rm -rf"
+			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+               id="cdt.managedbuild.config.gnu.solaris.lib.release">
+               <toolChain
+                     archList="all"
+                     osList="solaris"
+                     id="cdt.managedbuild.toolchain.gnu.solaris.lib.release"
+                     superClass="cdt.managedbuild.toolchain.gnu.lib.release">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.solaris.platform.lib.release"
+		              name="%PlatformName.Dbg"
+		              binaryParser="org.eclipse.cdt.core.ELF"
+		              osList="solaris"
+		              archList="all">
+	              </targetPlatform>
+		          <tool
+					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.release"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.release"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.lib.release"
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.release"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+               </toolChain>				  
+         </configuration>                  
+      </projectType>
    </extension>
 
 </plugin>

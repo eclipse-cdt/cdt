@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,8 +189,10 @@ public class CProjectPlatformPage extends WizardPage {
 		showAllProjTypes.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				populateTypes();
-				platformSelection.select(0);
-				handleTypeSelection();
+				IProjectType type = projectTypes.contains(selectedProjectType) 
+				                  ? selectedProjectType 
+				                  : (IProjectType) projectTypes.get(0); 
+				setSelectedProjectType(type);
 			}
 		});
 		showAllProjTypes.addDisposeListener(new DisposeListener() {

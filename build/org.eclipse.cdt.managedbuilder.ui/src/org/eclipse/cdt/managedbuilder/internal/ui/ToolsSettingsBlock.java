@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -537,8 +537,10 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		ManagedBuildManager.resetConfiguration(parent.getProject(), parent.getSelectedConfigurationClone());
 		ITool tools[] = parent.getSelectedConfigurationClone().getFilteredTools();
 		for( int i = 0; i < tools.length; i++ ){
-			if(!tools[i].getCustomBuildStep())
+			if(!tools[i].getCustomBuildStep()) {
 				tools[i].setToolCommand(null);
+				tools[i].setCommandLinePattern(null);
+			}
 		}
 		
 		// Reset the category or tool selection and run selection event handler
@@ -557,8 +559,10 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		ManagedBuildManager.resetResourceConfiguration(resParent.getProject(), resParent.getCurrentResourceConfigClone());
 		ITool tools[] = resParent.getCurrentResourceConfigClone().getTools();
 		for( int i = 0; i < tools.length; i++ ){
-			if(!tools[i].getCustomBuildStep())
+			if(!tools[i].getCustomBuildStep()) {
 				tools[i].setToolCommand(null);
+				tools[i].setCommandLinePattern(null);
+			}
 		}
 
 		// Reset the category or tool selection and run selection event handler
@@ -621,32 +625,57 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		IHoldsOptions realHo = page.getRealHoldsOptions(holder);
 		
 		if(realHo != null){
-			if(holder instanceof ITool)
-				((ITool)realHo).setToolCommand(((ITool)holder).getToolCommand());
-			
+			IHoldsOptions realHolder;
+			IConfiguration realCfg = null;
+			IResourceConfiguration realRcCfg = null;
+			if(resParent != null){ 
+				realHolder = resParent.getRealHoldsOptions(holder);
+				realRcCfg = (IResourceConfiguration)((ITool)realHolder).getParent();
+				realCfg = realRcCfg.getParent();
+			} else {
+				realHolder = parent.getRealHoldsOptions(holder);
+				realCfg = parent.getConfigurationFromHoldsOptions(realHolder);
+			}		
+			if(holder instanceof ITool) {
+				String currentValue = ((ITool)realHo).getToolCommand();
+				if (!(currentValue.equals(((ITool)holder).getToolCommand()))) {
+					((ITool)realHo).setToolCommand(((ITool)holder).getToolCommand());
+					//if(resParent != null){
+					    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
+					    //       file rebuilt?  "Clean" its output?  Change its modification date?
+						//realCfg.setRebuildState(true);
+					//} else {
+						realCfg.setRebuildState(true);
+					//}
+				}
+				currentValue = ((ITool)realHo).getCommandLinePattern();
+				if (!(currentValue.equals(((ITool)holder).getCommandLinePattern()))) {
+					((ITool)realHo).setCommandLinePattern(((ITool)holder).getCommandLinePattern());
+					//if(resParent != null){
+					    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
+					    //       file rebuilt?  "Clean" its output?  Change its modification date?
+						//realCfg.setRebuildState(true);
+					//} else {
+						realCfg.setRebuildState(true);
+					//}
+				}
+			}
 			IOption options[] = holder.getOptions();
 			for(int i = 0; i < options.length; i++){
-				saveOption(options[i], holder);
+				saveOption(options[i], holder, realHolder, realCfg, realRcCfg);
 			}
 		}
 	}
-	private void saveOption(IOption clonedOption, IHoldsOptions cloneHolder){
-		IConfiguration realCfg = null;
-		IResourceConfiguration realRcCfg = null;
-//		IBuildObject handler = null;
+	private void saveOption(IOption clonedOption, IHoldsOptions cloneHolder,
+			IHoldsOptions realHolder, IConfiguration realCfg, IResourceConfiguration realRcCfg){
 		IOption realOption;
-		IHoldsOptions realHolder;
+//		IBuildObject handler = null;
 		
 		if(resParent != null){ 
 			realOption = resParent.getRealOption(clonedOption,cloneHolder);
-			realHolder = resParent.getRealHoldsOptions(cloneHolder);
-			realRcCfg = (IResourceConfiguration)((ITool)realHolder).getParent();
-			realCfg = realRcCfg.getParent();
 //			handler = realRcCfg;
 		} else {
 			realOption = parent.getRealOption(clonedOption,cloneHolder);
-			realHolder = parent.getRealHoldsOptions(cloneHolder);
-			realCfg = parent.getConfigurationFromHoldsOptions(realHolder);
 //			handler = realCfg;
 		}		
 		
@@ -770,6 +799,13 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		for(int i = 0; i < tools.length; i++){
 			ITool tool = tools[i];
 			if(!tool.getCustomBuildStep()){
+				ITool cfgTool = cfg.getToolChain().getTool(tool.getSuperClass().getId());
+				//  Check for a non-default command or command-line-pattern
+				if(cfgTool != null){
+					if (!(tool.getToolCommand().equals(cfgTool.getToolCommand()))) return false;
+					if (!(tool.getCommandLinePattern().equals(cfgTool.getCommandLinePattern()))) return false;
+				}
+				//  Check for a non-default option
 				IOption options[] = tool.getOptions();
 				for( int j = 0; j < options.length; j++){
 					IOption option = options[j];
@@ -781,7 +817,6 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 						} while((ext = ext.getSuperClass()) != null);
 
 						if(ext != null){
-							ITool cfgTool = cfg.getToolChain().getTool(tool.getSuperClass().getId());
 							if(cfgTool != null){
 								IOption defaultOpt = cfgTool.getOptionBySuperClassId(ext.getId());
 								try {								

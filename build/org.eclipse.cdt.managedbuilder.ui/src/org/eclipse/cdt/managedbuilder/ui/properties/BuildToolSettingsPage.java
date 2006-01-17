@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,44 +18,91 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.core.Tool;
-import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
-import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor;
-import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
-import org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor;
-import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
-import org.eclipse.cdt.managedbuilder.internal.macros.MbsMacroSupplier;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
-import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 public class BuildToolSettingsPage extends BuildSettingsPage {
+	
+	//  Label class for a preference page.
+	class LabelFieldEditor extends FieldEditor {
+
+		private String fTitle;
+
+		private Label fTitleLabel;
+
+		public LabelFieldEditor( Composite parent, String title ) {
+			fTitle = title;
+			this.createControl( parent );
+		}
+
+		protected void adjustForNumColumns( int numColumns ) {
+			((GridData)fTitleLabel.getLayoutData()).horizontalSpan = 2;
+		}
+
+		protected void doFillIntoGrid( Composite parent, int numColumns ) {
+			fTitleLabel = new Label( parent, SWT.WRAP );
+			fTitleLabel.setText( fTitle );
+			GridData gd = new GridData();
+			gd.verticalAlignment = SWT.TOP;
+			gd.grabExcessHorizontalSpace = false;
+			gd.horizontalSpan = 2;
+			fTitleLabel.setLayoutData( gd );
+		}
+
+		public int getNumberOfControls() {
+			return 1;
+		}
+
+		/**
+		 * The label field editor is only used to present a text label on a preference page.
+		 */
+		protected void doLoad() {
+		}
+
+		protected void doLoadDefault() {
+		}
+
+		protected void doStore() {
+		}
+	}
+
+	// Data members
+	
 	// all build options field editor label
 	private static final String ALL_OPTIONS = ManagedBuilderUIMessages.getResourceString("BuildToolSettingsPage.alloptions"); //$NON-NLS-1$
-	// Field editor label
-	private static final String COMMAND = "FieldEditors.tool.command"; //$NON-NLS-1$
+	// Field editor label for tool command
+	private static final String COMMAND = "BuildToolSettingsPage.tool.command"; //$NON-NLS-1$
+	// Advanced settings label
+	private static final String ADVANCED_GROUP = "BuildToolSettingsPage.tool.advancedSettings"; //$NON-NLS-1$
+	// Field editor label for tool command line pattern
+	private static final String COMMAND_LINE_PATTERN = "BuildToolSettingsPage.tool.commandLinePattern"; //$NON-NLS-1$
 
 	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
 	// Whitespace character
 	private static final String WHITESPACE = " "; //$NON-NLS-1$
 	// Empty String
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	//private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	// field editor that displays all the build options for a particular tool
 	private MultiLineTextFieldEditor allOptionFieldEditor;
-	//tool command command
+	//tool command field
 	private StringFieldEditor commandStringField;
+	//tool command-line-pattern field
+	private StringFieldEditor commandLinePatternField;
 	// A list of safe options to put unrecognized values in
 	private Vector defaultOptionNames;
 	// Map that holds all string options and its values
@@ -106,16 +153,51 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		// Load up the preference store
 		super.createFieldEditors();
 		// Add a string editor to edit the tool command
+		Composite parent = getFieldEditorParent(); 
+		PixelConverter converter = new PixelConverter(parent);
 		commandStringField = new StringFieldEditor(clonedTool.getId(),
 				ManagedBuilderUIMessages.getResourceString(COMMAND),
-				getFieldEditorParent());
+				parent);
 		commandStringField.setEmptyStringAllowed(false);
+		GridData gd = ((GridData)commandStringField.getTextControl(parent).getLayoutData());
+		gd.grabExcessHorizontalSpace = true;
+		gd.minimumWidth = converter.convertWidthInCharsToPixels(3);
 		addField(commandStringField);
-		// Add a field editor that displays over all build options
+		// Add a field editor that displays overall build options
 		allOptionFieldEditor = new MultiLineTextFieldEditor(BuildToolSettingsPreferenceStore.ALL_OPTIONS_ID,
 				ALL_OPTIONS, getFieldEditorParent());
 		allOptionFieldEditor.getTextControl().setEditable(false);
+		gd = ((GridData)allOptionFieldEditor.getTextControl().getLayoutData());
+		gd.grabExcessHorizontalSpace = true;
+		gd.minimumWidth = converter.convertWidthInCharsToPixels(20);
 		addField(allOptionFieldEditor);
+		
+		// Create the Advanced Settings group
+		createAdvancedSettingsGroup(converter);
+	}		
+
+	/* (non-Javadoc)
+	 * Creates the group that contains the build artifact name controls.
+	 */
+	private void createAdvancedSettingsGroup(PixelConverter converter) {
+		addField( createLabelEditor( getFieldEditorParent(), WHITESPACE ) ); //$NON-NLS-1$
+		addField( createLabelEditor( getFieldEditorParent(), ManagedBuilderUIMessages.getResourceString(ADVANCED_GROUP) ) );
+		
+		// Add a string editor to edit the tool command line pattern
+		Composite parent = getFieldEditorParent(); 
+		commandLinePatternField = new StringFieldEditor(BuildToolSettingsPreferenceStore.COMMAND_LINE_PATTERN_ID,
+				ManagedBuilderUIMessages.getResourceString(COMMAND_LINE_PATTERN),
+				parent);
+		GridData gd = ((GridData)commandLinePatternField.getTextControl(parent).getLayoutData());
+		gd.grabExcessHorizontalSpace = true;
+		gd.widthHint =  converter.convertWidthInCharsToPixels(30);
+		gd.minimumWidth = converter.convertWidthInCharsToPixels(20);
+		addField(commandLinePatternField);
+
+	}
+
+	protected FieldEditor createLabelEditor( Composite parent, String title ) {
+		return new LabelFieldEditor( parent, title );
 	}
 
 	/**
@@ -232,7 +314,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			IOption[] options = clonedTool.getOptions();
 			for (int k = 0; k < options.length; ++k) {
 				IOption opt = options[k];
-				String name = opt.getId();
+				//String name = opt.getId();
 				// check whether the option value is "STRING" type
 				Iterator stringOptsIter = stringOptionsMap.values().iterator();
 				while (stringOptsIter.hasNext()) {
@@ -346,9 +428,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		IOption[] options = clonedTool.getOptions();
 		for (int k = 0; k < options.length; ++k) {
 			IOption opt = options[k];
-			String name = opt.getId();
-			String listStr = ""; //$NON-NLS-1$
-			String[] listVal = null;
+			//String name = opt.getId();
+			//String listStr = ""; //$NON-NLS-1$
+			//String[] listVal = null;
 			try {
 				switch (opt.getValueType()) {
 					case IOption.BOOLEAN :
@@ -565,6 +647,14 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			}
 		}
 		
+		// Save the tool command line pattern if it has changed
+		// Get the actual value out of the field editor
+		String commandLinePattern = clonedTool.getCommandLinePattern();
+		if (commandLinePattern.length() > 0 &&
+			(!commandLinePattern.equals(tool.getCommandLinePattern()))) {
+			tool.setCommandLinePattern(commandLinePattern);
+		}
+		
 		return result;
 	}
 	
@@ -584,6 +674,7 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	
 	public void setValues(){
 		commandStringField.load();
+		commandLinePatternField.load();
 		updateAllOptionField();
 	}
 	
@@ -594,6 +685,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		if(event.getSource() == commandStringField){
 			clonedTool.setToolCommand(commandStringField.getStringValue());
 			updateAllOptionField();
+		}
+		else if(event.getSource() == commandLinePatternField){
+			clonedTool.setCommandLinePattern(commandLinePatternField.getStringValue());
 		}
 	}
 }

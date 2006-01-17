@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 	private final static String WHITESPACE = " "; //$NON-NLS-1$
 	
 	public final static String ALL_OPTIONS_ID = EMPTY_STRING;
+	public final static String COMMAND_LINE_PATTERN_ID = "org.eclipse.commandLinePatternId";
 	private IConfiguration config;
 	private IResourceConfiguration rcConfig;
 	private IOptionCategory optCategory;
@@ -137,6 +138,8 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
 				return true;
+			else if(COMMAND_LINE_PATTERN_ID.equals(name))
+				return true;
 			else if(ALL_OPTIONS_ID.equals(name))
 				return true;
 		} else if(getOptionValue(name) != null){
@@ -210,6 +213,8 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
 				return ((Tool)optCategory).getToolCommand();
+			else if(COMMAND_LINE_PATTERN_ID.equals(name))
+				return ((Tool)optCategory).getCommandLinePattern();
 			else if(ALL_OPTIONS_ID.equals(name)){
 				try {
 					return listToString(((Tool)optCategory).getToolCommandFlags(
@@ -338,6 +343,8 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
 				((Tool)optCategory).setToolCommand(value);
+			else if (COMMAND_LINE_PATTERN_ID.equals(name))
+				((Tool)optCategory).setCommandLinePattern(value);
 		} else
 			setOptionValue(name,value);
 	}

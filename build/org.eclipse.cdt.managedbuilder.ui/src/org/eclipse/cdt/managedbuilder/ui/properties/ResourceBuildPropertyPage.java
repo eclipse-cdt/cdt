@@ -460,30 +460,30 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 		//	If the user did not visit this page, then there is nothing to do.
 		if (!displayedConfig) return true;
 
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					if(containsDefaults()){
-						removeCurrentResourceConfig();
-						return;
-					}
-					
-					fOptionBlock.performApply(monitor);
-					getCurrentResourceConfig(true).setExclude(getCurrentResourceConfigClone().isExcluded());
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				if(containsDefaults()){
+					removeCurrentResourceConfig();
+					return;
 				}
-			};
-			IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
-			try {
-				new ProgressMonitorDialog(getShell()).run(false, true, op);
-			} catch (InvocationTargetException e) {
-				Throwable e1 = e.getTargetException();
-				ManagedBuilderUIPlugin.errorDialog(getShell(), ManagedBuilderUIMessages.getResourceString("ManagedProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
-				return false;
-			} catch (InterruptedException e) {
-				// cancelled
-				return false;
+				
+				fOptionBlock.performApply(monitor);
+				getCurrentResourceConfig(true).setExclude(getCurrentResourceConfigClone().isExcluded());
 			}
-	
-			// Write out the build model info
+		};
+		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
+		try {
+			new ProgressMonitorDialog(getShell()).run(false, true, op);
+		} catch (InvocationTargetException e) {
+			Throwable e1 = e.getTargetException();
+			ManagedBuilderUIPlugin.errorDialog(getShell(), ManagedBuilderUIMessages.getResourceString("ManagedProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$
+			return false;
+		} catch (InterruptedException e) {
+			// cancelled
+			return false;
+		}
+
+		// Write out the build model info
 		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
 		
 		if (getCurrentResourceConfigClone().isDirty()) {
@@ -504,6 +504,7 @@ public class ResourceBuildPropertyPage extends AbstractBuildPropertyPage impleme
 	}
 	
 	public boolean containsDefaults(){
+		//  Check for a non-default "excluded" value
 		if(getCurrentResourceConfigClone().isExcluded() != DEFAULT_EXCLUDE_VALUE)
 			return false;
 		return fOptionBlock.containsDefaults();

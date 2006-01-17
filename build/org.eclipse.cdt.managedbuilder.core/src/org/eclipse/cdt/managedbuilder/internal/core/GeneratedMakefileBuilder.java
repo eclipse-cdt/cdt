@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -369,6 +369,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						if (refDelta == null) {
 							outputTrace(getProject().getName(), "Incremental build because of changed referenced project");	//$NON-NLS-1$
 							incrementalBuild(delta, info, generator, monitor);
+							//  Should only build this project once, for this delta
+							break;
 						} else {
 							int refKind = refDelta.getKind(); 
 							if (refKind != IResourceDelta.NO_CHANGE) {
@@ -377,6 +379,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 									  refFlags == IResourceDelta.OPEN)) {
 									outputTrace(getProject().getName(), "Incremental build because of changed referenced project");	//$NON-NLS-1$
 									incrementalBuild(delta, info, generator, monitor);
+									//  Should only build this project once, for this delta
+									break;
 								}
 							}
 						}						
@@ -794,8 +798,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				String[] errorParsers = info.getDefaultConfiguration().getErrorParserList(); 
 				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectory, this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
-				OutputStream stdout = epm.getOutputStream();
-				OutputStream stderr = epm.getOutputStream();
+				// This variable is necessary to ensure that the EPM stream stay open
+				// until we explicitly close it. See bug#123302.
+				OutputStream epmOutputStream = epm.getOutputStream();
 			
                 // Get the arguments to be passed to make from build model 
 				ArrayList makeArgs = new ArrayList();
@@ -844,7 +849,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 								proc.getOutputStream().close();
 							} catch (IOException e) {
 							}
-							if (launcher.waitAndRead(stdout, stderr,
+							if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
 									new SubProgressMonitor(monitor,
 											IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
 								errMsg = launcher.getErrorMessage();
@@ -873,9 +878,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 								// Write message on the console 
 								consoleOutStream.write(buf.toString().getBytes());
 								consoleOutStream.flush();
+								epmOutputStream.close();
 								consoleOutStream.close();
-								stdout.close();
-								stderr.close();
 							} else {
 								// The status value was other than 0, so press on with the build process
 								makeArgs.add("pre-build"); //$NON-NLS-1$                        
@@ -915,7 +919,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						} catch (IOException e) {
 						}
 
-						if (launcher.waitAndRead(stdout, stderr,
+						if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
 								new SubProgressMonitor(monitor,
 										IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
 							errMsg = launcher.getErrorMessage();
@@ -957,8 +961,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					// Write message on the console 
 					consoleOutStream.write(buf.toString().getBytes());
 					consoleOutStream.flush();
-					stdout.close();
-					stderr.close();
+					epmOutputStream.close();
 
 					// Generate any error markers that the build has discovered 
 					monitor.subTask(ManagedMakeMessages

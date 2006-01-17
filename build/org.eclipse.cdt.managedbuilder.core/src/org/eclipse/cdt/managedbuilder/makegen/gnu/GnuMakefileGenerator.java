@@ -2036,28 +2036,27 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 */
 	protected void addToBuildVar (LinkedHashMap buildVarToRuleStringMap, String ext, 
 			String varName, String relativePath, IPath sourceLocation, boolean generatedSource) {
-		// look for the extension in the map
+		List varList = null;
 		if (varName == null) {
+			// Get the proper source build variable based upon the extension
 			varName = getSourceMacroName(ext).toString();
-			//  Add the resource to the list of all resources associated with a variable.
-			List varList = (List)buildSrcVars.get(varName);
+			varList = (List)buildSrcVars.get(varName);
+		} else {
+			varList = (List)buildOutVars.get(varName);
+		}
+		//  Add the resource to the list of all resources associated with a variable.
+		//  Do not allow duplicates - there is no reason to and it can be 'bad' - 
+		//  e.g., having the same object in the OBJS list can cause duplicate symbol errors from the linker
+		if ((varList != null) && !(varList.contains(sourceLocation))) {
 			//  Since we don't know how these files will be used, we store them using a "location"
 			//  path rather than a relative path
 			varList.add(sourceLocation);
-		} else {
-			//  Add the resource to the list of all resources associated with a variable.
-			List varList = (List)buildOutVars.get(varName);
-			if (varList != null) {
-				//  Since we don't know how these files will be used, we store them using a "location"
-				//  path rather than a relative path
-				varList.add(sourceLocation);
+			if (!buildVarToRuleStringMap.containsKey(varName)) {
+				//  TODO - is this an error?
+			} else {
+				//  Add the resource name to the makefile line that adds resources to the build variable
+				addMacroAdditionFile(buildVarToRuleStringMap, varName, relativePath, sourceLocation, generatedSource);
 			}
-		}
-		if (!buildVarToRuleStringMap.containsKey(varName)) {
-			//  TODO - is this an error?
-		} else {
-			//  Add the resource name to the makefile line that adds resources to the build variable
-			addMacroAdditionFile(buildVarToRuleStringMap, varName, relativePath, sourceLocation, generatedSource);
 		}
 	}
 	

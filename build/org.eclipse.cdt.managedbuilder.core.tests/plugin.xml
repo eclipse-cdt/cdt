@@ -4948,7 +4948,7 @@
       <projectType
                   id="cdt.managedbuild.target.enablement.exe"
                   isAbstract="false"
-                  isTest="false"
+                  isTest="true"
                   name="enablement.exe"
                   projectEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
                   projectMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro">

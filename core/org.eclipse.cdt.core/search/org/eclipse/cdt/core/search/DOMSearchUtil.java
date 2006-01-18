@@ -350,38 +350,40 @@ public class DOMSearchUtil {
 		}
 		
 		IBinding binding = searchName.resolveBinding();
-		names = getNames(tu, binding, limitTo);
-		
-		if (names == null || names.length == 0) { // try alternate strategies		
-			try {
-				// fix for 86829, 95224
-				if ((binding instanceof ICPPConstructor || (binding instanceof ICPPMethod && ((ICPPMethod)binding).isDestructor())) 
-						&& binding.getScope() instanceof ICPPClassScope) {
-					binding =  ((ICPPClassScope)binding.getScope()).getClassType();
-					names = getNames(tu, binding, limitTo);
-				} else if (binding instanceof PDOMBinding) {
-					try { 
-						ArrayList pdomNames = new ArrayList();
-						// First decls
-						PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
-						while (name != null) {
-							pdomNames.add(name);
-							name = name.getNextInBinding();
-						}
-						// Next defs
-						name = ((PDOMBinding)binding).getFirstDefinition();
-						while (name != null) {
-							pdomNames.add(name);
-							name = name.getNextInBinding();
-						}
-						names = (IASTName[])pdomNames.toArray(new IASTName[pdomNames.size()]);
-					} catch (CoreException e) {
-						CCorePlugin.log(e);
-					}
+		if (binding instanceof PDOMBinding) {
+			try { 
+				ArrayList pdomNames = new ArrayList();
+				// First decls
+				PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
+				while (name != null) {
+					pdomNames.add(name);
+					name = name.getNextInBinding();
 				}
-			} catch (DOMException e) {}
+				// Next defs
+				name = ((PDOMBinding)binding).getFirstDefinition();
+				while (name != null) {
+					pdomNames.add(name);
+					name = name.getNextInBinding();
+				}
+				names = (IASTName[])pdomNames.toArray(new IASTName[pdomNames.size()]);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		} else {
+			names = getNames(tu, binding, limitTo);
+			
+			if (names == null || names.length == 0) { // try alternate strategies		
+				try {
+					// fix for 86829, 95224
+					if ((binding instanceof ICPPConstructor || (binding instanceof ICPPMethod && ((ICPPMethod)binding).isDestructor())) 
+							&& binding.getScope() instanceof ICPPClassScope) {
+						binding =  ((ICPPClassScope)binding.getScope()).getClassType();
+						names = getNames(tu, binding, limitTo);
+					}
+				} catch (DOMException e) {}
+			}
 		}
-		
+
 		return names;
     }
 	

@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -50,7 +52,13 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 	}
 
 	public IField findField(String name) throws DOMException {
-		throw new PDOMNotImplementedError();
+		try {
+			PDOMMember[] members = findMembers(name.toCharArray());
+			return (PDOMCField)members[0];
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
 	}
 
 	public IScope getCompositeScope() throws DOMException {

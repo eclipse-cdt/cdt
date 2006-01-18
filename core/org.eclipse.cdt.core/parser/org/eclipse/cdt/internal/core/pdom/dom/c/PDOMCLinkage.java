@@ -12,7 +12,10 @@
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -23,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -108,44 +112,46 @@ public class PDOMCLinkage extends PDOMLinkage {
 	}
 
 	private static final class FindBinding extends PDOMNode.NodeVisitor {
-		private final IBinding binding;
-		public PDOMBinding pdomBinding;
-		public FindBinding(PDOMDatabase pdom, IBinding binding) {
-			super(pdom, binding.getNameCharArray());
-			this.binding = binding;
+		PDOMBinding pdomBinding;
+		final int desiredType;
+		public FindBinding(PDOMDatabase pdom, char[] name, int desiredType) {
+			super(pdom, name);
+			this.desiredType = desiredType;
 		}
 		public boolean visit(int record) throws CoreException {
 			if (record == 0)
 				return true;
 			PDOMBinding tBinding = pdom.getBinding(record);
 			if (!tBinding.hasName(name))
+				// no more bindings with our desired name
 				return false;
-			switch (tBinding.getBindingType()) {
-			case CVARIABLE:
-				if (binding instanceof IVariable)
-					pdomBinding = tBinding;
-				break;
-			case CFUNCTION:
-				if (binding instanceof IFunction)
-					pdomBinding = tBinding;
-				break;
-			case CSTRUCTURE:
-				if (binding instanceof ICompositeType)
-					pdomBinding = tBinding;
-				break;
-			case CFIELD:
-				if (binding instanceof IField)
-					pdomBinding = tBinding;
-				break;
-			}
-			return pdomBinding == null;
+			if (tBinding.getBindingType() != desiredType)
+				// wrong type, try again
+				return true;
+			
+			// got it
+			pdomBinding = tBinding;
+			return false;
 		}
+	}
+
+	protected int getBindingType(IBinding binding) {
+		if (binding instanceof IVariable)
+			return CVARIABLE;
+		else if (binding instanceof IFunction)
+			return CFUNCTION;
+		else if (binding instanceof ICompositeType)
+			return CSTRUCTURE;
+		else if (binding instanceof IField)
+			return CFIELD;
+		else
+			return 0;
 	}
 	
 	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {
-			FindBinding visitor = new FindBinding(pdom, binding);
+			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
 			getIndex().visit(visitor);
 			return visitor.pdomBinding;
 		} else if (parent instanceof PDOMMemberOwner) {
@@ -179,6 +185,24 @@ public class PDOMCLinkage extends PDOMLinkage {
 	}
 
 	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
+		IASTNode parent = name.getParent();
+		if (parent instanceof IASTIdExpression) {
+			// reference
+			IASTNode eParent = parent.getParent();
+			if (eParent instanceof IASTFunctionCallExpression) {
+				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CFUNCTION);
+				getIndex().visit(visitor);
+				return visitor.pdomBinding;
+			} else {
+				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CVARIABLE);
+				getIndex().visit(visitor);
+				return visitor.pdomBinding;
+			}
+		} else if (parent instanceof ICASTElaboratedTypeSpecifier) {
+			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CSTRUCTURE);
+			getIndex().visit(visitor);
+			return visitor.pdomBinding;
+		}
 		return null;
 	}
 	

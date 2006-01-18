@@ -139,7 +139,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		}
 	}
 
-	public int getBindingType(IBinding binding) {
+	protected int getBindingType(IBinding binding) {
 		if (binding instanceof ICPPVariable)
 			return CPPVARIABLE;
 		else if (binding instanceof ICPPFunction)

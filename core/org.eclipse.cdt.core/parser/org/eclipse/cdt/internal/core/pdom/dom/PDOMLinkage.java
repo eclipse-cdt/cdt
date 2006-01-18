@@ -87,4 +87,6 @@ public abstract class PDOMLinkage extends PDOMNode {
 	
 	public abstract PDOMBinding getBinding(int record) throws CoreException;
 	
+	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
+	
 }

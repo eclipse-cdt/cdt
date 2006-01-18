@@ -51,6 +51,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -571,6 +573,11 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 
     public ParserLanguage getParserLanguage() {
         return ParserLanguage.CPP;
+    }
+    
+    public ILanguage getLanguage() {
+    	// Assuming gnu C++ for now.
+    	return new GPPLanguage();
     }
     
     public IPDOM getIndex() {

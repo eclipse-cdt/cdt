@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
@@ -52,7 +52,7 @@ public class PDOMCPPField extends PDOMMember implements ICPPField {
 	}
 	
 	public String[] getQualifiedName() throws DOMException {
-		throw new PDOMNotImplementedError();
+        return CPPVisitor.getQualifiedName( this );
 	}
 
 	public char[][] getQualifiedNameCharArray() throws DOMException {

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 
@@ -37,8 +36,6 @@ public interface ICodeReaderFactory {
 	 */
 	public CodeReader createCodeReaderForTranslationUnit(String path);
 
-	public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu);
-	
 	/**
 	 * Create CodeReader for inclusion.
 	 * 

@@ -37,6 +37,8 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -521,6 +523,11 @@ public class CASTTranslationUnit extends CASTNode implements
         return ParserLanguage.C;
     }
 
+    public ILanguage getLanguage() {
+    	// Assuming gnu C for now.
+    	return new GCCLanguage();
+    }
+    
     public IPDOM getIndex() {
     	return pdom;
     }

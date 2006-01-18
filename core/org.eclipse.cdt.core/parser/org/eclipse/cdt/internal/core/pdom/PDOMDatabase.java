@@ -118,7 +118,7 @@ public class PDOMDatabase implements IPDOM {
 		if (linkage == null)
 			return;
 
-		IASTTranslationUnit ast = language.getTranslationUnit(tu,
+		IASTTranslationUnit ast = language.getTranslationUnit((IFile)tu.getResource(),
 				ILanguage.AST_USE_INDEX |
 				ILanguage.AST_SKIP_INDEXED_HEADERS);
 		if (ast == null)
@@ -180,6 +180,13 @@ public class PDOMDatabase implements IPDOM {
 	}
 
 	public IBinding resolveBinding(IASTName name) {
+		try {
+			ILanguage language = name.getTranslationUnit().getLanguage();
+			return getLinkage(language).resolveBinding(name);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		
 		return null;
 	}
 

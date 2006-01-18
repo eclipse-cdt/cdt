@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -125,13 +127,20 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 					IWorkingCopy workingCopy = (IWorkingCopy)fEditor.getInputCElement();
 					IFile resourceFile = (IFile)workingCopy.getResource();
 					project = new CProject(null, resourceFile.getProject());
-					IPDOM pdom = null; //PDOM.getPDOM(resourceFile.getProject());
+					IPDOM pdom = PDOM.getPDOM(resourceFile.getProject());
 					try {
-						if (pdom != null)
-							tu = CDOM.getInstance().getASTService().getTranslationUnit(
-								resourceFile,
-								pdom.getCodeReaderFactory(workingCopy));
-						else
+						if (pdom != null) {
+							try {
+								ILanguage language = workingCopy.getLanguage();
+								tu = language.getTranslationUnit(workingCopy,
+										ILanguage.AST_USE_INDEX |
+										ILanguage.AST_SKIP_INDEXED_HEADERS);
+							} catch (CoreException e) {
+								CUIPlugin.getDefault().log(e);
+								operationNotAvailable(CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE);
+								return;
+							}
+						} else
 							tu = CDOM.getInstance().getASTService().getTranslationUnit(
 									resourceFile);
 					} catch (IASTServiceProvider.UnsupportedDialectException e) {

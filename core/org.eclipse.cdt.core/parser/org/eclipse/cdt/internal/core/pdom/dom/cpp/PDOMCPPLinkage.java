@@ -11,7 +11,11 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -112,42 +116,42 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 
 	private static final class FindBinding extends PDOMNode.NodeVisitor {
-		private final IBinding binding;
-		public PDOMBinding pdomBinding;
-		public FindBinding(PDOMDatabase pdom, IBinding binding) {
-			super(pdom, binding.getNameCharArray());
-			this.binding = binding;
+		PDOMBinding pdomBinding;
+		final int desiredType;
+		public FindBinding(PDOMDatabase pdom, char[] name, int desiredType) {
+			super(pdom, name);
+			this.desiredType = desiredType;
 		}
 		public boolean visit(int record) throws CoreException {
 			if (record == 0)
 				return true;
 			PDOMBinding tBinding = pdom.getBinding(record);
 			if (!tBinding.hasName(name))
+				// no more bindings with our desired name
 				return false;
-			switch (tBinding.getBindingType()) {
-			case CPPVARIABLE:
-				if (binding instanceof ICPPVariable)
-					pdomBinding = tBinding;
-				break;
-			case CPPFUNCTION:
-				if (binding instanceof ICPPFunction)
-					pdomBinding = tBinding;
-				break;
-			case CPPCLASSTYPE:
-				if (binding instanceof ICPPClassType)
-					pdomBinding = tBinding;
-				break;
-			case CPPFIELD:
-				if (binding instanceof ICPPField)
-					pdomBinding = tBinding;
-				break;
-			case CPPMETHOD:
-				if (binding instanceof ICPPMethod)
-					pdomBinding = tBinding;
-				break;
-			}
-			return pdomBinding == null;
+			if (tBinding.getBindingType() != desiredType)
+				// wrong type, try again
+				return true;
+			
+			// got it
+			pdomBinding = tBinding;
+			return false;
 		}
+	}
+
+	public int getBindingType(IBinding binding) {
+		if (binding instanceof ICPPVariable)
+			return CPPVARIABLE;
+		else if (binding instanceof ICPPFunction)
+			return CPPFUNCTION;
+		else if (binding instanceof ICPPClassType)
+			return CPPCLASSTYPE;
+		else if (binding instanceof ICPPField)
+			return CPPFIELD;
+		else if (binding instanceof ICPPMethod)
+			return CPPMETHOD;
+		else
+			return 0;
 	}
 	
 	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
@@ -156,7 +160,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {
-			FindBinding visitor = new FindBinding(pdom, binding);
+			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));
 			getIndex().visit(visitor);
 			return visitor.pdomBinding;
 		} else if (parent instanceof PDOMMemberOwner) {
@@ -187,4 +191,27 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		
 		return null;
 	}
+	
+	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
+		IASTNode parent = name.getParent();
+		if (parent instanceof IASTIdExpression) {
+			// reference
+			IASTNode eParent = parent.getParent();
+			if (eParent instanceof IASTFunctionCallExpression) {
+				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPFUNCTION);
+				getIndex().visit(visitor);
+				return visitor.pdomBinding;
+			} else {
+				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPVARIABLE);
+				getIndex().visit(visitor);
+				return visitor.pdomBinding;
+			}
+		} else if (parent instanceof IASTNamedTypeSpecifier) {
+			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPCLASSTYPE);
+			getIndex().visit(visitor);
+			return visitor.pdomBinding;
+		}
+		return null;
+	}
+	
 }

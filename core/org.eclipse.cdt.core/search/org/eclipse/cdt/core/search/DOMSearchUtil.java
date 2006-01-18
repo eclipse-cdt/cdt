@@ -52,9 +52,12 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.IndexVisitorUtil;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -356,6 +359,25 @@ public class DOMSearchUtil {
 						&& binding.getScope() instanceof ICPPClassScope) {
 					binding =  ((ICPPClassScope)binding.getScope()).getClassType();
 					names = getNames(tu, binding, limitTo);
+				} else if (binding instanceof PDOMBinding) {
+					try { 
+						ArrayList pdomNames = new ArrayList();
+						// First decls
+						PDOMName name = ((PDOMBinding)binding).getFirstDeclaration();
+						while (name != null) {
+							pdomNames.add(name);
+							name = name.getNextInBinding();
+						}
+						// Next defs
+						name = ((PDOMBinding)binding).getFirstDefinition();
+						while (name != null) {
+							pdomNames.add(name);
+							name = name.getNextInBinding();
+						}
+						names = (IASTName[])pdomNames.toArray(new IASTName[pdomNames.size()]);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
 				}
 			} catch (DOMException e) {}
 		}

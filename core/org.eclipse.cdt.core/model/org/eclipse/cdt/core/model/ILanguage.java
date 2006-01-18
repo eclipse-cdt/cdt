@@ -12,11 +12,10 @@
 package org.eclipse.cdt.core.model;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -55,14 +54,31 @@ public interface ILanguage extends IAdaptable {
 	public String getId();
 
 	/**
-	 * Create the AST for the given translation unit with the given style.
+	 * Create the AST for the given file with the given style.
 	 * 
 	 * @param file
 	 * @param style
 	 * @return
 	 */
-	public IASTTranslationUnit getTranslationUnit(ITranslationUnit file, int style);
+	public IASTTranslationUnit getTranslationUnit(IFile file, int style);
 
+	/**
+	 * Create the AST for the given external file with the given style.
+	 * 
+	 * @param file
+	 * @param style
+	 * @return
+	 */
+	public IASTTranslationUnit getTranslationUnit(IStorage file, IProject project, int style);
+
+	/**
+	 * Return the ASt for the given working copy
+	 * @param workingCopy
+	 * @param style
+	 * @return
+	 */
+	public IASTTranslationUnit getTranslationUnit(IWorkingCopy workingCopy, int style);
+	
 	/**
 	 * Return the AST Completion Node for the given working copy at the given
 	 * offset.

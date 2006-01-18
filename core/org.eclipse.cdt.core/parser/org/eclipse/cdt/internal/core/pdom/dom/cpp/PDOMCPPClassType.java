@@ -11,18 +11,22 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -32,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType {
+public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, ICPPClassScope {
 
 	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 0;
 	
@@ -97,7 +101,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType {
 	}
 
 	public IScope getCompositeScope() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return this;
 	}
 
 	public int getKey() throws DOMException {
@@ -116,4 +120,63 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType {
 		throw new PDOMNotImplementedError();
 	}
 
+	public ICPPClassType getClassType() {
+		throw new PDOMNotImplementedError();
+	}
+
+	public ICPPMethod[] getImplicitMethods() {
+		throw new PDOMNotImplementedError();
+	}
+
+	public void addBinding(IBinding binding) throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public void addName(IASTName name) throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public IBinding[] find(String name) throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public void flushCache() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		try {
+			PDOMMember[] matches = findMembers(name.toCharArray());
+			// TODO - need to check for overloads
+			return matches[0];
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+
+	public IScope getParent() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public IASTNode getPhysicalNode() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public IASTName getScopeName() throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public boolean isFullyCached() throws DOMException {
+		return true;
+	}
+
+	public void removeBinding(IBinding binding) throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+
+	public void setFullyCached(boolean b) throws DOMException {
+		throw new PDOMNotImplementedError();
+	}
+	
 }

@@ -178,4 +178,8 @@ public class PDOMCLinkage extends PDOMLinkage {
 		return null;
 	}
 
+	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
+		return null;
+	}
+	
 }

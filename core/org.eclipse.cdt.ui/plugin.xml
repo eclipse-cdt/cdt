@@ -17,6 +17,7 @@
    <extension-point id="textHovers" name="%textHoversName"/>
    <extension-point id="IndexerPage" name="Indexer Page" schema="schema/IndexerPage.exsd"/>
    <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
+   <extension-point id="ProposalFilter" name="Code Completion Proposal Filter" schema="schema/ProposalFilter.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.CDOM;
@@ -22,17 +21,21 @@ import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.preferences.ProposalFilterPreferencesUtil;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
+import org.eclipse.cdt.ui.text.contentassist.IProposalFilter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -128,48 +131,12 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				}
 			}
 
-			ICCompletionProposal[] propsArray = null;
+			IProposalFilter filter = getCompletionFilter();
+			ICCompletionProposal[] proposalsInput = (ICCompletionProposal[]) proposals.toArray(new ICCompletionProposal[proposals.size()]) ;
 			
-			if (!proposals.isEmpty()) {
-				errorMessage = null;
-				propsArray = (ICCompletionProposal[])proposals.toArray(new ICCompletionProposal[proposals.size()]);
-				CCompletionProposalComparator propsComp = new CCompletionProposalComparator();
-				propsComp.setOrderAlphabetically(true);
-				Arrays.sort(propsArray, propsComp); 
-				
-				// remove duplicates but leave the ones with return types
-                
-				int last = 0;
-				int removed = 0;
-				for (int i = 1; i < propsArray.length; ++i) {
-					if (propsComp.compare(propsArray[last], propsArray[i]) == 0) {
-                        // We want to leave the one that has the return string if any
-                        boolean lastReturn = propsArray[last].getIdString() != propsArray[last].getDisplayString();
-                        boolean iReturn = propsArray[i].getIdString() != propsArray[i].getDisplayString();
-
-                        if (!lastReturn && iReturn)
-                            // flip i down to last
-                            propsArray[last] = propsArray[i];
-
-                        // Remove the duplicate
-						propsArray[i] = null;
-                        ++removed;
-					} else
-						// update last
-						last = i;
-				}
-				if (removed > 0) {
-					// Strip out the null entries
-					ICCompletionProposal[] newArray = new ICCompletionProposal[propsArray.length - removed];
-					int j = 0;
-					for (int i = 0; i < propsArray.length; ++i)
-						if (propsArray[i] != null)
-							newArray[j++] = propsArray[i];
-					propsArray = newArray;
-				}
-			}
+			ICCompletionProposal[] proposalsFiltered = filter.filterProposals(proposalsInput);
 			
-			return propsArray;
+			return proposalsFiltered;
 			
 		} catch (UnsupportedDialectException e) {
 			errorMessage = CUIMessages.getString(dialectError);
@@ -178,6 +145,32 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 		}
 		
 		return null;
+	}
+	
+	private IProposalFilter getCompletionFilter() {
+		IProposalFilter filter = null;
+		try {
+			IConfigurationElement filterElement = ProposalFilterPreferencesUtil.getPreferredFilterElement();
+			if (null != filterElement) {
+				Object contribObject = filterElement
+						.createExecutableExtension("class"); //$NON-NLS-1$
+				if ((contribObject instanceof IProposalFilter)) {
+					filter = (IProposalFilter) contribObject;
+				}
+			}
+		} catch (InvalidRegistryObjectException e) {
+			// No action required since we will be using the fail-safe default filter
+			CUIPlugin.getDefault().log(e);
+		} catch (CoreException e) {
+			// No action required since we will be using the fail-safe default filter
+			CUIPlugin.getDefault().log(e);
+		}
+
+		if (null == filter) {
+			// fail-safe default implementation
+			filter = new DefaultProposalFilter();
+		}
+		return filter;
 	}
 
     private String scanPrefix(IDocument document, int end) {

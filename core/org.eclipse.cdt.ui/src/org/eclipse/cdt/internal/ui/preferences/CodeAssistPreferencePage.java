@@ -58,6 +58,7 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE));        
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SEARCH_SCOPE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FILTER));
 
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -135,7 +136,10 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 //		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterForegroundColor");
 //		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
 
-    	initializeFields();
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.proposalFilterSelect") ; //$NON-NLS-1$
+		addComboBox(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FILTER, 20, 0);
+    	
+		initializeFields();
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
 
@@ -168,6 +172,8 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
+		store.setDefault(ContentAssistPreference.PROPOSALS_FILTER, ProposalFilterPreferencesUtil.getProposalFilternamesAsString());  // $NON_NLS 1$
 
 	}
+	
 }

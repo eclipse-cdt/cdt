@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -63,6 +64,16 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
 		}
 	};
+	
+	protected Map fComboBoxes = new HashMap();
+	private ModifyListener fComboBoxListener = new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
+			Combo combo = (Combo) e.widget;
+			String state = ProposalFilterPreferencesUtil.comboStateAsString(combo);
+			fOverlayStore.setValue((String) fComboBoxes.get(combo), state);
+		}
+	};
+	
 
 	protected Map fCheckBoxes = new HashMap();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
@@ -155,6 +166,24 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		}
 
 		return textControl;
+	}
+
+	protected void addComboBox(Composite composite, String label, String key, int textLimit, int indentation) {
+
+		Label labelControl = new Label(composite, SWT.NONE);
+		labelControl.setText(label);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = indentation;
+		labelControl.setLayoutData(gd);
+
+		Combo comboControl = new Combo(composite, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY);  // TODO: When will the combo be disposed?
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		gd.widthHint = convertWidthInCharsToPixels(textLimit + 1);
+		comboControl.setLayoutData(gd);
+		comboControl.setTextLimit(textLimit);
+		fComboBoxes.put(comboControl, key);
+		comboControl.addModifyListener(fComboBoxListener);  // TODO: When will the listener be removed? 
+
 	}
 
 	protected void addFiller(Composite composite) {
@@ -292,11 +321,22 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 			String key = (String) fTextFields.get(t);
 			t.setText(fOverlayStore.getString(key));
 		}
+
+		e = fComboBoxes.keySet().iterator();
+		while (e.hasNext()) {
+			Combo c = (Combo) e.next();
+			String key = (String) fComboBoxes.get(c);
+			String state = fOverlayStore.getString(key);
+			// Interpret the state string as a Combo state description
+			ProposalFilterPreferencesUtil.restoreComboFromString(c, state);
+		}
 	}
 
 
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {

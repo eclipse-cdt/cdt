@@ -121,5 +121,12 @@
             id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.IncludeStatementFilter">
       </filter>
    </extension>
+   <extension
+         point="org.eclipse.cdt.ui.ProposalFilter">
+      <ProposalFilter
+            class="org.eclipse.cdt.ui.tests.text.contentassist.TestProposalFilter"
+            id="org.eclipse.cdt.ui.tests.TestProposalFilter"
+            name="Testing Completion Filter"/>
+   </extension>
 
 </plugin>

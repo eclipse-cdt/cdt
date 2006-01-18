@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
@@ -660,6 +661,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			IContentTypeManager manager = Platform.getContentTypeManager(); 
 			IContentType contentType = manager.getContentType(contentTypeId);
 			language = LanguageManager.getInstance().getLanguage(contentType);
+			
+			// Special magic for C/C++ header files
+			if (language == null && isHeaderUnit()) {
+				contentType = CoreModel.hasCCNature(getResource().getProject())
+					? manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE)
+					: manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
+				language = LanguageManager.getInstance().getLanguage(contentType);
+			}
 		}
 		
 		return language;

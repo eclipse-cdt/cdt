@@ -17,5 +17,5 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.cdt.core,
  org.eclipse.ui,
  org.eclipse.core.runtime.compatibility
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Plugin-Class: org.eclipse.cdt.debug.testplugin.CTestPlugin

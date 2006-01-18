@@ -7,4 +7,4 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui.intro,
  org.eclipse.ui.cheatsheets
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

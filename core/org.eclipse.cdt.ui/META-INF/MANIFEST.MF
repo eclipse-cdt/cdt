@@ -3,12 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.ui; singleton:=true
 Bundle-Version: 3.1.0.qualifier
-Bundle-ClassPath: cdtui.jar
 Bundle-Activator: org.eclipse.cdt.ui.CUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: .,
- org.eclipse.cdt.internal.corext,
+Export-Package: org.eclipse.cdt.internal.corext,
  org.eclipse.cdt.internal.corext.refactoring,
  org.eclipse.cdt.internal.corext.refactoring.base,
  org.eclipse.cdt.internal.corext.refactoring.changes,
@@ -76,4 +74,4 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.core.filebuffers,
  org.eclipse.core.runtime,
  org.eclipse.help
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

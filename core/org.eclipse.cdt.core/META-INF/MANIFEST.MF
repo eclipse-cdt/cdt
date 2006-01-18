@@ -3,12 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.core; singleton:=true
 Bundle-Version: 3.1.0.qualifier
-Bundle-ClassPath: cdtcore.jar
 Bundle-Activator: org.eclipse.cdt.core.CCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: .,
- org.eclipse.cdt.core,
+Export-Package: org.eclipse.cdt.core,
  org.eclipse.cdt.core.browser,
  org.eclipse.cdt.core.browser.typehierarchy,
  org.eclipse.cdt.core.dom,
@@ -86,4 +84,4 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.text,
  org.eclipse.core.variables
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

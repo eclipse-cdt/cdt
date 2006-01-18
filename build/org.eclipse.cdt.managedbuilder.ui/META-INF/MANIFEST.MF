@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.ui; singleton:=true
 Bundle-Version: 3.1.0.qualifier
-Bundle-ClassPath: mgdbuildui.jar
 Bundle-Activator: org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -19,4 +18,4 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.cdt.managedbuilder.core,
  org.eclipse.core.runtime,
  org.eclipse.core.variables
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

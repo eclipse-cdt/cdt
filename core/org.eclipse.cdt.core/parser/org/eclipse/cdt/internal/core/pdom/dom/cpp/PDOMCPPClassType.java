@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -53,7 +54,11 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 	
 	public boolean isSameType(IType type) {
-		throw new PDOMNotImplementedError();
+		if (type instanceof PDOMBinding)
+			return record == ((PDOMBinding)type).getRecord();
+		else
+			// TODO - should we check for real?
+			return false;
 	}
 
 	public Object clone() {
@@ -121,7 +126,9 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 
 	public ICPPClassType getClassType() {
-		throw new PDOMNotImplementedError();
+		return null;
+		// TODO - do we need the real type?
+		//throw new PDOMNotImplementedError();
 	}
 
 	public ICPPMethod[] getImplicitMethods() {
@@ -148,7 +155,7 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 		try {
 			PDOMMember[] matches = findMembers(name.toCharArray());
 			// TODO - need to check for overloads
-			return matches[0];
+			return matches.length > 0 ? matches[0] : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

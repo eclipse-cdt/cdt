@@ -1108,13 +1108,14 @@ public class CPPSemantics {
 		ICPPBase [] bases = null;
 		if( lookIn instanceof ICPPClassScope ){
 			ICPPClassType c  = ((ICPPClassScope)lookIn).getClassType();
-			bases = c.getBases();
+			if (c != null)
+				bases = c.getBases();
 		}
 	
 		Object inherited = null;
 		Object result = null;
 		
-		if( bases.length == 0 )
+		if( bases == null || bases.length == 0 )
 			return null;
 				
 		//use data to detect circular inheritance

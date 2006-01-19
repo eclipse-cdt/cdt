@@ -54,7 +54,7 @@ public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 	public IField findField(String name) throws DOMException {
 		try {
 			PDOMMember[] members = findMembers(name.toCharArray());
-			return (PDOMCField)members[0];
+			return members.length > 0 ? (PDOMCField)members[0] : null;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;

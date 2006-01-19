@@ -40,7 +40,9 @@ public class PDOMCField extends PDOMMember implements IField {
 	}
 
 	public IType getType() throws DOMException {
-		throw new PDOMNotImplementedError();
+		return null;
+		// TODO - do we need the real type?
+		//throw new PDOMNotImplementedError();
 	}
 
 	public boolean isStatic() throws DOMException {

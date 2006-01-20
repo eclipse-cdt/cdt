@@ -146,7 +146,7 @@ public class CPPUnknownBinding extends PlatformObject implements ICPPInternalUnk
             if( t instanceof ICPPClassType ){
                 IScope s = ((ICPPClassType)t).getCompositeScope();
                 
-                if( s.isFullyCached() )
+                if( s != null && s.isFullyCached() )
                 	result = s.getBinding( name, true );
 //                CPPSemantics.LookupData data = CPPSemantics.createLookupData( name, false );
 //                CPPSemantics.lookup( data, s );

@@ -234,6 +234,7 @@ abstract class BaseScanner implements IScanner {
         }
 
         private static class EvalException extends Exception {
+        	private static final long serialVersionUID = 0;
             public EvalException(String msg) {
                 super(msg);
             }
@@ -1296,7 +1297,7 @@ abstract class BaseScanner implements IScanner {
         locIncludePaths = einfo.getLocalIncludePath();
         pushContext(reader.buffer, reader);
 
-        if (preIncludeFiles.hasNext())
+        while (preIncludeFiles.hasNext())
             pushForcedInclusion();
 
         isInitialized = true;
@@ -1383,8 +1384,6 @@ abstract class BaseScanner implements IScanner {
         bufferData[bufferStackPos] = null;
         --bufferStackPos;
 
-        if (preIncludeFiles.hasNext())
-            pushForcedInclusion();
         return result;
     }
 
@@ -1639,7 +1638,7 @@ abstract class BaseScanner implements IScanner {
     // Return null to signify end of file
     protected IToken fetchToken() throws EndOfFileException {
         ++count;
-        contextLoop: while (bufferStackPos >= 0) {
+        while (bufferStackPos >= 0) {
             if (isCancelled == true)
                 throw new ParseError(
                         ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
@@ -2165,7 +2164,7 @@ abstract class BaseScanner implements IScanner {
         int stringLen = 0;
         boolean escaped = false;
         boolean foundClosingQuote = false;
-        loop: while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
+        while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
             ++stringLen;
             char c = buffer[bufferPos[bufferStackPos]];
             if (c == '"') {

@@ -72,7 +72,8 @@ public class PDOMCPPField extends PDOMMember implements ICPPField {
 	}
 
 	public IType getType() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return null;
 	}
 
 	public boolean isAuto() throws DOMException {

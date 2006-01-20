@@ -74,11 +74,13 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 
 	public ICPPBase[] getBases() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return new ICPPBase[0];
 	}
 
 	public ICPPConstructor[] getConstructors() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return new ICPPConstructor[0];
 	}
 
 	public ICPPField[] getDeclaredFields() throws DOMException {

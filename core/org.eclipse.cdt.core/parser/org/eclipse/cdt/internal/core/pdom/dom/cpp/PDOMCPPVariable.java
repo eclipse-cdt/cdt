@@ -44,7 +44,8 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 	}
 
 	public IType getType() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return null;
 	}
 
 	public boolean isAuto() throws DOMException {

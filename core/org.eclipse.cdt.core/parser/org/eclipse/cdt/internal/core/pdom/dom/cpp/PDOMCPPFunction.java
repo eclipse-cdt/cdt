@@ -59,7 +59,8 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction {
 	}
 
 	public IFunctionType getType() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return null;
 	}
 
 	public boolean isAuto() throws DOMException {

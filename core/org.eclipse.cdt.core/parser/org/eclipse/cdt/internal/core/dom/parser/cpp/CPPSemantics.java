@@ -2138,25 +2138,27 @@ public class CPPSemantics {
 	    
 	    if( useImplicit ){
 		    ICPPFunctionType ftype = (ICPPFunctionType) ((ICPPFunction)fn).getType();
-			IScope scope = fn.getScope();
-			if( scope instanceof ICPPTemplateScope )
-				scope = scope.getParent();
-			ICPPClassType cls = null;
-			if( scope instanceof ICPPClassScope ){
-				cls = ((ICPPClassScope)scope).getClassType();
-			} else {
-				cls = new CPPClassType.CPPClassTypeProblem( scope.getPhysicalNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray() );
-			}
-			if( cls instanceof ICPPClassTemplate ){
-			    cls = (ICPPClassType) CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) cls );
-			}
-			IType implicitType = cls;
-			if( ftype.isConst() || ftype.isVolatile() ){
-				implicitType = new CPPQualifierType( implicitType, ftype.isConst(), ftype.isVolatile() );
-			}
-			implicitType = new CPPReferenceType( implicitType );
-
-			result[0] = implicitType;
+		    if (ftype != null) {
+				IScope scope = fn.getScope();
+				if( scope instanceof ICPPTemplateScope )
+					scope = scope.getParent();
+				ICPPClassType cls = null;
+				if( scope instanceof ICPPClassScope ){
+					cls = ((ICPPClassScope)scope).getClassType();
+				} else {
+					cls = new CPPClassType.CPPClassTypeProblem( scope.getPhysicalNode(), IProblemBinding.SEMANTIC_BAD_SCOPE, fn.getNameCharArray() );
+				}
+				if( cls instanceof ICPPClassTemplate ){
+				    cls = (ICPPClassType) CPPTemplates.instantiateWithinClassTemplate( (ICPPClassTemplate) cls );
+				}
+				IType implicitType = cls;
+				if( ftype.isConst() || ftype.isVolatile() ){
+					implicitType = new CPPQualifierType( implicitType, ftype.isConst(), ftype.isVolatile() );
+				}
+				implicitType = new CPPReferenceType( implicitType );
+	
+				result[0] = implicitType;
+		    }
 	    }
 	    for( int i = 0; i < params.length; i++ )
 	        result = (IType[]) ArrayUtil.append( IType.class, result, params[i].getType() );
@@ -2260,7 +2262,11 @@ public class CPPSemantics {
 				} else 
 					varArgs = true;
 				
-				if( useImplicitObj && j == 0 && ((ICPPInternalFunction)currFn).isStatic( false ) ) {
+				if( useImplicitObj && j == 0 &&
+						(currFn instanceof ICPPInternalFunction
+								? ((ICPPInternalFunction)currFn).isStatic(false) 
+								: currFn.isStatic())
+							) {
 				    //13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
 				    cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost

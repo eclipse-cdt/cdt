@@ -60,7 +60,8 @@ public class PDOMCPPMethod extends PDOMMember implements ICPPMethod {
 	}
 
 	public IParameter[] getParameters() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO - need some real parameters
+		return new IParameter[0];
 	}
 
 	public IScope getFunctionScope() throws DOMException {
@@ -68,11 +69,13 @@ public class PDOMCPPMethod extends PDOMMember implements ICPPMethod {
 	}
 
 	public IFunctionType getType() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO 
+		return null;
 	}
 
 	public boolean isStatic() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return false;
 	}
 
 	public boolean isExtern() throws DOMException {
@@ -88,7 +91,8 @@ public class PDOMCPPMethod extends PDOMMember implements ICPPMethod {
 	}
 
 	public boolean takesVarArgs() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return false;
 	}
 
 	public String[] getQualifiedName() throws DOMException {

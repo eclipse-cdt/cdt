@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
@@ -155,7 +156,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
-		if (binding == null)
+		if (binding == null || binding instanceof IProblemBinding)
 			return null;
 		
 		PDOMNode parent = getParent(binding);

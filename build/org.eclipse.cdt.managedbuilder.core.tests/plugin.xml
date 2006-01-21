@@ -5911,5 +5911,108 @@
 		  </enumeratedOptionValue>
 		  </option>
 	</tool>
+
+    <!-- Interactive testing of option categories
+         Specifically of using the same option categories and options in
+         multiple tools in the same tool-chain.
+         This requires interactive testing of setting options -->
+       <tool
+         command="BaseCommand"
+         id="test1.baseTool"
+         isAbstract="false"
+         name="Base Tool">
+           <optionCategory
+             id="test1.baseTool.optionCategory"
+             name="Base Option Category1"/>
+           <option
+             category="test1.baseTool.optionCategory"
+             command="-aCmd"
+             defaultValue="BaseA"
+             id="test1.baseTool.optionA"
+             isAbstract="false"
+             name="Base Option A"
+             resourceFilter="all"
+             valueType="string"/>
+           <optionCategory
+             id="test1.baseTool.optionCategory2"
+             name="Base SubCategory2"
+             owner="test1.baseTool.optionCategory"/>
+           <option
+             category="test1.baseTool.optionCategory2"
+             command="-sub"
+             id="test1.baseTool.suboptionA"
+             name="SubOption A"
+             resourceFilter="all"
+             valueType="boolean"/>
+        </tool>
+        <projectType
+          id="test1.projectType"
+          isAbstract="false"
+          isTest="true"
+          name="Inheritance Test Project (case 1)">
+            <configuration
+              artifactExtension="out"
+              cleanCommand="rm -rf"
+              id="test1.configuration"
+              name="Test Configuration 1">
+		        <toolChain
+	              archList="foo"
+	              id="test1.toolChain1"
+	              isAbstract="false"
+	              name="Test1 Tool Chain 1"
+	              osList="solaris,linux,hpux,aix,qnx"
+	              targetTool="test1.baseTool">
+		            <tool
+                      command="DerivedCommand1"
+                      id="test1.derivedToolOne"
+                      superClass="test1.baseTool">
+		            </tool>
+		            <tool
+                      command="DerivedCommand2"
+                      id="test1.derivedToolTwo"
+                      name="Derived Tool Two"
+                      superClass="test1.baseTool">
+		            </tool>
+		        </toolChain>
+	        </configuration>
+            <configuration
+              artifactExtension="out"
+              cleanCommand="rm -rf"
+              id="test1.configuration 2"
+              name="Test Configuration 2">
+		        <toolChain
+	              archList="foo"
+	              id="test1.toolChain2"
+	              name="Test1 Tool Chain 2"
+	              targetTool="test1.baseTool">
+		            <tool
+                      id="test1.derivedToolOne2"
+                      superClass="test1.baseTool">
+		            </tool>
+		            <tool
+                      id="test1.derivedToolTwo2"
+                      name="Derived Tool Two"
+                      superClass="test1.baseTool">
+		            </tool>
+			       <tool
+			         command="xtra"
+			         id="test1.uniqueTool"
+			         name="Unique Tool">
+			           <optionCategory
+			             id="test1.uniqueTool.optionCategory"
+			             name="Unique Option Category1"/>
+			           <option
+			             category="test1.uniqueTool.optionCategory"
+			             command="-uopt"
+			             defaultValue="UniqueA"
+			             id="test1.uniqueTool.optionA"
+			             name="Unique Option A"
+			             resourceFilter="all"
+			             valueType="string"/>
+			        </tool>
+		        </toolChain>
+	        </configuration>
+        </projectType>
+
    </extension>
 </plugin>

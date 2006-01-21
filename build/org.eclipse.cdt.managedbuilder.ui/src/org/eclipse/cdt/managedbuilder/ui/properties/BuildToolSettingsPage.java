@@ -543,13 +543,13 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			if(realRcCfg == null)
 				return false;
 //			handler = realRcCfg;
-			clonedOptions = clonedCategory.getOptions(clonedResConfig);
+			clonedOptions = clonedCategory.getOptions(clonedResConfig, clonedTool);
 		} else {
 			realCfg = buildPropPage.getRealConfig(clonedConfig);
 			if(realCfg == null)
 				return false;
 //			handler = realCfg;
-			clonedOptions = clonedCategory.getOptions(clonedConfig);
+			clonedOptions = clonedCategory.getOptions(clonedConfig, clonedTool);
 		}
 
 		if ( clonedOptions == null)

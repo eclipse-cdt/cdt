@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,21 +11,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.*;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ToolListContentProvider implements ITreeContentProvider{
 	public static final int FILE = 0x1;
 	public static final int PROJECT = 0x4;
-	private static Object[] EMPTY_ARRAY = new Object[0];
 	private IConfiguration configRoot;
 	private IResourceConfiguration resConfigRoot;
 	private int elementType;
+	private ToolListElement[] elements;
 
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
@@ -36,88 +34,87 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	public ToolListContentProvider(int elementType) {
 		this.elementType = elementType;
 	}
-	
-	/**
-	 *  Gets the top level contents to be displayed in the tool list.
-	 *  If defined, first display the toolChain's option categories (unfiltered).
-	 *  Then display the the tools which are relevant for the project's nature.
-	 */
-	private Object[] getToplevelContent(IConfiguration config) {
-		Object toolChainsCategories[]; 
-		Object filteredTools[];
-		Object all[];
-		// Get the the option categories of the toolChain  
-		IToolChain toolChain = config.getToolChain();
-		toolChainsCategories = toolChain.getChildCategories();
-		// Get the tools to be displayed
-		filteredTools = config.getFilteredTools();
-		// Add up both arrays and return
-		int i;
-		int len = toolChainsCategories.length+filteredTools.length;
-		all = new Object[len];
-		for (i=0; i < toolChainsCategories.length; i++) 
-			all[i] = toolChainsCategories[i];
-		for (; i < len; i++) 
-			all[i] = filteredTools[i-toolChainsCategories.length];
-		
-		return all;
+
+	private ToolListElement[] createElements(IConfiguration config) {
+		IOptionCategory toolChainCategories[]; 
+		ITool filteredTools[];
+		List elementList = new ArrayList();
+		if (config != null) {
+			// Get the the option categories of the toolChain  
+			IToolChain toolChain = config.getToolChain();
+			toolChainCategories = toolChain.getChildCategories();
+			//  Create an element for each one
+			for (int i=0; i<toolChainCategories.length; i++) {
+				ToolListElement e = new ToolListElement(null, toolChain, toolChainCategories[i]);
+				elementList.add(e);
+				createChildElements(e);
+			}
+			//  Get the tools to be displayed
+			filteredTools = config.getFilteredTools();
+			//  Create an element for each one
+			for (int i=0; i<filteredTools.length; i++) {
+				ToolListElement e = new ToolListElement(filteredTools[i]);
+				elementList.add(e);
+				createChildElements(e);
+			}
+		}
+		return (ToolListElement[])elementList.toArray(new ToolListElement[elementList.size()]);		
+	}
+
+	private ToolListElement[] createElements(IResourceConfiguration resConfig) {
+		List elementList = new ArrayList();
+		if (resConfig != null) {
+			ITool[] tools = resConfig.getTools();
+			//  Create an element for each one
+			for (int i=0; i<tools.length; i++) {
+				ToolListElement e = new ToolListElement(tools[i]);
+				elementList.add(e);
+				createChildElements(e);
+			}
+		}
+		return (ToolListElement[])elementList.toArray(new ToolListElement[elementList.size()]);		
+	}
+
+	private void createChildElements(ToolListElement parentElement) {
+
+		IOptionCategory parent = parentElement.getOptionCategory();
+		IHoldsOptions optHolder = parentElement.getHoldOptions();
+		if (parent == null) {
+			parent = parentElement.getTool().getTopOptionCategory();	//  Must be an ITool
+			optHolder = parentElement.getTool();
+		}
+		IOptionCategory[] cats = parent.getChildCategories();
+		//  Create an element for each one
+		for (int i=0; i<cats.length; i++) {
+			ToolListElement e = new ToolListElement(parentElement, optHolder, cats[i]);
+			parentElement.addChildElement(e);
+			createChildElements(e);
+		}
 	}
 	
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		// If parent is configuration, return a list of its option categories
-		if (parentElement instanceof IConfiguration) {
-			IConfiguration config = (IConfiguration)parentElement;
-			// Get the contents to be displayed for the configuration
-			return getToplevelContent(config);
-		} else if( parentElement instanceof IResourceConfiguration) {
-			// If parent is a resource configuration, return a list of its tools.
-			// Resource configurations do not support categories that are children 
-			// of toolchains. The reason for this is that options in such categories 
-			// are intended to be global.
-			// TODO: Remove this restriction in future? Requires getToplevelContent() variant
-			IResourceConfiguration resConfig = (IResourceConfiguration)parentElement;
-			return resConfig.getTools();
-		} else if (parentElement instanceof ITool) {
-			// If this is a tool, return the categories it contains
-			ITool tool = (ITool)parentElement;
-			return tool.getTopOptionCategory().getChildCategories();
-		} else if (parentElement instanceof IOptionCategory) {
-			// Categories can have child categories
-			IOptionCategory cat = (IOptionCategory)parentElement;
-			return cat.getChildCategories();
-		} else {
-			return EMPTY_ARRAY;
+		if (parentElement instanceof IConfiguration ||
+			parentElement instanceof IResourceConfiguration	) {
+			return elements;
 		}
+		return ((ToolListElement)parentElement).getChildElements();
 	}
-
+	
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return getChildren(inputElement);
+		return elements;
 	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if (element instanceof IOptionCategory) {
-			// Find the parent category
-			IOptionCategory cat = (IOptionCategory)element; 
-			IOptionCategory parent = cat.getOwner();
-			// Then we need to get the configuration we belong to
-			if (parent == null) {
-				if(elementType == FILE)
-					return resConfigRoot;
-				else
-					return configRoot;
-			}
-			return parent;
-		}
-		return null;
+		return ((ToolListElement)element).getParent();
 	}
 
 	/**
@@ -131,13 +128,22 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		//  If the input hasn't changed, there is no reason to re-create the content
+		if (oldInput == newInput) return;
+		
 		if(elementType == FILE) {
 			resConfigRoot = (IResourceConfiguration)newInput;
 			configRoot = null;
+			//  Create a ToolListElement to represent each item that will appear
+			//  in the TreeViewer.
+			elements = createElements(resConfigRoot);
 		}
 		else if(elementType == PROJECT) {
 			configRoot = (IConfiguration) newInput;
 			resConfigRoot = null;
+			//  Create a ToolListElement to represent each item that will appear
+			//  in the TreeViewer.
+			elements = createElements(configRoot);
 		}
 	}
 }

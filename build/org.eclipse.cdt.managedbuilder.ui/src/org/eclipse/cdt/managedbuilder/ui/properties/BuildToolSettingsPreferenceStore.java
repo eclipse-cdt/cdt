@@ -43,6 +43,7 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 	private IConfiguration config;
 	private IResourceConfiguration rcConfig;
 	private IOptionCategory optCategory;
+	private ToolListElement selectedElement;
 	private ListenerList listenerList;
 	private boolean dirtyFlag;
 	
@@ -90,24 +91,18 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 		this.block = block;
 	}
 	
-	public void setSelection(IConfiguration cfg, IOptionCategory category){
+	public void setSelection(IConfiguration cfg, ToolListElement element, IOptionCategory category){
+		selectedElement = element;
 		optCategory = category;
 		rcConfig = null;
 		config = cfg;
 	}
 
-	public void setSelection(IResourceConfiguration cfg, IOptionCategory category){
+	public void setSelection(IResourceConfiguration cfg, ToolListElement element, IOptionCategory category){
+		selectedElement = element;
 		optCategory = category;
 		rcConfig = cfg;
 		config = cfg.getParent();
-	}
-	
-	public IOptionCategory getSelecedCategory(){
-		return optCategory;
-	}
-	
-	public IResourceConfiguration getSelectedRcConfig(){
-		return rcConfig;
 	}
 	
 	public IConfiguration getSelectedConfig(){
@@ -264,10 +259,12 @@ public class BuildToolSettingsPreferenceStore implements IPreferenceStore {
 	public Object[] getOption(String name){
 		Object options[][];
         
+		IHoldsOptions selectedHolder = selectedElement.getHoldOptions();
+		if (selectedHolder == null) selectedHolder = selectedElement.getTool();
 		if(rcConfig != null)
-			options = optCategory.getOptions(rcConfig);
+			options = optCategory.getOptions(rcConfig, selectedHolder);
 		else
-			options = optCategory.getOptions(config);
+			options = optCategory.getOptions(config, selectedHolder);
 
 		for(int i = 0; i < options.length; i++){
 			IHoldsOptions ho = (IHoldsOptions)options[i][0];

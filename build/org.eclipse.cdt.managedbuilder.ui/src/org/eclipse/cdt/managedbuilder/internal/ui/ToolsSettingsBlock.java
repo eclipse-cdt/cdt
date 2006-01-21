@@ -18,7 +18,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolSettingsPreferenceS
 import org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage;
 import org.eclipse.cdt.managedbuilder.ui.properties.ToolListContentProvider;
 import org.eclipse.cdt.managedbuilder.ui.properties.ToolListLabelProvider;
+import org.eclipse.cdt.managedbuilder.ui.properties.ToolListElement;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -75,8 +75,6 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	//private static final String TREE_LABEL = LABEL + ".ToolTree";	//$NON-NLS-1$
 	//private static final String OPTIONS_LABEL = LABEL + ".ToolOptions";	//$NON-NLS-1$
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 20, 30 };
-
-	private static final String EMPTY_STRING = new String();
 	
 	/*
 	 * Dialog widgets
@@ -94,10 +92,9 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	private BuildPropertyPage parent;
 	private ResourceBuildPropertyPage resParent;
 	private BuildSettingsPage currentSettingsPage;
-	private IOptionCategory selectedCategory;
+	private ToolListElement selectedElement;
 	private ToolListContentProvider provider;
-	private ITool selectedTool;
-	private Object element;
+	private Object propertyObject;
 	
 	private boolean defaultNeeded;
 
@@ -152,7 +149,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		super.setContainer(parent);
 		this.parent = parent;
 		configToPageListMap = new HashMap();
-		this.element = element;
+		this.propertyObject = element;
 		settingsStore = new BuildToolSettingsPreferenceStore(this);
 	}
 
@@ -162,7 +159,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		super.setContainer((ICOptionContainer) resParent);
 		this.resParent = resParent;
 		configToPageListMap = new HashMap();
-		this.element = element;
+		this.propertyObject = element;
 		settingsStore = new BuildToolSettingsPreferenceStore(this);
 	}
 	
@@ -214,9 +211,10 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * Method displayOptionsForCategory
 	 * @param category
 	 */
-	private void displayOptionsForCategory(IOptionCategory category) {
-		selectedTool = null;
-		selectedCategory = category;
+	private void displayOptionsForCategory(ToolListElement toolListElement) {
+		selectedElement = toolListElement;
+		IOptionCategory category = toolListElement.getOptionCategory();
+		IHoldsOptions optionHolder = toolListElement.getHoldOptions();
 		
 		// Cache the current build setting page
 		BuildSettingsPage oldPage = currentSettingsPage;
@@ -228,18 +226,18 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		while (iter.hasNext()) {
 			BuildSettingsPage page = (BuildSettingsPage) iter.next();
 			if (page instanceof BuildOptionSettingsPage && 
-					((BuildOptionSettingsPage)page).isForCategory(category)) {
+					((BuildOptionSettingsPage)page).isForCategory(optionHolder, category)) {
 				currentSettingsPage = page;
 				break;
 			}
 		}
 		if (currentSettingsPage == null) {
-			if ( this.element instanceof IProject) {
-				currentSettingsPage = new BuildOptionSettingsPage(parent,parent.getSelectedConfigurationClone(), category);
+			if ( this.propertyObject instanceof IProject) {
+				currentSettingsPage = new BuildOptionSettingsPage(parent,parent.getSelectedConfigurationClone(), optionHolder, category);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(parent);
-			} else if ( this.element instanceof IFile) {
-				currentSettingsPage = new BuildOptionSettingsPage(resParent,resParent.getCurrentResourceConfigClone(), category);
+			} else if ( this.propertyObject instanceof IFile) {
+				currentSettingsPage = new BuildOptionSettingsPage(resParent,resParent.getCurrentResourceConfigClone(), optionHolder, category);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(resParent);
 			}
@@ -273,11 +271,9 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * Method displayOptionsForTool
 	 * @param tool
 	 */
-	private void displayOptionsForTool(ITool tool) {
-		// Unselect the category
-		selectedCategory = null;
-		// record that the tool selection has changed
-		selectedTool = tool;
+	private void displayOptionsForTool(ToolListElement toolListElement) {
+		selectedElement = toolListElement;
+		ITool tool = toolListElement.getTool();
 		
 		// Cache the current build setting page
 		BuildSettingsPage oldPage = currentSettingsPage;
@@ -295,12 +291,12 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			}
 		}
 		if (currentSettingsPage == null) {
-			if ( this.element instanceof IProject) {
+			if ( this.propertyObject instanceof IProject) {
 				currentSettingsPage = new BuildToolSettingsPage(parent, 
 						parent.getSelectedConfigurationClone(), tool);
 				pages.add(currentSettingsPage);
 				currentSettingsPage.setContainer(parent);
-			} else if(this.element instanceof IFile) {
+			} else if(this.propertyObject instanceof IFile) {
 				currentSettingsPage = new BuildToolSettingsPage(resParent,
 						resParent.getCurrentResourceConfigClone(), tool);
 				pages.add(currentSettingsPage);
@@ -378,101 +374,112 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 
 	public void setVisible(boolean visible){
 		if(visible){
-			selectedCategory = null;
-			selectedTool = null;
+			selectedElement = null;
 			handleOptionSelection();
 		}
 		super.setVisible(visible);
 	}
 
 	protected void setValues() {
-		
-		IConfiguration config = null;	
-		IResourceConfiguration resConfig = null;
-		
+		/*
+		 *  This method updates the context of the build property pages
+		 *   - Which configuration/resource configuration is selected
+		 *   - Which tool/option category is selected
+		 *    
+		 *  It is called:
+		 *   - When a property page becomes visible
+		 *   - When the user changes the configuration selection
+		 *   - When the user changes the "exclude" setting for a resource
+		 */
+
+		//  Create the Tree Viewer content provider if first time
 		if (provider == null) {
-//			IResource element = parent.getProject(); 
-			IResource resource = (IResource) element;
+			IResource resource = (IResource) propertyObject;
 			provider = new ToolListContentProvider(resource.getType());
 			optionList.setContentProvider(provider);
 		}
-		if ( element instanceof IProject ) {
+
+		//  Update the selected configuration and the Tree Viewer
+		IConfiguration config = null;	
+		IResourceConfiguration resConfig = null;
+		ToolListElement[] newElements;
+		
+		if ( propertyObject instanceof IProject ) {
 			config = parent.getSelectedConfigurationClone();	
 			optionList.setInput(config);	
-		} else if ( element instanceof IFile){
+			newElements = (ToolListElement[])provider.getElements(config);
+		} else if ( propertyObject instanceof IFile){
 			resConfig = resParent.getCurrentResourceConfigClone();
 			optionList.setInput(resConfig);
-		}
+			newElements = (ToolListElement[])provider.getElements(resConfig);
+		} else
+			return;		// This should not happen
 		
 		optionList.expandAll();
 		
-		// Determine what the selection in the tree should be
-		Object primary = null;
-		if (selectedTool != null) {
-			// There is a selected tool defined.  See if it matches any current tool (by name)
-			ITool[] tools = null;
-			if ( element instanceof IProject ) {
-				tools = config.getFilteredTools();
-			} else if ( element instanceof IFile){
-				tools = resConfig.getTools();
-			}			
-			String matchName = selectedTool.getName();
-			for (int i=0; i<tools.length; i++) {
-				ITool tool = tools[i];
-				if (tool.getName().equals(matchName)) {
-					primary = tool;
-					break;
-				}
-			}
-		} else if (selectedCategory != null) {
-			// There is a selected option or category.  
-			// See if it matches any category in the current config (by name)
-			ITool[] tools = null;
-			IToolChain toolChain = null;
-			
-			if ( element instanceof IProject ) {
-				tools = config.getFilteredTools();
-				toolChain = config.getToolChain();
-			} else if ( element instanceof IFile){
-				tools = resConfig.getTools();
-			}
-			IBuildObject catOrTool = selectedCategory;
-			// Make the match name
-			String matchName = makeMatchName(catOrTool);
-			// Search for selected category/tool in toolChain
-			if ( toolChain != null ) {
-				primary = findOptionCategoryByMatchName(matchName, toolChain.getChildCategories());
-			}			
-			// Search for selected category/tool in tools
-			if ( primary == null ) {
-				for (int i=0; i<tools.length && primary == null; i++) {
-					primary = findOptionCategoryByMatchName(matchName, tools[i].getChildCategories());
-				}
-			}
-		} 
-		
-		if (primary == null) {
-			// Select the first tool in the list
-			Object[] elements = null;
-			if( element instanceof IProject){
-				elements = provider.getElements(parent.getSelectedConfigurationClone());
-			} else if ( element instanceof IFile) {
-				elements = provider.getElements(resParent.getCurrentResourceConfigClone());
-			}
-			primary = elements.length > 0 ? elements[0] : null;			
+		//  Determine what the selection in the tree should be
+		//  If the saved selection is not null, try to match the saved selection
+		//  with an object in the new element list.
+		//  Otherwise, select the first tool in the tree
+		Object primaryObject = null;
+		if (selectedElement != null) {
+			selectedElement = matchSelectionElement(selectedElement, newElements);
 		}
-		
-		if (primary != null) {
-			if(primary instanceof IOptionCategory){
-				if(resConfig != null)
-					settingsStore.setSelection(resConfig,(IOptionCategory)primary);
-				else
-					settingsStore.setSelection(config,(IOptionCategory)primary);
+			
+		if (selectedElement == null) {
+			selectedElement = (ToolListElement)(newElements.length > 0 ? newElements[0] : null);
+		}
+			
+		if (selectedElement != null) {
+			primaryObject = selectedElement.getTool();
+			if (primaryObject == null) {
+				primaryObject = selectedElement.getOptionCategory();
 			}
-			optionList.setSelection(new StructuredSelection(primary), true);
+			if (primaryObject != null) {
+				if (primaryObject instanceof IOptionCategory) {
+					if(resConfig != null)
+						settingsStore.setSelection(resConfig, selectedElement, (IOptionCategory)primaryObject);
+					else
+						settingsStore.setSelection(config, selectedElement, (IOptionCategory)primaryObject);
+				}
+				optionList.setSelection(new StructuredSelection(selectedElement), true);
+			}
 		}
 	}
+						
+	private ToolListElement matchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {
+		//  First, look for an exact match
+		ToolListElement match = exactMatchSelectionElement(currentElement, elements);
+		if (match == null)
+			//  Else, look for the same tool/category in the new set of elements
+			match = equivalentMatchSelectionElement(currentElement, elements);
+		return match;
+	}
 
+	private ToolListElement exactMatchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {
+		for (int i=0; i<elements.length; i++) {
+			ToolListElement e = elements[i];
+			if (e == currentElement) {
+				return currentElement;
+			}
+			e = exactMatchSelectionElement(currentElement, e.getChildElements());
+			if (e != null) return e;
+		}
+		return null;
+	}
+
+	private ToolListElement equivalentMatchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {
+		for (int i=0; i<elements.length; i++) {
+			ToolListElement e = elements[i];
+			if (e.isEquivalentTo(currentElement)) {
+				return e;
+			}
+			e = equivalentMatchSelectionElement(currentElement, e.getChildElements());
+			if (e != null) return e;
+		}
+		return null;
+	}
+	
 	public void removeValues(String id) {
 	}
 
@@ -481,17 +488,24 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		IStructuredSelection selection = (IStructuredSelection) optionList.getSelection();
 	
 		// Set the option page based on the selection
-		Object element = selection.getFirstElement();
-		if(element instanceof IOptionCategory){
-			if(resParent != null)
-				settingsStore.setSelection(resParent.getCurrentResourceConfigClone(),(IOptionCategory)element);
-			else
-				settingsStore.setSelection(parent.getSelectedConfigurationClone(),(IOptionCategory)element);
-		}
-		if (element instanceof ITool) {
-			displayOptionsForTool((ITool)element);
-		} else if (element instanceof IOptionCategory) {
-			displayOptionsForCategory((IOptionCategory)element);
+		ToolListElement toolListElement = (ToolListElement)selection.getFirstElement();
+		if (toolListElement != null) {
+			IOptionCategory cat = toolListElement.getOptionCategory();
+			if (cat == null)
+				cat = (IOptionCategory)toolListElement.getTool();
+			if (cat != null) {
+				if(resParent != null)
+					settingsStore.setSelection(resParent.getCurrentResourceConfigClone(), toolListElement, cat);
+				else
+					settingsStore.setSelection(parent.getSelectedConfigurationClone(), toolListElement, cat);
+			}
+
+			cat = toolListElement.getOptionCategory();
+			if (cat != null) {
+				displayOptionsForCategory(toolListElement);
+			} else {
+				displayOptionsForTool(toolListElement);
+			}
 		}
 	}
 
@@ -519,10 +533,10 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
-		if ( element instanceof IProject) {
-			performDefaults( (IProject)element);
-		} else if ( element instanceof IFile) {
-			performDefaults( (IFile)element);
+		if ( propertyObject instanceof IProject) {
+			performDefaults( (IProject)propertyObject);
+		} else if ( propertyObject instanceof IFile) {
+			performDefaults( (IFile)propertyObject);
 		}
 		defaultNeeded = true;
 		return;
@@ -544,8 +558,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		
 		// Reset the category or tool selection and run selection event handler
-		selectedCategory = null;
-		selectedTool = null;
+		selectedElement = null;
 		handleOptionSelection();
 		
 		setDirty(true);
@@ -566,8 +579,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 
 		// Reset the category or tool selection and run selection event handler
-		selectedCategory = null;
-		selectedTool = null;
+		selectedElement = null;
 		handleOptionSelection();
 		
 		setDirty(true);
@@ -579,11 +591,11 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		
-		if(element instanceof IFile)
+		if(propertyObject instanceof IFile)
 			resParent.getCurrentResourceConfig(true);
 		
 		if(defaultNeeded){
-			if(element instanceof IFile)
+			if(propertyObject instanceof IFile)
 				ManagedBuildManager.resetResourceConfiguration(resParent.getProject(), resParent.getCurrentResourceConfig(true));
 			else
 				ManagedBuildManager.resetConfiguration(parent.getProject(), parent.getSelectedConfiguration());
@@ -846,13 +858,13 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 */
 	private List getPagesForConfig() {
 		List pages = null;
-		if ( element instanceof IProject) {
+		if ( propertyObject instanceof IProject) {
 //			 Make sure that something was selected
 			if (parent.getSelectedConfigurationClone() == null) {
 				return null;
 			}
 			pages = (List) configToPageListMap.get(parent.getSelectedConfigurationClone().getId());	
-		} else if (element instanceof IFile) {
+		} else if (propertyObject instanceof IFile) {
 			if ( resParent.getCurrentResourceConfigClone() == null ) {
 				return null;
 			}
@@ -861,9 +873,9 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		
 		if (pages == null) {
 			pages = new ArrayList();
-			if ( element instanceof IProject) {
+			if ( propertyObject instanceof IProject) {
 				configToPageListMap.put(parent.getSelectedConfigurationClone().getId(), pages);	
-			} else if ( element instanceof IFile) {
+			} else if ( propertyObject instanceof IFile) {
 				configToPageListMap.put(resParent.getCurrentResourceConfigClone().getId(), pages);
 			}
 		}
@@ -938,59 +950,5 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 	}
-	
-	/**
-	 * Creates a name that uniquely identifies a category. The match name is 
-	 * a concatenation of the tool and categories, e.g. Tool->Cat1->Cat2 
-	 * maps onto the string "Tool|Cat1|Cat2|"
-	 * 
-	 * @param category or tool for which to build the match name 
-	 * @return match name
-	 */
-	private String makeMatchName(IBuildObject catOrTool) {
-		String catName = EMPTY_STRING;
-		
-		// Build the match name.
-		do {
-			catName = catOrTool.getName() + "|" + catName; //$NON-NLS-1$
-			if (catOrTool instanceof ITool) break;
-			else if (catOrTool instanceof IOptionCategory) {
-				catOrTool = ((IOptionCategory)catOrTool).getOwner();					
-			} else 
-				break;
-		} while (catOrTool != null);
-		
-		return catName;
-	}
-	
-	/**
-	 * Finds an option category from an array of categories by comparing against
-	 * a match name. The match name is a concatenation of the tool and categories, 
-	 * e.g. Tool->Cat1->Cat2 maps onto the string "Tool|Cat1|Cat2|"
-	 * 
-	 * @param matchName an identifier to search 
-	 * @param categories as returned by getChildCategories(), i.e. non-flattened 
-	 * @return category or tool, if found and null otherwise
-	 */
-	private Object findOptionCategoryByMatchName(String matchName, IOptionCategory[] cats) {
-		Object primary = null;
-		
-		for (int j=0; j<cats.length; j++) {
-			IBuildObject catOrTool = cats[j]; 
-			// Build the match name
-			String catName = makeMatchName(catOrTool);
-			// Check whether the name matches
-			if (catName.equals(matchName)) {
-				primary = cats[j];
-				break;
-			} else if (matchName.startsWith(catName)) {
-				// If there is a common root then check for any further children
-				primary = findOptionCategoryByMatchName(matchName, cats[j].getChildCategories());
-				if (primary != null)
-					break;
-			}
-		}
-		return primary;
-	}	
 }
 

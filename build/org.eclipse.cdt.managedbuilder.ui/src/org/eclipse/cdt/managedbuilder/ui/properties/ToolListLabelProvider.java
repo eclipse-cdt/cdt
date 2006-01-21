@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.net.URL;
 
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
@@ -56,50 +57,46 @@ public class ToolListLabelProvider extends LabelProvider {
 	}
 
 	public Image getImage(Object element) {
-		// Return a tool image for a tool or tool reference
-		if (element instanceof ITool) {
-			if (element instanceof IOptionCategory) {
-				// Retrieve the Image from Icon information included 
-				IOptionCategory cat = (IOptionCategory)element;
-				Image img = getIconFromOptionCategory(cat);
-				
-				if (img != null) {
-					return img;
-				}
-			}
-			// Use default icon for display 
-			return IMG_TOOL;
-
-		} else if (element instanceof IOptionCategory) { 
+		if (!(element instanceof ToolListElement)) {
+			throw unknownElement(element);
+		}
+		Image defaultImage = IMG_CAT;
+		ToolListElement toolListElement = (ToolListElement)element;
+		IOptionCategory cat = toolListElement.getOptionCategory();
+	
+		if (cat == null) {
+			defaultImage = IMG_TOOL;
+			cat = (IOptionCategory)toolListElement.getTool();
+		}
+		
+		if (cat != null) {
 			// Return a OptionCategory image for an OptionCategory reference
-			IOptionCategory cat = (IOptionCategory)element;
 			Image img = getIconFromOptionCategory(cat);
 			
 			if (img != null) {
 				return img;
 			}
-			// Use default icon for display 
-			return IMG_CAT;
-		} else {
-			throw unknownElement(element);
 		}
+		// Use default icon for display 
+		return defaultImage;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof ITool) {
-			// Handles tool references as well
-			ITool tool = (ITool)element;
+		if (!(element instanceof ToolListElement)) {
+			throw unknownElement(element);
+		}
+		ToolListElement toolListElement = (ToolListElement)element;
+		IOptionCategory cat = toolListElement.getOptionCategory();
+	
+		if (cat == null) {
+			ITool tool = toolListElement.getTool();
 			return tool.getName();
 		}
-		else if (element instanceof IOptionCategory) {
-			IOptionCategory cat = (IOptionCategory)element;
-			return cat.getName();
-		}
 		else {
-			throw unknownElement(element);
+			return cat.getName();
 		}
 	}
 

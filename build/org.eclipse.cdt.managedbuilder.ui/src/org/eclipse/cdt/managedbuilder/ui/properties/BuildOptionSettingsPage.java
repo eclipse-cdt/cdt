@@ -40,24 +40,27 @@ import org.eclipse.swt.widgets.Composite;
 public class BuildOptionSettingsPage extends BuildSettingsPage {
 	private Map fieldsMap = new HashMap();
 	private IOptionCategory clonedCategory;
+	private IHoldsOptions optionHolder;
 	private boolean isItResourceConfigPage;
 	private Map fieldEditorsToParentMap = new HashMap();
 	private AbstractBuildPropertyPage buildPropPage;
 
 	public BuildOptionSettingsPage(AbstractBuildPropertyPage page,
-			IConfiguration clonedConfig, IOptionCategory clonedCategory) {
+			IConfiguration clonedConfig, IHoldsOptions optionHolder, IOptionCategory clonedCategory) {
 		// Cache the configuration and option category this page is created for
 		super(clonedConfig);
 		this.clonedCategory = clonedCategory;
+		this.optionHolder = optionHolder;
 		isItResourceConfigPage = false;
 		buildPropPage = page;
 	}
 	
 	public BuildOptionSettingsPage(AbstractBuildPropertyPage page,
-			IResourceConfiguration clonedResConfig, IOptionCategory clonedCategory) {
+			IResourceConfiguration clonedResConfig, IHoldsOptions optionHolder, IOptionCategory clonedCategory) {
 		// Cache the configuration and option category this page is created for
 		super(clonedResConfig);
 		this.clonedCategory = clonedCategory;
+		this.optionHolder = optionHolder;
 		isItResourceConfigPage = true;
 		buildPropPage = page;
 	}
@@ -78,9 +81,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 		// for each
 		Object[][] options;
 		if ( isItResourceConfigPage ) {
-			options = clonedCategory.getOptions(clonedResConfig);
+			options = clonedCategory.getOptions(clonedResConfig, optionHolder);
 		} else {
-			options = clonedCategory.getOptions(clonedConfig);
+			options = clonedCategory.getOptions(clonedConfig, optionHolder);
 		}
 		
 		for (int index = 0; index < options.length; ++index) {
@@ -204,9 +207,10 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	 * @param category
 	 * @return
 	 */
-	public boolean isForCategory(IOptionCategory category) {
+	public boolean isForCategory(IHoldsOptions optionHolder, IOptionCategory category) {
 		if (category != null) {
-			return category.equals(this.clonedCategory);
+			if (this.optionHolder == optionHolder && category.equals(this.clonedCategory))
+				return true;
 		}
 		return false;
 	}
@@ -229,13 +233,13 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 			if(realRcCfg == null)
 				return false;
 			handler = realRcCfg;
-			clonedOptions = clonedCategory.getOptions(clonedResConfig);
+			clonedOptions = clonedCategory.getOptions(clonedResConfig, optionHolder);
 		} else {
 			realCfg = buildPropPage.getRealConfig(clonedConfig);
 			if(realCfg == null)
 				return false;
 			handler = realCfg;
-			clonedOptions = clonedCategory.getOptions(clonedConfig);
+			clonedOptions = clonedCategory.getOptions(clonedConfig, optionHolder);
 		}
 		
 		for (int i = 0; i < clonedOptions.length; i++) {
@@ -353,9 +357,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 	public void updateFields() {
 		Object[][] options;
 		if (isItResourceConfigPage) {
-			options = clonedCategory.getOptions(clonedResConfig);
+			options = clonedCategory.getOptions(clonedResConfig, optionHolder);
 		} else {
-			options = clonedCategory.getOptions(clonedConfig);
+			options = clonedCategory.getOptions(clonedConfig, optionHolder);
 		}
 
 		// some option has changed on this page... update enabled/disabled state for all options
@@ -518,9 +522,9 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 
 		Object[][] options;
 		if (isItResourceConfigPage) {
-			options = clonedCategory.getOptions(clonedResConfig);
+			options = clonedCategory.getOptions(clonedResConfig, optionHolder);
 		} else {
-			options = clonedCategory.getOptions(clonedConfig);
+			options = clonedCategory.getOptions(clonedConfig, optionHolder);
 		}
 
 		// some option has changed on this page... update enabled/disabled state for all options

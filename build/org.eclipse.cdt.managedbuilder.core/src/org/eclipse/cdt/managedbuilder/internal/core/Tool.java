@@ -1077,13 +1077,21 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		}
 		return iconPathURL;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
+	 */
+	public Object[][] getOptions(IConfiguration configuration, IHoldsOptions optionHolder) {
+		if (optionHolder != this) return null;
+		return getOptions(configuration);
+	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions(org.eclipse.cdt.core.build.managed.ITool)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
 	 */
 	public Object[][] getOptions(IConfiguration configuration) {
 		// Find the child of the configuration that represents the same tool.
-		// It could the tool itself, or a "sub-class" of the tool.
+		// It could be the tool itself, or a "sub-class" of the tool.
 		if (configuration != null) {
 			ITool[] tools = configuration.getTools();
 			return getOptions(tools);
@@ -1092,6 +1100,17 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
+	 */
+	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optionHolder) {
+		if (optionHolder != this) return null;
+		return getOptions(resConfig);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
+	 */
 	public Object[][] getOptions(IResourceConfiguration resConfig) {
 		ITool[] tools = resConfig.getTools();
 		return getOptions(tools);

@@ -35,6 +35,7 @@ import org.w3c.dom.Element;
  */
 public class OptionCategory extends BuildObject implements IOptionCategory {
 
+	private static final String EMPTY_STRING = new String();
 	private static final IOptionCategory[] emtpyCategories = new IOptionCategory[0];
 
 	//  Parent and children
@@ -227,7 +228,16 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions(org.eclipse.cdt.core.build.managed.ITool)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
+	 */
+	public Object[][] getOptions(IConfiguration configuration, IHoldsOptions optionHolder) {
+		IHoldsOptions[] optionHolders = new IHoldsOptions[1];
+		optionHolders[0] = optionHolder;
+		return getOptions(optionHolders, FILTER_PROJECT);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
 	 */
 	public Object[][] getOptions(IConfiguration configuration) {
 		IHoldsOptions[] optionHolders = null;
@@ -247,6 +257,18 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		return getOptions(optionHolders, FILTER_PROJECT);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
+	 */
+	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optionHolder) {
+		IHoldsOptions[] optionHolders = new IHoldsOptions[1];
+		optionHolders[0] = optionHolder;
+		return getOptions(optionHolders, FILTER_FILE);
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
+	 */
 	public Object[][] getOptions(IResourceConfiguration resConfig) {
 		IHoldsOptions[] optionHolders = null;
 		if (resConfig != null) {
@@ -455,4 +477,57 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		// Do nothing
 	}
 
+	/**
+	 * Creates a name that uniquely identifies a category. The match name is 
+	 * a concatenation of the tool and categories, e.g. Tool->Cat1->Cat2 
+	 * maps onto the string "Tool|Cat1|Cat2|"
+	 * 
+	 * @param category or tool for which to build the match name 
+	 * @return match name
+	 */
+	static public String makeMatchName(IBuildObject catOrTool) {
+		String catName = EMPTY_STRING;
+		
+		// Build the match name.
+		do {
+			catName = catOrTool.getName() + "|" + catName; //$NON-NLS-1$
+			if (catOrTool instanceof ITool) break;
+			else if (catOrTool instanceof IOptionCategory) {
+				catOrTool = ((IOptionCategory)catOrTool).getOwner();					
+			} else 
+				break;
+		} while (catOrTool != null);
+		
+		return catName;
+	}
+	
+	/**
+	 * Finds an option category from an array of categories by comparing against
+	 * a match name. The match name is a concatenation of the tool and categories, 
+	 * e.g. Tool->Cat1->Cat2 maps onto the string "Tool|Cat1|Cat2|"
+	 * 
+	 * @param matchName an identifier to search 
+	 * @param categories as returned by getChildCategories(), i.e. non-flattened 
+	 * @return category or tool, if found and null otherwise
+	 */
+	static public Object findOptionCategoryByMatchName(String matchName, IOptionCategory[] cats) {
+		Object primary = null;
+		
+		for (int j=0; j<cats.length; j++) {
+			IBuildObject catOrTool = cats[j]; 
+			// Build the match name
+			String catName = makeMatchName(catOrTool);
+			// Check whether the name matches
+			if (catName.equals(matchName)) {
+				primary = cats[j];
+				break;
+			} else if (matchName.startsWith(catName)) {
+				// If there is a common root then check for any further children
+				primary = findOptionCategoryByMatchName(matchName, cats[j].getChildCategories());
+				if (primary != null)
+					break;
+			}
+		}
+		return primary;
+	}	
 }

@@ -41,8 +41,28 @@ public interface IOptionCategory extends IBuildObject {
 	 * 
 	 * @param tool
 	 * @return Object[][]
+	 * 
+	 * @since 3.1
+	 */
+	public Object[][] getOptions(IConfiguration configuration, IHoldsOptions optHolder);
+	/**
+	 * @deprecated since 3.1 - use getOption with IHoldsOptions aregument instead
 	 */
 	public Object[][] getOptions(IConfiguration configuration);
+
+	/**
+	 * Returns an array of ITool/IOption pairs for the options in this category
+	 * for a given resource configuration.
+	 * 
+	 * @param tool
+	 * @return Object[][]
+	 * 
+	 * @since 3.1
+	 */
+	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optHolder);
+	/**
+	 * @deprecated since 3.1 - use getOption with IHoldsOptions aregument instead
+	 */
 	public Object[][] getOptions(IResourceConfiguration resConfig);
 
 	/**

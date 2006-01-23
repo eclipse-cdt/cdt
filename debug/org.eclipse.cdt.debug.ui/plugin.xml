@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-     <extension-point id="CDebuggerPage" name="%CDebuggerPage"/>
+     <extension-point id="CDebuggerPage" name="%CDebuggerPage" schema="schema/CDebuggerPage.exsd"/>
 
 <!-- Extensions -->
    <extension

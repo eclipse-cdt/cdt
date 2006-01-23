@@ -135,7 +135,7 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 			miSession.getMIInferior().setConnected();
 		}
 		catch( MIException e ) {
-			throw newCoreException( MessageFormat.format( MIPlugin.getResourceString( "src.GDBCDIDebugger2.2" ), new Integer[] { Integer.valueOf( pid ) } ), e ); //$NON-NLS-1$
+			throw newCoreException( MessageFormat.format( MIPlugin.getResourceString( "src.GDBCDIDebugger2.2" ), new Integer[] { new Integer( pid ) } ), e ); //$NON-NLS-1$
 		}
 		// @@@ We have to set the suspended state manually
 		miSession.getMIInferior().setSuspended();

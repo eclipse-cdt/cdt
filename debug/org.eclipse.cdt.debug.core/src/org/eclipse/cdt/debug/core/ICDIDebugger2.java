@@ -6,24 +6,26 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - initial API and implementation
+ * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core;
+package org.eclipse.cdt.debug.core; 
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import java.io.File;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
-
+ 
 /**
- * @deprecated use <code>ICDIDebugger2</code>.
+ * Replacement for deprecated <code>ICDIDebugger</code>.
+ * 
+ * @since 3.1 experimental
  */
-public interface ICDIDebugger {
-
+public interface ICDIDebugger2 extends ICDIDebugger {
+	
 	/**
-	 * @deprecated use <code>createSession</code> of <code>ICDIDebugger2</code>
+	 * <code>null</code> can be passed as <code>executable</code> allowing debuggers to create session without executables, 
+	 * or load executables later during the session.
 	 */
-	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor) throws CoreException;
-
+	public ICDISession createSession(ILaunch launch, File executable, IProgressMonitor monitor) throws CoreException;
 }

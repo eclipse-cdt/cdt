@@ -1,3 +1,9 @@
+2006-01-23 Mikhail Khodjaiants
+	Bug 119683: long messages during launch cause gdb to timeout, launch to fail.
+	New "createSession" method accepts File instead of IBinaryObject.
+	* ICDIDebugger.java
+	+ ICDIDebugger2.java
+
 2006-01-15 Mikhail Khodjaiants
 	Bug 123745: Disassembly view can get into endless loop.
 	* DisassemblyBlock.java

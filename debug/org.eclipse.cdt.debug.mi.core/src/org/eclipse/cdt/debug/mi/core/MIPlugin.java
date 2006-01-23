@@ -15,9 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
@@ -83,6 +84,8 @@ public class MIPlugin extends Plugin {
 	 * @param int
 	 * @throws MIException
 	 * @return MISession
+	 * 
+	 * @deprecated
 	 */
 	public MISession createMISession(MIProcess process, IMITTY pty, int timeout, int type, int launchTimeout, String miVersion, IProgressMonitor monitor) throws MIException {
 		return new MISession(process, pty, type, timeout, launchTimeout, miVersion, monitor);
@@ -95,6 +98,8 @@ public class MIPlugin extends Plugin {
 	 * @param type
 	 * @throws MIException
 	 * @return MISession
+	 * 
+	 * @deprecated
 	 */
 	public MISession createMISession(MIProcess process, IMITTY pty, int type, String miVersion, IProgressMonitor monitor) throws MIException {
 		MIPlugin miPlugin = getDefault();
@@ -104,12 +109,18 @@ public class MIPlugin extends Plugin {
 		return createMISession(process, pty, timeout, type, launchTimeout, miVersion, monitor);
 	}
 
+	private MISession createMISession0(int type, MIProcess process, CommandFactory commandFactory, IMITTY pty, int timeout) throws MIException {
+		return new MISession(process, pty, type, commandFactory, timeout);
+	}
+
 	/**
 	 * Method createCSession; Create an new PTY instance and launch gdb in mi for local debug.
 	 * 
 	 * @param program
 	 * @return ICDISession
 	 * @throws MIException
+	 * 
+	 * @deprecated use <code>createSession</code>
 	 */
 	public Session createCSession(String gdb, String miVersion, File program, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		IMITTY pty = null;
@@ -155,6 +166,8 @@ public class MIPlugin extends Plugin {
 	 * @param program
 	 * @return ICDISession
 	 * @throws IOException
+	 * 
+	 * @deprecated use <code>createSession</code>
 	 */
 	public Session createCSession(String gdb, String miVersion, File program, File cwd, String gdbinit, IMITTY pty, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
@@ -228,6 +241,8 @@ public class MIPlugin extends Plugin {
 	 * @param core
 	 * @return ICDISession
 	 * @throws IOException
+	 *
+	 * @deprecated use <code>createSession</code>
 	 */
 	public Session createCSession(String gdb, String miVersion, File program, File core, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
@@ -277,6 +292,8 @@ public class MIPlugin extends Plugin {
 	 * @param pid
 	 * @return ICDISession
 	 * @throws IOException
+	 * 
+	 * @deprecated use <code>createSession</code>
 	 */
 	public Session createCSession(String gdb, String miVersion, File program, int pid, String[] targetParams, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
@@ -348,6 +365,84 @@ public class MIPlugin extends Plugin {
 	}
 
 	/**
+	 * Starts a process by executing the following command:
+	 * gdb -q -nw -i <mi_version>(extracted from the command factory) 
+	 *     -tty<pty_name> (if <code>usePTY</code> is <code>true</code>) 
+	 *     extraArgs program (if <code>program</code> is not <code>null</code>)  
+	 * 
+	 * @param sessionType the type of debugging session: 
+	 *                    <code>MISession.PROGRAM</code>, 
+	 *                    <code>MISession.ATTACH</code> 
+	 *                    or <code>MISession.CORE</code>
+	 * @param gdb the name of the gdb file
+	 * @param factory the command set supported by gdb
+	 * @param program a program to debug or <code>null</code>
+	 * @param extraArgs arguments to pass to gdb
+	 * @param usePty whether to use pty or not
+	 * @param monitor a progress monitor
+	 * @return an instance of <code>ICDISession</code>
+	 * @throws IOException
+	 * @throws MIException
+	 */
+	public Session createSession(int sessionType, String gdb, CommandFactory factory, File program, String[] extraArgs, boolean usePty, IProgressMonitor monitor) throws IOException, MIException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		if (gdb == null || gdb.length() == 0) {
+			gdb =  GDB;
+		}
+
+		IMITTY pty = null;
+
+		if (usePty) {
+			try {
+				PTY pseudo = new PTY();
+				pty = new MITTYAdapter(pseudo);
+			} catch (IOException e) {
+				// Should we not print/log this ?
+			}
+		}
+
+		ArrayList argList = new ArrayList(extraArgs.length + 8);
+		argList.add(gdb);
+		argList.add("-q"); //$NON-NLS-1$
+		argList.add("-nw"); //$NON-NLS-1$
+		argList.add("-i"); //$NON-NLS-1$
+		argList.add(factory.getMIVersion());
+		if (pty != null) {
+			argList.add("-tty"); //$NON-NLS-1$
+			argList.add(pty.getSlaveName());
+		}
+		argList.addAll(Arrays.asList(extraArgs));
+		if (program != null) {
+			argList.add(program.getAbsolutePath());
+		}
+		String[] args = (String[])argList.toArray(new String[argList.size()]);
+		int launchTimeout = MIPlugin.getDefault().getPluginPreferences().getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);		
+		MIProcess pgdb = new MIProcessAdapter(args, launchTimeout, monitor);
+
+		if (MIPlugin.getDefault().isDebugging()) {
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < args.length; ++i) {
+				sb.append(args[i]);
+				sb.append(' ');
+			}
+			MIPlugin.getDefault().debugLog(sb.toString());
+		}
+		
+		MISession miSession;
+		try {
+			miSession = createMISession0(sessionType, pgdb, factory, pty, getCommandTimeout());
+		} catch (MIException e) {
+			pgdb.destroy();
+			throw e;
+		}
+		
+		return new Session(miSession);
+	}
+
+	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
@@ -405,6 +500,16 @@ public class MIPlugin extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		savePluginPreferences();
 		super.stop(context);
+	}
+
+	public static int getCommandTimeout() {
+		Preferences prefs = getDefault().getPluginPreferences();
+		return prefs.getInt(IMIConstants.PREF_REQUEST_TIMEOUT);
+	}
+
+	public static int getLaunchTimeout() {
+		Preferences prefs = plugin.getPluginPreferences();
+		return prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
 	}
 
 	public static String getMIVersion( ILaunchConfiguration config ) {

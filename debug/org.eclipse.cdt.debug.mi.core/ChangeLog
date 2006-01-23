@@ -1,3 +1,15 @@
+2006-01-23 Mikhail Khodjaiants
+	Bug 119683: long messages during launch cause gdb to timeout, launch to fail.
+	* plugin.xml
+	* plugin.properties
+	* MISession.java
+	+ AbstractGDBCDIDebugger.java
+	+ CygwinGDBCDIDebugger2.java
+	+ GDBCDIDebugger2.java
+	+ GDBServerCDIDebugger2.java
+	* MIPlugin.java
+	* MIPluginResources.properties
+
 2006-01-04 Mikhail Khodjaiants
 	Bug 118900: Display libraries loaded in post-mortem debug. 
 	Applied with modifications the patch from Joanne Woo (jwoo.mvista.com).

@@ -6,7 +6,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            delegate="org.eclipse.cdt.launch.internal.LocalRunLaunchDelegate"
+            delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
             public="true"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
             name="%LocalCDTLaunch.name"
@@ -14,7 +14,7 @@
             modes="run,debug">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="org.eclipse.cdt.launch.internal.LocalAttachLaunchDelegate"
+            delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
             id="org.eclipse.cdt.launch.localAttachCLaunch"
             modes="debug"
             name="%LocalAttachCDTLaunch.name"
@@ -23,7 +23,7 @@
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
-            delegate="org.eclipse.cdt.launch.internal.CoreFileLaunchDelegate"
+            delegate="org.eclipse.cdt.launch.internal.LocalCDILaunchDelegate"
             id="org.eclipse.cdt.launch.coreFileCLaunch"
             modes="debug"
             name="%CoreFileCDTLaunch.name"

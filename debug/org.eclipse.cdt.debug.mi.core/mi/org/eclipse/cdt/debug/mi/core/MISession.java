@@ -99,6 +99,7 @@ public class MISession extends Observable {
 	 * @param miVersion
 	 * @param monitor
 	 * @throws MIException
+	 * @deprecated
 	 */
 	public MISession(MIProcess process, IMITTY tty, int type, int commandTimeout, int launchTimeout, String miVersion, IProgressMonitor monitor) throws MIException {
 		this(process, tty, type, new CommandFactory(miVersion), commandTimeout, launchTimeout, monitor);
@@ -113,6 +114,7 @@ public class MISession extends Observable {
 	 * @param pty Terminal to use for the inferior.
 	 * @param timeout time in milliseconds to wait for command response.
 	 * @param type the type of debugin session.
+	 * @deprecated
 	 */
 	public MISession(MIProcess process, IMITTY tty, int commandTimeout, int type, int launchTimeout) throws MIException {
 		this(process, tty, type, commandTimeout, launchTimeout, MIVersion.MI1, new NullProgressMonitor());
@@ -130,6 +132,7 @@ public class MISession extends Observable {
 	 * @param Process gdb Process.
 	 * @param pty Terminal to use for the inferior.
 	 * @param timeout time in milliseconds to wait for command response.
+	 * @deprecated
 	 */
 	public MISession(MIProcess process, IMITTY tty, int type, CommandFactory commandFactory, int commandTimeout, int launchTimeout, IProgressMonitor monitor) throws MIException {
 		gdbProcess = process;
@@ -156,7 +159,102 @@ public class MISession extends Observable {
 		// initialize/setup
 		setup(launchTimeout, new NullProgressMonitor());
 	}
-	
+
+	/**
+	 * Constructor for MISession. Creates MI wrapper for the given gdb process.
+	 *
+	 * @param type the type of debugging session: <code>PROGRAM</code>, <code>ATTACH</code> or <code>CORE</code>
+	 * @param commandFactory the set of gdb/mi commands supported by given gdb
+	 * @param Process a gdb process
+	 * @param pty terminal to use for the inferior.
+	 * @param timeout time in milliseconds to wait for command response.
+	 * 
+	 * @since 3.1
+	 */
+	public MISession(MIProcess process, IMITTY tty, int type, CommandFactory commandFactory, int commandTimeout) throws MIException {
+		gdbProcess = process;
+		inChannel = process.getInputStream();
+		outChannel = process.getOutputStream();
+
+		factory = commandFactory;
+		cmdTimeout = commandTimeout;
+
+		sessionType = type;
+
+		parser = new MIParser();
+
+		inferior = new MIInferior(this, tty);
+
+		txQueue = new CommandQueue();
+		rxQueue = new CommandQueue();
+		eventQueue = new Queue();
+		
+		txThread = new TxThread(this);
+		rxThread = new RxThread(this);
+		eventThread = new EventThread(this);
+
+		setup();
+
+		txThread.start();
+		rxThread.start();
+		eventThread.start();	
+	}
+
+	/**
+	 * No need to pass a progress monitor and a launch timeout.
+	 * @since 3.1 
+	 */
+	protected void setup() throws MIException {
+		// The Process may have terminated earlier because
+		// of bad arguments etc .. check this here and bail out.
+		try {
+			gdbProcess.exitValue();
+			InputStream err = gdbProcess.getErrorStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(err));
+			String line = null;
+			try {
+				line = reader.readLine();
+				reader.close();
+			} catch (Exception e) {
+				// the reader may throw a NPE.
+			}
+			if (line == null) {
+				line = MIPlugin.getResourceString("src.MISession.Process_Terminated"); //$NON-NLS-1$
+			}
+			throw new MIException(line);
+		} catch (IllegalThreadStateException e) {
+			// Ok, it means the process is alive.
+		}
+	}
+
+	/**
+	 * Initializes the gdb session.
+	 * @since 3.1
+	 */
+	public void start() throws MIException {
+		try {
+			initialize();
+		} catch (MIException exc) {
+			// Kill the Transmition thread.
+			if (txThread.isAlive()) {
+				txThread.interrupt();
+			}		
+			// Kill the Receiving Thread.
+			if (rxThread.isAlive()) {
+				rxThread.interrupt();
+			}
+			// Kill the event Thread.
+			if (eventThread.isAlive()) {
+				eventThread.interrupt();
+			}
+			// rethrow up the exception.
+			throw exc;
+		}
+	}
+
+	/**
+	 * @deprecated use <code>setup()</code> without parameters
+	 */
 	protected void setup(int launchTimeout, IProgressMonitor monitor) throws MIException {
 		// The Process may have terminated earlier because
 		// of bad arguments etc .. check this here and bail out.
@@ -210,7 +308,38 @@ public class MISession extends Observable {
 			throw exc;
 		}
 	}
+
+	/**
+	 * Turns off the "confirm" option of gdb. 
+	 * Sets witdth and height of gdb session to 0.
+	 * @since 3.1
+	 */
+	protected void initialize() throws MIException {
+		// Disable a certain number of irritations from gdb.
+		// Like confirmation and screen size.
+		MIGDBSet confirm = getCommandFactory().createMIGDBSet(new String[]{"confirm", "off"}); //$NON-NLS-1$ //$NON-NLS-2$
+		postCommand(confirm);
+		confirm.getMIInfo();
+
+		MIGDBSet width = getCommandFactory().createMIGDBSet(new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+		postCommand(width);
+		width.getMIInfo();
+
+		MIGDBSet height = getCommandFactory().createMIGDBSet(new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
+		postCommand(height);
+		height.getMIInfo();
+		
+		useInterpreterExecConsole = canUseInterpreterExecConsole();
+
+		String prompt = getCLIPrompt();
+		if (prompt != null) {
+			getMIParser().cliPrompt = prompt;
+		}
+	}
 	
+	/**
+	 * @deprecated use <code>initialize()</code> without parameters
+	 */
 	protected void initialize(int launchTimeout, IProgressMonitor monitor) throws MIException {
 		// Disable a certain number of irritations from gdb.
 		// Like confirmation and screen size.

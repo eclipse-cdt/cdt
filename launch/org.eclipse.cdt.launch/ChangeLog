@@ -1,3 +1,9 @@
+2006-01-23 Mikhail Khodjaiants
+	Bug 119683: long messages during launch cause gdb to timeout, launch to fail.
+	+ LocalCDILaunchDelegate.java
+	* LaunchMessages.properties
+	* plugin.xml
+
 2006-01-06 Mikhail Khodjaiants
 	Bug 120509: CDebuggerTab invokes wong initialization code (in addition to right code).
 	* CDebuggerTab.java

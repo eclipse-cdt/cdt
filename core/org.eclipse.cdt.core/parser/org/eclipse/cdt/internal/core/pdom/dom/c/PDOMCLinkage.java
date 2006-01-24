@@ -148,6 +148,9 @@ public class PDOMCLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding adaptBinding(IBinding binding) throws CoreException {
+		if (binding instanceof PDOMBinding)
+			return (PDOMBinding)binding;
+		
 		PDOMNode parent = getParent(binding);
 		if (parent == this) {
 			FindBinding visitor = new FindBinding(pdom, binding.getNameCharArray(), getBindingType(binding));

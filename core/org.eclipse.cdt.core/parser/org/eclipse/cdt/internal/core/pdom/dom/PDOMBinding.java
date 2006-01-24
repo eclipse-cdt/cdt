@@ -25,10 +25,10 @@ import org.eclipse.core.runtime.CoreException;
  */
 public abstract class PDOMBinding extends PDOMNode implements IBinding {
 
-	private static final int TYPE_OFFSET       = PDOMNode.RECORD_SIZE +  4; // size 4
-	private static final int FIRST_DECL_OFFSET = PDOMNode.RECORD_SIZE +  8; // size 4
-	private static final int FIRST_DEF_OFFSET  = PDOMNode.RECORD_SIZE + 12; // size 4
-	private static final int FIRST_REF_OFFSET  = PDOMNode.RECORD_SIZE + 16; // size 4
+	private static final int BINDING_TYPE_OFFSET = PDOMNode.RECORD_SIZE +  4; // size 4
+	private static final int FIRST_DECL_OFFSET   = PDOMNode.RECORD_SIZE +  8; // size 4
+	private static final int FIRST_DEF_OFFSET    = PDOMNode.RECORD_SIZE + 12; // size 4
+	private static final int FIRST_REF_OFFSET    = PDOMNode.RECORD_SIZE + 16; // size 4
 	
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 20;
 	
@@ -37,7 +37,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 		Database db = pdom.getDB();
 		
 		// Binding type
-		db.putInt(record + TYPE_OFFSET, type);
+		db.putInt(record + BINDING_TYPE_OFFSET, type);
 	}
 	
 	public PDOMBinding(PDOMDatabase pdom, int record) {
@@ -52,7 +52,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 	}
 	
 	public static int getBindingType(PDOMDatabase pdom, int record) throws CoreException {
-		return pdom.getDB().getInt(record + TYPE_OFFSET);
+		return pdom.getDB().getInt(record + BINDING_TYPE_OFFSET);
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 	}
 
 	public int getBindingType() throws CoreException {
-		return pdom.getDB().getInt(record + TYPE_OFFSET);
+		return pdom.getDB().getInt(record + BINDING_TYPE_OFFSET);
 	}
 	
 	public boolean hasDeclarations() throws CoreException {

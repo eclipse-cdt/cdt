@@ -139,13 +139,17 @@ public class PDOMUpdator extends Job {
 	}
 
 	private void processDelta(ICElementDelta delta) {
+		// First make sure this project is PDOMable
+		ICElement element = delta.getElement();
+		if (element instanceof ICProject && PDOM.getPDOM(((ICProject)element).getProject()) == null)
+			return;
+		
 		// process the children first
 		ICElementDelta[] children = delta.getAffectedChildren();
 		for (int i = 0; i < children.length; ++i)
 			processDelta(children[i]);
 
 		// what have we got
-		ICElement element = delta.getElement();
 		if (element.getElementType() == ICElement.C_PROJECT) {
 			switch (delta.getKind()) {
 			case ICElementDelta.ADDED:

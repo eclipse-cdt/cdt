@@ -97,7 +97,7 @@ public class PDOMUpdator extends Job {
 					ITranslationUnit tu = (ITranslationUnit)i.next();
 					monitor.subTask(String.valueOf(count--)
 							+" files remaining - "
-							+ tu.getElementName());
+							+ tu.getPath().toString());
 					processAddedTU(tu);
 					monitor.worked(1);
 				}
@@ -109,7 +109,7 @@ public class PDOMUpdator extends Job {
 					ITranslationUnit tu = (ITranslationUnit)i.next();
 					monitor.subTask(String.valueOf(count--)
 							+" files remaining - "
-							+ tu.getElementName());
+							+ tu.getPath().toString());
 					processChangedTU(tu);
 					monitor.worked(1);
 				}
@@ -121,7 +121,7 @@ public class PDOMUpdator extends Job {
 					ITranslationUnit tu = (ITranslationUnit)i.next();
 					monitor.subTask(String.valueOf(count--)
 							+" files remaining - "
-							+ tu.getElementName());
+							+ tu.getPath().toString());
 					processRemovedTU(tu);
 					monitor.worked(1);
 				}

@@ -46,6 +46,12 @@ public interface ILanguage extends IAdaptable {
 	public static final int AST_SKIP_INDEXED_HEADERS = 4;
 
 	/**
+	 * Style for getTranslationUnit. Don't parse the file if there is no build
+	 * information for it.
+	 */
+	public static final int AST_SKIP_IF_NO_BUILD_INFO = 8;
+	
+	/**
 	 * Return the language id for this language in the given PDOM.
 	 * This is to differentiate languages from eachother.
 	 * 

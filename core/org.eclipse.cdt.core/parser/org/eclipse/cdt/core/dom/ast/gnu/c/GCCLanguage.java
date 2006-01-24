@@ -89,6 +89,8 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 			IScannerInfo buildScanInfo = provider.getScannerInformation(infoResource);
 			if (buildScanInfo != null)
 				scanInfo = buildScanInfo;
+			else if ((style & ILanguage.AST_SKIP_IF_NO_BUILD_INFO) != 0)
+				return null;
 			else
 				scanInfo = new ScannerInfo();
 		}

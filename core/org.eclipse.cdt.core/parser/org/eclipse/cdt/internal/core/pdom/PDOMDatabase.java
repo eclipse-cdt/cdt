@@ -120,7 +120,8 @@ public class PDOMDatabase implements IPDOM {
 
 		IASTTranslationUnit ast = language.getTranslationUnit((IFile)tu.getResource(),
 				ILanguage.AST_USE_INDEX |
-				ILanguage.AST_SKIP_INDEXED_HEADERS);
+				ILanguage.AST_SKIP_INDEXED_HEADERS |
+				ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 		if (ast == null)
 			return;
 

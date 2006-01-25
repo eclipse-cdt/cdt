@@ -1,3 +1,7 @@
+2006-01-25 Mikhail Khodjaiants
+	Reversing changes made to fix bug 107571. The fix for bug 119683 covers this problem too.
+	* mi/org/eclipse/cdt/debug/mi/core/MISession.java
+
 2006-01-23 Mikhail Khodjaiants
 	Bug 119683: long messages during launch cause gdb to timeout, launch to fail.
 	* plugin.xml

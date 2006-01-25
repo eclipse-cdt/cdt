@@ -751,6 +751,9 @@ public class MISession extends Observable {
 	}
 
 	OutputStream getConsolePipe() {
+		if (miOutConsolePipe == null) {
+			getMIConsoleStream();
+		}
 		return miOutConsolePipe;
 	}
 

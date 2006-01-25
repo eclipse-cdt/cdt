@@ -11,7 +11,6 @@
 package org.eclipse.cdt.launch.internal;
 
 import java.io.FileNotFoundException;
-
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -37,7 +36,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.core.model.IProcess;
 
 public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 
@@ -105,14 +103,8 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 							setDefaultSourceLocator(launch, config);
 							ICDITarget[] targets = dsession.getTargets();
 							for (int i = 0; i < targets.length; i++) {
-								Process process = targets[i].getProcess();
-								IProcess iprocess = null;
-								if (process != null) {
-									iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()), getDefaultProcessMap());
-								}
-
 								CDIDebugModel.newDebugTarget(launch, cproject.getProject(), targets[i],
-										renderTargetLabel(debugConfig), iprocess, exeFile, true, true, false);
+										renderTargetLabel(debugConfig), null, exeFile, true, true, false);
 							}
 						} catch (CoreException e) {
 							try {

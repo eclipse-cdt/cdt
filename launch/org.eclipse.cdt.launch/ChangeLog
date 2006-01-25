@@ -1,3 +1,9 @@
+2006-01-25 Mikhail Khodjaiants
+	Reversing changes made to fix bug 107571. The fix for bug 119683 covers this problem too.
+	Inferior process shouldn't be shown as a part of the attach session.
+	* LocalCDILaunchDelegate.java
+	* LocalAttachLaunchDelegate.java
+
 2006-01-23 Mikhail Khodjaiants
 	Bug 119683: long messages during launch cause gdb to timeout, launch to fail.
 	+ LocalCDILaunchDelegate.java

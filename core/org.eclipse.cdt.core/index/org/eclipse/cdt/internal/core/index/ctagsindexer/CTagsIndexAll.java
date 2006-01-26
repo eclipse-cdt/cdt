@@ -24,15 +24,19 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.cindexstorage.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.cindexstorage.Util;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.AbstractIndexerRunner;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -94,8 +98,25 @@ class CTagsIndexAll extends CTagsIndexRequest {
 				  startTime = System.currentTimeMillis();
 				
 				
-				//run CTags over project
-				success = runCTags(project.getLocation());
+		    	 //Make sure that there is no ctags file leftover in the metadata
+			    File tagsFile = new File(ctagsFile);
+			    if (tagsFile.exists()){
+			    	tagsFile.delete();
+			    }
+				//run CTags over all project source folders
+				try {
+					ICProject cproject = CModelManager.getDefault().create(project);
+					ISourceRoot[] sourceRoots = cproject.getAllSourceRoots();
+					success = true ;
+					IPath location ;
+					for (int i = 0; i < sourceRoots.length; i++) {
+						ISourceRoot sourceRoot = sourceRoots[i];
+						location = sourceRoot.getResource().getLocation();
+						success &= runCTags(location);
+					}
+				} catch (CModelException e) {
+				}
+
 				ctagsFileToUse=ctagsFile;
 				
 				if (AbstractIndexerRunner.TIMING){
@@ -208,24 +229,41 @@ class CTagsIndexAll extends CTagsIndexRequest {
 	/**
      * @return
      */
-    private boolean runCTags(IPath directoryToRunFrom) { 
-    	String[] args = {"--excmd=number", //$NON-NLS-1$
+    private boolean runCTags(IPath directoryToIndex) { 
+    	// Check whether we have a file below the workspace
+    	boolean isInsideProject = false ;
+    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    	IPath projectLoc = project.getLocation();
+		int sharedSegments = directoryToIndex.matchingFirstSegments(projectLoc);
+    	if (projectLoc.isPrefixOf(directoryToIndex))  {
+    		isInsideProject = (sharedSegments==projectLoc.segmentCount());
+    	}
+    	// For directories inside the workspace we give ctags no path to collect from (defaults to relative path ".")
+    	// for directories outside the workspace we use absolute paths
+    	// so ctags will format it's path entries appropriately
+    	// String pathToCollectFrom = (isInsideWorkspace)  ?  " " : directoryToRunFrom.toString();
+    	String[] args ;
+    	String pathToCollectFrom ;
+    	if (isInsideProject)  {
+    		IPath relativeDirectory = directoryToIndex.removeFirstSegments(sharedSegments).makeRelative();
+    		// For resources directly inside the project give the ".", ctags does not work with an empty string argument.
+    		pathToCollectFrom = (relativeDirectory.segmentCount()==0) ? "." : relativeDirectory.toOSString();
+    	}  else  {
+    		pathToCollectFrom = directoryToIndex.toOSString();
+    	};
+    	args = new String[]{"--excmd=number", //$NON-NLS-1$
 		        "--format=2", //$NON-NLS-1$
 				"--sort=no",  //$NON-NLS-1$
 				"--fields=aiKlmnsSz", //$NON-NLS-1$
 				"--c-types=cdefgmnpstuvx", //$NON-NLS-1$
 				"--c++-types=cdefgmnpstuvx", //$NON-NLS-1$
 				"--languages=c,c++", //$NON-NLS-1$
-				"-f",ctagsFile,"-R"}; //$NON-NLS-1$ //$NON-NLS-2$
+				"-a", //$NON-NLS-1$ // All locations are collected in one file
+				"-f",ctagsFile,"-R", //$NON-NLS-1$ //$NON-NLS-2$
+				pathToCollectFrom  // Give absolute path so that tag file entries will be absolute
+    	};
     	
     	try{
-	    	 //Make sure that there is no ctags file leftover in the metadata
-		    File tagsFile = new File(ctagsFile);
-		    
-		    if (tagsFile.exists()){
-		    	tagsFile.delete();
-		    }
-			
 	         CommandLauncher launcher = new CommandLauncher();
 	         // Print the command for visual interaction.
 	         launcher.showCommand(true);
@@ -238,7 +276,7 @@ class CTagsIndexAll extends CTagsIndexRequest {
 	        	 }
 	         }
 	         
-	         Process p = launcher.execute(ctagsExecutable, args, null, directoryToRunFrom); //$NON-NLS-1$
+	         Process p = launcher.execute(ctagsExecutable, args, null, projectLoc); //$NON-NLS-1$
              if (p == null) {
                 //CTags not installed
                 indexer.createProblemMarker(CCorePlugin.getResourceString("CTagsIndexMarker.CTagsMissing"), project); //$NON-NLS-1$

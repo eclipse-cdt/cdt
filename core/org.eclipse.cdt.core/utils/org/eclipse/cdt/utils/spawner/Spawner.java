@@ -142,6 +142,16 @@ public class Spawner extends Process {
 		while (!isDone) {
 			wait();
 		}
+		try {
+			if(null == err)
+				((SpawnerInputStream)getErrorStream()).close();
+			if(null == in)
+				((SpawnerInputStream)getInputStream()).close();
+			if(null == out)
+				((SpawnerOutputStream)getOutputStream()).close();
+			
+		} catch (IOException e) {
+		}
 		return status;
 	}
 

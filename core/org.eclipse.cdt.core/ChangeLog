@@ -1,3 +1,7 @@
+2006-01-26 Mikhail Khodjaiants
+	Bug 102043: Console Output Does Not Appear When Launching An Application.
+	* utils/org/eclipse/cdt/utils/spawner/Spawner.java
+
 2005-08-30 Alain Magloire
 	PR 108202, code from Devin Steffler.
 	* parser/org/eclipse/cdt/internal/core/dom/parser/c/GNUCSourceParser.java

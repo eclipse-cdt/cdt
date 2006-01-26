@@ -112,6 +112,8 @@ public class Spawner extends Process {
 	 * See java.lang.Process#getInputStream ();
 	 **/
 	public InputStream getInputStream() {
+		if(null == in)
+			in = new SpawnerInputStream(fChannels[1]);
 		return in;
 	}
 
@@ -119,6 +121,8 @@ public class Spawner extends Process {
 	 * See java.lang.Process#getOutputStream ();
 	 **/
 	public OutputStream getOutputStream() {
+		if(null == out)
+			out = new SpawnerOutputStream(fChannels[0]);
 		return out;
 	}
 
@@ -126,6 +130,8 @@ public class Spawner extends Process {
 	 * See java.lang.Process#getErrorStream ();
 	 **/
 	public InputStream getErrorStream() {
+		if(null == err)
+			err = new SpawnerInputStream(fChannels[2]);
 		return err;
 	}
 
@@ -137,9 +143,13 @@ public class Spawner extends Process {
 			wait();
 		}
 		try {
-			((SpawnerInputStream)getErrorStream()).close();
-			((SpawnerInputStream)getInputStream()).close();
-			((SpawnerOutputStream)getOutputStream()).close();
+			if(null == err)
+				((SpawnerInputStream)getErrorStream()).close();
+			if(null == in)
+				((SpawnerInputStream)getInputStream()).close();
+			if(null == out)
+				((SpawnerOutputStream)getOutputStream()).close();
+			
 		} catch (IOException e) {
 		}
 		return status;
@@ -163,9 +173,12 @@ public class Spawner extends Process {
 		terminate();
 		// Close the streams on this side.
 		try {
-			((SpawnerInputStream)getErrorStream()).close();
-			((SpawnerInputStream)getInputStream()).close();
-			((SpawnerOutputStream)getOutputStream()).close();
+			if(null == err)
+				((SpawnerInputStream)getErrorStream()).close();
+			if(null == in)
+				((SpawnerInputStream)getInputStream()).close();
+			if(null == out)
+				((SpawnerOutputStream)getOutputStream()).close();
 		} catch (IOException e) {
 		}
 		// Grace before using the heavy gone.
@@ -229,9 +242,6 @@ public class Spawner extends Process {
 		if (pid == -1) {
 			throw new IOException("Exec error:" + reaper.getErrorMessage()); //$NON-NLS-1$
 		}
-		in = new SpawnerInputStream(fChannels[1]);
-		err = new SpawnerInputStream(fChannels[2]);
-		out = new SpawnerOutputStream(fChannels[0]);
 	}
 
 	private void exec_pty(String[] cmdarray, String[] envp, String dirpath, PTY pty) throws IOException {
@@ -270,9 +280,6 @@ public class Spawner extends Process {
 		if (pid == -1) {
 			throw new IOException("Exec_tty error:" + reaper.getErrorMessage()); //$NON-NLS-1$
 		}
-		in = new SpawnerInputStream(fChannels[1]);
-		err = new SpawnerInputStream(fChannels[2]);
-		out = new SpawnerOutputStream(fChannels[0]);
 	}
 
 	public void exec_detached(String[] cmdarray, String[] envp, String dirpath) throws IOException {

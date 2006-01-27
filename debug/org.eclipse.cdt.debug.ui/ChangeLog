@@ -1,3 +1,7 @@
+2006-01-27 Mikhail Khodjaiants
+	Bug 125561: ClassCastException in Modules view.
+	* ModulesView.java
+
 2006-01-16 Mikhail Khodjaiants
 	Bug 123702: Prevent Signals view from being automatically added to debugger perspective.
 	* plugin.xml

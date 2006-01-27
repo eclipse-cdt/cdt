@@ -1,3 +1,7 @@
+2006-01-27 Mikhail Khodjaiants
+	Bug 125561: ClassCastException in Modules view.
+	* ModulesView.java
+
 2006-01-22 Mikhail Khodjaiants
 	Bug 60682: No schema for CDebuggerPage extension point.
 	* plugin.xml

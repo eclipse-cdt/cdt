@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
@@ -913,8 +912,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	private void disposeImageCache() {
 		Iterator it = fImageCache.values().iterator();
 		while( it.hasNext() ) {
-			Map.Entry entry = (Map.Entry)it.next();
-			((Image)entry.getValue()).dispose();
+			((Image)it.next()).dispose();
 		}
 		fImageCache.clear();
 	}

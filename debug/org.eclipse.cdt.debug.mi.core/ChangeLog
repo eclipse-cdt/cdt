@@ -1,3 +1,8 @@
+2006-01-27 Mikhail Khodjaiants
+	Bug 107202: slow debug launch with external sources.
+	Use "-p" option when passing a large number of directories to "cygpath".
+	* CygwinMIEnvironmentDirectory.java
+
 2006-01-04 Mikhail Khodjaiants
 	Bug 118900: Display libraries loaded in post-mortem debug. 
 	Applied with modifications the patch from Joanne Woo (jwoo.mvista.com).

@@ -85,6 +85,9 @@ public class IndexerBlock extends AbstractCOptionPage {
 	String initialSelected;
 	private IPreferenceStore prefStore=CUIPlugin.getDefault().getPreferenceStore();
 	
+	boolean initialPDOMChecked;
+	boolean pdomChecked;
+	
     public IndexerBlock(){
 		super(INDEXER_LABEL);
 		setDescription(INDEXER_DESCRIPTION);
@@ -216,15 +219,18 @@ public class IndexerBlock extends AbstractCOptionPage {
     		}
     		public void widgetSelected(SelectionEvent e) {
     			if (indexerUsePDOM.getSelection()) {
+    				pdomChecked = true;
     				indexersComboBox.select(nullIndexerIndex);
     				setPage();
     				indexersComboBox.setEnabled(false);
-    			} else
+    			} else {
+    				pdomChecked = false;
     				indexersComboBox.setEnabled(true);
+    			}
     		}
     	});
-    	indexerUsePDOM.setSelection(prefStore.getBoolean(CCorePlugin.USE_PDOM_PREF));
-    	
+    	pdomChecked = initialPDOMChecked = prefStore.getBoolean(CCorePlugin.USE_PDOM_PREF);
+    	indexerUsePDOM.setSelection(initialPDOMChecked);    	
         //TODO: Put in some logic to deal with old CDT project: upgrade old projects
         //to use the Classic CDT Indexer
         
@@ -381,18 +387,16 @@ public class IndexerBlock extends AbstractCOptionPage {
 		
 		if (indexerID != null) {
 			ICOptionContainer container = getContainer();
-			IProject project = null;
-			if (container != null){
-				project=container.getProject();
-			} else {
-				project = ((AbstractIndexerPage) currentPage).getCurrentProject();
-			}
+			final IProject project = (container != null)
+				? container.getProject()
+				: ((AbstractIndexerPage) currentPage).getCurrentProject();
 		
 			if ( project != null) {
-				PDOM.setEnabled(project, indexerUsePDOM.isEnabled());
 				ICDescriptorOperation op = new ICDescriptorOperation() {
 
 					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+						if (initialPDOMChecked != pdomChecked)
+							PDOM.setEnabled(project, pdomChecked);
 						if (initialSelected == null || !selected.equals(initialSelected)) {
 							descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
 							descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,indexerID);
@@ -416,7 +420,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 				if (initialSelected == null || !selected.equals(initialSelected)) {
 					
 						if (prefStore != null) {
-							prefStore.setValue(CCorePlugin.USE_PDOM_PREF, indexerUsePDOM.getEnabled());
+							prefStore.setValue(CCorePlugin.USE_PDOM_PREF, pdomChecked);
 							//First clean out the old indexer settings
 							String indexerId=prefStore.getString(CCorePlugin.PREF_INDEXER);
 							ICOptionPage tempPage = getIndexerPage(indexerId);
@@ -479,7 +483,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 	 * @param project
 	 */
 	public void setIndexerID(String indexerID, IProject project) {
-    	indexerUsePDOM.setSelection(PDOM.isEnabled(project));
+		if (PDOM.isInitialized(project)) {
+			initialPDOMChecked = pdomChecked = PDOM.isEnabled(project);
+			indexerUsePDOM.setSelection(initialPDOMChecked);
+		}
 		//Get the corresponding text for the given indexer id
 		selectedIndexerId = getIndexerPageName(indexerID);
 		//Store the currently selected indexer id
@@ -523,11 +530,4 @@ public class IndexerBlock extends AbstractCOptionPage {
 	
 	}
 	
-	public boolean getUsePDOM() {
-		IProject project = getProject();
-		if (project == null)
-			return false;
-		
-		return PDOM.isEnabled(project);
-	}
 }

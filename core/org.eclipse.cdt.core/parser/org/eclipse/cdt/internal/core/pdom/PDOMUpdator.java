@@ -184,6 +184,8 @@ public class PDOMUpdator extends Job {
 	
 	private void processNewProject(final ICProject project) {
 		try {
+			if (!PDOM.isEnabled(project.getProject()))
+				return;
 			project.getProject().accept(new IResourceProxyVisitor() {
 				public boolean visit(IResourceProxy proxy) throws CoreException {
 					if (proxy.getType() == IResource.FILE) {

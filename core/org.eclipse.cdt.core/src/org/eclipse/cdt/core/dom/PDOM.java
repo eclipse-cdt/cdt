@@ -58,6 +58,10 @@ public class PDOM {
     	}
     }
 
+    public static boolean isInitialized(IProject project) {
+    	return getPreferences(project) != null;
+    }
+    
     /**
      * Get the PDOM for the given project.
      * 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Ken Ryall (Nokia) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=118894
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -37,6 +38,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -46,6 +49,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
 
@@ -119,6 +123,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	protected Button fAdvancedButton;
 	protected Button fStopInMain;
+	protected Text fStopInMainSymbol;
 	protected Button fAttachButton;
 
 	private Map fAdvancedAttributes = new HashMap(5);
@@ -221,8 +226,8 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH);
 		} else {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, fStopInMain.getSelection());
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, fStopInMainSymbol.getText());
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 		}
 		applyAdvancedAttributes(config);
 	}
@@ -237,6 +242,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				: ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN;
 		if (!debugConfig.supportsMode(mode)) {
 			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), new String[]{mode})); //$NON-NLS-1$
+			return false;
+		}
+		String mainSymbol = fStopInMainSymbol.getText().trim();
+		if (fStopInMain.getSelection() && mainSymbol.length() == 0) {
+			setErrorMessage( LaunchMessages.getString("CDebuggerTab.Stop_on_startup_at_can_not_be_empty")); //$NON-NLS-1$
 			return false;
 		}
 		if (super.isValid(config) == false) {
@@ -329,7 +339,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	protected void createOptionsComposite(Composite parent) {
 		Composite optionsComp = new Composite(parent, SWT.NONE);
-		int numberOfColumns = (fAttachMode) ? 1 : 2;
+		int numberOfColumns = (fAttachMode) ? 1 : 3;
 		GridLayout layout = new GridLayout( numberOfColumns, false );
 		optionsComp.setLayout( layout );
 		optionsComp.setLayoutData( new GridData( GridData.BEGINNING, GridData.CENTER, true, false, 1, 1 ) );
@@ -338,6 +348,16 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			fStopInMain.addSelectionListener(new SelectionAdapter() {
 
 				public void widgetSelected(SelectionEvent e) {
+					fStopInMainSymbol.setEnabled(fStopInMain.getSelection());
+					update();
+				}
+			});
+			fStopInMainSymbol = new Text(optionsComp, SWT.SINGLE | SWT.BORDER);
+			final GridData gridData = new GridData(GridData.FILL, GridData.CENTER, false, false);
+			gridData.widthHint = 100;
+			fStopInMainSymbol.setLayoutData(gridData);
+			fStopInMainSymbol.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent evt) {
 					update();
 				}
 			});
@@ -408,6 +428,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			if (!fAttachMode) {
 				fStopInMain.setSelection(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
 						ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT));
+				fStopInMainSymbol.setText(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+						ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT));
+				fStopInMainSymbol.setEnabled(fStopInMain.getSelection());
 			}
 			initializeAdvancedAttributes(config);
 		} catch (CoreException e) {

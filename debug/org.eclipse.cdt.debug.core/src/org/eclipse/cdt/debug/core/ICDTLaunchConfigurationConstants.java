@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Ken Ryall (Nokia) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=118894
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -106,6 +107,12 @@ public interface ICDTLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute key. The value is a String specifying 
+	 * the symbol to use for the main breakpoint.
+	 */
+	public static final String ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL = CDT_LAUNCH_ID + ".DEBUGGER_STOP_AT_MAIN_SYMBOL"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a String specifying 
 	 * the register groups memento.
 	 */
 	public static final String ATTR_DEBUGGER_REGISTER_GROUPS = CDT_LAUNCH_ID + ".DEBUGGER_REGISTER_GROUPS"; //$NON-NLS-1$
@@ -171,6 +178,12 @@ public interface ICDTLaunchConfigurationConstants {
 	 * ATTR_DEBUGGER_STOP_AT_MAIN.
 	 */
 	public static boolean DEBUGGER_STOP_AT_MAIN_DEFAULT = true;
+
+	/**
+	 * Launch configuration attribute value. The key is
+	 * DEBUGGER_STOP_AT_MAIN_SYMBOL.
+	 */
+	public static String DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT = "main"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute value. The key is

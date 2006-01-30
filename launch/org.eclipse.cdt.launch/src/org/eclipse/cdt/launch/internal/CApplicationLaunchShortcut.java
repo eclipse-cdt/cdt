@@ -67,16 +67,12 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	}
 
 	public void launch(IBinary bin, String mode) {
-		try {
-			ILaunchConfiguration config = findLaunchConfiguration(bin, mode);
-			if (config != null) {
-				DebugUITools.saveAndBuildBeforeLaunch();
-				config.launch(mode, null);
-			}
-		} catch (CoreException e) {
-			LaunchUIPlugin.errorDialog(LaunchMessages.getString("CApplicationLaunchShortcut.LaunchFailed"), e.getStatus());  //$NON-NLS-1$
-		}
-	}
+        ILaunchConfiguration config = findLaunchConfiguration(bin, mode);
+        if (config != null) {
+            DebugUITools.saveAndBuildBeforeLaunch();
+            DebugUITools.launch(config, mode);
+        }
+    }
 
 	/**
 	 * Locate a configuration to relaunch for the given type.  If one cannot be found, create one.

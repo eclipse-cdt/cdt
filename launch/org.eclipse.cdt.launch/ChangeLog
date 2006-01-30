@@ -1,4 +1,9 @@
 2006-01-30 Mikhail Khodjaiants
+	Bug 124519: CDT launch shortcuts ignore Common Tabs "Launch in background" option.
+	Applied patch from Andrew Ferguson (andrew.ferguson@arm.com).
+	* CApplicationLaunchShortcut.java
+
+2006-01-30 Mikhail Khodjaiants
 	Bug 123997: launching subclasses of AbstractCLaunchDelegate causes progress information to be lost.
 	Applied patch from Andrew Ferguson (andrew.ferguson@arm.com).
 	* AbstractCLaunchDelegate.java

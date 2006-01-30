@@ -1,3 +1,7 @@
+2006-01-30 Mikhail Khodjaiants
+	Bug 125603: Debugger don't stop on breakpoints if src is linked.
+	* CSourceLookupDirector.java
+
 2006-01-29 Mikhail Khodjaiants
 	Bug 118894: Allow stopping at other locations other than main().
 	Applied patch from Ken Ryall (Nokia).

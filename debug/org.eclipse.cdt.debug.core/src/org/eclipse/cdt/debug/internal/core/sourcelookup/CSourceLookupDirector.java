@@ -18,7 +18,9 @@ import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -62,6 +64,16 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	public boolean contains( ICBreakpoint breakpoint ) {
 		try {
 			String handle = breakpoint.getSourceHandle();
+			// Check if the breakpoint's resource is a link - we have to handle 
+			// this case differently. 
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=125603
+			IMarker marker = breakpoint.getMarker();
+			if ( marker != null ) {
+				IResource resource = marker.getResource();
+				if ( resource.isLinked() && resource.getLocation().toOSString().equals( handle ) ) {
+					return contains( resource.getProject() );
+				}
+			}
 			ISourceContainer[] containers = getSourceContainers();
 			for ( int i = 0; i < containers.length; ++i ) {
 				if ( contains( containers[i], handle ) )

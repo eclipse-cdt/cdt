@@ -3,10 +3,10 @@
 <fragment
    id="org.eclipse.cdt.core.qnx"
    name="%fragmentName.qnx"
-   version="3.0.1"
+   version="3.0.2"
    provider-name="%providerName"
    plugin-id="org.eclipse.cdt.core"
-   plugin-version="3.0.1">
+   plugin-version="3.0.2">
 
    <runtime>
       <library name="cdt_qnx.jar"/>

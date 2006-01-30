@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.sdk"
       label="%featureName"
-      version="3.0.1"
+      version="3.0.2"
       provider-name="%providerName">
 
    <description>
@@ -34,12 +34,12 @@
          id="org.eclipse.cdt.sdk"
          download-size="0"
          install-size="0"
-         version="3.0.1"/>
+         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.cdt.doc.isv"
          download-size="0"
          install-size="0"
-         version="3.0.1"/>
+         version="0.0.0"/>
 
 </feature>

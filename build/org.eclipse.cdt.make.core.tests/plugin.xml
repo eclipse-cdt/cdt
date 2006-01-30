@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.make.core.tests"
    name="Make Core Tests Plug-in"
-   version="3.0.1"
+   version="3.0.2"
    provider-name=""
    class="org.eclipse.cdt.make.core.tests.MakeTestsPlugin">
 

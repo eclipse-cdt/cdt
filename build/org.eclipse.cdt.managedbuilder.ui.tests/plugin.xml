@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.managedbuilder.ui.tests"
    name="Managed Build UI Tests Plug-in"
-   version="3.0.1"
+   version="3.0.2"
    provider-name="eclipse.org"
    class="org.eclipse.cdt.managedbuilder.ui.tests.testplugin.TestsPlugin">
 

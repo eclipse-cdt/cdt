@@ -23,11 +23,11 @@
 
    <includes
          id="org.eclipse.cdt.source"
-         version="3.0.1"/>
+         version="0.0.0"/>
 
    <includes
          id="org.eclipse.cdt"
-         version="3.0.1"
+         version="0.0.0"
          name="%featureName"/>
 
    <plugin

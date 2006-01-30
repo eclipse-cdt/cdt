@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Andrew Ferguson (andrew.ferguson@arm.com) - bug 123997
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -640,44 +641,39 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *             if an exception occurs while checking for compile errors.
 	 */
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		try {
-			boolean continueLaunch = true;
-			if (orderedProjects != null) {
-				monitor.beginTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors"), //$NON-NLS-1$
-									orderedProjects.size() + 1);
-
-				boolean compileErrorsInProjs = false;
-
-				//check prerequisite projects for compile errors.
-				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-					IProject proj = (IProject)i.next();
-					monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
-							+ proj.getName());
-					compileErrorsInProjs = existsErrors(proj);
-					if (compileErrorsInProjs) {
-						break;
-					}
-				}
-
-				//check current project, if prerequite projects were ok
-				if (!compileErrorsInProjs) {
-					monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
-							+ project.getName());
-					compileErrorsInProjs = existsErrors(project);
-				}
-
-				//if compile errors exist, ask the user before continuing.
+		boolean continueLaunch = true;
+		if (orderedProjects != null) {
+			monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors")); //$NON-NLS-1$
+			
+			boolean compileErrorsInProjs = false;
+			
+			//check prerequisite projects for compile errors.
+			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
+				IProject proj = (IProject)i.next();
+				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
+						+ proj.getName());
+				compileErrorsInProjs = existsErrors(proj);
 				if (compileErrorsInProjs) {
-					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-					if (prompter != null) {
-						continueLaunch = ((Boolean)prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
-					}
+					break;
 				}
 			}
-			return continueLaunch;
-		} finally {
-			monitor.done();
+			
+			//check current project, if prerequite projects were ok
+			if (!compileErrorsInProjs) {
+				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") //$NON-NLS-1$
+						+ project.getName());
+				compileErrorsInProjs = existsErrors(project);
+			}
+			
+			//if compile errors exist, ask the user before continuing.
+			if (compileErrorsInProjs) {
+				IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+				if (prompter != null) {
+					continueLaunch = ((Boolean)prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
+				}
+			}
 		}
+		return continueLaunch;
 	}
 
 	/**

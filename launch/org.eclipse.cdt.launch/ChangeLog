@@ -1,3 +1,8 @@
+2006-01-30 Mikhail Khodjaiants
+	Bug 123997: launching subclasses of AbstractCLaunchDelegate causes progress information to be lost.
+	Applied patch from Andrew Ferguson (andrew.ferguson@arm.com).
+	* AbstractCLaunchDelegate.java
+
 2006-01-29 Mikhail Khodjaiants
 	Bug 118894: Allow stopping at other locations other than main().
 	Applied patch from Ken Ryall (Nokia).

@@ -1,3 +1,8 @@
+2006-01-31 Mikhail Khodjaiants
+	Bug 124966: GDBTypeParser.parse(String) parses incorrectly.
+	Applied patch from Matthias Spycher (matthias@coware.com).
+	* GDBTypeParser.java
+
 2006-01-27 Mikhail Khodjaiants
 	Bug 107202: slow debug launch with external sources.
 	Use "-p" option when passing a large number of directories to "cygpath".

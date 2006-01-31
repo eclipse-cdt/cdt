@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Matthias Spycher (matthias@coware.com) - bug 124966
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.mi.core;
@@ -82,13 +83,16 @@ public class GDBTypeParser {
 		// Hack for GDB, the typename can be something like
 		// class A : public B, C { ... } *
 		// We are only interested in "class A"
-		// Carefull for class A::data
+		// Carefull for class A::data or class ns::A<ns::data>
 		int column = dataType.indexOf(':');
-		if (column > 0) {
-			if ((column + 1) < dataType.length() && dataType.charAt(column + 1) != ':') {
-				dataType = dataType.substring(0, column);
-			}
-		}
+        while (column > 0) {
+            if ((column + 2) < dataType.length() && dataType.charAt(column + 1) == ':') {
+                column = dataType.indexOf(':', column+2);
+                continue;
+            }
+            dataType = dataType.substring(0, column);
+            break;
+        }
 		genericType = new GDBType(dataType);
 
 		// Start the recursive parser.
@@ -336,13 +340,29 @@ public class GDBTypeParser {
 			}
 			tokenType = BRACKETS;
 		} else if (isCIdentifierStart(c)) {
-			token = "" + (char) c; //$NON-NLS-1$
+            StringBuffer sb = new StringBuffer();
+            sb.append((char) c);
 			while (isCIdentifierPart((c = getch())) && c != EOF) {
-				token += (char) c;
+                sb.append((char) c);
 			}
-			if (c != EOF) {
+            if (c == '<') {
+                // Swallow template args in types like "class foobar<A,B> : public C {..} *"
+                // FIXME: if the bracket is not terminate do we throw exception?
+                sb.append((char) c);
+                int count = 1;
+                do {
+                    c = getch();
+                    if (c == '<') {
+                        count++;
+                    } else if (c == '>') {
+                        count--;
+                    }
+                    sb.append((char)c);
+                } while (count > 0 && c != EOF);
+            } else if (c != EOF) {
 				ungetch();
 			}
+            token = sb.toString();
 			tokenType = NAME;
 		} else if (c == '{') {
 			// Swallow gdb sends things like "struct foobar {..} *"
@@ -464,7 +484,13 @@ public class GDBTypeParser {
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
 
-		System.out.println("char **argv"); //$NON-NLS-1$
+        System.out.println("class ns::link<8, ns::A> : public ns::B { int i; int j; struct link * next;} *"); //$NON-NLS-1$
+        parser.parse("class ns::link<8, ns::A> : public ns::B { int i; int j; struct link * next;} *"); //$NON-NLS-1$
+        System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+        System.out.println(parser.getGDBType().verbose());
+        System.out.println();
+
+        System.out.println("char **argv"); //$NON-NLS-1$
 		parser.parse("char **argv"); //$NON-NLS-1$
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
 		System.out.println(parser.getGDBType().verbose());

@@ -4,16 +4,16 @@
 
      <extension
          point="org.eclipse.cdt.debug.ui.CDebuggerPage">
-      <debugPage
+      <debuggerPage
             class="org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebugger"
             id="org.eclipse.cdt.debug.mi.GDBDebuggerPage">
-      </debugPage>
-      <debugPage
+      </debuggerPage>
+      <debuggerPage
             class="org.eclipse.cdt.debug.mi.internal.ui.CygwinDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CygwinCDebugger"
             id="org.eclipse.cdt.debug.mi.CygwinDebuggerPage">
-      </debugPage>
+      </debuggerPage>
       <debuggerPage
             class="org.eclipse.cdt.debug.mi.internal.ui.GDBServerDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"

@@ -6,7 +6,11 @@
          <meta.schema plugin="org.eclipse.cdt.ui" id="CodeCompletionFilter" name="Code Completion Filter"/>
       </appInfo>
       <documentation>
-         This extension point allows contributors to make their implementation of ICompletionFilter known to the platform.
+         When the user requests code completion for an identifier prefix then proposals are gathered from a variety of sources. It is quite common that several proposals for the same completion are gathered. After gathering it is therefore necessary to filter proposals and present them in an optimal ordering to the user.
+
+The notion of what is &quot;optimal&quot; may vary from one application to another. This extension point allows the contribution of completion filters which best suit the needs of the user in any given situation. 
+
+The decision about which filter will actually be used remains with the user who can select his preference from a list of all contributed filters (menu Window - Preferences - C/C++ - Editor - Code Assist).
       </documentation>
    </annotation>
 
@@ -47,14 +51,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The required unique id of the ProposalFilter
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The required name of the ProposalFilter. This name will appear in the preferences combo and should therefore be informative for the user.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -64,10 +68,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The required fully qualified name of the implementing class which must implement org.eclipse.cdt.ui.text.contentassist.IProposalFilter
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.text.contentassist.IProposalFilter"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -88,7 +92,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         See the default implementation in org.eclipse.cdt.internal.ui.text.contentassist.DefaultProposalFilter as an example.
       </documentation>
    </annotation>
 
@@ -97,7 +101,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         ProposalFilters must implement interface org.eclipse.cdt.ui.text.contentassist.IProposalFilter
       </documentation>
    </annotation>
 
@@ -106,7 +110,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The default implementation in org.eclipse.cdt.internal.ui.text.contentassist.DefaultProposalFilter is the default filtering method which is used as long as the user preference is not changed.
       </documentation>
    </annotation>
 
@@ -115,7 +119,15 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2006 Norbert Ploett and others.
+
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+Norbert Ploett (Siemens) - Initial Contribution
       </documentation>
    </annotation>
 

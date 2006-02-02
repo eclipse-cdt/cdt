@@ -43,6 +43,13 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	public IASTName[] getNames();
 
 	/**
+	 * The last name is often semantically significant.
+	 * 
+	 * @return
+	 */
+	public IASTName getLastName();
+	
+	/**
 	 * Is this name fully qualified?
 	 * 
 	 * @return boolean

@@ -19,10 +19,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
@@ -30,6 +34,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -65,6 +71,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	public static final int CPPCLASSTYPE = 3;
 	public static final int CPPFIELD = 4;
 	public static final int CPPMETHOD = 5;
+	public static final int CPPNAMESPACE = 6;
+	public static final int CPPNAMESPACEALIAS = 7;
 
 	public PDOMNode getParent(IBinding binding) throws CoreException {
 		PDOMNode parent = this;
@@ -82,7 +90,8 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	}
 	
 	public PDOMBinding addName(IASTName name) throws CoreException {
-		if (name == null || name.toCharArray().length == 0)
+		if (name == null || name.toCharArray().length == 0 
+				|| name instanceof ICPPASTQualifiedName)
 			return null;
 		
 		IBinding binding = name.resolveBinding();
@@ -105,6 +114,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				pdomBinding = new PDOMCPPFunction(pdom, parent, name);
 			} else if (binding instanceof CPPClassType) {
 				pdomBinding = new PDOMCPPClassType(pdom, parent, name);
+			} else if (binding instanceof CPPNamespaceAlias) {
+				pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, name);
+			} else if (binding instanceof CPPNamespace) {
+				pdomBinding = new PDOMCPPNamespace(pdom, parent, name);
 			}
 		}
 		
@@ -150,6 +163,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return CPPFIELD;
 		else if (binding instanceof ICPPMethod)
 			return CPPMETHOD;
+		else if (binding instanceof ICPPNamespaceAlias)
+			return CPPNAMESPACEALIAS;
+		else if (binding instanceof ICPPNamespace)
+			return CPPNAMESPACE;
 		else
 			return 0;
 	}
@@ -190,13 +207,23 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			return new PDOMCPPField(pdom, record);
 		case CPPMETHOD:
 			return new PDOMCPPMethod(pdom, record);
+		case CPPNAMESPACE:
+			return new PDOMCPPNamespace(pdom, record);
+		case CPPNAMESPACEALIAS:
+			return new PDOMCPPNamespaceAlias(pdom, record);
 		}
 		
 		return null;
 	}
 	
 	public PDOMBinding resolveBinding(IASTName name) throws CoreException {
+		if (name instanceof ICPPASTQualifiedName) {
+			IASTName lastName = ((ICPPASTQualifiedName)name).getLastName();
+			return lastName != null ? resolveBinding(lastName) : null;
+		}
 		IASTNode parent = name.getParent();
+		if (parent instanceof ICPPASTQualifiedName)
+			parent = parent.getParent();
 		if (parent instanceof IASTIdExpression) {
 			// reference
 			IASTNode eParent = parent.getParent();
@@ -205,7 +232,10 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 				getIndex().visit(visitor);
 				return visitor.pdomBinding;
 			} else {
-				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPVARIABLE);
+				FindBinding visitor = new FindBinding(pdom, name.toCharArray(), 
+						(name.getParent() instanceof ICPPASTQualifiedName
+								&& ((ICPPASTQualifiedName)name.getParent()).getLastName() != name)
+							? CPPNAMESPACE : CPPVARIABLE);
 				getIndex().visit(visitor);
 				return visitor.pdomBinding;
 			}
@@ -213,7 +243,12 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPCLASSTYPE);
 			getIndex().visit(visitor);
 			return visitor.pdomBinding;
+		} else if (parent instanceof ICPPASTNamespaceAlias) {
+			FindBinding visitor = new FindBinding(pdom, name.toCharArray(), CPPNAMESPACE);
+			getIndex().visit(visitor);
+			return visitor.pdomBinding;
 		}
+		
 		return null;
 	}
 	

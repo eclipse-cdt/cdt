@@ -41,12 +41,14 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	public IBinding resolveBinding() {
 		// The full qualified name resolves to the same thing as the last name
 		removeNullNames();
-		return names[names.length - 1].resolveBinding();
+		IASTName lastName = getLastName();
+		return lastName != null ? lastName.resolveBinding() : null;
 	}
 
 	public IBinding[] resolvePrefix() {
 		removeNullNames();
-		return names[names.length - 1].resolvePrefix();
+		IASTName lastName = getLastName();
+		return lastName != null ? lastName.resolvePrefix() : new IBinding[0];
 	}
 
 	/*
@@ -96,6 +98,13 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return names;
 	}
 
+	public IASTName getLastName() {
+		if (names == null || names.length == 0)
+			return null;
+		
+		return names[names.length - 1];
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

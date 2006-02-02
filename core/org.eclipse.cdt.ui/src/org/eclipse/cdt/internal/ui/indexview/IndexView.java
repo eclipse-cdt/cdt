@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -21,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModel;
@@ -35,6 +34,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -217,6 +217,19 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 				} catch (CoreException e) {
 					CUIPlugin.getDefault().log(e);
 				} 
+			} else if (parentElement instanceof PDOMCPPNamespace) {
+				try {
+					PDOMCPPNamespace namespace = (PDOMCPPNamespace)parentElement;
+					PDOMDatabase pdom = namespace.getPDOM();
+					Counter counter = new Counter(pdom);
+					namespace.getIndex().visit(counter);
+					PDOMBinding[] bindings = new PDOMBinding[counter.count];
+					Children children = new Children(pdom, bindings);
+					namespace.getIndex().visit(children);
+					return bindings;
+				} catch (CoreException e) {
+					CUIPlugin.getDefault().log(e);
+				} 
 			} else if (parentElement instanceof PDOMMemberOwner) {
 				try {
 					PDOMMemberOwner owner = (PDOMMemberOwner)parentElement;
@@ -251,7 +264,8 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 				} catch (CoreException e) {
 					CUIPlugin.getDefault().log(e);
 				}
-			} else if (element instanceof PDOMLinkage) {
+			} else if (element instanceof PDOMLinkage
+					|| element instanceof PDOMCPPNamespace) {
 				return true;
 			} else if (element instanceof PDOMMemberOwner) {
 				try {
@@ -318,6 +332,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			else if (element instanceof ICompositeType)
 				return CUIPlugin.getImageDescriptorRegistry().get(
 						CElementImageProvider.getStructImageDescriptor());
+			else if (element instanceof ICPPNamespace)
+				return CUIPlugin.getImageDescriptorRegistry().get(
+						CElementImageProvider.getNamespaceImageDescriptor());
 			else if (element instanceof IBinding)
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_OBJ_ELEMENT);

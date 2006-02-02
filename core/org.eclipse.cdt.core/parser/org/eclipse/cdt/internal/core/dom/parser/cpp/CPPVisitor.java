@@ -162,7 +162,8 @@ public class CPPVisitor {
 			parent instanceof ICPPASTTemplateId ) 
 		{
 			binding = CPPSemantics.resolveBinding( name ); 
-			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName )
+			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName 
+					&& !(parent.getParent() instanceof ICPPASTNamespaceAlias))
 			{
 				if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND ){
 					IASTNode node = getContainingBlockItem( name.getParent() );

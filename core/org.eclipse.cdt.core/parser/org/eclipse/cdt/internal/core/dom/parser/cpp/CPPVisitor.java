@@ -436,7 +436,11 @@ public class CPPVisitor {
 		        binding = scope.getBinding( alias.getAlias(), false );
 		        if( binding == null ){
 		            IBinding namespace = alias.getMappingName().resolveBinding();
-		            if( namespace instanceof ICPPNamespace ){
+		            if( namespace instanceof IProblemBinding ){
+		            	IProblemBinding problem = (IProblemBinding) namespace;
+		            	namespace = new CPPNamespace.CPPNamespaceProblem( problem.getASTNode(), problem.getID(), alias.getMappingName().toCharArray());
+		            }
+		            if( namespace instanceof ICPPNamespace ) { 
 		                binding = new CPPNamespaceAlias( alias.getAlias(), (ICPPNamespace) namespace );
 		                scope.addName( alias.getAlias() );
 		            } else {

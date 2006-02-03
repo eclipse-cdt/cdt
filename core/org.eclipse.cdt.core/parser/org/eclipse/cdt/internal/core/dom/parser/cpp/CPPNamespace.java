@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -53,6 +54,26 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
         }
 		public IBinding[] getMemberBindings() throws DOMException {
 			return ((ICPPNamespace)getBinding()).getMemberBindings();
+		}
+    }
+    public static class CPPNamespaceProblem extends ProblemBinding implements ICPPNamespace{
+        public CPPNamespaceProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
+        }
+		public ICPPNamespaceScope getNamespaceScope() throws DOMException {
+			throw new DOMException(this);
+		}
+		public IBinding[] getMemberBindings() throws DOMException {
+			throw new DOMException(this);
+		}
+		public String[] getQualifiedName() throws DOMException {
+			throw new DOMException(this);
+		}
+		public char[][] getQualifiedNameCharArray() throws DOMException {
+			throw new DOMException(this);
+		}
+		public boolean isGloballyQualified() throws DOMException {
+			throw new DOMException(this);
 		}
     }
 	private static final char[] EMPTY_CHAR_ARRAY = { };

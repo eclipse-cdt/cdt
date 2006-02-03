@@ -1,4 +1,8 @@
 2006-02-03 Mikhail Khodjaiants
+	NPE in CDebuggerTab when attaching to a target.
+	* CDebuggerTab.java
+
+2006-02-03 Mikhail Khodjaiants
 	The "ICDebuggerPage" interface and "AbstractCDebuggerPage" class are added.
 	All extensions of the "CDebuggerPage" extension point must implement "ICDebuggerPage".
 	* AbstractCLaunchDelegate.java

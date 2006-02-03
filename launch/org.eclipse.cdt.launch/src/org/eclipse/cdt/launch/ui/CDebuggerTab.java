@@ -244,10 +244,13 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			setErrorMessage(MessageFormat.format(LaunchMessages.getString("CDebuggerTab.Mode_not_supported"), new String[]{mode})); //$NON-NLS-1$
 			return false;
 		}
-		String mainSymbol = fStopInMainSymbol.getText().trim();
-		if (fStopInMain.getSelection() && mainSymbol.length() == 0) {
-			setErrorMessage( LaunchMessages.getString("CDebuggerTab.Stop_on_startup_at_can_not_be_empty")); //$NON-NLS-1$
-			return false;
+		if ( fStopInMain != null && fStopInMainSymbol != null ) {
+			// The "Stop on startup at" field must not be empty
+			String mainSymbol = fStopInMainSymbol.getText().trim();
+			if (fStopInMain.getSelection() && mainSymbol.length() == 0) {
+				setErrorMessage( LaunchMessages.getString("CDebuggerTab.Stop_on_startup_at_can_not_be_empty")); //$NON-NLS-1$
+				return false;
+			}
 		}
 		if (super.isValid(config) == false) {
 			return false;

@@ -17,11 +17,11 @@ import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.ui.IMILaunchConfigurationComponent;
 import org.eclipse.cdt.debug.mi.ui.MIUIUtils;
+import org.eclipse.cdt.debug.ui.AbstractCDebuggerPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * The dynamic tab for gdb-based debugger implementations.
  */
-public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements Observer {
+public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	final private static String DEFAULT_MI_PROTOCOL = MIUIMessages.getString( "GDBDebuggerPage.12" );  //$NON-NLS-1$
 	final protected String[] protocolItems = new String[] { DEFAULT_MI_PROTOCOL, "mi1", "mi2", "mi3" };  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$

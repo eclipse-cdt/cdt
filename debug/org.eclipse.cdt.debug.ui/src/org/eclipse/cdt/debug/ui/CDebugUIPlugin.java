@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
@@ -135,14 +134,15 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		log( new Status( IStatus.ERROR, getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, message, null ) );
 	}
 
-	public ILaunchConfigurationTab getDebuggerPage( String debuggerID ) throws CoreException {
+	public ICDebuggerPage getDebuggerPage( String debuggerID ) throws CoreException {
 		if ( fDebuggerPageMap == null ) {
 			initializeDebuggerPageMap();
 		}
 		IConfigurationElement configElement = (IConfigurationElement)fDebuggerPageMap.get( debuggerID );
-		ILaunchConfigurationTab tab = null;
+		ICDebuggerPage tab = null;
 		if ( configElement != null ) {
-			tab = (ILaunchConfigurationTab)configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
+			tab = (ICDebuggerPage)configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
+			tab.init( debuggerID );
 		}
 		return tab;
 	}

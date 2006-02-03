@@ -1,3 +1,11 @@
+2006-02-03 Mikhail Khodjaiants
+	The "ICDebuggerPage" interface and "AbstractCDebuggerPage" class are added.
+	All extensions of the "CDebuggerPage" extension point must implement "ICDebuggerPage".
+	* CDebuggerPage.exsd
+	+ AbstractCDebuggerPage.java
+	* CDebugUIPlugin.java
+	+ ICDebuggerPage.java
+
 2006-01-27 Mikhail Khodjaiants
 	Bug 125561: ClassCastException in Modules view.
 	* ModulesView.java

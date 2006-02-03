@@ -64,7 +64,7 @@
                   specifies a fully qualified name of a Java class that implements &amp;lt;code&amp;gt;AbstractLaunchConfigurationTab&amp;lt;/code&amp;gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.AbstractLaunchConfigurationTab"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.debug.ui.ICDebuggerPage"/>
                </appInfo>
             </annotation>
          </attribute>

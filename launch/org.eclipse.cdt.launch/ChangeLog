@@ -1,3 +1,8 @@
+2006-02-03 Mikhail Khodjaiants
+	The "ICDebuggerPage" interface and "AbstractCDebuggerPage" class are added.
+	All extensions of the "CDebuggerPage" extension point must implement "ICDebuggerPage".
+	* AbstractCLaunchDelegate.java
+
 2006-01-30 Mikhail Khodjaiants
 	Bug 124519: CDT launch shortcuts ignore Common Tabs "Launch in background" option.
 	Applied patch from Andrew Ferguson (andrew.ferguson@arm.com).

@@ -15,11 +15,11 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -39,7 +39,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	protected ICDebugConfiguration fCurrentDebugConfig;
 
 	// Dynamic Debugger UI widgets
-	protected ILaunchConfigurationTab fDynamicTab;
+	protected ICDebuggerPage fDynamicTab;
 	protected Composite fDynamicTabHolder;
 	private boolean fInitDefaults;
 	private Combo fDCombo;
@@ -54,11 +54,11 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		return fCurrentDebugConfig;
 	}
 
-	protected ILaunchConfigurationTab getDynamicTab() {
+	protected ICDebuggerPage getDynamicTab() {
 		return fDynamicTab;
 	}
 
-	protected void setDynamicTab(ILaunchConfigurationTab tab) {
+	protected void setDynamicTab(ICDebuggerPage tab) {
 		fDynamicTab = tab;
 	}
 
@@ -94,7 +94,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		ILaunchConfigurationTab tab = getDynamicTab();
+		ICDebuggerPage tab = getDynamicTab();
 		if ( (super.getErrorMessage() != null) || (tab == null)) {
 			return super.getErrorMessage();
 		}
@@ -157,7 +157,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		if (debugConfig == null) {
 			setDynamicTab(null);
 		} else {
-			ILaunchConfigurationTab tab = null;
+			ICDebuggerPage tab = null;
 			try {
 				tab = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
 			} catch (CoreException e) {
@@ -179,7 +179,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	abstract public void createControl(Composite parent);
 
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		ICDebuggerPage dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			dynamicTab.activated(workingCopy);
 		}
@@ -187,7 +187,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		setLaunchConfiguration(config);
-		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		ICDebuggerPage dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			dynamicTab.initializeFrom(config);
 		}
@@ -196,7 +196,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (getDebugConfig() != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebugConfig().getID());
-			ILaunchConfigurationTab dynamicTab = getDynamicTab();
+			ICDebuggerPage dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
 				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map)null);
 			} else {
@@ -207,7 +207,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		setLaunchConfigurationWorkingCopy(config);
-		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		ICDebuggerPage dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			dynamicTab.setDefaults(config);
 			setInitializeDefault(false);
@@ -222,7 +222,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 			return false;
 		}
 
-		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		ICDebuggerPage dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			return dynamicTab.isValid(config);
 		}
@@ -322,7 +322,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	}
 
 	/**
-	 * Return the class that implements <code>ILaunchConfigurationTab</code>
+	 * Return the class that implements <code>ICDebuggerPage</code>
 	 * that is registered against the debugger id of the currently selected
 	 * debugger.
 	 */

@@ -106,6 +106,10 @@ selected option </p>
   </li>
   <li>
     <p class="MsoNormal"
+ style="text-indent: -0.25in; margin-left: 0.25in;">The currently selected tool</p>
+  </li>
+	<li>
+    <p class="MsoNormal"
  style="text-indent: -0.25in; margin-left: 0.25in;">The currently
 selected configuration (which includes a tool-chain). </p>
   </li>
@@ -136,7 +140,8 @@ workspace.</p>
 <p class="MsoNormal">The value of a build macro will be searched for in
 the order specified above.&nbsp;If macro is not found for the currently
 selected file context, the currently selected option context will be
-used, if not found, the currently selected configuration context will
+used, if not found, the currently selected tool context will be used, if not 
+found, the currently selected configuration context will
 be used, etc.&nbsp; It is possible, but not recommended, for a
 user-defined macro to override the definition of an MBS pre-defined
 macro. Overriding MBS pre-defined macros can have unanticipated
@@ -376,6 +381,106 @@ output file directory path relative to the current builder directory.</p>
     </tr>
   </tbody>
 </table>
+<h3>&nbsp;</h3>
+<h3>Option-specific macros</h3>
+<p class="MsoNormal">The set of option-context macros is predefined by
+the Managed Build System (MBS). Neither a tool-integrator nor a user
+can define new option-context macros.</p>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0"
+ style="border: medium none ; border-collapse: collapse;" id="table7"
+ width="695">
+  <tbody>
+    <tr style="height: 8.3pt;">
+      <td valign="top"
+ style="border: 1pt solid windowtext; padding: 0in 5.4pt; width: 217px; height: 8.3pt;">
+      <p class="MsoNormal" align="center" style="text-align: center;"><b>Macro</b></p>
+      </td>
+      <td valign="top"
+ style="border-style: solid solid solid none; border-width: 1pt 1pt 1pt medium; border-top: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 103px; height: 8.3pt;">
+      <p class="MsoNormal" align="center" style="text-align: center;"><b>Value
+Type</b></p>
+      </td>
+      <td valign="top"
+ style="border-style: solid solid solid none; border-width: 1pt 1pt 1pt medium; border-top: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 329px; height: 8.3pt;">
+      <p class="MsoNormal" align="center" style="text-align: center;"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr style="height: 3.5pt;">
+      <td valign="top"
+ style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 217px; height: 3.5pt;">
+      ${ParentVersion}</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 103px; height: 3.5pt;">
+      <p align="center">Text</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 329px; height: 3.5pt;" align="left">
+      Represent the option&#39;s parent version</td>
+    </tr>
+    <tr style="height: 3.5pt;">
+      <td valign="top"
+ style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 217px; height: 3.5pt;">
+      <p class="MsoNormal">${IncludeDefaults}</p>
+      </td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 103px; height: 3.5pt;">
+      <p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">Text-List</span></p>
+		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">Path-List</span></p>
+		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US" style="font-family: Arial">Text</span></p>
+      <p class="MsoNormal" align="center" style="text-align: center;">&nbsp;</p>
+      </td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 329px; height: 3.5pt;" align="left">
+      <p class="MsoNormal">Specifies whether the option values defined in the 
+		parent option should be included in the current option value. By default 
+		parent option values are not included in the current option value. If 
+		the “IncludeDefaults” macro is specified, it gets expanded to the parent 
+		option values during option value resolution, so the parent values are 
+		inserted in the current values in the place where the IncludeDefaults is 
+		used.</td>
+    </tr>
+  </tbody>
+</table>
+<h3 style="text-indent: 0in; margin-left: 0in;">&nbsp;</h3>
+<h3>Tool-specific macros</h3>
+<p class="MsoNormal">The set of tool-context macros is predefined by
+the Managed Build System (MBS). Neither a tool-integrator nor a user
+can define new tool-context macros.</p>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0"
+ style="border: medium none ; border-collapse: collapse;" id="table8"
+ width="695">
+  <tbody>
+    <tr style="height: 8.3pt;">
+      <td valign="top"
+ style="border: 1pt solid windowtext; padding: 0in 5.4pt; width: 217px; height: 8.3pt;">
+      <p class="MsoNormal" align="center" style="text-align: center;"><b>Macro</b></p>
+      </td>
+      <td valign="top"
+ style="border-style: solid solid solid none; border-width: 1pt 1pt 1pt medium; border-top: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 103px; height: 8.3pt;">
+      <p class="MsoNormal" align="center" style="text-align: center;"><b>Value
+Type</b></p>
+      </td>
+      <td valign="top"
+ style="border-style: solid solid solid none; border-width: 1pt 1pt 1pt medium; border-top: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 329px; height: 8.3pt;">
+      <p class="MsoNormal" align="center" style="text-align: center;"><b>Description</b></p>
+      </td>
+    </tr>
+    <tr style="height: 3.5pt;">
+      <td valign="top"
+ style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 217px; height: 3.5pt;">
+      ${ToolVersion}</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 103px; height: 3.5pt;">
+      <p align="center">Text</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 329px; height: 3.5pt;" align="left">
+      Represent the tool version</td>
+    </tr>
+  </tbody>
+</table>
+<h3 style="text-indent: 0in; margin-left: 0in;">&nbsp;</h3>
 <h3 style="text-indent: 0in; margin-left: 0in;">&nbsp;Configuration-specific
 macros</h3>
 <table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0"
@@ -514,6 +619,28 @@ artifact.</p>
       <p class="MsoNormal">Represents the list of the target Arch names.</p>
       </td>
     </tr>
+    <tr style="height: 6.95pt;">
+      <td valign="top"
+ style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 215px; height: 6.95pt;">
+      ${ToolChainVersion}</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 104px; height: 6.95pt;">
+      <p align="center">Text</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 331px; height: 6.95pt;">
+      Represents the tool-chain version</td>
+    </tr>
+    <tr style="height: 6.95pt;">
+      <td valign="top"
+ style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 215px; height: 6.95pt;">
+      ${BuilderVersion}</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 104px; height: 6.95pt;">
+      <p align="center">Text</td>
+      <td valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 331px; height: 6.95pt;">
+      Represents the builder version</td>
+    </tr>
   </tbody>
 </table>
 <h3 style="text-indent: 0in; margin-left: 0in;">Project-specific macros</h3>
@@ -624,7 +751,7 @@ variable definitions</p>
     <tr style="height: 6.95pt;">
       <td width="228" valign="top"
  style="border: 1pt solid windowtext; padding: 0in 5.4pt; width: 171pt; height: 6.95pt;">
-      <p class="MsoNormal">${EclipseVersion}</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">${EclipseVersion}</p>
       </td>
       <td width="108" valign="top"
  style="border-style: solid solid solid none; border-width: 1pt 1pt 1pt medium; border-top: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 80.85pt; height: 6.95pt;">
@@ -632,13 +759,13 @@ variable definitions</p>
       </td>
       <td width="359" valign="top"
  style="border-style: solid solid solid none; border-width: 1pt 1pt 1pt medium; border-top: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 269.55pt; height: 6.95pt;">
-      <p class="MsoNormal">Represents the current Eclipse version.</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Represents the current Eclipse version.</p>
       </td>
     </tr>
     <tr style="height: 6.95pt;">
       <td width="228" valign="top"
  style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 171pt; height: 6.95pt;">
-      <p class="MsoNormal">${CDTVersion}</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">${CDTVersion}</p>
       </td>
       <td width="108" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 80.85pt; height: 6.95pt;">
@@ -646,13 +773,13 @@ variable definitions</p>
       </td>
       <td width="359" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 269.55pt; height: 6.95pt;">
-      <p class="MsoNormal">Represents the current CDT version.</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Represents the current CDT version.</p>
       </td>
     </tr>
     <tr style="height: 6.95pt;">
       <td width="228" valign="top"
  style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 171pt; height: 6.95pt;">
-      <p class="MsoNormal">${MBSVersion}</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">${MBSVersion}</p>
       </td>
       <td width="108" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 80.85pt; height: 6.95pt;">
@@ -660,13 +787,13 @@ variable definitions</p>
       </td>
       <td width="359" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 269.55pt; height: 6.95pt;">
-      <p class="MsoNormal">Represents the current MBS version.</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Represents the current MBS version.</p>
       </td>
     </tr>
     <tr style="height: 6.95pt;">
       <td width="228" valign="top"
  style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 171pt; height: 6.95pt;">
-      <p class="MsoNormal">${HostOsName}</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">${HostOsName}</p>
       </td>
       <td width="108" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 80.85pt; height: 6.95pt;">
@@ -674,14 +801,16 @@ variable definitions</p>
       </td>
       <td width="359" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 269.55pt; height: 6.95pt;">
-      <p class="MsoNormal">Represents the operating system name on
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Represents the operating system name on
 which eclipse is running.</p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">This macro 
+		is deprecated, the ${OsType} should be used instead</p>
       </td>
     </tr>
     <tr style="height: 6.95pt;">
       <td width="228" valign="top"
  style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 171pt; height: 6.95pt;">
-      <p class="MsoNormal">${HostArchName}</p>
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">${HostArchName}</p>
       </td>
       <td width="108" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 80.85pt; height: 6.95pt;">
@@ -689,9 +818,36 @@ which eclipse is running.</p>
       </td>
       <td width="359" valign="top"
  style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 269.55pt; height: 6.95pt;">
-      <p class="MsoNormal">Represents the architecture name on which
+      <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Represents the architecture name on which
 eclipse is running.</p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">This macro 
+		is deprecated, the ${ArchType} should be used instead</p>
       </td>
+    </tr>
+    <tr style="height: 6.95pt;">
+      <td width="228" valign="top"
+ style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 171pt; height: 6.95pt;">
+      <p style="margin-top: 0; margin-bottom: 0">${OsType}</td>
+      <td width="108" valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 80.85pt; height: 6.95pt;">
+      <p align="center">Text</td>
+      <td width="359" valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 269.55pt; height: 6.95pt;">
+      <p style="margin-top: 0; margin-bottom: 0">Represents the operating system 
+		type on which eclipse is running.</td>
+    </tr>
+    <tr style="height: 6.95pt;">
+      <td width="228" valign="top"
+ style="border-style: none solid solid; border-width: medium 1pt 1pt; border-left: 1pt solid windowtext; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 171pt; height: 6.95pt;">
+      <p style="margin-top: 0; margin-bottom: 0">${ArchType}</td>
+      <td width="108" valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 80.85pt; height: 6.95pt;">
+      <p align="center">Text</td>
+      <td width="359" valign="top"
+ style="border-style: none solid solid none; border-width: medium 1pt 1pt medium; border-right: 1pt solid windowtext; border-bottom: 1pt solid windowtext; padding: 0in 5.4pt; width: 269.55pt; height: 6.95pt;">
+      <p style="margin-top: 0; margin-bottom: 0">Represents the architecture 
+		type on which
+eclipse is running.</td>
     </tr>
   </tbody>
 </table>

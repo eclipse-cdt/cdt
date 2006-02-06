@@ -31,6 +31,7 @@ public class MIBreakCondition extends MICommand {
 	 * etc .. doing this will break the command -break-condition.
 	 */
 	protected String parametersToString() {
+		String[] parameters = getParameters();
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < parameters.length; i++) {
 			buffer.append(' ').append(parameters[i]);

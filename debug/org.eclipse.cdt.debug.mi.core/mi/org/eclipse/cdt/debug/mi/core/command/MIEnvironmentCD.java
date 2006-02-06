@@ -33,6 +33,7 @@ public class MIEnvironmentCD extends MICommand
 	 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#parametersToString()
 	 */
 	protected String parametersToString() {
+		String[] parameters = getParameters();
 		if (parameters != null && parameters.length == 1) {
 			return parameters[0];
 		}

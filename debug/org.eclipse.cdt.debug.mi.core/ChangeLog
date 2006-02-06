@@ -1,4 +1,12 @@
 2006-02-06 Mikhail Khodjaiants
+	Use getters to access members of "MICommand".
+	* MIBreakCondition.java
+	* MICommand.java
+	* MIDataDisassemble.java
+	* MIEnvironmentCD.java
+	* MIGDBSetEnvironment.java
+
+2006-02-06 Mikhail Khodjaiants
 	Bug 114793: Add an extension point to contribute command factories.
 	* MANIFEST.MF
 	* CommandFactory.java

@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.mi.core.command.factories.win32;
 
 import org.eclipse.cdt.debug.mi.core.command.CLIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
 import org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory;
  
 /**
@@ -45,5 +46,34 @@ public class StandardWinCommandFactory extends StandardCommandFactory {
 	 */
 	public CLIInfoSharedLibrary createCLIInfoSharedLibrary() {
 		return new WinCLIInfoSharedLibrary();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.command.CommandFactory#createMIGDBSetAutoSolib(boolean)
+	 */
+	public MIGDBSetAutoSolib createMIGDBSetAutoSolib( boolean set ) {
+		return new MIGDBSetAutoSolib( getMIVersion(), true ) {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getOperation()
+			 */
+			public String getOperation() {
+				return ""; //$NON-NLS-1$
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getOptions()
+			 */
+			public String[] getOptions() {
+				return new String[0];
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getParameters()
+			 */
+			public String[] getParameters() {
+				return new String[0];
+			}			
+		};
 	}
 }

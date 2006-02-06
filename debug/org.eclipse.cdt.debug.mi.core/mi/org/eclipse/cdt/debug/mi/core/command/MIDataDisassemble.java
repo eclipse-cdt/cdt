@@ -113,6 +113,7 @@ public class MIDataDisassemble extends MICommand
 	 * So override the MICommand
 	 */
 	protected String parametersToString() {
+		String[] parameters = getParameters();
 		if (parameters != null && parameters.length > 0) {
 			return "-- " + parameters[0]; //$NON-NLS-1$
 		}

@@ -39,6 +39,7 @@ public class MIGDBSetEnvironment extends MIGDBSet {
 	 * So pass the strings raw without interpretation.
 	 */
 	protected String parametersToString() {
+		String[] parameters = getParameters();
 		StringBuffer buffer = new StringBuffer();
 		if (parameters != null) {
 			for (int i = 0; i < parameters.length; i++) {

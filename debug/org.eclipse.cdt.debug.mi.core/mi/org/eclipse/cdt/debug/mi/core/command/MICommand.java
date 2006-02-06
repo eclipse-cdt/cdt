@@ -17,9 +17,9 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MICommand extends Command {
 	final static String[] empty = new String[0];
-	String[] options = empty;
-	String[] parameters = empty;
-	String operation = new String();
+	String[] fOptions = empty;
+	String[] fParameters = empty;
+	String fOperation = new String();
 	String fMIVersion;
 
 	public MICommand(String miVersion, String oper) {
@@ -32,9 +32,9 @@ public class MICommand extends Command {
 
 	public MICommand(String miVersion, String oper, String[] opt, String[] params) {
 		fMIVersion = miVersion;
-		this.operation = oper;
-		this.options = opt;
-		this.parameters = params;
+		fOperation = oper;
+		fOptions = opt;
+		fParameters = params;
 	}
 
 	/**
@@ -75,11 +75,11 @@ public class MICommand extends Command {
 	 * @return the operation of this command
 	 */
 	public String getOperation() {
-		return operation;
+		return fOperation;
 	}
 
 	protected void setOperation(String op) {
-		operation = op; 
+		fOperation = op; 
 	}
 
 	/**
@@ -89,11 +89,11 @@ public class MICommand extends Command {
 	 * @return an array of command's options
 	 */
 	public String[] getOptions() {
-		return options;
+		return fOptions;
 	}
 
 	public void setOptions(String[] opt) {
-		options = opt;
+		fOptions = opt;
 	}
 
 	/**
@@ -103,14 +103,15 @@ public class MICommand extends Command {
 	 * @return an array of command's parameters
 	 */
 	public String[] getParameters() {
-		return parameters;
+		return fParameters;
 	}
 
 	public void setParameters(String[] p) {
-		parameters = p;
+		fParameters = p;
 	}
 
 	protected String optionsToString() {
+		String[] options = getOptions();
 		StringBuffer sb = new StringBuffer();
 		if (options != null && options.length > 0) {
 			for (int i = 0; i < options.length; i++) {
@@ -141,6 +142,8 @@ public class MICommand extends Command {
 	}
 
 	protected String parametersToString() {
+		String[] parameters = getParameters();
+		String[] options = getOptions();
 		StringBuffer buffer = new StringBuffer();
 		if (parameters != null && parameters.length > 0) {
 			// According to GDB/MI spec

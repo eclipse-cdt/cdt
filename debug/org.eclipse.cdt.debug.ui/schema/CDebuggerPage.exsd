@@ -61,7 +61,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements &amp;lt;code&amp;gt;AbstractLaunchConfigurationTab&amp;lt;/code&amp;gt;
+                  specifies a fully qualified name of a Java class that implements &amp;lt;code&amp;gt;ICDebuggerPage&amp;lt;/code&amp;gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.debug.ui.ICDebuggerPage"/>
@@ -101,7 +101,7 @@ In the above example, the contributed UI component (org.eclipse.cdt.debug.mi.int
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute class must be a fully qualified name of a Java class that extends the interface org.eclipse.debug.ui.AbstractLaunchConfigurationTab.
+         Value of the attribute class must be a fully qualified name of a Java class that implements the interface org.eclipse.debug.ui.ICDebuggerPage.
       </documentation>
    </annotation>
 

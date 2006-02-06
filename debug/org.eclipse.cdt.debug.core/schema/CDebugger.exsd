@@ -18,21 +18,21 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -44,45 +44,45 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  specifies the debugger&apos;s name
                </documentation>
             </annotation>
          </attribute>
          <attribute name="modes" type="string">
             <annotation>
                <documentation>
-                  
+                  specifies the comma separated list of debugging modes (run,core,attach).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  specifies a fully qualified name of a Java class that implements &amp;lt;code&amp;gt;ICDIDebugger2&amp;lt;/code&amp;gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.debug.mi.core.command.CommandFactory"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  specifies a unique identifier for this debugger.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="platform" type="string">
             <annotation>
                <documentation>
-                  
+                  specifies a comma separated list of supported platforms.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="cpu" type="string">
             <annotation>
                <documentation>
-                  
+                  specifies a comma separated list of supported platforms.
                </documentation>
             </annotation>
          </attribute>
@@ -128,7 +128,11 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2004, 2005 QNX Software Systems and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
       </documentation>
    </annotation>
 

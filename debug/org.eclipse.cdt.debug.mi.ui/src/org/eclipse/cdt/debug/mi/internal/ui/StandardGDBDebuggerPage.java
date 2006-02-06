@@ -150,7 +150,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 			}
 			int miIndex = 0;
 			for ( int i = 0; i < miVersions.length; ++i ) {
-				if ( miVersions.equals( mi ) ) {
+				if ( miVersions[i].equals( mi ) ) {
 					miIndex = i;
 					break;
 				}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.factories.win32.CygwinCommandFactory;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

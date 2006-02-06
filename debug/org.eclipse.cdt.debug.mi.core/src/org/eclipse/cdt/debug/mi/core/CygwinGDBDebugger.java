@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.factories.win32.CygwinCommandFactory;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;

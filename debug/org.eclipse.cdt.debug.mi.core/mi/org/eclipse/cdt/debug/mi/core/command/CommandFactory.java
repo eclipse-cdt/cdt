@@ -19,7 +19,14 @@ public class CommandFactory {
 
 	String fMIVersion;
 
+	protected CommandFactory() {
+	}
+
 	public CommandFactory(String miVersion) {
+		fMIVersion = miVersion;
+	}
+
+	public void setMIVersion(String miVersion) {
 		fMIVersion = miVersion;
 	}
 

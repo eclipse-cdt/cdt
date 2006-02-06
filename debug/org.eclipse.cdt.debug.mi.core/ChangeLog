@@ -1,3 +1,35 @@
+2006-02-06 Mikhail Khodjaiants
+	Bug 114793: Add an extension point to contribute command factories.
+	* MANIFEST.MF
+	* CommandFactory.java
+	+ mi/org/eclipse/cdt/debug/mi/core/command/factories (package)
+	+ CommandFactoriesMessages.java
+	+ CommandFactoriesMessages.properties
+	+ CommandFactoryDescriptor.java
+	+ CommandFactoryManager.java
+	+ StandardCommandFactory.java
+	+ mi/org/eclipse/cdt/debug/mi/core/command/factories/win32 (package)
+	+ CygwinCommandFactory.java
+	+ CygwinMIEnvironmentCD.java
+	+ CygwinMIEnvironmentDirectory.java
+	+ StandardWinCommandFactory.java
+	+ WinCLIInfoSharedLibrary.java
+	+ WinCLIInfoSharedLibraryInfo.java
+	+ WinMIEnvironmentCD.java
+	* CLIInfoSharedLibraryInfo.java
+	+ commandFactories.exsd
+	- CygwinCommandFactory.java
+	* CygwinGDBCDIDebugger.java
+	* CygwinGDBCDIDebugger2.java
+	* CygwinGDBDebugger.java
+	- CygwinMIEnvironmentCD.java
+	- CygwinMIEnvironmentDirectory.java
+	* GDBCDIDebugger2.java
+	* IMILaunchConfigurationConstants.java
+	* MIPlugin.java
+	* plugin.xml
+	* plugin.properties
+
 2006-01-31 Mikhail Khodjaiants
 	Bug 124966: GDBTypeParser.parse(String) parses incorrectly.
 	Applied patch from Matthias Spycher (matthias@coware.com).

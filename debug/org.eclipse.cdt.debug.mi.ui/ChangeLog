@@ -1,3 +1,9 @@
+2006-02-06 Mikhail Khodjaiants
+	Bug 114793: Add an extension point to contribute command factories.
+	* MIUIMessages.properties
+	+ StandardGDBDebuggerPage.java
+	* plugin.xml
+
 2006-02-03 Mikhail Khodjaiants
 	The "ICDebuggerPage" interface and "AbstractCDebuggerPage" class are added.
 	All extensions of the "CDebuggerPage" extension point must implement "ICDebuggerPage".

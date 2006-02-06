@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
+import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryManager;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
@@ -46,11 +47,24 @@ public class MIPlugin extends Plugin {
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.mi.core" ; //$NON-NLS-1$
 
+	/**
+	 * Simple identifier constant (value <code>"commandFactories"</code>)
+	 * for the "gdb/mi command factories" extension point.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EXTENSION_POINT_COMMAND_FACTORIES = "commandFactories"; //$NON-NLS-1$	
+
 	//The shared instance.
 	private static MIPlugin plugin;
 
 	// GDB command
 	private static final String GDB = "gdb"; //$NON-NLS-1$
+
+	/**
+	 * The singleton command factory manager.
+	 */
+	private CommandFactoryManager fCommandFactoryManager;
 
 	private static ResourceBundle fgResourceBundle;
 	static {
@@ -528,5 +542,22 @@ public class MIPlugin extends Plugin {
 			}
 		}
 		return miVersion;
+	}
+
+	public static String getCommandFactory( ILaunchConfiguration config ) {
+		String commandFactory = ""; //$NON-NLS-1$
+		try {
+			commandFactory = config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, "" ); //$NON-NLS-1$
+		}
+		catch( CoreException e ) {
+		}
+		return commandFactory;
+	}
+
+	public CommandFactoryManager getCommandFactoryManager() {
+		if ( fCommandFactoryManager == null ) {
+			fCommandFactoryManager = new CommandFactoryManager();
+		}
+		return fCommandFactoryManager;
 	}
 }

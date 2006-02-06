@@ -19,6 +19,10 @@
             debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
             id="org.eclipse.cdt.debug.mi.GDBServerDebuggerPage">
       </debuggerPage>
+      <debuggerPage
+            class="org.eclipse.cdt.debug.mi.internal.ui.StandardGDBDebuggerPage"
+            debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
+            id="org.eclipse.cdt.debug.mi.GDBDebuggerPageNew"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

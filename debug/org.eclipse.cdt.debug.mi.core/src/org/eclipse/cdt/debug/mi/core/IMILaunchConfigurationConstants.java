@@ -56,6 +56,11 @@ public interface IMILaunchConfigurationConstants {
 	public static final boolean DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT = false;
 
 	/**
+	 * Launch configuration attribute key.  The value is a string specifying the identifier of the command factory to use.
+	 */
+	public static final String ATTR_DEBUGGER_COMMAND_FACTORY = MIPlugin.getUniqueIdentifier() + ".commandFactory"; //$NON-NLS-1$
+
+	/**
 	 * launch configuration attribute key.  The value is a string specifying the protocol to
 	 * use.  For now only "mi", "mi1", "m2", "mi3" are supported.
 	 */

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point id="commandFactories" name="gdb/mi Command Factories" schema="schema/commandFactories.exsd"/>
 
      <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
-            platform="*"
-            name="%GDBDebugger.name"
+            platform="win32"
+            name="%GDBMIDebugger.name"
             modes="run,core,attach"
             cpu="native"
-            class="org.eclipse.cdt.debug.mi.core.GDBCDIDebugger2"
-            id="org.eclipse.cdt.debug.mi.core.CDebugger">
+            class="org.eclipse.cdt.debug.mi.core.CygwinGDBCDIDebugger2"
+            id="org.eclipse.cdt.debug.mi.core.CDebuggerNew">
       </debugger>
       <debugger
             platform="win32"
@@ -28,10 +29,41 @@
             class="org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger2"
             id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
       </debugger>
+      <debugger
+            class="org.eclipse.cdt.debug.mi.core.GDBCDIDebugger2"
+            cpu="native"
+            id="org.eclipse.cdt.debug.mi.core.CDebugger"
+            modes="run,core,attach"
+            name="%GDBDebugger.name"
+            platform="*"/>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.debug.mi.core.MIPreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.mi.core.commandFactories">
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.win32.StandardWinCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
+            id="org.eclipse.cdt.debug.mi.core.standardWinCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardWindowsCommandFactory.name"
+            platforms="win32"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.win32.CygwinCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
+            id="org.eclipse.cdt.debug.mi.core.cygwinCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%CygWinCommandFactory.name"
+            platforms="win32"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
+            id="org.eclipse.cdt.debug.mi.core.standardLinuxCommandFactory1"
+            miVersions="mi,mi1,mi2"
+            name="%StandardLinuxCommandFactory.name"
+            platforms="linux"/>
    </extension>
 
 </plugin>

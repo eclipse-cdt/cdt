@@ -62,7 +62,13 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 	}
 
 	protected CommandFactory getCommandFactory( ILaunchConfiguration config ) throws CoreException {
-		return new CommandFactory( getMIVersion( config ) );
+		String factoryID = MIPlugin.getCommandFactory( config );
+		CommandFactory factory = MIPlugin.getDefault().getCommandFactoryManager().getCommandFactory( factoryID );
+		String miVersion = getMIVersion( config );
+		if ( factory != null ) {
+			factory.setMIVersion( miVersion );
+		}
+		return ( factory != null ) ? factory : new CommandFactory( miVersion );
 	}
 
 	public static IPath getProjectPath( ILaunchConfiguration configuration ) throws CoreException {

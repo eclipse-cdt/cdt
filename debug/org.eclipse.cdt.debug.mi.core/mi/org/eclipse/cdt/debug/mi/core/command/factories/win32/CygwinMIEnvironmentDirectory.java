@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.mi.core;
+package org.eclipse.cdt.debug.mi.core.command.factories.win32;
 
 import java.io.ByteArrayOutputStream;
 import java.util.StringTokenizer;

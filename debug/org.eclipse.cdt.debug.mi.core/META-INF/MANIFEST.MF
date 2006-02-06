@@ -12,6 +12,7 @@ Export-Package: org.eclipse.cdt.debug.mi.core,
  org.eclipse.cdt.debug.mi.core.cdi.model,
  org.eclipse.cdt.debug.mi.core.cdi.model.type,
  org.eclipse.cdt.debug.mi.core.command,
+ org.eclipse.cdt.debug.mi.core.command.factories,
  org.eclipse.cdt.debug.mi.core.event,
  org.eclipse.cdt.debug.mi.core.output
 Require-Bundle: org.eclipse.cdt.debug.core,

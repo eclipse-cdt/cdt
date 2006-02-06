@@ -55,7 +55,7 @@ public class CLIInfoSharedLibraryInfo extends MIInfo {
 		}
 	}
 
-	void parseShared(String str, List aList) {
+	protected void parseShared(String str, List aList) {
 		if (!hasProcessHeader) {
 			// Process the header and choose a type.
 			if (str.startsWith("DLL")) { //$NON-NLS-1$

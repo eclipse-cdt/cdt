@@ -6,12 +6,12 @@
      <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
-            platform="win32"
-            name="%GDBMIDebugger.name"
-            modes="run,core,attach"
+            class="org.eclipse.cdt.debug.mi.core.GDBCDIDebugger2"
             cpu="native"
-            class="org.eclipse.cdt.debug.mi.core.CygwinGDBCDIDebugger2"
-            id="org.eclipse.cdt.debug.mi.core.CDebuggerNew">
+            id="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
+            modes="run,core,attach"
+            name="%GDBMIDebugger.name"
+            platform="*">
       </debugger>
       <debugger
             platform="win32"

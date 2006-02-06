@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CLITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -112,7 +113,21 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 	}
 
 	protected void startLocalGDBSession( ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {
-		
+		// TODO: need a better solution for new-console
+		MISession miSession = getMISession( session );
+		try {
+			CommandFactory factory = miSession.getCommandFactory();
+			MIGDBSet set = factory.createMIGDBSet( new String[]{ "new-console" } ); //$NON-NLS-1$
+			miSession.postCommand( set );
+			MIInfo info = set.getMIInfo();
+			if ( info == null ) {
+				throw new MIException( MIPlugin.getResourceString( "src.common.No_answer" ) ); //$NON-NLS-1$
+			}
+		}
+		catch( MIException e ) {
+			// We ignore this exception, for example
+			// on GNU/Linux the new-console is an error.
+		}		
 	}
 
 	protected void startAttachGDBSession( ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {

@@ -1,4 +1,8 @@
 2006-02-06 Mikhail Khodjaiants
+	Suppress "set auto-solib" - returns error on Windows.
+	* StandardWinCommandFactory.java
+
+2006-02-06 Mikhail Khodjaiants
 	Use getters to access members of "MICommand".
 	* MIBreakCondition.java
 	* MICommand.java

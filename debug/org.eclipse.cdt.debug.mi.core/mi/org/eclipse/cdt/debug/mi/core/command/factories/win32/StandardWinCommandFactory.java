@@ -52,6 +52,7 @@ public class StandardWinCommandFactory extends StandardCommandFactory {
 	 * @see org.eclipse.cdt.debug.mi.core.command.CommandFactory#createMIGDBSetAutoSolib(boolean)
 	 */
 	public MIGDBSetAutoSolib createMIGDBSetAutoSolib( boolean set ) {
+		// Suppress "set auto-solib" - returns error on Windows
 		return new MIGDBSetAutoSolib( getMIVersion(), true ) {
 
 			/* (non-Javadoc)

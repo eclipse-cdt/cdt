@@ -16,7 +16,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIShared;
  
 /**
- * Comment for .
+ * Windows specific parser of the "info shared" output.
  */
 public class WinCLIInfoSharedLibraryInfo extends CLIInfoSharedLibraryInfo {
 

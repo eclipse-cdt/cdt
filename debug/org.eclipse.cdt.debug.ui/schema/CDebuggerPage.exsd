@@ -101,7 +101,7 @@ In the above example, the contributed UI component (org.eclipse.cdt.debug.mi.int
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute class must be a fully qualified name of a Java class that implements the interface org.eclipse.debug.ui.ICDebuggerPage.
+         Value of the attribute class must be a fully qualified name of a Java class that implements the interface org.eclipse.cdt.debug.ui.ICDebuggerPage.
       </documentation>
    </annotation>
 

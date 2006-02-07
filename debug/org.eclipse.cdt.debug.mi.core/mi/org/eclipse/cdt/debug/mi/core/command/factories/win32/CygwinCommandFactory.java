@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.command.factories.win32;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 
 /**
- * Comment for .
+ * Command factory for the gdb/mi protocol for CygWin environment.
  */
 public class CygwinCommandFactory extends StandardWinCommandFactory {
 
@@ -22,7 +22,6 @@ public class CygwinCommandFactory extends StandardWinCommandFactory {
 	 */
 	public CygwinCommandFactory() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/** 
@@ -30,7 +29,6 @@ public class CygwinCommandFactory extends StandardWinCommandFactory {
 	 */
 	public CygwinCommandFactory( String miVersion ) {
 		super( miVersion );
-		// TODO Auto-generated constructor stub
 	}
 
 	public MIEnvironmentDirectory createMIEnvironmentDirectory(boolean reset, String[] pathdirs) {

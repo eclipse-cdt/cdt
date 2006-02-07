@@ -1,4 +1,12 @@
 2006-02-07 Mikhail Khodjaiants
+	Bug 114793: Add an extension point to contribute command factories.
+	+ mi/org/eclipse/cdt/debug/mi/core/command/factories/linux (package)
+	+ LinuxCLIInfoSharedLibrary.java
+	+ LinuxCLIInfoSharedLibraryInfo.java
+	+ StandardLinuxCommandFactory.java
+	* plugin.xml
+
+2006-02-07 Mikhail Khodjaiants
 	Bug 126789: Use new "fullname" attribute of stack frame description.
 	* MIStackListFrames.java
 	* MIFrame.java

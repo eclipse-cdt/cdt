@@ -58,7 +58,7 @@
             name="%CygWinCommandFactory.name"
             platforms="win32"/>
       <commandFactory
-            class="org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory"
+            class="org.eclipse.cdt.debug.mi.core.command.factories.linux.StandardLinuxCommandFactory"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
             id="org.eclipse.cdt.debug.mi.core.standardLinuxCommandFactory1"
             miVersions="mi,mi1,mi2"

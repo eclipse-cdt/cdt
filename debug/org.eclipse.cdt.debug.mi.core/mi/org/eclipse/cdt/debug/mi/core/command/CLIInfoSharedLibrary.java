@@ -18,7 +18,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
  * 
- *    info threads
+ *    info sharedlibrary
  *
  */
 public class CLIInfoSharedLibrary extends CLICommand 

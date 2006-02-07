@@ -19,6 +19,8 @@ public class MIFrame {
 	String addr;
 	String func = ""; //$NON-NLS-1$
 	String file = ""; //$NON-NLS-1$
+	// since gdb 6.4
+	String fullname = ""; //$NON-NLS-1$
 	int line;
 	MIArg[] args = new MIArg[0];
 
@@ -31,7 +33,12 @@ public class MIFrame {
 	}
 
 	public String getFile() {
-		return file;
+		String fname = getFullname();
+		return ( fname.length() != 0 ) ? fname : file;
+	}
+
+	public String getFullname() {
+		return fullname;
 	}
 
 	public String getFunction() {
@@ -108,6 +115,8 @@ public class MIFrame {
 				}
 			} else if (var.equals("file")) { //$NON-NLS-1$
 				file = str;
+			} else if (var.equals("fullname")) { //$NON-NLS-1$
+				fullname = str;
 			} else if (var.equals("line")) { //$NON-NLS-1$
 				try {
 					line = Integer.parseInt(str.trim());

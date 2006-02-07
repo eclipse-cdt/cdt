@@ -36,6 +36,10 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
  * `FILE'
  *    File name of the source file where the function lives.
  *
+ * `FULLNAME'
+ *    Absolute file name of the source file where the function lives.
+ *	@since gdb 6.4
+ *
  * `LINE'
  *   Line number corresponding to the `$pc'.
  *

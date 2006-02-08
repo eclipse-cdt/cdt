@@ -60,10 +60,17 @@
       <commandFactory
             class="org.eclipse.cdt.debug.mi.core.command.factories.linux.StandardLinuxCommandFactory"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
-            id="org.eclipse.cdt.debug.mi.core.standardLinuxCommandFactory1"
+            id="org.eclipse.cdt.debug.mi.core.standardLinuxCommandFactory"
             miVersions="mi,mi1,mi2"
             name="%StandardLinuxCommandFactory.name"
             platforms="linux"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
+            id="org.eclipse.cdt.debug.mi.core.standardCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardCommandFactory.name"
+            platforms="*"/>
    </extension>
 
 </plugin>

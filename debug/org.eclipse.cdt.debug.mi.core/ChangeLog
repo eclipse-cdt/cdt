@@ -1,3 +1,9 @@
+2006-02-08 Mikhail Khodjaiants
+	Bug 114793: Add an extension point to contribute command factories.
+	Added standard command factory for gdb server.
+	* plugin.xml
+	* plugin.properties
+	
 2006-02-07 Mikhail Khodjaiants
 	Bug 114793: Add an extension point to contribute command factories.
 	+ mi/org/eclipse/cdt/debug/mi/core/command/factories/linux (package)

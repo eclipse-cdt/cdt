@@ -707,7 +707,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 					detail = DebugEvent.STEP_RETURN;
 					break;
 			}
-			state = CDebugElementState.STEPPING;
+			state = CDebugElementState.STEPPED;
 		}
 		else {
 			disposeStackFrames();

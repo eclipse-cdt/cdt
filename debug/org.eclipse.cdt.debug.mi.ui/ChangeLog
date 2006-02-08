@@ -1,3 +1,8 @@
+2006-02-08 Mikhail Khodjaiants
+	Bug 114793: Add an extension point to contribute command factories.
+	GDBServerDebuggerPage should extend StandardGDBDebuggerPage.
+	* GDBServerDebuggerPage.java
+	
 2006-02-06 Mikhail Khodjaiants
 	Bug 114793: Add an extension point to contribute command factories.
 	* MIUIMessages.properties

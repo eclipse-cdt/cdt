@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.TabItem;
 /**
  * The dynamic debugger tab for remote launches using gdb server.
  */
-public class GDBServerDebuggerPage extends GDBDebuggerPage {
+public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 
 	private final static String CONNECTION_TCP = MIUIMessages.getString( "GDBServerDebuggerPage.0" ); //$NON-NLS-1$
 

@@ -114,7 +114,7 @@ public class CommandFactoryDescriptor {
 
 	public boolean supportsPlatform( String platform ) {
 		Set all = getSupportedPlatforms();
-		return all.isEmpty() || all.contains( platform );
+		return all.isEmpty() || all.contains( "*" ) || all.contains( platform ); //$NON-NLS-1$
 	}
 
 	public String[] getSupportedPlatformList() {

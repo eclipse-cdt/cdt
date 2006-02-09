@@ -71,6 +71,27 @@
             miVersions="mi,mi1,mi2"
             name="%StandardCommandFactory.name"
             platforms="*"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.win32.StandardWinCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
+            id="org.eclipse.cdt.debug.mi.core.standardWinCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardWindowsCommandFactory.name"
+            platforms="win32"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.win32.CygwinCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
+            id="org.eclipse.cdt.debug.mi.core.cygwinCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%CygWinCommandFactory.name"
+            platforms="win32"/>
+      <commandFactory
+            class="org.eclipse.cdt.debug.mi.core.command.factories.linux.StandardLinuxCommandFactory"
+            debuggerID="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger"
+            id="org.eclipse.cdt.debug.mi.core.standardLinuxCommandFactory"
+            miVersions="mi,mi1,mi2"
+            name="%StandardLinuxCommandFactory.name"
+            platforms="linux"/>
    </extension>
 
 </plugin>

@@ -1,4 +1,10 @@
 2006-02-09 Mikhail Khodjaiants
+	Bug 114793: Add an extension point to contribute command factories.
+	Registered windows and linux specific command factories for gdbserver.
+	* plugin.properties
+	* plugin.xml
+
+2006-02-09 Mikhail Khodjaiants
 	The inferior is in the suspended state when connecting to gsbserver.
 	* GDBServerCDIDebugger2.java
 

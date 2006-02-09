@@ -104,6 +104,9 @@ public class GDBServerCDIDebugger2 extends GDBCDIDebugger2 {
 			if ( info == null ) {
 				throw newCoreException( MIPlugin.getResourceString( "src.GDBServerCDIDebugger.target_selection_failed" ), ex ); //$NON-NLS-1$
 			}
+			// @@@ We have to set the suspended state manually
+			miSession.getMIInferior().setSuspended();
+			miSession.getMIInferior().update();
 		}
 	}
 

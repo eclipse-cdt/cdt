@@ -1,3 +1,7 @@
+2006-02-09 Mikhail Khodjaiants
+	The inferior is in the suspended state when connecting to gsbserver.
+	* GDBServerCDIDebugger2.java
+
 2006-02-08 Mikhail Khodjaiants
 	Bug 114793: Add an extension point to contribute command factories.
 	Added standard command factory for gdb server.

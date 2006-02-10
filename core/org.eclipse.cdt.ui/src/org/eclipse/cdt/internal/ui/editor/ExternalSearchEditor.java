@@ -17,10 +17,13 @@ import org.eclipse.jface.action.IMenuManager;
 
 public class ExternalSearchEditor extends CEditor {
 	
+	public static final String EDITOR_ID = "org.eclipse.cdt.ui.editor.ExternalSearchEditor";
+	
 	public ExternalSearchEditor(){
 		super();
 		setDocumentProvider(CUIPlugin.getDefault().getExternalSearchDocumentProvider());
 	}
+	
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 	  super.editorContextMenuAboutToShow(menu);
 	  IContributionItem[] contrItem = menu.getItems();

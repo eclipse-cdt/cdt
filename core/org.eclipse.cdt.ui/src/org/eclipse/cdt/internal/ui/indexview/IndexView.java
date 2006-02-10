@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.PDOM;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -24,25 +23,17 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
-import org.eclipse.cdt.internal.core.pdom.PDOMUpdator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -51,8 +42,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -62,13 +51,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @author Doug Schaefer
@@ -80,6 +67,8 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 //	private DrillDownAdapter drillDownAdapter;
 	private IndexAction rebuildAction;
 	private IndexAction openDefinitionAction;
+	private IndexAction findDeclarationsAction;
+	private IndexAction findReferencesAction;
 	
 	private static class Counter implements IBTreeVisitor {
 		int count;
@@ -394,92 +383,11 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
         getSite().registerContextMenu(menuMgr, viewer);
 	}
 	
-	private abstract static class IndexAction extends Action {
-		public abstract boolean valid();
-	}
-	
 	private void makeActions() {
-		rebuildAction = new IndexAction() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				if (!(selection instanceof IStructuredSelection))
-					return;
-				
-				Object[] objs = ((IStructuredSelection)selection).toArray();
-				for (int i = 0; i < objs.length; ++i) {
-					if (!(objs[i] instanceof ICProject))
-						continue;
-					
-					ICProject cproject = (ICProject)objs[i];
-					try {
-						PDOM.deletePDOM(cproject.getProject());
-						PDOMUpdator job = new PDOMUpdator(cproject, null);
-						job.schedule();
-					} catch (CoreException e) {
-						CUIPlugin.getDefault().log(e);
-					}
-				}
-			}
-			public boolean valid() {
-				ISelection selection = viewer.getSelection();
-				if (!(selection instanceof IStructuredSelection))
-					return false;
-				Object[] objs = ((IStructuredSelection)selection).toArray();
-				for (int i = 0; i < objs.length; ++i)
-					if (objs[i] instanceof ICProject)
-						return true;
-				return false;
-			}
-		};
-		rebuildAction.setText(CUIPlugin.getResourceString("IndexView.rebuildIndex.name")); //$NON-NLS-1$
-		
-		openDefinitionAction = new IndexAction() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				if (!(selection instanceof IStructuredSelection))
-					return;
-				
-				Object[] objs = ((IStructuredSelection)selection).toArray();
-				for (int i = 0; i < objs.length; ++i) {
-					if (!(objs[i] instanceof PDOMBinding))
-						continue;
-					
-					try {
-						PDOMBinding binding = (PDOMBinding)objs[i];
-						PDOMName name = binding.getFirstDefinition();
-						if (name == null)
-							name = binding.getFirstDeclaration();
-						if (name == null)
-							continue;
-						
-						IASTFileLocation location = name.getFileLocation();
-						IPath path = new Path(location.getFileName());
-						Object input = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-						if (input == null)
-							input = new FileStorage(path);
-
-						IEditorPart editor = EditorUtility.openInEditor(input);
-						if (editor != null && editor instanceof ITextEditor) {
-							((ITextEditor)editor).selectAndReveal(location.getNodeOffset(), location.getNodeLength());
-							return;
-						}
-					} catch (CoreException e) {
-						CUIPlugin.getDefault().log(e);
-					}
-				}
-			}
-			public boolean valid() {
-				ISelection selection = viewer.getSelection();
-				if (!(selection instanceof IStructuredSelection))
-					return false;
-				Object[] objs = ((IStructuredSelection)selection).toArray();
-				for (int i = 0; i < objs.length; ++i)
-					if (objs[i] instanceof PDOMBinding)
-						return true;
-				return false;
-			}
-		};
-		openDefinitionAction.setText(CUIPlugin.getResourceString("IndexView.openDefinition.name"));//$NON-NLS-1$
+		rebuildAction = new RebuildIndexAction(viewer);
+		openDefinitionAction = new OpenDefinitionAction(viewer);
+		findDeclarationsAction = new FindDeclarationsAction(viewer);
+		findReferencesAction = new FindReferencesAction(viewer);
 	}
 
 	private void hookContextMenu() {
@@ -498,8 +406,12 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	private void fillContextMenu(IMenuManager manager) {
 		if (rebuildAction.valid())
 			manager.add(rebuildAction);
-		if (rebuildAction.valid())
+		if (openDefinitionAction.valid())
 			manager.add(openDefinitionAction);
+		if (findDeclarationsAction.valid())
+			manager.add(findDeclarationsAction);
+		if (findReferencesAction.valid())
+			manager.add(findReferencesAction);
 		//manager.add(new Separator());
 		//drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));

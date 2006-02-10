@@ -1232,6 +1232,10 @@
             searchResultClass="org.eclipse.cdt.internal.ui.search.CSearchResult"
             id="org.eclipse.cdt.ui.CSearchResultPage">
       </viewPage>
+      <viewPage
+            class="org.eclipse.cdt.internal.ui.search.PDOMSearchViewPage"
+            id="org.eclipse.cdt.ui.pdomSearchViewPage"
+            searchResultClass="org.eclipse.cdt.internal.ui.search.PDOMSearchResult"/>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">

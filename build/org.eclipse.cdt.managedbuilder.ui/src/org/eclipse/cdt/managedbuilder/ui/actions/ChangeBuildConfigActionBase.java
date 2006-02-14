@@ -108,7 +108,7 @@ public class ChangeBuildConfigActionBase {
 				}
 			}
 			if (commonName) {
-				StringBuilder builder = new StringBuilder(sName);
+				StringBuffer builder = new StringBuffer(sName);
 				if (commonDesc) {
 					if (sDesc != null) {
 						builder.append(" (");	//$NON-NLS-1$

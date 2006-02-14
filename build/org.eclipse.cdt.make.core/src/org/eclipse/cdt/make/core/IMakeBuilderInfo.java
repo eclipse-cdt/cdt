@@ -14,8 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 
-	public final static String BUILD_TARGET_FULL = ARGS_PREFIX + ".build.target.full"; //$NON-NLS-1$
-	public final static String BUILD_TARGET_INCREAMENTAL = ARGS_PREFIX + ".build.target.inc"; //$NON-NLS-1$
+	public final static String BUILD_TARGET_INCREMENTAL = ARGS_PREFIX + ".build.target.inc"; //$NON-NLS-1$
 	public final static String BUILD_TARGET_AUTO = ARGS_PREFIX + ".build.target.auto"; //$NON-NLS-1$
 	public final static String BUILD_TARGET_CLEAN = ARGS_PREFIX + ".build.target.clean"; //$NON-NLS-1$
 

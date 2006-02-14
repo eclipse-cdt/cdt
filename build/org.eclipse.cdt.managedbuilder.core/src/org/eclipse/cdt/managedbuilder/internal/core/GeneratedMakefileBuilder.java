@@ -219,7 +219,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
 	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace [";	//$NON-NLS-1$
 	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
-	private static final String TYPE_FULL = "ManagedMakeBuilder.type.full";	//$NON-NLS-1$
 	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
 	private static final String WARNING_UNSUPPORTED_CONFIGURATION = "ManagedMakeBuilder.warning.unsupported.configuration";	//$NON-NLS-1$
 	public static boolean VERBOSE = false;
@@ -276,9 +275,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			ConsoleOutputStream consoleOutStream = console.getOutputStream();
 			// Report a successful clean
 			String[] consoleHeader = new String[3];
-			if (buildType == FULL_BUILD) {
-			    consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_FULL);
-			} else if (buildType == INCREMENTAL_BUILD) {
+			if (buildType == FULL_BUILD || buildType == INCREMENTAL_BUILD) {
 				consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
 			} else {
 				consoleHeader[0] = new String();
@@ -595,7 +592,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				args.add("clean");	//$NON-NLS-1$
 				break;
 			case FULL_BUILD:
-				args.add("clean");	//$NON-NLS-1$
 			case INCREMENTAL_BUILD:
 				args.add("all");	//$NON-NLS-1$
 				break;
@@ -749,8 +745,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				String[] consoleHeader = new String[3];
 				switch (buildType) {
 					case FULL_BUILD:
-						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_FULL);
-						break;
 					case INCREMENTAL_BUILD:
 						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
 						break;

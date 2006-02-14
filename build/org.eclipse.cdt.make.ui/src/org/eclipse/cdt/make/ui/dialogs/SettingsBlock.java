@@ -88,17 +88,14 @@ public class SettingsBlock extends AbstractCOptionPage {
 	Text buildLocation;
 	Button locationVariablesButton;
 
-	Text targetFull;
 	Text targetIncr;
 	Text targetAuto;
 	Text targetClean;
 
-	Button fullButton;
 	Button incrButton;
 	Button autoButton;
 	Button cleanButton;
 
-	Button fullVariableButton;
 	Button incrVariableButton;
 	Button autoVariableButton;
 	Button cleanVariableButton;
@@ -189,8 +186,6 @@ public class SettingsBlock extends AbstractCOptionPage {
 			public void widgetSelected(SelectionEvent e) {
 				targetAuto.setEnabled(autoButton.getSelection());
 				autoVariableButton.setEnabled(autoButton.getSelection());
-				targetFull.setEnabled(fullButton.getSelection());
-				fullVariableButton.setEnabled(fullButton.getSelection());
 				targetIncr.setEnabled(incrButton.getSelection());
 				incrVariableButton.setEnabled(incrButton.getSelection());
 				targetClean.setEnabled(cleanButton.getSelection());
@@ -231,20 +226,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 		incrButton.addSelectionListener(selectionAdapter);
 		incrButton.setSelection(fBuildInfo.isIncrementalBuildEnabled());
 		targetIncr = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		targetIncr.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, "")); //$NON-NLS-1$
+		targetIncr.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "")); //$NON-NLS-1$
 		((GridData) (targetIncr.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetIncr.getLayoutData())).grabExcessHorizontalSpace = true;
 		addControlAccessibleListener(targetIncr, MakeUIPlugin.getResourceString(MAKE_BUILD_INCREMENTAL_TARGET));
 		incrVariableButton = addVariablesButton(group, targetIncr);
-		fullButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_FULL));
-		fullButton.addSelectionListener(selectionAdapter);
-		fullButton.setSelection(fBuildInfo.isFullBuildEnabled());
-		targetFull = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
-		targetFull.setText(fBuildInfo.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, "")); //$NON-NLS-1$
-		((GridData) (targetFull.getLayoutData())).horizontalAlignment = GridData.FILL;
-		((GridData) (targetFull.getLayoutData())).grabExcessHorizontalSpace = true;
-		addControlAccessibleListener(targetFull, MakeUIPlugin.getResourceString(MAKE_BUILD_FULL_TARGET));
-		fullVariableButton = addVariablesButton(group, targetFull);
 		cleanButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_CLEAN));
 		cleanButton.addSelectionListener(selectionAdapter);
 		cleanButton.setSelection(fBuildInfo.isCleanBuildEnabled());
@@ -468,9 +454,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 				info.setAutoBuildEnable(autoButton.getSelection());
 				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, targetAuto.getText().trim());
 				info.setIncrementalBuildEnable(incrButton.getSelection());
-				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, targetIncr.getText().trim());
-				info.setFullBuildEnable(fullButton.getSelection());
-				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, targetFull.getText().trim());
+				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, targetIncr.getText().trim());
+				info.setFullBuildEnable(incrButton.getSelection());
 				info.setCleanBuildEnable(cleanButton.getSelection());
 				info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, targetClean.getText().trim());
 				if (buildLocation != null) {
@@ -531,10 +516,6 @@ public class SettingsBlock extends AbstractCOptionPage {
 		incrVariableButton.setEnabled(info.isIncrementalBuildEnabled());
 		targetIncr.setText(info.getIncrementalBuildTarget());
 		targetIncr.setEnabled(info.isIncrementalBuildEnabled());
-		fullButton.setSelection(info.isFullBuildEnabled());
-		fullVariableButton.setEnabled(info.isFullBuildEnabled());
-		targetFull.setText(info.getFullBuildTarget());
-		targetFull.setEnabled(info.isFullBuildEnabled());
 		cleanButton.setSelection(info.isCleanBuildEnabled());
 		cleanVariableButton.setEnabled(info.isCleanBuildEnabled());
 		targetClean.setText(info.getCleanBuildTarget());

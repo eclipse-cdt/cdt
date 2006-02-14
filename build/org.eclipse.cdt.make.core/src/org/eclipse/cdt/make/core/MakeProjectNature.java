@@ -140,10 +140,9 @@ public class MakeProjectNature implements IProjectNature {
 		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
 		
 		projectInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
-		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, "")); //$NON-NLS-1$
+		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "")); //$NON-NLS-1$
 
-		projectInfo.setFullBuildEnable(info.isFullBuildEnabled());
-		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, "")); //$NON-NLS-1$
+		projectInfo.setFullBuildEnable(info.isIncrementalBuildEnabled());
 
 		projectInfo.setCleanBuildEnable(info.isCleanBuildEnabled());
 		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "")); //$NON-NLS-1$

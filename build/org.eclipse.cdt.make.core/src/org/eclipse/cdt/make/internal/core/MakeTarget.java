@@ -288,7 +288,6 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		info.setUseDefaultBuildCmd(isDefaultBuildCmd());
 		info.setStopOnError(isStopOnError());
 		info.setFullBuildEnable(true);
-		info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, getBuildAttribute(IMakeTarget.BUILD_TARGET, "")); //$NON-NLS-1$
 		info.setEnvironment(getExpandedEnvironment());
 		info.setAppendEnvironment(appendEnvironment());
 		if (container != null) {

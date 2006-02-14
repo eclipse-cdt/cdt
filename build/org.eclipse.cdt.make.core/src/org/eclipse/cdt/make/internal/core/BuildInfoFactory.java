@@ -88,9 +88,7 @@ public class BuildInfoFactory {
 					value = getString(BuildInfoFactory.BUILD_TARGET_AUTO);
 				} else if (IMakeBuilderInfo.BUILD_TARGET_CLEAN.equals(name)) {
 					value = getString(BuildInfoFactory.BUILD_TARGET_CLEAN);
-				} else if (IMakeBuilderInfo.BUILD_TARGET_FULL.equals(name)) {
-					value = getString(BuildInfoFactory.BUILD_TARGET_FULL);
-				} else if (IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL.equals(name)) {
+				} else if (IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL.equals(name)) {
 					value = getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL);
 				} 
 			} 
@@ -222,12 +220,12 @@ public class BuildInfoFactory {
 		}
 
 		public void setIncrementalBuildTarget(String target) throws CoreException {
-			putString(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, null);
+			putString(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, null);
 			putString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL, target);
 		}
 
 		public String getIncrementalBuildTarget() {
-			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL,
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL,
 					getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
 			try {
 				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
@@ -237,12 +235,11 @@ public class BuildInfoFactory {
 		}
 
 		public void setFullBuildTarget(String target) throws CoreException {
-			putString(IMakeBuilderInfo.BUILD_TARGET_FULL, null);
-			putString(BuildInfoFactory.BUILD_TARGET_FULL, target);
+		
 		}
 
 		public String getFullBuildTarget() {
-			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, getString(BuildInfoFactory.BUILD_TARGET_FULL));
+			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
 			try {
 				result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
 			} catch (CoreException e) {

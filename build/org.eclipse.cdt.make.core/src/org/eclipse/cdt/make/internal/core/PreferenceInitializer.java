@@ -39,9 +39,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			info.setAutoBuildEnable(false);
 			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "all"); //$NON-NLS-1$
 			info.setIncrementalBuildEnable(true);
-			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREAMENTAL, "all"); //$NON-NLS-1$
+			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "all"); //$NON-NLS-1$
 			info.setFullBuildEnable(true);
-			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_FULL, "clean all"); //$NON-NLS-1$
 			info.setCleanBuildEnable(true);
 			info.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, "clean"); //$NON-NLS-1$
 			info.setAppendEnvironment(true);

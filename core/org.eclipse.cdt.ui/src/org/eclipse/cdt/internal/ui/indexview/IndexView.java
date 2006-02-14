@@ -41,7 +41,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -106,75 +105,76 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 		};
 	}
 
-	private class IndexLazyContentProvider implements ILazyTreeContentProvider {
-
-		public Object getParent(Object element) {
-			return null;
-		}
-
-		public void updateElement(Object parent, int index) {
-			try {
-				if (parent instanceof ICModel) {
-					ICModel model = (ICModel)parent;
-					ICProject[] cprojects = model.getCProjects();
-					int n = -1;
-					for (int i = 0; i < cprojects.length; ++i) {
-						ICProject cproject = cprojects[i];
-						PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cproject.getProject());
-						if (pdom != null)
-							++n;
-						if (n == index) {
-							viewer.replace(parent, index, cproject);
-							int nl = 0;
-							for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
-								++nl;
-							viewer.setChildCount(cproject, nl);
-							return;
-						}
-					}
-				} else if (parent instanceof ICProject) {
-					ICProject cproject = (ICProject)parent;
-					PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cproject.getProject());
-					PDOMLinkage linkage = pdom.getFirstLinkage();
-					if (linkage == null)
-						return;
-					for (int n = 0; n < index; ++n) {
-						linkage = linkage.getNextLinkage();
-						if (linkage == null)
-							return;
-					}
-					LinkageCache linkageCache = new LinkageCache(pdom, linkage);
-					viewer.replace(parent, index, linkageCache);
-					viewer.setChildCount(linkageCache, linkageCache.getCount());
-				} else if (parent instanceof LinkageCache) {
-					LinkageCache linkageCache = (LinkageCache)parent;
-					PDOMBinding binding = linkageCache.getItem(index);
-					if (binding != null) {
-						viewer.replace(parent, index, binding);
-						if (binding instanceof PDOMMemberOwner) {
-							PDOMMemberOwner owner = (PDOMMemberOwner)binding;
-							viewer.setChildCount(binding, owner.getNumMembers());
-						} else
-							viewer.setChildCount(binding, 0);
-					}
-				} else if (parent instanceof PDOMMemberOwner) {
-					PDOMMemberOwner owner = (PDOMMemberOwner)parent;
-					PDOMMember member = owner.getMember(index);
-					viewer.replace(parent, index, member);
-					viewer.setChildCount(member, 0);
-				}
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-			}
-		}
-
-		public void dispose() {
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-	}
+// TODO - turned off until M5 lands.
+//	private class IndexLazyContentProvider implements ILazyTreeContentProvider {
+//
+//		public Object getParent(Object element) {
+//			return null;
+//		}
+//
+//		public void updateElement(Object parent, int index) {
+//			try {
+//				if (parent instanceof ICModel) {
+//					ICModel model = (ICModel)parent;
+//					ICProject[] cprojects = model.getCProjects();
+//					int n = -1;
+//					for (int i = 0; i < cprojects.length; ++i) {
+//						ICProject cproject = cprojects[i];
+//						PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cproject.getProject());
+//						if (pdom != null)
+//							++n;
+//						if (n == index) {
+//							viewer.replace(parent, index, cproject);
+//							int nl = 0;
+//							for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+//								++nl;
+//							viewer.setChildCount(cproject, nl);
+//							return;
+//						}
+//					}
+//				} else if (parent instanceof ICProject) {
+//					ICProject cproject = (ICProject)parent;
+//					PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cproject.getProject());
+//					PDOMLinkage linkage = pdom.getFirstLinkage();
+//					if (linkage == null)
+//						return;
+//					for (int n = 0; n < index; ++n) {
+//						linkage = linkage.getNextLinkage();
+//						if (linkage == null)
+//							return;
+//					}
+//					LinkageCache linkageCache = new LinkageCache(pdom, linkage);
+//					viewer.replace(parent, index, linkageCache);
+//					viewer.setChildCount(linkageCache, linkageCache.getCount());
+//				} else if (parent instanceof LinkageCache) {
+//					LinkageCache linkageCache = (LinkageCache)parent;
+//					PDOMBinding binding = linkageCache.getItem(index);
+//					if (binding != null) {
+//						viewer.replace(parent, index, binding);
+//						if (binding instanceof PDOMMemberOwner) {
+//							PDOMMemberOwner owner = (PDOMMemberOwner)binding;
+//							viewer.setChildCount(binding, owner.getNumMembers());
+//						} else
+//							viewer.setChildCount(binding, 0);
+//					}
+//				} else if (parent instanceof PDOMMemberOwner) {
+//					PDOMMemberOwner owner = (PDOMMemberOwner)parent;
+//					PDOMMember member = owner.getMember(index);
+//					viewer.replace(parent, index, member);
+//					viewer.setChildCount(member, 0);
+//				}
+//			} catch (CoreException e) {
+//				CUIPlugin.getDefault().log(e);
+//			}
+//		}
+//
+//		public void dispose() {
+//		}
+//
+//		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+//		}
+//
+//	}
 	
 	private class IndexContentProvider implements ITreeContentProvider {
 

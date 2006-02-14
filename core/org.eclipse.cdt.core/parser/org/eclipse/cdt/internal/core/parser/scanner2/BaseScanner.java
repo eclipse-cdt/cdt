@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.CharTable;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
@@ -49,10 +50,11 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
  *  
  */
 abstract class BaseScanner implements IScanner {
+	static boolean cacheIdentifiers = true;
 
     protected static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
 
-    protected static final char[] ELLIPSIS_CHARARRAY = "...".toString().toCharArray(); //$NON-NLS-1$
+    protected static final char[] ELLIPSIS_CHARARRAY = "...".toCharArray(); //$NON-NLS-1$
 
     protected static final char[] VA_ARGS_CHARARRAY = "__VA_ARGS__".toCharArray(); //$NON-NLS-1$
 
@@ -2015,7 +2017,10 @@ abstract class BaseScanner implements IScanner {
         // We've run out of contexts, our work is done here
         return contentAssistMode ? eocToken : null;
     }
-
+    
+    static public CharTable ident = new CharTable(1024);
+    static public int idents = 0;
+    
     protected IToken scanIdentifier() {
         char[] buffer = bufferStack[bufferStackPos];
         boolean escapedNewline = false;
@@ -2030,14 +2035,24 @@ abstract class BaseScanner implements IScanner {
                     || Character.isUnicodeIdentifierPart(c)) {
                 ++len;
                 continue;
-            } else if (c == '\\' && bufferPos[bufferStackPos] + 1 < limit
-                    && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
-                // escaped newline
-                ++bufferPos[bufferStackPos];
-                len += 2;
-                escapedNewline = true;
-                continue;
             } else if (c == '\\' && (bufferPos[bufferStackPos] + 1 < limit)) {
+            	if (buffer[bufferPos[bufferStackPos] + 1] == '\n') {
+                    // escaped newline
+                    ++bufferPos[bufferStackPos];
+                    len += 2;
+                    escapedNewline = true;
+                    continue;
+            	}
+            	if (buffer[bufferPos[bufferStackPos] + 1] == '\r') {
+                    // escaped newline
+            		if(buffer[bufferPos[bufferStackPos] + 2] == '\n') {
+	                    ++bufferPos[bufferStackPos];
+	                    ++bufferPos[bufferStackPos];
+	                    len += 3;
+	                    escapedNewline = true;
+	                    continue;
+            		}
+            	}
                 if ((buffer[bufferPos[bufferStackPos] + 1] == 'u')
                         || buffer[bufferPos[bufferStackPos] + 1] == 'U') {
                     ++bufferPos[bufferStackPos];
@@ -2052,9 +2067,17 @@ abstract class BaseScanner implements IScanner {
         }
 
         --bufferPos[bufferStackPos];
+        
+        if(escapedNewline) {
+        	buffer = removedEscapedNewline(buffer, start, len);
+        	start = 0;
+        	len = buffer.length;
+        }
 
         if (contentAssistMode && bufferStackPos == 0 && bufferPos[bufferStackPos] + 1 == limit) {
         	// return the text as a content assist token
+        	if(escapedNewline)
+        		return newToken(IToken.tCOMPLETION, buffer);
         	return newToken(IToken.tCOMPLETION, CharArrayUtils.extract(buffer, start, bufferPos[bufferStackPos] - start + 1));
         }
 
@@ -2092,25 +2115,19 @@ abstract class BaseScanner implements IScanner {
                 return EXPANSION_TOKEN;
         }
 
-        char[] result = escapedNewline ? removedEscapedNewline(buffer, start,
-                len) : CharArrayUtils.extract(buffer, start, len);
-        int tokenType = escapedNewline ? keywords.get(result, 0, result.length)
-                : keywords.get(buffer, start, len);
-
-        if (tokenType == keywords.undefined) {
-            tokenType = escapedNewline ? additionalKeywords.get(result, 0,
-                    result.length) : additionalKeywords.get(buffer, start, len);
-
-            if (tokenType == additionalKeywords.undefined) {
-                result = (result != null) ? result : CharArrayUtils.extract(
-                        buffer, start, len);
-                return newToken(IToken.tIDENTIFIER, result);
-            }
-            result = (result != null) ? result : CharArrayUtils.extract(buffer,
-                    start, len);
-            return newToken(tokenType, result);
-        }
-        return newToken(tokenType);
+        int tokenType = keywords.get(buffer, start, len);
+        if (tokenType != keywords.undefined)  
+        	return newToken(tokenType);
+        
+        int keyLoc = additionalKeywords.getKeyLocation(buffer, start, len);
+        if (keyLoc != additionalKeywords.undefined)
+        	return newToken(additionalKeywords.get(keyLoc), additionalKeywords.keyAt(keyLoc));  
+        
+        // we have a identifier
+    	if (cacheIdentifiers) 
+    		return newToken(IToken.tIDENTIFIER, ident.keyAt(ident.addIndex(buffer, start, len)));
+    	else
+    		return newToken(IToken.tIDENTIFIER, escapedNewline ? buffer : CharArrayUtils.extract(buffer, start, len)); 
     }
 
     /**
@@ -2962,6 +2979,7 @@ abstract class BaseScanner implements IScanner {
             int startingLineNumber, int nameOffset, int nameEndOffset,
             int nameLine, int endOffset, int endLine, boolean isForced);
 
+    static int countIt = 0;
     protected void handlePPDefine(int pos2, int startingLineNumber) {
         char[] buffer = bufferStack[bufferStackPos];
         int limit = bufferLimit[bufferStackPos];
@@ -3093,6 +3111,8 @@ abstract class BaseScanner implements IScanner {
         if (textlen > 0) {
             text = new char[textlen];
             System.arraycopy(buffer, textstart, text, 0, textlen);
+//            countIt++;
+//            System.out.println(countIt);
         }
 
         if (encounteredMultilineComment)
@@ -3198,12 +3218,12 @@ abstract class BaseScanner implements IScanner {
      * @return
      */
     protected char[] removedEscapedNewline(char[] text, int start, int len) {
-        if (CharArrayUtils.indexOf('\n', text, start, len) == -1)
+        if (CharArrayUtils.indexOf('\n', text, start, start + len) == -1)
             return text;
-        char[] result = new char[text.length];
+        char[] result = new char[len];
         Arrays.fill(result, ' ');
         int counter = 0;
-        for (int i = 0; i < text.length; ++i) {
+        for (int i = start; i < start + len; ++i) {
             if (text[i] == '\\' && i + 1 < text.length && text[i + 1] == '\n')
                 ++i;
             else if (text[i] == '\\' && i + 1 < text.length

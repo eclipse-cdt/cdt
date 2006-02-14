@@ -21,7 +21,7 @@ import java.util.List;
 public class CharTable extends HashTable {
 	protected char[][] keyTable;
 
-	protected CharTable(int initialSize) {
+	public CharTable(int initialSize) {
 		super(initialSize);
 		keyTable = new char[capacity()][];
 	}
@@ -61,7 +61,7 @@ public class CharTable extends HashTable {
 	protected final int addIndex(char[] buffer ) {
 		return addIndex(buffer, 0, buffer.length);
 	}
-	protected final int addIndex(char[] buffer, int start, int len) {
+	public final int addIndex(char[] buffer, int start, int len) {
 		if (hashTable != null)
 		{
 			int hash = hash(buffer, start, len);

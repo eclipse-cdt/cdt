@@ -60,6 +60,19 @@ public class CharArrayIntMap extends CharTable {
 			return valueTable[i];
 		return undefined;
 	}
+	
+	public int get(int pos) {
+		if( pos < 0 || pos > currEntry )
+			return undefined;
+		return valueTable[pos];
+	}
+	
+	public int getKeyLocation(char[] key, int start, int length) {
+		int i = lookup(key, start, length);
+		if (i >= 0)
+			return i;
+		return undefined;
+	}
 
 	/**
 	 * @param image

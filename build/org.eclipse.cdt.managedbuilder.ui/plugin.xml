@@ -120,5 +120,57 @@
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
          </filter>
       </objectContribution>
-   </extension>   
+   </extension>
+  <extension
+        point="org.eclipse.ui.actionSets">
+     <actionSet
+           description="Build configuration for the current project"
+           id="org.eclipse.cdt.managedbuilder.ui.buildConfigActionSet"
+           label="%BuildConfigActionSet.label"
+           visible="false">
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.ChangeBuildConfigMenuAction"
+              disabledIcon="icons/dlcl16/config-tool.gif"
+              enablesFor="+"
+              icon="icons/elcl16/config-tool.gif"
+              id="org.eclipse.cdt.managedbuilder.ui.buildConfigToolbarAction"
+              label="%BuildConfigToolbarAction.label"
+              style="pulldown"
+              toolbarPath="buildConfig"
+              tooltip="%BuildConfigAction.tooltip"/>
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.ChangeBuildConfigMenuAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.managedbuilder.ui.buildConfigMenuAction"
+              label="%BuildConfigMenuAction.label"
+              menubarPath="project/build"
+              style="pulldown"
+              tooltip="%BuildConfigAction.tooltip"/>
+     </actionSet>
+  </extension>
+  <extension
+        point="org.eclipse.ui.popupMenus">
+     <objectContribution
+           adaptable="true"
+           id="org.eclipse.cdt.managedbuilder.ui.buildConfigContribution"
+           objectClass="org.eclipse.core.resources.IResource">
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.ChangeBuildConfigContextAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.managedbuilder.ui.buildConfigPulldownAction"
+              label="%BuildConfigContextAction.label"
+              menubarPath="buildGroup"
+              style="pulldown"
+              tooltip="%BuildConfigAction.tooltip"/>
+        <filter
+              name="projectNature"
+              value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+     </objectContribution>
+  </extension>
+  <extension
+        point="org.eclipse.ui.perspectiveExtensions">
+     <perspectiveExtension targetID="org.eclipse.cdt.ui.CPerspective">
+        <actionSet id="org.eclipse.cdt.managedbuilder.ui.buildConfigActionSet"/>
+     </perspectiveExtension>
+  </extension>   
 </plugin>

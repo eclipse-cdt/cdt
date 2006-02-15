@@ -18,6 +18,11 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	public final static String BUILD_TARGET_AUTO = ARGS_PREFIX + ".build.target.auto"; //$NON-NLS-1$
 	public final static String BUILD_TARGET_CLEAN = ARGS_PREFIX + ".build.target.clean"; //$NON-NLS-1$
 
+	/** @deprecated */
+	public final static String BUILD_TARGET_INCREAMENTAL = BUILD_TARGET_INCREMENTAL;
+	/** @deprecated */
+	public final static String BUILD_TARGET_FULL = ARGS_PREFIX + ".build.target.full"; //$NON-NLS-1$
+	
 	boolean isAutoBuildEnable();
 	void setAutoBuildEnable(boolean enabled) throws CoreException;
 

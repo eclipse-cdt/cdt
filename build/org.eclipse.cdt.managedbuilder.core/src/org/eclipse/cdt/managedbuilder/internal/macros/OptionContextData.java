@@ -47,17 +47,13 @@ public class OptionContextData implements IOptionContextData {
 	}
 
 	public static IHoldsOptions getHolder(IOptionContextData data){
-		IOption option = data.getOption();
-		if(option == null)
-			return null;
-		
 		IBuildObject buildObj = data.getParent();
 		IToolChain tCh = null;
 		IHoldsOptions ho = null;
 		IResourceConfiguration rcCfg = null;
 		if(buildObj instanceof ITool)
 			ho = (ITool)buildObj;
-		if(buildObj instanceof IToolChain)
+		else if(buildObj instanceof IToolChain)
 			tCh = (IToolChain)buildObj;
 		else if(buildObj instanceof IResourceConfiguration)
 			rcCfg = (IResourceConfiguration)buildObj;
@@ -65,6 +61,10 @@ public class OptionContextData implements IOptionContextData {
 			tCh = ((IConfiguration)buildObj).getToolChain();
 
 		if(ho == null){
+			IOption option = data.getOption();
+			if(option == null)
+				return null;
+
 			ho = option.getOptionHolder();
 			ITool tools[] = null;
 			if(tCh != null){

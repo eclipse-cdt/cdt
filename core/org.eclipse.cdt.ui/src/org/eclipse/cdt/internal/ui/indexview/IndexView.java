@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.PDOM;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -29,11 +30,15 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -65,10 +70,48 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	private TreeViewer viewer;
 //	private DrillDownAdapter drillDownAdapter;
 	private IndexAction rebuildAction;
+	private IndexAction discardExternalDefsAction;
 	private IndexAction openDefinitionAction;
 	private IndexAction findDeclarationsAction;
 	private IndexAction findReferencesAction;
+	Filter filter = new Filter();
 	
+	public void toggleExternalDefs() {
+		filter.showExternalDefs = ! filter.showExternalDefs;
+		viewer.refresh();
+	}
+	
+	private static class Filter {
+		public boolean showExternalDefs = false;
+		public boolean accept(PDOMBinding binding) {
+			if(showExternalDefs)
+				return true;
+			return isLocalToWorkspace(binding);
+		}
+		
+		private static boolean isLocalToWorkspace(PDOMBinding binding) {
+			try {
+				PDOMName name = binding.getFirstReference();
+				if (name == null)
+					name = binding.getFirstDeclaration();
+				if (name == null)
+					name = binding.getFirstDefinition();
+				
+				if (name == null)
+					return false;
+				
+				IASTFileLocation location = name.getFileLocation();
+				IPath path = new Path(location.getFileName());
+				Object input = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+				if (input == null)
+					return false;
+				return true;
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+			return false;
+		}
+	}
 	private static class Counter implements IBTreeVisitor {
 		int count;
 		PDOMDatabase pdom;
@@ -88,10 +131,12 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	private static class Children implements IBTreeVisitor {
 		final PDOMDatabase pdom;
 		final PDOMBinding[] bindings;
+		final Filter filter;
 		int index;
-		public Children(PDOMDatabase pdom, PDOMBinding[] bindings) {
+		public Children(PDOMDatabase pdom, PDOMBinding[] bindings, Filter filter) {
 			this.pdom = pdom;
 			this.bindings = bindings;
+			this.filter = filter;
 		}
 		public int compare(int record) throws CoreException {
 			return 1;
@@ -100,7 +145,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			if (record == 0 || PDOMBinding.isOrphaned(pdom, record))
 				return true;
 			
-			bindings[index++] = pdom.getBinding(record);
+			PDOMBinding binding = pdom.getBinding(record);
+			if( filter.accept(binding) )
+				bindings[index++] = binding;
 			return true;
 		};
 	}
@@ -176,6 +223,16 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 //
 //	}
 	
+	static PDOMBinding[] trim(PDOMBinding []binding) {
+		int len;
+		for (len = 0; len < binding.length; len++)
+			if(binding[len] == null) {
+				PDOMBinding [] newBinding = new PDOMBinding [len];
+				System.arraycopy(binding, 0, newBinding, 0, len);
+				return newBinding;
+			}
+		return binding;
+	}
 	private class IndexContentProvider implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
@@ -200,9 +257,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 					Counter counter = new Counter(pdom);
 					linkage.getIndex().visit(counter);
 					PDOMBinding[] bindings = new PDOMBinding[counter.count];
-					Children children = new Children(pdom, bindings);
+					Children children = new Children(pdom, bindings, filter);
 					linkage.getIndex().visit(children);
-					return bindings;
+					return trim(bindings);
 				} catch (CoreException e) {
 					CUIPlugin.getDefault().log(e);
 				} 
@@ -213,9 +270,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 					Counter counter = new Counter(pdom);
 					namespace.getIndex().visit(counter);
 					PDOMBinding[] bindings = new PDOMBinding[counter.count];
-					Children children = new Children(pdom, bindings);
+					Children children = new Children(pdom, bindings, filter);
 					namespace.getIndex().visit(children);
-					return bindings;
+					return trim(bindings);
 				} catch (CoreException e) {
 					CUIPlugin.getDefault().log(e);
 				} 
@@ -385,6 +442,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	
 	private void makeActions() {
 		rebuildAction = new RebuildIndexAction(viewer);
+		discardExternalDefsAction = new DiscardExternalDefsAction(viewer, this);
 		openDefinitionAction = new OpenDefinitionAction(viewer);
 		findDeclarationsAction = new FindDeclarationsAction(viewer);
 		findReferencesAction = new FindReferencesAction(viewer);
@@ -406,6 +464,8 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	private void fillContextMenu(IMenuManager manager) {
 		if (rebuildAction.valid())
 			manager.add(rebuildAction);
+		if (discardExternalDefsAction.valid())
+			manager.add(discardExternalDefsAction);
 		if (openDefinitionAction.valid())
 			manager.add(openDefinitionAction);
 		if (findDeclarationsAction.valid())

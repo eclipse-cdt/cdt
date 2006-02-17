@@ -11,8 +11,9 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -25,7 +26,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 public class DiscardExternalDefsAction extends IndexAction {
 	final IndexView view;
 	public DiscardExternalDefsAction(TreeViewer viewer, IndexView view) {
-		super(viewer, CUIPlugin.getResourceString("IndexView.ToggleExternals.name")); //$NON-NLS-1$
+		super(viewer, CUIPlugin.getResourceString("IndexView.ToggleExternals.name"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+		setToolTipText(CUIPlugin.getResourceString("IndexView.ToggleExternals.tooltip")); //$NON-NLS-1$
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$	
 		this.view = view;
 	}
 	
@@ -37,13 +40,6 @@ public class DiscardExternalDefsAction extends IndexAction {
 	}
 	
 	public boolean valid() {
-		ISelection selection = viewer.getSelection();
-		if (!(selection instanceof IStructuredSelection))
-			return false;
-		Object[] objs = ((IStructuredSelection)selection).toArray();
-		for (int i = 0; i < objs.length; ++i)
-			if (objs[i] instanceof ICProject)
-				return true;
 		return false;
 	}
 

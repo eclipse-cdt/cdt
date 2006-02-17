@@ -46,8 +46,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -69,18 +72,40 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 
 	private TreeViewer viewer;
 //	private DrillDownAdapter drillDownAdapter;
+	private ToggleLinkingAction toggleLinkingAction;
 	private IndexAction rebuildAction;
 	private IndexAction discardExternalDefsAction;
 	private IndexAction openDefinitionAction;
 	private IndexAction findDeclarationsAction;
 	private IndexAction findReferencesAction;
 	Filter filter = new Filter();
+	public boolean isLinking = false;
 	
 	public void toggleExternalDefs() {
 		filter.showExternalDefs = ! filter.showExternalDefs;
 		viewer.refresh();
 	}
 	
+	public void toggleLinking() {
+		isLinking = ! isLinking;
+		if (isLinking) {
+			openDefinitionAction.run();
+		}
+	}
+	
+	
+	/**
+	 * Handles selection changed in viewer. Updates global actions. Links to
+	 * editor (if option enabled)
+	 */
+	void handleSelectionChanged(SelectionChangedEvent event) {
+		final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+//		updateStatusLine(selection);
+//		updateActionBars(selection);
+		if (isLinking) {
+			openDefinitionAction.run();
+		}
+	}
 	private static class Filter {
 		public boolean showExternalDefs = false;
 		public boolean accept(PDOMBinding binding) {
@@ -438,11 +463,19 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
         Menu menu = menuMgr.createContextMenu(viewer.getControl());
         viewer.getControl().setMenu(menu);
         getSite().registerContextMenu(menuMgr, viewer);
+        
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleSelectionChanged(event);
+			}
+		});
 	}
 	
 	private void makeActions() {
 		rebuildAction = new RebuildIndexAction(viewer);
 		discardExternalDefsAction = new DiscardExternalDefsAction(viewer, this);
+		toggleLinkingAction = new ToggleLinkingAction(this);
 		openDefinitionAction = new OpenDefinitionAction(viewer);
 		findDeclarationsAction = new FindDeclarationsAction(viewer);
 		findReferencesAction = new FindReferencesAction(viewer);
@@ -492,7 +525,9 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		//drillDownAdapter.addNavigationActions(manager);
+//		drillDownAdapter.addNavigationActions(manager);
+		manager.add(toggleLinkingAction);
+		manager.add(discardExternalDefsAction);
 	}
 	
 	public void setFocus() {

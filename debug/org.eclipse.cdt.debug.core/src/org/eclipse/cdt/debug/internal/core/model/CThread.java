@@ -895,7 +895,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		else {
 			setState( CDebugElementState.RESUMED );
 			disposeStackFrames();
-			events.add( createChangeEvent( DebugEvent.CONTENT ) );
+			events.add( createResumeEvent( DebugEvent.CLIENT_REQUEST ) );
 		}
 		setCurrent( false );
 		setCurrentStateInfo( null );

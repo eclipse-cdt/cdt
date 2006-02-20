@@ -1,4 +1,8 @@
 2006-02-20 Mikhail Khodjaiants
+	Fire the resume event instead of the change event when a non-current thread is resumed.
+	* CThread.java
+
+2006-02-20 Mikhail Khodjaiants
 	CModuleManager needs to extend PlatformObject to be accessible as an adapter 
 	for IModuleRetrival.
 	* CModuleManager.java

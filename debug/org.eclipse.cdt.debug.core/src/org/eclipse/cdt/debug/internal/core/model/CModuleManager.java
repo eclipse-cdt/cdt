@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -28,7 +29,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Manages the modules loaded on this debug target.
  */
-public class CModuleManager implements IModuleRetrieval {
+public class CModuleManager extends PlatformObject implements IModuleRetrieval {
 
 	/**
 	 * The debug target associated with this manager.

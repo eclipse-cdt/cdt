@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -374,7 +374,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		// create the sash form that will contain the tree viewer & text viewer
 		setSashForm( new SashForm( parent, SWT.NONE ) );
 		// add tree viewer
-		final ModulesViewer modulesViewer = new ModulesViewer( getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL, this );
+		final ModulesViewer modulesViewer = new ModulesViewer( getSashForm(), this );
 		modulesViewer.setUseHashlookup( false );
 		modulesViewer.getControl().addFocusListener( new FocusAdapter() {
 
@@ -391,7 +391,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		getSite().setSelectionProvider( getModulesViewSelectionProvider() );
 
 		// listen to debug context
-		DebugContextManager.getDefault().addDebugContextListener(this, getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().addDebugContextListener( this, getSite().getWorkbenchWindow() );
 		return modulesViewer;
 	}
 

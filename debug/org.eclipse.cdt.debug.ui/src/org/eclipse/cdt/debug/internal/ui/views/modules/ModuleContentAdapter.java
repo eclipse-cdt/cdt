@@ -17,16 +17,16 @@ import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
+import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
  
 /**
  * Comment for .
  */
-public class ModuleTreeContentAdapter extends AsynchronousTreeContentAdapter {
+public class ModuleContentAdapter extends AsynchronousContentAdapter {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AsynchronousTreeContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.IPresentationContext)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#getChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
 	protected Object[] getChildren( Object parent, IPresentationContext context ) throws CoreException {
 		if ( parent instanceof IModuleRetrieval ) {

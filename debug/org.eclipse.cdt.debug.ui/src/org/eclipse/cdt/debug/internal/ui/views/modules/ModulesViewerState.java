@@ -16,7 +16,7 @@ import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -29,7 +29,7 @@ public class ModulesViewerState extends AbstractViewerState {
 	/** 
 	 * Constructor for ModulesViewerState. 
 	 */
-	public ModulesViewerState( AsynchronousTreeViewer viewer ) {
+	public ModulesViewerState( AsynchronousTreeModelViewer viewer ) {
 		super( viewer );
 	}
 
@@ -47,9 +47,9 @@ public class ModulesViewerState extends AbstractViewerState {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState#decodePath(org.eclipse.core.runtime.IPath, org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer)
+	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState#decodePath(org.eclipse.core.runtime.IPath, org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer)
 	 */
-	protected TreePath decodePath( IPath path, AsynchronousTreeViewer viewer ) throws DebugException {
+	protected TreePath decodePath( IPath path, AsynchronousTreeModelViewer viewer ) throws DebugException {
 		String[] names = path.segments();
 		Tree tree = viewer.getTree();
 		TreeItem[] items = tree.getItems();

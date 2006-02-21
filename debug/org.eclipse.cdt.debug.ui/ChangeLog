@@ -1,3 +1,18 @@
+2006-02-21 Mikhail Khodjaiants
+	Bug 122336: Use the asynchronous tree viewer in the Modules view.
+	Adjustments to the platform changes in M5.
+	+ src/org/eclipse/cdt/debug/internal/ui/elements/adapters (new package)
+	+ CDebugElementAdapterFactory.java
+	* AbstractViewerState.java
+	+ ModuleContentAdapter.java
+	+ ModuleProxyFactory.java
+	* ModulesView.java
+	* ModulesViewer.java
+	* ModulesViewerState.java
+	* ModulesViewEventHandler.java
+	- ModuleTreeContentAdapter.java
+	* CDebugUIPlugin.java
+
 2006-02-03 Mikhail Khodjaiants
 	The "ICDebuggerPage" interface and "AbstractCDebuggerPage" class are added.
 	All extensions of the "CDebuggerPage" extension point must implement "ICDebuggerPage".

@@ -12,10 +12,9 @@ package org.eclipse.cdt.debug.internal.ui.views;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.TreePath;
 import org.eclipse.debug.internal.ui.viewers.TreeSelection;
 import org.eclipse.swt.widgets.TreeItem;
@@ -33,7 +32,7 @@ public abstract class AbstractViewerState {
 	/**
 	 * Constructs a memento for the given viewer.
 	 */
-	public AbstractViewerState(AsynchronousTreeViewer viewer) {
+	public AbstractViewerState(AsynchronousTreeModelViewer viewer) {
 		saveState(viewer);
 	}
 
@@ -43,7 +42,7 @@ public abstract class AbstractViewerState {
 	 * 
 	 * @param viewer viewer of which to save the state
 	 */
-	public void saveState(AsynchronousTreeViewer viewer) {
+	public void saveState(AsynchronousTreeModelViewer viewer) {
 		List expanded = new ArrayList();
 		fSavedExpansion = null;
 		TreeItem[] items = viewer.getTree().getItems();
@@ -115,7 +114,7 @@ public abstract class AbstractViewerState {
 	 * 
 	 * @param viewer viewer to which state is restored
 	 */
-	public void restoreState(AsynchronousTreeViewer viewer) {
+	public void restoreState(AsynchronousTreeModelViewer viewer) {
 	    boolean expansionComplete = true;
 	    if (fSavedExpansion != null && fSavedExpansion.size() > 0) {
 			for (int i = 0; i < fSavedExpansion.size(); i++) {
@@ -176,6 +175,6 @@ public abstract class AbstractViewerState {
 	 * @return element represented by the path, or <code>null</code> if none
 	 * @throws DebugException if unable to locate a variable
 	 */
-	protected abstract TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException;
+	protected abstract TreePath decodePath(IPath path, AsynchronousTreeModelViewer viewer) throws DebugException;
 
 }

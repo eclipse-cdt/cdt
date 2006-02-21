@@ -13,10 +13,10 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.internal.ui.viewers.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
+import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
-import org.eclipse.debug.internal.ui.viewers.update.ModelDelta;
  
 /**
  * Comment for .
@@ -46,7 +46,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	 */
 	protected void handleChange( DebugEvent event ) {
 		if ( event.getSource() instanceof ICModule )
-			fireDelta( new ModelDelta( event.getSource(), IModelDelta.CHANGED | IModelDelta.STATE ) );
+			fireDelta( new ModelDelta( event.getSource(), IModelDelta.STATE ) );
 	}
 
 	/* (non-Javadoc)

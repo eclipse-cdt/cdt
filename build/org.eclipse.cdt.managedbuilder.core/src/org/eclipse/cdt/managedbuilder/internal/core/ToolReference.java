@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -585,6 +586,7 @@ public class ToolReference implements IToolReference {
 	 * @param id
 	 * @return
 	 */
+	/*
 	private OptionReference getOptionReference(String id) {
 		Iterator it = getOptionReferenceList().iterator();
 		while (it.hasNext()) {
@@ -595,6 +597,7 @@ public class ToolReference implements IToolReference {
 		}
 		return null;
 	}
+	*/
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getOptionReferenceList()
@@ -1115,7 +1118,7 @@ public class ToolReference implements IToolReference {
 		return null;
 	}
 
-	public IManagedDependencyGenerator getDependencyGeneratorForExtension(String sourceExt) {
+	public IManagedDependencyGeneratorType getDependencyGeneratorForExtension(String sourceExt) {
 		return null;
 	}
 

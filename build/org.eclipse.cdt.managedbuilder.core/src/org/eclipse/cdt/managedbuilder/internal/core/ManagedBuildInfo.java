@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Software Corporation and others.
+ * Copyright (c) 2002, 2006 IBM Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -283,7 +283,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getDependencyGenerator(java.lang.String)
 	 */
-	public IManagedDependencyGenerator getDependencyGenerator(String sourceExtension) {
+	public IManagedDependencyGeneratorType getDependencyGenerator(String sourceExtension) {
 		// Find the tool and ask the Managed Build Manager for its dep generator
 		try {
 			if (getDefaultConfiguration() != null) {

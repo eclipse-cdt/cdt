@@ -46,6 +46,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.MacroResolver;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -86,7 +87,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	
 	//  Superclass
 	//  Note that superClass itself is defined in the base and that the methods
-	//  getSuperClass() and setSuperClass(), defined in Tool must be used to 
+	//  getSuperClass() and setSuperClassInternal(), defined in Tool must be used to 
 	//  access it. This avoids widespread casts from IHoldsOptions to ITool.
 	private String superClassId;
 	//  Parent and children
@@ -116,7 +117,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	private IConfigurationElement commandLineGeneratorElement = null;
 	private IManagedCommandLineGenerator commandLineGenerator = null;
 	private IConfigurationElement dependencyGeneratorElement = null;
-	private IManagedDependencyGenerator dependencyGenerator = null;
+	private IManagedDependencyGeneratorType dependencyGenerator = null;
 	private URL iconPathURL;	
 	//  Miscellaneous
 	private boolean isExtensionTool = false;
@@ -199,7 +200,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	public Tool(ToolChain parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
 		super(resolvedDefault);
 		this.parent = parent;
-		setSuperClass(superClass);
+		setSuperClassInternal(superClass);
 		setManagedBuildRevision(parent.getManagedBuildRevision());
 		if (getSuperClass() != null) {
 			superClassId = getSuperClass().getId();
@@ -232,7 +233,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	public Tool(ResourceConfiguration parent, ITool superClass, String Id, String name, boolean isExtensionElement) {
 		super(resolvedDefault);
 		this.parent = parent;
-		setSuperClass( superClass );
+		setSuperClassInternal( superClass );
 		setManagedBuildRevision(parent.getManagedBuildRevision());
 		if (getSuperClass() != null) {
 			superClassId = getSuperClass().getId();
@@ -300,9 +301,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		super(resolvedDefault);
 		this.parent = parent;
 		if (toolSuperClass != null) {
-			setSuperClass( toolSuperClass );
+			setSuperClassInternal( toolSuperClass );
 		} else {
-			setSuperClass( tool.getSuperClass() );
+			setSuperClassInternal( tool.getSuperClass() );
 		}
 		if (getSuperClass() != null) {
 			superClassId = getSuperClass().getId();
@@ -571,9 +572,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (superClassId != null && superClassId.length() > 0) {
 			if( getParent() instanceof IResourceConfiguration ) {
 				IResourceConfiguration resConfig = (IResourceConfiguration) getParent();
-				setSuperClass( resConfig.getParent().getTool(superClassId) );
+				setSuperClassInternal( resConfig.getParent().getTool(superClassId) );
 			} else {
-				setSuperClass( ManagedBuildManager.getExtensionTool(superClassId) );			
+				setSuperClassInternal( ManagedBuildManager.getExtensionTool(superClassId) );			
 			}
 			
 			// Check for migration support
@@ -1251,8 +1252,22 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	 * Access function to set the superclass element that is defined in
 	 * the base class.
 	 */
-	private void setSuperClass(ITool superClass) {
+	private void setSuperClassInternal(ITool superClass) {
 		this.superClass = superClass;
+	}
+	
+	public void setSuperClass(ITool superClass) {
+		if ( this.superClass != superClass ) {
+			this.superClass = superClass;
+			if ( this.superClass == null) {
+				superClassId = null;
+			} else {
+				superClassId = this.superClass.getId();
+			}
+		
+			if(!isExtensionElement())
+				setDirty(true);
+		}			
 	}
 
 	/* (non-Javadoc)
@@ -1802,14 +1817,22 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	 */
 	public IManagedDependencyGenerator getDependencyGenerator() {
 		if (dependencyGenerator != null) {
-			return dependencyGenerator;
+			if (dependencyGenerator instanceof IManagedDependencyGenerator)
+				return (IManagedDependencyGenerator)dependencyGenerator;
+			else
+				return null;
 		}
 		IConfigurationElement element = getDependencyGeneratorElement();
 		if (element != null) {
 			try {
 				if (element.getAttribute(DEP_CALC_ID) != null) {
-					dependencyGenerator = (IManagedDependencyGenerator) element.createExecutableExtension(DEP_CALC_ID);
-					return dependencyGenerator;
+					dependencyGenerator = (IManagedDependencyGeneratorType) element.createExecutableExtension(DEP_CALC_ID);
+					if (dependencyGenerator != null) {
+						if (dependencyGenerator instanceof IManagedDependencyGenerator)
+							return (IManagedDependencyGenerator)dependencyGenerator;
+						else
+							return null;
+					}
 				}
 			} catch (CoreException e) {}
 		}
@@ -1819,7 +1842,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getDependencyGeneratorForExtension()
 	 */
-	public IManagedDependencyGenerator getDependencyGeneratorForExtension(String sourceExt) {
+	public IManagedDependencyGeneratorType getDependencyGeneratorForExtension(String sourceExt) {
 		if (dependencyGenerator != null) {
 			return dependencyGenerator;
 		}
@@ -1827,7 +1850,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (element != null) {
 			try {
 				if (element.getAttribute(DEP_CALC_ID) != null) {
-					dependencyGenerator = (IManagedDependencyGenerator) element.createExecutableExtension(DEP_CALC_ID);
+					dependencyGenerator = (IManagedDependencyGeneratorType) element.createExecutableExtension(DEP_CALC_ID);
 					return dependencyGenerator;
 				}
 			} catch (CoreException e) {}
@@ -2381,7 +2404,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 			resolved = true;
 			// Resolve superClass
 			if (superClassId != null && superClassId.length() > 0) {
-				setSuperClass( ManagedBuildManager.getExtensionTool(superClassId) );
+				setSuperClassInternal( ManagedBuildManager.getExtensionTool(superClassId) );
 				if (getSuperClass() == null) {
 					// Report error
 					ManagedBuildManager.OutputResolveError(
@@ -2632,7 +2655,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 								// If control comes here means that superClass
 								// is null.
 								// So, set the superClass to this tool element
-								setSuperClass(toolElement);
+								setSuperClassInternal(toolElement);
 								superClassId = getSuperClass().getId();
 								isExists = true;
 								break;

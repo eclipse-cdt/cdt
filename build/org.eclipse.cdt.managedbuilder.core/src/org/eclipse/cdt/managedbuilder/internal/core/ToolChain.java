@@ -54,7 +54,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	
 	//  Superclass
 	//  Note that superClass itself is defined in the base and that the methods
-	//  getSuperClass() and setSuperClass(), defined in ToolChain must be used  
+	//  getSuperClass() and setSuperClassInternal(), defined in ToolChain must be used  
 	//  to access it. This avoids widespread casts from IHoldsOptions to IToolChain.
 	private String superClassId;
 	//  Parent and children
@@ -169,7 +169,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	public ToolChain(Configuration parent, IToolChain superClass, String Id, String name, boolean isExtensionElement) {
 		super(resolvedDefault);
 		this.parent = parent;
-		setSuperClass(superClass);
+		setSuperClassInternal(superClass);
 		setManagedBuildRevision(parent.getManagedBuildRevision());
 		
 		if (getSuperClass() != null) {
@@ -243,7 +243,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	public ToolChain(IConfiguration parent, String Id, String name, ToolChain toolChain) {
 		super(resolvedDefault);
 		this.parent = parent;
-		setSuperClass(toolChain.getSuperClass());
+		setSuperClassInternal(toolChain.getSuperClass());
 		if (getSuperClass() != null) {
 			if (toolChain.superClassId != null) {
 				superClassId = new String(toolChain.superClassId);
@@ -480,7 +480,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		// superClass
 		superClassId = element.getAttribute(IProjectType.SUPERCLASS);
 		if (superClassId != null && superClassId.length() > 0) {
-			setSuperClass( ManagedBuildManager.getExtensionToolChain(superClassId) );
+			setSuperClassInternal( ManagedBuildManager.getExtensionToolChain(superClassId) );
 			// Check for migration support
 			checkForMigrationSupport();
 		}
@@ -893,8 +893,22 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 	 * Access function to set the superclass element that is defined in
 	 * the base class.
 	 */
-	private void setSuperClass(IToolChain superClass) {
+	private void setSuperClassInternal(IToolChain superClass) {
 		this.superClass = superClass;
+	}
+	
+	public void setSuperClass(IToolChain superClass) {
+		if ( this.superClass != superClass ) {
+			this.superClass = superClass;
+			if ( this.superClass == null) {
+				superClassId = null;
+			} else {
+				superClassId = this.superClass.getId();
+			}
+		
+			if(!isExtensionElement())
+				setDirty(true);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1285,7 +1299,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			resolved = true;
 			// Resolve superClass
 			if (superClassId != null && superClassId.length() > 0) {
-				setSuperClass(ManagedBuildManager.getExtensionToolChain(superClassId));
+				setSuperClassInternal(ManagedBuildManager.getExtensionToolChain(superClassId));
 				if (getSuperClass() == null) {
 					// Report error
 					ManagedBuildManager.OutputResolveError(
@@ -1585,7 +1599,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 								
 								// If control comes here means that 'superClass' is null
 								// So, set the superClass to this toolChain element
-								setSuperClass(toolChainElement);
+								setSuperClassInternal(toolChainElement);
 								superClassId = getSuperClass().getId();
 								isExists = true;
 								break;

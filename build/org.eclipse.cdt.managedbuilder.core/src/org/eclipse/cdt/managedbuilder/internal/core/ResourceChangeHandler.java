@@ -283,10 +283,13 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 	public void sendClose(IProject project){
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project,false);
 		if(info != null){
-			IConfiguration cfgs[] = info.getManagedProject().getConfigurations();
+			IManagedProject managedProj = info.getManagedProject();
+			if (managedProj != null) {
+				IConfiguration cfgs[] = managedProj.getConfigurations();
 			
-			for(int i = 0; i < cfgs.length; i++)
-				ManagedBuildManager.performValueHandlerEvent(cfgs[i], IManagedOptionValueHandler.EVENT_CLOSE, true);		
+				for(int i = 0; i < cfgs.length; i++)
+					ManagedBuildManager.performValueHandlerEvent(cfgs[i], IManagedOptionValueHandler.EVENT_CLOSE, true);
+			}
 		}
 	}
 	

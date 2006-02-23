@@ -1438,4 +1438,13 @@ public class Configuration extends BuildObject implements IConfiguration {
 			((ResourceConfiguration)iter.next()).updateManagedBuildRevision(revision);
 		}
 	}
+	
+	public void setParent(IConfiguration parent) {
+		if ( this.parent != parent) {
+			this.parent = parent;
+			if (!isExtensionElement())
+				setDirty(true);
+		}		
+	}
+	
 }

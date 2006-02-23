@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
-import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
@@ -28,12 +27,15 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCalculator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
@@ -49,10 +51,6 @@ import org.eclipse.core.runtime.Path;
  */
 public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	
-	//private static final String EMPTY_STRING = new String();
-	//private static final String OBJS_MACRO = "OBJS";			//$NON-NLS-1$
-	private static final String DEPS_MACRO = "DEPS";			//$NON-NLS-1$
-
 	/*
 	 * Members
 	 */
@@ -72,6 +70,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	private Vector enumeratedSecondaryOutputs = new Vector();
 	private Vector outputVariables = new Vector();
 	private Vector commandDependencies = new Vector();
+	private Vector additionalTargets = new Vector();
 	//private Vector enumeratedDependencies = new Vector();
 	// Map of macro names (String) to values (List)
 	
@@ -134,8 +133,14 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		return dependenciesCalculated;
 	}
 
+	//  Command dependencies are top build directory relative
 	public Vector getCommandDependencies() {
 		return commandDependencies;
+	}
+
+	//  Additional targets are top build directory relative
+	public Vector getAdditionalTargets() {
+		return additionalTargets;
 	}
 
 	//public Vector getEnumeratedDependencies() {
@@ -336,8 +341,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								for (int k = 0; k < paths.length; k++) {
 									String path = paths[k];
 									itEnumeratedInputs.add(path);
-									// Translate the path from project relative to
-									// build directory relative
+									// Translate the path from project relative to build directory relative
 									if (!(path.startsWith("$("))) {		//$NON-NLS-1$
 										IResource addlResource = project.getFile(path);
 										if (addlResource != null) {
@@ -763,11 +767,109 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				
 		return false;		
 	}
+
+	private boolean callDependencyCalculator (GnuMakefileGenerator makeGen, IConfiguration config, HashSet handledInputExtensions, 
+			IManagedDependencyGeneratorType depGen, String[] extensionsList, Vector myCommandDependencies, HashMap myOutputMacros,
+			Vector myAdditionalTargets, boolean done) {
+		
+		int calcType = depGen.getCalculatorType();
+		switch (calcType) {
+		case IManagedDependencyGeneratorType.TYPE_COMMAND:
+		case IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS:
+ 			// iterate over all extensions that the tool knows how to handle
+ 			for (int i=0; i<extensionsList.length; i++) {
+ 				String extensionName = extensionsList[i];
+ 				
+ 				// Generated files should not appear in the list.
+ 				if(!makeGen.getOutputExtensions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
+ 					handledInputExtensions.add(extensionName);
+ 					String depExt = IManagedBuilderMakefileGenerator.DEP_EXT;
+ 					if (calcType == IManagedDependencyGeneratorType.TYPE_BUILD_COMMANDS) {
+ 						IManagedDependencyGenerator2 depGen2 = (IManagedDependencyGenerator2)depGen;
+ 						String xt = depGen2.getDependencyFileExtension(config, tool);
+ 						if (xt != null && xt.length() > 0) depExt = xt;
+ 					}
+					String depsMacroEntry = calculateSourceMacro(makeGen, extensionName, depExt,
+							IManagedBuilderMakefileGenerator.WILDCARD);
+
+					List depsList = new ArrayList();
+					depsList.add(Path.fromOSString(depsMacroEntry));
+					String depsMacro = makeGen.getDepMacroName(extensionName).toString();
+					if (myOutputMacros.containsKey(depsMacro)) {
+						List currList = (List)myOutputMacros.get(depsMacro);
+						currList.addAll(depsList);
+						myOutputMacros.put(depsMacro, currList);
+					} else {
+						myOutputMacros.put(depsMacro, depsList);
+					}
+ 				}
+ 			}											
+			break;
+
+		case IManagedDependencyGeneratorType.TYPE_INDEXER:
+		case IManagedDependencyGeneratorType.TYPE_EXTERNAL:
+		case IManagedDependencyGeneratorType.TYPE_CUSTOM:
+			// The inputs must have been calculated before we can do this
+			if (!inputsCalculated) {
+				done = false;
+			} else {
+				Vector inputs = getEnumeratedInputs();
+
+				if (calcType == IManagedDependencyGeneratorType.TYPE_CUSTOM) {
+					IManagedDependencyGenerator2 depGen2 = (IManagedDependencyGenerator2)depGen;
+					IManagedDependencyInfo depInfo = null;
+					for (int i=0; i<inputs.size(); i++) {
+						depInfo = depGen2.getDependencySourceInfo(
+								Path.fromOSString((String)inputs.get(i)), config, tool, makeGen.getBuildWorkingDir());
+						if (depInfo instanceof IManagedDependencyCalculator) {
+							IManagedDependencyCalculator depCalc = (IManagedDependencyCalculator)depInfo;
+							IPath[] depPaths = depCalc.getDependencies();
+							if (depPaths != null) {
+								for (int j=0; j<depPaths.length; j++) {
+									if (!depPaths[j].isAbsolute()) {
+										//  Convert from project relative to build directory relative
+										IPath absolutePath = project.getLocation().append((IPath)depPaths[j]);
+										depPaths[j] = ManagedBuildManager.calculateRelativePath(
+												makeGen.getTopBuildDir(), absolutePath);
+									}
+									myCommandDependencies.add(depPaths[j].toString());
+								}
+							}								
+							IPath[] targetPaths = depCalc.getAdditionalTargets();
+							if (targetPaths != null) {
+								for (int j=0; j<targetPaths.length; j++) {
+									myAdditionalTargets.add(targetPaths[j].toString());
+								}
+							}								
+						}
+					}
+				} else {
+					IManagedDependencyGenerator oldDepGen = (IManagedDependencyGenerator)depGen;
+					for (int i=0; i<inputs.size(); i++) {
+						IResource[] outNames = oldDepGen.findDependencies(
+								project.getFile((String)inputs.get(i)), project);
+						if (outNames != null) {
+							for (int j=0; j<outNames.length; j++) {
+								myCommandDependencies.add(outNames[j].toString());
+							}
+						}								
+					}								
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+		
+		return done;
+	}
 	
-	public boolean calculateDependencies(GnuMakefileGenerator makeGen, HashSet handledInputExtensions, boolean lastChance) {
+	public boolean calculateDependencies(GnuMakefileGenerator makeGen, IConfiguration config, HashSet handledInputExtensions, boolean lastChance) {
 		// Get the dependencies for this tool invocation
 		boolean done = true;
 		Vector myCommandDependencies = new Vector();
+		Vector myAdditionalTargets = new Vector();
 		//Vector myEnumeratedDependencies = new Vector();
 	    HashMap myOutputMacros = new HashMap();
 
@@ -776,56 +878,13 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			for (int i=0; i<inTypes.length; i++) {
 				IInputType type = inTypes[i];
 				
-				IManagedDependencyGenerator depGen = type.getDependencyGenerator();
+				// Handle dependencies from the dependencyCalculator
+				IManagedDependencyGeneratorType depGen = type.getDependencyGenerator();
+				String[] extensionsList = type.getSourceExtensions(tool);
 				if (depGen != null) {
-					int calcType = depGen.getCalculatorType();
-					switch (calcType) {
-					case IManagedDependencyGenerator.TYPE_COMMAND:
-			 			// iterate over all extensions that the tool knows how to handle
-						String[] extensionsList = type.getSourceExtensions(tool);
-			 			for (int j=0; j<extensionsList.length; j++) {
-			 				String extensionName = extensionsList[j];
-			 				
-			 				// Generated files should not appear in the list.
-			 				if(!makeGen.getOutputExtensions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
-			 					handledInputExtensions.add(extensionName);
-								String depsMacro = calculateSourceMacro(makeGen, extensionName, IManagedBuilderMakefileGenerator.DEP_EXT,
-										IManagedBuilderMakefileGenerator.WILDCARD);
-
-								List depsList = new ArrayList();
-								depsList.add(Path.fromOSString(depsMacro));
-								if (myOutputMacros.containsKey(DEPS_MACRO)) {
-									List currList = (List)myOutputMacros.get(DEPS_MACRO);
-									currList.addAll(depsList);
-									myOutputMacros.put(DEPS_MACRO, currList);
-								} else {
-									myOutputMacros.put(DEPS_MACRO, depsList);
-								}
-			 				}
-			 			}											
-						break;
-
-					case IManagedDependencyGenerator.TYPE_INDEXER:
-					case IManagedDependencyGenerator.TYPE_EXTERNAL:
-						// The inputs must have been calculated before we can do this
-						if (!inputsCalculated) {
-							done = false;
-						} else {
-							Vector inputs = getEnumeratedInputs();
-							for (int j=0; j<inputs.size(); j++) {
-								IResource[] outNames = depGen.findDependencies(project.getFile((String)inputs.get(j)), project);
-								if (outNames != null) {
-									for (int k=0; k<outNames.length; k++) {
-										myCommandDependencies.add(outNames[k].toString());
-									}
-								}								
-							}
-						}
-						break;
-
-					default:
-						break;
-					}
+					done = callDependencyCalculator (makeGen, config, handledInputExtensions, 
+							depGen, extensionsList, myCommandDependencies, myOutputMacros,
+							myAdditionalTargets, done);
 				}
 				
 				// Add additional dependencies specified in AdditionalInput elements
@@ -872,59 +931,15 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				myCommandDependencies.add("$(OBJS)");			 //$NON-NLS-1$		
 				myCommandDependencies.add("$(USER_OBJS)");	 //$NON-NLS-1$		
 			} else {
-	 			String[] extensionsList = tool.getAllInputExtensions();
-	 			
 				// Handle dependencies from the dependencyCalculator
-				IManagedDependencyGenerator depGen = tool.getDependencyGenerator();
+				IManagedDependencyGeneratorType depGen = tool.getDependencyGenerator();
+	 			String[] extensionsList = tool.getAllInputExtensions();
 				if (depGen != null) {
-					int calcType = depGen.getCalculatorType();
-					switch (calcType) {
-					case IManagedDependencyGenerator.TYPE_COMMAND:
-			 			// iterate over all extensions that the tool knows how to handle
-			 			for (int i=0; i<extensionsList.length; i++) {
-			 				String extensionName = extensionsList[i];
-			 				
-			 				// Generated files should not appear in the list.
-			 				if(!makeGen.getOutputExtensions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
-			 					handledInputExtensions.add(extensionName);
-								String depsMacro = calculateSourceMacro(makeGen, extensionName, IManagedBuilderMakefileGenerator.DEP_EXT,
-										IManagedBuilderMakefileGenerator.WILDCARD);
-
-								List depsList = new ArrayList();
-								depsList.add(Path.fromOSString(depsMacro));
-								if (myOutputMacros.containsKey(DEPS_MACRO)) {
-									List currList = (List)myOutputMacros.get(DEPS_MACRO);
-									currList.addAll(depsList);
-									myOutputMacros.put(DEPS_MACRO, currList);
-								} else {
-									myOutputMacros.put(DEPS_MACRO, depsList);
-								}
-			 				}
-			 			}											
-						break;
-
-					case IManagedDependencyGenerator.TYPE_INDEXER:
-					case IManagedDependencyGenerator.TYPE_EXTERNAL:
-						// The inputs must have been calculated before we can do this
-						if (!inputsCalculated) {
-							done = false;
-						} else {
-							Vector inputs = getEnumeratedInputs();
-							for (int j=0; j<inputs.size(); j++) {
-								IResource[] outNames = depGen.findDependencies(project.getFile((String)inputs.get(j)), project);
-								if (outNames != null) {
-									for (int k=0; k<outNames.length; k++) {
-										myCommandDependencies.add(outNames[k].toString());
-									}
-								}								
-							}
-						}
-						break;
-
-					default:
-						break;
-					}
+					done = callDependencyCalculator (makeGen, config, handledInputExtensions, 
+							depGen, extensionsList, myCommandDependencies, myOutputMacros,
+							myAdditionalTargets, done);
 				}
+	 			
 			}
 		}
 		
@@ -946,6 +961,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		
 		if (done) {
 			commandDependencies.addAll(myCommandDependencies);
+			additionalTargets.addAll(myAdditionalTargets);
 			//enumeratedDependencies.addAll(myEnumeratedDependencies);
 			dependenciesCalculated = true;
 			return true;

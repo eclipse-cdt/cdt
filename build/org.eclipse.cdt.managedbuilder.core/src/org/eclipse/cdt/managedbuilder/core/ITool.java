@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 
 /**
  * This interface represents a utility of some sort that is used in the build process.
@@ -547,9 +548,9 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * when the project is built.
 	 *
 	 * @param sourceExt  source file extension
-	 * @return IManagedDependencyGenerator
+	 * @return IManagedDependencyGeneratorType
 	 */
-	public IManagedDependencyGenerator getDependencyGeneratorForExtension(String sourceExt);
+	public IManagedDependencyGeneratorType getDependencyGeneratorForExtension(String sourceExt);
 	
 	/**
 	 * Returns an array of command line arguments that have been specified for

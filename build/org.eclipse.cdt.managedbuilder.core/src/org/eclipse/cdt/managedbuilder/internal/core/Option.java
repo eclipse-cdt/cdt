@@ -1850,4 +1850,18 @@ public class Option extends BuildObject implements IOption {
 		isUdjusted = adjusted;
 	}
 
+	public void setSuperClass(IOption superClass) {
+		if ( this.superClass != superClass ) {
+			this.superClass = superClass;
+			if ( this.superClass == null) {
+				superClassId = null;
+			} else {
+				superClassId = this.superClass.getId();
+			}
+		
+			if(!isExtensionElement())
+				setDirty(true);
+		}		
+	}
+
 }

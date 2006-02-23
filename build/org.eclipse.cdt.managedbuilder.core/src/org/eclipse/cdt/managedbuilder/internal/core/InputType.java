@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IInputOrder;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -62,7 +62,7 @@ public class InputType extends BuildObject implements IInputType {
 	private Boolean multipleOfType;
 	private Boolean primaryInput;
 	private IConfigurationElement dependencyGeneratorElement = null;
-	private IManagedDependencyGenerator dependencyGenerator = null;
+	private IManagedDependencyGeneratorType dependencyGenerator = null;
 	//  Miscellaneous
 	private boolean isExtensionInputType = false;
 	private boolean isDirty = false;
@@ -874,7 +874,7 @@ public class InputType extends BuildObject implements IInputType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#getDependencyGenerator()
 	 */
-	public IManagedDependencyGenerator getDependencyGenerator() {
+	public IManagedDependencyGeneratorType getDependencyGenerator() {
 		if (dependencyGenerator != null) {
 			return dependencyGenerator;
 		}
@@ -882,7 +882,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (element != null) {
 			try {
 				if (element.getAttribute(ITool.DEP_CALC_ID) != null) {
-					dependencyGenerator = (IManagedDependencyGenerator) element.createExecutableExtension(ITool.DEP_CALC_ID);
+					dependencyGenerator = (IManagedDependencyGeneratorType) element.createExecutableExtension(ITool.DEP_CALC_ID);
 					return dependencyGenerator;
 				}
 			} catch (CoreException e) {}

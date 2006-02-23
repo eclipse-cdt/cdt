@@ -368,7 +368,7 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * 
 	 * @return
 	 */
-	private Map getConfigurationMap() {
+	public Map getConfigurationMap() {
 		if (configMap == null) {
 			configMap = new HashMap();
 		}
@@ -520,5 +520,16 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 			Configuration cfg = (Configuration)iter.next();
 			cfg.updateManagedBuildRevision(revision);
 		}
+	}
+
+	public void setProjectType(IProjectType projectType) {
+		if ( this.projectType != projectType ) {
+			this.projectType = projectType;
+			if ( this.projectType == null) {
+				projectTypeId = null;
+			} else {
+				projectTypeId = this.projectType.getId();
+			}
+		}				
 	}
 }

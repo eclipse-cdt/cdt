@@ -46,16 +46,18 @@ public class BuildConfigAction extends Action {
 		Iterator iter = fProjects.iterator();
 		while (iter.hasNext()) {
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo((IProject)iter.next());
-			IConfiguration[] configs = info.getManagedProject().getConfigurations();
-			int i = 0;
-			for (; i < configs.length; i++) {
-				if (configs[i].getName().equals(fConfigName)) {
-					break;
+			if (info != null && info.isValid()) {
+				IConfiguration[] configs = info.getManagedProject().getConfigurations();
+				int i = 0;
+				for (; i < configs.length; i++) {
+					if (configs[i].getName().equals(fConfigName)) {
+						break;
+					}
 				}
-			}
-			if (i != configs.length) {
-				info.setDefaultConfiguration(configs[i]);
-				info.setSelectedConfiguration(configs[i]);
+				if (i != configs.length) {
+					info.setDefaultConfiguration(configs[i]);
+					info.setSelectedConfiguration(configs[i]);
+				}
 			}
 		}
 	}

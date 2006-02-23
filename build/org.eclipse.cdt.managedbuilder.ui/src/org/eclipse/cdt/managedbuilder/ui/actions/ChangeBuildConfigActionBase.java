@@ -51,18 +51,18 @@ public class ChangeBuildConfigActionBase {
 		boolean bCurrentConfig = true;
 		while (projIter.hasNext()) {
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo((IProject)projIter.next());
-			if (bCurrentConfig) {
-				String sNewConfig = info.getDefaultConfiguration().getName();
-				if (sCurrentConfig == null) {
-					sCurrentConfig = sNewConfig;
-				}
-				else {
-					if (!sCurrentConfig.equals(sNewConfig)) {
-						bCurrentConfig = false;
+			if (info != null && info.isValid()) {
+				if (bCurrentConfig) {
+					String sNewConfig = info.getDefaultConfiguration().getName();
+					if (sCurrentConfig == null) {
+						sCurrentConfig = sNewConfig;
+					}
+					else {
+						if (!sCurrentConfig.equals(sNewConfig)) {
+							bCurrentConfig = false;
+						}
 					}
 				}
-			}
-			if (info != null) {
 				IConfiguration[] configs = info.getManagedProject().getConfigurations();
 				for (int i = 0; i < configs.length; i++) {
 					configNames.add(configs[i].getName());
@@ -81,7 +81,7 @@ public class ChangeBuildConfigActionBase {
 			boolean firstProj = true;
 			while (projIter.hasNext()) {
 				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo((IProject)projIter.next());
-				if (info != null) {
+				if (info != null && info.isValid()) {
 					IConfiguration[] configs = info.getManagedProject().getConfigurations();
 					int i = 0;
 					for (; i < configs.length; i++) {
@@ -170,7 +170,10 @@ public class ChangeBuildConfigActionBase {
 					}
 				}
 				if (project != null) {
-					fProjects.add(project);
+					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+					if (info != null && info.isValid()) {
+						fProjects.add(project);
+					}
 				} else {
 					found = true;
 					break;

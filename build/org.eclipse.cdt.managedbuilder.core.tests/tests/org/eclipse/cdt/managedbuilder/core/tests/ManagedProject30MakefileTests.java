@@ -279,8 +279,12 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("objects.mk"), 
 				 Path.fromOSString("sources.mk"), 
 				 Path.fromOSString("subdir.mk"),
+				 Path.fromOSString("main.d"),
 				 Path.fromOSString("source1/subdir.mk"),
+				 Path.fromOSString("source1/Class1.d"),
 				 Path.fromOSString("source2/subdir.mk"),
+				 Path.fromOSString("source2/Class2.d"),
+				 Path.fromOSString("source2/source21/Class21.d"),
 				 Path.fromOSString("source2/source21/subdir.mk")};
 		IProject[] projects = createProjects("multiResConfig", null, null, true);
 		buildProjects(projects, makefiles);
@@ -357,7 +361,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("objects.mk"), 
 				 Path.fromOSString("sources.mk"), 
 				 Path.fromOSString("subdir.mk"), 
-				 Path.fromOSString("Functions/subdir.mk")};
+				 Path.fromOSString("main.d"), 
+				 Path.fromOSString("Functions/subdir.mk"),
+				 Path.fromOSString("Functions/Func1.d")};
 		IProject[] projects = createProjects("copyandDeploy", null, null, true);
 		buildProjects(projects, makefiles);
 	}

@@ -1,3 +1,8 @@
+2006-02-24 Mikhail Khodjaiants
+	Fix for bugs 129152 (Keyboard shortcuts are gone in CDT CVS HEAD) 
+	and 128844 (No prompt for Debug perspective on suspend).
+	* CDebugTarget.java
+
 2006-02-20 Mikhail Khodjaiants
 	Fire the resume event instead of the change event when a non-current thread is resumed.
 	* CThread.java

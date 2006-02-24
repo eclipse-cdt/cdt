@@ -307,6 +307,8 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 		// See bug #100261
 		if ( adapter.equals( IMemoryBlockRetrieval.class ) )
 			return getDebugTarget().getAdapter( adapter );
+		if ( adapter.equals( ILaunch.class ) )
+			return getDebugTarget().getLaunch();
 		return super.getAdapter( adapter );
 	}
 

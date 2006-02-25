@@ -20,7 +20,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -31,6 +30,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
@@ -732,7 +732,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			try {
 				workspace.setDescription(workspaceDesc);
 				proj = CCorePlugin.getDefault().createCProject(workspace.newProjectDescription(proj.getName()), 
-					proj, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+					proj, new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
 			
 				// 	add ManagedBuildNature
 				IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(proj);

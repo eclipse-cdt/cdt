@@ -48,8 +48,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
-//import org.eclipse.compare.structuremergeviewer.Differencer;
-//import org.eclipse.compare.ResourceNode;;
 
 public class ManagedBuildTestHelper {
 	

@@ -9,8 +9,7 @@ Bundle-Vendor: Eclipse.org
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.managedbuilder.core.tests,
  org.eclipse.cdt.managedbuilder.testplugin,
- org.eclipse.cdt.managedbuilder.tests.suite,
- org.eclipse.cdt.standardbuilder.core.tests
+ org.eclipse.cdt.managedbuilder.tests.suite
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.cdt.managedbuilder.core,

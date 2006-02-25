@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.standardbuilder.core.tests;
+package org.eclipse.cdt.make.builder.tests;
 
 import java.util.ArrayList;
 import java.util.List;

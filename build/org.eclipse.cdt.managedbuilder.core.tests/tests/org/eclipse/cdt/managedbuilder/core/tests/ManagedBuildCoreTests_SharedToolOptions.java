@@ -17,10 +17,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
-import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
-
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -29,9 +25,12 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
+import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
+import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -217,7 +216,7 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
 		} else {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {

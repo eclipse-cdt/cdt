@@ -54,6 +54,10 @@ public class StandardBuildTests extends TestCase {
 		suite.addTest(new StandardBuildTests("testProjectSettings"));
 		suite.addTest(new StandardBuildTests("testProjectConversion"));
 		suite.addTest(new StandardBuildTests("testProjectCleanup"));
+		
+		suite.addTestSuite(ScannerConfigConsoleParserTests.class);
+		suite.addTestSuite(ScannerConfigDiscoveryTests.class);
+		
 		return suite;
 	}
 	

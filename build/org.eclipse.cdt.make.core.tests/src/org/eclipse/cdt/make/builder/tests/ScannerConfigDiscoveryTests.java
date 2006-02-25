@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.standardbuilder.core.tests;
+package org.eclipse.cdt.make.builder.tests;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.core.tests.StandardBuildTestHelper;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
-import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -50,7 +50,7 @@ public class ScannerConfigDiscoveryTests extends TestCase {
 	protected void setUp() throws Exception {
 		fMonitor = new NullProgressMonitor();
 		
-		fCProject = ManagedBuildTestHelper.createProject("SCD", (IPath)null, MakeCorePlugin.MAKE_PROJECT_ID, null);
+		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath)null, MakeCorePlugin.MAKE_PROJECT_ID);
 		fCFile = fCProject.getProject().getFile("main.c");
 		if (!fCFile.exists()) {
 			fCFile.create(new ByteArrayInputStream(" \n".getBytes()), false, fMonitor);
@@ -58,7 +58,7 @@ public class ScannerConfigDiscoveryTests extends TestCase {
 	}
 
 	protected void tearDown() throws Exception {
-		ManagedBuildTestHelper.removeProject("SCDC");
+		StandardBuildTestHelper.removeProject("SCDC");
 	}
 
 	public void testGetCCompilerBuiltins() throws CoreException {

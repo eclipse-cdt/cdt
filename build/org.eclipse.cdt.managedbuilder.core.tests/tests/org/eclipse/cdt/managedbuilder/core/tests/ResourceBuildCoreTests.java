@@ -11,14 +11,12 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.ByteArrayInputStream;
-import java.util.HashMap;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -29,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
@@ -46,7 +45,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 
 public class ResourceBuildCoreTests extends TestCase {
@@ -585,7 +583,7 @@ public class ResourceBuildCoreTests extends TestCase {
 			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			//description.setLocation(root.getLocation());
-			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
 		} else {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {

@@ -13,11 +13,9 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -28,7 +26,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -38,24 +35,20 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
-
 import org.eclipse.core.resources.IProject;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 
@@ -326,7 +319,7 @@ public class MultiVersionSupportTests extends TestCase {
 			try {
 				workspace.setDescription(workspaceDesc);
 				proj = CCorePlugin.getDefault().createCProject(workspace.newProjectDescription(proj.getName()), 
-					proj, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+					proj, new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
 			
 				// 	add ManagedBuildNature
 				IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(proj);

@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.AR;
@@ -97,6 +98,25 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		return info;
 	}
 
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(PE.class)) {
+			try {
+				if (header != null) {
+					return new PE(getPath().toOSString(), header.getObjectDataOffset());
+				}
+				return new PE(getPath().toOSString());
+			} catch (IOException e) {
+			}
+		}
+		if (adapter.equals(ISymbolReader.class)) {
+			PE pe = (PE)getAdapter(PE.class);
+			if (pe != null) {
+				return pe.getSymbolReader();
+			}
+		}
+		return super.getAdapter(adapter);
+	}
+	
 	protected PE getPE() throws IOException {
 		if (header != null) {
 			return new PE(getPath().toOSString(), header.getObjectDataOffset());

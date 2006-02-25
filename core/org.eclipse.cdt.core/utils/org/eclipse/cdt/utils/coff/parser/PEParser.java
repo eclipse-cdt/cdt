@@ -116,6 +116,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 				case PEConstants.IMAGE_FILE_MACHINE_SH3:
 				case PEConstants.IMAGE_FILE_MACHINE_SH4:
 				case PEConstants.IMAGE_FILE_MACHINE_THUMB:
+				case PEConstants.IMAGE_FILE_MACHINE_ARM2:
 					// Ok;
 					isBin = true;
 					break;

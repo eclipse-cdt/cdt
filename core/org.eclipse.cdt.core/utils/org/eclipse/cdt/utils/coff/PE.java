@@ -16,12 +16,14 @@ import java.io.RandomAccessFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.coff.Coff.FileHeader;
 import org.eclipse.cdt.utils.coff.Coff.OptionalHeader;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
 import org.eclipse.cdt.utils.coff.Coff.Symbol;
 import org.eclipse.cdt.utils.coff.Exe.ExeHeader;
+import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 /**
  * The PE file header consists of an MS-DOS stub, the PE signalture, the COFF file Header
@@ -162,9 +164,42 @@ public class PE {
 		}
 	}
 
+	public static class IMAGE_DEBUG_DIRECTORY {
+		final int DEBUGDIRSZ = 28;
+		public int Characteristics;
+		public int TimeDateStamp;
+		public short MajorVersion;
+		public short MinorVersion;
+		public int Type;
+		public int SizeOfData;
+		public int AddressOfRawData;
+		public int PointerToRawData;
+
+		public IMAGE_DEBUG_DIRECTORY(RandomAccessFile file, long offset) throws IOException {
+			file.seek(offset);
+			byte[] dir = new byte[DEBUGDIRSZ];
+			file.readFully(dir);
+			ReadMemoryAccess memory = new ReadMemoryAccess(dir, true);
+			Characteristics = memory.getInt();
+			TimeDateStamp = memory.getInt();
+			MajorVersion = memory.getShort();
+			MinorVersion = memory.getShort();
+			Type = memory.getInt();
+			SizeOfData = memory.getInt();
+			AddressOfRawData = memory.getInt();
+			PointerToRawData = memory.getInt();
+		}
+	}
+
+	public static class IMAGE_DATA_DIRECTORY {
+		
+		public int VirtualAddress;
+		public int Size;
+	}
+
 	public static class NTOptionalHeader {
 
-		public final static int NTHDRSZ = 68;
+		public final static int NTHDRSZ = 196;
 		public int  ImageBase;                     // 4 bytes.
 		public int  SectionAlignment;              // 4 bytes.
 		public int  FileAlignment;                 // 4 bytes.
@@ -186,6 +221,7 @@ public class PE {
 		public int  SizeOfHeapCommit;              // 4 bytes. 
 		public int  LoaderFlags;                   // 4 bytes. 
 		public int  NumberOfRvaAndSizes;           // 4 bytes. 
+		public IMAGE_DATA_DIRECTORY DataDirectory[];
 
 		public NTOptionalHeader(RandomAccessFile file) throws IOException {
 			this(file, file.getFilePointer());
@@ -217,6 +253,13 @@ public class PE {
 			SizeOfHeapCommit = memory.getInt();
 			LoaderFlags = memory.getInt();
 			NumberOfRvaAndSizes = memory.getInt();
+
+			DataDirectory = new IMAGE_DATA_DIRECTORY[NumberOfRvaAndSizes]; // 8*16=128 bytes			
+			for (int i = 0; i < NumberOfRvaAndSizes; i++) {
+				DataDirectory[i] = new IMAGE_DATA_DIRECTORY();
+				DataDirectory[i].VirtualAddress = memory.getInt();
+				DataDirectory[i].Size = memory.getInt();
+			}
 		}
 
 		public String toString() {
@@ -353,6 +396,7 @@ public class PE {
 		switch (magic) {
 			case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
 			case PEConstants.IMAGE_FILE_MACHINE_ARM:
+			case PEConstants.IMAGE_FILE_MACHINE_ARM2:
 			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
 			case PEConstants.IMAGE_FILE_MACHINE_I386:
 			case PEConstants.IMAGE_FILE_MACHINE_IA64:
@@ -385,6 +429,7 @@ public class PE {
 				attrib.cpu = "alpha"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_ARM:
+			case PEConstants.IMAGE_FILE_MACHINE_ARM2:
 				attrib.cpu = "arm"; //$NON-NLS-1$
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
@@ -600,11 +645,12 @@ public class PE {
 				// FIXME: What is this again ?
 				if (ntHeader != null)
 					symbolTable[i].n_value += ntHeader.ImageBase + ntHeader.FileAlignment;
-			}
+			}				
 		}
 		return symbolTable;
 	}
 
+	
 	public byte[] getStringTable() throws IOException {
 		if (stringTable == null) {
 			if (fileHeader.f_nsyms > 0) {
@@ -691,12 +737,102 @@ public class PE {
 		}
 		return rfile;
 	}
-	public static void main(String[] args) {
+
+	private ISymbolReader createCodeViewReader() {
+		ISymbolReader symReader = null;
+		final int IMAGE_DIRECTORY_ENTRY_DEBUG = 6;
+
 		try {
-			PE pe = new PE(args[0]);
-			System.out.println(pe);
+			// the debug directory is the 6th entry
+			NTOptionalHeader ntHeader = getNTOptionalHeader();
+			if (ntHeader.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
+				return null;
+
+			int debugDir = ntHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
+			if (debugDir == 0)
+				return null;
+
+			int debugFormats = ntHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size / 28;
+			if (debugFormats == 0)
+				return null;
+
+			SectionHeader[] sections = getSectionHeaders();
+
+			// loop through the section headers to find the .rdata section
+			for (int i = 0; i < sections.length; i++) {
+				String name = new String(sections[i].s_name).trim();
+				if (name.equals(".rdata")) {
+					// figure out the file offset of the debug ddirectory entries
+					int offsetInto_rdata = debugDir - sections[i].s_vaddr;
+					int fileOffset = sections[i].s_scnptr + offsetInto_rdata;
+					RandomAccessFile accessFile = getRandomAccessFile();
+
+					// loop through the debug directories looking for CodeView (type 2)
+					for (int j = 0; j < debugFormats; j++) {
+						PE.IMAGE_DEBUG_DIRECTORY dir = new PE.IMAGE_DEBUG_DIRECTORY(
+								accessFile, fileOffset);
+
+						if ((2 == dir.Type) && (dir.SizeOfData > 0)) {
+							// CodeView found, seek to actual data
+							int debugBase = dir.PointerToRawData;
+							accessFile.seek(debugBase);
+
+							// sanity check.  the first four bytes of the CodeView
+							// data should be "NB11"
+							String s2 = accessFile.readLine();
+							if (s2.startsWith("NB11")) {
+								Attribute att = getAttribute();
+								symReader = new CodeViewReader(accessFile,
+										debugBase, att.isLittleEndian());
+								return symReader;
+							}
+						}
+						fileOffset += dir.DEBUGDIRSZ;
+					}
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		return symReader;
+	}
+
+	private ISymbolReader createStabsReader() {
+		ISymbolReader symReader = null;
+		try {
+			SectionHeader[] sections = getSectionHeaders();
+			byte[] stab = null;
+			byte[] stabstr = null;
+
+			// loop through the section headers looking for stabs info
+			for (int i = 0; i < sections.length; i++) {
+				String name = new String(sections[i].s_name).trim();
+				if (name.equals(".stab")) {
+					stab = sections[i].getRawData();
+				}
+				if (name.equals(".stabstr")) {
+					stabstr = sections[i].getRawData();
+				}
+			}
+
+			// if we found both sections then proceed
+			if (stab != null && stabstr != null) {
+				Attribute att = getAttribute();
+				symReader = new StabsReader(stab, stabstr, att.isLittleEndian());
+			}
+
+		} catch (IOException e) {
+		}
+		return symReader;
+	}
+
+	public ISymbolReader getSymbolReader() {
+		ISymbolReader reader = null;
+		reader = createStabsReader();
+		if (reader == null) {
+			reader = createCodeViewReader();
+		}
+		return reader;
 	}
 }

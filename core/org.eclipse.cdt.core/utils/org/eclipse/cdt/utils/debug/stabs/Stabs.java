@@ -36,6 +36,9 @@ import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
 import org.eclipse.cdt.utils.debug.tools.DebugSymsRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
+import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE.Attribute;
 
 public class Stabs {
 
@@ -58,9 +61,18 @@ public class Stabs {
 	DebugType voidType = new DebugBaseType("void", 0, false); //$NON-NLS-1$
 
 	public Stabs(String file) throws IOException {
-		Elf exe = new Elf(file);
-		init(exe);
-		exe.dispose();
+
+		// we support Elf and PE executable formats.  try Elf
+		// and then PE.
+		try {
+			Elf exe = new Elf(file);
+			init(exe);
+			exe.dispose();
+		} catch (IOException e) {
+			PE exe = new PE(file);
+			init(exe);
+			exe.dispose();
+		}
 	}
 
 	public Stabs(Elf exe) throws IOException {
@@ -87,6 +99,26 @@ public class Stabs {
 		boolean isLE = header.e_ident[Elf.ELFhdr.EI_DATA] == Elf.ELFhdr.ELFDATA2LSB;
 		if (data != null && stabstr != null) {
 			init(data, stabstr, isLE);
+		}
+	}
+
+	void init(PE exe) throws IOException {
+		byte[] data = null;
+		byte[] stabstr = null;
+
+		SectionHeader[] sections = exe.getSectionHeaders();
+		for (int i = 0; i < sections.length; i++) {
+			String name = new String(sections[i].s_name).trim();
+			if (name.equals(".stab")) { //$NON-NLS-1$
+				data = sections[i].getRawData();
+			} else if (name.equals(".stabstr")) { //$NON-NLS-1$
+				stabstr = sections[i].getRawData();
+			}
+		}
+		
+		Attribute att = exe.getAttribute();
+		if (data != null && stabstr != null) {
+			init(data, stabstr, att.isLittleEndian());
 		}
 	}
 
@@ -453,10 +485,11 @@ public class Stabs {
 			case 'T' :
 				{
 					String infoField = sf.getTypeInformation();
-					// According to the doc 't' can follow the 'T'
+					// According to the doc 't' can follow the 'T'.  If so just
+					// strip the T and go again.
 					if (infoField.length() > 0 && infoField.charAt(0) == 't') {
-						//String s = infoField.substring(1);
-						parseStabString(requestor, field, value);
+						String s = field.replaceFirst(":T", ":");
+						parseStabString(requestor, s, value);
 					} else {
 						// Just register the type.
 						String name = sf.getName();

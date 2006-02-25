@@ -12,25 +12,30 @@ package org.eclipse.cdt.internal.core.model;
 
  
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 public class Binary extends Openable implements IBinary {
 
@@ -240,24 +245,97 @@ public class Binary extends Openable implements IBinary {
 			Map hash = new HashMap();
 			IBinaryObject obj = getBinaryObject();
 			if (obj != null) {
-				ISymbol[] symbols = obj.getSymbols();
-				for (int i = 0; i < symbols.length; i++) {
-					switch (symbols[i].getType()) {
-						case ISymbol.FUNCTION :
-							addFunction(info, symbols[i], hash);
-						break;
+				// First check if we can get the list of source
+				// files used to build the binary from the symbol
+				// information.  if not, fall back on information from the binary parser.
+				if (!addSourceFiles(info, obj, hash))
+				{
+					ISymbol[] symbols = obj.getSymbols();
+					for (int i = 0; i < symbols.length; i++) {
+						switch (symbols[i].getType()) {
+							case ISymbol.FUNCTION :
+								addFunction(info, symbols[i], hash);
+							break;
 
-						case ISymbol.VARIABLE :
-							addVariable(info, symbols[i], hash);
-						break;
+							case ISymbol.VARIABLE :
+								addVariable(info, symbols[i], hash);
+							break;
+						}
 					}
-				}
+				}				
 				ok = true;
 			}
 		}
 		return ok;
 	}
 
+	private boolean addSourceFiles(OpenableInfo info, IBinaryObject obj,
+			Map hash) throws CModelException {
+		// Try to get the list of source files used to build the binary from the
+		// symbol information.
+
+		ISymbolReader symbolreader = (ISymbolReader)obj.getAdapter(ISymbolReader.class);
+		if (symbolreader == null)
+			return false;
+
+		String[] sourceFiles = symbolreader.getSourceFiles();
+		if (sourceFiles != null && sourceFiles.length > 0) {
+			for (int i = 0; i < sourceFiles.length; i++) {
+				String filename = sourceFiles[i];
+
+				// Sometimes the path in the symbolics will have a different
+				// case than the actual file system path. Even if the file
+				// system is not case sensitive this will confuse the Path
+				// class.
+				// So make sure the path is canonical, otherwise breakpoints
+				// won't be resolved, etc..
+
+				File file = new File(filename);
+				if (file.exists()) {
+					try {
+						filename = file.getCanonicalPath();
+					} catch (IOException e) {
+					}
+				}
+
+				// See if this source file is already in the project.
+				// We check this to determine if we should create a TranslationUnit or ExternalTranslationUnit
+				IFile sourceFile = getCProject().getProject().getFile(filename);
+				IPath path = new Path(filename);
+
+				IFile wkspFile = null;
+				if (sourceFile.exists())
+					wkspFile = sourceFile;
+				else {
+					IFile[] filesInWP = ResourcesPlugin
+					.getWorkspace().getRoot()
+							.findFilesForLocation(path);
+
+					for (int j = 0; j < filesInWP.length; j++) {
+						if (filesInWP[j].isAccessible()) {
+							wkspFile = filesInWP[j];
+							break;
+						}
+					}
+				}
+
+				// Create a translation unit for this file and add it as a child of the binary
+				String id = CoreModel.getRegistedContentTypeId(sourceFile
+						.getProject(), sourceFile.getName());
+
+				TranslationUnit tu;
+				if (wkspFile != null)
+					tu = new TranslationUnit(this, wkspFile, id);
+				else
+					tu = new ExternalTranslationUnit(this, path, id);
+
+				info.addChild(tu);
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	private void addFunction(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
 		IPath filename = filename = symbol.getFilename();
 		BinaryFunction function = null;

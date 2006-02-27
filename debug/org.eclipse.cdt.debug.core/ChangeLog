@@ -1,3 +1,15 @@
+2006-02-27 Mikhail Khodjaiants
+	The DirectorySourceContainer's UI now supports the subfolders searching option (see bug 89748).
+	Removed CDirectorySourceContainer and related classes. 
+	The CDirectorySourceContainerType is kept for migration purposes.
+	- CDirectorySourceContainer.java
+	* CDebugTarget.java
+	* CDirectorySourceContainerType.java
+	* CSourceLookupDirector.java
+	* SourceUtils.java
+	* plugin.properties
+	* plugin.xml
+
 2006-02-24 Mikhail Khodjaiants
 	Fix for bugs 129152 (Keyboard shortcuts are gone in CDT CVS HEAD) 
 	and 128844 (No prompt for Debug perspective on suspend).

@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -28,6 +27,7 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
+import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
@@ -44,7 +44,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 		fSupportedTypes.add( WorkspaceSourceContainer.TYPE_ID );
 		fSupportedTypes.add( ProjectSourceContainer.TYPE_ID );
 		fSupportedTypes.add( FolderSourceContainer.TYPE_ID );
-		fSupportedTypes.add( CDirectorySourceContainer.TYPE_ID );
+		fSupportedTypes.add( DirectorySourceContainer.TYPE_ID );
 		fSupportedTypes.add( MappingSourceContainer.TYPE_ID );
 	}
 
@@ -131,9 +131,9 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 				return ( file != null && file.exists() );
 			}
 		}
-		if ( container instanceof CDirectorySourceContainer ) {
-			File dir = ((CDirectorySourceContainer)container).getDirectory();
-			boolean searchSubfolders = ((CDirectorySourceContainer)container).searchSubfolders();
+		if ( container instanceof DirectorySourceContainer ) {
+			File dir = ((DirectorySourceContainer)container).getDirectory();
+			boolean searchSubfolders = ((DirectorySourceContainer)container).isComposite();
 			IPath dirPath = new Path( dir.getAbsolutePath() );
 			if ( searchSubfolders || dirPath.segmentCount() + 1 == path.segmentCount() )
 				return dirPath.isPrefixOf( path );

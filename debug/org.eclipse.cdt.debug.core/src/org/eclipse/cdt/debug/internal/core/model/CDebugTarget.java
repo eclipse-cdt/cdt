@@ -78,7 +78,6 @@ import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup;
 import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
-import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
@@ -122,6 +121,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
+import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 
@@ -1642,8 +1642,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 				if ( container != null && container.exists() )
 					list.add( container.getLocation().toPortableString() );
 			}
-			if ( containers[i] instanceof CDirectorySourceContainer ) {
-				File dir = ((CDirectorySourceContainer)containers[i]).getDirectory();
+			if ( containers[i] instanceof DirectorySourceContainer ) {
+				File dir = ((DirectorySourceContainer)containers[i]).getDirectory();
 				if ( dir != null && dir.exists() ) {
 					IPath path = new Path( dir.getAbsolutePath() );
 					list.add( path.toPortableString() );

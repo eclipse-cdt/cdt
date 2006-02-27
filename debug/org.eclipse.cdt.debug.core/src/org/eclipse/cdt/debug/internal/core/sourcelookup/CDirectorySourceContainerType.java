@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
-import org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
+import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,7 +38,7 @@ public class CDirectorySourceContainerType extends AbstractSourceContainerTypeDe
 				}
 				String nest = element.getAttribute( "nest" ); //$NON-NLS-1$
 				boolean nested = "true".equals( nest ); //$NON-NLS-1$
-				return new CDirectorySourceContainer( new Path( string ), nested );
+				return new DirectorySourceContainer( new Path( string ), nested );
 			}
 			abort( InternalSourceLookupMessages.getString( "CDirectorySourceContainerType.1" ), null ); //$NON-NLS-1$
 		}
@@ -50,7 +50,7 @@ public class CDirectorySourceContainerType extends AbstractSourceContainerTypeDe
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
 	public String getMemento( ISourceContainer container ) throws CoreException {
-		CDirectorySourceContainer folder = (CDirectorySourceContainer)container;
+		DirectorySourceContainer folder = (DirectorySourceContainer)container;
 		Document document = newDocument();
 		Element element = document.createElement( "directory" ); //$NON-NLS-1$
 		element.setAttribute( "path", folder.getDirectory().getAbsolutePath() ); //$NON-NLS-1$

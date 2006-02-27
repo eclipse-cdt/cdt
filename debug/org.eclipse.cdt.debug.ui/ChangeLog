@@ -1,4 +1,11 @@
 2006-02-27 Mikhail Khodjaiants
+	Discouraged access to EditorsPlugin. 
+	Added support for SharedTextColors to CDebugUIPlugin.
+	+ SharedTextColors.java
+	* DisassemblyView.java
+	* CDebugUIPlugin.java
+
+2006-02-27 Mikhail Khodjaiants
 	Bug 89429: replaced the usage of the internal SourceLookupUIUtils class by DebugUITools.
 	* AddSourceContainerDialog.java
 	* EditContainerAction.java

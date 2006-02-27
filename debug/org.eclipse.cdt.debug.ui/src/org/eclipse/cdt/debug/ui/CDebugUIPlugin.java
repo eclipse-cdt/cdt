@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
+import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +37,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -60,6 +62,8 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	protected Map fDebuggerPageMap;
 
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
+
+	private ISharedTextColors fSharedTextColors;
 
 	/**
 	 * The constructor.
@@ -268,9 +272,25 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
+		if ( fSharedTextColors != null ) {
+			fSharedTextColors.dispose();
+			fSharedTextColors = null;
+		}
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();
 		}
 		super.stop( context );
+	}
+
+	/**
+	 * Returns the shared text colors of this plug-in.
+	 *
+	 * @return the shared text colors
+	 * @since 3.1
+	 */
+	public ISharedTextColors getSharedTextColors() {
+		if ( fSharedTextColors == null )
+			fSharedTextColors = new SharedTextColors();
+		return fSharedTextColors;
 	}
 }

@@ -79,7 +79,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
@@ -667,7 +666,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	}
 
 	private ISharedTextColors getSharedColors() {
-		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
+		ISharedTextColors sharedColors = CDebugUIPlugin.getDefault().getSharedTextColors();
 		return sharedColors;
 	}
 

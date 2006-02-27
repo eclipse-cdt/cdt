@@ -1,4 +1,8 @@
 2006-02-27 Mikhail Khodjaiants
+	All serializable objects should have a stable serialVersionUID.
+	* CDIException.java
+
+2006-02-27 Mikhail Khodjaiants
 	The DirectorySourceContainer's UI now supports the subfolders searching option (see bug 89748).
 	Removed CDirectorySourceContainer and related classes. 
 	The CDirectorySourceContainerType is kept for migration purposes.

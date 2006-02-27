@@ -19,6 +19,11 @@ package org.eclipse.cdt.debug.core.cdi;
  */
 public class CDIException extends Exception {
 
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	String details = ""; //$NON-NLS-1$
 
 	public CDIException() {

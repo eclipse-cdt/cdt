@@ -67,7 +67,6 @@ public class MIInferior extends Process {
 	public OutputStream getOutputStream() {
 		if (out == null) {
 			out = new OutputStream() {
-				StringBuffer buf = new StringBuffer();
 				public void write(int b) throws IOException {
 					if (!isRunning()) {
 						throw new IOException(MIPlugin.getResourceString("src.MIInferior.target_is_suspended")); //$NON-NLS-1$

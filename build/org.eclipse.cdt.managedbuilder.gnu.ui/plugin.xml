@@ -988,7 +988,7 @@
 		      sources="c"
               dependencyContentType="org.eclipse.cdt.core.cHeader"
 			  dependencyExtensions="h"
-			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
+			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.c.compiler.input">
           </inputType>
           <outputType
@@ -1227,7 +1227,7 @@
 			  sources="c,C,cc,cxx,cpp"
               dependencyContentType="org.eclipse.cdt.core.cxxHeader"
 			  dependencyExtensions="h,H,hpp"
-			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator"
+			  dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
               id="cdt.managedbuild.tool.gnu.cpp.compiler.input">
           </inputType>
           <outputType

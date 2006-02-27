@@ -6013,6 +6013,107 @@
 		        </toolChain>
 	        </configuration>
         </projectType>
+    
+    <!-- projects for testing  the default dependency calculators -->
+      <projectType      
+            isAbstract="false"     
+            isTest="true"
+            name="DependencyCalculator2 Tester"
+            id="depcalc2.managedbuild.target.gnu.exe">
+         <configuration
+               name="Debug"
+               id="depcalc2.managedbuild.config.gnu.exe.debug">
+			<toolChain
+				id="test.dependency.calculator.2"
+				name="GCC using DependencyCalculator2"
+				superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
+			  <tool
+			      id="depcalc2.managedbuild.tool.gnu.c.compiler"
+			      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
+		        <inputType
+					dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
+		            id="depcalc2.managedbuild.tool.gnu.c.compiler.input"
+		            superClass="cdt.managedbuild.tool.gnu.c.compiler.input">
+		        </inputType>
+			  </tool>
+			  <tool
+			      id="depcalc2.managedbuild.tool.gnu.cpp.compiler"
+			      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
+		        <inputType
+					dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator2"
+		            id="depcalc2.managedbuild.tool.gnu.cpp.compiler.input"
+		            superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input">
+		        </inputType>
+			  </tool>
+			</toolChain>
+		 </configuration>
+       </projectType>
+      <projectType      
+            isAbstract="false"     
+            isTest="true"
+            name="DependencyCalculator3 Tester"
+            id="depcalc3.managedbuild.target.gnu.exe">
+         <configuration
+               name="Debug"
+               id="depcalc3.managedbuild.config.gnu.exe.debug">
+			<toolChain
+				id="test.dependency.calculator.3"
+				name="GCC using DependencyCalculator3"
+				superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
+			  <tool
+			      id="depcalc3.managedbuild.tool.gnu.c.compiler"
+			      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
+		        <inputType
+					dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator3"
+		            id="depcalc3.managedbuild.tool.gnu.c.compiler.input"
+		            superClass="cdt.managedbuild.tool.gnu.c.compiler.input">
+		        </inputType>
+			  </tool>
+			  <tool
+			      id="depcalc3.managedbuild.tool.gnu.cpp.compiler"
+			      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
+		        <inputType
+					dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculator3"
+		            id="depcalc3.managedbuild.tool.gnu.cpp.compiler.input"
+		            superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input">
+		        </inputType>
+			  </tool>
+			</toolChain>
+		 </configuration>
+       </projectType>
+      <projectType      
+            isAbstract="false"     
+            isTest="true"
+            name="DependencyCalculatorPreBuild Tester"
+            id="depcalcPreBuild.managedbuild.target.gnu.exe">
+         <configuration
+               name="Debug"
+               id="depcalcPreBuild.managedbuild.config.gnu.exe.debug">
+			<toolChain
+				id="test.dependency.calculator.PreBuild"
+				name="GCC using DependencyCalculatorPreBuild"
+				superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
+			  <tool
+			      id="depcalcPreBuild.managedbuild.tool.gnu.c.compiler"
+			      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
+		        <inputType
+					dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculatorPreBuild"
+		            id="depcalcPreBuild.managedbuild.tool.gnu.c.compiler.input"
+		            superClass="cdt.managedbuild.tool.gnu.c.compiler.input">
+		        </inputType>
+			  </tool>
+			  <tool
+			      id="depcalcPreBuild.managedbuild.tool.gnu.cpp.compiler"
+			      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
+		        <inputType
+					dependencyCalculator="org.eclipse.cdt.managedbuilder.makegen.gnu.DefaultGCCDependencyCalculatorPreBuild"
+		            id="depcalcPreBuild.managedbuild.tool.gnu.cpp.compiler.input"
+		            superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input">
+		        </inputType>
+			  </tool>
+			</toolChain>
+		 </configuration>
+       </projectType>
 
    </extension>
 </plugin>

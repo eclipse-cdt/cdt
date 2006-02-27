@@ -614,7 +614,10 @@ public class ManagedProject30MakefileTests extends TestCase {
 				 Path.fromOSString("makefile"), 
 				 Path.fromOSString("objects.mk"), 
 				 Path.fromOSString("sources.mk"), 
-				 Path.fromOSString("subdir.mk")};
+				 Path.fromOSString("subdir.mk"),
+				 Path.fromOSString("main with spaces.d"),
+				 Path.fromOSString("sub folder with spaces/subdir.mk"),
+				 Path.fromOSString("sub folder with spaces/foo with spaces.d")};
 		IProject[] projects = createProjects("test with spaces", null, null, true);
 		buildProjects(projects, makefiles);
 	}

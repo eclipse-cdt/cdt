@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildTCSupportedTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedCommandLineGeneratorTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
@@ -59,6 +60,7 @@ public class AllManagedBuildTests {
 		suite.addTest(ManagedBuildTCSupportedTest.suite());
 		suite.addTest(MultiVersionSupportTests.suite());
 		suite.addTest(OptionEnablementTests.suite());
+		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

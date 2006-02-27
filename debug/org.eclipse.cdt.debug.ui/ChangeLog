@@ -1,4 +1,9 @@
 2006-02-27 Mikhail Khodjaiants
+	Added dependency to the org.eclipse.ui.views plugin (needed to use the breakpoint 
+	actions in the Outline view).
+	* MANIFEST.MF
+
+2006-02-27 Mikhail Khodjaiants
 	The DirectorySourceContainer's UI now supports the subfolders searching option (see bug 89748).
 	Removed the UI related to CDirectorySourceContainer. 
 	- CDirectorySourceContainerBrowser.java

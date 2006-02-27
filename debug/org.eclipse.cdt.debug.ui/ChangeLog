@@ -1,4 +1,10 @@
 2006-02-27 Mikhail Khodjaiants
+	Bug 89429: replaced the usage of the internal SourceLookupUIUtils class by DebugUITools.
+	* AddSourceContainerDialog.java
+	* EditContainerAction.java
+	* SourceContainerLabelProvider.java
+
+2006-02-27 Mikhail Khodjaiants
 	Added dependency to the org.eclipse.ui.views plugin (needed to use the breakpoint 
 	actions in the Outline view).
 	* MANIFEST.MF

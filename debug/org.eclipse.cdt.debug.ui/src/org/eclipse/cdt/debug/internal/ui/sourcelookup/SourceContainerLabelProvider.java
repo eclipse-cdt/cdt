@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -40,7 +40,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 			}
 			if (type != null) {
 				// next consult contributed image
-				image = SourceLookupUIUtils.getSourceContainerImage(type.getId());
+				image = DebugUITools.getSourceContainerImage(type.getId());
 			}
 		}		
 		if (image != null) {

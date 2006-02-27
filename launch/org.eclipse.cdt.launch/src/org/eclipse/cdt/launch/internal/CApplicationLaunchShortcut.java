@@ -69,7 +69,6 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	public void launch(IBinary bin, String mode) {
         ILaunchConfiguration config = findLaunchConfiguration(bin, mode);
         if (config != null) {
-            DebugUITools.saveAndBuildBeforeLaunch();
             DebugUITools.launch(config, mode);
         }
     }

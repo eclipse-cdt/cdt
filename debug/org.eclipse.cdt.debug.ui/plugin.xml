@@ -1150,12 +1150,7 @@
             adaptableType="org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.CDirectorySourceContainer"
-            class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
-         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-      </factory>   </extension>
+      </factory>   </extension>
    <extension
          point="org.eclipse.ui.themes">
       <fontDefinition

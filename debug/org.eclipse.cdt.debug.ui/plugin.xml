@@ -1209,11 +1209,6 @@
             containerTypeID="org.eclipse.cdt.debug.core.containerType.mapEntry"
             icon="icons/obj16/mapentry_obj.gif"
             id="org.eclipse.cdt.debug.ui.sourceContainerPresentation.mapEntry"/>
-      <sourceContainerPresentation
-            browserClass="org.eclipse.cdt.debug.internal.ui.sourcelookup.CDirectorySourceContainerBrowser"
-            containerTypeID="org.eclipse.cdt.debug.core.containerType.directory"
-            icon="icons/obj16/directory_obj.gif"
-            id="org.eclipse.cdt.debug.ui.containerPresentation.directory"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">

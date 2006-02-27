@@ -1,3 +1,12 @@
+2006-02-27 Mikhail Khodjaiants
+	The DirectorySourceContainer's UI now supports the subfolders searching option (see bug 89748).
+	Removed the UI related to CDirectorySourceContainer. 
+	- CDirectorySourceContainerBrowser.java
+	- CDirectorySourceContainerDialog.java
+	* SourceContainerWorkbenchAdapter.java
+	* SourceLookupUIMessages.properties
+	* plugin.xml
+
 2006-02-21 Mikhail Khodjaiants
 	Bug 122336: Use the asynchronous tree viewer in the Modules view.
 	Adjustments to the platform changes in M5.

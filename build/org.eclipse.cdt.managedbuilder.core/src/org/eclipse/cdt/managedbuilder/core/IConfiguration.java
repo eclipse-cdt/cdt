@@ -274,6 +274,15 @@ public interface IConfiguration extends IBuildObject {
 	public boolean hasOverriddenBuildCommand();
 	
 	/**
+	 * Returns <code>true</code> if the extension matches one of the special 
+	 * file extensions the tools for the configuration consider to be a header file. 
+	 * 
+	 * @param ext the file extension of the resource
+	 * @return boolean
+	 */
+	public boolean isHeaderFile(String ext);
+	
+	/**
 	 * Returns <code>true</code> if this configuration has changes that need to 
 	 * be saved in the project file, else <code>false</code>.  
 	 * Should not be called for an extension configuration.

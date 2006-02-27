@@ -10,28 +10,39 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
+import java.io.IOException;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * This dependency calculator uses the GCC -MMD -MF -MP -MT options in order to
- * generate .d files as a side effect of compilation.
- * See bugzilla 108715 for the discussion of dependency management that led to
- * the creation of this dependency calculator.  Note also that this technique
- * exhibits the failure modes discussed in comment #5.
+ * This dependency calculator uses the same dependency management technique as the
+ * DefaultGCCDependencyCalculator.  That is:
  * 
- * This dependency calculator uses the class DefaultGCCDependencyCalculator2Commands
+ *  1.  An echo command creates the dependency file (.d).
+ *  2.  A second invocation of the compiler is made in order to append to the dependency file.  
+ *      The additional options -MM -MG -P -w are added to the command line.
+ *  3.  The dependency files are post-processed to add the empty header rules. 
+ * 
+ * This dependency calculator uses the class DefaultGCCDependencyCalculator3Commands
  * which implements the per-source command information
+ *
+ * This is an example dependency calculator that is not used by the CDT GCC tool-chain.
  * 
  * @since 3.1
  */
 
-public class DefaultGCCDependencyCalculator2 implements
+public class DefaultGCCDependencyCalculator3 implements
 		IManagedDependencyGenerator2 {
 
 	/*
@@ -55,7 +66,7 @@ public class DefaultGCCDependencyCalculator2 implements
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencySourceInfo(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
 	 */
 	public IManagedDependencyInfo getDependencySourceInfo(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
-		return new DefaultGCCDependencyCalculator2Commands(source, buildContext, tool, topBuildDirectory);
+		return new DefaultGCCDependencyCalculator3Commands(source, buildContext, tool, topBuildDirectory);
 	}
 
 	/*
@@ -63,8 +74,25 @@ public class DefaultGCCDependencyCalculator2 implements
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#postProcessDependencyFile(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
 	 */
 	public boolean postProcessDependencyFile(IPath dependencyFile, IConfiguration buildContext, ITool tool, IPath topBuildDirectory) {
-		// Nothing
-		return false;
+		try {
+			IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
+			IFile makefile;
+			IPath makefilePath;
+			if (dependencyFile.isAbsolute()) {
+				makefilePath = dependencyFile;
+			} else {
+				makefilePath = topBuildDirectory.append(dependencyFile);
+			}
+			IPath rootPath = root.getLocation();
+			if (rootPath.isPrefixOf(makefilePath)) {
+				makefilePath = makefilePath.removeFirstSegments(rootPath.segmentCount());
+			}
+			makefile = root.getFile(makefilePath);
+			return GnuMakefileGenerator.populateDummyTargets(buildContext, makefile, false);
+		} catch (CoreException e) {
+		} catch (IOException e) {
+		}		
+		return false;			
 	}
 
 }

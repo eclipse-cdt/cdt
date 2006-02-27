@@ -1213,6 +1213,46 @@ public class Configuration extends BuildObject implements IConfiguration {
 			return toolChain.isSupported();
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isHeaderFile(java.lang.String)
+	 */
+	public boolean isHeaderFile(String ext) {
+		// Check to see if there is a rule to build a file with this extension
+		IManagedProject manProj = getManagedProject();
+		IProject project = null;
+		if (manProj != null) {
+			project = (IProject)manProj.getOwner();
+		}
+		ITool[] tools = getFilteredTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			try {
+				if (project != null) {
+					// Make sure the tool is right for the project
+					switch (tool.getNatureFilter()) {
+						case ITool.FILTER_C:
+							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.isHeaderFile(ext);
+							}
+							break;
+						case ITool.FILTER_CC:
+							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.isHeaderFile(ext);
+							}
+							break;
+						case ITool.FILTER_BOTH:
+							return tool.isHeaderFile(ext);
+					}
+				} else {
+					return tool.isHeaderFile(ext);
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+		}
+		return false;
+	}
 
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E

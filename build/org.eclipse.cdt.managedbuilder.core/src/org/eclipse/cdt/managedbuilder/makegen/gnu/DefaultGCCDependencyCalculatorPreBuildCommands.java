@@ -122,14 +122,14 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		
 		String[] commands = new String[1];
 		String depCmd = EMPTY_STRING;
+		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 		
 		// Get and resolve the command
 		String cmd = tool.getToolCommand();
 		try {
 			String resolvedCommand = null;
 			if (!needExplicitRuleForFile) {
-				resolvedCommand = ManagedBuildManager.getBuildMacroProvider()
-						.resolveValueToMakefileFormat(
+				resolvedCommand = provider.resolveValueToMakefileFormat(
 								cmd,
 								EMPTY_STRING,
 								IManagedBuilderMakefileGenerator.WHITESPACE,
@@ -140,8 +140,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 				// if we need an explicit rule then don't use any builder
 				// variables, resolve everything
 				// to explicit strings
-				resolvedCommand = ManagedBuildManager.getBuildMacroProvider()
-						.resolveValue(
+				resolvedCommand = provider.resolveValue(
 								cmd,
 								EMPTY_STRING,
 								IManagedBuilderMakefileGenerator.WHITESPACE,
@@ -177,7 +176,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 			options.add(optTxt);
 			// -MT"object-file-filename"
 			optTxt = "-MT\"";					//$NON-NLS-1$
-			GnuMakefileGenerator.escapeWhitespaces((outPath.removeFileExtension()).toString());
+			optTxt += GnuMakefileGenerator.escapeWhitespaces((outPath.removeFileExtension()).toString());
 			String outExt = tool.getOutputExtension(source.getFileExtension()); 
 			if (outExt != null) optTxt += "." + outExt;		//$NON-NLS-1$
 			optTxt += "\""; 					//$NON-NLS-1$
@@ -225,7 +224,6 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	        // generated
 			try {
 				String resolvedCommand;
-				IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 				if (!needExplicitRuleForFile) {
 					resolvedCommand = provider.resolveValueToMakefileFormat(
 									depCmd,

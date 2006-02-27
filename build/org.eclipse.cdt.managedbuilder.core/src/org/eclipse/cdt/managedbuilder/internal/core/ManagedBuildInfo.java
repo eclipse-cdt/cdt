@@ -861,34 +861,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isHeaderFile(java.lang.String)
 	 */
 	public boolean isHeaderFile(String ext) {
-		IProject project = (IProject)owner;
-
 		// Check to see if there is a rule to build a file with this extension
 		IConfiguration config = getDefaultConfiguration();
-		ITool[] tools = config.getFilteredTools();
-		for (int index = 0; index < tools.length; index++) {
-			ITool tool = tools[index];
-			try {
-				// Make sure the tool is right for the project
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							return tool.isHeaderFile(ext);
-						}
-						break;
-					case ITool.FILTER_CC:
-						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-							return tool.isHeaderFile(ext);
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						return tool.isHeaderFile(ext);
-				}
-			} catch (CoreException e) {
-				continue;
-			}
-		}
-		return false;
+		return config.isHeaderFile(ext);
 	}
 
 	/**

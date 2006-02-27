@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.resources.IProject;;
 
 /**
- * This dependency calculator uses the GCC -MMD -MF -MP -MQ options in order to
+ * This dependency calculator uses the GCC -MMD -MF -MP -MT options in order to
  * generate .d files as a side effect of compilation.
  * See bugzilla 108715 for the discussion of dependency management that led to
  * the creation of this dependency calculator.  Note also that this technique

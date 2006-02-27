@@ -16,12 +16,11 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyPreBuild;
 import org.eclipse.core.runtime.IPath;
 
 
 /**
- * This dependency calculator uses the GCC -MM -MF -MP -MQ options in order to
+ * This dependency calculator uses the GCC -MM -MF -MP -MT options in order to
  * generate .d files as separate step prior to the source compilations.
  * 
  * This dependency calculator uses the class DefaultGCCDependencyCalculatorPreBuildCommands

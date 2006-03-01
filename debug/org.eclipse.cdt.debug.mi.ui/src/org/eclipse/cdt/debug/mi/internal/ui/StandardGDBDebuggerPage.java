@@ -134,29 +134,29 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 				index = i;
 		}
 		fCommandFactoryCombo.setItems( descLabels );
-		if ( index >= 0 ) {
-			fCommandFactoryCombo.select( index );
-			String[] miVersions = fCommandFactoryDescriptors[index].getMIVersions();
-			fProtocolCombo.setItems( miVersions );
-			if ( miVersions.length == 0 ) {
-				miVersions = new String[] { DEFAULT_MI_VERSION };
-			}
-			String mi = DEFAULT_MI_VERSION;
-			try {
-				mi = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, DEFAULT_MI_VERSION );
-			}
-			catch( CoreException e ) {
-				// use default
-			}
-			int miIndex = 0;
-			for ( int i = 0; i < miVersions.length; ++i ) {
-				if ( miVersions[i].equals( mi ) ) {
-					miIndex = i;
-					break;
-				}
-			}
-			fProtocolCombo.select( miIndex );
+		if ( index < 0 )
+			index = 0;
+		fCommandFactoryCombo.select( index );
+		String[] miVersions = fCommandFactoryDescriptors[index].getMIVersions();
+		fProtocolCombo.setItems( miVersions );
+		if ( miVersions.length == 0 ) {
+			miVersions = new String[] { DEFAULT_MI_VERSION };
 		}
+		String mi = DEFAULT_MI_VERSION;
+		try {
+			mi = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, DEFAULT_MI_VERSION );
+		}
+		catch( CoreException e ) {
+			// use default
+		}
+		int miIndex = 0;
+		for ( int i = 0; i < miVersions.length; ++i ) {
+			if ( miVersions[i].equals( mi ) ) {
+				miIndex = i;
+				break;
+			}
+		}
+		fProtocolCombo.select( miIndex );
 
 		setInitializing( false ); 
 	}
@@ -170,7 +170,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, str );
 		str = fCommandFactoryCombo.getText();
 		int index = fCommandFactoryCombo.indexOf( str );
-		str = fCommandFactoryDescriptors[index].getIdentifier();
+		str = ( index < 0 ) ? "" : fCommandFactoryDescriptors[index].getIdentifier(); //$NON-NLS-1$
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, str );
 		str = fProtocolCombo.getText();
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, str );

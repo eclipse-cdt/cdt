@@ -1,3 +1,7 @@
+2006-03-01 Mikhail Khodjaiants
+	Select the first available command factory when a new launch configuration is created.
+	* StandardGDBDebuggerPage.java
+
 2006-02-08 Mikhail Khodjaiants
 	Bug 114793: Add an extension point to contribute command factories.
 	GDBServerDebuggerPage should extend StandardGDBDebuggerPage.

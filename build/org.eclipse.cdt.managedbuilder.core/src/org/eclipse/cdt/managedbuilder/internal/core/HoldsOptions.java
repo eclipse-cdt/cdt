@@ -528,7 +528,13 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 					}
 					//  Create a new extension Option element
 					String subId;
-					subId = newSuperClass.getId() + ".adjusted." + new Integer(ManagedBuildManager.getRandomNumber()); //$NON-NLS-1$ //$NON-NLS-2$
+					String version = ManagedBuildManager.getVersionFromIdAndVersion(newSuperClass.getId());
+					String baseId = ManagedBuildManager.getIdFromIdAndVersion(newSuperClass.getId());
+					if ( version != null) {
+						subId = baseId + ".adjusted." + new Integer(ManagedBuildManager.getRandomNumber()) + "_" + version; //$NON-NLS-1$ //$NON-NLS-2$ 
+					} else {
+						subId = baseId + ".adjusted." + new Integer(ManagedBuildManager.getRandomNumber()); //$NON-NLS-1$
+					}
 					setOption = createOption(newSuperClass, subId, null, true);
 					((Option)setOption).setAdjusted(true);
 					setOption.setValueType(option.getValueType());
@@ -552,8 +558,7 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 				}
 				//  Create an Option element for the managed build project file (.CDTBUILD)
 				String subId;
-				int nnn = ManagedBuildManager.getRandomNumber();
-				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
+				subId = ManagedBuildManager.calculateChildId(newSuperClass.getId(), null);
 				setOption = createOption(newSuperClass, subId, null, false);
 				setOption.setValueType(option.getValueType());
 			}

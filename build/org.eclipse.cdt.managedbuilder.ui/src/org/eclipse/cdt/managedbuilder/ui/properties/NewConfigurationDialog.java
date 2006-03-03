@@ -55,8 +55,6 @@ public class NewConfigurationDialog extends StatusDialog {
 	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
 	private static final String DESCRIPTION = LABEL + ".description";	//$NON-NLS-1$
 	
-	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
-
 	// Widgets
 	private Button btnClone;
 	private Button btnCopy;
@@ -549,23 +547,19 @@ public class NewConfigurationDialog extends StatusDialog {
 	 * the dialog.
 	 */
 	public IConfiguration newConfiguration(IManagedBuildInfo info) {
-		int id = ManagedBuildManager.getRandomNumber();
 		
-		// Create ID for the new component based on the parent ID and random component
-		String newId = parentConfig.getId();
-		int index = newId.lastIndexOf(ID_SEPARATOR);
-		if (index > 0) {
-			String lastComponent = newId.substring(index + 1, newId.length());
-			if (Character.isDigit(lastComponent.charAt(0))) {
-				// Strip the last component
-				newId = newId.substring(0, index);
-			}
-		}
-		newId += ID_SEPARATOR + id;
+		String newId = null;
 		IConfiguration newConfig;
+				
 		if (parentConfig.isExtensionElement()) {
+			// If parent config is an extension element,
+			// Create ID for the new component based on the parentConfig's id and random component
+			newId = ManagedBuildManager.calculateChildId(parentConfig.getId(), null);
 			newConfig = info.getManagedProject().createConfiguration(parentConfig, newId);
 		} else {
+			// If parent config is not an extension element, then
+			// Create ID for the new component based on the parentConfig's parent id and random component
+			newId = ManagedBuildManager.calculateChildId(parentConfig.getParent().getId(), null);
 			newConfig = info.getManagedProject().createConfigurationClone(parentConfig, newId);
 		}
 		

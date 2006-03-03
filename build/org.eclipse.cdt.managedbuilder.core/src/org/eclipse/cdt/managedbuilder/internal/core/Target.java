@@ -394,7 +394,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getCleanCommand();
 			} else {
 				// User forgot to specify it. Guess based on OS.
-				if (Platform.getOS().equals("OS_WIN32")) { //$NON-NLS-1$
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
 					return new String("del"); //$NON-NLS-1$
 				} else {
 					return new String("rm"); //$NON-NLS-1$

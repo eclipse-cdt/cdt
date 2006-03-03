@@ -337,7 +337,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			Iterator iter = resElements.listIterator();
 			while (iter.hasNext()) {
 				ResourceConfiguration resConfig = (ResourceConfiguration) iter.next();
-				subId = getId() + "." + ManagedBuildManager.getRandomNumber(); //$NON-NLS-1$
+				subId = ManagedBuildManager.calculateChildId(getId(), resConfig.getResourcePath());
 				ResourceConfiguration newResConfig = new ResourceConfiguration(this, resConfig, subId);
 				addResourceConfiguration(newResConfig);
 			}
@@ -974,7 +974,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				return parent.getCleanCommand();
 			} else {
 				// User forgot to specify it. Guess based on OS.
-				if (Platform.getOS().equals("OS_WIN32")) { //$NON-NLS-1$
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
 					return new String("del"); //$NON-NLS-1$
 				} else {
 					return new String("rm"); //$NON-NLS-1$
@@ -1486,5 +1486,4 @@ public class Configuration extends BuildObject implements IConfiguration {
 				setDirty(true);
 		}		
 	}
-	
 }

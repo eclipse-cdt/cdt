@@ -39,4 +39,11 @@ public class NamedEntry extends CIndexStorageEntry implements INamedEntry {
 		output.addIndexEntry(this);
 	}
 
+	/* BugZilla ID#124618 */   	
+	public void setNamedEntry(int meta_kind, int entry_type,  char[][] fullName, int modifiers, int fileNumber) {
+		this.entry_type = entry_type; 
+		this.fileNumber = fileNumber;
+		this.fullName = fullName;
+		this.modifiers = modifiers;
+	}
 }

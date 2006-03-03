@@ -47,4 +47,16 @@ public class TypeEntry extends NamedEntry implements ITypeEntry {
         this.friends = friends;
     }
 
+    /* BugZilla ID#124618 */   
+    public void setTypeEntry(int type_kind, int entry_type, char[][] fullName, int modifiers, int fileNumber) {
+		this.entry_type = entry_type; 
+		this.fileNumber = fileNumber;
+		this.fullName = fullName;
+		this.modifiers = modifiers;
+    	this.type_kind = type_kind;
+    	// since we reuse TypeEntry instance, 
+    	// the following vars should be cleared.
+    	this.baseTypes = null;
+    	this.friends = null;
+    }
 }

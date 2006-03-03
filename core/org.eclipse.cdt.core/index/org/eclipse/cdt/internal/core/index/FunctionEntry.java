@@ -40,4 +40,12 @@ public class FunctionEntry extends NamedEntry implements IFunctionEntry {
 		output.addIndexEntry(this);
 	}
 	
+    /* BugZilla ID#124618 */   
+	public void setFunctionEntry(int meta_kind, int entry_type,  char[][] fullName, int modifiers, int fileNumber) {
+		setNamedEntry(meta_kind, entry_type, fullName, modifiers, fileNumber);
+	   	// since we reuse FunctionEntry instance, 
+    	// the following vars should be cleared.
+		this.signature = null;
+		this.returnString = null;
+	}
 }

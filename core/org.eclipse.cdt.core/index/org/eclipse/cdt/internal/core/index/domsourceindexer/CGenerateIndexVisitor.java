@@ -37,7 +37,12 @@ import org.eclipse.cdt.internal.core.index.TypeEntry;
 import org.eclipse.cdt.internal.core.model.Util;
 
 public class CGenerateIndexVisitor extends CASTVisitor {
-    private DOMSourceIndexerRunner indexer; 
+    private DOMSourceIndexerRunner indexer;
+    
+    private FunctionEntry commonFunctionEntry;
+    private TypeEntry     commonTypeEntry;
+    private NamedEntry    commonNamedEntry;
+
     {
         shouldVisitNames          = true;
         shouldVisitDeclarations   = true;
@@ -58,6 +63,16 @@ public class CGenerateIndexVisitor extends CASTVisitor {
     public CGenerateIndexVisitor(DOMSourceIndexerRunner indexer) {
         super();
         this.indexer = indexer;
+        // reuse of XXXEntry object allows to reduce memory consumption
+        char[][] dummy = new char[][] { null }; 
+        commonFunctionEntry = new FunctionEntry(IIndex.FUNCTION, 0, dummy, 0, 0);
+        commonTypeEntry     = new TypeEntry (0, 0, dummy, 0, 0);
+        commonNamedEntry    = new NamedEntry(0, 0, dummy, 0, 0);
+    }
+
+	/* BugZilla ID#124618 */   	
+    public void setCGenerateIndexVisitor(DOMSourceIndexerRunner indexer) {
+        this.indexer = indexer;    	
     }
 
     /* (non-Javadoc)
@@ -187,10 +202,10 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             }
             // guard against cpp entities in c project
             if (iEntryType != 0) {
-                TypeEntry indexEntry = new TypeEntry(iEntryType, entryKind, qualifiedName, modifiers, fileNumber);
-                indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            	commonTypeEntry.setTypeEntry(iEntryType, entryKind, qualifiedName, modifiers, fileNumber);
+            	commonTypeEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
     
-                indexEntry.serialize(indexer.getOutput());
+            	commonTypeEntry.serialize(indexer.getOutput());
             }
         }
         else if (binding instanceof IEnumeration){
@@ -198,32 +213,32 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_ENUM, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonTypeEntry.setTypeEntry(IIndex.TYPE_ENUM, entryKind, qualifiedName, modifiers, fileNumber);
+            commonTypeEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            commonTypeEntry.serialize(indexer.getOutput());
         }
         else if (binding instanceof ITypedef) {
-            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_TYPEDEF, entryKind, qualifiedName, 0, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+        	commonTypeEntry.setTypeEntry(IIndex.TYPE_TYPEDEF, entryKind, qualifiedName, 0, fileNumber);
+            commonTypeEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
     
-            indexEntry.serialize(indexer.getOutput());
+            commonTypeEntry.serialize(indexer.getOutput());
         }
         else if (binding instanceof IEnumerator) {
-            NamedEntry indexEntry = new NamedEntry(IIndex.ENUMTOR, entryKind, qualifiedName, 0, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonNamedEntry.setNamedEntry(IIndex.ENUMTOR, entryKind, qualifiedName, 0, fileNumber);
+            commonNamedEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            commonNamedEntry.serialize(indexer.getOutput());
         }
         else if (binding instanceof IField) { 
             int modifiers = 0;
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            NamedEntry indexEntry = new NamedEntry(IIndex.FIELD, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonNamedEntry.setNamedEntry(IIndex.FIELD, entryKind, qualifiedName, modifiers, fileNumber);
+            commonNamedEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            indexEntry.serialize(indexer.getOutput());
+            commonNamedEntry.serialize(indexer.getOutput());
         }
         else if (binding instanceof IVariable &&
                 !(binding instanceof IParameter)) { 
@@ -234,10 +249,10 @@ public class CGenerateIndexVisitor extends CASTVisitor {
                 if (entryKind != IIndex.REFERENCE) {
                     modifiers = IndexVisitorUtil.getModifiers(name, binding);
                 }
-                NamedEntry indexEntry = new NamedEntry(IIndex.VAR, entryKind, qualifiedName, modifiers, fileNumber);
-                indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+                commonNamedEntry.setNamedEntry(IIndex.VAR, entryKind, qualifiedName, modifiers, fileNumber);
+                commonNamedEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
     
-                indexEntry.serialize(indexer.getOutput());
+                commonNamedEntry.serialize(indexer.getOutput());
             }
         }
         else if (binding instanceof IFunction) {
@@ -245,12 +260,12 @@ public class CGenerateIndexVisitor extends CASTVisitor {
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            FunctionEntry indexEntry = new FunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
-            indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
+            commonFunctionEntry.setFunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
+            commonFunctionEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonFunctionEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
+            commonFunctionEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
-            indexEntry.serialize(indexer.getOutput());
+            commonFunctionEntry.serialize(indexer.getOutput());
         }
     }
 

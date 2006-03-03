@@ -59,7 +59,11 @@ import org.eclipse.core.runtime.Path;
 public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
 
     private DOMSourceIndexer indexer;
-    
+    // Bug 124618: reuse NamedEntry & Visitor instances to reduce memory consumption
+    private NamedEntry commonNamedEntry;
+    static CGenerateIndexVisitor visitorC = null;
+    static CPPGenerateIndexVisitor visitorCPP = null;
+
     // for running JUnit tests
 	private static boolean skipScannerInfoTest=false;
     
@@ -73,6 +77,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
     public DOMSourceIndexerRunner(IFile resource, DOMSourceIndexer indexer) {
         this.resourceFile = resource;
         this.indexer = indexer;
+        commonNamedEntry = new NamedEntry(0, 0, new char[][] { null }, 0, 0);
     }
 
     /**
@@ -118,18 +123,26 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
             
             if (AbstractIndexerRunner.TIMING)
                 parseTime = System.currentTimeMillis();
-            
+
         	// first clear all problem markers on non-external include files
         	clearProblemMarkers(tu.getIncludeDirectives());
         	
             ASTVisitor visitor = null;
             //C or CPP?
             if (tu.getParserLanguage() == ParserLanguage.CPP) {
-                visitor = new CPPGenerateIndexVisitor(this);
+            	if (visitorCPP == null)
+            		visitorCPP = new CPPGenerateIndexVisitor(this);
+            	else
+            		visitorCPP.setCPPGenerateIndexVisitor(this);
+            	visitor = visitorCPP;
             } else {
-                visitor = new CGenerateIndexVisitor(this);
+            	if (visitorC == null)
+            		visitorC = new CGenerateIndexVisitor(this);
+            	else
+            		visitorC.setCGenerateIndexVisitor(this);
+            	visitor = visitorC;
             }
-           
+            
             tu.accept(visitor);   
  
             processMacroDefinitions(tu.getMacroDefinitions());
@@ -284,9 +297,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
             getOutput().addRelatives(fileNumber, include, 
                     (parent != null) ? parent.getIncludeDirective().getPath() : null);
 			
-            NamedEntry namedEntry = new NamedEntry(IIndex.INCLUDE, IIndex.REFERENCE, new char[][] {include.toCharArray()}, 0, fileNumber);
-            namedEntry.setNameOffset(1, 1, IIndex.OFFSET);
-            namedEntry.serialize(getOutput());
+            commonNamedEntry.setNamedEntry(IIndex.INCLUDE, IIndex.REFERENCE, new char[][] {include.toCharArray()}, 0, fileNumber);
+            commonNamedEntry.setNameOffset(1, 1, IIndex.OFFSET);
+            commonNamedEntry.serialize(getOutput());
 
             /* See if this file has been encountered before */
             indexer.haveEncounteredHeader(resourceFile.getProject().getFullPath(), new Path(include), true);
@@ -310,9 +323,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexerRunner {
             IASTFileLocation loc = IndexEncoderUtil.getFileLocation(macro);
             int fileNumber = IndexEncoderUtil.calculateIndexFlags(this, loc);
             
-            NamedEntry namedEntry = new NamedEntry(IIndex.MACRO, IIndex.DECLARATION, new char[][] {macro.toCharArray()}, 0, fileNumber);
-            namedEntry.setNameOffset(loc.getNodeOffset(), loc.getNodeLength(), IIndex.OFFSET);
-            namedEntry.serialize(getOutput());
+            commonNamedEntry.setNamedEntry(IIndex.MACRO, IIndex.DECLARATION, new char[][] {macro.toCharArray()}, 0, fileNumber);
+            commonNamedEntry.setNameOffset(loc.getNodeOffset(), loc.getNodeLength(), IIndex.OFFSET);
+            commonNamedEntry.serialize(getOutput());
         }
     }
 

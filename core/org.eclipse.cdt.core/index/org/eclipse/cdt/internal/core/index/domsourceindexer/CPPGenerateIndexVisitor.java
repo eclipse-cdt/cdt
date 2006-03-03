@@ -59,6 +59,9 @@ import org.eclipse.cdt.internal.core.model.Util;
 public class CPPGenerateIndexVisitor extends CPPASTVisitor {
     private DOMSourceIndexerRunner indexer; 
     
+    private FunctionEntry commonFunctionEntry;
+    private TypeEntry     commonTypeEntry;
+    private NamedEntry    commonNamedEntry;
     {
         shouldVisitNames          = true;
         shouldVisitDeclarations   = true;
@@ -81,8 +84,19 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
     public CPPGenerateIndexVisitor(DOMSourceIndexerRunner indexer) {
         super();
         this.indexer = indexer;
+        // reuse of XXXEntry object allows to reduce memory consumption
+        char[][] dummy = new char[0][0]; 
+        commonFunctionEntry = new FunctionEntry(IIndex.FUNCTION, 0, dummy, 0, 0);
+        commonTypeEntry     = new TypeEntry (0, 0, dummy, 0, 0);
+        commonNamedEntry    = new NamedEntry(0, 0, dummy, 0, 0);
     }
 
+	/* BugZilla ID#124618 */   	
+    public void setCPPGenerateIndexVisitor(DOMSourceIndexerRunner indexer) {
+        this.indexer = indexer;    	
+    }
+
+    
 /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
      */
@@ -228,52 +242,52 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            TypeEntry indexEntry = new TypeEntry(iEntryType, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonTypeEntry.setTypeEntry(iEntryType, entryKind, qualifiedName, modifiers, fileNumber);
+            commonTypeEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
             if (entryKind == IIndex.DEFINITION && binding instanceof ICPPClassType) {
-                addDerivedDeclarations(name, (ICPPClassType)binding, indexEntry, fileNumber);
-                addFriendDeclarations(name, (ICPPClassType)binding, indexEntry, fileNumber);
+                addDerivedDeclarations(name, (ICPPClassType)binding, commonTypeEntry, fileNumber);
+                addFriendDeclarations(name, (ICPPClassType)binding, commonTypeEntry, fileNumber);
             }
             
-            serialize(indexEntry);
+            serialize(commonTypeEntry);
         }
         else if (binding instanceof IEnumeration) {
             int modifiers = 0;
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_ENUM, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonTypeEntry.setTypeEntry(IIndex.TYPE_ENUM, entryKind, qualifiedName, modifiers, fileNumber);
+            commonTypeEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            serialize(indexEntry);
+            serialize(commonTypeEntry);
         }
         else if (binding instanceof ITypedef) {
-            TypeEntry indexEntry = new TypeEntry(IIndex.TYPE_TYPEDEF, entryKind, qualifiedName, 0, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+        	commonTypeEntry.setTypeEntry(IIndex.TYPE_TYPEDEF, entryKind, qualifiedName, 0, fileNumber);
+        	commonTypeEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            serialize(indexEntry);
+            serialize(commonTypeEntry);
         }
         else if (binding instanceof ICPPNamespace) {
-            NamedEntry indexEntry = new NamedEntry(IIndex.NAMESPACE, entryKind, qualifiedName, 0, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonNamedEntry.setNamedEntry(IIndex.NAMESPACE, entryKind, qualifiedName, 0, fileNumber);
+            commonNamedEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            serialize(indexEntry);
+            serialize(commonNamedEntry);
         }
         else if (binding instanceof IEnumerator) {
-            NamedEntry indexEntry = new NamedEntry(IIndex.ENUMTOR, entryKind, qualifiedName, 0, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonNamedEntry.setNamedEntry(IIndex.ENUMTOR, entryKind, qualifiedName, 0, fileNumber);
+            commonNamedEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            serialize(indexEntry);
+            serialize(commonNamedEntry);
         }
         else if (binding instanceof IField) {
             int modifiers = 0;
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            NamedEntry indexEntry = new NamedEntry(IIndex.FIELD, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonNamedEntry.setNamedEntry(IIndex.FIELD, entryKind, qualifiedName, modifiers, fileNumber);
+            commonNamedEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
 
-            serialize(indexEntry);
+            serialize(commonNamedEntry);
         }
         else if (binding instanceof IVariable &&
                 !(binding instanceof IParameter)) { 
@@ -284,10 +298,10 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
                 if (entryKind != IIndex.REFERENCE) {
                     modifiers = IndexVisitorUtil.getModifiers(name, binding);
                 }
-                NamedEntry indexEntry = new NamedEntry(IIndex.VAR, entryKind, qualifiedName, modifiers, fileNumber);
-                indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+                commonNamedEntry.setNamedEntry(IIndex.VAR, entryKind, qualifiedName, modifiers, fileNumber);
+                commonNamedEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
     
-                serialize(indexEntry);
+                serialize(commonNamedEntry);
             }
         }
         else if (binding instanceof ICPPMethod) {
@@ -295,12 +309,12 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            FunctionEntry indexEntry = new FunctionEntry(IIndex.METHOD, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters((ICPPMethod) binding));
-            indexEntry.setReturnType(IndexVisitorUtil.getReturnType((ICPPMethod) binding));
+            commonFunctionEntry.setFunctionEntry(IIndex.METHOD, entryKind, qualifiedName, modifiers, fileNumber);
+            commonFunctionEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonFunctionEntry.setSignature(IndexVisitorUtil.getParameters((ICPPMethod) binding));
+            commonFunctionEntry.setReturnType(IndexVisitorUtil.getReturnType((ICPPMethod) binding));
 
-            serialize(indexEntry);
+            serialize(commonFunctionEntry);
             // TODO In case we want to add friend method declarations to index
 //          if (isFriendDeclaration(name, binding)) {
 //			    entryType = IndexerOutputWrapper.FRIEND; 
@@ -311,12 +325,12 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             if (entryKind != IIndex.REFERENCE) {
                 modifiers = IndexVisitorUtil.getModifiers(name, binding);
             }
-            FunctionEntry indexEntry = new FunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
-            indexEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
-            indexEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
-            indexEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
+            commonFunctionEntry.setFunctionEntry(IIndex.FUNCTION, entryKind, qualifiedName, modifiers, fileNumber);
+            commonFunctionEntry.setNameOffset(fileLoc.getNodeOffset(), fileLoc.getNodeLength(), IIndex.OFFSET);
+            commonFunctionEntry.setSignature(IndexVisitorUtil.getParameters((IFunction) binding));
+            commonFunctionEntry.setReturnType(IndexVisitorUtil.getReturnType((IFunction) binding));
 
-            serialize(indexEntry);
+            serialize(commonFunctionEntry);
             // TODO In case we want to add friend function declarations to index
 //	        if (isFriendDeclaration(name, binding)) {
 //				entryType = IndexerOutputWrapper.FRIEND; 

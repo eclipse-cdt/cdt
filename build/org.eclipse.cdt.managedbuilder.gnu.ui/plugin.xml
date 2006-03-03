@@ -749,7 +749,7 @@
 		  id="cdt.managedbuild.tool.gnu.c.compiler"
 		  isAbstract="true"
 		  command="gcc"
-		  natureFilter="cnature"
+		  natureFilter="both"
 		  outputFlag="-o">
          <envVarBuildPath 
          	pathType="buildpathInclude"
@@ -1337,20 +1337,6 @@
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
 		     	  </builder>               
-                  <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
-			  	      <option
-					      id="gnu.c.compiler.exe.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
-						  superClass="gnu.c.compiler.option.optimization.level">
-					  </option>
-					  <option   
-					      id="gnu.c.compiler.exe.debug.option.debugging.level"					     
-						  defaultValue="gnu.c.debugging.level.max"
-					      superClass="gnu.c.compiler.option.debugging.level">
-					  </option>
-				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                         
@@ -1365,6 +1351,20 @@
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+			  	      <option
+					      id="gnu.c.compiler.exe.debug.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.none"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  <option   
+					      id="gnu.c.compiler.exe.debug.option.debugging.level"					     
+						  defaultValue="gnu.c.debugging.level.max"
+					      superClass="gnu.c.compiler.option.debugging.level">
+					  </option>
+				  </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.exe.debug"
                       superClass="cdt.managedbuild.tool.gnu.c.linker">
@@ -1407,20 +1407,6 @@
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">
 				  </builder> 
                   <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
-					  <option
-						  id="gnu.c.compiler.exe.release.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.most"
-						  superClass="gnu.c.compiler.option.optimization.level">
-					  </option>
-					  <option
-						  id="gnu.c.compiler.exe.release.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.none"
-						  superClass="gnu.c.compiler.option.debugging.level">
-					  </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">                     
 					  <option
@@ -1432,6 +1418,20 @@
 						  id="gnu.cpp.compiler.exe.release.option.debugging.level"
 						  defaultValue="gnu.cpp.compiler.debugging.level.none"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
+					  </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">                          
+					  <option
+						  id="gnu.c.compiler.exe.release.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.most"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  <option
+						  id="gnu.c.compiler.exe.release.option.debugging.level"
+						  defaultValue="gnu.c.debugging.level.none"
+						  superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
                   </tool>
                   <tool
@@ -1484,20 +1484,6 @@
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 				  </builder>               		         
 				  <tool
-				      id="cdt.managedbuild.tool.gnu.c.compiler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
-					  <option
-						  id="gnu.c.compiler.so.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
-						  superClass="gnu.c.compiler.option.optimization.level">
-					  </option>
-					  <option
-					      id="gnu.c.compiler.so.debug.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.max"
-						  superClass="gnu.c.compiler.option.debugging.level">
-					  </option>
-				  </tool>
-				  <tool
 				      id="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
 					  <option
@@ -1509,6 +1495,20 @@
 					      id="gnu.cpp.compiler.so.debug.option.debugging.level"
 						  defaultValue="gnu.cpp.compiler.debugging.level.max"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
+					  </option>
+				  </tool>
+				  <tool
+				      id="cdt.managedbuild.tool.gnu.c.compiler.so.debug"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+					  <option
+						  id="gnu.c.compiler.so.debug.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.none"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  <option
+					      id="gnu.c.compiler.so.debug.option.debugging.level"
+						  defaultValue="gnu.c.debugging.level.max"
+						  superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
@@ -1577,20 +1577,6 @@
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 				  </builder>               
-				  <tool				     
-				      id="cdt.managedbuild.tool.gnu.c.compiler.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
-				      <option
-				          id="gnu.c.compiler.so.release.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.most"
-						  superClass="gnu.c.compiler.option.optimization.level">
-				      </option>
-				      <option
-				          id="gnu.c.compiler.so.release.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.none"
-						  superClass="gnu.c.compiler.option.debugging.level">
-				      </option>
-				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.cpp.compiler.so.release"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
@@ -1605,6 +1591,20 @@
 						  superClass="gnu.cpp.compiler.option.debugging.level">
 				      </option>
 				  </tool>				
+				  <tool				     
+				      id="cdt.managedbuild.tool.gnu.c.compiler.so.release"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+				      <option
+				          id="gnu.c.compiler.so.release.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.most"
+						  superClass="gnu.c.compiler.option.optimization.level">
+				      </option>
+				      <option
+				          id="gnu.c.compiler.so.release.option.debugging.level"
+						  defaultValue="gnu.c.debugging.level.none"
+						  superClass="gnu.c.compiler.option.debugging.level">
+				      </option>
+				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.c.linker.so.release"
 					  superClass="cdt.managedbuild.tool.gnu.c.linker">
@@ -1678,20 +1678,6 @@
 					  arguments="-k"
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		         
-				  <tool
-					  id="cdt.managedbuild.tool.gnu.c.compiler.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
-				      <option
-					      id="gnu.c.compiler.lib.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
-						  superClass="gnu.c.compiler.option.optimization.level">
-				      </option>
-				      <option
-						  id="gnu.c.compiler.lib.debug.option.debugging.level"						
-						  defaultValue="gnu.c.debugging.level.max"
-						  superClass="gnu.c.compiler.option.debugging.level">
-				      </option>
-				  </tool>
                   <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
@@ -1706,6 +1692,20 @@
 					      superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
                   </tool>
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.lib.debug"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+				      <option
+					      id="gnu.c.compiler.lib.debug.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.none"
+						  superClass="gnu.c.compiler.option.optimization.level">
+				      </option>
+				      <option
+						  id="gnu.c.compiler.lib.debug.option.debugging.level"						
+						  defaultValue="gnu.c.debugging.level.max"
+						  superClass="gnu.c.compiler.option.debugging.level">
+				      </option>
+				  </tool>
 			      <tool
 		    		  id="cdt.managedbuild.tool.gnu.archiver.lib.debug"
 			          superClass="cdt.managedbuild.tool.gnu.archiver">
@@ -1744,20 +1744,6 @@
 		              arguments="-k"
 		              buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 				  </builder>               		            
-		          <tool
-					  id="cdt.managedbuild.tool.gnu.c.compiler.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
-					  <option
-						  id="gnu.c.compiler.lib.release.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.most"
-						  superClass="gnu.c.compiler.option.optimization.level">
-					  </option>
-					  <option
-						  id="gnu.c.compiler.lib.release.option.debugging.level"
-					      defaultValue="gnu.c.debugging.level.none"
-					      superClass="gnu.c.compiler.option.debugging.level">
-					  </option>
-				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.release"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
@@ -1770,6 +1756,20 @@
 						  id="gnu.cpp.compiler.lib.release.option.debugging.level"
 						  defaultValue="gnu.cpp.compiler.debugging.level.none"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
+					  </option>
+				  </tool>
+		          <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.lib.release"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler">
+					  <option
+						  id="gnu.c.compiler.lib.release.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.most"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  <option
+						  id="gnu.c.compiler.lib.release.option.debugging.level"
+					      defaultValue="gnu.c.debugging.level.none"
+					      superClass="gnu.c.compiler.option.debugging.level">
 					  </option>
 				  </tool>
 				  <tool
@@ -1819,20 +1819,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		         
                   <tool
-					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
-					  <option
-						  id="gnu.c.compiler.cygwin.exe.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
-						  superClass="gnu.c.compiler.option.optimization.level">
-					  </option>
-					  <option
-						  id="gnu.c.compiler.cygwin.exe.debug.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.max"
-						  superClass="gnu.c.compiler.option.debugging.level">
-					  </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
@@ -1845,6 +1831,20 @@
                           defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
+                  </tool>
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+					  <option
+						  id="gnu.c.compiler.cygwin.exe.debug.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.none"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  <option
+						  id="gnu.c.compiler.cygwin.exe.debug.option.debugging.level"
+						  defaultValue="gnu.c.debugging.level.max"
+						  superClass="gnu.c.compiler.option.debugging.level">
+					  </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug"
@@ -1890,20 +1890,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		                       
                   <tool
-					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
-                      <option
-                          id="gnu.c.compiler.cygwin.exe.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.cygwin.exe.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.exe.release"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
@@ -1917,6 +1903,20 @@
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
                   </tool>                      
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      <option
+                          id="gnu.c.compiler.cygwin.exe.release.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.most"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.cygwin.exe.release.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.none"
+                          superClass="gnu.c.compiler.option.debugging.level">
+                      </option>
+                  </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release"
                       superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin">
@@ -1968,20 +1968,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		         
                   <tool
-					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
-					  <option
-						  id="gnu.c.compiler.cygwin.so.debug.option.optimization.level"
-						  defaultValue="gnu.c.optimization.level.none"
-						  superClass="gnu.c.compiler.option.optimization.level">
-					  </option>
-					  <option
-						  id="gnu.c.compiler.cygwin.so.debug.option.debugging.level"
-						  defaultValue="gnu.c.debugging.level.max"
-						  superClass="gnu.c.compiler.option.debugging.level">
-					  </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
@@ -1994,6 +1980,20 @@
                           defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
                       </option>
+                  </tool>
+                  <tool
+					  id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+					  <option
+						  id="gnu.c.compiler.cygwin.so.debug.option.optimization.level"
+						  defaultValue="gnu.c.optimization.level.none"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  <option
+						  id="gnu.c.compiler.cygwin.so.debug.option.debugging.level"
+						  defaultValue="gnu.c.debugging.level.max"
+						  superClass="gnu.c.compiler.option.debugging.level">
+					  </option>
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.c.linker.cygwin.so.debug"
@@ -2061,20 +2061,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		                                       
                   <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
-                      <option 
-                          id="gnu.c.compiler.cygwin.so.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.cygwin.so.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.so.release"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                       <option
@@ -2086,6 +2072,20 @@
                           id="gnu.cpp.compiler.cygwin.so.release.option.debugging.level"
                           defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.so.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      <option 
+                          id="gnu.c.compiler.cygwin.so.release.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.most"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.cygwin.so.release.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.none"
+                          superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
@@ -2160,20 +2160,6 @@
 					  arguments="-k"
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		                                                              
-                  <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
-                      <option
-                          id="gnu.c.compiler.cygwin.lib.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.cygwin.lib.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
 			      <tool
 			          id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.debug"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
@@ -2188,6 +2174,20 @@
 							superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
 				  </tool>  
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                      <option
+                          id="gnu.c.compiler.cygwin.lib.debug.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.none"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.cygwin.lib.debug.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.max"
+                          superClass="gnu.c.compiler.option.debugging.level">
+                      </option>
+                  </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.debug"
                       superClass="cdt.managedbuild.tool.gnu.archiver">
@@ -2228,20 +2228,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		                                                                                              
                   <tool
-                     id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
-                     <option
-                         id="gnu.c.compiler.cygwin.lib.release.option.optimization.level"
-                         defaultValue="gnu.c.optimization.level.most"
-                         superClass="gnu.c.compiler.option.optimization.level">
-                     </option>
-                     <option
-                         id="gnu.c.compiler.cygwin.lib.release.option.debugging.level"                        
-                         defaultValue="gnu.c.debugging.level.none"
-                         superClass="gnu.c.compiler.option.debugging.level">                         
-                     </option>
-                  </tool>
-                  <tool
                      id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.lib.release"
                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
                      <option       
@@ -2255,6 +2241,20 @@
                          superClass="gnu.cpp.compiler.option.debugging.level">
                      </option>
                  </tool>
+                  <tool
+                     id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.lib.release"
+                     superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin">
+                     <option
+                         id="gnu.c.compiler.cygwin.lib.release.option.optimization.level"
+                         defaultValue="gnu.c.optimization.level.most"
+                         superClass="gnu.c.compiler.option.optimization.level">
+                     </option>
+                     <option
+                         id="gnu.c.compiler.cygwin.lib.release.option.debugging.level"                        
+                         defaultValue="gnu.c.debugging.level.none"
+                         superClass="gnu.c.compiler.option.debugging.level">                         
+                     </option>
+                  </tool>
                  <tool
                      id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
                      superClass="cdt.managedbuild.tool.gnu.archiver">
@@ -2300,20 +2300,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		         
                   <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
-                      <option
-                          id="gnu.c.compiler.macosx.exe.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.macosx.exe.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                       <option
@@ -2325,6 +2311,20 @@
                           id="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level"
                           defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      <option
+                          id="gnu.c.compiler.macosx.exe.debug.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.none"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.macosx.exe.debug.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.max"
+                          superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
 				  <tool
@@ -2368,20 +2368,6 @@
 					  arguments="-k"
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		         
-                  <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
-                      <option
-                          id="gnu.c.compiler.macosx.exe.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.macosx.exe.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                   </tool>
                    <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
@@ -2394,6 +2380,20 @@
                           id="gnu.cpp.compiler.macosx.exe.release.option.debugging.level"
                           defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                   </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      <option
+                          id="gnu.c.compiler.macosx.exe.release.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.most"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.macosx.exe.release.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.none"
+                          superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                    </tool>
 				   <tool
@@ -2446,20 +2446,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		                       
                   <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
-                      <option
-                          id="gnu.c.compiler.macosx.so.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.macosx.so.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.so.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
 					  <option
@@ -2472,6 +2458,20 @@
 						  defaultValue="gnu.cpp.compiler.debugging.level.max"
 						  superClass="gnu.cpp.compiler.option.debugging.level">
 					  </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      <option
+                          id="gnu.c.compiler.macosx.so.debug.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.none"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.macosx.so.debug.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.max"
+                          superClass="gnu.c.compiler.option.debugging.level">
+                      </option>
                   </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.macosx.c.linker.macosx.so.debug"
@@ -2550,20 +2550,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		                                                     
                   <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
-                      <option
-                          id="gnu.c.compiler.macosx.so.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.macosx.so.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.so.release"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                       <option
@@ -2575,6 +2561,20 @@
                           id="gnu.cpp.compiler.macosx.so.release.option.debugging.level"
                           defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.so.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      <option
+                          id="gnu.c.compiler.macosx.so.release.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.most"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.macosx.so.release.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.none"
+                          superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
 				  <tool
@@ -2661,20 +2661,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		         
                   <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.lib.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
-                      <option
-                          id="gnu.c.compiler.macosx.lib.debug.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.none"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.macosx.lib.debug.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.max"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.lib.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                       <option
@@ -2686,6 +2672,20 @@
                           id="gnu.cpp.compiler.macosx.lib.debug.option.debugging.level"
                           defaultValue="gnu.cpp.compiler.debugging.level.max"
                           superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.lib.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      <option
+                          id="gnu.c.compiler.macosx.lib.debug.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.none"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.macosx.lib.debug.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.max"
+                          superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
@@ -2727,20 +2727,6 @@
 					  buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator">		              
 			      </builder>               		         
                   <tool
-                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.lib.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
-                      <option
-                          id="gnu.c.compiler.macosx.lib.release.option.optimization.level"
-                          defaultValue="gnu.c.optimization.level.most"
-                          superClass="gnu.c.compiler.option.optimization.level">
-                      </option>
-                      <option
-                          id="gnu.c.compiler.macosx.lib.release.option.debugging.level"
-                          defaultValue="gnu.c.debugging.level.none"
-                          superClass="gnu.c.compiler.option.debugging.level">
-                      </option>
-                  </tool>
-                  <tool
                       id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.lib.release"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
                       <option
@@ -2752,6 +2738,20 @@
                           id="gnu.cpp.compiler.macosx.lib.release.option.debugging.level"
                           defaultValue="gnu.cpp.compiler.debugging.level.none"
                           superClass="gnu.cpp.compiler.option.debugging.level">
+                      </option>
+                  </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.c.compiler.macosx.lib.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler">
+                      <option
+                          id="gnu.c.compiler.macosx.lib.release.option.optimization.level"
+                          defaultValue="gnu.c.optimization.level.most"
+                          superClass="gnu.c.compiler.option.optimization.level">
+                      </option>
+                      <option
+                          id="gnu.c.compiler.macosx.lib.release.option.debugging.level"
+                          defaultValue="gnu.c.debugging.level.none"
+                          superClass="gnu.c.compiler.option.debugging.level">
                       </option>
                   </tool>
                   <tool
@@ -2788,16 +2788,16 @@
 		              osList="solaris"
 		              archList="all">
 	              </targetPlatform>
-                  <tool
-                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.debug"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
-				  </tool>
 				  <tool
                       id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.exe.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
                   </tool>
+                  <tool
+                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.debug"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
 			  </toolChain>
          </configuration>
          <configuration
@@ -2818,13 +2818,13 @@
 		              archList="all">
 	              </targetPlatform>
                   <tool
-                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release"
+                      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release"                     
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
                   </tool>
                   <tool
-                      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.exe.release"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release"                     
+                      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.exe.release"
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
                   </tool>
                </toolChain>
@@ -2855,13 +2855,13 @@
 		              archList="all">
 	              </targetPlatform>
 				  <tool
-				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug"
+				      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.so.debug"
+					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
 				  </tool>
 				  <tool
-				      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.so.debug"
-					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug"
+				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.debug"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
 				  </tool>
 			   </toolChain>
@@ -2884,16 +2884,16 @@
 		              osList="solaris"
 		              archList="all">
 	              </targetPlatform>
-				  <tool				     
-				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
-				  </tool>
 				  <tool
 				      id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.so.release"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
 				  </tool>				
+				  <tool				     
+				      id="cdt.managedbuild.tool.gnu.solaris.c.compiler.so.release"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
 			   </toolChain>  
          </configuration>         
       </projectType>
@@ -2921,16 +2921,16 @@
 		              osList="solaris"
 		              archList="all">
 	              </targetPlatform>
-				  <tool
-					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.debug"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
-				  </tool>
                   <tool
 					  id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.lib.debug"
                       superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
                   </tool>
+				  <tool
+					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.debug"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.debug"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
                </toolChain>                 
          </configuration>
          <configuration
@@ -2951,14 +2951,14 @@
 		              osList="solaris"
 		              archList="all">
 	              </targetPlatform>
-		          <tool
-					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.release"
-					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.release"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
-				  </tool>
 				  <tool
 					  id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.lib.release"
 					  superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.release"
+                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+				  </tool>
+		          <tool
+					  id="cdt.managedbuild.tool.gnu.solaris.c.compiler.lib.release"
+					  superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.release"
                       commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
 				  </tool>
                </toolChain>				  

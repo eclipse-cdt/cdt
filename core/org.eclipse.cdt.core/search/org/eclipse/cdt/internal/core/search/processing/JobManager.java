@@ -476,9 +476,10 @@ public abstract class JobManager implements Runnable {
 							JobManager.verbose("FINISHED background job - " + job); //$NON-NLS-1$
 						}
 						moveToNextJob();
-						if (this.awaitingClients == 0) {
-							Thread.sleep(50);
-						}
+			// Bug 68078: this delay affects indexing procedure too much.						
+			//			if (this.awaitingClients == 0) {
+			//				Thread.sleep(50);
+			//			}
 					}
 				} catch (InterruptedException e) { // background indexing was interrupted
 				}

@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.Vector;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -23,76 +22,118 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
  */
 public class ScannerUtility {
 
-	public static String reconcilePath(String originalPath ) {
-		if( originalPath == null ) return null;
-		originalPath = removeQuotes( originalPath );
-		
-		String [] segments = originalPath.split( "[/\\\\]" ); //$NON-NLS-1$
-		if( segments.length == 1 ) return originalPath;
-		Vector results = new Vector(segments.length); 
-		for( int i = 0; i < segments.length; ++i )
-		{
-			String segment = segments[i];
-			if( segment.equals( ".") ) continue; //$NON-NLS-1$
-			if( segment.equals("..") ) //$NON-NLS-1$
-			{
-				if( results.size() > 0 ) 
-					results.removeElementAt( results.size() - 1 );
-			}
-			else
-				results.add( segment );
-		}
-		StringBuffer strbuff = new StringBuffer(128); 
-		for( int i = 0; i < results.size(); ++i )
-		{
-			strbuff.append( (String)results.elementAt(i) );
-			if( i != results.size() - 1  )
-				strbuff.append( File.separatorChar );
-		}
-		return strbuff.toString();
-	}
+	static final char DOT    = '.';  //$NON-NLS-1$
+	static final char SLASH  = '/';  //$NON-NLS-1$
+	static final char BSLASH = '\\'; //$NON-NLS-1$
+	static final char QUOTE  = '\"'; //$NON-NLS-1$
 
-	
 	/**
-	 * @param originalPath
-	 * @return
+	 * This method is quick 1-pass path reconciler.
+	 * Functions:
+	 *   - replace "/" or "\" by system's separator
+	 *   - replace multiple separators by single one
+	 *   - skip "/./" 
+	 *   - skip quotes
+	 *   - process "/../" (skip previous directory level)    
+	 * 
+	 * @param originalPath - path to process
+	 * @return             - reconciled path   
 	 */
-	private static String removeQuotes(String originalPath) {
-		String [] segments = originalPath.split( "\""); //$NON-NLS-1$
-		if( segments.length == 1 ) return originalPath;
-		StringBuffer strbuff = new StringBuffer();
-		for( int i = 0; i < segments.length; ++ i )
-			if( segments[i] != null )
-				strbuff.append( segments[i]);
-		return strbuff.toString();
+	public static String reconcilePath(String originalPath ) {
+		int len = originalPath.length();
+		int len1 = len - 1;         // to avoid multiple calculations
+		int j = 0;                  // index for output array
+		boolean noSepBefore = true; // to avoid duplicate separators
+		
+		char[] ein = new char[len];
+		char[] aus = new char[len + 1];
+		
+		originalPath.getChars(0, len, ein, 0);
+		for (int i=0; i<len; i++) {
+			char c = ein[i]; 
+			switch (c) {
+			case QUOTE:	  // quotes are removed
+				noSepBefore = true;
+				break;
+			case SLASH:     // both separators are processed  
+			case BSLASH:    // in the same way
+				if (noSepBefore) {
+					noSepBefore = false;
+					aus[j++] = File.separatorChar;
+				}
+				break;
+			case DOT:
+				// no separator before, not a 1st string symbol. 
+				if (noSepBefore && j>0) 
+					aus[j++] = c;
+				else { // separator before "." ! 
+					if (i < len1) {
+						c = ein[i+1]; // check for next symbol
+						// check for "/./" case
+						if (c == SLASH || c == BSLASH) {
+							// write nothing to output
+							// skip the next symbol
+							i++;
+							noSepBefore = false;
+						} 
+						// symbol other than "." - write it also 
+						else if (c != DOT) {
+							i++;
+							noSepBefore = true;
+							aus[j++] = DOT;
+							aus[j++] = c;
+						}
+						// we found "/.." sequence. Look ahead.
+						else {
+							// we found "/../" (or "/.." is at the end of string)
+							// we should delete previous segment of output path 
+							if (i == len1 || ein[i+2] == SLASH || ein[i+2] == BSLASH) {
+								i+=2;
+								noSepBefore = false;
+								if (j > 1) { // there is at least 1 segment before
+									int k = j - 2;
+									while ( k >= 0 ) {
+										if (aus[k] == File.separatorChar) break;
+										k--;
+									}
+									j = k + 1; // set index to previous segment or to 0
+								}
+							}
+							// Case "/..blabla" processed as usual
+							else {
+								i++;
+								noSepBefore = true;
+								aus[j++] = DOT;
+								aus[j++] = DOT;
+							}
+						}
+					} else 
+					{} // do nothing when "." is last symbol
+				}
+				break;
+			default: 
+				noSepBefore = true;
+				aus[j++] = c;
+			}
+		}
+		return new String(aus, 0, j);
 	}
 
+	/**
+	 * @param path     - include path
+	 * @param fileName - include file name
+	 * @return         - reconsiled path
+	 */
+	public static String createReconciledPath(String path, String fileName) {
+		boolean pathEmpty = (path == null || path.length() == 0);
+		return (pathEmpty ? fileName : reconcilePath(path + File.separatorChar + fileName));
+	}
 
 	public static CodeReader createReaderDuple( String path, ISourceElementRequestor requestor, Iterator workingCopies )
 	{
 		return requestor.createReader( path, workingCopies );
 	}
 	
-	/**
-	 * @param path
-	 * @param fileName
-	 * @return
-	 */
-	public static String createReconciledPath(String path, String fileName) {
-		//TODO assert pathFile.isDirectory();	
-		StringBuffer newPathBuffer = new StringBuffer();
-        if( ! path.equals( "" )) //$NON-NLS-1$
-        {
-            newPathBuffer.append( new File(path).getPath() );
-
-			if (fileName.length() > 0 && fileName.toCharArray()[0] != File.separatorChar)
-				newPathBuffer.append( File.separatorChar );
-        }
-		newPathBuffer.append( fileName );
-		//remove ".." and "." segments
-		return reconcilePath( newPathBuffer.toString() );
-	}
-
 	public static class InclusionDirective
 	{
 		public InclusionDirective( String fileName, boolean useIncludePaths, int startOffset, int endOffset )
@@ -132,6 +173,5 @@ public class ScannerUtility {
 	public static class InclusionParseException extends Exception
 	{
 	}
-
 
 }

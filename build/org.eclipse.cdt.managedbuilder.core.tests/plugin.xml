@@ -4132,6 +4132,7 @@
            name="Build Definitions Macro Support Project Type">
         <configuration
               artifactExtension="tar"
+              cleanCommand="rm"
               id="org.eclipse.cdt.managedbuilder.core.tests.BDMacroSupportConfiguration"
               name="Default">
            <toolChain
@@ -6022,6 +6023,7 @@
             id="depcalc2.managedbuild.target.gnu.exe">
          <configuration
                name="Debug"
+               cleanCommand="rm"
                id="depcalc2.managedbuild.config.gnu.exe.debug">
 			<toolChain
 				id="test.dependency.calculator.2"
@@ -6055,6 +6057,7 @@
             id="depcalc3.managedbuild.target.gnu.exe">
          <configuration
                name="Debug"
+               cleanCommand="rm"
                id="depcalc3.managedbuild.config.gnu.exe.debug">
 			<toolChain
 				id="test.dependency.calculator.3"
@@ -6088,6 +6091,7 @@
             id="depcalcPreBuild.managedbuild.target.gnu.exe">
          <configuration
                name="Debug"
+               cleanCommand="rm"
                id="depcalcPreBuild.managedbuild.config.gnu.exe.debug">
 			<toolChain
 				id="test.dependency.calculator.PreBuild"

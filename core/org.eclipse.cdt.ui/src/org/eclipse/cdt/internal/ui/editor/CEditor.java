@@ -1450,4 +1450,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		// CoreModel WorkingCopy changes instead.
 		// It will allow more fined grained.
 	}
+	
+	public CSourceViewer getCSourceViewer()  {
+		ISourceViewer viewer = getSourceViewer();
+		CSourceViewer cViewer = null ;
+		if (viewer instanceof CSourceViewer) {
+			cViewer = (CSourceViewer) viewer;
+		}
+		return cViewer ;
+	}
 }

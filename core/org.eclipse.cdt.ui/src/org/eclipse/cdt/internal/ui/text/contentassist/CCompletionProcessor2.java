@@ -62,16 +62,17 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	private String noCompletions = assistPrefix + ".noCompletions"; //$NON-NLS-1$
 	private String parseError = assistPrefix + ".parseError"; //$NON-NLS-1$
 	private String dialectError = assistPrefix + ".badDialect"; //$NON-NLS-1$
+	private ASTCompletionNode fCurrentCompletionNode;
 	
 	public CCompletionProcessor2(IEditorPart editor) {
 		this.editor = editor;
+		fCurrentCompletionNode = null;
 	}
 	
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer, int offset) {
 		try {
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-			ASTCompletionNode completionNode = null;
-            String prefix = null;
+			String prefix = null;
             
             IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
             boolean fileScope = store.getBoolean(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE);
@@ -88,7 +89,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
                 		readerFactory = pdom.getCodeReaderFactory(workingCopy);
                 	else
                 		readerFactory = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE); 
-                    completionNode = CDOM.getInstance().getCompletionNode(file, offset, readerFactory);
+                    fCurrentCompletionNode = CDOM.getInstance().getCompletionNode(file, offset, readerFactory);
                 } else if (editor.getEditorInput() instanceof ExternalEditorInput) {
                     IStorage storage = ((ExternalEditorInput)(editor.getEditorInput())).getStorage();
                     IProject project = workingCopy.getCProject().getProject();
@@ -98,11 +99,11 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
                 		readerFactory = pdom.getCodeReaderFactory(workingCopy);
                 	else
                 		readerFactory = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE); 
-                    completionNode = CDOM.getInstance().getCompletionNode(storage, project, offset, readerFactory);
+                    fCurrentCompletionNode = CDOM.getInstance().getCompletionNode(storage, project, offset, readerFactory);
                 }
                 
-                if (completionNode != null)
-                    prefix = completionNode.getPrefix();
+                if (fCurrentCompletionNode != null)
+                    prefix = fCurrentCompletionNode.getPrefix();
 
             }
             
@@ -127,7 +128,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					if (!(contribObject instanceof ICompletionContributor))
 						continue;
 					ICompletionContributor contributor = (ICompletionContributor)contribObject;
-					contributor.contributeCompletionProposals(viewer, offset, workingCopy, completionNode, prefix, proposals);
+					contributor.contributeCompletionProposals(viewer, offset, workingCopy, fCurrentCompletionNode, prefix, proposals);
 				}
 			}
 
@@ -219,5 +220,12 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 
     public void allowAddingIncludes(boolean allowAddingIncludes) {
     }
+
+	/**
+	 * @return the fCurrentCompletionNode
+	 */
+	public ASTCompletionNode getCurrentCompletionNode() {
+		return fCurrentCompletionNode;
+	}
     
 }    

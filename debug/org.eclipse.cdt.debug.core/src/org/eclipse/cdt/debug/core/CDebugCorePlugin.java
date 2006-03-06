@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
@@ -56,6 +61,8 @@ public class CDebugCorePlugin extends Plugin {
 	private static CDebugCorePlugin plugin;
 
 	private HashMap fDebugConfigurations;
+	
+	private HashSet fActiveDebugConfigurations;
 
 	/**
 	 * Breakpoint listener list.
@@ -158,11 +165,82 @@ public class CDebugCorePlugin extends Plugin {
 		}
 	}
 
+	private void initializeActiveDebugConfigurations() {
+		fActiveDebugConfigurations = new HashSet( getDebugConfigurations().length );
+		fActiveDebugConfigurations.addAll( fDebugConfigurations.keySet() );
+		String[] filteredTypes = CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_FILTERED_DEBUGGERS ).split( "\\," ); //$NON-NLS-1$
+		fActiveDebugConfigurations.removeAll( Arrays.asList( filteredTypes ) );
+	}
+
 	public ICDebugConfiguration[] getDebugConfigurations() {
 		if ( fDebugConfigurations == null ) {
 			initializeDebugConfiguration();
 		}
 		return (ICDebugConfiguration[])fDebugConfigurations.values().toArray( new ICDebugConfiguration[0] );
+	}
+
+	public ICDebugConfiguration[] getActiveDebugConfigurations() {
+		if ( fDebugConfigurations == null ) {
+			initializeDebugConfiguration();
+		}
+		if ( fActiveDebugConfigurations == null ) {
+			initializeActiveDebugConfigurations();
+		}
+		ArrayList list = new ArrayList( fActiveDebugConfigurations.size() );
+		Iterator it = fActiveDebugConfigurations.iterator();
+		while( it.hasNext() ) {
+			Object o = fDebugConfigurations.get( it.next() );
+			if ( o != null )
+				list.add( o );
+		}
+		return (ICDebugConfiguration[])list.toArray( new ICDebugConfiguration[list.size()] );
+	}
+
+	public ICDebugConfiguration[] getDefaultActiveDebugConfigurations() {
+		List filtered = Arrays.asList( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString( ICDebugConstants.PREF_FILTERED_DEBUGGERS ).split( "\\," ) ); //$NON-NLS-1$
+		HashMap all = (HashMap)fDebugConfigurations.clone();
+		all.keySet().removeAll( filtered );
+		return (ICDebugConfiguration[])all.values().toArray( new ICDebugConfiguration[all.size()] ); 
+	}
+
+	public void saveFilteredDebugConfigurations( ICDebugConfiguration[] configurations ) {
+		disposeActiveDebugConfigurations();
+		StringBuffer sb = new StringBuffer();
+		for ( int i = 0; i < configurations.length; ++i ) {
+			sb.append( configurations[i].getID() ).append( ',' );
+		}
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_FILTERED_DEBUGGERS, sb.toString() );
+		CDebugCorePlugin.getDefault().savePluginPreferences();
+	}
+
+	public void saveDefaultDebugConfiguration( String id ) {
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE, ( id != null ) ? id : "" ); //$NON-NLS-1$
+	}
+
+	public ICDebugConfiguration getDefaultDebugConfiguration() {
+		ICDebugConfiguration result = null;
+		try {
+			result = getDebugConfiguration( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE ) );
+		}
+		catch( CoreException e ) {
+		}
+		return result;
+	}
+
+	public ICDebugConfiguration getDefaultDefaultDebugConfiguration() {
+		ICDebugConfiguration result = null;
+		try {
+			result = getDebugConfiguration( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE ) );
+		}
+		catch( CoreException e ) {
+		}
+		if ( result == null ) {
+		}
+		return result;
+	}
+
+	public boolean isDefaultDebugConfiguration( String id ) {
+		return id.compareTo( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_DEFAULT_DEBUGGER_TYPE ) ) == 0;
 	}
 
 	public ICDebugConfiguration getDebugConfiguration( String id ) throws CoreException {
@@ -265,6 +343,7 @@ public class CDebugCorePlugin extends Plugin {
 		disposeBreakpointListenersList();
 		resetBreakpointsInstallCount();
 		disposeCommonSourceLookupDirector();
+		disposeDebugConfigurations();
 		super.stop( context );
 	}
 
@@ -298,5 +377,20 @@ public class CDebugCorePlugin extends Plugin {
 
 	private void convertSourceLocations( CommonSourceLookupDirector director ) {
 		director.setSourceContainers( SourceUtils.convertSourceLocations( getCommonSourceLocations() ) );
+	}
+
+	private void disposeActiveDebugConfigurations() {
+		if ( fActiveDebugConfigurations != null ) {
+			fActiveDebugConfigurations.clear();
+			fActiveDebugConfigurations = null;
+		}
+	}
+
+	private void disposeDebugConfigurations() {
+		disposeActiveDebugConfigurations();
+		if ( fDebugConfigurations != null ) {
+			fDebugConfigurations.clear();
+			fDebugConfigurations = null;
+		}
 	}
 }

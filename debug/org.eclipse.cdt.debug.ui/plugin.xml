@@ -92,6 +92,11 @@
             class="org.eclipse.cdt.debug.internal.ui.preferences.SourcePreferencePage"
             id="org.eclipse.cdt.debug.ui.SourcePreferencePage">
       </page>
+      <page
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.DebuggerTypesPage"
+            id="org.eclipse.cdt.debug.ui.DebuggerTypesPreferencePage"
+            name="%DebuggerTypesPreferencePage.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

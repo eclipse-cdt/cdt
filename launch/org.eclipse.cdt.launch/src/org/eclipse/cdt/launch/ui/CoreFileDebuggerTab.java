@@ -127,8 +127,13 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 	}
 	
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
-		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
+		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
 		String projectPlatform = getProjectPlatform(config);
+		if (selection.equals("")) { //$NON-NLS-1$
+			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+			if (dc != null)
+				selection = dc.getID();
+		}
 		String defaultSelection = null;
 		List list = new ArrayList();
 		for (int i = 0; i < debugConfigs.length; i++) {
@@ -138,7 +143,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 					// select first exact matching debugger for platform or
 					// requested selection
 					String debuggerPlatform = debugConfigs[i].getPlatform();
-					if (defaultSelection == null && debuggerPlatform.equalsIgnoreCase(projectPlatform)) {
+					if (defaultSelection == null && (debuggerPlatform.equals("*") || projectPlatform.equals( "*" ) || debuggerPlatform.equalsIgnoreCase(projectPlatform))) { //$NON-NLS-1$ //$NON-NLS-2$
 						defaultSelection = debugConfigs[i].getID();
 					}
 				}

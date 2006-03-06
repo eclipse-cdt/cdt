@@ -151,7 +151,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
 		ICDebugConfiguration[] debugConfigs;
 		String configPlatform = getPlatform(config);
-		debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
+		debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
 		Arrays.sort(debugConfigs, new Comparator() {
 
 			public int compare(Object o1, Object o2) {
@@ -166,6 +166,11 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			mode = ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH;
 		} else {
 			mode = ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN;
+		}
+		if (selection.equals("")) { //$NON-NLS-1$
+			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+			if (dc != null)
+				selection = dc.getID();
 		}
 		String defaultSelection = selection;
 		for (int i = 0; i < debugConfigs.length; i++) {

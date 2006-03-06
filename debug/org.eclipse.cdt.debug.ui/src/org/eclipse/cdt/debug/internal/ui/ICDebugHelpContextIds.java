@@ -23,8 +23,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
  * 
  * @since Jul 23, 2002
  */
-public interface ICDebugHelpContextIds
-{
+public interface ICDebugHelpContextIds {
 	/**
 	 * C/C++ Debug UI plug-in identifier (value <code>"org.eclipse.cdt.debug.ui"</code>).
 	 */
@@ -62,6 +61,7 @@ public interface ICDebugHelpContextIds
 	public static final String SHARED_LIBRARIES_PREFERENCE_PAGE = PREFIX + "shared_libraries_preference_page_context"; //$NON-NLS-1$
 	public static final String MEMORY_PREFERENCE_PAGE = PREFIX + "memory_preference_page_context"; //$NON-NLS-1$
 	public static final String C_DEBUG_PREFERENCE_PAGE = PREFIX + "c_debug_preference_page_context"; //$NON-NLS-1$
+	public static final String DEBUGGER_TYPES_PAGE = PREFIX + "debugger_typpes_preference_page_context"; //$NON-NLS-1$
 
 	// dialogs
 	public static final String SOURCE_PATH_MAPPING_DIALOG = PREFIX + "source_path_mapping_dialog_context"; //$NON-NLS-1$

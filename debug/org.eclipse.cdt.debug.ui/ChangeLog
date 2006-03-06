@@ -1,3 +1,11 @@
+2006-03-06 Mikhail Khodjaiants
+	Fix for Bug 93777: Postmortem and Local launch need a default preference for selected debugger.
+	* ICDebugHelpContextIds.java
+	+ DebuggerTypesPage.java
+	* PreferenceMessages.properties
+	* plugin.properties
+	* plugin.xml
+
 2006-02-27 Mikhail Khodjaiants
 	Discouraged access to EditorsPlugin. 
 	Added support for SharedTextColors to CDebugUIPlugin.

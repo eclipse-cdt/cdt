@@ -1,3 +1,8 @@
+2006-03-06 Mikhail Khodjaiants
+	Fix for Bug 93777: Postmortem and Local launch need a default preference for selected debugger.
+	* CDebugCorePlugin.java
+	* ICDebugConstants.java
+
 2006-02-27 Mikhail Khodjaiants
 	All serializable objects should have a stable serialVersionUID.
 	* CDIException.java

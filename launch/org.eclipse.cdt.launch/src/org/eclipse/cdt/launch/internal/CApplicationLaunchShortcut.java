@@ -107,26 +107,38 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		int candidateCount = candidateConfigs.size();
 		if (candidateCount < 1) {
 			String programCPU = bin.getCPU();
-
-			// Prompt the user if more then 1 debugger.
-			ICDebugConfiguration debugConfig = null;
-			ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
-			List debugList = new ArrayList(debugConfigs.length);
+			// Try default debugger first
+			ICDebugConfiguration defaultConfig = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
 			String os = Platform.getOS();
-			for (int i = 0; i < debugConfigs.length; i++) {
-				String platform = debugConfigs[i].getPlatform();
-				if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+			ICDebugConfiguration debugConfig = null;
+			if ( defaultConfig != null ) {
+				String platform = defaultConfig.getPlatform();
+				if (defaultConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
 					if (platform.equals("*") || platform.equals(os)) { //$NON-NLS-1$
-						if (debugConfigs[i].supportsCPU(programCPU)) 
-							debugList.add(debugConfigs[i]);
+						if (defaultConfig.supportsCPU(programCPU)) 
+							debugConfig = defaultConfig;
 					}
 				}
 			}
-			debugConfigs = (ICDebugConfiguration[]) debugList.toArray(new ICDebugConfiguration[0]);
-			if (debugConfigs.length == 1) {
-				debugConfig = debugConfigs[0];
-			} else if (debugConfigs.length > 1) {
-				debugConfig = chooseDebugConfig(debugConfigs, mode);
+			if ( debugConfig == null ) {
+				// Prompt the user if more then 1 debugger.
+				ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
+				List debugList = new ArrayList(debugConfigs.length);
+				for (int i = 0; i < debugConfigs.length; i++) {
+					String platform = debugConfigs[i].getPlatform();
+					if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+						if (platform.equals("*") || platform.equals(os)) { //$NON-NLS-1$
+							if (debugConfigs[i].supportsCPU(programCPU)) 
+								debugList.add(debugConfigs[i]);
+						}
+					}
+				}
+				debugConfigs = (ICDebugConfiguration[]) debugList.toArray(new ICDebugConfiguration[0]);
+				if (debugConfigs.length == 1) {
+					debugConfig = debugConfigs[0];
+				} else if (debugConfigs.length > 1) {
+					debugConfig = chooseDebugConfig(debugConfigs, mode);
+				}
 			}
 			if (debugConfig != null) {
 				configuration = createConfiguration(bin, debugConfig);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
+
 /**
  * Constant definitions for C/C++ debug plug-in.
  */
@@ -71,7 +72,19 @@ public interface ICDebugConstants {
 	 */
 	public static final int MAX_NUMBER_OF_INSTRUCTIONS = 999;
 
-	/**
+    /**
+     * Preference that saves the default debugger type
+     * @since 3.1
+     */
+    public static final String PREF_DEFAULT_DEBUGGER_TYPE = PLUGIN_ID + ".cDebug.defaultDebugger"; //$NON-NLS-1$
+
+    /**
+     * Preference that saves the deactivated debugger types
+     * @since 3.1
+     */
+    public static final String PREF_FILTERED_DEBUGGERS = PLUGIN_ID + ".cDebug.filteredDebuggers"; //$NON-NLS-1$
+
+    /**
 	 * Boolean preference controlling whether the instruction stepping mode should be activated.
 	 * 
 	 * Temporary. See bugs 79872 and 80323.

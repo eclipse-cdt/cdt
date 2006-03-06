@@ -1,3 +1,9 @@
+2006-03-06 Mikhail Khodjaiants
+	Fix for Bug 93777: Postmortem and Local launch need a default preference for selected debugger.
+	* CApplicationLaunchShortcut.java
+	* CDebuggerTab.java
+	* CoreFileDebuggerTab.java
+
 2006-02-27 Mikhail Khodjaiants
 	Fix for Bug 126025: CApplicationLaunchShortcut call to DebugUITools.saveAndBuild 
 	invokes workspace wide build unnecessarily.

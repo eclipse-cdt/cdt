@@ -356,6 +356,10 @@ public class RxThread extends Thread {
 					}
 				}
 			}
+			// Accumulate the Target Stream Output response for parsing.
+			// Some commands, e.g. 'monitor' will put valuable info  in the Console Stream.
+			// This fixes bug 119370.
+			oobList.add(stream);
 		} else if (stream instanceof MILogStreamOutput) {
 			// This is meant for the gdb console.
 			OutputStream log = session.getLogPipe();

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Norbert Ploett, Siemens AG - fix for bug 119370
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 

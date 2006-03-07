@@ -34,6 +34,8 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -87,7 +89,8 @@ public class CProjectPlatformPage extends WizardPage {
 	protected String[] projectTypeNames;
 	protected ArrayList projectTypes;
 	protected IConfiguration configurations[];
-
+	protected boolean pageHasBeenVisible;
+	
 	/**
 	 * Constructor.
 	 * @param pageName
@@ -525,6 +528,9 @@ public class CProjectPlatformPage extends WizardPage {
 	 * @return
 	 */
 	private boolean validatePage() {
+		if(!pageHasBeenVisible)
+			return false;
+
 		// TODO some validation ... maybe
 		if ((tableViewer.getCheckedElements()).length > 0) {
 			setErrorMessage(null);
@@ -534,10 +540,16 @@ public class CProjectPlatformPage extends WizardPage {
 			return false;
 		}
 	}
-	
-    private void log(String msg) {
-            String id = ManagedBuilderUIPlugin.getUniqueIdentifier();
-            IStatus status = new Status(IStatus.WARNING, id, 0, msg, null);
-            ManagedBuilderUIPlugin.log(status);
-    }
+
+	private void log(String msg) {
+		String id = ManagedBuilderUIPlugin.getUniqueIdentifier();
+		IStatus status = new Status(IStatus.WARNING, id, 0, msg, null);
+		ManagedBuilderUIPlugin.log(status);
+	}
+
+	public void setVisible(boolean visible) {
+		pageHasBeenVisible = true;
+		setPageComplete(validatePage());
+		super.setVisible(visible);
+	}
 }

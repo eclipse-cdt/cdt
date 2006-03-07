@@ -73,20 +73,20 @@ import org.eclipse.core.runtime.IPath;
  *         We can use this to ensure that the dependency files are up to date
  *         by adding rules to the make file for generating the dependency files.
  *         These rules are returned by the call to getDependencyCommands.
- *         However, this has a significant problem when we don’t want to build
- *         the build target, but only want to “clean” the configuration, 
+ *         However, this has a significant problem when we donï¿½t want to build
+ *         the build target, but only want to ï¿½cleanï¿½ the configuration, 
  *         for example.  If we invoke make just to clean the configuration, 
  *         make will still update the dependency files if necessary, thereby 
  *         re-generating the dependency files only to immediately delete them.
  *         The workaround suggested by the make documentation is to check for 
- *         an invocation using the “clean” target, and to not include the 
+ *         an invocation using the ï¿½cleanï¿½ target, and to not include the 
  *         dependency files it that case.  For example,
  *         
  *         ifneq ($(MAKECMDGOALS),clean)
  *         include $(DEPS)
  *         endif
  *         
- *         The restriction with this is that it only works if “clean” is the only 
+ *         The restriction with this is that it only works if ï¿½cleanï¿½ is the only 
  *         target specified on the make command line.  Therefore, the build 
  *         "clean" step must be invoked separately.
  */

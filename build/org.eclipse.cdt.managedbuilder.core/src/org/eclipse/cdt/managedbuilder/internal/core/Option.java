@@ -1260,11 +1260,11 @@ public class Option extends BuildObject implements IOption {
 		/*
 		 *  In order to determine the current value of an option, perform the following steps until a value is found:
 		 *   1.	Examine the value attribute of the option.
-		 *   2.	Examine the value attribute of the option’s superClass recursively.
+		 *   2.	Examine the value attribute of the optionï¿½s superClass recursively.
 		 *   3.	Examine the dynamicDefaultValue attribute of the option and invoke it if specified. (not yet implemented)
 		 *   4.	Examine the defaultValue attribute of the option.
-		 *   5.	Examine the dynamicDefaultValue attribute of the option’s superClass and invoke it if specified. (not yet implemented)
-		 *   6.	Examine the defaultValue attribute of the option’s superClass.
+		 *   5.	Examine the dynamicDefaultValue attribute of the optionï¿½s superClass and invoke it if specified. (not yet implemented)
+		 *   6.	Examine the defaultValue attribute of the optionï¿½s superClass.
 		 *   7.	Go to step 5 recursively until no more super classes.
 		 *   8.	Use the default value for the option type.
 		 */

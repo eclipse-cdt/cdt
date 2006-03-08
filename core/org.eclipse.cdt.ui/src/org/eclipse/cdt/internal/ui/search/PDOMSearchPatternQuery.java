@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -40,16 +41,19 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		| FIND_UNION | FIND_METHOD | FIND_FIELD | FIND_ENUM
 		| FIND_ENUMERATOR | FIND_NAMESPACE | FIND_TYPEDEF | FIND_MACRO;
 	
-	private ICElement[] scope;
+	private IResource[] scope;
+	private String scopeDesc;
 	private String pattern;
 	
 	public PDOMSearchPatternQuery(
-			ICElement[] scope,
+			IResource[] scope,
 			String scopeDesc,
 			String pattern,
+			boolean isCaseSensitive,
 			int flags) {
 		super(flags);
 		this.scope = scope;
+		this.scopeDesc = scopeDesc;
 		this.pattern = pattern;
 	}
 	
@@ -59,7 +63,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	}
 	
 	public String getLabel() {
-		return super.getLabel() + " " + pattern;
+		return super.getLabel() + " " + pattern + " in " + scopeDesc;
 	}
 	
 }

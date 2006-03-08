@@ -11,81 +11,36 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
 /**
  * @author Doug Schaefer
- * 
- * This is the search query to be used for searching the PDOM.
+ *
  */
-public class PDOMSearchQuery implements ISearchQuery {
+public abstract class PDOMSearchQuery implements ISearchQuery {
 
-	public static final int FIND_DECLARATIONS = 1;
-	public static final int FIND_DEFINITIONS = 2;
-	public static final int FIND_REFERENCES = 4;
+	public static final int FIND_DECLARATIONS = 0x1;
+	public static final int FIND_DEFINITIONS = 0x2;
+	public static final int FIND_REFERENCES = 0x4;
+	public static final int FIND_ALL_OCCURANCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 	
-	private PDOMSearchResult result = new PDOMSearchResult(this);
-	private PDOMBinding binding;
-	private int flags;
-	
-	public PDOMSearchQuery(PDOMBinding binding, int flags) {
-		this.binding = binding;
+	protected PDOMSearchResult result = new PDOMSearchResult(this);
+	protected int flags;
+
+	protected PDOMSearchQuery(int flags) {
 		this.flags = flags;
 	}
 	
-	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		try {
-			if ((flags & FIND_DECLARATIONS) != 0) {
-				PDOMName name = binding.getFirstDeclaration();
-				while (name != null) {
-					IASTFileLocation loc = name.getFileLocation();
-					result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
-					name = name.getNextInBinding();
-				}
-			}
-			if ((flags & (FIND_DECLARATIONS)) != 0) {
-				// for decls we do defs too
-				PDOMName name = binding.getFirstDefinition();
-				while (name != null) {
-					IASTFileLocation loc = name.getFileLocation();
-					result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
-					name = name.getNextInBinding();
-				}
-			}
-			if ((flags & FIND_REFERENCES) != 0) {
-				PDOMName name = binding.getFirstReference();
-				while (name != null) {
-					IASTFileLocation loc = name.getFileLocation();
-					result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
-					name = name.getNextInBinding();
-				}
-			}
-			return Status.OK_STATUS;
-		} catch (CoreException e) {
-			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e);
-		}
-	}
-
 	public String getLabel() {
-		String type = null;
+		String type;
 		if ((flags & FIND_REFERENCES) != 0)
 			type = CSearchMessages.getString("PDOMSearch.query.refs.label"); //$NON-NLS-1$
 		else if ((flags & FIND_DECLARATIONS) != 0)
 			type = CSearchMessages.getString("PDOMSearch.query.decls.label"); //$NON-NLS-1$
 		else
  			type = CSearchMessages.getString("PDOMSearch.query.defs.label"); //$NON-NLS-1$
-
-		return type + " " + binding.getName();
+		return type;
 	}
 
 	public boolean canRerun() {

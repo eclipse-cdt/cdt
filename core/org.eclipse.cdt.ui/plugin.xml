@@ -1053,19 +1053,27 @@
       </command>
    </extension>
    <extension
-         id="org.eclipse.cdt.ui.CSearchPage"
+         id="pdomSearchPage"
          name="CSearchPage"
          point="org.eclipse.search.searchPages">
+      <page
+            canSearchEnclosingProjects="true"
+            class="org.eclipse.cdt.internal.ui.search.PDOMSearchPage"
+            extensions="c:90,cpp:90, cxx:90, cc:90,C:90, h:90, hh:90, hpp:90, H:90"
+            icon="icons/obj16/csearch_obj.gif"
+            id="org.eclipse.cdt.ui.pdomSearchPage"
+            label="%CSearchPage.label"
+            showScopeSection="true"
+            sizeHint="460, 160"/>
       <page
             canSearchEnclosingProjects="true"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             extensions="c:90,cpp:90, cxx:90, cc:90,C:90, h:90, hh:90, hpp:90, H:90"
             icon="icons/obj16/csearch_obj.gif"
             id="org.eclipse.cdt.ui.CSearchPage"
-            label="%CSearchPage.label"
+            label="Old C/C++ Search"
             showScopeSection="true"
-            sizeHint="460, 160">
-      </page>
+            sizeHint="460, 160"/>
    </extension>
    <extension
          point="org.eclipse.search.searchResultSorters">

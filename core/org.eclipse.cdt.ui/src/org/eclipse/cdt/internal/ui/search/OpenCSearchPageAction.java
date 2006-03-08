@@ -26,8 +26,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  */
 public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 
-	private static final String C_SEARCH_PAGE_ID= "org.eclipse.cdt.ui.CSearchPage";  //$NON-NLS-1$
-
 	private IWorkbenchWindow fWindow;
 	
 	public OpenCSearchPageAction() {
@@ -44,7 +42,7 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 			beep();
 			return;
 		}
-		NewSearchUI.openSearchDialog(fWindow, C_SEARCH_PAGE_ID);
+		NewSearchUI.openSearchDialog(fWindow, PDOMSearchPage.EXTENSION_POINT_ID);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

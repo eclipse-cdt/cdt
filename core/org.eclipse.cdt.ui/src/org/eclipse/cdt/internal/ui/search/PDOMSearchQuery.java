@@ -11,6 +11,10 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 
@@ -53,6 +57,39 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 
 	public ISearchResult getSearchResult() {
 		return result;
+	}
+
+	/**
+	 * Return true to filter name out of the match list.
+	 * Override in a subclass to add scoping.
+	 * @param name
+	 * @return true to filter name out of the match list
+	 */
+	protected boolean filterName(PDOMName name) {
+		return false; // i.e. keep it
+	}
+	
+	private void collectNames(PDOMName name) throws CoreException {
+		while (name != null) {
+			if (!filterName(name)) {
+				IASTFileLocation loc = name.getFileLocation();
+				result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
+				name = name.getNextInBinding();
+			}
+		}
+	}
+
+	protected void createMatches(PDOMBinding binding) throws CoreException {
+		if ((flags & FIND_DECLARATIONS) != 0) {
+			collectNames(binding.getFirstDeclaration());
+		}
+		if ((flags & FIND_DECLARATIONS) != 0) {
+			collectNames(binding.getFirstDefinition());
+		}
+		if ((flags & FIND_REFERENCES) != 0) {
+			collectNames(binding.getFirstReference());
+		}
+		
 	}
 
 }

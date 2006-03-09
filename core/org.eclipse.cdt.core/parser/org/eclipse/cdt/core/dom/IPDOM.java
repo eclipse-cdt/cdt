@@ -26,8 +26,6 @@ public interface IPDOM {
 
 	public IBinding resolveBinding(IASTName name);
 	
-	public IBinding[] resolvePrefix(IASTName name);
-	
 	public IASTName[] getDeclarations(IBinding binding);
 	
 	public void delete() throws CoreException;

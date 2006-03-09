@@ -1466,7 +1466,7 @@ public class CPPSemantics {
 				item = nodes[idx];
 			} else {
 			    item = null;
-			    nullItem: while( item == null ){
+			    while( item == null ){
 				    if( namespaceIdx > -1 ) {
 				        //check all definitions of this namespace
 					    while( namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx ){
@@ -3279,13 +3279,6 @@ public class CPPSemantics {
             }
         }
         
-        IASTTranslationUnit tu = name.getTranslationUnit();
-        if (tu != null) {
-        	IPDOM pdom = tu.getIndex(); 
-        	if (pdom != null)
-        		result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
-        }
-
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
 

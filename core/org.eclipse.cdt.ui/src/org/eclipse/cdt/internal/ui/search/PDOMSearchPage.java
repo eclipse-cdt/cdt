@@ -234,8 +234,27 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(STORE_CASE_SENSITIVE, isCaseSensitive);
 		
-		if (previousPatterns != null)
-			settings.put(STORE_PREVIOUS_PATTERNS, previousPatterns);
+		if (previousPatterns == null)
+			previousPatterns = new String[] { pattern };
+		else {
+			// Add only if we don't have it already
+			boolean addit = true;
+			for (int i = 0; i < previousPatterns.length; ++i) {
+				if (pattern.equals(previousPatterns[i])) {
+					addit = false;
+					break;
+				}
+			}
+			if (addit) {
+				// Insert it into the beginning of the list
+				String[] newPatterns = new String[previousPatterns.length + 1];
+				System.arraycopy(previousPatterns, 0, newPatterns, 1, previousPatterns.length);
+				newPatterns[0] = pattern;
+				previousPatterns = newPatterns;
+			}
+		}
+
+		settings.put(STORE_PREVIOUS_PATTERNS, previousPatterns);
 		
 		settings.put(STORE_SEARCH_FLAGS, searchFlags);
 
@@ -452,6 +471,10 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					// Int was unitialized, assume the defaults
 				}
 
+				previousPatterns = settings.getArray(STORE_PREVIOUS_PATTERNS);
+				if (previousPatterns != null)
+					patternCombo.setItems(previousPatterns);
+
 				// Initialize the selection
 				ISelection selection = getContainer().getSelection();
 				if (selection instanceof IStructuredSelection) {
@@ -510,9 +533,6 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					// the selection is valid.
 				}
 
-				String[] previousPatterns = settings.getArray(STORE_PREVIOUS_PATTERNS);
-				if (previousPatterns != null)
-					patternCombo.setItems(previousPatterns);
 				caseSensitiveButton.setSelection(settings.getBoolean(STORE_CASE_SENSITIVE));
 				
 				if ((searchFlags & PDOMSearchPatternQuery.FIND_ALL_TYPES) == PDOMSearchPatternQuery.FIND_ALL_TYPES) {

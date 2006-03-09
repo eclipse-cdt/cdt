@@ -11,11 +11,16 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -25,6 +30,35 @@ import org.eclipse.core.runtime.CoreException;
  * link time. These are generally global symbols specific to a given language.
  */
 public abstract class PDOMLinkage extends PDOMNode {
+
+	protected static final class MatchBinding implements IBTreeVisitor {
+			private final PDOMDatabase pdom;
+			private final List bindings;
+			private final Pattern pattern;
+			
+			public MatchBinding(PDOMDatabase pdom, String pattern, List bindings) {
+				this.pdom = pdom;
+				this.bindings = bindings;
+				this.pattern = Pattern.compile(pattern);
+			}
+			
+			public boolean visit(int record) throws CoreException {
+				if (record == 0)
+					return true;
+				
+				// TODO of course do something smarter here
+				PDOMBinding binding = pdom.getBinding(record);
+				if (binding != null) {
+					Matcher matcher = pattern.matcher(binding.getName());
+					if (matcher.matches())
+						bindings.add(binding);
+				}
+				return true;
+			}
+			public int compare(int record) throws CoreException {
+				return 1;
+			}
+		}
 
 	private static final int ID_OFFSET   = PDOMNode.RECORD_SIZE + 0;
 	private static final int NEXT_OFFSET = PDOMNode.RECORD_SIZE + 4;
@@ -88,5 +122,7 @@ public abstract class PDOMLinkage extends PDOMNode {
 	public abstract PDOMBinding getBinding(int record) throws CoreException;
 	
 	public abstract PDOMBinding resolveBinding(IASTName name) throws CoreException;
+
+	public abstract void findBindings(String pattern, List bindings) throws CoreException;
 	
 }

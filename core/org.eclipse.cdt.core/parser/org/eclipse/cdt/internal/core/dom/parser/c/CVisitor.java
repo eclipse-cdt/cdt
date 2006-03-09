@@ -1906,13 +1906,6 @@ public class CVisitor {
 	        }
         }
         
-        IASTTranslationUnit tu = name.getTranslationUnit();
-        if (tu != null) {
-	        IPDOM pdom = tu.getIndex(); 
-	        if (pdom != null)
-	        	result = (IBinding[])ArrayUtil.addAll(IBinding.class, result, pdom.resolvePrefix(name));
-        }
-        
         return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
     

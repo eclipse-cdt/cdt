@@ -11,8 +11,18 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.model.ICElement;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.cdt.core.dom.PDOM;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -58,8 +68,37 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	}
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		// TODO Auto-generated method stub
-		return Status.OK_STATUS;
+		// get the list of projects we need to search
+		List projects = new ArrayList();
+		for (int i = 0; i < scope.length; ++i) {
+			if (scope[i] instanceof IWorkspaceRoot) {
+				IProject[] p = ((IWorkspaceRoot)scope[i]).getProjects();
+				for (int j = 0; j < p.length; ++j)
+					projects.add(p[j]);
+			} else
+				projects.add(scope[i].getProject());
+		}
+		
+		try {
+			for (Iterator iproject = projects.iterator(); iproject.hasNext();)
+				searchProject((IProject)iproject.next());
+			return Status.OK_STATUS;
+		} catch (CoreException e) {
+			return e.getStatus();
+		}
+	}
+	
+	private void searchProject(IProject project) throws CoreException {
+		if (!CoreModel.hasCNature(project))
+			// Not a CDT project
+			return;
+
+		PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(project);
+		PDOMBinding[] bindings = pdom.findBindings(pattern);
+		
+		for (int i = 0; i < bindings.length; ++i) {
+			createMatches(bindings[i]);
+		}
 	}
 	
 	public String getLabel() {

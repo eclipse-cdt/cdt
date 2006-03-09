@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -208,4 +210,8 @@ public class PDOMCLinkage extends PDOMLinkage {
 		return null;
 	}
 	
+	public void findBindings(String pattern, List bindings) throws CoreException {
+		MatchBinding visitor = new MatchBinding(pdom, pattern, bindings);
+		getIndex().visit(visitor);
+	}
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -191,8 +192,14 @@ public class PDOMDatabase implements IPDOM {
 		return null;
 	}
 
-	public IBinding[] resolvePrefix(IASTName name) {
-		return new IBinding[0];
+	public PDOMBinding[] findBindings(String pattern) throws CoreException {
+		List bindings = new ArrayList();
+		PDOMLinkage linkage = getFirstLinkage();
+		while (linkage != null) {
+			linkage.findBindings(pattern, bindings);
+			linkage = linkage.getNextLinkage();
+		}
+		return (PDOMBinding[])bindings.toArray(new PDOMBinding[bindings.size()]);
 	}
 	
 	public PDOMLinkage getLinkage(ILanguage language) throws CoreException {

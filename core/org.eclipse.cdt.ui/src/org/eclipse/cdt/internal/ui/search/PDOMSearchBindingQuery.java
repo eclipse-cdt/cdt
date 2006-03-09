@@ -11,9 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,31 +35,7 @@ public class PDOMSearchBindingQuery extends PDOMSearchQuery {
 	
 	public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			if ((flags & FIND_DECLARATIONS) != 0) {
-				PDOMName name = binding.getFirstDeclaration();
-				while (name != null) {
-					IASTFileLocation loc = name.getFileLocation();
-					result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
-					name = name.getNextInBinding();
-				}
-			}
-			if ((flags & (FIND_DECLARATIONS)) != 0) {
-				// for decls we do defs too
-				PDOMName name = binding.getFirstDefinition();
-				while (name != null) {
-					IASTFileLocation loc = name.getFileLocation();
-					result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
-					name = name.getNextInBinding();
-				}
-			}
-			if ((flags & FIND_REFERENCES) != 0) {
-				PDOMName name = binding.getFirstReference();
-				while (name != null) {
-					IASTFileLocation loc = name.getFileLocation();
-					result.addMatch(new PDOMSearchMatch(name, loc.getNodeOffset(), loc.getNodeLength()));
-					name = name.getNextInBinding();
-				}
-			}
+			createMatches(binding);
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e);

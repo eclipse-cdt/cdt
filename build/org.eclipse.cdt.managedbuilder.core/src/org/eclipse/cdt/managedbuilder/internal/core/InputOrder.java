@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
-import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IInputOrder;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,6 +31,7 @@ public class InputOrder implements IInputOrder {
 	private boolean isExtensionInputOrder = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
+	private boolean rebuildState; 
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -108,6 +109,7 @@ public class InputOrder implements IInputOrder {
 		}
 		
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/*
@@ -216,6 +218,7 @@ public class InputOrder implements IInputOrder {
 		if (path == null || newPath == null || !(path.equals(newPath))) {
 			path = newPath;
 			isDirty = true;
+			setRebuildState(true);
 		}
 	}
 
@@ -234,6 +237,7 @@ public class InputOrder implements IInputOrder {
 		if (order == null || newOrder == null || !(order.equals(newOrder))) {
 			order = newOrder;
 			isDirty = true;
+			setRebuildState(true);
 		}
 	}
 
@@ -251,6 +255,7 @@ public class InputOrder implements IInputOrder {
 		if (excluded == null || !(b == excluded.booleanValue())) {
 			excluded = new Boolean(b);
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -291,4 +296,14 @@ public class InputOrder implements IInputOrder {
 		}
 	}
 	
+	public boolean needsRebuild(){
+		return rebuildState;
+	}
+	
+	public void setRebuildState(boolean rebuild){
+		if(isExtensionElement() && rebuild)
+			return;
+		
+		rebuildState = rebuild;
+	}
 }

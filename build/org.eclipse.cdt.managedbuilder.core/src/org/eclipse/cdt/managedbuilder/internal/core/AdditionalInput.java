@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class AdditionalInput implements IAdditionalInput {
 	private boolean isExtensionAdditionalInput = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
+	private boolean rebuildState;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -65,6 +66,7 @@ public class AdditionalInput implements IAdditionalInput {
 		isExtensionAdditionalInput = isExtensionElement;
 		if (!isExtensionElement) {
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -103,6 +105,7 @@ public class AdditionalInput implements IAdditionalInput {
 		}
 		
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/*
@@ -226,6 +229,7 @@ public class AdditionalInput implements IAdditionalInput {
 		if (paths == null || newPaths == null || !(paths.equals(newPaths))) {
 			paths = newPaths;
 			isDirty = true;
+			setRebuildState(true);
 		}
 	}
 
@@ -246,6 +250,7 @@ public class AdditionalInput implements IAdditionalInput {
 		if (kind == null || !(kind.intValue() == newKind)) {
 			kind = new Integer(newKind);
 			isDirty = true;
+			setRebuildState(true);
 		}
 	}
 
@@ -285,4 +290,15 @@ public class AdditionalInput implements IAdditionalInput {
 		}
 	}
 	
+	public boolean needsRebuild(){
+		return rebuildState;
+	}
+	
+	public void setRebuildState(boolean rebuild){
+		if(isExtensionElement() && rebuild)
+			return;
+
+		rebuildState = rebuild;
+	}
+
 }

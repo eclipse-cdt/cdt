@@ -657,7 +657,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 					    //       file rebuilt?  "Clean" its output?  Change its modification date?
 						//realCfg.setRebuildState(true);
 					//} else {
-						realCfg.setRebuildState(true);
+//						realCfg.setRebuildState(true);
 					//}
 				}
 				currentValue = ((ITool)realHo).getCommandLinePattern();
@@ -668,7 +668,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 					    //       file rebuilt?  "Clean" its output?  Change its modification date?
 						//realCfg.setRebuildState(true);
 					//} else {
-						realCfg.setRebuildState(true);
+//						realCfg.setRebuildState(true);
 					//}
 				}
 			}

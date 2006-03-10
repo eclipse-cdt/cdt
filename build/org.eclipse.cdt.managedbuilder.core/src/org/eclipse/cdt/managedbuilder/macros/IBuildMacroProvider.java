@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,6 +116,18 @@ public interface IBuildMacroProvider{
 
 	/**
 	 * 
+	 * resolves macros in the array of string-list values
+	 * 
+	 * @see isStringListValue
+	 */
+	public String[] resolveStringListValues(String value[], 
+					String nonexistentMacrosValue,
+					String listDelimiter,
+					int contextType, 
+					Object contextData) throws BuildMacroException;
+
+	/**
+	 * 
 	 * resolves all macros in the string to the makefile format. That is:
 	 * 1. In case when a user has specified to resolve the environment build macros all macros 
 	 * get resolved in the string
@@ -150,6 +162,18 @@ public interface IBuildMacroProvider{
 	 * @see isStringListValue
 	 */
 	public String[] resolveStringListValueToMakefileFormat(String value, 
+					String nonexistentMacrosValue,
+					String listDelimiter,
+					int contextType, 
+					Object contextData) throws BuildMacroException;
+
+	/**
+	 * resolves macros in the array of string-list values
+	 * macros are resolved to the makefile format
+	 * 
+	 * @see isStringListValue
+	 */
+	public String[] resolveStringListValuesToMakefileFormat(String value[], 
 					String nonexistentMacrosValue,
 					String listDelimiter,
 					int contextType, 

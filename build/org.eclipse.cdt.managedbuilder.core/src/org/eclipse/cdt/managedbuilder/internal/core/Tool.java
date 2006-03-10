@@ -125,6 +125,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 	private boolean resolved = resolvedDefault;
 	private IConfigurationElement previousMbsVersionConversionElement = null;
 	private IConfigurationElement currentMbsVersionConversionElement = null;
+	private boolean rebuildState;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -216,6 +217,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 			ManagedBuildManager.addExtensionTool(this);
 		} else {
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -248,6 +250,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 			ManagedBuildManager.addExtensionTool(this);
 		} else {
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -421,6 +424,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		}	
 		
         setDirty(true);
+		setRebuildState(true);
 	}
 	
 	/*
@@ -2004,6 +2008,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (cmd == null || command == null || !cmd.equals(command)) {
 			command = cmd;
 			isDirty = true;
+			setRebuildState(true);
 			return true;
 		} else {
 			return false;
@@ -2017,6 +2022,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (pattern == null && commandLinePattern == null) return;
 		if (pattern == null || commandLinePattern == null || !pattern.equals(commandLinePattern)) {
 			commandLinePattern = pattern;
+			setRebuildState(true);
 			isDirty = true;
 		}
 	}
@@ -2028,6 +2034,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (flag == null && outputFlag == null) return;
 		if (outputFlag == null || flag == null || !(flag.equals(outputFlag))) {
 			outputFlag = flag;
+			setRebuildState(true);
 			isDirty = true;
 		}
 	}
@@ -2039,6 +2046,7 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		if (prefix == null && outputPrefix == null) return;
 		if (outputPrefix == null || prefix == null || !(prefix.equals(outputPrefix))) {
 			outputPrefix = prefix;
+			setRebuildState(true);
 			isDirty = true;
 		}
 	}
@@ -2822,4 +2830,58 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory {
 		return globalSpecs;		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		if(rebuildState)
+			return true;
+		
+		// Check my children
+		List typeElements = getInputTypeList();
+		Iterator iter = typeElements.listIterator();
+		while (iter.hasNext()) {
+			InputType type = (InputType) iter.next();
+			if (type.needsRebuild()) return true;
+		}
+		typeElements = getOutputTypeList();
+		iter = typeElements.listIterator();
+		while (iter.hasNext()) {
+			OutputType type = (OutputType) iter.next();
+			if (type.needsRebuild()) return true;
+		}
+
+		return super.needsRebuild();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+		if(isExtensionElement() && rebuild)
+			return;
+		
+		rebuildState = rebuild;
+		
+		if(!rebuild){
+			super.setRebuildState(rebuild);
+			
+			if (!rebuild) {
+				List typeElements = getInputTypeList();
+				Iterator iter = typeElements.listIterator();
+				while (iter.hasNext()) {
+					InputType type = (InputType) iter.next();
+					type.setRebuildState(false);
+				}
+				typeElements = getOutputTypeList();
+				iter = typeElements.listIterator();
+				while (iter.hasNext()) {
+					OutputType type = (OutputType) iter.next();
+					type.setRebuildState(false);
+				}
+			}
+		}
+		
+		
+	}
 }

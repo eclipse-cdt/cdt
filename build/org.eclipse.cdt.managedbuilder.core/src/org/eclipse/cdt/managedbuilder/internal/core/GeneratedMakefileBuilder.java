@@ -27,7 +27,9 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration; 
+import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
@@ -61,7 +63,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 1.2 
  */
 public class GeneratedMakefileBuilder extends ACBuilder {
-	
 	/**
 	 * @since 1.2
 	 */
@@ -327,13 +328,72 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			outputError(getProject().getName(), "Build information is not valid");	//$NON-NLS-1$
 			return referencedProjects;
 		}
-		
+
 		// Create a makefile generator for the build
 		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 		generator.initialize(getProject(), info, monitor);
 
+		IConfiguration cfg = info.getDefaultConfiguration();
+		
+		//perform necessary cleaning and build type calculation
+		if(cfg.needsFullRebuild()){
+			//configuration rebuild state is set to true,
+			//full rebuild is needed in any case
+			//clean first, then make a full build
+			outputTrace(getProject().getName(), "config rebuild state is set to true, making a full rebuild");	//$NON-NLS-1$
+			clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+			fullBuild(info, generator, monitor);
+		} else {
+			boolean fullBuildNeeded = info.needsRebuild();
+			IBuildDescription des = null;
+			
+			IResourceDelta delta = kind == FULL_BUILD ? null : getDelta(getProject());
+			if(delta == null)
+				fullBuildNeeded = true;
+			if(cfg.needsRebuild() || delta != null){
+				//use a build desacription model to calculate the resources to be cleaned 
+				//only in case there are some changes to the project sources or build information
+				try{
+					int flags = BuildDescriptionManager.REBUILD;
+					if(delta != null)
+						flags |= BuildDescriptionManager.REMOVED;
+
+					outputTrace(getProject().getName(), "using a build description..");	//$NON-NLS-1$
+
+					des = BuildDescriptionManager.createBuildDescription(info.getDefaultConfiguration(), getDelta(getProject()), flags);
+	
+					BuildDescriptionManager.cleanRebuildResources(des);
+				} catch (Throwable e){
+					//TODO: log error
+					outputError(getProject().getName(), "error occured while build description calculation: " + e.getLocalizedMessage());	//$NON-NLS-1$
+					//in case an error occured, make it behave in the old stile:
+					if(info.needsRebuild()){
+						//make a full clean if an info needs a rebuild
+						clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+						fullBuildNeeded = true;
+					}
+					else if(delta != null && !fullBuildNeeded){
+						// Create a delta visitor to detect the build type
+						ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
+						delta.accept(visitor);
+						if (visitor.shouldBuildFull()) {
+							fullBuildNeeded = true;
+						}
+					}
+				}
+			}
+
+			if(fullBuildNeeded){
+				outputTrace(getProject().getName(), "performing a full build");	//$NON-NLS-1$
+				fullBuild(info, generator, monitor);
+			} else {
+				outputTrace(getProject().getName(), "performing an incremental build");	//$NON-NLS-1$
+				incrementalBuild(delta, info, generator, monitor);
+			}
+		}
+/*
 		// So let's figure out why we got called
-		if (kind == FULL_BUILD || info.needsRebuild()) {
+		if (kind == FULL_BUILD) {
 			outputTrace(getProject().getName(), "Full build needed/requested");	//$NON-NLS-1$
 			fullBuild(info, generator, monitor);
 		}
@@ -385,6 +445,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				}
 			}
 		}
+*/
 		// Scrub the build info the project
 		info.setRebuildState(false);
 		// Ask build mechanism to compute deltas for project dependencies next time
@@ -505,7 +566,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		//in case one or more of the generated makefiles (e.g. dep files) are corrupted, 
 		//the builder invocation might fail because of the possible syntax errors, so e.g. "make clean" will not work 
 		//we need to explicitly clean the generated directories
-		clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
+//		clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 		
 		// Regenerate the makefiles for this project
 		checkCancel(monitor);
@@ -913,10 +974,18 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						} catch (IOException e) {
 						}
 
-						if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
+						int state = launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
 								new SubProgressMonitor(monitor,
-										IProgressMonitor.UNKNOWN)) != CommandLauncher.OK) {
+										IProgressMonitor.UNKNOWN));
+						if(state != CommandLauncher.OK){
 							errMsg = launcher.getErrorMessage();
+							
+							if(state == CommandLauncher.COMMAND_CANCELED){
+								//TODO: the better way of handling cancel is needed
+								//currently the rebuild state is set to true forcing the full rebuild
+								//on the next builder invocation
+								info.getDefaultConfiguration().setRebuildState(true);
+							}
 						}
 
 						// Force a resync of the projects without allowing the user to cancel. 

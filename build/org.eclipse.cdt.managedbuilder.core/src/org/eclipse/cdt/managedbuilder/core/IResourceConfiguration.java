@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,5 +218,17 @@ public interface IResourceConfiguration extends IBuildObject {
 	 * @return IResource
 	 */
 	public IResource getOwner();
-	
+
+	/**
+	 * specifies whether the resource configuration is modified and needs rebuild
+	 * 
+	 * @return boolean
+	 */	
+	public boolean needsRebuild();
+
+	/**
+	 * sets the resource configuration rebuild state
+	 * @param rebuild
+	 */
+	void setRebuildState(boolean rebuild);
 }

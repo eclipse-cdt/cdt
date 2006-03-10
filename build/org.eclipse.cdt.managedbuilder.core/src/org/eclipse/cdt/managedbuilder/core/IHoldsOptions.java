@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Symbian Ltd and others.
+ * Copyright (c) 2005, 2006 Symbian Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,4 +156,17 @@ public interface IHoldsOptions extends IBuildObject {
 	* Note: changing this option will affect all non-extension configurations using this option!
 	*/
 	IOption getOptionToSet(IOption option, boolean adjustExtension) throws BuildException;
+	
+	/**
+	 * specifies whether the option holder is modified and needs rebuild
+	 * 
+	 * @return boolean
+	 */
+	public boolean needsRebuild();
+	
+	/**
+	 * sets the holder rebuild state
+	 * @param rebuild
+	 */
+	public void setRebuildState(boolean rebuild);
 }

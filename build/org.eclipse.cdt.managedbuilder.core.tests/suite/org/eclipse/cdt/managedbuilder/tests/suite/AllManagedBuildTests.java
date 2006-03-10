@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.tests.BuildDescriptionModelTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTests;
-import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildTCSupportedTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedCommandLineGeneratorTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedProject21MakefileTests;
@@ -46,7 +47,7 @@ public class AllManagedBuildTests {
 		TestSuite suite = new TestSuite(
 				"Test for org.eclipse.cdt.managedbuild.core.tests");
 		//$JUnit-BEGIN$
-// TODO uncoment this		
+// TODO uncoment this
 		suite.addTest(ManagedBuildCoreTests20.suite());
 		suite.addTest(ManagedBuildCoreTests.suite());
 		suite.addTest(ManagedProjectUpdateTests.suite());
@@ -61,6 +62,7 @@ public class AllManagedBuildTests {
 		suite.addTest(MultiVersionSupportTests.suite());
 		suite.addTest(OptionEnablementTests.suite());
 		suite.addTest(ManagedBuildDependencyCalculatorTests.suite());
+		suite.addTest(BuildDescriptionModelTests.suite());
 		//$JUnit-END$
 		return suite;
 	}

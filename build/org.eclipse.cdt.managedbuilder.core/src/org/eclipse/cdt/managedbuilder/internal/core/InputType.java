@@ -67,6 +67,7 @@ public class InputType extends BuildObject implements IInputType {
 	private boolean isExtensionInputType = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
+	private boolean rebuildState;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -131,6 +132,7 @@ public class InputType extends BuildObject implements IInputType {
 			ManagedBuildManager.addExtensionInputType(this);
 		} else {
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -237,6 +239,7 @@ public class InputType extends BuildObject implements IInputType {
 		}
 		
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/*
@@ -756,6 +759,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (buildVariable == null || variableName == null || !(variableName.equals(buildVariable))) {
 			buildVariable = variableName;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -785,6 +789,7 @@ public class InputType extends BuildObject implements IInputType {
 				dependencyContentTypeId = null;
 			}
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -817,6 +822,7 @@ public class InputType extends BuildObject implements IInputType {
 			}
 		}
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/* (non-Javadoc)
@@ -908,6 +914,7 @@ public class InputType extends BuildObject implements IInputType {
 	public void setDependencyGeneratorElement(IConfigurationElement element) {
 		dependencyGeneratorElement = element;
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/* (non-Javadoc)
@@ -931,6 +938,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (multipleOfType == null || !(b == multipleOfType.booleanValue())) {
 			multipleOfType = new Boolean(b);
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -955,6 +963,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (primaryInput == null || !(b == primaryInput.booleanValue())) {
 			primaryInput = new Boolean(b);
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -980,6 +989,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (id == null || optionId == null || !(optionId.equals(id))) {
 			optionId = id;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -1005,6 +1015,7 @@ public class InputType extends BuildObject implements IInputType {
 		if (id == null || assignToOptionId == null || !(assignToOptionId.equals(id))) {
 			assignToOptionId = id;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -1034,6 +1045,7 @@ public class InputType extends BuildObject implements IInputType {
 				sourceContentTypeId = null;
 			}
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -1064,6 +1076,7 @@ public class InputType extends BuildObject implements IInputType {
 			}
 		}
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/* (non-Javadoc)
@@ -1218,4 +1231,45 @@ public class InputType extends BuildObject implements IInputType {
 	public void setVersion(PluginVersionIdentifier version) {
 		// Do nothing
 	}
+	
+	public boolean needsRebuild(){
+		if(rebuildState)
+			return true;
+		
+		Iterator typeIter = getInputOrderList().iterator();
+		while (typeIter.hasNext()) {
+			InputOrder current = (InputOrder)typeIter.next();
+			if (current.needsRebuild()) return true;
+		}
+		typeIter = getAdditionalInputList().iterator();
+		while (typeIter.hasNext()) {
+			AdditionalInput current = (AdditionalInput)typeIter.next();
+			if (current.needsRebuild()) return true;
+		}
+
+		return rebuildState;
+	}
+	
+	public void setRebuildState(boolean rebuild){
+		if(isExtensionElement() && rebuild)
+			return;
+
+		rebuildState = rebuild;
+		
+		// Propagate "false" to the children
+		if (!rebuild) {
+			Iterator typeIter = getInputOrderList().iterator();
+			while (typeIter.hasNext()) {
+				InputOrder current = (InputOrder)typeIter.next();
+				current.setRebuildState(false);
+			}
+			typeIter = getAdditionalInputList().iterator();
+			while (typeIter.hasNext()) {
+				AdditionalInput current = (AdditionalInput)typeIter.next();
+				current.setRebuildState(false);
+			}
+		}
+
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -346,7 +346,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Hook me up
 		managedProject.addConfiguration(this);
 		setDirty(true);
-		rebuildNeeded = true;
+		setRebuildState(true);
 	}
 
 	/*
@@ -719,7 +719,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (option.getBooleanValue() != value) {
 			retOpt = holder.getOptionToSet(option, false);
 			retOpt.setValue(value);
-			rebuildNeeded = true;
+//			rebuildNeeded = true;
 		}
 		return retOpt;
 	}
@@ -734,7 +734,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (oldValue != null && !oldValue.equals(value)) {
 			retOpt = holder.getOptionToSet(option, false);
 			retOpt.setValue(value);
-			rebuildNeeded = true;
+//			rebuildNeeded = true;
 		}
 		return retOpt;
 	}
@@ -769,7 +769,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(!Arrays.equals(value, oldValue)) {
 			retOpt = holder.getOptionToSet(option, false);
 			retOpt.setValue(value);
-			rebuildNeeded = true;
+//			rebuildNeeded = true;
 		} 
 		return retOpt;
 	}
@@ -807,7 +807,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		getResourceConfigurationList().add(resConfig);
 		getResourceConfigurationMap().put(resConfig.getResourcePath(), resConfig);
 		isDirty = true;
-		rebuildNeeded = true;
+//		rebuildNeeded = true;
 	}
 
 	public void removeResourceConfiguration(IResourceConfiguration resConfig) {
@@ -816,7 +816,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		getResourceConfigurationList().remove(resConfig);
 		getResourceConfigurationMap().remove(resConfig.getResourcePath());
 		isDirty = true;
-		rebuildNeeded = true;
+//		rebuildNeeded = true;
 	}
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
@@ -1060,7 +1060,15 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (extension == null && artifactExtension == null) return;
 		if (artifactExtension == null || extension == null || !artifactExtension.equals(extension)) {
 			artifactExtension = extension;
-			rebuildNeeded = true;
+//			rebuildNeeded = true;
+			if(!isExtensionElement()){
+				ITool tool = calculateTargetTool();
+				if(tool != null){
+					tool.setRebuildState(true);
+				} else {
+					setRebuildState(true);
+				}
+			}
 			isDirty = true;
 		}
 	}
@@ -1072,7 +1080,15 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (name == null && artifactName == null) return;
 		if (artifactName == null || name == null || !artifactName.equals(name)) {
 			artifactName = name;
-			rebuildNeeded = true;
+			if(!isExtensionElement()){
+				ITool tool = calculateTargetTool();
+				if(tool != null) {
+					tool.setRebuildState(true);
+				} else {
+					setRebuildState(true);
+				}
+			}
+//			rebuildNeeded = true;
 			isDirty = true;
 		}
 	}
@@ -1120,7 +1136,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(makeArgs == null){ //resetting the build arguments
 			if(!builder.isExtensionElement()){
 				builder.setArguments(makeArgs);
-				rebuildNeeded = true;
+//				rebuildNeeded = true;
 			}
 		}else if(!makeArgs.equals(builder.getArguments())){
 			if (builder.isExtensionElement()) {
@@ -1129,7 +1145,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				builder = toolChain.createBuilder(builder, subId, builderName, false);
 			}
 			builder.setArguments(makeArgs);
-			rebuildNeeded = true;
+//			rebuildNeeded = true;
 		}
 	}
 
@@ -1142,7 +1158,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if(command == null){ //resetting the build command
 			if(!builder.isExtensionElement()){
 				builder.setCommand(command);
-				rebuildNeeded = true;
+//				rebuildNeeded = true;
 			}
 		} else if(!command.equals(builder.getCommand())){
 			if (builder.isExtensionElement()) {
@@ -1151,7 +1167,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				builder = toolChain.createBuilder(builder, subId, builderName, false);
 			}
 			builder.setCommand(command);
-			rebuildNeeded = true;
+//			rebuildNeeded = true;
 		}
 	}
  
@@ -1162,7 +1178,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (step == null && prebuildStep == null) return; 
         if (prebuildStep == null || step == null || !prebuildStep.equals(step)) { 
             prebuildStep = step; 
-            rebuildNeeded = true;
+//			rebuildNeeded = true;
             isDirty = true; 
         } 
     } 
@@ -1175,7 +1191,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (step == null && postbuildStep == null) return; 
         if (postbuildStep == null || step == null || !postbuildStep.equals(step)) { 
             postbuildStep = step; 
-    		rebuildNeeded = true;
+//    		rebuildNeeded = true;
             isDirty = true; 
         }       
     } 
@@ -1187,7 +1203,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (announceStep == null && preannouncebuildStep == null) return; 
         if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
             preannouncebuildStep = announceStep; 
-    		rebuildNeeded = true;
+//    		rebuildNeeded = true;
             isDirty = true; 
         } 
     } 
@@ -1199,7 +1215,7 @@ public class Configuration extends BuildObject implements IConfiguration {
         if (announceStep == null && postannouncebuildStep == null) return; 
         if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
             postannouncebuildStep = announceStep; 
-    		rebuildNeeded = true;
+//    		rebuildNeeded = true;
             isDirty = true; 
         } 
     } 
@@ -1290,7 +1306,39 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#needsRebuild()
 	 */
 	public boolean needsRebuild() {
-		return rebuildNeeded;
+		return needsRebuild(true);
+	}
+	
+	public boolean needsFullRebuild() {
+		return needsRebuild(false);
+	}
+	
+	public boolean needsRebuild(boolean checkChildren) {
+		if(rebuildNeeded || !checkChildren)
+			return rebuildNeeded;
+		
+		if(toolChain.needsRebuild())
+			return true;
+		
+		for(Iterator iter = resourceConfigurationList.iterator();iter.hasNext();){
+			IResourceConfiguration rcCfg = (IResourceConfiguration)iter.next();
+			if(rcCfg.needsRebuild())
+				return true;
+			
+			ITool tools[] = rcCfg.getToolsToInvoke();
+			for(int i = 0; i < tools.length; i++){
+				if(tools[i].needsRebuild())
+					return true;
+			}
+		}
+
+		ITool tools[] = getFilteredTools();
+		for(int i = 0; i < tools.length; i++){
+			if(tools[i].needsRebuild())
+				return true;
+		}
+
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -1314,9 +1362,29 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setRebuildState(boolean)
 	 */
 	public void setRebuildState(boolean rebuild) {
+		if(isExtensionElement() && rebuild)
+			return;
+		
 		rebuildNeeded = rebuild;
-		if(rebuild && !isTemporary())
-			((EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider()).checkBuildPathVariables(this);
+		
+		if(!rebuildNeeded){
+			toolChain.setRebuildState(false);
+			
+			for(Iterator iter = resourceConfigurationList.iterator();iter.hasNext();){
+				IResourceConfiguration rcCfg = (IResourceConfiguration)iter.next();
+				rcCfg.setRebuildState(false);
+				
+				ITool tools[] = rcCfg.getToolsToInvoke();
+				for(int i = 0; i < tools.length; i++){
+					tools[i].setRebuildState(false);
+				}
+			}
+	
+			ITool tools[] = getFilteredTools();
+			for(int i = 0; i < tools.length; i++){
+				tools[i].setRebuildState(false);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1390,7 +1458,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			toolChain.removeOption(opts[j]);
 		}
 		
-		rebuildNeeded = true;
+//		rebuildNeeded = true;
 	}
 
 	/*
@@ -1485,5 +1553,33 @@ public class Configuration extends BuildObject implements IConfiguration {
 			if (!isExtensionElement())
 				setDirty(true);
 		}		
+	}
+	
+	public ITool calculateTargetTool(){
+		ITool tool = getTargetTool();
+		
+		if(tool == null){
+			IConfiguration extCfg;
+			for(extCfg = this; 
+			extCfg != null && !extCfg.isExtensionElement(); 
+			extCfg = extCfg.getParent()){
+				
+			}
+
+			String ext = extCfg != null ? extCfg.getArtifactExtension() :
+				getArtifactExtension();
+			
+			// Get all the tools for the current config
+			ITool[] tools = getFilteredTools();
+			for (int index = 0; index < tools.length; index++) {
+				ITool t = tools[index];
+				if (t.producesFileType(ext)) {
+					tool = t;
+					break;
+				}
+			}
+		}
+		
+		return tool;
 	}
 }

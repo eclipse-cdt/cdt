@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 
 	private IConfigurationElement previousMbsVersionConversionElement = null;
 	private IConfigurationElement currentMbsVersionConversionElement = null;
+	private boolean rebuildState;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -185,6 +186,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			ManagedBuildManager.addExtensionToolChain(this);
 		} else {
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -363,6 +365,7 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 		}
 		
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/*
@@ -1727,4 +1730,25 @@ public class ToolChain extends HoldsOptions implements IToolChain {
 			builder.updateManagedBuildRevision(revision);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		if(rebuildState)
+			return true;
+		return super.needsRebuild();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+		if(isExtensionElement() && rebuild)
+			return;
+
+		rebuildState = rebuild;
+		
+		if(!rebuild)
+			super.setRebuildState(rebuild);
+	}
 }

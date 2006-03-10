@@ -949,6 +949,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			// Save it
 			defaultConfig = configuration;
 			defaultConfigId = configuration.getId();
+			
+			defaultConfig.setRebuildState(true);
+			
 			// TODO: is this appropriate?
 			persistDefaultConfiguration();
 		}

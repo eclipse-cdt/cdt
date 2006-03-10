@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public class Option extends BuildObject implements IOption {
 	                                     * MBS 2.0 model OptionReference element
 	                                     */
 	private boolean isUdjusted = false;
+	private boolean rebuildState;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -137,6 +138,7 @@ public class Option extends BuildObject implements IOption {
 			ManagedBuildManager.addExtensionOption(this);
 		} else {
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -264,8 +266,10 @@ public class Option extends BuildObject implements IOption {
 			valueHandlerExtraArgument = new String(option.valueHandlerExtraArgument);
 		}		
 		
-		if(!isExtensionElement())
+		if(!isExtensionElement()){
 			setDirty(true);
+			setRebuildState(true);
+		}
 	}
 
 	/*
@@ -1337,8 +1341,10 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public void setDefaultValue(Object v) {
 		defaultValue = v;
-		if(!isExtensionElement())
+		if(!isExtensionElement()){
 			setDirty(true);
+			rebuildState = true;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -1352,8 +1358,10 @@ public class Option extends BuildObject implements IOption {
 			} else {
 				categoryId = null;
 			}
-			if(!isExtensionElement())
+			if(!isExtensionElement()){
 				setDirty(true);
+				rebuildState = true;
+			}
 		}
 	}
 
@@ -1364,8 +1372,10 @@ public class Option extends BuildObject implements IOption {
 		if (cmd == null && command == null) return;
 		if (cmd == null || command == null || !cmd.equals(command)) {
 			command = cmd;
-			if(!isExtensionElement())
+			if(!isExtensionElement()){
 				isDirty = true;
+				rebuildState = true;
+			}
 		}
 	}
 
@@ -1376,8 +1386,10 @@ public class Option extends BuildObject implements IOption {
 		if (cmd == null && commandFalse == null) return;
 		if (cmd == null || commandFalse == null || !cmd.equals(commandFalse)) {
 			commandFalse = cmd;
-			if(!isExtensionElement())
-				isDirty = true;		
+			if(!isExtensionElement()){
+				isDirty = true;
+				rebuildState = true;
+			}
 		}
 	}
 	
@@ -1388,8 +1400,10 @@ public class Option extends BuildObject implements IOption {
 		if (tooltip == null && tip == null) return;
 		if (tooltip == null || tip == null || !tooltip.equals(tip)) {
 			tip = tooltip;
-			if(!isExtensionElement())
+			if(!isExtensionElement()){
 				isDirty = true;		
+				rebuildState = true;
+			}
 		}
 	}
 	
@@ -1399,8 +1413,10 @@ public class Option extends BuildObject implements IOption {
 	public void setResourceFilter(int filter) {
 		if (resourceFilter == null || !(filter == resourceFilter.intValue())) {
 			resourceFilter = new Integer(filter);
-			if(!isExtensionElement())
+			if(!isExtensionElement()){
 				isDirty = true;
+				rebuildState = true;
+			}
 		}
 	}
 	
@@ -1410,8 +1426,10 @@ public class Option extends BuildObject implements IOption {
 	public void setBrowseType(int type) {
 		if (browseType == null || !(type == browseType.intValue())) {
 			browseType = new Integer(type);
-			if(!isExtensionElement())
+			if(!isExtensionElement()){
 				isDirty = true;
+				rebuildState = true;
+			}
 		}
 	}
 
@@ -1424,8 +1442,10 @@ public class Option extends BuildObject implements IOption {
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		if(!isExtensionElement())
+		if(!isExtensionElement()){
 			setDirty(true);
+			rebuildState = true;
+		}
 	}
 
 
@@ -1439,8 +1459,10 @@ public class Option extends BuildObject implements IOption {
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		if(!isExtensionElement())
+		if(!isExtensionElement()){
 			setDirty(true);
+			rebuildState = true;
+		}
 	}
 	
 
@@ -1463,8 +1485,10 @@ public class Option extends BuildObject implements IOption {
 		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		if(!isExtensionElement())
+		if(!isExtensionElement()){
 			setDirty(true);
+			rebuildState = true;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -1472,8 +1496,10 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public void setValue(Object v) {
 		value = v;
-		if(!isExtensionElement())
+		if(!isExtensionElement()){
 			setDirty(true);
+			rebuildState = true;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1483,8 +1509,10 @@ public class Option extends BuildObject implements IOption {
 		// TODO:  Verify that this is a valid type
 		if (valueType == null || valueType.intValue() != type) {
 			valueType = new Integer(type);
-			if(!isExtensionElement())
+			if(!isExtensionElement()){
 				setDirty(true);
+				rebuildState = true;
+			}
 		}
 	}
 
@@ -1505,8 +1533,10 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public void setValueHandlerElement(IConfigurationElement element) {
 		valueHandlerElement = element;
-		if(!isExtensionElement())
+		if(!isExtensionElement()){
 			setDirty(true);
+			rebuildState = true;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -1557,8 +1587,10 @@ public class Option extends BuildObject implements IOption {
  				valueHandlerExtraArgument == null ||
  				!extraArgument.equals(valueHandlerExtraArgument)) {
 			valueHandlerExtraArgument = extraArgument;
-			if(!isExtensionElement())
+			if(!isExtensionElement()){
 				isDirty = true;
+				rebuildState = true;
+			}
 		}
 	}
 
@@ -1864,4 +1896,14 @@ public class Option extends BuildObject implements IOption {
 		}		
 	}
 
+	public boolean needsRebuild() {
+		return rebuildState;
+	}
+
+	public void setRebuildState(boolean rebuild) {
+		if(isExtensionElement() && rebuild)
+			return;
+
+		rebuildState = rebuild;
+	}
 }

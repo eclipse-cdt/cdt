@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -273,12 +273,12 @@ public class UserDefinedEnvironmentSupplier extends
 		if(context == null)
 			return;
 		if(context instanceof IConfiguration){
-			((IConfiguration)context).setRebuildState(true);
+			cfgVarsModified((IConfiguration)context);
 		}
 		else if(context instanceof IManagedProject){
 			IConfiguration cfgs[] = ((IManagedProject)context).getConfigurations();
 			for(int i = 0; i < cfgs.length; i++){
-				cfgs[i].setRebuildState(true);
+				cfgVarsModified(cfgs[i]);
 			}
 		}
 		else if(context instanceof IWorkspace){
@@ -289,13 +289,18 @@ public class UserDefinedEnvironmentSupplier extends
 					if(info != null){
 						IConfiguration cfgs[] = info.getManagedProject().getConfigurations();
 						for(int j = 0; j < cfgs.length; j++){
-							cfgs[j].setRebuildState(true);
+							cfgVarsModified(cfgs[j]);
 						}
 					}
 				}
 			}
 		}
 			
+	}
+	
+	protected void cfgVarsModified(IConfiguration cfg){
+		cfg.setRebuildState(true);
+		EnvironmentVariableProvider.getDefault().checkBuildPathVariables(cfg);
 	}
 
 	protected String getValidName(String name){

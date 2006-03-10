@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	private boolean isExtensionOutputType = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
+	private boolean rebuildState;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -110,6 +111,7 @@ public class OutputType extends BuildObject implements IOutputType {
 			ManagedBuildManager.addExtensionOutputType(this);
 		} else {
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -186,6 +188,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		nameProvider = outputType.nameProvider; 
 		
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/*
@@ -468,6 +471,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (buildVariable == null || variableName == null || !(variableName.equals(buildVariable))) {
 			buildVariable = variableName;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -492,6 +496,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (multipleOfType == null || !(b == multipleOfType.booleanValue())) {
 			multipleOfType = new Boolean(b);
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -518,6 +523,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (namePattern == null || pattern == null || !(pattern.equals(namePattern))) {
 			namePattern = pattern;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -539,6 +545,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	public void setNameProviderElement(IConfigurationElement element) {
 		nameProviderElement = element;
 		setDirty(true);
+		setRebuildState(true);
 	}
 
 	/* (non-Javadoc)
@@ -582,6 +589,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (id == null || optionId == null || !(optionId.equals(id))) {
 			optionId = id;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -611,6 +619,7 @@ public class OutputType extends BuildObject implements IOutputType {
 				outputContentTypeId = null;
 			}
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -636,6 +645,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (outputs == null || exts == null || !(exts.equals(outputs))) {
 			outputs = exts;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -687,6 +697,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (outputPrefix == null || prefix == null || !(prefix.equals(outputPrefix))) {
 			outputPrefix = prefix;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -715,6 +726,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (outputNames == null || names == null || !(names.equals(outputNames))) {
 			outputNames = names;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -746,6 +758,7 @@ public class OutputType extends BuildObject implements IOutputType {
 				primaryInputTypeId = null;
 			}
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -770,6 +783,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		if (primaryOutput == null || !(b == primaryOutput.booleanValue())) {
 			primaryOutput = new Boolean(b);
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -858,5 +872,16 @@ public class OutputType extends BuildObject implements IOutputType {
 	
 	public void setVersion(PluginVersionIdentifier version) {
 		// Do nothing
+	}
+	
+	public boolean needsRebuild(){
+		return rebuildState;
+	}
+	
+	public void setRebuildState(boolean rebuild){
+		if(isExtensionElement() && rebuild)
+			return;
+
+		rebuildState = rebuild;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -407,8 +407,9 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		if(rcCfg != null && !oldPath.equals(newPath)){
 			config.removeResourceConfiguration(rcCfg);
 			rcCfg.setResourcePath(newPath.toString());
+			rcCfg.setRebuildState(true);
 			((Configuration)config).addResourceConfiguration((ResourceConfiguration)rcCfg);
-			config.setRebuildState(true);
+//			config.setRebuildState(true);
 			return true;
 		}
 		return false;
@@ -418,7 +419,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		IResourceConfiguration rcCfg = config.getResourceConfiguration(path.toString());
 		if(rcCfg != null){
 			config.removeResourceConfiguration(rcCfg);
-			config.setRebuildState(true);
+//			config.setRebuildState(true);
 			return true;
 		}
 		return false;

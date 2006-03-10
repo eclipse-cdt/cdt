@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Symbian Ltd and others.
+ * Copyright (c) 2005, 2006 Symbian Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 	private Map optionMap;
 	//  Miscellaneous
 	private boolean isDirty = false;
+	private boolean rebuildState;
 	
 	/*
 	 *  C O N S T R U C T O R S
@@ -189,8 +190,10 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 	public IOption createOption(IOption superClass, String Id, String name, boolean isExtensionElement) {
 		Option option = new Option(this, superClass, Id, name, isExtensionElement);
 		addOption(option);
-		if(!isExtensionElement)
+		if(!isExtensionElement){
 			setDirty(true);
+			setRebuildState(true);
+		}
 		return option;
 	}
 	
@@ -214,6 +217,7 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 		getOptionList().remove(option);
 		getOptionMap().remove(option.getId());
 		setDirty(true);
+		setRebuildState(true);
 	}
 	
 	/* (non-Javadoc)
@@ -509,6 +513,9 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 		}		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#getOptionToSet(org.eclipse.cdt.managedbuilder.core.IOption, boolean)
+	 */
 	public IOption getOptionToSet(IOption option, boolean adjustExtension) throws BuildException{
 		IOption setOption = null;
 		if(option.getOptionHolder() != this)
@@ -564,5 +571,41 @@ public class HoldsOptions extends BuildObject implements IHoldsOptions {
 			}
 		}
 		return setOption;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		if(rebuildState)
+			return true;
+		
+		// Otherwise see if any options need saving
+		List optionElements = getOptionList();
+		Iterator iter = optionElements.listIterator();
+		while (iter.hasNext()) {
+			Option option = (Option) iter.next();
+			if (option.needsRebuild()) return true;
+		}
+		
+		return rebuildState;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+		rebuildState = rebuild;
+		
+		// Propagate "false" to the children
+		if (!rebuildState) {
+			List optionElements = getOptionList();
+			Iterator iter = optionElements.listIterator();
+			while (iter.hasNext()) {
+				Option option = (Option) iter.next();
+				if(!option.isExtensionElement())
+					option.setRebuildState(false);
+			}
+		}
 	}
 }

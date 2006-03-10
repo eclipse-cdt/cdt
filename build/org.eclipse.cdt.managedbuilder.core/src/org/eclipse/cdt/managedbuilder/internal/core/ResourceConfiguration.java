@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,10 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
-import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
+import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IResource;
@@ -52,6 +51,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	private boolean isExtensionResourceConfig = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
+	private boolean rebuildState;
 	
 	/*
 	 *  C O N S T R U C T O R S
@@ -128,6 +128,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		isExcluded = new Boolean(false);
 		toolsToInvoke = EMPTY_STRING;
 		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
+		setRebuildState(true);
 	}
 
 	/**
@@ -203,6 +204,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		}
 
 		setDirty(true);
+		setRebuildState(true);
 	}
 	
 	/*
@@ -424,6 +426,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	public void addTool(Tool tool) {
 		getToolList().add(tool);
 		getToolMap().put(tool.getId(), tool);
+		setRebuildState(true);
 	}
 
 	/* (non-Javadoc)
@@ -434,6 +437,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 	public void removeTool(ITool tool) {
 		getToolList().remove(tool);
 		getToolMap().remove(tool);
+		setRebuildState(true);
 	}
 
 	/*
@@ -631,6 +635,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (rcbsApplicability == null || !(rcbsApplicability.intValue() == newValue)) {
 			rcbsApplicability = new Integer(newValue);
 			isDirty = true;
+			setRebuildState(true);
 		}
 	}
 
@@ -641,7 +646,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (isExcluded == null || excluded != isExcluded.booleanValue()) {
 			isExcluded = new Boolean(excluded);
 			setDirty(true);
-			parent.setRebuildState(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -654,6 +659,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		if (resPath == null || !path.equals(resPath)) {
 			resPath = path;
 			setDirty(true);
+			setRebuildState(true);
 		}
 	}
 
@@ -770,7 +776,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			retOpt.setValue(value);
 		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
 		    //       file rebuilt?  "Clean" its output?  Change its modification date?
-			parent.setRebuildState(true);
+//			parent.setRebuildState(true);
 		}
 		return retOpt;
 	}
@@ -786,7 +792,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			retOpt.setValue(value);
 		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
 		    //       file rebuilt?  "Clean" its output?  Change its modification date?
-			parent.setRebuildState(true);
+//			parent.setRebuildState(true);
 		}
 		return retOpt;
 	}
@@ -823,7 +829,7 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 			retOpt.setValue(value);
 		    // TODO: This causes the entire project to be rebuilt.  Is there a way to only have this 
 		    //       file rebuilt?  "Clean" its output?  Change its modification date?
-			parent.setRebuildState(true);
+//			parent.setRebuildState(true);
 		} 
 		return retOpt;
 	}
@@ -857,5 +863,39 @@ public class ResourceConfiguration extends BuildObject implements IResourceConfi
 		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
 			((Tool)iter.next()).updateManagedBuildRevision(revision);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		if(rebuildState)
+			return true;
+		
+		ITool tools[] = getToolsToInvoke();
+		for(int i = 0; i < tools.length; i++){
+			if(tools[i].needsRebuild())
+				return true;
+		}
+
+		return rebuildState;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+		if(isExtensionResourceConfiguration() && rebuild)
+			return;
+		
+		rebuildState = rebuild;
+		
+		if(!rebuildState){
+			ITool tools[] = getToolsToInvoke();
+			for(int i = 0; i < tools.length; i++){
+				tools[i].setRebuildState(false);
+			}
+		}
+
 	}
 }

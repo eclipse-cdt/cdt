@@ -1251,4 +1251,17 @@ public class ToolReference implements IToolReference {
 	public IOption getOptionToSet(IOption option, boolean adjustExtension){
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#setRebuildState(boolean)
+	 */
+	public void setRebuildState(boolean rebuild) {
+	}
 }

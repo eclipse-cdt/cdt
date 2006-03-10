@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipFile;
 
 import junit.framework.Assert;
@@ -23,14 +25,24 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -50,6 +62,14 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 public class ManagedBuildTestHelper {
+	private static final String rcbsToolId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs");	//$NON-NLS-1$
+	private static final String rcbsToolName = new String("Resource Custom Build Step");	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype");	//$NON-NLS-1$
+	private static final String rcbsToolInputTypeName = new String("Resource Custom Build Step Input Type");	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
+	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
+	private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
+
 	
 	/* (non-Javadoc)
 	 * Create a new project named <code>name</code> or return the project in 
@@ -118,8 +138,16 @@ public class ManagedBuildTestHelper {
 	
 	static public IFile createFile(IProject project, String name){
 		IFile file = project.getFile(name);
-		if( file.exists() ){
+		if( !file.exists() ){
 			try {
+				IPath dirPath = file.getFullPath().removeLastSegments(1).removeFirstSegments(1);
+				if(dirPath.segmentCount() > 0){
+					IFolder rc = project.getFolder(dirPath);
+					if(!rc.exists()){
+						rc.create(true, true, null);
+					}
+				}
+					
 //				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
 				file.create( new ByteArrayInputStream( new byte[0] ), false, null );
 			} catch (CoreException e) {
@@ -154,6 +182,25 @@ public class ManagedBuildTestHelper {
 				Assert.assertTrue(false);
 			}
 		}
+	}
+	
+	public static IProject loadProject(String name, String path){
+		IPath zipPath = new Path("resources").append(path).append(name).append(name).addFileExtension("zip");
+		File zipFile = CTestPlugin.getFileInPlugin(zipPath);
+		if(zipFile == null) {
+			Assert.fail("zip file " + zipPath.toString() + " is missing.");
+			return null;
+		}
+
+		
+		try{
+			return createProject(name, zipFile, null, null);
+		}
+		catch(Exception e){
+			Assert.fail("fail to create the project: " + e.getLocalizedMessage());
+		}
+		
+		return null;
 	}
 	
 	static public IProject createProject(String projectName, File zip, IPath location, String projectTypeId) throws CoreException, InvocationTargetException, IOException {
@@ -236,6 +283,11 @@ public class ManagedBuildTestHelper {
 					}
 				}
 				ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
+				
+				IConfiguration cfgs[] = newProject.getConfigurations();
+				for(int i = 0; i < cfgs.length; i++){
+					cfgs[i].setArtifactName(newProject.getDefaultArtifactName());
+				}
 			}
 		};
 		NullProgressMonitor monitor = new NullProgressMonitor();
@@ -342,7 +394,7 @@ public class ManagedBuildTestHelper {
 			try {
 				input = new FileReader(fullPath.toFile());
 			} catch (Exception e) {
-				Assert.fail("File " + fullPath.toString() + " could not be read.");
+				Assert.fail("File " + fullPath.toString() + " could not be read: " + e.getLocalizedMessage());
 			}
 			//InputStream input = file.getContents(true);   // A different way to read the file...
 			int c;
@@ -462,4 +514,186 @@ public class ManagedBuildTestHelper {
 		}
 		b = dir.delete();
 	}
+	
+	public static ITool createRcbsTool(IConfiguration cfg, String file, String inputs, String outputs, String cmds){
+		IProject project = cfg.getOwner().getProject();
+		IResource f = project.findMember(file);
+		
+		Assert.assertTrue("file does not exist", f != null);
+		Assert.assertEquals("resource is not a file", f.getType(), IResource.FILE);
+		
+		return createRcbsTool(cfg, (IFile)f, inputs, outputs, cmds);
+	}
+
+	public static ITool createRcbsTool(IConfiguration cfg, IFile file, String inputs, String outputs, String cmds){
+		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(file.getFullPath().toString());
+		if(rcCfg == null)
+			rcCfg = cfg.createResourceConfiguration(file);
+		
+		Assert.assertTrue("failed to create resource configuration", rcCfg != null);
+		
+		ITool tool = getRcbsTool(rcCfg, true);
+		
+		setRcbsInputs(tool, inputs);
+		setRcbsOutputs(tool, outputs);
+		tool.setToolCommand(cmds);
+		tool.setAnnouncement("default test rcbs announcement");
+		
+		rcCfg.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
+		return tool;
+	}
+	
+	public static ITool setRcbsInputs(ITool tool, String inputs){
+		tool.getInputTypes()[0].getAdditionalInputs()[0].setPaths(inputs);
+		return tool;
+	}
+
+	public static ITool setRcbsOutputs(ITool tool, String outputs){
+		tool.getOutputTypes()[0].setOutputNames(outputs);
+		return tool;
+	}
+
+	public static ITool getRcbsTool(IResourceConfiguration rcConfig, boolean create){
+		ITool rcbsTools[] = getRcbsTools(rcConfig);
+		ITool rcbsTool = null; 
+		if(rcbsTools != null)
+			rcbsTool = rcbsTools[0];
+		else if (create) {
+			rcbsTool = rcConfig.createTool(null,rcbsToolId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolName,false);	//$NON-NLS-1$
+			rcbsTool.setCustomBuildStep(true);
+			IInputType rcbsToolInputType = rcbsTool.createInputType(null,rcbsToolInputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolInputTypeName,false);	//$NON-NLS-1$
+			IAdditionalInput rcbsToolInputTypeAdditionalInput = rcbsToolInputType.createAdditionalInput(new String());
+			rcbsToolInputTypeAdditionalInput.setKind(IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY);
+			rcbsTool.createOutputType(null,rcbsToolOutputTypeId + "." + ManagedBuildManager.getRandomNumber(),rcbsToolOutputTypeName,false);	//$NON-NLS-1$
+		}
+		return rcbsTool;
+	}
+	
+	public static ITool[] getRcbsTools(IResourceConfiguration rcConfig){
+		List list = new ArrayList();
+		ITool tools[] = rcConfig.getTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool tool = tools[i];
+			if (tool.getCustomBuildStep() && !tool.isExtensionElement()) {
+				list.add(tool);
+			}
+		}
+		if(list.size() != 0)
+			return (ITool[])list.toArray(new ITool[list.size()]);
+		return null;
+	}
+
+	public static boolean setObjs(IConfiguration cfg, String[] objs){
+		return setOption(cfg, IOption.OBJECTS, objs);
+	}
+
+	public static boolean setLibs(IConfiguration cfg, String[] objs){
+		return setOption(cfg, IOption.LIBRARIES, objs);
+	}
+
+	public static boolean setOption(IConfiguration cfg, int type, Object value){
+		return setOption(cfg.getFilteredTools(), type, value);
+	}
+
+	public static boolean setOption(IResourceConfiguration rcCfg, int type, Object value){
+		return setOption(rcCfg.getToolsToInvoke()[0], type, value);
+	}
+
+	public static boolean setOption(ITool tools[], int type, Object value){
+		for(int i = 0; i < tools.length; i++){
+			if(setOption(tools[i], type, value))
+				return true;
+		}
+		return false;
+	}
+
+	public static IBuildObject[] getOption(IConfiguration cfg, int type){
+		return getOption(cfg.getFilteredTools(), type);
+	}
+
+	public static IBuildObject[] getOption(IResourceConfiguration rcCfg, int type, Object value){
+		return getOption(new ITool[]{rcCfg.getToolsToInvoke()[0]}, type);
+	}
+
+	public static IBuildObject[] getOption(ITool tools[], int type){
+		for(int i = 0; i < tools.length; i++){
+			IOption option = getOption(tools[i], type);
+			if(option != null)
+				return new IBuildObject[]{tools[i],option};
+		}
+		return null;
+	}
+
+	public static IOption getOption(IHoldsOptions tool, int type){
+		IOption opts[] = tool.getOptions();
+		
+		for(int i = 0; i < opts.length; i++){
+			IOption option = opts[i];
+			try {
+				if(option.getValueType() == type){
+					return option;
+				}
+			} catch (BuildException e) {
+			}
+		}
+		return null;
+	}
+
+	public static boolean setOption(ITool tool, int type, Object value){
+		IOption option = getOption(tool, type);
+		
+		if(option == null)
+			return false;
+		IBuildObject obj = tool.getParent();
+		IConfiguration cfg = null;
+		IResourceConfiguration rcCfg = null;
+		if(obj instanceof IToolChain)
+			cfg = ((IToolChain)obj).getParent();
+		else
+			rcCfg = (IResourceConfiguration)obj;
+
+		try {
+				if(option.getValueType() == type){
+					switch(type){
+						case IOption.BOOLEAN:
+						{
+							boolean val = ((Boolean)value).booleanValue();
+							if(rcCfg != null)
+								rcCfg.setOption(tool, option, val);
+							else
+								cfg.setOption(tool, option, val);
+						}
+							return true;
+						case IOption.ENUMERATED:
+						case IOption.STRING:
+						{
+							String val = (String)value;
+							if(rcCfg != null)
+								rcCfg.setOption(tool, option, val);
+							else
+								cfg.setOption(tool, option, val);
+						}
+							return true;
+						case IOption.STRING_LIST:
+						case IOption.INCLUDE_PATH:
+						case IOption.PREPROCESSOR_SYMBOLS:
+						case IOption.LIBRARIES:
+						case IOption.OBJECTS:
+						{
+							String val[] = (String[])value;
+							if(rcCfg != null)
+								rcCfg.setOption(tool, option, val);
+							else
+								cfg.setOption(tool, option, val);
+						}
+							return true;
+						default:
+							Assert.fail("wrong option type passed");
+					}
+				}
+			} catch (BuildException e) {
+			}
+		return false;
+	}
+	
 }

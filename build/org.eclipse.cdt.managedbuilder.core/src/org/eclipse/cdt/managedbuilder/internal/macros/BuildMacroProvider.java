@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -333,5 +333,27 @@ public class BuildMacroProvider implements IBuildMacroProvider {
 	 */
 	public boolean canKeepMacrosInBuildfile(IBuilder builder){
 		return MacroResolver.canKeepMacrosInBuildfile(builder);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValues(java.lang.String[], java.lang.String, java.lang.String, int, java.lang.Object)
+	 */
+	public String[] resolveStringListValues(String[] value, String nonexistentMacrosValue, String listDelimiter, int contextType, Object contextData) throws BuildMacroException {
+		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
+		if(info != null)
+			return MacroResolver.resolveStringListValues(value,
+					getMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter), true);
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#resolveStringListValuesToMakefileFormat(java.lang.String[], java.lang.String, java.lang.String, int, java.lang.Object)
+	 */
+	public String[] resolveStringListValuesToMakefileFormat(String[] value, String nonexistentMacrosValue, String listDelimiter, int contextType, Object contextData) throws BuildMacroException {
+		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
+		if(info != null)
+			return MacroResolver.resolveStringListValues(value,
+					getBuildfileMacroSubstitutor(info,nonexistentMacrosValue, listDelimiter), true);
+		return null;
 	}
 }

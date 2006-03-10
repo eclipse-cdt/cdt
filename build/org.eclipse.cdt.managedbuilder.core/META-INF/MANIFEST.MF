@@ -6,8 +6,10 @@ Bundle-Version: 3.1.0.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.managedbuilder.core,
+Export-Package: org.eclipse.cdt.managedbuilder.buildmodel,
+ org.eclipse.cdt.managedbuilder.core,
  org.eclipse.cdt.managedbuilder.envvar,
+ org.eclipse.cdt.managedbuilder.internal.buildmodel,
  org.eclipse.cdt.managedbuilder.internal.core,
  org.eclipse.cdt.managedbuilder.internal.envvar,
  org.eclipse.cdt.managedbuilder.internal.macros,

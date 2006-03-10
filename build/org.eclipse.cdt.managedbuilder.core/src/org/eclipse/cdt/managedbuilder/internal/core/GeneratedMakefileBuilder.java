@@ -944,7 +944,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						break;
 					}
 					case FULL_BUILD: {
-						makeArgs.add("clean"); //$NON-NLS-1$        
+//						makeArgs.add("clean"); //$NON-NLS-1$        
 						makeArgs.add("pre-build"); //$NON-NLS-1$ 
 						makeArgs.add("main-build"); //$NON-NLS-1$                           
 						break;

@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class IndexEncoderUtil {
@@ -73,26 +72,29 @@ public class IndexEncoderUtil {
     public static IASTFileLocation getFileLocation(IASTNode node) {
         return node.getFileLocation();
     }
-
+/*
+ * This method is never called
+ * 
 	public static boolean nodeInExternalHeader(IASTNode node) {
 		String fileName = node.getContainingFilename();
 		return (CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName)) == null)
 				? true : false;
 	}
-
+*/
 	static private boolean visitedExternalHeader = false;
 	static private String lastVisitedFile = null;
+	static private String wspLocation = CCorePlugin.getWorkspace().getRoot().getLocation().toOSString();
+	
 	public static boolean nodeInVisitedExternalHeader(IASTNode node, DOMSourceIndexer indexer) {
 		String fileName = node.getContainingFilename();
-		if (fileName.equals(lastVisitedFile)) {
+		
+		// if file is the same as before, return previous result.
+		if (fileName.equals(lastVisitedFile)) { 
 			return visitedExternalHeader;
 		}
-		
 		lastVisitedFile = fileName;
-		IPath filePath = new Path(fileName);
-		IPath projectPath = indexer.getProject().getFullPath();
-		visitedExternalHeader = (CCorePlugin.getWorkspace().getRoot().getFileForLocation(filePath) == null) &&
-				indexer.haveEncounteredHeader(projectPath, filePath, false);
+		// If file is external, check whether it's encountered
+		visitedExternalHeader = (!fileName.startsWith(wspLocation)) && indexer.haveEncounteredHeader(indexer.getProject().getFullPath(), fileName);  
 		return visitedExternalHeader;
 	}
 

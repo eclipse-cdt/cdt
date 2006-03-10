@@ -183,10 +183,29 @@ public class DOMSourceIndexer extends AbstractCExtension implements ICDTIndexer 
 			headers.put(filePath.toOSString());
             added++;
 		}
-		
+
 		return false;
 	}
 	
+	// lighter version of the same method
+	public synchronized boolean haveEncounteredHeader(IPath projectPath, String filePath) {
+		SimpleLookupTable headerTable = indexStorage.getEncounteredHeaders(); 
+		
+		// Path is already canonical per construction
+		ObjectSet headers = (ObjectSet) headerTable.get(projectPath);
+		if (headers == null) {
+			//First time for the project, must create a new ObjectSet
+			headers = new ObjectSet(4);
+			headerTable.put(projectPath, headers);
+		 }
+		
+		if (headers.containsKey(filePath)) {
+			trimed++;
+			return true;
+		}
+		
+		return false;
+	}
 
 	
 	/**

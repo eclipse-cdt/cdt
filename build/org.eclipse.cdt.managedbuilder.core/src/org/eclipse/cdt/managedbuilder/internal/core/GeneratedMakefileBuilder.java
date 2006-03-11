@@ -377,6 +377,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						ResourceDeltaVisitor visitor = new ResourceDeltaVisitor(info);
 						delta.accept(visitor);
 						if (visitor.shouldBuildFull()) {
+							clean(new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN));
 							fullBuildNeeded = true;
 						}
 					}

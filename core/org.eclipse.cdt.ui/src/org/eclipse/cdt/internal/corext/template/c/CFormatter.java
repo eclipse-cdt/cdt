@@ -14,7 +14,9 @@ package org.eclipse.cdt.internal.corext.template.c;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.Strings;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +36,7 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.RangeMarker;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 
 /**
@@ -204,7 +207,22 @@ public class CFormatter {
 		MultiTextEdit root= new MultiTextEdit(0, document.getLength());
 		root.addChildren((TextEdit[]) positions.toArray(new TextEdit[positions.size()]));
 		
-		String indent= Strings.createIndentString(fInitialIndentLevel);
+		boolean useSpaces=
+			CUIPlugin.getDefault().getCombinedPreferenceStore().getBoolean(CEditor.SPACES_FOR_TABS); 
+			String indent;
+			if (useSpaces) {
+			int iSpaceIndent =
+			CUIPlugin.getDefault().getCombinedPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+
+			StringBuffer mystringbuf = new StringBuffer();
+			for ( int i=fInitialIndentLevel * iSpaceIndent; i>0; i-- )
+			     mystringbuf.append ( ' ' );
+
+			indent = mystringbuf.toString();
+			}
+			else {
+			        indent = Strings.createIndentString(fInitialIndentLevel);
+			}
 		// first line
 		int offset= document.getLineOffset(0);
 		TextEdit edit= new InsertEdit(offset, indent);

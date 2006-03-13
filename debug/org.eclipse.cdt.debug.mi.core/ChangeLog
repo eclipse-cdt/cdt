@@ -1,3 +1,8 @@
+2006-03-13 Mikhail Khodjaiants
+	Added default implementation for "getExtraArguments". No need to force 
+	clients to implement this method.
+	* AbstractGDBCDIDebugger.java
+
 2006-02-09 Mikhail Khodjaiants
 	Bug 114793: Add an extension point to contribute command factories.
 	Registered windows and linux specific command factories for gdbserver.

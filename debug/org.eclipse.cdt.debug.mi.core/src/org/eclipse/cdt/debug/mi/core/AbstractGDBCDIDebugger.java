@@ -124,7 +124,9 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		throw newCoreException( MIPlugin.getResourceString( "src.AbstractGDBCDIDebugger.0" ) + debugMode, null ); //$NON-NLS-1$
 	}
 
-	abstract protected String[] getExtraArguments( ILaunchConfiguration config ) throws CoreException;
+	protected String[] getExtraArguments( ILaunchConfiguration config ) throws CoreException {
+		return new String[0];
+	}
 
 	abstract protected CommandFactory getCommandFactory( ILaunchConfiguration config ) throws CoreException;
 

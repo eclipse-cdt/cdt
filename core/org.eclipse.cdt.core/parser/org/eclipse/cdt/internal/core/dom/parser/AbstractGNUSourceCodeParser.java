@@ -448,6 +448,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             case IToken.tLBRACE:
                 ++depth;
                 break;
+            case IToken.tEOC:
+                throw new EndOfFileException();
             }
         }
         return result;

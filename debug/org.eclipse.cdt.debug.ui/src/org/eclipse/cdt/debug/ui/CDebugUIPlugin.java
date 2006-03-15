@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
+import org.eclipse.cdt.debug.internal.ui.CDebuggerPageAdapter;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -149,8 +151,15 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		IConfigurationElement configElement = (IConfigurationElement)fDebuggerPageMap.get( debuggerID );
 		ICDebuggerPage tab = null;
 		if ( configElement != null ) {
-			tab = (ICDebuggerPage)configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
-			tab.init( debuggerID );
+			Object o = configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
+			if ( o instanceof ICDebuggerPage ) {
+				tab = (ICDebuggerPage)o;
+				tab.init( debuggerID );
+			}
+			else if ( o instanceof ILaunchConfigurationTab ) {
+				tab = new CDebuggerPageAdapter( (ILaunchConfigurationTab)o );
+				tab.init( debuggerID );
+			}
 		}
 		return tab;
 	}

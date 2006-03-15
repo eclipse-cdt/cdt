@@ -1,3 +1,8 @@
+2006-03-15 Mikhail Khodjaiants
+	An ICDebuggerPage adapter is added to retain compatibility with old extensions.
+	+ CDebuggerPageAdapter.java
+	* CDebugUIPlugin.java
+
 2006-03-06 Mikhail Khodjaiants
 	Fix for Bug 93777: Postmortem and Local launch need a default preference for selected debugger.
 	* ICDebugHelpContextIds.java

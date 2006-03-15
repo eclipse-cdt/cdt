@@ -1,4 +1,8 @@
 2006-03-15 Mikhail Khodjaiants
+	Reversing previous changes. The existing "verifyProgramPath" method can be used.
+	* AbstractCLaunchDelegate.java
+	
+2006-03-15 Mikhail Khodjaiants
 	The new "getExecutable" method is added to replace deprecated "getProgramFile".
 	* AbstractCLaunchDelegate.java
 

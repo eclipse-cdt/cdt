@@ -327,7 +327,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @param config
 	 * @return
 	 * @throws CoreException
-	 * @deprecated Use <code>getExecutable</code> instead.
+	 * @deprecated Use <code>verifyProgramFile</code> instead.
 	 */
 	protected IFile getProgramFile(ILaunchConfiguration config) throws CoreException {
 		ICProject cproject = verifyCProject(config);
@@ -347,40 +347,6 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 		return programPath;
-	}
-
-	/**
-	 * Returns the file based on the path specified in the Main tab of the launch 
-	 * configguration dialog. If the original path is relative, it is assumed to 
-	 * be relative to the project location.
-	 *  
-	 * @since 3.1
-	 */
-	protected File getExecutable(ILaunchConfiguration config) throws CoreException {
-		ICProject cproject = verifyCProject(config);
-		String fileName = getProgramName(config);
-		if (fileName == null) {
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
-		}
-		IPath path = new Path(fileName);
-		File result = null;
-		if (!path.isAbsolute()) {
-			IFile programPath = ((IProject)cproject.getResource()).getFile(fileName);
-			if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
-				abort(
-						LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
-						new FileNotFoundException(
-								LaunchMessages.getFormattedString(
-																	"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.getLocation().toOSString())), //$NON-NLS-1$
-						ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
-			}
-			result = programPath.getLocation().toFile();
-		}
-		else {
-			result = path.toFile();
-		}
-		return result;
 	}
 
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {

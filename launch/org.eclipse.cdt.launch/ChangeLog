@@ -1,3 +1,7 @@
+2006-03-15 Mikhail Khodjaiants
+	The new "getExecutable" method is added to replace deprecated "getProgramFile".
+	* AbstractCLaunchDelegate.java
+
 2006-03-06 Mikhail Khodjaiants
 	Fix for Bug 93777: Postmortem and Local launch need a default preference for selected debugger.
 	* CApplicationLaunchShortcut.java

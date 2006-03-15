@@ -281,10 +281,9 @@ public class MakeBuilder extends ACBuilder {
 		switch (kind) {
 			case IncrementalProjectBuilder.AUTO_BUILD :
 				return info.isAutoBuildEnable();
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
-				return info.isIncrementalBuildEnabled();
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
 			case IncrementalProjectBuilder.FULL_BUILD :
-				return info.isFullBuildEnabled();
+				return info.isFullBuildEnabled() | info.isIncrementalBuildEnabled() ;
 			case IncrementalProjectBuilder.CLEAN_BUILD :
 				return info.isCleanBuildEnabled();
 		}
@@ -297,11 +296,9 @@ public class MakeBuilder extends ACBuilder {
 			case IncrementalProjectBuilder.AUTO_BUILD :
 				targets = info.getAutoBuildTarget();
 				break;
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
-				targets = info.getIncrementalBuildTarget();
-				break;
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD : // now treated as the same!
 			case IncrementalProjectBuilder.FULL_BUILD :
-				targets = info.getFullBuildTarget();
+				targets = info.getIncrementalBuildTarget();
 				break;
 			case IncrementalProjectBuilder.CLEAN_BUILD :
 				targets = info.getCleanBuildTarget();

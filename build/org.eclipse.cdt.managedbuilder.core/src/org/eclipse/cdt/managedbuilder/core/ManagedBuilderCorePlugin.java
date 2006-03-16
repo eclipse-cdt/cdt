@@ -94,7 +94,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			jobManager.beginRule(root, null);
 
 			startResourceChangeHandling();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			//either an IllegalArgumentException is thrown by the jobManager.beginRule
 			//or core exception is thrown by the startResourceChangeHandling()
 			//in any case, schedule a job with the root rule

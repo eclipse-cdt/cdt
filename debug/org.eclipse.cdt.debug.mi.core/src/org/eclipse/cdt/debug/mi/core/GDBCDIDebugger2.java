@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
  
 /**
@@ -96,9 +97,9 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.mi.core.AbstractGDBCDIDebugger#doStartSession(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.debug.mi.core.cdi.Session, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.cdt.debug.mi.core.AbstractGDBCDIDebugger#doStartSession(org.eclipse.debug.core.ILaunch, org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.debug.mi.core.cdi.Session, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void doStartSession( ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {
+	protected void doStartSession( ILaunch launch, ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {
 		initializeLibraries( config, session );
 		if ( monitor.isCanceled() ) {
 			throw new OperationCanceledException();

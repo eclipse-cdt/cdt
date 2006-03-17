@@ -1,3 +1,9 @@
+2006-03-16 Mikhail Khodjaiants
+	ILaunch is added to the arguments list of "doStartSession".
+	* AbstractGDBCDIDebugger.java
+	* CygwinGDBCDIDebugger2.java
+	* GDBCDIDebugger2.java
+ 
 2006-03-13 Mikhail Khodjaiants
 	Added default implementation for "getExtraArguments". No need to force 
 	clients to implement this method.

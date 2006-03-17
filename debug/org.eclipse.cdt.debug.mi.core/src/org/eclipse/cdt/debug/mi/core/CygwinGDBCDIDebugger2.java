@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.mi.core.command.factories.win32.CygwinCommandFactor
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
@@ -32,9 +33,9 @@ public class CygwinGDBCDIDebugger2 extends GDBCDIDebugger2 {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.mi.core.GDBCDIDebugger2#doStartSession(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.debug.mi.core.cdi.Session, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.cdt.debug.mi.core.GDBCDIDebugger2#doStartSession(org.eclipse.debug.core.ILaunch, org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.cdt.debug.mi.core.cdi.Session, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void doStartSession( ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {
+	protected void doStartSession( ILaunch launch, ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {
 		// For windows we need to start the inferior in a new console window
 		// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
 		MISession miSession = getMISession( session );
@@ -51,7 +52,7 @@ public class CygwinGDBCDIDebugger2 extends GDBCDIDebugger2 {
 			// We ignore this exception, for example
 			// on GNU/Linux the new-console is an error.
 		}		
-		super.doStartSession( config, session, monitor );
+		super.doStartSession( launch, config, session, monitor );
 	}
 
 	/* (non-Javadoc)

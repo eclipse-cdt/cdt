@@ -79,7 +79,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 			}
 		}
 		try {
-			doStartSession( config, session, monitor );
+			doStartSession( launch, config, session, monitor );
 		}
 		catch( CoreException e ) {
 			failed = true;
@@ -130,7 +130,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 
 	abstract protected CommandFactory getCommandFactory( ILaunchConfiguration config ) throws CoreException;
 
-	protected void doStartSession( ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {		
+	protected void doStartSession( ILaunch launch, ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {		
 	}
 
 	protected String renderDebuggerProcessLabel( ILaunchConfiguration config ) {

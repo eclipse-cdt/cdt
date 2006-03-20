@@ -222,12 +222,12 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 		}
 	}
 
-	private String getWorkingDirectory( ILaunchConfiguration config ) throws CoreException {
+	protected String getWorkingDirectory( ILaunchConfiguration config ) throws CoreException {
 		File cwd = getProjectPath( config ).toFile();
 		return "--cd=" + cwd.getAbsolutePath(); //$NON-NLS-1$
 	}
 
-	private String getCommandFile( ILaunchConfiguration config ) throws CoreException {
+	protected String getCommandFile( ILaunchConfiguration config ) throws CoreException {
 		String gdbinit = config.getAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
 		return (gdbinit != null && gdbinit.length() > 0) ? "--command=" + gdbinit : "--nx"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

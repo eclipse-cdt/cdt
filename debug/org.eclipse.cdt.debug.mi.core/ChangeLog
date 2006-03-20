@@ -1,3 +1,7 @@
+2006-03-20 Mikhail Khodjaiants
+	Made "getCommandFile" and "getWorkingDirectory" methods protected.
+	* GDBCDIDebugger2.java
+	
 2006-03-16 Mikhail Khodjaiants
 	ILaunch is added to the arguments list of "doStartSession".
 	* AbstractGDBCDIDebugger.java

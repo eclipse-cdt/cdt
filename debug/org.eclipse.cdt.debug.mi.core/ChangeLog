@@ -1,3 +1,7 @@
+2006-03-21 Mikhail Khodjaiants
+	Missing error message.
+	* MIPluginResources.properties
+
 2006-03-20 Mikhail Khodjaiants
 	Made "getCommandFile" and "getWorkingDirectory" methods protected.
 	* GDBCDIDebugger2.java

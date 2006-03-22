@@ -33,9 +33,9 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 	private final CompletionKind expectedKind = CompletionKind.FUNCTION_REFERENCE;
 	private final String expectedPrefix = "x";
 	private final String[] expectedResults = {
-			"xLocal", // TODO: should be "xLocal : int",
-			"xAClassField", // TODO: should be "xAClassField : float",
-			"xVariable", // TODO: should be "xVariable : int",
+			"xLocal : int",
+			"xAClassField : float",
+			"xVariable : int",
 			"xAClassMethod(int x) void",
 			"xFunction(void) bool",
 			"xOtherFunction(void) void",

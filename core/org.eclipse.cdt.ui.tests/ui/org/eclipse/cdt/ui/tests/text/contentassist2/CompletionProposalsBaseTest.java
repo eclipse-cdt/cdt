@@ -152,6 +152,12 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 //			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, wc, null);
 			ICompletionProposal[] results = completionProcessor.computeCompletionProposals(editor.getCSourceViewer(), getCompletionPosition()); // (document, pos, wc, null);
 			assertTrue(results != null);
+			if (CTestPlugin.getDefault().isDebugging())  {
+				for (int i = 0; i < results.length; i++) {
+					ICompletionProposal proposal = results[i];
+					System.out.println("Result: " + proposal.getDisplayString());
+				}
+			}
 			
 			// check the completion node
 			ASTCompletionNode currentCompletionNode = completionProcessor.getCurrentCompletionNode();
@@ -181,7 +187,8 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 //			assertEquals( completionNode.getFunctionName(), getFunctionOrConstructorName() );
 			
 			String[] expected = getExpectedResultsValues();
-			assertTrue(results.length >= expected.length);
+
+			boolean allFound = true ;  // for the time being, let's be optimistic
 			
 			for (int i = 0; i< expected.length; i++){
 				boolean found = false;
@@ -190,11 +197,21 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 					String displayString = proposal.getDisplayString();
 					if(expected[i].equals(displayString)){
 						found = true;
+						if (CTestPlugin.getDefault().isDebugging())  {
+							System.out.println("Lookup success for " + expected[i]);
+						}
 						break;
 					}
 				}
-				assertTrue( "Lookup failed for " + expected[i],  found ); //$NON-NLS-1$
+				if (!found)  {
+					allFound = false ;
+					if (CTestPlugin.getDefault().isDebugging())  {
+						System.out.println( "Lookup failed for " + expected[i]); //$NON-NLS-1$
+					}
+				}
 			}	
+			assertTrue("Not enough results!", results.length >= expected.length);
+			assertTrue("Some expected results were not found!", allFound);
 			
 	}	
 	

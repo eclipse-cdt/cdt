@@ -94,8 +94,11 @@ public class DOMCompletionContributor implements ICompletionContributor {
 	}
 
 	private void handleBinding(IBinding binding, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
-		if (binding instanceof IFunction)
+		if (binding instanceof IFunction)  {
 			handleFunction((IFunction)binding, completionNode, offset, viewer, proposals);
+		} else if (binding instanceof IVariable)  {
+			handleVariable((IVariable) binding, completionNode, offset, viewer, proposals);
+		}
 		else
 			proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), completionNode, offset, viewer));
 	}
@@ -178,6 +181,39 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			info.setContextInformationPosition(offset);
 			proposal.setContextInformation(info);
 		}
+		
+		proposals.add(proposal);
+	}
+	
+	private void handleVariable(IVariable variable, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+		StringBuffer repStringBuff = new StringBuffer();
+		repStringBuff.append(variable.getName());
+		
+		String returnTypeStr = "<unknown>";
+		try {
+			IType varType = variable.getType();
+			if (varType != null)
+				returnTypeStr = ASTTypeUtil.getType(varType);
+		} catch (DOMException e) {
+		}
+        
+        StringBuffer dispStringBuff = new StringBuffer(repStringBuff.toString());
+        if (returnTypeStr != null) {
+            dispStringBuff.append(" : ");
+            dispStringBuff.append(returnTypeStr);
+        }
+        String dispString = dispStringBuff.toString();
+
+        StringBuffer idStringBuff = new StringBuffer(repStringBuff.toString());
+        String idString = idStringBuff.toString();
+		
+        String repString = repStringBuff.toString();
+
+        int repLength = completionNode.getLength();
+        int repOffset = offset - repLength;
+        CCompletionProposal proposal = new CCompletionProposal(repString, repOffset, repLength, null, dispString, idString, 1, viewer);
+
+		proposal.setCursorPosition(repString.length() - 1);
 		
 		proposals.add(proposal);
 	}

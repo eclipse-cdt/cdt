@@ -125,7 +125,6 @@ public class MachOHelper {
 		}
 
 		MachO.Symbol[] ret = (MachO.Symbol[]) v.toArray(new MachO.Symbol[0]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -146,7 +145,6 @@ public class MachOHelper {
 		}
 
 		MachO.Symbol[] ret = (MachO.Symbol[]) v.toArray(new MachO.Symbol[0]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -161,7 +159,6 @@ public class MachOHelper {
 		}
 
 		MachO.Symbol[] ret = (MachO.Symbol[]) v.toArray(new MachO.Symbol[0]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -185,7 +182,6 @@ public class MachOHelper {
 		}
 
 		MachO.Symbol[] ret = (MachO.Symbol[]) v.toArray(new MachO.Symbol[0]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -209,7 +205,6 @@ public class MachOHelper {
 		}
 
 		MachO.Symbol[] ret = (MachO.Symbol[]) v.toArray(new MachO.Symbol[0]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -228,7 +223,6 @@ public class MachOHelper {
 		}
 
 		MachO.Symbol[] ret = (MachO.Symbol[]) v.toArray(new MachO.Symbol[0]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 

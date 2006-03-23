@@ -12,7 +12,6 @@ package org.eclipse.cdt.utils.elf;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -144,7 +143,6 @@ public class ElfHelper {
 		}
 
 		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -168,7 +166,6 @@ public class ElfHelper {
 		}
 
 		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -183,7 +180,6 @@ public class ElfHelper {
 		}
 
 		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -207,7 +203,6 @@ public class ElfHelper {
 		}
 
 		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -231,7 +226,6 @@ public class ElfHelper {
 		}
 
 		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 
@@ -251,7 +245,6 @@ public class ElfHelper {
 		}
 
 		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
-		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
 

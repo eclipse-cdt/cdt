@@ -15,8 +15,8 @@ import java.util.Comparator;
 
 public class SymbolSortCompare implements Comparator {
 	public int compare( Object o1, Object o2 ) {
-        String s1 = o1.toString().toLowerCase();
-        String s2 = o2.toString().toLowerCase();
+        String s1 = o1.toString();
+        String s2 = o2.toString();
 
         while( s1.length() > 0 && s1.charAt( 0 ) == '_' )
             s1 = s1.substring( 1 );
@@ -24,7 +24,7 @@ public class SymbolSortCompare implements Comparator {
         while( s2.length() > 0 && s2.charAt( 0 ) == '_' )
             s2 = s2.substring( 1 );
 
-        return s1.compareTo( s2 );
+        return s1.compareToIgnoreCase( s2 );
 	}
 }
 

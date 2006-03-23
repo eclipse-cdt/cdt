@@ -358,18 +358,29 @@ public class Elf {
 	}
 
 	protected String string_from_elf_section(Elf.Section section, int index) throws IOException {
-		StringBuffer str = new StringBuffer();
-		byte tmp;
 		if (index > section.sh_size) {
 			return EMPTY_STRING;
 		}
+		
+		StringBuffer str = new StringBuffer();
+		//Most string symbols will be less than 50 bytes in size
+		byte [] tmp = new byte[50];		
+		
 		efile.seek(section.sh_offset + index);
-		while (true) {
-			tmp = efile.readByte();
-			if (tmp == 0)
+		while(true) {
+			int len = efile.read(tmp);
+			for(int i = 0; i < len; i++) {
+				if(tmp[i] == 0) {
+					len = 0;
+					break;
+				}
+				str.append((char)tmp[i]);
+			}			
+			if(len <= 0) {
 				break;
-			str.append((char)tmp);
+			}
 		}
+
 		return str.toString();
 	}
 

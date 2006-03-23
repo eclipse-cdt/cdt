@@ -24,11 +24,13 @@ import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -59,14 +61,13 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		if ( monitor.isCanceled() ) {
 			throw new OperationCanceledException();
 		}
-		ILaunchConfiguration config = launch.getLaunchConfiguration();
-		Session session = createGDBSession( config, executable, monitor );
+		Session session = createGDBSession( launch, executable, monitor );
 		if ( session != null ) {
 			ICDITarget[] targets = session.getTargets();
 			for( int i = 0; i < targets.length; i++ ) {
 				Process debugger = session.getSessionProcess( targets[i] );
 				if ( debugger != null ) {
-					IProcess debuggerProcess = DebugPlugin.newProcess( launch, debugger, renderDebuggerProcessLabel( config ) );
+					IProcess debuggerProcess = DebugPlugin.newProcess( launch, debugger, renderDebuggerProcessLabel( launch ) );
 					launch.addProcess( debuggerProcess );
 				}
 				try {
@@ -79,7 +80,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 			}
 		}
 		try {
-			doStartSession( launch, config, session, monitor );
+			doStartSession( launch, session, monitor );
 		}
 		catch( CoreException e ) {
 			failed = true;
@@ -96,13 +97,14 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		return session;
 	}
 
-	protected Session createGDBSession( ILaunchConfiguration config, File executable, IProgressMonitor monitor ) throws CoreException {
-		String gdb = config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" ); //$NON-NLS-1$
+	protected Session createGDBSession( ILaunch launch, File executable, IProgressMonitor monitor ) throws CoreException {
+		IPath gdbPath = getGDBPath( launch );
+		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		CommandFactory factory = getCommandFactory( config );
 		String[] extraArgs = getExtraArguments( config );
 		boolean usePty = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true );
 		try {
-			return MIPlugin.getDefault().createSession( getSessionType( config ), gdb, factory, executable, extraArgs, usePty, monitor );
+			return MIPlugin.getDefault().createSession( getSessionType( config ), gdbPath.toOSString(), factory, executable, extraArgs, usePty, monitor );
 		}
 		catch( Exception e ) {
 			// Catch all wrap them up and rethrow
@@ -130,21 +132,26 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 
 	abstract protected CommandFactory getCommandFactory( ILaunchConfiguration config ) throws CoreException;
 
-	protected void doStartSession( ILaunch launch, ILaunchConfiguration config, Session session, IProgressMonitor monitor ) throws CoreException {		
+	protected void doStartSession( ILaunch launch, Session session, IProgressMonitor monitor ) throws CoreException {		
 	}
 
-	protected String renderDebuggerProcessLabel( ILaunchConfiguration config ) {
+	protected String renderDebuggerProcessLabel( ILaunch launch ) {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format( new Date( System.currentTimeMillis() ) );
 		String label = MIPlugin.getResourceString( "src.AbstractGDBCDIDebugger.0" ); //$NON-NLS-1$
 		try {
-			label = config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" ); //$NON-NLS-1$
+			IPath path = getGDBPath( launch );
+			label = path.toOSString();
 		}
 		catch( CoreException e ) {
 		}
 		return MessageFormat.format( format, new String[]{ label, timestamp } );
 	}
 
+	protected IPath getGDBPath( ILaunch launch ) throws CoreException {
+		ILaunchConfiguration config = launch.getLaunchConfiguration();
+		return new Path( config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT ) );
+	}
 	/**
 	 * Throws a core exception with an error status object built from 
 	 * the lower level exception and error code.

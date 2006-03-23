@@ -1,4 +1,12 @@
 2006-03-23 Mikhail Khodjaiants
+	Pass ILaunch instead of ILaunchConfiguration.
+	Added "getGDBPath" method.
+	* AbstractGDBCDIDebugger.java
+	* CygwinGDBCDIDebugger2.java
+	* GDBCDIDebugger2.java
+	* GDBServerCDIDebugger2.java
+
+2006-03-23 Mikhail Khodjaiants
 	Added default attribute value for ATTR_DEBUG_NAME.
 	* IMILaunchConfigurationConstants.java
 

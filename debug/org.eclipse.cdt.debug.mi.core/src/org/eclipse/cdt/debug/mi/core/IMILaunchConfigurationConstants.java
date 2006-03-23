@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
-
-
 public interface IMILaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. The value is the name of
@@ -41,7 +39,12 @@ public interface IMILaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_SOLIB_PATH = MIPlugin.getUniqueIdentifier() + ".SOLIB_PATH"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_AUTO_SOLIB.
+	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
+	 */
+	public static final String DEBUGGER_DEBUG_NAME_DEFAULT = "gdb"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_GDB_INIT.
 	 */
 	public static final String DEBUGGER_GDB_INIT_DEFAULT = ".gdbinit"; //$NON-NLS-1$
 

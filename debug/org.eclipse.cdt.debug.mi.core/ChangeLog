@@ -1,3 +1,7 @@
+2006-03-23 Mikhail Khodjaiants
+	Added default attribute value for ATTR_DEBUG_NAME.
+	* IMILaunchConfigurationConstants.java
+
 2006-03-21 Mikhail Khodjaiants
 	Missing error message.
 	* MIPluginResources.properties

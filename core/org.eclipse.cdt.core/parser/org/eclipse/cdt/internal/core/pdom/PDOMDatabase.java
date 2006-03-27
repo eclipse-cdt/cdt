@@ -240,5 +240,55 @@ public class PDOMDatabase implements IPDOM {
 		else
 			return PDOMLinkage.getLinkage(this, record).getBinding(record);
 	}
+
+	// Read-write lock. Since we want to allow reads during a long
+	// running index, readers take precidence.
+	private Object lockMutex = new Object();
+	private int lockCount;
+	private int waitingReaders;
+	private int waitingWriters;
 	
+	public void getReadLock(boolean waitForWrites) throws InterruptedException {
+		synchronized (lockMutex) {
+			if (!waitForWrites)
+				++waitingReaders;
+			while (lockCount < 0 || (waitForWrites && waitingWriters > 0))
+				// wait for the writers to finish
+				lockMutex.wait();
+			// free to go
+			++lockCount;
+			if (!waitForWrites) 
+				--waitingReaders;
+		}
+	}
+	
+	public void getWriteLock() throws InterruptedException {
+		synchronized (lockMutex) {
+			++waitingWriters;
+			while (lockCount != 0 || waitingReaders > 0)
+				// wait for everyone to finish
+				// readers get precidence
+				lockMutex.wait();
+			
+			// free to go
+			--lockCount;
+			--waitingWriters;
+		}
+	}
+	
+	public void releaseReadLock() {
+		synchronized (lockMutex) {
+			if (lockCount > 0)
+				--lockCount;
+			lockMutex.notifyAll();
+		}
+	}
+	
+	public void releaseWriteLock() {
+		synchronized (lockMutex) {
+			if (lockCount < 0)
+				++lockCount;
+			lockMutex.notifyAll();
+		}
+	}
 }

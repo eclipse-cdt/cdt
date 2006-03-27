@@ -1,3 +1,7 @@
+2006-03-27 Mikhail Khodjaiants
+	Added the "getSessionConfiguration" method to allow clients to provide their own session configurations.
+	* AbstractGDBCDIDebugger.java
+
 2006-03-23 Mikhail Khodjaiants
 	Pass ILaunch instead of ILaunchConfiguration.
 	Added "getGDBPath" method.

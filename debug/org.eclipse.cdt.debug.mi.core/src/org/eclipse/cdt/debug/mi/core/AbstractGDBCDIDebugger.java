@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.ICDIDebugger2;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -104,7 +105,12 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		String[] extraArgs = getExtraArguments( config );
 		boolean usePty = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true );
 		try {
-			return MIPlugin.getDefault().createSession( getSessionType( config ), gdbPath.toOSString(), factory, executable, extraArgs, usePty, monitor );
+			Session session = MIPlugin.getDefault().createSession( getSessionType( config ), gdbPath.toOSString(), factory, executable, extraArgs, usePty, monitor );
+			ICDISessionConfiguration sessionConfig = getSessionConfiguration( session );
+			if ( sessionConfig != null ) {
+				session.setConfiguration( sessionConfig );
+			}
+			return session;
 		}
 		catch( Exception e ) {
 			// Catch all wrap them up and rethrow
@@ -152,6 +158,11 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		return new Path( config.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT ) );
 	}
+
+	protected ICDISessionConfiguration getSessionConfiguration( ICDISession session ) {
+		return null;
+	}
+
 	/**
 	 * Throws a core exception with an error status object built from 
 	 * the lower level exception and error code.

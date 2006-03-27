@@ -1,4 +1,8 @@
 2006-03-27 Mikhail Khodjaiants
+	Cleaned up the "Session" class constructors.
+	* Session.java
+ 
+2006-03-27 Mikhail Khodjaiants
 	Added the "getSessionConfiguration" method to allow clients to provide their own session configurations.
 	* AbstractGDBCDIDebugger.java
 

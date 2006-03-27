@@ -43,26 +43,27 @@ public class Session implements ICDISession, ICDISessionObject {
 	SourceManager sourceManager;
 	ICDISessionConfiguration configuration;
 
-	public Session(MISession miSession, boolean attach) {
+	public Session(MISession miSession, ICDISessionConfiguration configuration) {
 		commonSetup();
-		//setConfiguration(new SessionConfiguration(this));
-
 		Target target = new Target(this, miSession);
 		addTargets(new Target[] { target });
+		setConfiguration(configuration);
+	}
+
+	// Why do we need this?
+	public Session(MISession miSession, boolean attach) {
+		this(miSession);
 	}
 
 	public Session(MISession miSession) {
 		commonSetup();
-		//setConfiguration(new CoreFileConfiguration());
-
 		Target target = new Target(this, miSession);
 		addTargets(new Target[] { target });
+		setConfiguration(new SessionConfiguration(this));
 	}
 
 	private void commonSetup() {
 		props = new Properties();
-		setConfiguration(new SessionConfiguration(this));
-
 		processManager = new ProcessManager(this);
 		breakpointManager = new BreakpointManager(this);
 		eventManager = new EventManager(this);

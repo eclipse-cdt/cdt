@@ -142,6 +142,9 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			monitor.worked( 1 );
 
 			boolean stopInMain = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false );
+			String stopSymbol = null;
+			if ( stopInMain )
+				stopSymbol = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
 			ICDITarget[] targets = dsession.getTargets();
 			for( int i = 0; i < targets.length; i++ ) {
 				Process process = targets[i].getProcess();
@@ -149,7 +152,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 				if ( process != null ) {
 					iprocess = DebugPlugin.newProcess( launch, process, renderProcessLabel( exePath.toOSString() ), getDefaultProcessMap() );
 				}
-				CDIDebugModel.newDebugTarget( launch, project.getProject(), targets[i], renderTargetLabel( debugConfig ), iprocess, exeFile, true, false, stopInMain, true );
+				CDIDebugModel.newDebugTarget( launch, project.getProject(), targets[i], renderTargetLabel( debugConfig ), iprocess, exeFile, true, false, stopSymbol, true );
 			}
 		}
 		catch( CoreException e ) {

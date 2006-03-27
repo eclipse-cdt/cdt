@@ -270,11 +270,32 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	public void start( boolean stopInMain, boolean resume ) throws DebugException {
+		String stopSymbol = null;
+		try {
+			if ( stopInMain )
+				stopSymbol = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+		}
+		catch( CoreException e ) {
+			throw new DebugException( e.getStatus() );
+		}
 		ICDITargetConfiguration config = getConfiguration();
 		if ( config.supportsBreakpoints() ) {
 			getBreakpointManager().setInitialBreakpoints();
-			if ( stopInMain ) {
-				stopInMain();
+			if ( stopSymbol != null && stopSymbol.length() != 0 ) {
+				stopAtSymbol( stopSymbol );
+			}
+		}
+		if ( config.supportsResume() && resume ) {
+			resume();
+		}
+	}
+
+	public void start( String stopSymbol, boolean resume ) throws DebugException {
+		ICDITargetConfiguration config = getConfiguration();
+		if ( config.supportsBreakpoints() ) {
+			getBreakpointManager().setInitialBreakpoints();
+			if ( stopSymbol != null && stopSymbol.length() != 0 ) {
+				stopAtSymbol( stopSymbol );
 			}
 		}
 		if ( config.supportsResume() && resume ) {
@@ -1697,6 +1718,21 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	protected void skipBreakpoints( boolean enabled ) {
 		getBreakpointManager().skipBreakpoints( enabled );
+	}
+
+	protected void stopAtSymbol( String stopSymbol ) throws DebugException {
+		try {
+			ICDILocation location = getCDITarget().createFunctionLocation( "", stopSymbol ); //$NON-NLS-1$ 
+			setInternalTemporaryBreakpoint( location );
+		}
+		catch( CoreException e ) {
+			String message = MessageFormat.format( DebugCoreMessages.getString( "CDebugModel.0" ), new String[]{ e.getStatus().getMessage() } ); //$NON-NLS-1$
+			IStatus newStatus = new Status( IStatus.WARNING, e.getStatus().getPlugin(), ICDebugInternalConstants.STATUS_CODE_QUESTION, message, null );
+			if ( !CDebugUtils.question( newStatus, this ) ) {
+				terminate();
+				throw new DebugException( new Status( IStatus.OK, e.getStatus().getPlugin(), e.getStatus().getCode(), e.getStatus().getMessage(), null ) );
+			}
+		}
 	}
 
 	protected void stopInMain() throws DebugException {

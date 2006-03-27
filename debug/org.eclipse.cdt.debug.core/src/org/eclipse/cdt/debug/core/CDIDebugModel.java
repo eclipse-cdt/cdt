@@ -77,18 +77,59 @@ public class CDIDebugModel {
 	 * @param file the executable to debug.
 	 * @param allowTerminate allow terminate().
 	 * @param allowDisconnect allow disconnect().
+	 * @param stopSymbol place temporary breakpoint at <code>stopSymbol</code>, ignore if <code>null</code> or empty.
+	 * @param resumeTarget resume target.
+	 * @return a debug target
+	 * @throws DebugException
+	 * @since 3.1
+	 */
+	public static IDebugTarget newDebugTarget( final ILaunch launch, final IProject project, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IBinaryObject file, final boolean allowTerminate, final boolean allowDisconnect, final String stopSymbol, final boolean resumeTarget ) throws DebugException {
+		final IDebugTarget[] target = new IDebugTarget[1];
+		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+
+			public void run( IProgressMonitor m ) throws CoreException {
+				target[0] = new CDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect );
+				((CDebugTarget)target[0]).start( stopSymbol, resumeTarget );
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e ) {
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+		return target[0];
+	}
+
+	/**
+	 * Creates and returns a debug target for the given CDI target, with the specified name, and associates it with the given process for console I/O. The debug
+	 * target is added to the given launch.
+	 * 
+	 * @param launch the launch the new debug target will be contained in
+	 * @param project the project to use to persist breakpoints.
+	 * @param cdiTarget the CDI target to create a debug target for
+	 * @param name the name to associate with this target, which will be returned from <code>IDebugTarget.getName</code>.
+	 * @param debuggeeProcess the process to associate with the debug target, which will be returned from <code>IDebugTarget.getProcess</code>
+	 * @param file the executable to debug.
+	 * @param allowTerminate allow terminate().
+	 * @param allowDisconnect allow disconnect().
 	 * @param stopInMain place temporary breakpoint at main()
 	 * @param resumeTarget resume target.
 	 * @return a debug target
 	 * @throws DebugException
+	 * @deprecated
 	 */
 	public static IDebugTarget newDebugTarget( final ILaunch launch, final IProject project, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IBinaryObject file, final boolean allowTerminate, final boolean allowDisconnect, final boolean stopInMain, final boolean resumeTarget ) throws DebugException {
 		final IDebugTarget[] target = new IDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 
 			public void run( IProgressMonitor m ) throws CoreException {
+				String stopSymbol = null;
+				if ( stopInMain )
+					stopSymbol = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
 				target[0] = new CDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect );
-				((CDebugTarget)target[0]).start( stopInMain, resumeTarget );
+				((CDebugTarget)target[0]).start( stopSymbol, resumeTarget );
 			}
 		};
 		try {
@@ -118,7 +159,7 @@ public class CDIDebugModel {
 	 * @throws DebugException
 	 */
 	public static IDebugTarget newDebugTarget( ILaunch launch, IProject project, ICDITarget cdiTarget, final String name, IProcess debuggeeProcess, IBinaryObject file, boolean allowTerminate, boolean allowDisconnect, boolean resumeTarget ) throws DebugException {
-		return newDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect, false, resumeTarget );
+		return newDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect, null, resumeTarget );
 	}
 
 	/**
@@ -454,7 +495,10 @@ public class CDIDebugModel {
 	 */
 	public static IDebugTarget newDebugTarget( ILaunch launch, ICDITarget target, String name, IProcess iprocess, IProcess debuggerProcess, IFile file, boolean allowTerminate, boolean allowDisconnect, boolean stopInMain ) throws CoreException {
 		IBinaryExecutable exeFile = getBinary( file );
-		return newDebugTarget( launch, file.getProject(), target, name, iprocess, exeFile, allowTerminate, allowDisconnect, stopInMain, true );
+		String stopSymbol = null;
+		if ( stopInMain )
+			stopSymbol = launch.getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT );
+		return newDebugTarget( launch, file.getProject(), target, name, iprocess, exeFile, allowTerminate, allowDisconnect, stopSymbol, true );
 	}
 
 	/**

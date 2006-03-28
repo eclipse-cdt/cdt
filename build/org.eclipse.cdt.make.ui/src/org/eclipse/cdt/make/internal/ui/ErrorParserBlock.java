@@ -75,7 +75,7 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 	 *      java.lang.String[])
 	 */
 	public void saveErrorParsers(IProject project, String[] parserIDs) throws CoreException {
-		if (getContainer().getProject() != null && fBuildInfo == null) {
+		if (getContainer().getProject() != null) {
 			try {
 				fBuildInfo = MakeCorePlugin.createBuildInfo(getContainer().getProject(), MakeBuilder.BUILDER_ID);
 			} catch (CoreException e) {

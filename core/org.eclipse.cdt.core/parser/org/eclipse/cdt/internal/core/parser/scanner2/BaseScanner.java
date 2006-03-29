@@ -4846,6 +4846,7 @@ abstract class BaseScanner implements IScanner {
         ppKeywords.put(Keywords.cUNDEF, ppUndef); //$NON-NLS-1$
         ppKeywords.put(Keywords.cERROR, ppError); //$NON-NLS-1$
         ppKeywords.put(Keywords.cINCLUDE_NEXT, ppInclude_next); //$NON-NLS-1$
+        ppKeywords.put(Keywords.cPRAGMA, ppPragma); //$NON-NLS-1$
     }
 
     /**

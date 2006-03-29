@@ -243,4 +243,5 @@ public class Keywords {
 	public static final char[] cUNDEF = "undef".toCharArray(); //$NON-NLS-1$
 	public static final char[] cERROR = "error".toCharArray(); //$NON-NLS-1$
 	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray(); //$NON-NLS-1$
+	public static final char[] cPRAGMA = "pragma".toCharArray(); //$NON-NLS-1$
 }

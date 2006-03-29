@@ -1,3 +1,7 @@
+2006-03-29 Mikhail Khodjaiants
+	Made some generic methods static.
+	* AbstractCLaunchDelegate.java
+
 2006-03-27 Mikhail Khodjaiants
 	Moved the extraction of the stop symbol to the launch.
 	* LocalCDILaunchDelegate.java

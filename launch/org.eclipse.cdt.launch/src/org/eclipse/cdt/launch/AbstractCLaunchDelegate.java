@@ -248,7 +248,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * 
 	 * @return the program arguments as a String
 	 */
-	public String getProgramArguments(ILaunchConfiguration config) throws CoreException {
+	public static String getProgramArguments(ILaunchConfiguration config) throws CoreException {
 		String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
 		if (args != null) {
 			args = getStringVariableManager().performStringSubstitution(args);
@@ -261,7 +261,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * 
 	 * @return the program arguments as an array of individual arguments
 	 */
-	public String[] getProgramArgumentsArray(ILaunchConfiguration config) throws CoreException {
+	public static String[] getProgramArgumentsArray(ILaunchConfiguration config) throws CoreException {
 		return parseArguments(getProgramArguments(config));
 	}
 
@@ -833,7 +833,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * does not include the default environment of the target.
 	 * @deprecated
 	 */
-	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
+	public static Properties getEnvironmentProperty(ILaunchConfiguration config) {
 		Properties prop = new Properties();
 		Map env = null;
 		try {

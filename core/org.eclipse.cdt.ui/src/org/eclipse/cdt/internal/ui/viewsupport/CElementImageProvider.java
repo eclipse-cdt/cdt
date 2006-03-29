@@ -17,10 +17,11 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContributedCElement;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
-import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
@@ -267,6 +268,10 @@ public class CElementImageProvider {
 	 * Returns an image descriptor for a C element. This is the base image, no overlays.
 	 */
 	public ImageDescriptor getBaseImageDescriptor(ICElement celement, int renderFlags) {
+		// Allow contributed languages to provide icons for their extensions to the ICElement hierarchy
+		if (celement instanceof IContributedCElement)
+		    return (ImageDescriptor)((IContributedCElement)celement).getAdapter(ImageDescriptor.class);
+		
 		int type = celement.getElementType();
 		switch (type) {
 			case ICElement.C_VCONTAINER:

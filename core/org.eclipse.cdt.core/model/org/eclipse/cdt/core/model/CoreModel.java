@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.model;
 
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
@@ -41,6 +43,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -185,13 +188,10 @@ public class CoreModel {
 	 * @return String[] ids
 	 */
 	public static String[] getRegistedContentTypeIds() {
-		return new String[] {
-				CCorePlugin.CONTENT_TYPE_ASMSOURCE,
-				CCorePlugin.CONTENT_TYPE_CHEADER,
-				CCorePlugin.CONTENT_TYPE_CSOURCE,
-				CCorePlugin.CONTENT_TYPE_CXXHEADER,
-				CCorePlugin.CONTENT_TYPE_CXXSOURCE
-		};
+		ArrayList a = LanguageManager.getInstance().getAllContentTypes();
+		String[] result = new String[a.size()];
+		a.toArray(result);
+		return result;
 	}
 
 	/**
@@ -201,17 +201,12 @@ public class CoreModel {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
 		if (contentType != null) {
 			String id = contentType.getId();
-			if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
-				return true;
-			} else if (CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)) {
-				return true;
-			} else if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
-				return true;
-			} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
-				return true;
-			} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
-				return true;
-			}
+			return CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(id)
+				|| CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)
+				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
+				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)
+				|| LanguageManager.getInstance().isContributedContentType(id);
 		}
 		return false;
 	}
@@ -239,13 +234,10 @@ public class CoreModel {
 		IContentType contentType = CCorePlugin.getContentType(project, name);
 		if (contentType != null) {
 			String id = contentType.getId();
-			if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
-				return true;
-			} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
-				return true;
-			} else if (CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)) {
-				return true;
-			}
+			return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)
+				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)
+				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(id)
+				|| LanguageManager.getInstance().isContributedContentType(id);
 		}
 		return false;
 	}

@@ -882,11 +882,13 @@ public class CCorePlugin extends Plugin {
 	 * @return
 	 */
 	public static IContentType getContentType(IProject project, String filename) {
+		// Always try in the workspace (for multi-language support)
 		// try with the project settings
 		if (project != null) {
 			try {
 				IContentTypeMatcher matcher = project.getContentTypeMatcher();
-				return matcher.findContentTypeFor(filename);
+				IContentType ct = matcher.findContentTypeFor(filename);
+				if (ct != null) return ct;
 			} catch (CoreException e) {
 				// ignore. 
 			}

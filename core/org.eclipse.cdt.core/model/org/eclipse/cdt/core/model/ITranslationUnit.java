@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.model;
 
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -375,4 +374,16 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @return
 	 */
 	ILanguage getLanguage() throws CoreException;
+	
+	/**
+	 * Used by contributed languages' model builders to indicate whether or
+	 * not the parse of a translation unit was successful.
+	 * 
+	 * @param wasSuccessful
+	 * 
+	 * TODO (DS) I'm not sure it's a good idea to put a setter in this
+	 * interface. We should revisit this.
+	 * 
+	 */
+	public void setIsStructureKnown(boolean wasSuccessful);
 }

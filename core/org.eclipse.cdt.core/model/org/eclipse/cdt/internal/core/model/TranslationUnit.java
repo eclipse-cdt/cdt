@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.INamespace;
@@ -279,7 +280,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return location;
 	}
 
-	protected IFile getFile() {
+	public IFile getFile() {
 		IResource res = getResource();
 		if (res instanceof IFile) {
 			return (IFile)res;
@@ -580,15 +581,36 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	/**
 	 * Parse the buffer contents of this element.
 	 */
-	private void parse(Map newElements){
+	private void parse(Map newElements) {
+		boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
+		IContributedModelBuilder mb = LanguageManager.getInstance().getContributedModelBuilderFor(this);
+		if (mb == null) {
+			parseUsingCModelBuilder(newElements, quickParseMode);
+		} else {
+			parseUsingContributedModelBuilder(mb, quickParseMode);
+		}
+	}
+
+	/**
+	 * Parse the buffer contents of this element.
+	 */
+	private void parseUsingCModelBuilder(Map newElements, boolean quickParseMode) {
 		try {
 			CModelBuilder modelBuilder = new CModelBuilder(this, newElements);
-			boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
 			modelBuilder.parse(quickParseMode);
 		} catch (Exception e) {
 			// use the debug log for this exception.
 			Util.debugLog( "Exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
 		}							
+	}
+	
+	private void parseUsingContributedModelBuilder(IContributedModelBuilder mb, boolean quickParseMode) {
+		try {
+			mb.parse(quickParseMode);
+		} catch (Exception e) {
+			// use the debug log for this exception.
+			Util.debugLog( "Exception in contributed model builder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
+		}
 	}
 	
 	public IProblemRequestor getProblemRequestor() {
@@ -613,6 +635,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
 				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
 				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentTypeId)
+				|| LanguageManager.getInstance().isContributedContentType(contentTypeId)
 				);
 	}
 
@@ -694,5 +717,20 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			setContentTypeID(cType.getId());
 		}
 		super.closing(info);
+	}
+
+	/**
+	 * Contributed languages' model builders need to be able to indicate whether or
+	 * not the parse of a translation unit was successful without having access to
+	 * the <code>CElementInfo</code> object associated with the translation unit
+	 * 
+	 * @param wasSuccessful
+	 */
+	public void setIsStructureKnown(boolean wasSuccessful) {
+		try {
+			this.getElementInfo().setIsStructureKnown(wasSuccessful);
+		} catch (CModelException e) {
+			;
+		}
 	}
 }

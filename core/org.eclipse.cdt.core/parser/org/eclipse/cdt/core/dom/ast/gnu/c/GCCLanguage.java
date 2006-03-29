@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -129,5 +131,9 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) {
 		return null;
 	}
-	
+
+	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
+		// Use the default CDT model builder
+		return null;
+	}
 }

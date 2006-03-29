@@ -95,4 +95,13 @@ public interface ILanguage extends IAdaptable {
 	 */
 	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset);
 
+	/**
+	 * Used to override the default model building behavior for a translation unit.
+	 * 
+	 * @param  tu  the <code>ITranslationUnit</code> to be parsed (non-<code>null</code>)
+	 * @return an <code>IModelBuilder</code>, which parses the given translation unit and
+	 *         returns the <code>ICElement</code>s of its model, or <code>null</code>
+	 *         to parse using the default CDT model builder
+	 */
+	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu);
 }

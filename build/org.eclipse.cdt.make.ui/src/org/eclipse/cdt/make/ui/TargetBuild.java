@@ -51,7 +51,7 @@ public class TargetBuild {
 		List projects = new ArrayList();
 		for (int i = 0; i < targets.length; ++i) {
 			IMakeTarget target = targets[i];
-			projects.add(target.getContainer().getProject());
+			projects.add(target.getProject());
 		}
 
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();

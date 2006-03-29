@@ -833,7 +833,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * does not include the default environment of the target.
 	 * @deprecated
 	 */
-	public static Properties getEnvironmentProperty(ILaunchConfiguration config) {
+	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
 		Properties prop = new Properties();
 		Map env = null;
 		try {

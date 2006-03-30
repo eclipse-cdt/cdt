@@ -167,6 +167,24 @@ public class DefaultMacroContextInfo implements IMacroContextInfo {
 					return new DefaultMacroContextInfo(
 							IBuildMacroProvider.CONTEXT_CONFIGURATION,
 							((IToolChain)ho).getParent());
+				else {
+					IBuildObject buildObj = optionContext.getParent();
+                    IConfiguration cfg = null; 
+                    if(buildObj instanceof ITool) 
+                       buildObj = ((ITool)buildObj).getParent(); 
+                    if(buildObj instanceof IToolChain) 
+                       cfg = ((IToolChain)buildObj).getParent(); 
+                    else if(buildObj instanceof IResourceConfiguration) 
+                       cfg = ((IResourceConfiguration)buildObj).getParent(); 
+                    else if(buildObj instanceof IConfiguration) 
+                       cfg = (IConfiguration)buildObj; 
+
+                    if(cfg != null){ 
+                        return new DefaultMacroContextInfo( 
+                        		IBuildMacroProvider.CONTEXT_CONFIGURATION, 
+                        		cfg); 
+                    } 
+				}
 			}
 			break;
 		case IBuildMacroProvider.CONTEXT_TOOL:

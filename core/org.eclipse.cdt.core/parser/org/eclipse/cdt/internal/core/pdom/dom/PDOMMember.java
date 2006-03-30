@@ -12,7 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPClassType;
 import org.eclipse.core.runtime.CoreException;
 
@@ -28,12 +28,12 @@ public abstract class PDOMMember extends PDOMBinding {
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 12;
 	
-	public PDOMMember(PDOMDatabase pdom, PDOMMemberOwner parent, IASTName name, int type) throws CoreException {
+	public PDOMMember(PDOM pdom, PDOMMemberOwner parent, IASTName name, int type) throws CoreException {
 		super(pdom, parent, name, type);
 		parent.addMember(this);
 	}
 
-	public PDOMMember(PDOMDatabase pdom, int record) {
+	public PDOMMember(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 

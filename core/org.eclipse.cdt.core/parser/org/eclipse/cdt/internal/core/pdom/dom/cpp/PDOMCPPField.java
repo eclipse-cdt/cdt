@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -29,12 +29,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCPPField extends PDOMMember implements ICPPField {
 
-	public PDOMCPPField(PDOMDatabase pdom, PDOMCPPClassType parent, IASTName name)
+	public PDOMCPPField(PDOM pdom, PDOMCPPClassType parent, IASTName name)
 			throws CoreException {
 		super(pdom, parent, name, PDOMCPPLinkage.CPPFIELD);
 	}		
 
-	public PDOMCPPField(PDOMDatabase pdom, int bindingRecord) {
+	public PDOMCPPField(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
 

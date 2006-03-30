@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCStructure extends PDOMMemberOwner implements ICompositeType {
 
-	public PDOMCStructure(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
+	public PDOMCStructure(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCLinkage.CSTRUCTURE);
 	}
 
-	public PDOMCStructure(PDOMDatabase pdom, int record) {
+	public PDOMCStructure(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 

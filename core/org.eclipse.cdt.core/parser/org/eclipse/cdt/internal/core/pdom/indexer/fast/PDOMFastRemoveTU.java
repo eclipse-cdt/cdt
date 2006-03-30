@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,22 +26,24 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMFastRemoveTU extends Job {
 
-	private final IPDOM pdom;
+	private final PDOM pdom;
 	private final ITranslationUnit tu;
 	
 	public PDOMFastRemoveTU(IPDOM pdom, ITranslationUnit tu) {
 		super("PDOM Fast Remove TU");
-		this.pdom = pdom;
+		this.pdom = (pdom instanceof PDOM) ? (PDOM)pdom : null;
 		this.tu = tu;
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
+		if (pdom == null)
+			return Status.CANCEL_STATUS;
 		try {
-			PDOMDatabase mypdom = (PDOMDatabase)pdom;
-			mypdom.removeSymbols(tu);
+			getJobManager().beginRule(pdom.getWriterLockRule(), monitor);
+			pdom.removeSymbols(tu);
 			// TODO delete the file itself from the database
 			// the removeSymbols only removes the names in the file
-			// TODO Auto-generated method stub
+			getJobManager().endRule(pdom.getWriterLockRule());
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();

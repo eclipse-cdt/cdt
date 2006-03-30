@@ -13,7 +13,7 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="indexer"/>
+            <element ref="run"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -34,6 +34,21 @@
                <documentation>
                   
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="run">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.dom.IPDOMIndexer"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

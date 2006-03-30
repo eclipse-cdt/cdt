@@ -20,19 +20,19 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMLanguage {
 
-	private PDOMDatabase pdom;
+	private PDOM pdom;
 	private int record;
 	
 	private static final int NEXT = 0;	// int
 	private static final int ID = 4;	// char
 	private static final int NAME = 6;	// string
 	
-	public PDOMLanguage(PDOMDatabase pdom, int record) {
+	public PDOMLanguage(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
 	}
 
-	public PDOMLanguage(PDOMDatabase pdom, String name, int id, int next) throws CoreException {
+	public PDOMLanguage(PDOM pdom, String name, int id, int next) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		record = db.malloc(6 + (name.length() + 1) * 2);

@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -1139,7 +1138,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		this.getIndexManager().discardJobs(project.getName());
 		// delete the PDOM for this project
 		try {
-			PDOM.deletePDOM(project);
+			CCorePlugin.getPDOMManager().deletePDOM(project);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

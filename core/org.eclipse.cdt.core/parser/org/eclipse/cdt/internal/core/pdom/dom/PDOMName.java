@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope2;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMName implements IASTName, IASTFileLocation {
 
-	private final PDOMDatabase pdom;
+	private final PDOM pdom;
 	private final int record;
 	
 	private static final int FILE_REC_OFFSET     = 0;
@@ -50,7 +50,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 	private static final int IS_REFERENCE = 3;
 	
 
-	public PDOMName(PDOMDatabase pdom, IASTName name, PDOMBinding binding) throws CoreException {
+	public PDOMName(PDOM pdom, IASTName name, PDOMBinding binding) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
@@ -98,7 +98,7 @@ public class PDOMName implements IASTName, IASTFileLocation {
 		db.putInt(record + NODE_LENGTH_OFFSET, fileloc.getNodeLength());
 	}
 	
-	public PDOMName(PDOMDatabase pdom, int nameRecord) {
+	public PDOMName(PDOM pdom, int nameRecord) {
 		this.pdom = pdom;
 		this.record = nameRecord;
 	}

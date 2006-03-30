@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -141,7 +140,7 @@ public class PDOMUpdator extends Job {
 	private void processDelta(ICElementDelta delta) {
 		// First make sure this project is PDOMable
 		ICElement element = delta.getElement();
-		if (element instanceof ICProject && PDOM.getPDOM(((ICProject)element).getProject()) == null)
+		if (element instanceof ICProject && CCorePlugin.getPDOMManager().getPDOM(((ICProject)element).getProject()) == null)
 			return;
 		
 		// process the children first
@@ -184,8 +183,6 @@ public class PDOMUpdator extends Job {
 	
 	private void processNewProject(final ICProject project) {
 		try {
-			if (!PDOM.isEnabled(project.getProject()))
-				return;
 			project.getProject().accept(new IResourceProxyVisitor() {
 				public boolean visit(IResourceProxy proxy) throws CoreException {
 					if (proxy.getType() == IResource.FILE) {
@@ -215,30 +212,30 @@ public class PDOMUpdator extends Job {
 
 	private void processAddedTU(ITranslationUnit tu) throws CoreException {
 		IPDOM pdom = tu.getCProject().getIndex();
-		if (pdom == null || !(pdom instanceof PDOMDatabase))
+		if (pdom == null || !(pdom instanceof PDOM))
 			return;
 		
-		PDOMDatabase mypdom = (PDOMDatabase)pdom;
+		PDOM mypdom = (PDOM)pdom;
 		mypdom.addSymbols(tu);
 	}
 
 	private void processRemovedTU(ITranslationUnit tu) throws CoreException {
 		IProject project = tu.getCProject().getProject();
-		IPDOM pdom = PDOM.getPDOM(project);
-		if (pdom == null || !(pdom instanceof PDOMDatabase))
+		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
+		if (pdom == null || !(pdom instanceof PDOM))
 			return;
 
-		PDOMDatabase mypdom = (PDOMDatabase)pdom;
+		PDOM mypdom = (PDOM)pdom;
 		mypdom.removeSymbols(tu);
 		// TODO delete the file itself from the database
 		// the removeSymbols only removes the names in the file
 	}
 
 	private void processChangedTU(ITranslationUnit tu) throws CoreException {
-		IPDOM pdom = PDOM.getPDOM(tu.getCProject().getProject());
-		if (pdom == null || !(pdom instanceof PDOMDatabase))
+		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(tu.getCProject().getProject());
+		if (pdom == null || !(pdom instanceof PDOM))
 			return;
-		PDOMDatabase mypdom = (PDOMDatabase)pdom;
+		PDOM mypdom = (PDOM)pdom;
 		
 		mypdom.removeSymbols(tu);
 		mypdom.addSymbols(tu);

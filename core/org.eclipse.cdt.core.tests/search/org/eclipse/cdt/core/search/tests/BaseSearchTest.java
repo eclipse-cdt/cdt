@@ -71,7 +71,8 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		try {
 			//Create temp project
 			testProject = createProject("SearchTestProject");
-			
+			resetIndexer(DOMSourceIndexer.ID);
+
 			testProject.setSessionProperty(DOMSourceIndexer.activationKey,new Boolean(true));
 			
 			//Set the id of the source indexer extension point as a session property to allow

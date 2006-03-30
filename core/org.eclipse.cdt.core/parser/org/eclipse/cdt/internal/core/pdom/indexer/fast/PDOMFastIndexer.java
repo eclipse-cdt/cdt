@@ -18,14 +18,13 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -44,11 +43,19 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMFastIndexer implements IPDOMIndexer {
 
-	private PDOMDatabase pdom;
+	private PDOM pdom;
 
 	public void setPDOM(IPDOM pdom) {
-		if (pdom instanceof PDOMDatabase)
-			this.pdom = (PDOMDatabase)pdom;
+		if (pdom instanceof PDOM)
+			this.pdom = (PDOM)pdom;
+	}
+	
+	private IProgressMonitor progressGroup;
+	
+	private IProgressMonitor getProgressGroup() {
+		if (progressGroup == null)
+			progressGroup = Platform.getJobManager().createProgressGroup();
+		return progressGroup;
 	}
 	
 	private class ChangeHandler extends Job {
@@ -130,7 +137,7 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 		private void processDelta(ICElementDelta delta) {
 			// First make sure this project is PDOMable
 			ICElement element = delta.getElement();
-			if (element instanceof ICProject && PDOM.getPDOM(((ICProject)element).getProject()) == null)
+			if (element instanceof ICProject && CCorePlugin.getPDOMManager().getPDOM(((ICProject)element).getProject()) == null)
 				return;
 			
 			// process the children first
@@ -173,8 +180,6 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 
 		private void processNewProject(final ICProject project) {
 			try {
-				if (!PDOM.isEnabled(project.getProject()))
-					return;
 				project.getProject().accept(new IResourceProxyVisitor() {
 					public boolean visit(IResourceProxy proxy) throws CoreException {
 						if (proxy.getType() == IResource.FILE) {

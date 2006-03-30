@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -41,11 +41,11 @@ public class PDOMCPPNamespace extends PDOMBinding
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCPPNamespace(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
+	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCPPLinkage.CPPNAMESPACE);
 	}
 
-	public PDOMCPPNamespace(PDOMDatabase pdom, int record) {
+	public PDOMCPPNamespace(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 
@@ -109,7 +109,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 	private static final class FindBinding extends PDOMNode.NodeVisitor {
 		PDOMBinding pdomBinding;
 		final int desiredType;
-		public FindBinding(PDOMDatabase pdom, char[] name, int desiredType) {
+		public FindBinding(PDOM pdom, char[] name, int desiredType) {
 			super(pdom, name);
 			this.desiredType = desiredType;
 		}

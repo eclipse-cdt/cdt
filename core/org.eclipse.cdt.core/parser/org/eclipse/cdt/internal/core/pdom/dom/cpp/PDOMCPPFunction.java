@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -30,11 +30,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction {
 
-	public PDOMCPPFunction(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
+	public PDOMCPPFunction(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCPPLinkage.CPPFUNCTION);
 	}
 
-	public PDOMCPPFunction(PDOMDatabase pdom, int bindingRecord) {
+	public PDOMCPPFunction(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
 

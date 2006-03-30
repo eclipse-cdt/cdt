@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QNX Software Systems and others.
+ * Copyright (c) 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,25 +9,25 @@
  * QNX - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.pdom.dom.cpp;
+package org.eclipse.cdt.core.dom;
 
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  *
  */
-public class PDOMCPPLinkageFactory implements IPDOMLinkageFactory {
+public interface IPDOMManager {
 
-	public PDOMLinkage getLinkage(PDOM pdom, int record) {
-		return new PDOMCPPLinkage(pdom, record);
-	}
+	// Getting and deleting a PDOM for a project
+	public IPDOM getPDOM(IProject project);
+	public void deletePDOM(IProject project) throws CoreException;
 
-	public PDOMLinkage createLinkage(PDOM pdom) throws CoreException {
-		return new PDOMCPPLinkage(pdom);
-	}
+	// Getting and setting indexer Ids
+	public String getDefaultIndexerId();
+	public void setDefaultIndexerId(String indexerId);
 	
+	public String getIndexerId(IProject project);
+	public void setIndexerId(IProject project, String indexerId);
 }

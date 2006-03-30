@@ -33,14 +33,14 @@ import org.eclipse.core.runtime.Status;
  */
 public class PDOMCodeReaderFactory implements ICodeReaderFactory {
 
-	private final PDOMDatabase pdom;
+	private final PDOM pdom;
 	private List workingCopies;
 	
-	public PDOMCodeReaderFactory(PDOMDatabase pdom) {
+	public PDOMCodeReaderFactory(PDOM pdom) {
 		this.pdom = pdom;
 	}
 
-	public PDOMCodeReaderFactory(PDOMDatabase pdom, IWorkingCopy workingCopy) {
+	public PDOMCodeReaderFactory(PDOM pdom, IWorkingCopy workingCopy) {
 		this(pdom);
 		workingCopies = new ArrayList(1);
 		workingCopies.add(workingCopy);

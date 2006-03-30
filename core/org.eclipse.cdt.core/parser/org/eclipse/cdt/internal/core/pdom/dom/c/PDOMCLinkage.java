@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
@@ -43,11 +43,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCLinkage extends PDOMLinkage {
 
-	public PDOMCLinkage(PDOMDatabase pdom, int record) {
+	public PDOMCLinkage(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 
-	public PDOMCLinkage(PDOMDatabase pdom) throws CoreException {
+	public PDOMCLinkage(PDOM pdom) throws CoreException {
 		super(pdom, GCCLanguage.ID, "C".toCharArray());
 	}
 
@@ -115,7 +115,7 @@ public class PDOMCLinkage extends PDOMLinkage {
 	private static final class FindBinding extends PDOMNode.NodeVisitor {
 		PDOMBinding pdomBinding;
 		final int desiredType;
-		public FindBinding(PDOMDatabase pdom, char[] name, int desiredType) {
+		public FindBinding(PDOM pdom, char[] name, int desiredType) {
 			super(pdom, name);
 			this.desiredType = desiredType;
 		}

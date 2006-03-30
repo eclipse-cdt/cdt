@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -31,11 +31,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCPPMethod extends PDOMMember implements ICPPMethod {
 
-	public PDOMCPPMethod(PDOMDatabase pdom, PDOMMemberOwner parent, IASTName name) throws CoreException {
+	public PDOMCPPMethod(PDOM pdom, PDOMMemberOwner parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCPPLinkage.CPPMETHOD);
 	}
 
-	public PDOMCPPMethod(PDOMDatabase pdom, int record) {
+	public PDOMCPPMethod(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 

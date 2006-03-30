@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -23,14 +23,14 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class LinkageCache {
 
-	private final PDOMDatabase pdom;
+	private final PDOM pdom;
 	private final PDOMLinkage linkage;
 	private int[] cache;
 	
 	private static class Counter implements IBTreeVisitor {
 		int count;
-		PDOMDatabase pdom;
-		public Counter(PDOMDatabase pdom) {
+		PDOM pdom;
+		public Counter(PDOM pdom) {
 			this.pdom = pdom;
 		}
 		public int compare(int record) throws CoreException {
@@ -44,10 +44,10 @@ public class LinkageCache {
 	}
 
 	private static class FillCache implements IBTreeVisitor {
-		final PDOMDatabase pdom;
+		final PDOM pdom;
 		final int[] cache;
 		int index;
-		public FillCache(PDOMDatabase pdom, int [] cache) {
+		public FillCache(PDOM pdom, int [] cache) {
 			this.pdom = pdom;
 			this.cache = cache;
 		}
@@ -63,7 +63,7 @@ public class LinkageCache {
 		};
 	}
 
-	public LinkageCache(PDOMDatabase pdom, PDOMLinkage linkage) throws CoreException {
+	public LinkageCache(PDOM pdom, PDOMLinkage linkage) throws CoreException {
 		this.pdom = pdom;
 		this.linkage = linkage;
 		

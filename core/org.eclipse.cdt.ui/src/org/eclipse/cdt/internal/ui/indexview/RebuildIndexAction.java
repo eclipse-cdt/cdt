@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.core.dom.PDOM;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOMUpdator;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -43,7 +43,7 @@ public class RebuildIndexAction extends IndexAction {
 			
 			ICProject cproject = (ICProject)objs[i];
 			try {
-				PDOM.deletePDOM(cproject.getProject());
+				CCorePlugin.getPDOMManager().deletePDOM(cproject.getProject());
 				PDOMUpdator job = new PDOMUpdator(cproject, null);
 				job.schedule();
 			} catch (CoreException e) {

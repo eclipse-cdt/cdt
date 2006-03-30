@@ -14,10 +14,10 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -127,7 +127,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 					IWorkingCopy workingCopy = (IWorkingCopy)fEditor.getInputCElement();
 					IFile resourceFile = (IFile)workingCopy.getResource();
 					project = new CProject(null, resourceFile.getProject());
-					IPDOM pdom = PDOM.getPDOM(resourceFile.getProject());
+					IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(resourceFile.getProject());
 					try {
 						if (pdom != null) {
 							try {

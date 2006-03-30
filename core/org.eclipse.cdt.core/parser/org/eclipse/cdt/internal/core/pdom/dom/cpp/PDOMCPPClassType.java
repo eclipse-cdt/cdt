@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
@@ -41,11 +41,11 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 
 	protected static final int RECORD_SIZE = PDOMMemberOwner.RECORD_SIZE + 0;
 	
-	public PDOMCPPClassType(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
+	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCPPLinkage.CPPCLASSTYPE);
 	}
 
-	public PDOMCPPClassType(PDOMDatabase pdom, int bindingRecord) {
+	public PDOMCPPClassType(PDOM pdom, int bindingRecord) {
 		super(pdom, bindingRecord);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 QNX Software Systems and others.
+ * Copyright (c) 2006 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,19 +9,25 @@
  * QNX - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.pdom.dom;
+package org.eclipse.cdt.internal.core.pdom.indexer.nulli;
 
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
 
 /**
  * @author Doug Schaefer
  *
  */
-public interface IPDOMLinkageFactory {
+public class PDOMNullIndexer implements IPDOMIndexer {
 
-	public PDOMLinkage getLinkage(PDOM pdom, int record);
-	
-	public PDOMLinkage createLinkage(PDOM pdom) throws CoreException;
-	
+	public void setPDOM(IPDOM pdom) {
+	}
+
+	public void reindex() {
+	}
+
+	public void elementChanged(ElementChangedEvent event) {
+	}
+
 }

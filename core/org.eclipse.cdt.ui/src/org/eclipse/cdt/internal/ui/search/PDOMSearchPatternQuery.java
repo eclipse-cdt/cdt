@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.PDOM;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -93,7 +93,7 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 			// Not a CDT project
 			return;
 
-		PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(project);
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
 		PDOMBinding[] bindings = pdom.findBindings(pattern);
 		
 		for (int i = 0; i < bindings.length; ++i) {

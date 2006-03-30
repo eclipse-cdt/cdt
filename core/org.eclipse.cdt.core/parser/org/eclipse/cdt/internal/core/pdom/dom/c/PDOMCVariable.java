@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariable;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -29,13 +29,13 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCVariable extends PDOMBinding implements IVariable {
 
-	public PDOMCVariable(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
+	public PDOMCVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCLinkage.CVARIABLE);
 		CVariable binding = (CVariable)name.getBinding();
 		IType type = binding.getType();
 	}
 
-	public PDOMCVariable(PDOMDatabase pdom, int record) {
+	public PDOMCVariable(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 

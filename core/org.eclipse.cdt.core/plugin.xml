@@ -540,6 +540,7 @@
             	class="org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer">
          </run>
       </cextension>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer"/>
    </extension>
    <extension
          id="ctagsindexer"
@@ -550,11 +551,24 @@
           class="org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer">
          </run>
       </cextension>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer"/>
    </extension>
    <extension
    		 id="nullindexer"
          name="%CDTIndexer.nullindexer"
          point="org.eclipse.cdt.core.CIndexer">
+      <cextension>
+         <run 
+            class="org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer">
+         </run>
+      </cextension>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer"/>
+   </extension>
+   <extension
+         id="fastIndexer"
+         name="%fastIndexer.name"
+         point="org.eclipse.cdt.core.CIndexer">
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer"/>
       <cextension>
          <run 
             class="org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer">

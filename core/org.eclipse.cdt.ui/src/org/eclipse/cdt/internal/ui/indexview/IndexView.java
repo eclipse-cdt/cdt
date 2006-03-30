@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -68,7 +68,7 @@ import org.eclipse.ui.part.ViewPart;
  * @author Doug Schaefer
  *
  */
-public class IndexView extends ViewPart implements PDOMDatabase.IListener {
+public class IndexView extends ViewPart implements PDOM.IListener {
 
 	private TreeViewer viewer;
 //	private DrillDownAdapter drillDownAdapter;
@@ -139,8 +139,8 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	}
 	private static class Counter implements IBTreeVisitor {
 		int count;
-		PDOMDatabase pdom;
-		public Counter(PDOMDatabase pdom) {
+		PDOM pdom;
+		public Counter(PDOM pdom) {
 			this.pdom = pdom;
 		}
 		public int compare(int record) throws CoreException {
@@ -154,11 +154,11 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 	}
 
 	private static class Children implements IBTreeVisitor {
-		final PDOMDatabase pdom;
+		final PDOM pdom;
 		final PDOMBinding[] bindings;
 		final Filter filter;
 		int index;
-		public Children(PDOMDatabase pdom, PDOMBinding[] bindings, Filter filter) {
+		public Children(PDOM pdom, PDOMBinding[] bindings, Filter filter) {
 			this.pdom = pdom;
 			this.bindings = bindings;
 			this.filter = filter;
@@ -263,7 +263,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof ICProject) {
 				try {
-					PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(((ICProject)parentElement).getProject());
+					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(((ICProject)parentElement).getProject());
 					int n = 0;
 					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
 						++n;
@@ -278,7 +278,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			} else if (parentElement instanceof PDOMLinkage) {
 				try {
 					PDOMLinkage linkage = (PDOMLinkage)parentElement;
-					PDOMDatabase pdom = linkage.getPDOM();
+					PDOM pdom = linkage.getPDOM();
 					Counter counter = new Counter(pdom);
 					linkage.getIndex().visit(counter);
 					PDOMBinding[] bindings = new PDOMBinding[counter.count];
@@ -291,7 +291,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			} else if (parentElement instanceof PDOMCPPNamespace) {
 				try {
 					PDOMCPPNamespace namespace = (PDOMCPPNamespace)parentElement;
-					PDOMDatabase pdom = namespace.getPDOM();
+					PDOM pdom = namespace.getPDOM();
 					Counter counter = new Counter(pdom);
 					namespace.getIndex().visit(counter);
 					PDOMBinding[] bindings = new PDOMBinding[counter.count];
@@ -325,12 +325,12 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 
 		public boolean hasChildren(Object element) {
 			if (element instanceof ICProject) {
-				IPDOM ipdom = PDOM.getPDOM(((ICProject)element).getProject());
-				if (ipdom == null || !(ipdom instanceof PDOMDatabase))
+				IPDOM ipdom = CCorePlugin.getPDOMManager().getPDOM(((ICProject)element).getProject());
+				if (ipdom == null || !(ipdom instanceof PDOM))
 					return false;
 				
 				try {
-					PDOMDatabase pdom = (PDOMDatabase)ipdom;
+					PDOM pdom = (PDOM)ipdom;
 					return pdom.getFirstLinkage() != null;
 				} catch (CoreException e) {
 					CUIPlugin.getDefault().log(e);
@@ -432,7 +432,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 			ICProject[] cprojects = model.getCProjects();
 			int n = 0;
 			for (int i = 0; i < cprojects.length; ++i) {
-				PDOMDatabase pdom = (PDOMDatabase)PDOM.getPDOM(cprojects[i].getProject()); 
+				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(cprojects[i].getProject()); 
 				if (pdom != null) {
 					++n;
 					pdom.addListener(this);
@@ -534,7 +534,7 @@ public class IndexView extends ViewPart implements PDOMDatabase.IListener {
 		viewer.getControl().setFocus();
 	}
 
-	public void handleChange(PDOMDatabase pdom) {
+	public void handleChange(PDOM pdom) {
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				viewer.refresh();

@@ -1367,6 +1367,11 @@
             id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
             indexerID="org.eclipse.cdt.core.domsourceindexer"
             name="%CDTIndexer.domsourceindexer"/>
+   <indexerUI
+         class="org.eclipse.cdt.ui.dialogs.NullIndexerBlock"
+         id="org.eclipse.cdt.ui.fastIndexer"
+         indexerID="org.eclipse.cdt.core.fastIndexer"
+         name="%CDTIndexer.fastindexer"/>
 
    </extension>
 	<extension

@@ -12,8 +12,11 @@
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,20 +29,35 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOMFastChangeTU extends Job {
 
-	private final IPDOM pdom;
+	private final PDOM pdom;
 	private final ITranslationUnit tu;
 	
 	public PDOMFastChangeTU(IPDOM pdom, ITranslationUnit tu) {
 		super("PDOM Fast Change TU");
-		this.pdom = pdom;
+		this.pdom = (pdom instanceof PDOM) ? (PDOM)pdom : null;
 		this.tu = tu;
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
+		if (pdom == null)
+			return Status.CANCEL_STATUS;
 		try {
-			PDOMDatabase mypdom = (PDOMDatabase)pdom;
-			mypdom.removeSymbols(tu);
-			mypdom.addSymbols(tu);
+			ILanguage language = tu.getLanguage();
+			if (language == null)
+				return Status.CANCEL_STATUS;
+
+			// get the AST in a "Fast" way
+			IASTTranslationUnit ast = language.getTranslationUnit((IFile)tu.getResource(),
+					ILanguage.AST_USE_INDEX |
+					ILanguage.AST_SKIP_INDEXED_HEADERS |
+					ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+			if (ast == null)
+				return Status.CANCEL_STATUS;
+			
+			getJobManager().beginRule(pdom.getWriterLockRule(), monitor);
+			pdom.removeSymbols(tu);
+			pdom.addSymbols(language, ast);
+			getJobManager().endRule(pdom.getWriterLockRule());
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();

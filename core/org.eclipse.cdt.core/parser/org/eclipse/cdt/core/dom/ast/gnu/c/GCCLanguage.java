@@ -13,8 +13,6 @@ package org.eclipse.cdt.core.dom.ast.gnu.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
@@ -37,8 +35,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerExtensionConfiguration;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOMCodeReaderFactory;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 import org.eclipse.core.resources.IFile;
@@ -97,10 +95,10 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 				scanInfo = new ScannerInfo();
 		}
 		
-		IPDOM pdom = PDOM.getPDOM(project);
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project).getAdapter(PDOM.class);
 		ICodeReaderFactory fileCreator;
 		if ((style & ILanguage.AST_SKIP_INDEXED_HEADERS) != 0)
-			fileCreator = new PDOMCodeReaderFactory((PDOMDatabase)pdom);
+			fileCreator = new PDOMCodeReaderFactory(pdom);
 		else
 			fileCreator = SavedCodeReaderFactory.getInstance();
 

@@ -687,7 +687,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			
 			// Special magic for C/C++ header files
 			if (language == null && isHeaderUnit()) {
-				contentType = CoreModel.hasCCNature(getResource().getProject())
+				IResource resource = getResource();
+				contentType = resource != null && CoreModel.hasCCNature(resource.getProject())
 					? manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE)
 					: manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
 				language = LanguageManager.getInstance().getLanguage(contentType);

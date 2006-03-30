@@ -13,10 +13,10 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.PDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -83,7 +83,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
                 IFile file = (IFile)workingCopy.getResource();
                 if (file != null) {
                 	IProject project = file.getProject();
-                	IPDOM pdom = PDOM.getPDOM(project);
+                	IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
                 	ICodeReaderFactory readerFactory;
                 	if (pdom != null)
                 		readerFactory = pdom.getCodeReaderFactory(workingCopy);
@@ -93,7 +93,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
                 } else if (editor.getEditorInput() instanceof ExternalEditorInput) {
                     IStorage storage = ((ExternalEditorInput)(editor.getEditorInput())).getStorage();
                     IProject project = workingCopy.getCProject().getProject();
-                	IPDOM pdom = PDOM.getPDOM(project);
+                	IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
                 	ICodeReaderFactory readerFactory;
                 	if (pdom != null)
                 		readerFactory = pdom.getCodeReaderFactory(workingCopy);

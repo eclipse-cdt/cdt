@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -28,12 +28,12 @@ public class PDOMMemberOwner extends PDOMBinding {
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 
-	public PDOMMemberOwner(PDOMDatabase pdom, PDOMNode parent, IASTName name,
+	public PDOMMemberOwner(PDOM pdom, PDOMNode parent, IASTName name,
 			int type) throws CoreException {
 		super(pdom, parent, name, type);
 	}
 
-	public PDOMMemberOwner(PDOMDatabase pdom, int record) {
+	public PDOMMemberOwner(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 

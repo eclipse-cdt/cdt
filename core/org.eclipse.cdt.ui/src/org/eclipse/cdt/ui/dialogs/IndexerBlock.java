@@ -16,10 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
-import org.eclipse.cdt.core.dom.PDOM;
-import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -33,17 +29,12 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -60,19 +51,10 @@ import org.eclipse.swt.widgets.Group;
 
 public class IndexerBlock extends AbstractCOptionPage {
 
-	public final static String INDEX_UI_ID = CUIPlugin.PLUGIN_ID + ".cdtindexers"; //$NON-NLS-1$
-	public final static String INDEXERUIID = "indexerUIID"; //$NON-NLS-1$
-	public final static QualifiedName indexerUIIDKey = new QualifiedName(INDEX_UI_ID, INDEXERUIID);
-	
-	public static final String INDEXER_UI = "indexerUI"; //$NON-NLS-1$
-	public static final String INDEXER_UI_VALUE = "indexerUIValue"; //$NON-NLS-1$
-	
 	private static final String INDEXER_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.label" ); //$NON-NLS-1$
 	private static final String INDEXER_DESCRIPTION = CUIPlugin.getResourceString("BaseIndexerBlock.desc"); //$NON-NLS-1$
 	private static final String INDEXER_COMBO_LABEL = CUIPlugin.getResourceString("BaseIndexerBlock.comboLabel"); //$NON-NLS-1$
-	private static final String INDEXER_USE_PDOM = CUIPlugin.getResourceString("BaseIndexerBlock.usePDOM"); //$NON-NLS-1$
 	
-	private Button					indexerUsePDOM;
     private Combo 					indexersComboBox;
     private HashMap 				indexerPageMap;
     private List                    indexerPageList;
@@ -83,10 +65,6 @@ public class IndexerBlock extends AbstractCOptionPage {
     int nullIndexerIndex;
     
 	String initialSelected;
-	private IPreferenceStore prefStore=CUIPlugin.getDefault().getPreferenceStore();
-	
-	boolean initialPDOMChecked;
-	boolean pdomChecked;
 	
     public IndexerBlock(){
 		super(INDEXER_LABEL);
@@ -121,7 +99,6 @@ public class IndexerBlock extends AbstractCOptionPage {
     }
 
     public void createControl(Composite parent) {
-       
         
         Composite composite = ControlFactory.createComposite(parent, 1);
         Font font = parent.getFont();
@@ -211,29 +188,6 @@ public class IndexerBlock extends AbstractCOptionPage {
      * @return
      */
     private boolean createIndexerControls(Composite parent) {
-    	// PDOM selection
-    	indexerUsePDOM = new Button(parent, SWT.CHECK);
-    	indexerUsePDOM.setText(INDEXER_USE_PDOM);
-    	indexerUsePDOM.addSelectionListener(new SelectionListener() {
-    		public void widgetDefaultSelected(SelectionEvent e) {
-    		}
-    		public void widgetSelected(SelectionEvent e) {
-    			if (indexerUsePDOM.getSelection()) {
-    				pdomChecked = true;
-    				indexersComboBox.select(nullIndexerIndex);
-    				setPage();
-    				indexersComboBox.setEnabled(false);
-    			} else {
-    				pdomChecked = false;
-    				indexersComboBox.setEnabled(true);
-    			}
-    		}
-    	});
-    	pdomChecked = initialPDOMChecked = prefStore.getBoolean(CCorePlugin.USE_PDOM_PREF);
-    	indexerUsePDOM.setSelection(initialPDOMChecked);    	
-        //TODO: Put in some logic to deal with old CDT project: upgrade old projects
-        //to use the Classic CDT Indexer
-        
         Group group= ControlFactory.createGroup(parent,INDEXER_COMBO_LABEL,2);
        
        // Add discovered indexers combo box
@@ -259,14 +213,8 @@ public class IndexerBlock extends AbstractCOptionPage {
         }
 
 		//See what the preferred indexer is
-		String indexerId=prefStore.getString(CCorePlugin.PREF_INDEXER);
-		String preferredIndexer=null;
-		if (indexerId.equals("")) { //$NON-NLS-1$
-			preferredIndexer=getIndexerPageName(DOMSourceIndexer.ID);
-		} else {
-			preferredIndexer=getIndexerPageName(indexerId);
-		}
-	
+		String indexerId = CCorePlugin.getPDOMManager().getDefaultIndexerId();
+		String preferredIndexer = getIndexerPageName(indexerId);
         String[] indexerList = indexersComboBox.getItems();
         int selectedIndex = 0;
         for (int i=0; i<indexerList.length; i++){
@@ -392,26 +340,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 				: ((AbstractIndexerPage) currentPage).getCurrentProject();
 		
 			if ( project != null) {
-				ICDescriptorOperation op = new ICDescriptorOperation() {
-
-					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-						if (initialPDOMChecked != pdomChecked)
-							PDOM.setEnabled(project, pdomChecked);
-						if (initialSelected == null || !selected.equals(initialSelected)) {
-							descriptor.remove(CCorePlugin.INDEXER_UNIQ_ID);
-							descriptor.create(CCorePlugin.INDEXER_UNIQ_ID,indexerID);
-						}
-						monitor.worked(1);
-						// Give a chance to the contributions to save.
-						// We have to do it last to make sure the indexer id
-						// is saved in .cdtproject
-						ICOptionPage page = currentPage; //egetBinaryParserPage(((BinaryParserConfiguration) selected.get(i)).getID());
-						if (page != null && page.getControl() != null) {
-							page.performApply(new SubProgressMonitor(monitor, 1));
-						}
-					}
-				};
- 				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, monitor);
+				CCorePlugin.getPDOMManager().setIndexerId(project, indexerID);
+				if (currentPage != null && currentPage.getControl() != null) {
+					currentPage.performApply(new SubProgressMonitor(monitor, 1));
+				}
 				//Only send out an index changed notification if the indexer has actually changed
 				if (initialSelected == null || !selected.equals(initialSelected)) {
 					CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
@@ -419,16 +351,13 @@ public class IndexerBlock extends AbstractCOptionPage {
 			} else {
 				if (initialSelected == null || !selected.equals(initialSelected)) {
 					
-						if (prefStore != null) {
-							prefStore.setValue(CCorePlugin.USE_PDOM_PREF, pdomChecked);
-							//First clean out the old indexer settings
-							String indexerId=prefStore.getString(CCorePlugin.PREF_INDEXER);
-							ICOptionPage tempPage = getIndexerPage(indexerId);
-							if (tempPage instanceof AbstractIndexerPage)
-								((AbstractIndexerPage) tempPage).removePreferences();
+					// First clean out the old indexer settings
+					String oldId = CCorePlugin.getPDOMManager().getDefaultIndexerId();
+					ICOptionPage tempPage = getIndexerPage(oldId);
+					if (tempPage instanceof AbstractIndexerPage)
+						((AbstractIndexerPage) tempPage).removePreferences();
 							
-							prefStore.setValue(CCorePlugin.PREF_INDEXER, indexerID);
-						}
+					CCorePlugin.getPDOMManager().setDefaultIndexerId(indexerID);
 				}
 				monitor.worked(1);
 				// Give a chance to the contributions to save.
@@ -483,10 +412,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 	 * @param project
 	 */
 	public void setIndexerID(String indexerID, IProject project) {
-		if (PDOM.isInitialized(project)) {
-			initialPDOMChecked = pdomChecked = PDOM.isEnabled(project);
-			indexerUsePDOM.setSelection(initialPDOMChecked);
-		}
 		//Get the corresponding text for the given indexer id
 		selectedIndexerId = getIndexerPageName(indexerID);
 		//Store the currently selected indexer id
@@ -506,7 +431,6 @@ public class IndexerBlock extends AbstractCOptionPage {
 			((AbstractIndexerPage) currentPage).initialize(project);
 		}
 	}
-	
 	 
 	public String getSelectedIndexerID(){
 		String indexerID = null;

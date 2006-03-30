@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * @author Doug Schaefer
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
  * It provides services to allow access to DOM information
  * persisted between parses.
  */
-public interface IPDOM {
+public interface IPDOM extends IAdaptable {
 
 	public IBinding resolveBinding(IASTName name);
 	

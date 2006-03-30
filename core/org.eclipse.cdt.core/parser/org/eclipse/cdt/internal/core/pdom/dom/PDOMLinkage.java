@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -32,11 +32,11 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class PDOMLinkage extends PDOMNode {
 
 	protected static final class MatchBinding implements IBTreeVisitor {
-			private final PDOMDatabase pdom;
+			private final PDOM pdom;
 			private final List bindings;
 			private final Pattern pattern;
 			
-			public MatchBinding(PDOMDatabase pdom, String pattern, List bindings) {
+			public MatchBinding(PDOM pdom, String pattern, List bindings) {
 				this.pdom = pdom;
 				this.bindings = bindings;
 				this.pattern = Pattern.compile(pattern);
@@ -66,11 +66,11 @@ public abstract class PDOMLinkage extends PDOMNode {
 	
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 12;
 	
-	public PDOMLinkage(PDOMDatabase pdom, int record) {
+	public PDOMLinkage(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 
-	protected PDOMLinkage(PDOMDatabase pdom, String languageId, char[] name) throws CoreException {
+	protected PDOMLinkage(PDOM pdom, String languageId, char[] name) throws CoreException {
 		super(pdom, null, name);
 		Database db = pdom.getDB();
 
@@ -85,13 +85,13 @@ public abstract class PDOMLinkage extends PDOMNode {
 		return RECORD_SIZE;
 	}
 
-	public static String getId(PDOMDatabase pdom, int record) throws CoreException {
+	public static String getId(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int namerec = db.getInt(record + ID_OFFSET);
 		return db.getString(namerec);
 	}
 
-	public static int getNextLinkageRecord(PDOMDatabase pdom, int record) throws CoreException {
+	public static int getNextLinkageRecord(PDOM pdom, int record) throws CoreException {
 		return pdom.getDB().getInt(record + NEXT_OFFSET);
 	}
 	

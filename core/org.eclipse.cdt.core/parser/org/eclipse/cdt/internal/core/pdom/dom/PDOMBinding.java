@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 
@@ -32,7 +32,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 	
 	protected static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 20;
 	
-	protected PDOMBinding(PDOMDatabase pdom, PDOMNode parent, IASTName name, int type) throws CoreException {
+	protected PDOMBinding(PDOM pdom, PDOMNode parent, IASTName name, int type) throws CoreException {
 		super(pdom, parent, name.toCharArray());
 		Database db = pdom.getDB();
 		
@@ -40,7 +40,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 		db.putInt(record + BINDING_TYPE_OFFSET, type);
 	}
 	
-	public PDOMBinding(PDOMDatabase pdom, int record) {
+	public PDOMBinding(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 	
@@ -51,7 +51,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 			return null;
 	}
 	
-	public static int getBindingType(PDOMDatabase pdom, int record) throws CoreException {
+	public static int getBindingType(PDOM pdom, int record) throws CoreException {
 		return pdom.getDB().getInt(record + BINDING_TYPE_OFFSET);
 	}
 	
@@ -64,7 +64,7 @@ public abstract class PDOMBinding extends PDOMNode implements IBinding {
 	 * @return
 	 * @throws CoreException
 	 */
-	public static boolean isOrphaned(PDOMDatabase pdom, int record) throws CoreException {
+	public static boolean isOrphaned(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		return db.getInt(record + FIRST_DECL_OFFSET) == 0
 			&& db.getInt(record + FIRST_DEF_OFFSET) == 0

@@ -20,8 +20,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
-import org.eclipse.cdt.core.indexer.tests.DependencyTests;
-import org.eclipse.cdt.core.indexer.tests.DOMSourceIndexerTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
@@ -30,8 +28,6 @@ import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
 import org.eclipse.cdt.core.parser.failedTests.FailedCompleteParseASTTest;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
-import org.eclipse.cdt.core.search.tests.SearchTestSuite;
-import org.eclipse.cdt.core.tests.RegressionTestSuite;
 
 /**
  * @author vhirsl
@@ -66,12 +62,15 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(BinaryTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
-		suite.addTest(SearchTestSuite.suite());
-		suite.addTest(DependencyTests.suite());
-		suite.addTest(RegressionTestSuite.suite());
+		
+		// TODO turning off indexer/search tests until the PDOM
+		// settles. These'll probably have to be rewritten anyway.
+//		suite.addTest(SearchTestSuite.suite());
+//		suite.addTest(DependencyTests.suite());
+//		suite.addTest(RegressionTestSuite.suite());
 		//Indexer Tests need to be run after any indexer client tests
 		//as the last test shuts down the indexing thread
-		suite.addTest(DOMSourceIndexerTests.suite());
+//		suite.addTest(DOMSourceIndexerTests.suite());
 		// Last test to trigger report generation
 		
 		// Add all failed tests

@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -36,7 +36,7 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 	
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 	
-	public PDOMCPPVariable(PDOMDatabase pdom, PDOMNode parent, IASTName name) throws CoreException {
+	public PDOMCPPVariable(PDOM pdom, PDOMNode parent, IASTName name) throws CoreException {
 		super(pdom, parent, name, PDOMCPPLinkage.CPPVARIABLE);
 		
 		// Find the type record
@@ -52,7 +52,7 @@ public class PDOMCPPVariable extends PDOMBinding implements ICPPVariable {
 		}
 	}
 
-	public PDOMCPPVariable(PDOMDatabase pdom, int record) {
+	public PDOMCPPVariable(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 	

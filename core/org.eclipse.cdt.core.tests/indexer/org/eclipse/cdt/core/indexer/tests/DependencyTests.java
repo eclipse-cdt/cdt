@@ -121,7 +121,7 @@ import org.eclipse.core.runtime.Platform;
 		if (testProject==null)
 			fail("Unable to create project");	
 		
- 		resetIndexer(CCorePlugin.DEFAULT_INDEXER_UNIQ_ID);
+ 		resetIndexer(DOMSourceIndexer.ID);
 	    //The DOM Source Indexer checks to see if a file has any scanner info
 		//set prior to indexing it in order to increase efficiency. We need to let it know
 		//that it is running in test mode in order to allow for this scanner info test to be skipped

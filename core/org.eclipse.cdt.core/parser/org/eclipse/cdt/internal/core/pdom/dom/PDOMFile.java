@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMFile {
 
-	private PDOMDatabase pdom;
+	private PDOM pdom;
 	private int record;
 	
 	private static final int FIRST_NAME_OFFSET = 0;
@@ -77,7 +77,7 @@ public class PDOMFile {
 		
 	}
 	
-	public static PDOMFile insert(PDOMDatabase pdom, String filename) throws CoreException {
+	public static PDOMFile insert(PDOM pdom, String filename) throws CoreException {
 		BTree index = pdom.getFileIndex();
 		PDOMFile pdomFile = find(pdom, filename);
 		if (pdomFile == null) {
@@ -91,13 +91,13 @@ public class PDOMFile {
 		return pdomFile;
 	}
 
-	public static PDOMFile find(PDOMDatabase pdom, String filename) throws CoreException {
+	public static PDOMFile find(PDOM pdom, String filename) throws CoreException {
 		BTree index = pdom.getFileIndex();
 		int record = new FindVisitor(pdom.getDB(), filename).findIn(index);
 		return (record != 0) ? new PDOMFile(pdom, record) : null;
 	}
 	
-	public PDOMFile(PDOMDatabase pdom, int record) {
+	public PDOMFile(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
 	}

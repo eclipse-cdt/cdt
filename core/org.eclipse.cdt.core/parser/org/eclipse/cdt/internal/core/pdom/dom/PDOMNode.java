@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
@@ -31,15 +31,15 @@ public abstract class PDOMNode {
 	
 	protected static final int RECORD_SIZE = 8;
 	
-	protected final PDOMDatabase pdom;
+	protected final PDOM pdom;
 	protected final int record;
 	
-	protected PDOMNode(PDOMDatabase pdom, int record) {
+	protected PDOMNode(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
 	}
 	
-	protected PDOMNode(PDOMDatabase pdom, PDOMNode parent, char[] name) throws CoreException {
+	protected PDOMNode(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		
@@ -59,7 +59,7 @@ public abstract class PDOMNode {
 
 	protected abstract int getRecordSize();
 	
-	public PDOMDatabase getPDOM() {
+	public PDOM getPDOM() {
 		return pdom;
 	}
 	
@@ -71,7 +71,7 @@ public abstract class PDOMNode {
 		return getLinkage(pdom, record);
 	}
 	
-	public static PDOMLinkage getLinkage(PDOMDatabase pdom, int record) throws CoreException {
+	public static PDOMLinkage getLinkage(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int linkagerec = record;
 		int parentrec = db.getInt(linkagerec + PARENT_OFFSET);
@@ -121,9 +121,9 @@ public abstract class PDOMNode {
 	}
 	
 	public abstract static class NodeVisitor implements IBTreeVisitor {
-		protected final PDOMDatabase pdom;
+		protected final PDOM pdom;
 		protected final char[] name;
-		protected NodeVisitor(PDOMDatabase pdom, char [] name) {
+		protected NodeVisitor(PDOM pdom, char [] name) {
 			this.pdom = pdom;
 			this.name = name;
 		}

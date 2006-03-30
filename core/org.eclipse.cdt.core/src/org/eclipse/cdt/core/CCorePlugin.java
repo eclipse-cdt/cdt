@@ -24,7 +24,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.dom.CDOM;
-import org.eclipse.cdt.core.dom.PDOM;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -41,6 +41,7 @@ import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.DeltaProcessor;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
@@ -88,8 +89,9 @@ public class CCorePlugin extends Plugin {
 	public static final String INDEXER_UNIQ_ID = PLUGIN_ID + "." + INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String PREF_INDEXER = "indexer"; //$NON-NLS-1$
 	public final static String USE_PDOM_PREF = "usePDOM"; //$NON-NLS-1$
-	public final static String DEFAULT_INDEXER_SIMPLE_ID = "domsourceindexer"; //$NON-NLS-1$
 	public final static String NULL_INDEXER_SIMPLE_ID = "nullindexer"; //$NON-NLS-1$
+//	public final static String DEFAULT_INDEXER_SIMPLE_ID = "domsourceindexer"; //$NON-NLS-1$
+	public final static String DEFAULT_INDEXER_SIMPLE_ID = NULL_INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	public final static String NULL_INDEXER_UNIQUE_ID = PLUGIN_ID + "." + NULL_INDEXER_SIMPLE_ID ; //$NON-NLS-1$
 	public final static String DEFAULT_INDEXER_UNIQ_ID =  PLUGIN_ID + "." + DEFAULT_INDEXER_SIMPLE_ID; //$NON-NLS-1$
 	
@@ -158,6 +160,8 @@ public class CCorePlugin extends Plugin {
 	private CDescriptorManager fDescriptorManager = new CDescriptorManager();
 
 	private CoreModel fCoreModel;
+	
+	private PDOMManager pdomManager;
 
 	private PathEntryVariableManager fPathEntryVariableManager;
 
@@ -295,7 +299,8 @@ public class CCorePlugin extends Plugin {
 		fCoreModel.startIndexing();
 		
 		// Fire up the PDOM
-		PDOM.startup();
+		pdomManager = new PDOMManager();
+		pdomManager.startup();
 
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
@@ -617,6 +622,10 @@ public class CCorePlugin extends Plugin {
 		return fCoreModel;
 	}
 
+	public static IPDOMManager getPDOMManager() {
+		return getDefault().pdomManager;
+	}
+	
 	public IPathEntryVariableManager getPathEntryVariableManager() {
 		return fPathEntryVariableManager;
 	}

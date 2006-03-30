@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceAlias;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
-import org.eclipse.cdt.internal.core.pdom.PDOMDatabase;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMember;
@@ -54,11 +54,11 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCPPLinkage extends PDOMLinkage {
 
-	public PDOMCPPLinkage(PDOMDatabase pdom, int record) {
+	public PDOMCPPLinkage(PDOM pdom, int record) {
 		super(pdom, record);
 	}
 
-	public PDOMCPPLinkage(PDOMDatabase pdom)
+	public PDOMCPPLinkage(PDOM pdom)
 			throws CoreException {
 		super(pdom, GPPLanguage.ID, "C++".toCharArray());
 	}
@@ -133,7 +133,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 	private static final class FindBinding extends PDOMNode.NodeVisitor {
 		PDOMBinding pdomBinding;
 		final int desiredType;
-		public FindBinding(PDOMDatabase pdom, char[] name, int desiredType) {
+		public FindBinding(PDOM pdom, char[] name, int desiredType) {
 			super(pdom, name);
 			this.desiredType = desiredType;
 		}

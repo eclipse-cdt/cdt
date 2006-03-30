@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -698,7 +697,7 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	public IPDOM getIndex() {
-		return PDOMManager.getInstance().getPDOM(getProject());
+		return CCorePlugin.getPDOMManager().getPDOM(getProject());
 	}
 	
 }

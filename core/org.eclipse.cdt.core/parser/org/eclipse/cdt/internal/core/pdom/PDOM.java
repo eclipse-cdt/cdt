@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -37,17 +38,20 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * The PDOM Database.
  * 
  * @author Doug Schaefer
  */
-public class PDOMDatabase implements IPDOM {
+public class PDOM extends PlatformObject implements IPDOM {
 
 	private final IProject project;
+	private IPDOMIndexer indexer;
 	
 	private final IPath dbPath;
 	private Database db;
@@ -62,25 +66,40 @@ public class PDOMDatabase implements IPDOM {
 	private static final QualifiedName dbNameProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "dbName"); //$NON-NLS-1$
 
-	public PDOMDatabase(IProject project, PDOMManager manager) throws CoreException {
+	public PDOM(IProject project, IPDOMIndexer indexer) throws CoreException {
 		this.project = project;
+		this.indexer = indexer;
+		
+		// Load up the database
 		String dbName = project.getPersistentProperty(dbNameProperty);
 		if (dbName == null) {
 			dbName = project.getName() + "_"
 					+ System.currentTimeMillis() + ".pdom";
 			project.setPersistentProperty(dbNameProperty, dbName);
 		}
-		
 		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
 		db = new Database(dbPath.toOSString(), VERSION);
+		
+		// Create the appropriate indexer
 	}
 
+	public Object getAdapter(Class adapter) {
+		if (adapter == PDOM.class)
+			return this;
+		else
+			return super.getAdapter(adapter);
+	}
+	
 	public IProject getProject() {
 		return project;
 	}
 	
+	public IPDOMIndexer getIndexer() {
+		return indexer;
+	}
+	
 	public static interface IListener {
-		public void handleChange(PDOMDatabase pdom);
+		public void handleChange(PDOM pdom);
 	}
 	
 	private List listeners;
@@ -97,7 +116,7 @@ public class PDOMDatabase implements IPDOM {
 		listeners.remove(listener);
 	}
 	
-	private void fireChange() {
+	public void fireChange() {
 		if (listeners == null)
 			return;
 		Iterator i = listeners.iterator();
@@ -118,6 +137,9 @@ public class PDOMDatabase implements IPDOM {
 		return fileIndex;
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	public void addSymbols(ITranslationUnit tu) throws CoreException {
 		final ILanguage language = tu.getLanguage();
 		if (language == null)
@@ -151,6 +173,31 @@ public class PDOMDatabase implements IPDOM {
 				};
 			});;
 		
+		fireChange();
+	}
+	
+	public void addSymbols(ILanguage language, IASTTranslationUnit ast) throws CoreException {
+		final PDOMLinkage linkage = getLinkage(language);
+		if (linkage == null)
+			return;
+		
+		ast.accept(new ASTVisitor() {
+			{
+				shouldVisitNames = true;
+				shouldVisitDeclarations = true;
+			}
+
+			public int visit(IASTName name) {
+				try {
+					linkage.addName(name);
+					return PROCESS_CONTINUE;
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+					return PROCESS_ABORT;
+				}
+			};
+		});;
+	
 		fireChange();
 	}
 	
@@ -251,7 +298,7 @@ public class PDOMDatabase implements IPDOM {
 
 	// Read-write lock rules. Readers don't conflict with other readers,
 	// Writers conflict with readers, and everyone conflicts with writers.
-	private class ReaderLockRule implements ISchedulingRule {
+	private final ISchedulingRule readerLockRule = new ISchedulingRule() {
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule == this)
 				return false;
@@ -263,9 +310,9 @@ public class PDOMDatabase implements IPDOM {
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
-	}
+	};
 
-	private class WriterLockRule implements ISchedulingRule {
+	private final ISchedulingRule writerLockRule = new ISchedulingRule() {
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule == this || rule == getReaderLockRule())
 				return true;
@@ -275,10 +322,7 @@ public class PDOMDatabase implements IPDOM {
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
-	}
-	
-	private ReaderLockRule readerLockRule = new ReaderLockRule();
-	private WriterLockRule writerLockRule = new WriterLockRule();
+	};
 	
 	public ISchedulingRule getReaderLockRule() {
 		return readerLockRule;
@@ -288,4 +332,7 @@ public class PDOMDatabase implements IPDOM {
 		return writerLockRule;
 	}
 	
+	// These are really only recommendations
+	public static final int READER_PRIORITY = Job.SHORT;
+	public static final int WRITER_PRIORITY = Job.LONG;
 }

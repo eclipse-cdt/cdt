@@ -70,9 +70,11 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener, IJobC
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)
 			return;
 		
-		currJob = new PDOMUpdator(event.getDelta(), currJob);
-		currJob.addJobChangeListener(this);
-		currJob.schedule();
+		// TODO turn off indexing for now.
+		return;
+//		currJob = new PDOMUpdator(event.getDelta(), currJob);
+//		currJob.addJobChangeListener(this);
+//		currJob.schedule();
 	}
 
 	public void aboutToRun(IJobChangeEvent event) {

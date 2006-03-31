@@ -1468,7 +1468,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	{	
 		String path = file.getFullPath().toString();
 		String resourceName = file.getName();
-		String id = getId() + "." + ManagedBuildManager.getRandomNumber(); //$NON-NLS-1$
+		String id = ManagedBuildManager.calculateChildId(getId(), path);
 		ResourceConfiguration resConfig = new ResourceConfiguration( (IConfiguration) this, id, resourceName, path);
 		
 		//	Get file extension.

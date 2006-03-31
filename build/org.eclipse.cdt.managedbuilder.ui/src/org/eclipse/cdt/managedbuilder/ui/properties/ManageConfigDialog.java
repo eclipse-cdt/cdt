@@ -290,9 +290,45 @@ public class ManageConfigDialog extends Dialog {
 				String fromId = element.getAttribute("fromId"); //$NON-NLS-1$
 				String toId = element.getAttribute("toId"); //$NON-NLS-1$
 
-				if(convertBuildObject != null )
-					convertBuildObject.convert( getSelectedConfiguration().getToolChain(), fromId, toId, true);
-			}	
+				if(convertBuildObject != null ) {
+					IConfiguration configuration = (IConfiguration) convertBuildObject.convert( getSelectedConfiguration().getToolChain(), fromId, toId, true);	
+
+//					 Determine which configuration was selected
+					int configSelectionIndex = currentConfigList.getSelectionIndex();
+					
+					// Update the currentConfigList and the existingConfigs variables.					
+					String selectedConfigNameAndDescription = currentConfigList.getItem(configSelectionIndex);
+					getExistingConfigs().remove(selectedConfigNameAndDescription);
+					
+//					Set the selection to selectedConfiguration.
+					String name = configuration.getName();
+					String description = configuration.getDescription();
+					String nameAndDescription = new String();
+					
+					if ( description == null || description.equals("") ) {	//$NON-NLS-1$
+						nameAndDescription = name;
+					} else {
+						nameAndDescription = name + "( " + description + " )";	//$NON-NLS-1$ //$NON-NLS-2$
+					}
+
+					// Set the selected Configuration to the newConfig
+					setSelectedConfiguration(configuration);
+					getExistingConfigs().put(nameAndDescription, configuration);
+					
+					// Update the Configuration combo list that is displayed to the user.
+					currentConfigList.removeAll();
+					currentConfigList.setItems(getConfigurationNamesAndDescriptions());
+					
+					currentConfigList.select( currentConfigList.indexOf(nameAndDescription));
+					
+//					 As the selected configuration has changed after conversion, Update the conversion target list,
+					updateConversionTargets(configuration);
+				}
+			}
+			
+			// Clean up the UI lists
+			updateButtons();
+			
 		}
 	}
 	/* (non-Javadoc)
@@ -487,14 +523,15 @@ public class ManageConfigDialog extends Dialog {
 				// Get the index of selected configuration & set selection in config list.
 				int configIndex = currentConfigList.indexOf(nameAndDescription);
 				currentConfigList.setSelection(configIndex);
-			}
-						
+				
+				// As the selected configuration has changed after creation of new configuration,
+				// Update the conversion target list,
+				updateConversionTargets(newConfig);
+			}						
 		}
-
 		// Update the buttons based on the choices		
 		updateButtons();
 	}
-
 	
 	protected void handleRenamePressed() {
 		IConfiguration selectedConfig = null;
@@ -598,6 +635,11 @@ public class ManageConfigDialog extends Dialog {
 							selectedConfigNameAndDescription);
 					setSelectedConfiguration(selectedConfig);
 				}
+				
+				//	As the selected configuration has changed after removal of selected configuration,
+				// Update the conversion target list,
+				updateConversionTargets(selectedConfig);
+				
 				// Clean up the UI lists
 				updateButtons();
 			}

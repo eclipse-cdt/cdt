@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.internal.ui.dialogfields;
 
-import org.eclipse.cdt.debug.internal.ui.SWTUtil;
+import org.eclipse.cdt.debug.mi.internal.ui.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;

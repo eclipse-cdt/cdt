@@ -14,9 +14,8 @@ package org.eclipse.cdt.debug.mi.internal.ui.dialogfields;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
-import org.eclipse.cdt.debug.internal.ui.SWTUtil;
+import org.eclipse.cdt.debug.mi.internal.ui.PixelConverter;
+import org.eclipse.cdt.debug.mi.internal.ui.SWTUtil;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;

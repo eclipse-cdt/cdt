@@ -1,3 +1,10 @@
+2006-03-31 Mikhail Khodjaiants
+	Replaced internal org.eclipse.cdt.debug.internal.ui.SWTUtil class.
+	+ SWTUtil.java
+	* ListDialogField.java
+	* SelectionButtonDialogField.java
+	* StringButtonDialogField.java
+
 2006-03-01 Mikhail Khodjaiants
 	Select the first available command factory when a new launch configuration is created.
 	* StandardGDBDebuggerPage.java

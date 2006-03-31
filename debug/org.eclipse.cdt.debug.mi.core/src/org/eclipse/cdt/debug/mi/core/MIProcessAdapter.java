@@ -21,6 +21,7 @@ import java.io.Reader;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  */
@@ -96,8 +97,7 @@ public class MIProcessAdapter implements MIProcess {
 		}
 		if (monitor.isCanceled()) {
 			pgdb.destroy();
-			String message = MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session");//$NON-NLS-1$
-			throw new IOException(message);
+			throw new OperationCanceledException();
 		} else if (timepass > launchTimeout) {
 			pgdb.destroy();
 			String message = MIPlugin.getResourceString("src.GDBDebugger.Error_launch_timeout"); //$NON-NLS-1$

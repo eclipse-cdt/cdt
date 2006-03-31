@@ -1,3 +1,7 @@
+2006-03-31 Mikhail Khodjaiants
+	Throw OperationCanceledException instead of IOException when getGDBprocess is canceled.
+	* MIProcessAdapter.java
+
 2006-03-27 Mikhail Khodjaiants
 	Cleaned up the "Session" class constructors.
 	* Session.java

@@ -12,7 +12,10 @@
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -45,18 +48,22 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	}
 
 	protected void performDefaults() {
-		IProject tempProject = getProject();
+		ICProject tempProject = CoreModel.getDefault().create(getProject());
 		optionPage.resetIndexerPageSettings(tempProject);
 	}
 	
 	private void initialize(){
-		IProject project = getProject();
-		oldIndexerID = CCorePlugin.getPDOMManager().getIndexerId(project);
-		optionPage.setIndexerID(oldIndexerID, project);
+		ICProject project = CoreModel.getDefault().create(getProject());
+		try {
+			oldIndexerID = CCorePlugin.getPDOMManager().getIndexerId(project);
+			optionPage.setIndexerID(oldIndexerID, project);
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
 	}
 	
 	public boolean performOk() {
-		IProject tempProject = getProject();
+		ICProject tempProject = CoreModel.getDefault().create(getProject());
 		try {
 			optionPage.persistIndexerSettings(tempProject, new NullProgressMonitor());
 		} catch (CoreException e) {}

@@ -13,7 +13,7 @@ package org.eclipse.cdt.ui.dialogs;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.index.ICDTIndexer;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
@@ -64,11 +64,11 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.index.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
      */
-    public void initialize(IProject project) {
+    public void initialize(ICProject project) {
 		
 		this.currentProject = project;
 		try {
-			loadPersistedValues(project);
+			loadPersistedValues(project.getProject());
 		} catch (CoreException e) {}
 		
     }
@@ -107,7 +107,7 @@ public class CTagsIndexerBlock extends AbstractIndexerPage {
 				proj = container.getProject();
 			}
 			else{
-				proj = currentProject;
+				proj = currentProject.getProject();
 			}
 			
 			if (proj != null) {

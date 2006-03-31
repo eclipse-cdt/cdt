@@ -13,21 +13,30 @@ package org.eclipse.cdt.internal.core.pdom.indexer.nulli;
 
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  *
+ * The Null Indexer which does nothing.
  */
 public class PDOMNullIndexer implements IPDOMIndexer {
 
+	private IPDOM pdom;
+	
 	public void setPDOM(IPDOM pdom) {
+		this.pdom = pdom;
 	}
 
-	public void reindex() {
+	public void handleDelta(ICElementDelta delta) {
 	}
-
-	public void elementChanged(ElementChangedEvent event) {
+	
+	public void reindex() throws CoreException {
+		// Just clear out the old index
+		pdom.delete();
+		((PDOM)pdom).fireChange();
 	}
 
 }

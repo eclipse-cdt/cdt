@@ -263,7 +263,7 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof ICProject) {
 				try {
-					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(((ICProject)parentElement).getProject());
+					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)parentElement);
 					int n = 0;
 					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
 						++n;
@@ -325,7 +325,7 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 
 		public boolean hasChildren(Object element) {
 			if (element instanceof ICProject) {
-				IPDOM ipdom = CCorePlugin.getPDOMManager().getPDOM(((ICProject)element).getProject());
+				IPDOM ipdom = CCorePlugin.getPDOMManager().getPDOM((ICProject)element);
 				if (ipdom == null || !(ipdom instanceof PDOM))
 					return false;
 				
@@ -429,10 +429,10 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 		ICModel model = CoreModel.getDefault().getCModel();
 		viewer.setInput(model);
 		try {
-			ICProject[] cprojects = model.getCProjects();
+			ICProject[] projects = model.getCProjects();
 			int n = 0;
-			for (int i = 0; i < cprojects.length; ++i) {
-				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(cprojects[i].getProject()); 
+			for (int i = 0; i < projects.length; ++i) {
+				PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(projects[i]); 
 				if (pdom != null) {
 					++n;
 					pdom.addListener(this);

@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.nullindexer.NullIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -340,7 +342,8 @@ public class IndexerBlock extends AbstractCOptionPage {
 				: ((AbstractIndexerPage) currentPage).getCurrentProject();
 		
 			if ( project != null) {
-				CCorePlugin.getPDOMManager().setIndexerId(project, indexerID);
+				ICProject cproject = CoreModel.getDefault().create(project);
+				CCorePlugin.getPDOMManager().setIndexerId(cproject, indexerID);
 				if (currentPage != null && currentPage.getControl() != null) {
 					currentPage.performApply(new SubProgressMonitor(monitor, 1));
 				}
@@ -377,14 +380,14 @@ public class IndexerBlock extends AbstractCOptionPage {
      * This is needed since we need to pass in the project if we are trying to save changes made to the 
      * property page.
      */
-    public void persistIndexerSettings(IProject project, IProgressMonitor monitor) throws CoreException{
+    public void persistIndexerSettings(ICProject project, IProgressMonitor monitor) throws CoreException{
     	if (currentPage instanceof AbstractIndexerPage)
     		((AbstractIndexerPage)currentPage).setCurrentProject(project);
     	
     	this.performApply(monitor);		
     }
 	
-	public void resetIndexerPageSettings(IProject project){
+	public void resetIndexerPageSettings(ICProject project){
 		if (currentPage instanceof AbstractIndexerPage)
     		((AbstractIndexerPage)currentPage).setCurrentProject(project);
 		
@@ -411,7 +414,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 	 * @param oldIndexerID
 	 * @param project
 	 */
-	public void setIndexerID(String indexerID, IProject project) {
+	public void setIndexerID(String indexerID, ICProject project) {
 		//Get the corresponding text for the given indexer id
 		selectedIndexerId = getIndexerPageName(indexerID);
 		//Store the currently selected indexer id

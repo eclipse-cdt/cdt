@@ -11,12 +11,10 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -32,32 +30,35 @@ public class PDOMFastAddTU extends Job {
 	private final ITranslationUnit tu;
 	private final PDOM pdom;
 	
-	public PDOMFastAddTU(IPDOM pdom, ITranslationUnit tu) {
-		super("PDOM Fast Add TU");
-		this.pdom = (pdom instanceof PDOM) ? (PDOM)pdom : null;
+	public PDOMFastAddTU(PDOM pdom, ITranslationUnit tu, IProgressMonitor group) {
+		super("PDOM Fast Add: " + tu.getElementName());
+		this.pdom = pdom;
 		this.tu = tu;
 		setPriority(PDOM.WRITER_PRIORITY);
+		setProgressGroup(group, 1);
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-		if (pdom == null)
-			return Status.CANCEL_STATUS;
-		
 		try {
 			ILanguage language = tu.getLanguage();
 			if (language == null)
 				return Status.CANCEL_STATUS;
 
+			// begin the rule before the parse so that we are only parsing once at a time
+			// maybe we can do more than one some day
+			getJobManager().beginRule(pdom.getWriterLockRule(), monitor);
+			monitor.beginTask("Adding: " + tu.getElementName(), 1);		
+			
 			// get the AST in a "Fast" way
-			IASTTranslationUnit ast = language.getTranslationUnit((IFile)tu.getResource(),
+			IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
 					ILanguage.AST_USE_INDEX |
 					ILanguage.AST_SKIP_INDEXED_HEADERS |
 					ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 			if (ast == null)
 				return Status.CANCEL_STATUS;
 			
-			getJobManager().beginRule(pdom.getWriterLockRule(), monitor);
 			pdom.addSymbols(language, ast);
+			monitor.done();
 			getJobManager().endRule(pdom.getWriterLockRule());
 			return Status.OK_STATUS;
 		} catch (CoreException e) {

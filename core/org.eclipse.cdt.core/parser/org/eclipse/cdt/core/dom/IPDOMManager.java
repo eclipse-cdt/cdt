@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.core.dom;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -21,13 +21,14 @@ import org.eclipse.core.runtime.CoreException;
 public interface IPDOMManager {
 
 	// Getting and deleting a PDOM for a project
-	public IPDOM getPDOM(IProject project);
-	public void deletePDOM(IProject project) throws CoreException;
+	public IPDOM getPDOM(ICProject project);
+	public void deletePDOM(ICProject project) throws CoreException;
 
 	// Getting and setting indexer Ids
 	public String getDefaultIndexerId();
 	public void setDefaultIndexerId(String indexerId);
 	
-	public String getIndexerId(IProject project);
-	public void setIndexerId(IProject project, String indexerId);
+	public String getIndexerId(ICProject project) throws CoreException;
+	public void setIndexerId(ICProject project, String indexerId) throws CoreException;
+
 }

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IProject;
@@ -93,7 +94,8 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 			// Not a CDT project
 			return;
 
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project);
+		ICProject cproject = CoreModel.getDefault().create(project);
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(cproject);
 		PDOMBinding[] bindings = pdom.findBindings(pattern);
 		
 		for (int i = 0; i < bindings.length; ++i) {

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -42,7 +43,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -66,26 +66,15 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 			return super.getAdapter(adapter);
 	}
 	
-	public IASTTranslationUnit getTranslationUnit(IStorage file, IProject project, int style) {
-		return getTranslationUnit(file.getFullPath().toOSString(), project, project, style, null);
-	}
-	
-	public IASTTranslationUnit getTranslationUnit(IFile file, int style) {
-		return getTranslationUnit(file.getLocation().toOSString(), file.getProject(), file, style, null);
-	}
-	
-	public IASTTranslationUnit getTranslationUnit(IWorkingCopy workingCopy, int style) {
-		IFile file = (IFile)workingCopy.getResource();
-		String path = file.getLocation().toOSString();
-		CodeReader reader = new CodeReader(path, workingCopy.getContents());
-		return getTranslationUnit(path, file.getProject(), file, style, reader);
-	}
-	
-	protected IASTTranslationUnit getTranslationUnit(String path, IProject project, IResource infoResource, int style,
-			CodeReader reader) {
+	public IASTTranslationUnit getASTTranslationUnit(ITranslationUnit file, int style) {
+		IResource resource = file.getResource();
+		ICProject project = file.getCProject();
+		IProject rproject = project.getProject();
+		
 		IScannerInfo scanInfo = null;
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(rproject);
 		if (provider != null){
+			IResource infoResource = resource != null ? resource : rproject; 
 			IScannerInfo buildScanInfo = provider.getScannerInformation(infoResource);
 			if (buildScanInfo != null)
 				scanInfo = buildScanInfo;
@@ -102,11 +91,18 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 		else
 			fileCreator = SavedCodeReaderFactory.getInstance();
 
-		if (reader == null) {
+		CodeReader reader;
+		if (file instanceof IWorkingCopy) {
+			// get the working copy contents
+			IFile rfile = (IFile)file.getResource();
+			reader = new CodeReader(rfile.getLocation().toOSString(), file.getContents());
+		} else {
+			String path = file.getPath().toOSString();
 			reader = fileCreator.createCodeReaderForTranslationUnit(path);
-	        if( reader == null )
-	            return null;
+			if (reader == null)
+				return null;
 		}
+		
 		
 	    IScannerExtensionConfiguration scannerExtensionConfiguration =
 	       scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;

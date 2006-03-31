@@ -1,8 +1,8 @@
 package org.eclipse.cdt.internal.ui.actions;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.PDOMUpdator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
@@ -34,11 +34,10 @@ public class PDOMUpdateProjectAction implements IObjectActionDelegate {
 			if (!(objs[i] instanceof ICProject))
 				continue;
 			
-			ICProject cproject = (ICProject)objs[i];
+			ICProject project = (ICProject)objs[i];
+			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
 			try {
-				CCorePlugin.getPDOMManager().deletePDOM(cproject.getProject());
-				PDOMUpdator job = new PDOMUpdator(cproject, null);
-				job.schedule();
+				pdom.getIndexer().reindex();
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}

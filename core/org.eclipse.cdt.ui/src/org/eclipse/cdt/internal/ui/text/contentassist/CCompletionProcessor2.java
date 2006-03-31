@@ -82,8 +82,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 
                 IFile file = (IFile)workingCopy.getResource();
                 if (file != null) {
-                	IProject project = file.getProject();
-                	IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
+                	IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
                 	ICodeReaderFactory readerFactory;
                 	if (pdom != null)
                 		readerFactory = pdom.getCodeReaderFactory(workingCopy);
@@ -93,7 +92,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
                 } else if (editor.getEditorInput() instanceof ExternalEditorInput) {
                     IStorage storage = ((ExternalEditorInput)(editor.getEditorInput())).getStorage();
                     IProject project = workingCopy.getCProject().getProject();
-                	IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
+                	IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
                 	ICodeReaderFactory readerFactory;
                 	if (pdom != null)
                 		readerFactory = pdom.getCodeReaderFactory(workingCopy);

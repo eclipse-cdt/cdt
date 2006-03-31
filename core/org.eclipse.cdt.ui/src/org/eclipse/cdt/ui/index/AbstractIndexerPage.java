@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.index;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.core.resources.IProject;
@@ -20,7 +21,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
-   protected IProject currentProject;
+   protected ICProject currentProject;
    protected IPreferenceStore prefStore=CUIPlugin.getDefault().getPreferenceStore();
    
    protected AbstractIndexerPage() {
@@ -31,7 +32,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
    * Called by BaseIndexerBlock to give the indexer page a chance to load its state from store
    * @param currentProject - the project that this page is being created for  
    */
-   abstract public void initialize(IProject currentProject);
+   abstract public void initialize(ICProject currentProject);
    /**
     * Called by the indexer block to give the indexer page an opportunity to
     * load any preferecnes previously set
@@ -44,9 +45,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
    abstract public void removePreferences();
    
 	public IProject getCurrentProject() {
-		return currentProject;
+		return currentProject.getProject();
 	}
-	public void setCurrentProject(IProject currentProject) {
+	
+	public void setCurrentProject(ICProject currentProject) {
 		this.currentProject = currentProject;
 	}
 }

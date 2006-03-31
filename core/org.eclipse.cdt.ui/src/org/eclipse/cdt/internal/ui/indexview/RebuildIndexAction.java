@@ -12,14 +12,13 @@
 package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.PDOMUpdator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-
 
 /**
  * @author Doug Schaefer
@@ -41,11 +40,10 @@ public class RebuildIndexAction extends IndexAction {
 			if (!(objs[i] instanceof ICProject))
 				continue;
 			
-			ICProject cproject = (ICProject)objs[i];
+			ICProject project = (ICProject)objs[i];
+			IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(project);
 			try {
-				CCorePlugin.getPDOMManager().deletePDOM(cproject.getProject());
-				PDOMUpdator job = new PDOMUpdator(cproject, null);
-				job.schedule();
+				pdom.getIndexer().reindex();
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}

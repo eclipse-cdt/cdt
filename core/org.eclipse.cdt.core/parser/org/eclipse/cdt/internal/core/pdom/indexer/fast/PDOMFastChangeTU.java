@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -46,15 +45,16 @@ public class PDOMFastChangeTU extends Job {
 			if (language == null)
 				return Status.CANCEL_STATUS;
 
+			getJobManager().beginRule(pdom.getWriterLockRule(), monitor);
+
 			// get the AST in a "Fast" way
-			IASTTranslationUnit ast = language.getTranslationUnit((IFile)tu.getResource(),
+			IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
 					ILanguage.AST_USE_INDEX |
 					ILanguage.AST_SKIP_INDEXED_HEADERS |
 					ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
 			if (ast == null)
 				return Status.CANCEL_STATUS;
 			
-			getJobManager().beginRule(pdom.getWriterLockRule(), monitor);
 			pdom.removeSymbols(tu);
 			pdom.addSymbols(language, ast);
 			getJobManager().endRule(pdom.getWriterLockRule());

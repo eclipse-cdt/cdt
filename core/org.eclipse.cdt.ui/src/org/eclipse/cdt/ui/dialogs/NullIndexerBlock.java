@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.index.AbstractIndexerPage;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class NullIndexerBlock extends AbstractIndexerPage {
 
-
-	public void initialize(IProject currentProject) {}
+	public void initialize(ICProject currentProject) {}
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {}
 

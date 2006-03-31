@@ -35,4 +35,7 @@ public interface IPDOM extends IAdaptable {
 	
 	public ICodeReaderFactory getCodeReaderFactory(IWorkingCopy root);
 	
+	public IPDOMIndexer getIndexer();
+	public void setIndexer(IPDOMIndexer indexer) throws CoreException;
+	
 }

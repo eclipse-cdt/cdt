@@ -11,16 +11,20 @@
 
 package org.eclipse.cdt.core.dom;
 
-import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.core.runtime.CoreException;
+
 
 /**
  * @author Doug Schaefer
  *
  */
-public interface IPDOMIndexer extends IElementChangedListener {
+public interface IPDOMIndexer {
 
 	public void setPDOM(IPDOM pdom);
+
+	public void handleDelta(ICElementDelta delta);
 	
-	public void reindex();
+	public void reindex() throws CoreException;
 	
 }

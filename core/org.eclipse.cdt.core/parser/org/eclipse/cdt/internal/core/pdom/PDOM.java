@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -50,7 +51,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class PDOM extends PlatformObject implements IPDOM {
 
-	private final IProject project;
+	private final ICProject project;
 	private IPDOMIndexer indexer;
 	
 	private final IPath dbPath;
@@ -66,16 +67,18 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private static final QualifiedName dbNameProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "dbName"); //$NON-NLS-1$
 
-	public PDOM(IProject project, IPDOMIndexer indexer) throws CoreException {
+	public PDOM(ICProject project, IPDOMIndexer indexer) throws CoreException {
 		this.project = project;
 		this.indexer = indexer;
+		indexer.setPDOM(this);
 		
 		// Load up the database
-		String dbName = project.getPersistentProperty(dbNameProperty);
+		IProject rproject = project.getProject();
+		String dbName = rproject.getPersistentProperty(dbNameProperty);
 		if (dbName == null) {
-			dbName = project.getName() + "_"
+			dbName = project.getElementName() + "_"
 					+ System.currentTimeMillis() + ".pdom";
-			project.setPersistentProperty(dbNameProperty, dbName);
+			rproject.setPersistentProperty(dbNameProperty, dbName);
 		}
 		dbPath = CCorePlugin.getDefault().getStateLocation().append(dbName);
 		db = new Database(dbPath.toOSString(), VERSION);
@@ -90,12 +93,22 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return super.getAdapter(adapter);
 	}
 	
-	public IProject getProject() {
+	public ICProject getProject() {
 		return project;
 	}
 	
 	public IPDOMIndexer getIndexer() {
 		return indexer;
+	}
+	
+	public void setIndexer(IPDOMIndexer indexer) throws CoreException {
+		// Force a reindex if indexer changes 
+		boolean reindex = indexer != null && this.indexer != indexer;
+		this.indexer = indexer;
+		indexer.setPDOM(this);
+		
+		if (reindex)
+			indexer.reindex();
 	}
 	
 	public static interface IListener {
@@ -149,7 +162,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (linkage == null)
 			return;
 
-		IASTTranslationUnit ast = language.getTranslationUnit((IFile)tu.getResource(),
+		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
 				ILanguage.AST_USE_INDEX |
 				ILanguage.AST_SKIP_INDEXED_HEADERS |
 				ILanguage.AST_SKIP_IF_NO_BUILD_INFO);

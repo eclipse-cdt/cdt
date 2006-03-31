@@ -697,7 +697,7 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	public IPDOM getIndex() {
-		return CCorePlugin.getPDOMManager().getPDOM(getProject());
+		return CCorePlugin.getPDOMManager().getPDOM(this);
 	}
 	
 }

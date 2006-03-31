@@ -127,12 +127,12 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 					IWorkingCopy workingCopy = (IWorkingCopy)fEditor.getInputCElement();
 					IFile resourceFile = (IFile)workingCopy.getResource();
 					project = new CProject(null, resourceFile.getProject());
-					IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(resourceFile.getProject());
+					IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
 					try {
 						if (pdom != null) {
 							try {
 								ILanguage language = workingCopy.getLanguage();
-								tu = language.getTranslationUnit(workingCopy,
+								tu = language.getASTTranslationUnit(workingCopy,
 										ILanguage.AST_USE_INDEX |
 										ILanguage.AST_SKIP_INDEXED_HEADERS);
 							} catch (CoreException e) {

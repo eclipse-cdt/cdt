@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -64,7 +65,7 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 			proj = container.getProject();
 		}
 		else{
-			proj = currentProject;
+			proj = currentProject.getProject();
 		}
 		
 		if (proj != null) {
@@ -92,12 +93,12 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 		if (currentProject == null)
 			return;
 		
-        ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(currentProject);
+        ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(currentProject.getProject());
 
         int indexMarkersInt = Integer.parseInt(indexMarkers);
         if (indexMarkersInt != oldIndexerProblemsValue && indexMarkersInt == 0) 
             if (indexer instanceof DOMSourceIndexer)
-                ((DOMSourceIndexer) indexer).removeIndexerProblems(currentProject);
+                ((DOMSourceIndexer) indexer).removeIndexerProblems(currentProject.getProject());
 		
 	}
 	/* (non-Javadoc)
@@ -142,10 +143,10 @@ public class DOMSourceIndexerBlock extends AbstractIndexerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.index2.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
 	 */
-	public void initialize(IProject project) {
+	public void initialize(ICProject project) {
 		
 		try {
-			loadPersistedValues(project);
+			loadPersistedValues(project.getProject());
 			this.currentProject = project;
 		} catch (CoreException e) {}
 	

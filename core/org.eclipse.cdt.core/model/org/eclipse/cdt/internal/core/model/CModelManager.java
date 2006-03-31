@@ -1136,12 +1136,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public void deleting(IProject project) {
 		// discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
-		// delete the PDOM for this project
-		try {
-			CCorePlugin.getPDOMManager().deletePDOM(project);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
 	}

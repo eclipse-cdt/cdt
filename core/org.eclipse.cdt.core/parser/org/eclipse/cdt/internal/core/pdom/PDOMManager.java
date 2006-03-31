@@ -18,6 +18,9 @@ import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -28,8 +31,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -42,20 +43,19 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @author Doug Schaefer
  */
-public class PDOMManager implements IPDOMManager, IElementChangedListener, IJobChangeListener {
+public class PDOMManager implements IPDOMManager, IElementChangedListener {
 
-	private PDOMUpdator currJob;
-	
 	private static final QualifiedName pdomProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "pdom"); //$NON-NLS-1$
 
-	public IPDOM getPDOM(IProject project) {
+	public IPDOM getPDOM(ICProject project) {
 		try {
-			IPDOM pdom = (IPDOM)project.getSessionProperty(pdomProperty);
+			IProject rproject = project.getProject();
+			IPDOM pdom = (IPDOM)rproject.getSessionProperty(pdomProperty);
 			
 			if (pdom == null) {
-				pdom = new PDOM(project, createIndexer(project));
-				project.setSessionProperty(pdomProperty, pdom);
+				pdom = new PDOM(project, createIndexer(getIndexerId(project)));
+				rproject.setSessionProperty(pdomProperty, pdom);
 			}
 			
 			return pdom;
@@ -70,36 +70,31 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener, IJobC
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)
 			return;
 		
-		// TODO turn off indexing for now.
-		return;
-//		currJob = new PDOMUpdator(event.getDelta(), currJob);
-//		currJob.addJobChangeListener(this);
-//		currJob.schedule();
+		// Walk the delta sending the subtrees to the appropriate indexers
+		processDelta(event.getDelta());
 	}
-
-	public void aboutToRun(IJobChangeEvent event) {
+	
+	private void processDelta(ICElementDelta delta) {
+		int type = delta.getElement().getElementType();
+		switch (type) {
+		case ICElement.C_MODEL:
+			// Loop through the children
+			ICElementDelta[] children = delta.getAffectedChildren();
+			for (int i = 0; i < children.length; ++i)
+				processDelta(children[i]);
+			break;
+		case ICElement.C_PROJECT:
+			// Find the appropriate indexer and pass the delta on
+			ICProject project = (ICProject)delta.getElement();
+			IPDOM pdom = getPDOM(project);
+			pdom.getIndexer().handleDelta(delta);
+		}
 	}
-
-	public void awake(IJobChangeEvent event) {
-	}
-
-	public synchronized void done(IJobChangeEvent event) {
-		if (currJob == event.getJob())
-			currJob = null;
-	}
-
-	public void running(IJobChangeEvent event) {
-	}
-
-	public void scheduled(IJobChangeEvent event) {
-	}
-
-	public void sleeping(IJobChangeEvent event) {
-	}
-
-	public void deletePDOM(IProject project) throws CoreException {
-		IPDOM pdom = (IPDOM)project.getSessionProperty(pdomProperty); 
-		project.setSessionProperty(pdomProperty, null);
+	
+	public void deletePDOM(ICProject project) throws CoreException {
+		IProject rproject = project.getProject();
+		IPDOM pdom = (IPDOM)rproject.getSessionProperty(pdomProperty); 
+		rproject.setSessionProperty(pdomProperty, null);
 		pdom.delete();
 	}
 
@@ -127,8 +122,8 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener, IJobC
     	}
     }
     
-    public String getIndexerId(IProject project) {
-    	IEclipsePreferences prefs = new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID);
+    public String getIndexerId(ICProject project) throws CoreException {
+    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return getDefaultIndexerId();
     	
@@ -136,7 +131,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener, IJobC
     	if (indexerId == null) {
     		// See if it is in the ICDescriptor
     		try {
-    			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project, true);
+    			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project.getProject(), true);
     			ICExtensionReference[] ref = desc.get(CCorePlugin.INDEXER_UNIQ_ID);
     			if (ref != null && ref.length > 0) {
     				indexerId = ref[0].getID();
@@ -153,8 +148,8 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener, IJobC
   	    return indexerId;
     }
 
-    public void setIndexerId(IProject project, String indexerId) {
-    	IEclipsePreferences prefs = new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID);
+    public void setIndexerId(ICProject project, String indexerId) throws CoreException {
+    	IEclipsePreferences prefs = new ProjectScope(project.getProject()).getNode(CCorePlugin.PLUGIN_ID);
     	if (prefs == null)
     		return; // TODO why would this be null?
     	
@@ -163,11 +158,12 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener, IJobC
     		prefs.flush();
     	} catch (BackingStoreException e) {
     	}
+    	
+    	IPDOM pdom = getPDOM(project);
+    	pdom.setIndexer(createIndexer(indexerId));
     }
     
-    private IPDOMIndexer createIndexer(IProject project) throws CoreException {
-    	String indexerId = getIndexerId(project);
-    	
+    private IPDOMIndexer createIndexer(String indexerId) throws CoreException {
     	// Look up in extension point
     	IExtension indexerExt = Platform.getExtensionRegistry()
     		.getExtension(CCorePlugin.INDEXER_UNIQ_ID, indexerId);

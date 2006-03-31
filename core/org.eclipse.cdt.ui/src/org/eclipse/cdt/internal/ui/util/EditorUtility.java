@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -438,7 +439,10 @@ public class EditorUtility {
 	public static IStorage getStorage(IBinary bin) {
 		IStorage store = null;
 		try {
-			store = new FileStorage (new ByteArrayInputStream(bin.getBuffer().getContents().getBytes()), bin.getPath());
+			IBuffer buffer = bin.getBuffer();
+			if (buffer != null) {
+				store = new FileStorage (new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
+			}
 		} catch (CModelException e) {
 			// nothing;
 		}

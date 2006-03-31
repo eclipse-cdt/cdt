@@ -81,14 +81,6 @@ public class CTextTools {
 		if(store == null) {
 			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
-		fPreferenceStore = store;
-		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
-        
-        fCorePreferenceStore= coreStore;
-        if (fCorePreferenceStore != null) {
-            fCorePreferenceStore.addPropertyChangeListener(fPreferenceListener);
-        }
-		
 		fColorManager= new CColorManager();
 		fCodeScanner= new CCodeScanner(fColorManager, store);
 		fCppCodeScanner= new CppCodeScanner(fColorManager, store);
@@ -97,6 +89,15 @@ public class CTextTools {
 		fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
+
+		fPreferenceStore = store;
+		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
+        
+        fCorePreferenceStore= coreStore;
+        if (fCorePreferenceStore != null) {
+            fCorePreferenceStore.addPropertyChangeListener(fPreferenceListener);
+        }
+		
 	}
 	
 	/**

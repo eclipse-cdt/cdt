@@ -394,6 +394,24 @@ public class Binary extends Openable implements IBinary {
 		//}
 	}
 
+	/**
+	 * @see org.eclipse.cdt.core.model.IOpenable#getBuffer()
+	 * 
+	 * overridden from default as we do not need to create our children to provider a buffer since the buffer just contains
+	 * IBinaryOject contents which is not model specific.
+	 */
+	public IBuffer getBuffer() throws CModelException {
+		if (hasBuffer()) {
+			IBuffer buffer = getBufferManager().getBuffer(this);
+			if (buffer == null) {
+				// try to (re)open a buffer
+				buffer = openBuffer(null);
+			}
+			return buffer;
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.Openable#openBuffer(org.eclipse.core.runtime.IProgressMonitor)
 	 */

@@ -1,4 +1,8 @@
 2006-03-31 Mikhail Khodjaiants
+	Corrected position of the "try-catch-finally" clause in createSession.
+	* AbstractGDBCDIDebugger.java
+
+2006-03-31 Mikhail Khodjaiants
 	Throw OperationCanceledException instead of IOException when getGDBprocess is canceled.
 	* MIProcessAdapter.java
 

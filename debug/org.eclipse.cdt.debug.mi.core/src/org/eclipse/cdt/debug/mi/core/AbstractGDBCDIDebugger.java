@@ -64,53 +64,53 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 		}
 		Session session = createGDBSession( launch, executable, monitor );
 		if ( session != null ) {
-			ICDITarget[] targets = session.getTargets();
-			for( int i = 0; i < targets.length; i++ ) {
-				Process debugger = session.getSessionProcess( targets[i] );
-				if ( debugger != null ) {
-					IProcess debuggerProcess = DebugPlugin.newProcess( launch, debugger, renderDebuggerProcessLabel( launch ) );
-					launch.addProcess( debuggerProcess );
-				}
-				try {
+			try {
+				ICDITarget[] targets = session.getTargets();
+				for( int i = 0; i < targets.length; i++ ) {
+					Process debugger = session.getSessionProcess( targets[i] );
+					if ( debugger != null ) {
+						IProcess debuggerProcess = DebugPlugin.newProcess( launch, debugger, renderDebuggerProcessLabel( launch ) );
+						launch.addProcess( debuggerProcess );
+					}
 					((Target)targets[i]).getMISession().start();
 				}
-				catch( MIException e ) {
-					failed = true;
-					throw newCoreException( e );
+				doStartSession( launch, session, monitor );
+			}
+			catch( MIException e ) {
+				failed = true;
+				throw newCoreException( e );
+			}
+			catch( CoreException e ) {
+				failed = true;
+				throw e;
+			}
+			finally {
+				try {
+					if ( (failed || monitor.isCanceled()) && session != null )
+						session.terminate();
 				}
-			}
-		}
-		try {
-			doStartSession( launch, session, monitor );
-		}
-		catch( CoreException e ) {
-			failed = true;
-			throw e;
-		}
-		finally {
-			try {
-				if ( failed || monitor.isCanceled() )
-					session.terminate();
-			}
-			catch( CDIException e1 ) {
+				catch( CDIException e1 ) {
+				}
 			}
 		}
 		return session;
 	}
 
 	protected Session createGDBSession( ILaunch launch, File executable, IProgressMonitor monitor ) throws CoreException {
+		Session session = null;
 		IPath gdbPath = getGDBPath( launch );
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		CommandFactory factory = getCommandFactory( config );
 		String[] extraArgs = getExtraArguments( config );
 		boolean usePty = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true );
 		try {
-			Session session = MIPlugin.getDefault().createSession( getSessionType( config ), gdbPath.toOSString(), factory, executable, extraArgs, usePty, monitor );
+			session = MIPlugin.getDefault().createSession( getSessionType( config ), gdbPath.toOSString(), factory, executable, extraArgs, usePty, monitor );
 			ICDISessionConfiguration sessionConfig = getSessionConfiguration( session );
 			if ( sessionConfig != null ) {
 				session.setConfiguration( sessionConfig );
 			}
-			return session;
+		}
+		catch( OperationCanceledException e ) {
 		}
 		catch( Exception e ) {
 			// Catch all wrap them up and rethrow
@@ -119,6 +119,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 			}
 			throw newCoreException( e );
 		}
+		return session;
 	}
 
 	protected int getSessionType( ILaunchConfiguration config ) throws CoreException {

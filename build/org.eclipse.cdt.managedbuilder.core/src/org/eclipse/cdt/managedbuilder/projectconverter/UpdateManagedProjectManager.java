@@ -133,6 +133,25 @@ public class UpdateManagedProjectManager {
 		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName()+suffix)); 
 		mngr.backupFile(settingsFile,  dstFile, monitor,  project, fBackupFileOverwriteQuery);
 	}
+
+	/*
+	 *  Creates a back-up file. This method is useful for the vendor who wants
+	 *  to create a backup of '.cdtbuild' file before project conversion.
+
+ 	 * @param settingsFile
+	 * @param suffix
+	 * @param monitor
+	 * @param project
+	 */
+	
+	public static void backupSettingsFile(IFile settingsFile, String suffix, IProgressMonitor monitor, IProject project){
+		UpdateManagedProjectManager mngr = getUpdateManager(project);
+		if(mngr == null || mngr.fIsInfoReadOnly)
+			return;
+		IContainer destFolder = project;
+		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName()+suffix)); 
+		mngr.backupFile(settingsFile,  dstFile, monitor,  project, fBackupFileOverwriteQuery);
+	}
 	
 	/* (non-Javadoc)
 	 * Create a back-up file

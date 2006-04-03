@@ -20,4 +20,16 @@ public class WinRegTests extends TestCase {
 		}
 	}
 	
+	public void test2() {
+		WindowsRegistry registry = WindowsRegistry.getRegistry();
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			assertNotNull(registry);
+			String value = registry.getLocalMachineValue("SOFTWARE\\Microsoft\\Windows\\CurrentVersion", "Nothing");
+			// Not sure how you set this to anything else so it seems safe.
+			assertNull(value);
+		} else {
+			// Should be null on non-Windows platforms
+			assertNotNull(registry);
+		}
+	}
 }

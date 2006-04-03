@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,12 +64,13 @@ public class OptionContextData implements IOptionContextData {
 			IOption option = data.getOption();
 			if(option == null)
 				return null;
+			
+			IHoldsOptions tmp = option.getOptionHolder();
 
-			ho = option.getOptionHolder();
 			ITool tools[] = null;
 			if(tCh != null){
 				for(IToolChain cur = tCh; cur != null; cur = cur.getSuperClass()){
-					if(cur == ho)
+					if(cur == tmp)
 						return tCh;
 				}
 				tools = tCh.getTools();
@@ -80,8 +81,30 @@ public class OptionContextData implements IOptionContextData {
 			if(tools != null){
 				for(int i = 0; i < tools.length; i++){
 					for(ITool cur = tools[i]; cur != null; cur = cur.getSuperClass()){
-						if(cur == ho)
-							return tools[i];
+						if(cur == tmp){
+							ITool tool = tools[i];
+							if(!tool.isExtensionElement()
+									&& tool.getParent() != null){
+								ho = tools[i];
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			if(ho == null && tmp != null){
+				if(tmp instanceof ITool){
+					ITool tool = (ITool)tmp;
+					if(!tool.isExtensionElement()
+							&& tool.getParent() != null){
+						ho = tmp;
+					}
+				} else if (tmp instanceof IToolChain){
+					IToolChain tChain = (IToolChain)tmp;
+					if(!tChain.isExtensionElement()
+							&& tChain.getParent() != null){
+						ho = tmp;
 					}
 				}
 			}

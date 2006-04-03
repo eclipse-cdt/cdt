@@ -194,6 +194,7 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 				try {
 					sharedMgr.setAutoLoadSymbols( target, autolib );
 					sharedMgr.setStopOnSolibEvents( target, stopOnSolibEvents );
+					sharedMgr.setDeferredBreakpoint( false );
 					// The idea is that if the user set autolib, by default
 					// we provide with the capability of deferred breakpoints
 					// And we set setStopOnSolib events for them(but they should not see those things.

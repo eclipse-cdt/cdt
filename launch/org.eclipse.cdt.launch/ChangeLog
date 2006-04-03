@@ -1,3 +1,7 @@
+2006-04-03 Mikhail Khodjaiants
+	Fix for bug 134581: Unable to set advanced debugger options.
+	* CDebuggerTab.java
+
 2006-03-29 Mikhail Khodjaiants
 	Made some generic methods static.
 	* AbstractCLaunchDelegate.java

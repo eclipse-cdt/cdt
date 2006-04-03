@@ -94,16 +94,16 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		private void initialize() {
 			Map attr = getAdvancedAttributes();
 			Object varBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING);
-			fVarBookKeeping.setSelection( (varBookkeeping instanceof Boolean) ? ! ((Boolean)varBookkeeping).booleanValue() : true);
+			fVarBookKeeping.setSelection( (varBookkeeping instanceof Boolean) ? !((Boolean)varBookkeeping).booleanValue() : true);
 			Object regBookkeeping = attr.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING);
-			fRegBookKeeping.setSelection( (regBookkeeping instanceof Boolean) ? ! ((Boolean)regBookkeeping).booleanValue() : true);
+			fRegBookKeeping.setSelection( (regBookkeeping instanceof Boolean) ? !((Boolean)regBookkeeping).booleanValue() : true);
 		}
 
 		private void saveValues() {
 			Map attr = getAdvancedAttributes();
-			Boolean varBookkeeping = Boolean.valueOf( fVarBookKeeping.getSelection() );
+			Boolean varBookkeeping = Boolean.valueOf( !fVarBookKeeping.getSelection() );
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, varBookkeeping);
-			Boolean regBookkeeping = Boolean.valueOf( fRegBookKeeping.getSelection() );
+			Boolean regBookkeeping = Boolean.valueOf( !fRegBookKeeping.getSelection() );
 			attr.put(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_REGISTER_BOOKKEEPING, regBookkeeping);
 			update();
 		}

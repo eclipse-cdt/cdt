@@ -1,4 +1,8 @@
 2006-04-04 Mikhail Khodjaiants
+	See bug 134871: StackOverflowError using AsynchronousViewer.
+	* ModulesView.java
+	
+2006-04-04 Mikhail Khodjaiants
 	Complying with Eclipse 3.2 M6. AsynchronousTreeModelViewer has been renamed to AsynchronousTreeViewer.
 	* AbstractViewerState.java
 	* ModulesViewer.java

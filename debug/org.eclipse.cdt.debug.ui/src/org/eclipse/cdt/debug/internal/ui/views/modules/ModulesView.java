@@ -375,7 +375,6 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		setSashForm( new SashForm( parent, SWT.NONE ) );
 		// add tree viewer
 		final ModulesViewer modulesViewer = new ModulesViewer( getSashForm(), this );
-		modulesViewer.setUseHashlookup( false );
 		modulesViewer.getControl().addFocusListener( new FocusAdapter() {
 
 			/* (non-Javadoc)

@@ -1,3 +1,9 @@
+2006-04-04 Mikhail Khodjaiants
+	Complying with Eclipse 3.2 M6. AsynchronousTreeModelViewer has been renamed to AsynchronousTreeViewer.
+	* AbstractViewerState.java
+	* ModulesViewer.java
+	* ModulesViewerState.java
+
 2006-03-29 Mikhail Khodjaiants
 	Allow clients to contribute IRestart adapters.
 	* RestartActionDelegate.java

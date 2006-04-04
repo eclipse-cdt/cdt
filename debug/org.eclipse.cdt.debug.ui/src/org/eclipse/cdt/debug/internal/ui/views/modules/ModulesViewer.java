@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.model.viewers.AsynchronousTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.progress.UIJob;
@@ -21,7 +21,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * Asynchronous viewer used by the Modules view.
  */
-public class ModulesViewer extends AsynchronousTreeModelViewer {
+public class ModulesViewer extends AsynchronousTreeViewer {
 	
 	protected ModulesView fView;
 

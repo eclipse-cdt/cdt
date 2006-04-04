@@ -82,7 +82,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 
                 IFile file = (IFile)workingCopy.getResource();
                 if (file != null) {
-                	IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
+                	IPDOM pdom = null; //CCorePlugin.getPDOMManager().getPDOM(workingCopy.getCProject());
                 	ICodeReaderFactory readerFactory;
                 	if (pdom != null)
                 		readerFactory = pdom.getCodeReaderFactory(workingCopy);

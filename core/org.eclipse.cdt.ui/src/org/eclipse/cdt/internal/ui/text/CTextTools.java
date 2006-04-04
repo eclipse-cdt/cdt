@@ -41,6 +41,8 @@ public class CTextTools {
             adaptToPreferenceChange(new PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
         }
 	}
+
+	private static final String DEFAULT_PARTITIONING = "__c_partitioning"; //$NON-NLS-1$
 	
 	/** The color manager */
 	private CColorManager fColorManager;
@@ -63,7 +65,8 @@ public class CTextTools {
     private Preferences fCorePreferenceStore;	
 	/** The preference change listener */
 	private PreferenceListener fPreferenceListener= new PreferenceListener();
-	
+	/** The document partitioning used for the C partitioner */
+	private String fDocumentPartitioning = DEFAULT_PARTITIONING;
 	
 	/**
 	 * Creates a new C text tools collection and eagerly creates 
@@ -273,7 +276,26 @@ public class CTextTools {
 	 * @since 3.0
 	 */
 	public void setupCDocument(IDocument document) {
-		setupCDocumentPartitioner(document, IDocumentExtension3.DEFAULT_PARTITIONING);
+		setupCDocumentPartitioner(document, fDocumentPartitioning);
 	}
-	
+
+	/**
+	 * Get the document partitioning used for the C partitioner.
+	 * 
+	 * @return the document partitioning used for the C partitioner
+	 * @since 3.1
+	 */
+	public String getDocumentPartitioning() {
+		return fDocumentPartitioning;
+	}
+
+	/**
+	 * Set the document partitioning to be used for the C partitioner.
+	 * 
+	 * @since 3.1
+	 */
+	public void setDocumentPartitioning(String documentPartitioning) {
+		fDocumentPartitioning = documentPartitioning;
+	}
+
 }

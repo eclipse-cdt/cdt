@@ -18,6 +18,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -70,9 +71,11 @@ public class CTemplatePreferencePage extends TemplatePreferencePage {
 	protected SourceViewer createViewer(Composite parent) {
 		SourceViewer viewer= new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
+		IDocument document = new Document();
+		tools.setupCDocument(document);
 		viewer.configure(new CSourceViewerConfiguration(tools, null));
 		viewer.setEditable(false);
-		viewer.setDocument(new Document());
+		viewer.setDocument(document);
 		viewer.getTextWidget().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	
 		Font font= JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT);

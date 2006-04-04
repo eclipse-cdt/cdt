@@ -30,8 +30,10 @@ import org.eclipse.compare.internal.TokenComparator;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -127,7 +129,12 @@ public class CMergeViewer extends TextMergeViewer {
 	private CSourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
 			CTextTools tools= CUIPlugin.getDefault().getTextTools();
-			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools, null);
+			fSourceViewerConfiguration = new CSourceViewerConfiguration(tools, null) {
+				public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+					return IDocumentExtension3.DEFAULT_PARTITIONING;
+				}
+				
+			};
 		}
 		return fSourceViewerConfiguration;
 	}
@@ -143,10 +150,9 @@ public class CMergeViewer extends TextMergeViewer {
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner();
 	}
-		
+
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
-			CTextTools tools= CUIPlugin.getDefault().getTextTools();
 			((SourceViewer)textViewer).configure(getSourceViewerConfiguration());
 		}
 	}

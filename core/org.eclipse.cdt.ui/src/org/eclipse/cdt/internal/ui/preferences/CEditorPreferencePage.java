@@ -29,7 +29,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -289,9 +288,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 		String content = loadPreviewContentFromFile("ColorSettingPreviewCode.txt"); //$NON-NLS-1$
 		IDocument document = new Document(content);
-		IDocumentPartitioner partitioner = fCTextTools.createDocumentPartitioner();
-		partitioner.connect(document);
-		document.setDocumentPartitioner(partitioner);
+		fCTextTools.setupCDocument(document);
 
 		fPreviewViewer.setDocument(document);
 

@@ -151,6 +151,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
     public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
 		PresentationReconciler reconciler= new PresentationReconciler();
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
 		RuleBasedScanner scanner;
 
@@ -469,8 +470,15 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		
 		return detectors;
 	}
- 
-    /**
+
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+    public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return fTextTools.getDocumentPartitioning();
+	}
+
+	/**
      * Creates control for outline presentation in editor.
      * @param editor Editor.
      * @return Control.

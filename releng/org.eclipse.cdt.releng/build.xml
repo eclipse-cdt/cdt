@@ -190,52 +190,52 @@
 	<target name="tag" depends="init">
 		<property name="cdtTag" value="${tagname}"/>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.aix"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.aix"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.linux"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.linux"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.linux.ia64"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ia64"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.linux.ppc"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ppc"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.linux.x86"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.linux.x86_64"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86_64"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.macosx"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.macosx"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.qnx"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.qnx"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.solaris"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.solaris"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.tests"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.tests"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.core.win32"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.core.win32"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.refactoring"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.refactoring"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.refactoring.tests"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.refactoring.tests"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.ui"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.ui"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt.core/org.eclipse.cdt.ui.tests"/>
+			<param name="tagmodule" value="org.eclipse.cdt-core/org.eclipse.cdt.ui.tests"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt-build/org.eclipse.cdt.make.core"/>

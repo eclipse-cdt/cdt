@@ -11,8 +11,14 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IFile;
@@ -34,17 +40,16 @@ import org.eclipse.core.runtime.jobs.Job;
 public class PDOMFastReindex extends Job {
 
 	private final PDOM pdom;
-	private final IProgressMonitor group;
 	
-	public PDOMFastReindex(PDOM pdom, IProgressMonitor group) {
+	public PDOMFastReindex(PDOM pdom) {
 		super("Reindex");
 		this.pdom = pdom;
-		this.group = group;
-		setProgressGroup(group, 1);
 	}
 	
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
+			final List addedTUs = new ArrayList();
+			
 			// First clear out the DB
 			pdom.delete();
 			
@@ -60,20 +65,47 @@ public class PDOMFastReindex extends Job {
 						
 						if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
 								|| CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)) {
-							new PDOMFastAddTU(pdom, (ITranslationUnit)CoreModel.getDefault().create((IFile)proxy.requestResource()), group).schedule();
+							// TODO handle header files
+							addedTUs.add((ITranslationUnit)CoreModel.getDefault().create((IFile)proxy.requestResource()));
 						}
-						// TODO handle header files
 						return false;
 					} else {
 						return true;
 					}
 				}
 			}, 0);
+			
+			for (Iterator i = addedTUs.iterator(); i.hasNext();)
+				addTU((ITranslationUnit)i.next());
+			
+			monitor.done();
+			return Status.OK_STATUS;
 		} catch (CoreException e) {
-			CCorePlugin.log(e);
+			return e.getStatus();
+		} catch (InterruptedException e) {
+			return Status.CANCEL_STATUS;
 		}
-		monitor.done();
-		return Status.OK_STATUS;
+	}
+
+	protected void addTU(ITranslationUnit tu) throws InterruptedException, CoreException {
+		ILanguage language = tu.getLanguage();
+		if (language == null)
+			return;
+
+		// get the AST in a "Fast" way
+		IASTTranslationUnit ast = language.getASTTranslationUnit(tu,
+				ILanguage.AST_USE_INDEX
+						| ILanguage.AST_SKIP_INDEXED_HEADERS
+						| ILanguage.AST_SKIP_IF_NO_BUILD_INFO);
+		if (ast == null)
+			return;
+
+		pdom.acquireWriteLock();
+		try {
+			pdom.addSymbols(language, ast);
+		} finally {
+			pdom.releaseWriteLock();
+		}
 	}
 
 }

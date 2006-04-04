@@ -12,6 +12,8 @@
 package org.eclipse.cdt.core.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
@@ -30,6 +32,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 public class LanguageManager {
 
 	private static LanguageManager instance;
+	private Map cache = new HashMap();
 	
 	public static LanguageManager getInstance() {
 		if (instance == null)
@@ -38,16 +41,22 @@ public class LanguageManager {
 	}
 	
 	public ILanguage getLanguage(String id) throws CoreException {
+		ILanguage language = (ILanguage)cache.get(id);
+		if (language != null)
+			return language;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ILanguage.KEY);
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; ++i) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] languages = extension.getConfigurationElements();
 			for (int j = 0; j < languages.length; ++j) {
-				IConfigurationElement language = languages[j];
-				String langId = extension.getNamespace() + "." + language.getAttribute("id"); //$NON-NLS-1$ $NON-NLS-2$
-				if (langId.equals(id))
-					return (ILanguage)language.createExecutableExtension("class"); //$NON-NLS-1$
+				IConfigurationElement languageElem = languages[j];
+				String langId = extension.getNamespace() + "." + languageElem.getAttribute("id"); //$NON-NLS-1$ $NON-NLS-2$
+				if (langId.equals(id)) {
+					language = (ILanguage)languageElem.createExecutableExtension("class"); //$NON-NLS-1$
+					cache.put(id, language);
+					return language;
+				}
 			}
 		}
 		

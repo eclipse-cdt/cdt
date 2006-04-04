@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
@@ -79,17 +80,19 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		}
 	}
 
-	protected void createMatches(PDOMBinding binding) throws CoreException {
-		if ((flags & FIND_DECLARATIONS) != 0) {
-			collectNames(binding.getFirstDeclaration());
-		}
-		if ((flags & FIND_DECLARATIONS) != 0) {
-			collectNames(binding.getFirstDefinition());
-		}
-		if ((flags & FIND_REFERENCES) != 0) {
-			collectNames(binding.getFirstReference());
-		}
-		
+	protected void createMatches(IBinding binding) throws CoreException {
+		if (binding instanceof PDOMBinding) {
+			PDOMBinding pdomBinding = (PDOMBinding)binding;
+			if ((flags & FIND_DECLARATIONS) != 0) {
+				collectNames(pdomBinding.getFirstDeclaration());
+			}
+			if ((flags & FIND_DECLARATIONS) != 0) {
+				collectNames(pdomBinding.getFirstDefinition());
+			}
+			if ((flags & FIND_REFERENCES) != 0) {
+				collectNames(pdomBinding.getFirstReference());
+			}
+		}		
 	}
 
 }

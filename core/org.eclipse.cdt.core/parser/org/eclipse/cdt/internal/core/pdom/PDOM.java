@@ -41,8 +41,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * The PDOM Database.
@@ -227,6 +225,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 		fileIndex = null;
 	}
 
+	public boolean isEmpty() throws CoreException {
+		return getFirstLinkage() == null;
+	}
+
 	public ICodeReaderFactory getCodeReaderFactory() {
 		return new PDOMCodeReaderFactory(this);
 	}
@@ -260,14 +262,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return null;
 	}
 
-	public PDOMBinding[] findBindings(String pattern) throws CoreException {
+	public IBinding[] findBindings(String pattern) throws CoreException {
 		List bindings = new ArrayList();
 		PDOMLinkage linkage = getFirstLinkage();
 		while (linkage != null) {
 			linkage.findBindings(pattern, bindings);
 			linkage = linkage.getNextLinkage();
 		}
-		return (PDOMBinding[])bindings.toArray(new PDOMBinding[bindings.size()]);
+		return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
 	}
 	
 	public PDOMLinkage getLinkage(ILanguage language) throws CoreException {
@@ -311,41 +313,43 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	// Read-write lock rules. Readers don't conflict with other readers,
 	// Writers conflict with readers, and everyone conflicts with writers.
-	private final ISchedulingRule readerLockRule = new ISchedulingRule() {
-		public boolean isConflicting(ISchedulingRule rule) {
-			if (rule == this)
-				return false;
-			else if (rule == getWriterLockRule())
-				return true;
-			else
-				return false;
-		}
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-	};
-
-	private final ISchedulingRule writerLockRule = new ISchedulingRule() {
-		public boolean isConflicting(ISchedulingRule rule) {
-			if (rule == this || rule == getReaderLockRule())
-				return true;
-			else
-				return false;
-		}
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-	};
+	private Object mutex = new Object();
+	private int lockCount;
+	private int waitingReaders;
 	
-	public ISchedulingRule getReaderLockRule() {
-		return readerLockRule;
+	public void acquireReadLock() throws InterruptedException {
+		synchronized (mutex) {
+			++waitingReaders;
+			while (lockCount < 0)
+				mutex.wait();
+			--waitingReaders;
+			++lockCount;
+		}
 	}
 	
-	public ISchedulingRule getWriterLockRule() {
-		return writerLockRule;
+	public void releaseReadLock() {
+		synchronized (mutex) {
+			if (lockCount > 0)
+				--lockCount;
+			mutex.notifyAll();
+		}
 	}
 	
-	// These are really only recommendations
-	public static final int READER_PRIORITY = Job.SHORT;
-	public static final int WRITER_PRIORITY = Job.LONG;
+	public void acquireWriteLock() throws InterruptedException {
+		synchronized (mutex) {
+			// Let the readers go first
+			while (lockCount != 0 || waitingReaders > 0)
+				mutex.wait();
+			--lockCount;
+		}
+	}
+	
+	public void releaseWriteLock() {
+		synchronized (mutex) {
+			if (lockCount < 0)
+				++lockCount;
+			mutex.notifyAll();
+		}
+	}
+	
 }

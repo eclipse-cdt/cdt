@@ -34,14 +34,11 @@ public class PDOMFastIndexer implements IPDOMIndexer {
 	}
 	
 	public void handleDelta(ICElementDelta delta) {
-		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
-		new PDOMFastHandleDelta(pdom, delta, group).schedule();
+		new PDOMFastHandleDelta(pdom, delta).schedule();
 	}
 	
 	public void reindex() throws CoreException {
-		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
-		group.beginTask("Reindexing", 100);
-		new PDOMFastReindex(pdom, group).schedule();
+		new PDOMFastReindex(pdom).schedule();
 	}
 	
 }

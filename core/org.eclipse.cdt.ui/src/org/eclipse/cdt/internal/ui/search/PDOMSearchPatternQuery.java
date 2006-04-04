@@ -16,10 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOM;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -82,24 +82,34 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		
 		try {
 			for (Iterator iproject = projects.iterator(); iproject.hasNext();)
-				searchProject((IProject)iproject.next());
+				searchProject((IProject)iproject.next(), monitor);
 			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
 	}
 	
-	private void searchProject(IProject project) throws CoreException {
+	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
 		if (!CoreModel.hasCNature(project))
 			// Not a CDT project
 			return;
 
 		ICProject cproject = CoreModel.getDefault().create(project);
-		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(cproject);
-		PDOMBinding[] bindings = pdom.findBindings(pattern);
-		
-		for (int i = 0; i < bindings.length; ++i) {
-			createMatches(bindings[i]);
+		IPDOM pdom = CCorePlugin.getPDOMManager().getPDOM(cproject);
+
+		try {
+			pdom.acquireReadLock();
+		} catch (InterruptedException e) {
+			return;
+		}
+
+		try {
+			IBinding[] bindings = pdom.findBindings(pattern);
+			for (int i = 0; i < bindings.length; ++i) {
+				createMatches(bindings[i]);
+			}
+		} finally {
+			pdom.releaseReadLock();
 		}
 	}
 	

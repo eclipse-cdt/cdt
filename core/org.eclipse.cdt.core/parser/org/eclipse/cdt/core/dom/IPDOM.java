@@ -27,9 +27,19 @@ public interface IPDOM extends IAdaptable {
 
 	public IBinding resolveBinding(IASTName name);
 	
+	public IBinding[] findBindings(String pattern) throws CoreException;
+	
 	public IASTName[] getDeclarations(IBinding binding);
 	
 	public void delete() throws CoreException;
+	
+	/**
+	 * Looks to see if anything has been stored in this PDOM.
+	 * 
+	 * @return is the PDOM empty
+	 * @throws CoreException
+	 */
+	public boolean isEmpty() throws CoreException;
 	
 	public ICodeReaderFactory getCodeReaderFactory();
 	
@@ -37,5 +47,10 @@ public interface IPDOM extends IAdaptable {
 	
 	public IPDOMIndexer getIndexer();
 	public void setIndexer(IPDOMIndexer indexer) throws CoreException;
+	
+	public void acquireReadLock() throws InterruptedException;
+	public void releaseReadLock();
+	public void acquireWriteLock() throws InterruptedException;
+	public void releaseWriteLock();
 	
 }

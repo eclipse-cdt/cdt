@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
+import org.eclipse.cdt.core.search.SearchFor;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;

@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.search;
 /**
  * @author bgheorgh
  */
-import org.eclipse.cdt.internal.core.search.processing.*;
+import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
 
 
 /**
@@ -199,20 +199,4 @@ public interface ICSearchConstants {
 	int WAIT_UNTIL_READY_TO_SEARCH = IIndexJob.WaitUntilReady;
 	
 	public static final String EXTERNAL_SEARCH_LINK_PREFIX = "cdtlnk"; //$NON-NLS-1$
-	
-	public class SearchFor{
-		private SearchFor( int value )
-		{
-			this.value = value;
-		}
-		private final int value;
-	}
-	
-	public class LimitTo {
-		private LimitTo( int value )
-		{
-			this.value = value;
-		}
-		private final int value;
-	}
 }

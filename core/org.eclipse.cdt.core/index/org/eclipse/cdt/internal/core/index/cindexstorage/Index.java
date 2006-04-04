@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.LimitTo;
+import org.eclipse.cdt.core.search.SearchFor;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;

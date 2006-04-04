@@ -17,7 +17,7 @@
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
+import org.eclipse.cdt.core.search.LimitTo;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;

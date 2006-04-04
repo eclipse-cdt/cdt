@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.IMatchLocator;
+import org.eclipse.cdt.core.search.LimitTo;
 import org.eclipse.cdt.internal.core.search.AcceptMatchOperation;
 import org.eclipse.cdt.internal.core.search.indexing.IndexProblemHandler;
 import org.eclipse.core.resources.IFile;

@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.DOMSearchUtil;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.LimitTo;
 import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;

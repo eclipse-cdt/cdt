@@ -183,7 +183,7 @@
 	</target>
 
 	<target name="tagone">
-		<ant cvsroot=":ext:dschaefer@dev.eclipse.org:/cvsroot/tools" cvsrsh="ssh"
+		<cvs cvsroot=":ext:dschaefer@dev.eclipse.org:/cvsroot/tools" cvsrsh="ssh"
 			command="rtag ${tagbranch} ${tagname} ${tagmodule}"/>
 	</target>
 	

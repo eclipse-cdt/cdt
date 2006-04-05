@@ -11,7 +11,7 @@
 package org.eclipse.cdt.internal.core.browser.cache;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
+import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

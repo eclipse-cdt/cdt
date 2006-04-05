@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -46,6 +45,7 @@ import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.LimitTo;
 import org.eclipse.cdt.core.search.OffsetLocatable;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

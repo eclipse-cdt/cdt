@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.browser;
+package org.eclipse.cdt.utils;
 
 import java.io.File;
 import java.io.IOException;

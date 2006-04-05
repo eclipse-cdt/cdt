@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.IndexerView;
 
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
@@ -24,6 +23,7 @@ import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -40,6 +39,7 @@ import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -27,6 +26,7 @@ import org.eclipse.cdt.internal.core.index.cindexstorage.Index;
 import org.eclipse.cdt.internal.core.index.cindexstorage.IndexedFileEntry;
 import org.eclipse.cdt.internal.core.index.cindexstorage.io.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;

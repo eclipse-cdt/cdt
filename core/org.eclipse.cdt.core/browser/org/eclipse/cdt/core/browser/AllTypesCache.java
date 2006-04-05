@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;

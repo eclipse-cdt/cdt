@@ -9,9 +9,9 @@
  * IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
-import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
 import org.eclipse.cdt.internal.core.dom.PartialWorkingCopyCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;

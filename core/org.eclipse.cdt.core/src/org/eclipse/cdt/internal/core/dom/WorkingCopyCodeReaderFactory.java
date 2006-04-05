@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.core.parser.CodeReader;
 
 /**

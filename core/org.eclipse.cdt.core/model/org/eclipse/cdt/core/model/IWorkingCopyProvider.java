@@ -8,9 +8,8 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.browser;
+package org.eclipse.cdt.core.model;
 
-import org.eclipse.cdt.core.model.IWorkingCopy;
 
 /**
  * Defines a simple interface in order to provide

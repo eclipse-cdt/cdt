@@ -633,7 +633,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_EXECUTABLE );
 			case ICModule.SHARED_LIBRARY:
 				if ( element.areSymbolsLoaded() ) {
-					return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( CDebugImages.DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS ), new ImageDescriptor[]{ null, CDebugImages.DESC_OVRS_SYMBOLS, null, null } ) );
+					return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS );
 				}
 				return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY );
 		}

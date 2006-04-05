@@ -1,3 +1,15 @@
+2006-04-05 Mikhail Khodjaiants
+	Bug 135118: Modules view is not updated.
+	* ModuleProxyFactory.java
+	* ModulesViewEventHandler.java
+	* ModulesViewModelProxy.java
+
+2006-04-05 Mikhail Khodjaiants
+	Corrected the shared library image selection.
+	* CDebugImages.java
+	* CDebugModelPresentation.java
+	- icons/ovr16/symbols_ovr.gif
+
 2006-04-04 Mikhail Khodjaiants
 	See bug 134871: StackOverflowError using AsynchronousViewer.
 	* ModulesView.java

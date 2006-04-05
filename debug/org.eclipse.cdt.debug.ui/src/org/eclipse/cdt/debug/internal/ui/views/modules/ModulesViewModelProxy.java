@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy;
  
@@ -18,17 +19,28 @@ import org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy;
  */
 public class ModulesViewModelProxy extends EventHandlerModelProxy {
 
+	private IModuleRetrieval fModuleRetrieval;
+
 	/** 
 	 * Constructor for ModulesViewModelProxy. 
 	 */
-	public ModulesViewModelProxy() {
+	public ModulesViewModelProxy( IModuleRetrieval moduleRetrieval ) {
 		super();
+		fModuleRetrieval = moduleRetrieval;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
 	 */
 	protected DebugEventHandler[] createEventHandlers() {
-		return new DebugEventHandler[] { new ModulesViewEventHandler( this ) };
+		return new DebugEventHandler[] { new ModulesViewEventHandler( this, fModuleRetrieval ) };
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		fModuleRetrieval = null;
 	}
 }

@@ -28,7 +28,7 @@ public class ModuleProxyFactory implements IModelProxyFactoryAdapter {
 			String id = part.getSite().getId();
 			if ( ICDebugUIConstants.ID_MODULES_VIEW.equals( id ) ) {
 				if ( element instanceof IModuleRetrieval ) {
-						return new ModulesViewModelProxy();
+						return new ModulesViewModelProxy( (IModuleRetrieval)element );
 				}
 			}
 		}

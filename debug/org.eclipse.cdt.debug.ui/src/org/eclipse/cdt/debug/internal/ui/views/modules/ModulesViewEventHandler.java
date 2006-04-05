@@ -11,7 +11,9 @@
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
@@ -23,11 +25,14 @@ import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
  */
 public class ModulesViewEventHandler extends DebugEventHandler {
 
+	private IModuleRetrieval fModuleRetrieval;
+
 	/** 
 	 * Constructor for ModulesViewEventHandler. 
 	 */
-	public ModulesViewEventHandler( AbstractModelProxy proxy ) {
+	public ModulesViewEventHandler( AbstractModelProxy proxy, IModuleRetrieval moduleRetrieval ) {
 		super( proxy );
+		fModuleRetrieval = moduleRetrieval;
 	}
 
 	/* (non-Javadoc)
@@ -46,7 +51,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	 */
 	protected void handleChange( DebugEvent event ) {
 		if ( event.getSource() instanceof ICModule )
-			fireDelta( new ModelDelta( event.getSource(), IModelDelta.STATE ) );
+			fireDelta( (ICModule)event.getSource(), IModelDelta.STATE );
 	}
 
 	/* (non-Javadoc)
@@ -57,7 +62,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 			refreshRoot( event );
 		}
 		else if ( event.getSource() instanceof ICModule ) {
-			fireDelta( new ModelDelta( event.getSource(), IModelDelta.ADDED ) );
+			fireDelta( (ICModule)event.getSource(), IModelDelta.ADDED );
 		}
 	}
 
@@ -69,7 +74,21 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 			refreshRoot( event );
 		}
 		else if ( event.getSource() instanceof ICModule ) {
-			fireDelta( new ModelDelta( event.getSource(), IModelDelta.REMOVED ) );
+			fireDelta( (ICModule)event.getSource(), IModelDelta.REMOVED );
 		}
+	}
+
+	private void fireDelta( ICModule module, int flags ) {
+		ModelDelta root = new ModelDelta( fModuleRetrieval, IModelDelta.NO_CHANGE );
+		root.addNode( module, flags );
+		fireDelta( root );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		fModuleRetrieval = null;
 	}
 }

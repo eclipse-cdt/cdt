@@ -142,8 +142,6 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
     		if (indexerId == null)
     			// make it the default
     			indexerId = getDefaultIndexerId();
-    		
-    		setIndexerId(project, indexerId);
     	}
   	    return indexerId;
     }

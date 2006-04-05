@@ -48,6 +48,7 @@ public class PDOMFastReindex extends Job {
 	
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
+			long start = System.currentTimeMillis();
 			final List addedTUs = new ArrayList();
 			
 			// First clear out the DB
@@ -78,6 +79,11 @@ public class PDOMFastReindex extends Job {
 			for (Iterator i = addedTUs.iterator(); i.hasNext();)
 				addTU((ITranslationUnit)i.next());
 			
+			String showTimings = Platform.getDebugOption(CCorePlugin.PLUGIN_ID
+					+ "/debug/pdomtimings"); //$NON-NLS-1$
+			if (showTimings != null && showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
+				System.out.println("PDOM Reindex Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+
 			monitor.done();
 			return Status.OK_STATUS;
 		} catch (CoreException e) {

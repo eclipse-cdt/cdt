@@ -100,7 +100,7 @@ class PDOMFastHandleDelta extends Job {
 			if (showTimings != null)
 				if (showTimings.equalsIgnoreCase("true")) //$NON-NLS-1$
 					System.out
-							.println("Updator Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+							.println("PDOM Update Time: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 	
 			return Status.OK_STATUS;
 		} catch (CoreException e) {

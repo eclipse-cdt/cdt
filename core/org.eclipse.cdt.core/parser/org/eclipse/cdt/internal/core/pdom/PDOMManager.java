@@ -95,7 +95,7 @@ public class PDOMManager implements IPDOMManager, IElementChangedListener {
 		IProject rproject = project.getProject();
 		IPDOM pdom = (IPDOM)rproject.getSessionProperty(pdomProperty); 
 		rproject.setSessionProperty(pdomProperty, null);
-		pdom.delete();
+		pdom.clear();
 	}
 
 	public IElementChangedListener getElementChangedListener() {

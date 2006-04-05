@@ -130,7 +130,7 @@ public class PDOMCPPLinkage extends PDOMLinkage {
 		return pdomBinding;
 	}
 
-	private static final class FindBinding extends PDOMNode.NodeVisitor {
+	private static final class FindBinding extends PDOMNode.NodeFinder {
 		PDOMBinding pdomBinding;
 		final int desiredType;
 		public FindBinding(PDOM pdom, char[] name, int desiredType) {

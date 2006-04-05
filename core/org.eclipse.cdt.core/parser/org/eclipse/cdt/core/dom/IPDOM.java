@@ -31,7 +31,20 @@ public interface IPDOM extends IAdaptable {
 	
 	public IASTName[] getDeclarations(IBinding binding);
 	
-	public void delete() throws CoreException;
+	/**
+	 * Recursively visit the nodes in this PDOM using the given visitor.
+	 * 
+	 * @param visitor
+	 * @throws CoreException
+	 */
+	public void accept(IPDOMVisitor visitor) throws CoreException;
+	
+	/** 
+	 * Clear all the contents of this PDOM.
+	 * 
+	 * @throws CoreException
+	 */
+	public void clear() throws CoreException;
 	
 	/**
 	 * Looks to see if anything has been stored in this PDOM.

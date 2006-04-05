@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -24,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * PDOM nodes form a multi-root tree with linkages being the roots.
  * This class managed the parent pointer.
  */
-public abstract class PDOMNode {
+public abstract class PDOMNode implements IPDOMNode{
 
 	private static final int PARENT_OFFSET = 0;
 	private static final int NAME_OFFSET = 4;
@@ -65,6 +67,10 @@ public abstract class PDOMNode {
 	
 	public int getRecord() {
 		return record;
+	}
+	
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		// No children here.
 	}
 	
 	public PDOMLinkage getLinkage() throws CoreException {
@@ -120,10 +126,10 @@ public abstract class PDOMNode {
 		};
 	}
 	
-	public abstract static class NodeVisitor implements IBTreeVisitor {
+	public abstract static class NodeFinder implements IBTreeVisitor {
 		protected final PDOM pdom;
 		protected final char[] name;
-		protected NodeVisitor(PDOM pdom, char [] name) {
+		protected NodeFinder(PDOM pdom, char [] name) {
 			this.pdom = pdom;
 			this.name = name;
 		}

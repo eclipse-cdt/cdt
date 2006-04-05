@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -105,6 +106,23 @@ public abstract class PDOMLinkage extends PDOMNode {
 	
 	public BTree getIndex() throws CoreException {
 		return new BTree(pdom.getDB(), record + INDEX_OFFSET);
+	}
+	
+	public void accept(final IPDOMVisitor visitor) throws CoreException {
+		super.accept(visitor);
+		getIndex().visit(new IBTreeVisitor() {
+			public int compare(int record) throws CoreException {
+				return 1;
+			};
+			public boolean visit(int record) throws CoreException {
+				PDOMBinding binding = pdom.getBinding(record);
+				if (binding != null) {
+					if (visitor.visit(binding))
+						binding.accept(visitor);
+				}
+				return true;
+			};
+		});
 	}
 	
 	public PDOMLinkage getLinkage() throws CoreException {

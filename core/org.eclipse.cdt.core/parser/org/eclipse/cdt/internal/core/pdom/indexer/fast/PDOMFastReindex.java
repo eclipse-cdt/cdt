@@ -52,7 +52,7 @@ public class PDOMFastReindex extends Job {
 			final List addedTUs = new ArrayList();
 			
 			// First clear out the DB
-			pdom.delete();
+			pdom.clear();
 			
 			// Now repopulate it
 			pdom.getProject().getProject().accept(new IResourceProxyVisitor() {

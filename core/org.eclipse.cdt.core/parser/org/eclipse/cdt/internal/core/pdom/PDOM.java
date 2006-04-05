@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -107,6 +108,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 		
 		if (reindex)
 			indexer.reindex();
+	}
+	
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		for (PDOMLinkage linkage = getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+			linkage.accept(visitor);
 	}
 	
 	public static interface IListener {
@@ -220,7 +226,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		file.clear();
 	}
 	
-	public void delete() throws CoreException {
+	public void clear() throws CoreException {
 		getDB().clear();
 		fileIndex = null;
 	}

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -57,6 +59,23 @@ public class PDOMCPPNamespace extends PDOMBinding
 		return new BTree(pdom.getDB(), record + INDEX_OFFSET);
 	}
 
+	public void accept(final IPDOMVisitor visitor) throws CoreException {
+		super.accept(visitor);
+		getIndex().visit(new IBTreeVisitor() {
+			public int compare(int record) throws CoreException {
+				return 1;
+			};
+			public boolean visit(int record) throws CoreException {
+				PDOMBinding binding = pdom.getBinding(record);
+				if (binding != null) {
+					if (visitor.visit(binding))
+						binding.accept(visitor);
+				}
+				return true;
+			};
+		});
+	}
+	
 	public void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord(), child.getIndexComparator());
 	}
@@ -106,7 +125,7 @@ public class PDOMCPPNamespace extends PDOMBinding
 		throw new PDOMNotImplementedError();
 	}
 
-	private static final class FindBinding extends PDOMNode.NodeVisitor {
+	private static final class FindBinding extends PDOMNode.NodeFinder {
 		PDOMBinding pdomBinding;
 		final int desiredType;
 		public FindBinding(PDOM pdom, char[] name, int desiredType) {

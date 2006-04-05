@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
@@ -39,6 +40,14 @@ public class PDOMMemberOwner extends PDOMBinding {
 
 	protected int getRecordSize() {
 		return RECORD_SIZE;
+	}
+	
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		super.accept(visitor);
+		for (PDOMMember member = getFirstMember(); member != null; member = member.getNextMember())
+			if (visitor.visit(member))
+				member.accept(visitor);
+				
 	}
 	
 	public void addMember(PDOMMember member) throws CoreException {

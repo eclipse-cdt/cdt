@@ -9,34 +9,24 @@
  * QNX - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.pdom.indexer.nulli;
+package org.eclipse.cdt.core.dom;
 
-import org.eclipse.cdt.core.dom.IPDOM;
-import org.eclipse.cdt.core.dom.IPDOMIndexer;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author Doug Schaefer
  *
- * The Null Indexer which does nothing.
  */
-public class PDOMNullIndexer implements IPDOMIndexer {
+public interface IPDOMVisitor {
 
-	private IPDOM pdom;
+	/**
+	 * Walk the nodes in a PDOM. Return true to visit the children of
+	 * this node, or false to skip to the next sibling of this node.
+	 * Throw CoreException to stop the visit.
+	 *  
+	 * @param node
+	 * @return
+	 */
+	public boolean visit(IPDOMNode node) throws CoreException;
 	
-	public void setPDOM(IPDOM pdom) {
-		this.pdom = pdom;
-	}
-
-	public void handleDelta(ICElementDelta delta) {
-	}
-	
-	public void reindex() throws CoreException {
-		// Just clear out the old index
-		pdom.clear();
-		((PDOM)pdom).fireChange();
-	}
-
 }

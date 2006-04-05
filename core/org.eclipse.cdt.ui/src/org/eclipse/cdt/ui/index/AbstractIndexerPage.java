@@ -45,7 +45,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
    abstract public void removePreferences();
    
 	public IProject getCurrentProject() {
-		return currentProject.getProject();
+		return currentProject != null ? currentProject.getProject() : null;
 	}
 	
 	public void setCurrentProject(ICProject currentProject) {

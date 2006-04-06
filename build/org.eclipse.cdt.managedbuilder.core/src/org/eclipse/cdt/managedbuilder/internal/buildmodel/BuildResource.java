@@ -31,7 +31,7 @@ public class BuildResource implements IBuildResource {
 	private BuildDescription fInfo;
 
 	protected BuildResource(BuildDescription info, IResource rc){
-		this(info, rc.getLocation(), rc.getFullPath());
+		this(info, info.calcResourceLocation(rc), rc.getFullPath());
 	}
 
 	protected BuildResource(BuildDescription info, IPath location, IPath fullPath){
@@ -41,17 +41,6 @@ public class BuildResource implements IBuildResource {
 		if(fFullPath != null)
 			fIsProjectRc = fFullPath.segment(0).equals(info.getProject().getName());
 
-		IResourceDelta delta = fInfo.getDelta();
-		if(delta != null && isProjectResource()){
-			IResourceDelta rcDelta = delta.findMember(getFullPath().removeFirstSegments(1)); 
-			if(rcDelta != null){
-				setRebuildState(true);
-				
-				if(rcDelta.getKind() == IResourceDelta.REMOVED)
-					setRemoved();
-			}
-			
-		}
 		info.resourceCreated(this);
 		
 		if(DbgUtil.DEBUG)
@@ -99,28 +88,33 @@ public class BuildResource implements IBuildResource {
 		return fIsRemoved;
 	}
 	
-	public void setRemoved() {
-		fIsRemoved = true;
-		fNeedsRebuild = false;
+	public void setRemoved(boolean removed) {
+		if(DbgUtil.DEBUG){
+			if(removed)
+				DbgUtil.traceln("REMOVED state: resource " + DbgUtil.resourceName(this));
+		}
+		fIsRemoved = removed;
+		if(fIsRemoved)
+			fNeedsRebuild = false;
 	}
 	
 	public void setRebuildState(boolean rebuild){
 		fNeedsRebuild = rebuild;
 	}
 
-	void addToArg(BuildIOType arg){
+	protected void addToArg(BuildIOType arg){
 		if(arg.isInput()){
 			fDepArgs.add(arg);
 		} else {
-			if(fProducerArg == null)
+			if(fProducerArg == null){
 				fProducerArg = arg;
-			else {
+			} else {
 				String err = "ProducerArgument not null!!!\n";	//$NON-NLS-1$
 				if(DbgUtil.DEBUG){
 					err = err + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
 				}
 					
-				throw new AssertionError(err);
+				throw new IllegalArgumentException(err);
 			}
 		}
 	}
@@ -129,10 +123,10 @@ public class BuildResource implements IBuildResource {
 		if(arg.isInput()){
 			fDepArgs.remove(arg);
 		} else {
-			if(fProducerArg == arg)
+			if(fProducerArg == arg){
 				fProducerArg = null;
-			else
-				throw new AssertionError("Resource is not produced by this arg!!!");	//$NON-NLS-1$
+			}else
+				throw new IllegalArgumentException("Resource is not produced by this arg!!!");	//$NON-NLS-1$
 		}
 	}
 	

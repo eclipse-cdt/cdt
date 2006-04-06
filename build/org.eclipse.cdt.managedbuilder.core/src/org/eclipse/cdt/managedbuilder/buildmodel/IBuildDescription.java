@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.buildmodel;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -42,8 +43,17 @@ public interface IBuildDescription {
 	 * 
 	 * @return the IBuildResource or null if not found
 	 */
-	IBuildResource getResourceForLocation(IPath location);
-	
+	IBuildResource getBuildResource(IPath location);
+
+	/**
+	 * Returns the Build resource for the given resource
+	 * 
+	 * @param location 
+	 * 
+	 * @return the IBuildResource or null if not found
+	 */
+	IBuildResource getBuildResource(IResource resource);
+
 	/**
 	 * Returns all resources used in the build
 	 * 

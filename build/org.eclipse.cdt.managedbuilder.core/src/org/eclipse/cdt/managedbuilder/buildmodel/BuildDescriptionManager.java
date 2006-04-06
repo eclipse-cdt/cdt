@@ -121,7 +121,7 @@ public class BuildDescriptionManager {
 		}
 		
 		if(proceed && !fVisitedSteps.contains(action)){
-			proceed = visitor.visit(action);
+			proceed = visitor.visit(action) == IStepVisitor.VISIT_CONTINUE;
 			fVisitedSteps.add(action);
 		}
 		
@@ -215,7 +215,7 @@ public class BuildDescriptionManager {
 	 * @param bRc build resource
 	 * @return IResource
 	 */
-	public static IResource getResourceFromBuildResource(IBuildResource bRc){
+	public static IResource findResourceForBuildResource(IBuildResource bRc){
 		IProject project = bRc.getBuildDescription().getConfiguration().getOwner().getProject();
 		
 		IPath path = bRc.getFullPath();
@@ -236,7 +236,7 @@ public class BuildDescriptionManager {
 		List failList = new ArrayList();
 		
 		for(int i = 0; i < bRcs.length; i++){
-			IResource rc = getResourceFromBuildResource(bRcs[i]);
+			IResource rc = findResourceForBuildResource(bRcs[i]);
 			if(rc != null){
 				try {
 					rc.delete(true, null);

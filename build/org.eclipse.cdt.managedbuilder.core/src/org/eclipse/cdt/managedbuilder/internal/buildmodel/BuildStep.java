@@ -25,9 +25,11 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
@@ -50,6 +52,7 @@ public class BuildStep implements IBuildStep {
 	private BuildDescription fBuildDescription;
 	private IInputType fInputType;
 	private ITool fLibTool;
+	private boolean fAssignToCalculated;
 	
 	protected BuildStep(BuildDescription des, ITool tool, IInputType inputType){
 		fTool = tool;
@@ -240,13 +243,19 @@ public class BuildStep implements IBuildStep {
 		if(fTool == null)
 			return null;
 		
+		if(cwd == null)
+			cwd = fBuildDescription.getDefaultBuildDirLocation();
+		
 		if(!cwd.isAbsolute())
 			cwd = fBuildDescription.getConfiguration().getOwner().getProject().getLocation().append(cwd);
+		
+		performAsignToOption(cwd);
 		
 		BuildResource inRc = getRcForMacros(true);
 		BuildResource outRc = getRcForMacros(false);
 		IPath inRcPath = inRc != null ? BuildDescriptionManager.getRelPath(cwd, inRc.getLocation()) : null;
 		IPath outRcPath = outRc != null ? BuildDescriptionManager.getRelPath(cwd, outRc.getLocation()) : null;
+
 		IManagedCommandLineGenerator gen = fTool.getCommandLineGenerator();
 		FileContextData data = new FileContextData(inRcPath, outRcPath, null, fTool);
 		IManagedCommandLineInfo info = gen.generateCommandLineInfo(fTool, 
@@ -258,16 +267,65 @@ public class BuildStep implements IBuildStep {
 				resourcesToStrings(cwd, getPrimaryResources(true)), 
 				fTool.getCommandLinePattern());
 		
-		return createCommandsFromString(info.getCommandLine(), cwd);
+		return createCommandsFromString(info.getCommandLine(), cwd, getEnvironment());
 	}
 	
-	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd){
-		String[] cmds = cmd.split(" ");	//$NON-NLS-1$
-		IPath c = new Path(cmds[0]);
-		String[] args = new String[cmds.length - 1];
-		System.arraycopy(cmds, 1, args, 0, args.length);
+	protected Map getEnvironment(){
+		return fBuildDescription.getEnvironment();
+	}
+	
+	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd, Map env){
+		char arr[] = cmd.toCharArray();
+		char expect = 0;
+		char prev = 0;
+//		int start = 0;
+		List list = new ArrayList();
+		StringBuffer buf = new StringBuffer();
+		for(int i = 0; i < arr.length; i++){
+			char ch = arr[i]; 
+			switch(ch){
+			case '\'':
+			case '"':
+				if(expect == ch){
+//					String s = cmd.substring(start, i);
+//					list.add(s);
+					expect = 0;
+//					start = i + 1;
+				} else if (expect == 0){
+//					String s = cmd.substring(start, i);
+//					list.add(s);
+					expect = ch;
+//					start = i + 1;
+				} else {
+					buf.append(ch);
+				}
+				break;
+			case ' ':
+				if(expect == 0){
+					if(prev != ' '){
+						list.add(buf.toString());
+						buf.delete(0, buf.length());
+					}
+//					start = i + 1;
+				} else {
+					buf.append(ch);
+				}
+				break;
+			default:
+				buf.append(ch);
+				break;
+			
+			}
+			prev = ch;
+		}
 		
-		return new IBuildCommand[]{new BuildCommand(c, args, null, cwd, this)};
+		if(buf.length() > 0)
+			list.add(buf.toString());
+		
+		IPath c = new Path((String)list.remove(0));
+		String[] args = (String[])list.toArray(new String[list.size()]);
+		
+		return new IBuildCommand[]{new BuildCommand(c, args, env, cwd, this)};
 	}
 	
 	private BuildResource[] getPrimaryResources(boolean input){
@@ -397,5 +455,65 @@ public class BuildStep implements IBuildStep {
 	
 	public ITool getLibTool(){
 		return fLibTool;
+	}
+	
+	protected void performAsignToOption(IPath cwd){
+		if(fTool == null && !fAssignToCalculated)
+			return;
+		
+		fAssignToCalculated = true;
+
+		IConfiguration cfg = fBuildDescription.getConfiguration();
+		
+		for(Iterator iter = fInputTypes.iterator(); iter.hasNext();){
+			BuildIOType bType = (BuildIOType)iter.next();
+			IInputType type = (IInputType)bType.getIoType();
+			
+			if(type == null)
+				continue;
+			
+			IOption option = fTool.getOptionBySuperClassId(type.getOptionId());
+			IOption assignToOption = fTool.getOptionBySuperClassId(type.getAssignToOptionId());
+			if (assignToOption != null && option == null) {
+				try {
+					BuildResource bRcs[] = (BuildResource[])bType.getResources();
+					int optType = assignToOption.getValueType();
+					if (optType == IOption.STRING) {
+						String optVal = "";	   //$NON-NLS-1$
+						for (int j=0; j<bRcs.length; j++) {
+							if (j != 0) {
+								optVal += " ";	   //$NON-NLS-1$
+							}
+							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
+						}
+						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal);							
+					} else if (
+							optType == IOption.STRING_LIST ||
+							optType == IOption.LIBRARIES ||
+							optType == IOption.OBJECTS ||
+							optType == IOption.INCLUDE_PATH ||
+							optType == IOption.PREPROCESSOR_SYMBOLS){
+						//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
+						//  to top build directory relative
+						String[] paths = new String[bRcs.length];
+						for (int j=0; j<bRcs.length; j++) {
+							paths[j] = BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
+						}
+						ManagedBuildManager.setOption(cfg, fTool, assignToOption, paths);
+					} else if (optType == IOption.BOOLEAN) {
+						if (bRcs.length > 0) {
+							ManagedBuildManager.setOption(cfg, fTool, assignToOption, true);
+						} else {
+							ManagedBuildManager.setOption(cfg, fTool, assignToOption, false);
+						}
+					} else if (optType == IOption.ENUMERATED) {
+						if (bRcs.length > 0) {
+							ManagedBuildManager.setOption(cfg, fTool, assignToOption, BuildDescriptionManager.getRelPath(cwd, bRcs[0].getLocation()).toOSString());
+						}
+					}
+				} catch( BuildException ex ) {
+				}
+			}
+		}
 	}
 }

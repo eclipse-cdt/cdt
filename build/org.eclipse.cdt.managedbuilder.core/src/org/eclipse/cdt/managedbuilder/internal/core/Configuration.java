@@ -816,7 +816,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		getResourceConfigurationList().remove(resConfig);
 		getResourceConfigurationMap().remove(resConfig.getResourcePath());
 		isDirty = true;
-//		rebuildNeeded = true;
+		rebuildNeeded = true;
 	}
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S

@@ -2505,7 +2505,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	private IBuildResource getResourceForProjPath(IBuildDescription des, IPath path){
 		IPath location = des.getConfiguration().getOwner().getProject().getLocation().append(path);
-		return des.getResourceForLocation(location);
+		return des.getBuildResource(location);
 	}
 
 	private ITool getToolForInExt(IConfiguration cfg, String ext){

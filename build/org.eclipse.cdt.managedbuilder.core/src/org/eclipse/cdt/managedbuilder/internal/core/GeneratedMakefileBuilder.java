@@ -33,6 +33,8 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
@@ -222,6 +224,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
 	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
 	private static final String WARNING_UNSUPPORTED_CONFIGURATION = "ManagedMakeBuilder.warning.unsupported.configuration";	//$NON-NLS-1$
+	private static final String BUILD_CANCELLED = "ManagedMakeBuilder.message.cancelled";	//$NON-NLS-1$
+	private static final String BUILD_FINISHED_WITH_ERRS = "ManagedMakeBuilder.message.finished.with.errs";	//$NON-NLS-1$
+	private static final String BUILD_FAILED_ERR = "ManagedMakeBuilder.message.internal.builder.error";	//$NON-NLS-1$
+	private static final String BUILD_STOPPED_ERR = "ManagedMakeBuilder.message.stopped.error";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER_HEADER_NOTE = "ManagedMakeBuilder.message.internal.builder.header.note";	//$NON-NLS-1$
+	private static final String TYPE_REBUILD = "ManagedMakeBuider.type.rebuild";	//$NON-NLS-1$
+	private static final String INTERNAL_BUILDER = "ManagedMakeBuilder.message.internal.builder";	//$NON-NLS-1$
 	public static boolean VERBOSE = false;
 	
 	// Local variables
@@ -329,12 +338,24 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			return referencedProjects;
 		}
 
+		IConfiguration cfg = info.getDefaultConfiguration();
+
+// 		Uncomment the below code for using the Internal Builder
+// 		TODO: the info of what builder is to be used
+// 		should be held in and obtained from the Configuration
+/*
+		if(true){
+			invokeInternalBuilder(cfg, kind != FULL_BUILD, true, monitor);
+
+			// Scrub the build info the project
+			info.setRebuildState(false);
+			return referencedProjects;
+		}
+*/
 		// Create a makefile generator for the build
 		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 		generator.initialize(getProject(), info, monitor);
 
-		IConfiguration cfg = info.getDefaultConfiguration();
-		
 		//perform necessary cleaning and build type calculation
 		if(cfg.needsFullRebuild()){
 			//configuration rebuild state is set to true,
@@ -1067,6 +1088,152 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// The only situation that might cause this is some sort of resource change event
 				return;
 			}
+		}
+	}
+	
+	/**
+	 * called to invoke the MBS Internal Builder for building the given configuration
+	 *  
+	 * @param cfg configuration to be built
+	 * @param buildIncrementaly if true, incremental build will be performed,
+	 * only files that need rebuild will be built.
+	 * If false, full rebuild will be performed
+	 * @param resumeOnErr if true, build will continue in case of error while building.
+	 * If false the build will stop on the first error 
+	 * @param monitor monitor
+	 */
+	protected void invokeInternalBuilder(IConfiguration cfg, 
+			boolean buildIncrementaly,
+			boolean resumeOnErr,
+			IProgressMonitor monitor) {
+		// Get the project and make sure there's a monitor to cancel the build
+		IProject currentProject = cfg.getOwner().getProject();
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+
+		try {
+			int flags = 0;
+			IResourceDelta delta = null;
+			
+			if(buildIncrementaly){
+				flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED;
+				delta = getDelta(currentProject);
+			}
+			
+			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, delta, flags);
+			
+			IBuildModelBuilder builder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr);
+
+			String[] msgs = new String[2];
+			msgs[0] = ManagedMakeMessages.getResourceString(INTERNAL_BUILDER);
+			msgs[1] = currentProject.getName();
+			monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
+
+			// Get a build console for the project
+			StringBuffer buf = new StringBuffer();
+			IConsole console = CCorePlugin.getDefault().getConsole();
+			console.start(currentProject);
+			ConsoleOutputStream consoleOutStream = console.getOutputStream();
+			String[] consoleHeader = new String[3];
+			if(buildIncrementaly)
+				consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
+			else
+				consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_REBUILD);
+						
+			consoleHeader[1] = cfg.getName();
+			consoleHeader[2] = currentProject.getName();
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			
+			buf.append(ManagedMakeMessages.getResourceString(INTERNAL_BUILDER_HEADER_NOTE));
+			buf.append("\n"); //$NON-NLS-1$
+			
+			if(!cfg.isSupported()){
+				buf.append(ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()}));
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			}
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+				
+			// Remove all markers for this project
+			removeAllMarkers(currentProject);
+			
+			// Hook up an error parser manager
+			String[] errorParsers = cfg.getErrorParserList(); 
+			ErrorParserManager epm = new ErrorParserManager(getProject(), des.getDefaultBuildDirLocation(), this, errorParsers);
+			epm.setOutputStream(consoleOutStream);
+			// This variable is necessary to ensure that the EPM stream stay open
+			// until we explicitly close it. See bug#123302.
+			OutputStream epmOutputStream = epm.getOutputStream();
+			
+			int status = builder.build(epmOutputStream, epmOutputStream, monitor);
+
+			// Force a resync of the projects without allowing the user to cancel. 
+			// This is probably unkind, but short of this there is no way to insure 
+			// the UI is up-to-date with the build results 
+			monitor.subTask(ManagedMakeMessages
+					.getResourceString(REFRESH));
+			try {
+				currentProject.refreshLocal(
+						IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				monitor.subTask(ManagedMakeMessages
+						.getResourceString(REFRESH_ERROR));
+			}
+
+			// Report either the success or failure of our mission 
+			buf = new StringBuffer();
+			
+			switch(status){
+			case IBuildModelBuilder.STATUS_OK:
+				buf.append(ManagedMakeMessages
+						.getFormattedString(BUILD_FINISHED,
+								currentProject.getName()));
+				break;
+			case IBuildModelBuilder.STATUS_CANCELLED:
+				buf.append(ManagedMakeMessages
+						.getResourceString(BUILD_CANCELLED));
+				break;
+			case IBuildModelBuilder.STATUS_ERROR_BUILD:
+				String msg = resumeOnErr ? 
+						ManagedMakeMessages.getResourceString(BUILD_FINISHED_WITH_ERRS) :
+							ManagedMakeMessages.getResourceString(BUILD_STOPPED_ERR);
+				buf.append(msg);
+				break;
+			case IBuildModelBuilder.STATUS_ERROR_LAUNCH:
+			default:
+				buf.append(ManagedMakeMessages
+						.getResourceString(BUILD_FAILED_ERR));
+				break;
+			}
+			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+
+			// Write message on the console 
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			epmOutputStream.close();
+
+			// Generate any error markers that the build has discovered 
+			monitor.subTask(ManagedMakeMessages
+					.getResourceString(MARKERS));
+			addBuilderMarkers(epm);
+			epm.reportProblems();
+			consoleOutStream.close();
+		} catch (Exception e) {
+			StringBuffer buf = new StringBuffer();
+			String errorDesc = ManagedMakeMessages
+						.getResourceString(BUILD_ERROR);
+			buf.append(errorDesc);
+			buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
+			buf.append("(").append(e.getLocalizedMessage()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+
+			forgetLastBuiltState();
+		} finally {
+			getGenerationProblems().clear();
 		}
 	}
 }

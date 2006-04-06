@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public interface IStepVisitor {
+	public static final int VISIT_CONTINUE = 1;
+	public static final int VISIT_STOP = 2;
 	
 	/**
 	 * this call-back method is called by the build description
@@ -32,5 +34,5 @@ public interface IStepVisitor {
 	 * @return
 	 * @throws CoreException
 	 */
-	boolean visit(IBuildStep step) throws CoreException;
+	int visit(IBuildStep step) throws CoreException;
 }

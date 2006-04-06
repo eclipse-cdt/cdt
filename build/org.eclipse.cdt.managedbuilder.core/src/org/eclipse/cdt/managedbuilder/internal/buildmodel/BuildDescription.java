@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.buildmodel.IStepVisitor;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
@@ -52,6 +54,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -95,6 +98,8 @@ public class BuildDescription implements IBuildDescription {
 	
 	private Map fExtToToolAndTypeListMap = new HashMap();
 	
+	private Map fEnvironment;
+	
 	class ToolAndType{
 		ITool fTool;
 		IInputType fType;
@@ -109,7 +114,14 @@ public class BuildDescription implements IBuildDescription {
 	
 	private class RcVisitor implements IResourceProxyVisitor,
 										IResourceDeltaVisitor{
+		private boolean fPostProcessMode;
+		
 		RcVisitor(){
+			setMode(false);
+		}
+		
+		public void setMode(boolean postProcess){
+			fPostProcessMode = postProcess;
 		}
 
 		public boolean visit(IResourceProxy proxy) throws CoreException {
@@ -121,17 +133,65 @@ public class BuildDescription implements IBuildDescription {
 			
 			return !isGenerated(proxy.requestFullPath());
 		}
-
-		public boolean visit(IResourceDelta delta) throws CoreException {
+		
+		protected boolean postProcessVisit(IResourceDelta delta){
 			IResource rc = delta.getResource();
 			if(rc.getType() == IResource.FILE){
-				if(delta.getKind() == IResourceDelta.REMOVED
-						&& getResourceForLocation(rc.getLocation()) == null)
-					doVisitFile(rc);
+				IPath rcLocation = calcResourceLocation(rc);
+				BuildResource bRc = (BuildResource)getBuildResource(rcLocation);
+				if(bRc != null){
+					if(bRc.getProducerIOType() != null 
+							&& bRc.getProducerIOType().getStep() == fInputStep){
+						if(delta.getKind() == IResourceDelta.REMOVED){
+							if(checkFlags(BuildDescriptionManager.REMOVED)){
+								bRc.setRemoved(true);
+							}
+						} else	{
+							if(checkFlags(BuildDescriptionManager.REBUILD)){
+								bRc.setRebuildState(true);
+							}
+						}
+					} else {
+						if(checkFlags(BuildDescriptionManager.REBUILD)){
+							bRc.setRebuildState(true);
+							IBuildIOType type = bRc.getProducerIOType();
+							if(type != null){
+								((BuildStep)type.getStep()).setRebuildState(true);
+							}
+						}
+					}
+				}
+				return false;
+			}
+			return true;
+		}
+		
+		public boolean removedCalcVisit(IResourceDelta delta) throws CoreException {
+			IResource rc = delta.getResource();
+			if(rc.getType() == IResource.FILE){
+				if(!isGenerated(rc.getFullPath())){
+					//this is a project source, check the removed state
+					if(delta.getKind() == IResourceDelta.REMOVED
+							&& checkFlags(BuildDescriptionManager.REMOVED)){
+						IPath rcLocation = calcResourceLocation(rc);
+						BuildResource bRc = (BuildResource)getBuildResource(rcLocation);
+
+						if(bRc == null){
+							doVisitFile(rc);
+						}
+					}
+				}
 				return false;
 			}
 			
-			return !isGenerated(rc.getFullPath());
+			return true;//!isGenerated(rc.getFullPath());
+		}
+
+		
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			if(fPostProcessMode)
+				return postProcessVisit(delta);
+			return removedCalcVisit(delta);
 		}
 		
 		private void doVisitFile(IResource res) throws CoreException{
@@ -143,15 +203,31 @@ public class BuildDescription implements IBuildDescription {
 		
 	}
 
+	protected IPath calcResourceLocation(IResource rc){
+		IPath rcLocation = rc.getLocation();
+		if(rcLocation == null){
+			IPath fullPath = rc.getFullPath();
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot(); 
+			IProject proj = root.getProject(fullPath.segment(0));
+			rcLocation = proj.getLocation();
+			if(rcLocation != null){
+				rcLocation = rcLocation.append(fullPath.removeFirstSegments(1));
+			} else {
+				rcLocation = root.getLocation().append(fullPath);
+			}
+		}
+		return rcLocation;
+	}
+	
 	private class StepCollector implements IStepVisitor{
 		private Set fStepSet = new HashSet();
 
-		public boolean visit(IBuildStep action) throws CoreException {
+		public int visit(IBuildStep action) throws CoreException {
 			if(DbgUtil.DEBUG){
 				DbgUtil.traceln("StepCollector: visiting step " + DbgUtil.stepName(action));	//$NON-NLS-1$
 			}
 			fStepSet.add(action);
-			return true;
+			return VISIT_CONTINUE;
 		}
 		
 		public BuildStep[] getSteps(){
@@ -172,7 +248,7 @@ public class BuildDescription implements IBuildDescription {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.builddescription.IStepVisitor#visit(org.eclipse.cdt.managedbuilder.builddescription.IBuildStep)
 		 */
-		public boolean visit(IBuildStep a) throws CoreException {
+		public int visit(IBuildStep a) throws CoreException {
 			BuildStep action = (BuildStep)a;
 			BuildResource rcs[] = (BuildResource[])action.getInputResources();
 			boolean rebuild = action.needsRebuild();
@@ -236,7 +312,7 @@ public class BuildDescription implements IBuildDescription {
 					if(DbgUtil.DEBUG)
 						DbgUtil.traceln("setting remove state for resource " + locationToRel(outRcs[i].getLocation()).toString());	//$NON-NLS-1$
 					
-					((BuildResource)outRcs[i]).setRemoved();
+					((BuildResource)outRcs[i]).setRemoved(true);
 				}
 				
 			} else if(rebuild){
@@ -258,7 +334,7 @@ public class BuildDescription implements IBuildDescription {
 			if(DbgUtil.DEBUG)
 				DbgUtil.traceln("<<leaving..");	//$NON-NLS-1$
 			
-			return true;
+			return VISIT_CONTINUE;
 		}
 	}
 	
@@ -305,7 +381,7 @@ public class BuildDescription implements IBuildDescription {
 		initBase(cfg, null, 0);
 	}
 	
-	private void synchRebuildState() throws CoreException{
+	public void synchRebuildState() throws CoreException{
 		if(DbgUtil.DEBUG)
 			DbgUtil.traceln("--->Synch started");	//$NON-NLS-1$
 
@@ -600,10 +676,18 @@ public class BuildDescription implements IBuildDescription {
 		fProject.accept(visitor, IResource.NONE);
 		
 		
-		if(checkFlags(BuildDescriptionManager.REMOVED) && fDelta != null)
+		if(checkFlags(BuildDescriptionManager.REMOVED)
+				&& fDelta != null)
 			fDelta.accept(visitor);
 		
 		handleMultiSteps();
+		
+		visitor.setMode(true);
+		if((checkFlags(BuildDescriptionManager.REMOVED) 
+				|| checkFlags(BuildDescriptionManager.REBUILD))
+				&& fDelta != null)
+			fDelta.accept(visitor);
+		
 		completeLinking();
 		synchRebuildState();
 		//TODO: trim();
@@ -1101,7 +1185,7 @@ public class BuildDescription implements IBuildDescription {
 				String outExt = tool.getOutputExtension(inExt);
 				outFullPath = resolvePercent(outFullPath.addFileExtension(outExt), buildRc.getLocation());
 				
-				outLocation = outLocation = fProject.getLocation().append(outFullPath.removeFirstSegments(1));
+				outLocation = fProject.getLocation().append(outFullPath.removeFirstSegments(1));
 				
 				BuildIOType buildArg = action.createIOType(false, true, null);
 
@@ -1131,7 +1215,7 @@ public class BuildDescription implements IBuildDescription {
 		return location;
 	}
 	
-	public IBuildResource getResourceForLocation(IPath location) {
+	public IBuildResource getBuildResource(IPath location) {
 		return (BuildResource)fLocationToRcMap.get(location);
 	}
 
@@ -1157,6 +1241,23 @@ public class BuildDescription implements IBuildDescription {
 	 */
 	public IConfiguration getConfiguration() {
 		return fCfg;
+	}
+	
+	public Map getEnvironment(){
+		if(fEnvironment == null)
+			fEnvironment = calculateEnvironment();
+		return fEnvironment;
+	}
+	
+	protected Map calculateEnvironment(){
+		IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(fCfg,true,true);
+		Map map = new HashMap();
+		
+		for(int i = 0; i < variables.length; i++){
+			IBuildEnvironmentVariable var = variables[i];
+			map.put(var.getName(), var.getValue());
+		}
+		return map;
 	}
 
 	public IProject getProject() {
@@ -1417,11 +1518,13 @@ public class BuildDescription implements IBuildDescription {
 				IPath projPath = inFullPath;
 				inFullPath = fProject.getFullPath().append(inFullPath);
 
-				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(inFullPath);
-				if(res != null)
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().getFile(inFullPath);//.findMember(inFullPath);
+				inLocation = calcResourceLocation(res);
+/*				if(res != null)
 					inLocation = res.getLocation();
 				else 
 					inLocation = fProject.getLocation().append(projPath);
+*/
 			}
 			
 			BuildResource rc = createResource(inLocation, inFullPath);
@@ -1444,12 +1547,12 @@ public class BuildDescription implements IBuildDescription {
 	}
 	
 	public BuildResource createResource(IResource rc){
-		return createResource(rc.getLocation(), rc.getFullPath());
+		return createResource(calcResourceLocation(rc), rc.getFullPath());
 	}
 
 	public BuildResource createResource(IPath location, IPath fullPath){
 		
-		BuildResource rc = (BuildResource)getResourceForLocation(location);
+		BuildResource rc = (BuildResource)getBuildResource(location);
 		
 		if(rc == null)
 			rc = new BuildResource(this, location, fullPath);
@@ -1628,7 +1731,7 @@ public class BuildDescription implements IBuildDescription {
 		return fGeneratedPaths;
 	}
 	
-	private boolean isGenerated(IPath path){
+	protected boolean isGenerated(IPath path){
 		IPath paths[] = getGeneratedPaths();
 		for(int i = 0; i < paths.length; i++){
 			if(paths[i].isPrefixOf(path))
@@ -1690,5 +1793,12 @@ public class BuildDescription implements IBuildDescription {
 	 */
 	public IBuildStep[] getSteps() {
 		return (BuildStep[])fStepList.toArray(new BuildStep[fStepList.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription#findBuildResource(org.eclipse.core.resources.IResource)
+	 */
+	public IBuildResource getBuildResource(IResource resource){
+		return getBuildResource(calcResourceLocation(resource));
 	}
 }

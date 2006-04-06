@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,6 +142,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	// Project types defined in the manifest files
 	public static SortedMap projectTypeMap;
 	private static List projectTypes;
+	// Early configuration initialization extension elements
+	private static List startUpConfigElements;
 	// Configurations defined in the manifest files
 	private static Map extensionConfigurationMap;
 	// Resource configurations defined in the manifest files
@@ -1770,6 +1772,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			return;
 		projectTypesLoading = true;
 		
+		//The list of the IManagedBuildDefinitionsStartup callbacks 
+		List buildDefStartupList = null;
 		// Get the extensions that use the current CDT managed build model
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
 		if( extensionPoint != null) {
@@ -1824,6 +1828,27 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						loadConfigElements(DefaultManagedConfigElement.convertArray(elements, extension), revision);
 					}
 				}
+				
+				// Call the start up config extensions. These may rely on the standard elements
+				// having already been loaded so we wait to call them from here.
+				if (startUpConfigElements != null) {
+					buildDefStartupList = new ArrayList(startUpConfigElements.size());
+
+					for (Iterator iter = startUpConfigElements.iterator(); iter.hasNext();) {
+						IManagedBuildDefinitionsStartup customConfigLoader;
+						try {
+							customConfigLoader = createStartUpConfigLoader((DefaultManagedConfigElement)iter.next());
+							
+							//need to save the startup for the future notifications
+							buildDefStartupList.add(customConfigLoader);
+							
+							// Now we can perform any actions on the build configurations
+							// in an extended plugin before the build configurations have been resolved
+							customConfigLoader.buildDefsLoaded();					
+						} catch (CoreException e) {}
+					}
+				}
+				
 				// Then call resolve.
 				//
 				// Here are notes on "references" within the managed build system.
@@ -2035,6 +2060,17 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 		}
 		
+		// configs resolved...
+		// Call the start up config extensions again now that configs have been resolved. 
+		if (buildDefStartupList != null) {
+			for (Iterator iter = buildDefStartupList.iterator(); iter.hasNext();) {
+				IManagedBuildDefinitionsStartup customConfigLoader = (IManagedBuildDefinitionsStartup)iter.next();
+
+				// Now we can perform any actions on the build configurations
+				// in an extended plugin now that all build configruations have been resolved
+				customConfigLoader.buildDefsResolved();					
+			}
+		}
 		performAdjustments();
 		projectTypesLoading = false;
 		projectTypesLoaded = true;
@@ -2118,6 +2154,14 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						providedConfigs = provider.getConfigElements();
 						loadConfigElements(providedConfigs, revision);	// This must use the current build model
 					}
+				} else if (element.getName().equals(IManagedBuildDefinitionsStartup.BUILD_DEFINITION_STARTUP)) {
+					if (element instanceof DefaultManagedConfigElement) {
+					// Cache up early configuration extension elements so was can call them after
+					// other configuration elements have loaded.
+						if (startUpConfigElements == null)
+							startUpConfigElements = new ArrayList();
+						startUpConfigElements.add(element);
+					}
 				} else {
 					// TODO: Report an error (log?)
 				}
@@ -2191,6 +2235,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			createExecutableExtension(IManagedConfigElementProvider.CLASS_ATTRIBUTE);
 	}
 
+	
+	private static IManagedBuildDefinitionsStartup createStartUpConfigLoader(
+			DefaultManagedConfigElement element) throws CoreException {
+		
+			return (IManagedBuildDefinitionsStartup)element.getConfigurationElement().createExecutableExtension(IManagedBuildDefinitionsStartup.CLASS_ATTRIBUTE);
+		}
 	
 	/**
 	 * @param project

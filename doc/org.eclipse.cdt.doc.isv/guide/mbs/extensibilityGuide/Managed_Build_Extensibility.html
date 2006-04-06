@@ -188,7 +188,9 @@ managed build system and how to extend it.</font></td>
 <div class="indent"><a href="#_TocSectionDynamic_11">7.11 Defining an Option Value Handler</a></div>
 <div class="indent"><a href="#_TocSectionDynamic_12">7.12 Defining an Option Applicability Calculator</a></div>
 <div class="indent"><a href="#_TocSectionDynamic_13">7.13 Defining a Dynamic Element Provider</a></div>
-<div class="indent"><a href="#_TocSectionDynamic_14">7.14 Adding Custom Pages to the New Project Wizard</a></div>
+<div class="indent"><a href="#_TocSectionDynamic_14">7.14 Adding Custom Pages to the New Project Wizard</a><br>
+  <a href="#_TocSectionStartup_15">7.15 Defining Startup Behavior for Build Configuration Loading </a><br>
+</div>
 </div>
 <div class="indent"><a href="#_TocSectionAdvanced">8 Advanced Features</a>
 <div class="indent"><a href="#_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</a></div>
@@ -6519,9 +6521,32 @@ definitions must define a dynamicElementProvider element as described in § 3.19.
 <p>This section will be provided in a future version of the document.&nbsp; For 
 now, refer to the Custom Project Wizard Pages design document in bugzilla 
 #90334.</p>
-<p class="section"><a name="_TocSectionAdvanced"> Advanced Features</a></p>
-<p class="subsection"><a name="_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</p>
 </a>
+  <p class="subsection"><a name="_TocSectionStartup_15"></a><a name="_TocSectionTutorial_18"> 7.15 Defining Startup Behavior for Configuration Loading</a></p>
+  <p>Tool integrators may require that a plugin contain all the build configurations before projects are loaded. Use of this interface insures that a plugin will have access to build configurations before project inforamation is loaded in the workbench. Two methods can be used to access configuration information just after build definitions have been loaded and then again after the build definitions have been resolved. Added as enhancement to <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123275">bug 123275</a>. </p>
+  <blockquote>
+    <p class="style1">	public interface IManagedBuildDefinitionsStartup {</p>
+    <blockquote>
+      <p class="style1">String BUILD_DEFINITION_STARTUP = &quot;buildDefinitionStartup&quot;; //$NON-NLS-1$<br>
+        String CLASS_ATTRIBUTE = &quot;class&quot;; //$NON-NLS-1$<br>
+        <br>
+        /**<br>
+        * Any work you want to do on build definitions after they have been loaded but before they have been resolved.<br>
+        */<br>
+        void buildDefsLoaded();<br>
+        <br>
+        /**<br>
+        * Any work you want to do on build definitions after they have been resolved.<br>
+        */<br>
+      void buildDefsResolved();</p>
+    </blockquote>
+    <p class="style1">} </p>
+  </blockquote>
+  <a name="_TocSectionTutorial_18">
+  <p>&nbsp;</p>
+  <p class="section"><a name="_TocSectionAdvanced"> Advanced Features</a></p>
+  <p class="subsection"><a name="_TocSectionAdvanced_1">8.1 Converting CDT 2.0 Manifest Files</p>
+  </a>
 <p class="MsoNormal">The CDT 2.1 Managed Build System (MBS) defined a new object 
 model for tool integrators to use when integrating their tool definitions.&nbsp; 
 The CDT 3.0 model is upward compatible with the CDT 2.1 model with the exception 

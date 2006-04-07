@@ -228,9 +228,10 @@ public class IndexManager extends JobManager{
 	 */
 	public void removeResourceEvent(IProject project, IResourceDelta delta, int kind) {
 		//Get the indexer for this project
-		ICDTIndexer indexer = null;
-		indexer = (ICDTIndexer) indexerMap.get(project);
+		if (indexerMap == null)
+			return;
 		
+		ICDTIndexer indexer = (ICDTIndexer) indexerMap.get(project);
 		if (indexer != null)
 			indexer.removeRequest(project, delta, kind);
 	}

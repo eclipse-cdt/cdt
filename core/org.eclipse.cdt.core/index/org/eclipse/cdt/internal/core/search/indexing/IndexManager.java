@@ -377,32 +377,33 @@ public class IndexManager extends JobManager{
 	}
 	
 	public ICDTIndexer getIndexerForProject(IProject project){
-		ICDTIndexer indexer = null;
-		try {
-			//Make sure we're not updating list
-			monitor.enterRead();
-			
-			//See if indexer exists already
-			indexer = (ICDTIndexer) indexerMap.get(project);
-			
-			//Create the indexer and store it
-			if (indexer == null) {
-				monitor.exitRead();
-				try {
-					monitor.enterWrite();
-					indexer = getIndexer(project);
-					//Make sure we're not putting null in map
-					if (indexer != null)
-						indexerMap.put(project,indexer);
-				} finally{
-					monitor.exitWriteEnterRead();
-				}
-			}
-			return indexer;
-				
-			}finally {
-				monitor.exitRead();
-			}
+		return null;
+//		ICDTIndexer indexer = null;
+//		try {
+//			//Make sure we're not updating list
+//			monitor.enterRead();
+//			
+//			//See if indexer exists already
+//			indexer = (ICDTIndexer) indexerMap.get(project);
+//			
+//			//Create the indexer and store it
+//			if (indexer == null) {
+//				monitor.exitRead();
+//				try {
+//					monitor.enterWrite();
+//					indexer = getIndexer(project);
+//					//Make sure we're not putting null in map
+//					if (indexer != null)
+//						indexerMap.put(project,indexer);
+//				} finally{
+//					monitor.exitWriteEnterRead();
+//				}
+//			}
+//			return indexer;
+//				
+//			}finally {
+//				monitor.exitRead();
+//			}
 	}
 	
 	public ICDTIndexer getDefaultIndexer(IProject project) throws CoreException {

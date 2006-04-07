@@ -295,9 +295,6 @@ public class CCorePlugin extends Plugin {
 		fCoreModel = CoreModel.getDefault();
 		fCoreModel.startup();
 
-		//Fired up the indexer
-		fCoreModel.startIndexing();
-		
 		// Fire up the PDOM
 		pdomManager = new PDOMManager();
 		pdomManager.startup();

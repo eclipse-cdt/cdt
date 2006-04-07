@@ -90,8 +90,8 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 		else
 			fileCreator = SavedCodeReaderFactory.getInstance();
 
-		IFile rfile = (IFile)file.getResource();
 		CodeReader reader;
+		IFile rfile = (IFile)file.getResource();
 		if (file instanceof IWorkingCopy) {
 			// get the working copy contents
 			reader = new CodeReader(rfile.getLocation().toOSString(), file.getContents());
@@ -105,8 +105,8 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 				return null;
 		}
 		
-	    IScannerExtensionConfiguration scannerExtensionConfiguration =
-	       scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
+	    IScannerExtensionConfiguration scannerExtensionConfiguration
+	    	= CPP_GNU_SCANNER_EXTENSION;
 	    
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
                 ParserLanguage.CPP, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator );

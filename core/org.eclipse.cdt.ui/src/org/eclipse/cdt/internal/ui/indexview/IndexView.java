@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -29,10 +28,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPNamespace;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -48,7 +45,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -104,7 +100,7 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 	 * editor (if option enabled)
 	 */
 	void handleSelectionChanged(SelectionChangedEvent event) {
-		final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+//		final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 //		updateStatusLine(selection);
 //		updateActionBars(selection);
 		if (isLinking) {
@@ -187,8 +183,13 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 				if (parentElement instanceof ICProject) {
 					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)parentElement);
 					int n = 0;
-					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
+					PDOMLinkage firstLinkage = pdom.getFirstLinkage();
+					for (PDOMLinkage linkage = firstLinkage; linkage != null; linkage = linkage.getNextLinkage())
 						++n;
+					if (n == 1) {
+						// Skip linkages in hierarchy if there is only one
+						return getChildren(firstLinkage);
+					}
 					PDOMLinkage[] linkages = new PDOMLinkage[n];
 					int i = 0;
 					for (PDOMLinkage linkage = pdom.getFirstLinkage(); linkage != null; linkage = linkage.getNextLinkage())
@@ -218,7 +219,14 @@ public class IndexView extends ViewPart implements PDOM.IListener {
 			try {
 				if (element instanceof ICProject) {
 					PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM((ICProject)element);
-					return pdom.getFirstLinkage() != null;
+					PDOMLinkage firstLinkage = pdom.getFirstLinkage();
+					if (firstLinkage == null)
+						return false;
+					else if (firstLinkage.getNextLinkage() == null)
+						// Skipping linkages if only one
+						return hasChildren(firstLinkage);
+					else
+						return true;
 				} else if (element instanceof IPDOMNode) {
 					HasChildren hasChildren = new HasChildren();
 					try {

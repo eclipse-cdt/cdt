@@ -92,20 +92,22 @@ public class GCCLanguage extends PlatformObject implements ILanguage {
 			fileCreator = SavedCodeReaderFactory.getInstance();
 
 		CodeReader reader;
+		IFile rfile = (IFile)file.getResource();
 		if (file instanceof IWorkingCopy) {
 			// get the working copy contents
-			IFile rfile = (IFile)file.getResource();
 			reader = new CodeReader(rfile.getLocation().toOSString(), file.getContents());
 		} else {
-			String path = file.getPath().toOSString();
+			String path
+				= rfile != null
+				? rfile.getLocation().toOSString()
+				: file.getPath().toOSString();
 			reader = fileCreator.createCodeReaderForTranslationUnit(path);
 			if (reader == null)
 				return null;
 		}
 		
-		
-	    IScannerExtensionConfiguration scannerExtensionConfiguration =
-	       scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
+	    IScannerExtensionConfiguration scannerExtensionConfiguration
+	    	= C_GNU_SCANNER_EXTENSION;
 	    
 		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
                 ParserLanguage.C, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator );

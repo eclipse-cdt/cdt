@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,8 +33,21 @@ import org.eclipse.ui.ide.IDEActionFactory;
  */
 public class BuildGroup extends CViewActionGroup {
 
+	private class RebuildAction extends BuildAction {
+	    public RebuildAction(Shell shell) {
+	        super(shell, IncrementalProjectBuilder.FULL_BUILD);
+	    }
+	    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
+	            throws CoreException {
+	    	// these are both async.  NOT what I want.
+	    	((IProject) resource).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+	    	((IProject) resource).build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+
+	    }
+	}
+
 	private BuildAction buildAction;
-//	private BuildAction rebuildAction;
+	private BuildAction rebuildAction;
 	private BuildAction cleanAction;
 
 	// Menu tags for the build
@@ -46,7 +60,6 @@ public class BuildGroup extends CViewActionGroup {
 
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(IDEActionFactory.BUILD_PROJECT.getId(), buildAction);
-//		actionBars.setGlobalActionHandler(IDEActionFactory.REBUILD_PROJECT.getId(), rebuildAction);
 	}
 
 	/**
@@ -137,27 +150,19 @@ public class BuildGroup extends CViewActionGroup {
 
 	protected void makeActions() {
 		Shell shell = getCView().getSite().getShell();
-		
-		// when the managed builder can handle a full build we should change this to use FULL BUILD
-		// the incremental build allows the eclipse plaftorm to decide that the CDT builder does not
-		// need to be called.  FULL_BUILD will always call our builders and WE can decide what to do.
-		buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-//		buildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
+
+		buildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 		buildAction.setText(CViewMessages.getString("BuildAction.label")); //$NON-NLS-1$
 
 		cleanAction = new BuildAction(shell, IncrementalProjectBuilder.CLEAN_BUILD);
 		cleanAction.setText(CViewMessages.getString("CleanAction.label")); //$NON-NLS-1$
 		
-		//	I need to figure out how to override the action on the rebuild.  Currently this is all implemented
-		//  as the default action.  I would like to do both CLEAN_BUILD followed by INCREMENTAL_BUILD
-		//  oddly enough if it is not INCREMENTAL_BUILD the strings are maped to "rebuild" in the contructor of BuildAction
-//		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
-//		rebuildAction.setText(CViewMessages.getString("RebuildAction.label")); //$NON-NLS-1$
+		rebuildAction = new RebuildAction(shell);
+		rebuildAction.setText(CViewMessages.getString("RebuildAction.label")); //$NON-NLS-1$
 	}
 
 	public void updateActionBars() {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		buildAction.selectionChanged(selection);
-//		rebuildAction.selectionChanged(selection);
 	}
 }

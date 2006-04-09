@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -25,30 +26,18 @@ public class CPPASTUnaryExpression extends CPPASTNode implements
     private int operator;
     private IASTExpression operand;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryExpression#getOperator()
-     */
     public int getOperator() {
         return operator;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryExpression#setOperator(int)
-     */
     public void setOperator(int value) {
         this.operator = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryExpression#getOperand()
-     */
     public IASTExpression getOperand() {
         return operand;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryExpression#setOperand(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setOperand(IASTExpression expression) {
         operand = expression;
     }
@@ -75,4 +64,9 @@ public class CPPASTUnaryExpression extends CPPASTNode implements
         }
         
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

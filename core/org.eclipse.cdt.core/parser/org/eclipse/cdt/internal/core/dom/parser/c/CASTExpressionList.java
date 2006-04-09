@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -23,26 +24,15 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CASTExpressionList extends CASTNode implements IASTExpressionList,
         IASTAmbiguityParent {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTExpressionList#getExpressions()
-     */
     public IASTExpression[] getExpressions() {
         if (expressions == null)
             return IASTExpression.EMPTY_EXPRESSION_ARRAY;
         return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, expressions );
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTExpressionList#addExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void addExpression(IASTExpression expression) {
         expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, expression );
     }
-
 
     private IASTExpression [] expressions = new IASTExpression[2];
 
@@ -76,4 +66,9 @@ public class CASTExpressionList extends CASTNode implements IASTExpressionList,
             }
         }
     }
+    
+    public IType getExpressionType() {
+    	return CVisitor.getExpressionType(this);
+    }
+    
 }

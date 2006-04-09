@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -25,30 +26,18 @@ public class CPPASTSimpleTypeConstructorExpression extends CPPASTNode implements
     private int st;
     private IASTExpression init;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression#getSimpleType()
-     */
     public int getSimpleType() {
         return st;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression#setSimpleType(int)
-     */
     public void setSimpleType(int value) {
         st = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression#getInitialValue()
-     */
     public IASTExpression getInitialValue() {
         return init;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression#setInitialValue(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setInitialValue(IASTExpression expression) {
         init = expression;
     }
@@ -74,4 +63,9 @@ public class CPPASTSimpleTypeConstructorExpression extends CPPASTNode implements
             init  = (IASTExpression) other;
         }        
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

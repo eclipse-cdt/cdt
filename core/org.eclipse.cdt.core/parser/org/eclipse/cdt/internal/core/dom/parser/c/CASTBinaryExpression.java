@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -26,44 +27,26 @@ public class CASTBinaryExpression extends CASTNode implements
     private IASTExpression operand1;
     private IASTExpression operand2;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTBinaryExpression#getOperator()
-     */
     public int getOperator() {
         return op;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTBinaryExpression#getOperand1()
-     */
     public IASTExpression getOperand1() {
         return operand1;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTBinaryExpression#getOperand2()
-     */
     public IASTExpression getOperand2() {
         return operand2;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTBinaryExpression#setOperator(int)
-     */
     public void setOperator(int op) {
         this.op = op;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTBinaryExpression#setOperand1(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setOperand1(IASTExpression expression) {
         operand1 = expression;   
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTBinaryExpression#setOperand2(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setOperand2(IASTExpression expression) {
         operand2 = expression;
     }
@@ -96,4 +79,9 @@ public class CASTBinaryExpression extends CASTNode implements
             operand2 = (IASTExpression) other;
         }
     }
+    
+    public IType getExpressionType() {
+    	return CVisitor.getExpressionType(this);
+    }
+    
 }

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -93,7 +94,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
         }
 	}
 
-	private void handleBinding(IBinding binding, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+	protected void handleBinding(IBinding binding, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
 		if (binding instanceof IFunction)  {
 			handleFunction((IFunction)binding, completionNode, offset, viewer, proposals);
 		} else if (binding instanceof IVariable)  {
@@ -144,9 +145,12 @@ public class DOMCompletionContributor implements ICompletionContributor {
                 idargs.append("void"); //$NON-NLS-1$
             }
 			
-			IType returnType = function.getType().getReturnType();
-			if (returnType != null)
-				returnTypeStr = ASTTypeUtil.getType(returnType);
+			IFunctionType functionType = function.getType();
+			if (functionType != null) {
+				IType returnType = functionType.getReturnType();
+				if (returnType != null)
+					returnTypeStr = ASTTypeUtil.getType(returnType);
+			}
 		} catch (DOMException e) {
 		}
         

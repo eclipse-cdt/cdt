@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -25,30 +26,18 @@ public class CPPASTArraySubscriptExpression extends CPPASTNode implements
     private IASTExpression subscriptExp;
     private IASTExpression arrayExpression;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression#getArrayExpression()
-     */
     public IASTExpression getArrayExpression() {
         return arrayExpression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression#setArrayExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setArrayExpression(IASTExpression expression) {
         arrayExpression = expression;        
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression#getSubscriptExpression()
-     */
     public IASTExpression getSubscriptExpression() {
         return subscriptExp;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression#setSubscriptExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setSubscriptExpression(IASTExpression expression) {
         subscriptExp = expression;
     }
@@ -83,4 +72,8 @@ public class CPPASTArraySubscriptExpression extends CPPASTNode implements
         }
     }
 
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

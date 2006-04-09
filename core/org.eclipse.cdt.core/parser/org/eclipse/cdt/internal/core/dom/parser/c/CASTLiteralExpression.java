@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author jcamelon
@@ -22,30 +23,18 @@ public class CASTLiteralExpression extends CASTNode implements
     private int kind;
     private String value = ""; //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#getKind()
-     */
     public int getKind() {
         return kind;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#setKind(int)
-     */
     public void setKind(int value) {
         kind = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#setValue(java.lang.String)
-     */
     public void setValue(String value) {
         this.value = value;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     public String toString() {
         return value;
     }
@@ -60,4 +49,9 @@ public class CASTLiteralExpression extends CASTNode implements
 		}
         return true;
     }
+    
+    public IType getExpressionType() {
+    	return CVisitor.getExpressionType(this);
+    }
+    
 }

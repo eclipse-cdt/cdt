@@ -112,7 +112,8 @@ public class PDOMCPPClassType extends PDOMMemberOwner implements ICPPClassType, 
 	}
 
 	public int getKey() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO 
+		return ICPPClassType.k_class;
 	}
 
 	public String[] getQualifiedName() throws DOMException {

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 
 /**
@@ -21,16 +22,10 @@ public class CPPASTCompoundStatementExpression extends CPPASTNode implements
         IGNUASTCompoundStatementExpression {
     private IASTCompoundStatement statement;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression#getCompoundStatement()
-     */
     public IASTCompoundStatement getCompoundStatement() {
         return statement;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression#setCompoundStatement(org.eclipse.cdt.core.dom.ast.IASTCompoundStatement)
-     */
     public void setCompoundStatement(IASTCompoundStatement statement) {
         this.statement = statement;
     }
@@ -47,4 +42,9 @@ public class CPPASTCompoundStatementExpression extends CPPASTNode implements
         if( statement != null ) if( !statement.accept( action ) ) return false;
         return true;
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

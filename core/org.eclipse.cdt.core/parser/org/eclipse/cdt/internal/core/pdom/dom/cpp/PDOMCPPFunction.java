@@ -55,7 +55,8 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction {
 	}
 
 	public IParameter[] getParameters() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO 
+		return new IParameter[0];
 	}
 
 	public IFunctionType getType() throws DOMException {
@@ -80,7 +81,8 @@ public class PDOMCPPFunction extends PDOMBinding implements ICPPFunction {
 	}
 
 	public boolean takesVarArgs() throws DOMException {
-		throw new PDOMNotImplementedError();
+		// TODO
+		return false;
 	}
 
 	public String[] getQualifiedName() throws DOMException {

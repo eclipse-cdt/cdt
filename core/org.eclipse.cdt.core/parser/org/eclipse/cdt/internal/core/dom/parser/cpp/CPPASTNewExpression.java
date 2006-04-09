@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -30,87 +31,51 @@ public class CPPASTNewExpression extends CPPASTNode implements
     private IASTTypeId typeId;
     private boolean isNewTypeId;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#isGlobal()
-     */
     public boolean isGlobal() {
         return global;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#setIsGlobal(boolean)
-     */
     public void setIsGlobal(boolean value) {
         global = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#getNewPlacement()
-     */
     public IASTExpression getNewPlacement() {
         return placement;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#setNewPlacement(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setNewPlacement(IASTExpression expression) {
         placement = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#getNewInitializer()
-     */
     public IASTExpression getNewInitializer() {
         return initializer;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#setNewInitializer(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setNewInitializer(IASTExpression expression) {
         initializer = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#getTypeId()
-     */
     public IASTTypeId getTypeId() {
         return typeId;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#setTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
     public void setTypeId(IASTTypeId typeId) {
         this.typeId = typeId;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#isNewTypeId()
-     */
     public boolean isNewTypeId() {
         return isNewTypeId;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#setIsNewTypeId(boolean)
-     */
     public void setIsNewTypeId(boolean value) {
         isNewTypeId = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#getNewTypeIdArrayExpressions()
-     */
     public IASTExpression [] getNewTypeIdArrayExpressions() {
         if( arrayExpressions == null ) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
         return (IASTExpression[]) ArrayUtil.removeNulls( IASTExpression.class, arrayExpressions );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression#addNewTypeIdArrayExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void addNewTypeIdArrayExpression(IASTExpression expression) {
         arrayExpressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, arrayExpressions, expression );
     }
@@ -159,4 +124,9 @@ public class CPPASTNewExpression extends CPPASTNode implements
                 arrayExpressions[i] = (IASTExpression) other;
             }   
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

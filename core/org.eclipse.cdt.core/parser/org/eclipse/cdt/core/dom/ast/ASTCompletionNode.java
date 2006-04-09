@@ -66,7 +66,7 @@ public class ASTCompletionNode {
 	 * @return the prefix text up to the point of completion
 	 */
 	public String getPrefix() {
-		return completionToken.getImage();
+		return completionToken.getType() != IToken.tEOC ? completionToken.getImage() : "";
 	}
 
 	/**

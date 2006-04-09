@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author jcamelon
@@ -20,16 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression {
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIdExpression#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIdExpression#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
     }
@@ -47,11 +42,13 @@ public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression {
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( name == n )return r_reference;
 		return r_unclear;
 	}
+	
+	public IType getExpressionType() {
+		return CPPVisitor.getExpressionType(this);
+	}
+	
 }

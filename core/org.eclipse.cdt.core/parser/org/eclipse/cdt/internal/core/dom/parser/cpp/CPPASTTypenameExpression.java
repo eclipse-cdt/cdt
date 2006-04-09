@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -27,44 +28,26 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
     private IASTName name;
     private IASTExpression init;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression#setIsTemplate(boolean)
-     */
     public void setIsTemplate(boolean templateTokenConsumed) {
         isTemplate = templateTokenConsumed;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression#isTemplate()
-     */
     public boolean isTemplate() {
         return isTemplate;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression#setInitialValue(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setInitialValue(IASTExpression expressionList) {
         init = expressionList;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression#getInitialValue()
-     */
     public IASTExpression getInitialValue() {
         return init;
     }
@@ -83,9 +66,6 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
         return true;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( n == name )
 			return r_reference;
@@ -101,4 +81,9 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
         }
         
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

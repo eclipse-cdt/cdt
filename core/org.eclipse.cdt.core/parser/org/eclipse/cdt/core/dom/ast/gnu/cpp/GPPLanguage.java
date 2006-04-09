@@ -94,7 +94,7 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 		IFile rfile = (IFile)file.getResource();
 		if (file instanceof IWorkingCopy) {
 			// get the working copy contents
-			reader = new CodeReader(rfile.getLocation().toOSString(), file.getContents());
+			reader = new CodeReader(((IWorkingCopy)file).getOriginalElement().getPath().toOSString(), file.getContents());
 		} else {
 			String path
 				= rfile != null 
@@ -123,9 +123,45 @@ public class GPPLanguage extends PlatformObject implements ILanguage {
 		return ast;
 	}
 
-	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy,
-			int offset) {
-		return null;
+	public ASTCompletionNode getCompletionNode(IWorkingCopy workingCopy, int offset) {
+		IResource resource = workingCopy.getResource();
+		ICProject project = workingCopy.getCProject();
+		IProject rproject = project.getProject();
+		
+		IScannerInfo scanInfo = null;
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(rproject);
+		if (provider != null){
+			IResource infoResource = resource != null ? resource : rproject; 
+			IScannerInfo buildScanInfo = provider.getScannerInformation(infoResource);
+			if (buildScanInfo != null)
+				scanInfo = buildScanInfo;
+			else
+				scanInfo = new ScannerInfo();
+		}
+		
+		PDOM pdom = (PDOM)CCorePlugin.getPDOMManager().getPDOM(project).getAdapter(PDOM.class);
+		ICodeReaderFactory fileCreator = new PDOMCodeReaderFactory(pdom);
+
+		CodeReader reader = new CodeReader(resource.getLocation().toOSString(), workingCopy.getContents());
+	    IScannerExtensionConfiguration scannerExtensionConfiguration
+	    	= CPP_GNU_SCANNER_EXTENSION;
+		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
+                ParserLanguage.CPP, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator );
+		scanner.setContentAssistMode(offset);
+		
+		ISourceCodeParser parser = new GNUCPPSourceParser(
+				scanner,
+				ParserMode.COMPLETION_PARSE,
+				ParserUtil.getParserLogService(),
+				new GPPParserExtensionConfiguration());
+		
+		// Run the parse and return the completion node
+		parser.parse();
+		ASTCompletionNode node = parser.getCompletionNode();
+		if (node != null) {
+			node.count = scanner.getCount();
+		}
+		return node;
 	}
 	
 

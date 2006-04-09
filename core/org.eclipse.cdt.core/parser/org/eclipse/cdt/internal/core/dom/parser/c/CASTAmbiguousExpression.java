@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 
@@ -37,5 +38,8 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements
         return getExpressions();
     }
 
-
+    public IType getExpressionType() {
+    	return CVisitor.getExpressionType(this);
+    }
+    
 }

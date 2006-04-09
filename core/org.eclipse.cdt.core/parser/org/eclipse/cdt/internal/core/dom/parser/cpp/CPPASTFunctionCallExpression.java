@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -24,30 +25,18 @@ public class CPPASTFunctionCallExpression extends CPPASTNode implements
     private IASTExpression functionName;
     private IASTExpression parameter;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression#setFunctionNameExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setFunctionNameExpression(IASTExpression expression) {
         this.functionName = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression#getFunctionNameExpression()
-     */
     public IASTExpression getFunctionNameExpression() {
         return functionName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression#setParameterExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setParameterExpression(IASTExpression expression) {
         this.parameter = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression#getParameterExpression()
-     */
     public IASTExpression getParameterExpression() {
         return parameter;
     }
@@ -79,6 +68,10 @@ public class CPPASTFunctionCallExpression extends CPPASTNode implements
             other.setParent( child.getParent() );
             parameter  = (IASTExpression) other;
         }    
-    
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

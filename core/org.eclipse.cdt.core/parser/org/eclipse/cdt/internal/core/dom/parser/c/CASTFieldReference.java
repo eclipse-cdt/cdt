@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -26,44 +27,26 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference, 
     private IASTName name;
     private boolean ptr;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldReference#getFieldOwner()
-     */
     public IASTExpression getFieldOwner() {
         return owner;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldReference#setFieldOwner(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setFieldOwner(IASTExpression expression) {
         this.owner = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldReference#getFieldName()
-     */
     public IASTName getFieldName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldReference#setFieldName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setFieldName(IASTName name) {
         this.name = name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldReference#isPointerDereference()
-     */
     public boolean isPointerDereference() {
         return ptr;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldReference#setIsPointerDereference(boolean)
-     */
     public void setIsPointerDereference(boolean value) {
         ptr = value;
     }
@@ -82,9 +65,6 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference, 
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n ) {
 		if( n  == this.name )
 			return r_reference;
@@ -100,5 +80,8 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference, 
         }
     }
     
+    public IType getExpressionType() {
+    	return CVisitor.getExpressionType(this);
+    }
     
 }

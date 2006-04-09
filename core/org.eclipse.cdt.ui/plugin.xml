@@ -1376,10 +1376,6 @@
             id="CodeTemplates"
             priority="2"/>
       <contributor
-            class="org.eclipse.cdt.internal.ui.text.contentassist.SearchCompletionContributor"
-            id="Search"
-            priority="3"/>
-      <contributor
             class="org.eclipse.cdt.internal.ui.text.contentassist.KeywordCompletionContributor"
             id="Keywords"
             priority="10"/>
@@ -1387,6 +1383,10 @@
             class="org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionContributor"
             id="Help"
             priority="99"/>
+      <contributor
+            class="org.eclipse.cdt.internal.ui.text.contentassist.PDOMCompletionContributor"
+            id="PDOM"
+            priority="3"/>
    	</extension>
 
 </plugin>

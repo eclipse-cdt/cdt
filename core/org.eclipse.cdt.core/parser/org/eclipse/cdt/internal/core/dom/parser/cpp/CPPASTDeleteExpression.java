@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 
 /**
@@ -24,44 +25,26 @@ public class CPPASTDeleteExpression extends CPPASTNode implements
     private boolean isGlobal;
     private boolean isVectored;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression#getOperand()
-     */
     public IASTExpression getOperand() {
         return operand;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression#setOperand(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setOperand(IASTExpression expression) {
         operand = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression#setIsGlobal(boolean)
-     */
     public void setIsGlobal(boolean global) {
         isGlobal = global;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression#isGlobal()
-     */
     public boolean isGlobal() {
         return isGlobal;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression#setIsVectored(boolean)
-     */
     public void setIsVectored(boolean vectored) {
         isVectored = vectored;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression#isVectored()
-     */
     public boolean isVectored() {
         return isVectored;
     }
@@ -78,4 +61,9 @@ public class CPPASTDeleteExpression extends CPPASTNode implements
         if( operand != null ) if( !operand.accept( action ) ) return false;
         return true;
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

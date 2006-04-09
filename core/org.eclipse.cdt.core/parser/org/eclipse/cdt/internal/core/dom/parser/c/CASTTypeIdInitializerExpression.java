@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 
 /**
@@ -24,30 +25,18 @@ public class CASTTypeIdInitializerExpression extends CASTNode implements
     private IASTTypeId t;
     private IASTInitializer i;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression#getTypeId()
-     */
     public IASTTypeId getTypeId() {
         return t;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression#setTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
     public void setTypeId(IASTTypeId typeId) {
         t = typeId;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression#getInitializer()
-     */
     public IASTInitializer getInitializer() {
         return i;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression#setInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
-     */
     public void setInitializer(IASTInitializer initializer) {
         i = initializer;
     }
@@ -65,4 +54,9 @@ public class CASTTypeIdInitializerExpression extends CASTNode implements
         if( i != null ) if( !i.accept( action ) ) return false;
         return true;
     }
+    
+    public IType getExpressionType() {
+    	return CVisitor.getExpressionType(this);
+    }
+    
 }

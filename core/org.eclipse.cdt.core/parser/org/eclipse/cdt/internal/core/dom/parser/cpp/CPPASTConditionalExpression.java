@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -25,44 +26,26 @@ public class CPPASTConditionalExpression extends CPPASTNode implements
     private IASTExpression negative;
     private IASTExpression postive;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTConditionalExpression#getLogicalConditionExpression()
-     */
     public IASTExpression getLogicalConditionExpression() {
         return condition;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTConditionalExpression#setLogicalConditionExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setLogicalConditionExpression(IASTExpression expression) {
         condition = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTConditionalExpression#getPositiveResultExpression()
-     */
     public IASTExpression getPositiveResultExpression() {
         return postive;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTConditionalExpression#setPositiveResultExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setPositiveResultExpression(IASTExpression expression) {
         this.postive = expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTConditionalExpression#getNegativeResultExpression()
-     */
     public IASTExpression getNegativeResultExpression() {
         return negative;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTConditionalExpression#setNegativeResultExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setNegativeResultExpression(IASTExpression expression) {
         this.negative = expression;
     }
@@ -102,4 +85,9 @@ public class CPPASTConditionalExpression extends CPPASTNode implements
             negative  = (IASTExpression) other;
         }
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

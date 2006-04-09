@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 
@@ -35,6 +36,10 @@ public class CPPASTAmbiguousExpression extends CPPASTAmbiguity implements
 
     protected IASTNode[] getNodes() {
         return getExpressions();
+    }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
     }
 
 }

@@ -20,4 +20,7 @@ public interface IASTExpression extends IASTNode {
 	 * Empty expression array.
 	 */
 	public static final IASTExpression[] EMPTY_EXPRESSION_ARRAY = new IASTExpression[0];
+	
+	public IType getExpressionType();
+	
 }

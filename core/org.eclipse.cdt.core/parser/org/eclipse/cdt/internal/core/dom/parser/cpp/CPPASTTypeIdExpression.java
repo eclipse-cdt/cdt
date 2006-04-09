@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 
 /**
@@ -23,30 +24,18 @@ public class CPPASTTypeIdExpression extends CPPASTNode implements
     private int op;
     private IASTTypeId typeId;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression#getOperator()
-     */
     public int getOperator() {
         return op;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression#setOperator(int)
-     */
     public void setOperator(int value) {
         this.op = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression#setTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
     public void setTypeId(IASTTypeId typeId) {
        this.typeId = typeId;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression#getTypeId()
-     */
     public IASTTypeId getTypeId() {
         return typeId;
     }
@@ -63,4 +52,9 @@ public class CPPASTTypeIdExpression extends CPPASTNode implements
         if( typeId != null ) if( !typeId.accept( action ) ) return false;
         return true;
     }
+    
+    public IType getExpressionType() {
+    	return CPPVisitor.getExpressionType(this);
+    }
+    
 }

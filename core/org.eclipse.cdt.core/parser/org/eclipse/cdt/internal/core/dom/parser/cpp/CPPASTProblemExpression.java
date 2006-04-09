@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author jcamelon
@@ -29,4 +30,9 @@ public class CPPASTProblemExpression extends CPPASTProblemOwner implements
 		}
         return true;
     }
+    
+    public IType getExpressionType() {
+    	return null;
+    }
+    
 }

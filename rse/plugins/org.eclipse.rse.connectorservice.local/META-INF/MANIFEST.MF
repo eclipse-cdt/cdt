@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: org.eclipse.rse.connectorservice.local
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.rse.connectorservice.local.Activator
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.rse.services,
+ org.eclipse.rse.ui
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.rse.connectorservice.local
+Bundle-Vendor: Eclipse.org
+Bundle-ClassPath: local_connector_service.jar

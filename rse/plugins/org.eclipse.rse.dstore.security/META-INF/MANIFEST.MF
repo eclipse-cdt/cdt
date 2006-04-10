@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: org.eclipse.rse.dstore.security; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.rse.dstore.security.UniversalSecurityPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.rse.services,
+ org.eclipse.dstore.core,
+ org.eclipse.core.resources,
+ org.eclipse.rse.subsystems.files.dstore,
+ org.eclipse.rse.subsystems.shells.dstore,
+ org.eclipse.rse.subsystems.processes.dstore,
+ org.eclipse.rse.subsystems.files.core,
+ org.eclipse.rse.subsystems.processes.core,
+ org.eclipse.rse.subsystems.shells.core,
+ org.eclipse.rse.ui
+Eclipse-LazyStart: true
+Bundle-Vendor: Eclipse.org
+Bundle-ClassPath: dstore_security.jar

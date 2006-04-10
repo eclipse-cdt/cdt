@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %plugin.name
+Bundle-SymbolicName: org.eclipse.rse.logging;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.rse.logging.RemoteSystemsLoggingPlugin
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.rse.logging,
+ org.eclipse.rse.logging.performance
+Bundle-Vendor: Eclipse.org
+Bundle-ClassPath: systemslogging.jar
